@@ -1,0 +1,46 @@
+{
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@10.20.0",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^22.21.1",
+      "onFail": "download"
+    }
+  },
+  "pnpm": {
+    "requiredScripts": [
+      "build"
+    ],
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "msw"
+    ]
+  },
+  "scripts": {
+    "test": "vitest run",
+    "prepub": "./scripts/publish/prepare",
+    "pub": "changeset publish",
+    "pub:tags": "git push --follow-tags"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.2",
+    "@changesets/cli": "^2.29.7",
+    "@kosmojs/config": "workspace:^",
+    "@kosmojs/dev": "workspace:^",
+    "@kosmojs/devlib": "workspace:^",
+    "@kosmojs/esbuilder": "workspace:^",
+    "@types/node": "^24.9.2",
+    "execa": "^9.6.0",
+    "jsdom": "^27.1.0",
+    "kosmojs": "workspace:^",
+    "msw": "^2.11.6",
+    "playwright": "^1.56.1",
+    "resolve-tspaths": "^0.8.23",
+    "rimraf": "^6.1.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12",
+    "vitest": "^4.0.6"
+  }
+}

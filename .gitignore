@@ -1,0 +1,8 @@
+/docs/.vitepress/dist/
+/docs/.vitepress/cache/
+/docs/.vitepress/.temp/
+
+/.tmuxinator*
+
+# ignore var dir any level depth
+var/
