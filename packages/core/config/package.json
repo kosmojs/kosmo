@@ -1,0 +1,19 @@
+{
+  "name": "@kosmojs/config",
+  "version": "0.0.0-alpha.0",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "*.json"
+  ],
+  "exports": {
+    "./tsconfig.kosmojs.json": "./tsconfig.kosmojs.json",
+    "./tsconfig.vite.json": "./tsconfig.vite.json"
+  },
+  "scripts": {
+    "build": "echo"
+  }
+}
