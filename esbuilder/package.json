@@ -1,0 +1,8 @@
+{
+  "type": "module",
+  "name": "esbuilder",
+  "private": true,
+  "bin": {
+    "esbuilder": "./esbuilder.js"
+  }
+}
