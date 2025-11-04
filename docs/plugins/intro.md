@@ -11,7 +11,7 @@ head:
 All its functionality comes from three Vite plugins that handle path resolution,
 environment variable management, and code generation.
 
-Using these plugins is straightforward — import them and add them to your Vite configuration.
+Using these plugins is straightforward - import them and add them to your Vite configuration.
 
 ### 🔌 The Three Plugins
 
@@ -51,7 +51,7 @@ by modifying the `keys` arrays in your base configuration.
 
 For DevPlugin, add or remove generators and formatters
 in each source folder's configuration.
-Different source folders can use different generators —
+Different source folders can use different generators -
 perhaps your main app uses SolidJS while your admin panel uses React.
 ([Details](/plugins/dev-plugin))
 

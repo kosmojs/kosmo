@@ -31,7 +31,7 @@ Each route's client module exports:
 
 🔹 Full TypeScript types derived from your API route definitions
 
-The client understands your complete API structure — parameters, payload requirements, response shapes —
+The client understands your complete API structure - parameters, payload requirements, response shapes -
 and provides this intelligence through both TypeScript's type system and runtime validation checks,
 ensuring your frontend and backend remain perfectly synchronized.
 

@@ -19,10 +19,10 @@ Running them on separate ports with independent configurations means:
 - **Focused development** - Work on one concern without loading everything else
 - **Independent scaling** - Deploy and scale each concern based on its traffic patterns
 - **Team autonomy** - Different teams can own different source folders without conflicts
-- **Clear boundaries** - Port separation reinforces the organizational structure — no accidental cross-contamination
+- **Clear boundaries** - Port separation reinforces the organizational structure - no accidental cross-contamination
 
-The standalone model matches how these concerns will eventually deploy in production —
-separate services on different base URLs—making your development environment reflect reality rather than abstract it away.
+The standalone model matches how these concerns will eventually deploy in production -
+separate services on different base URLs-making your development environment reflect reality rather than abstract it away.
 
 ## 🚀 Starting the Dev Server
 
@@ -95,12 +95,12 @@ By default, requests matching your `apiurl` configuration (e.g., `/api/*`) route
 All other requests go to Vite's dev server for client assets.
 
 This automatic routing means you develop your full-stack application with a single dev server
-on a single port — no separate processes to manage.
+on a single port - no separate processes to manage.
 
 ## ⚙️ Custom Development Middleware
 
 Your `api/app.ts` file can export two optional functions that customize development behavior.
-Both are commented out by default — uncomment and adapt them as needed.
+Both are commented out by default - uncomment and adapt them as needed.
 
 ### DevMiddlewareFactory
 
@@ -122,8 +122,8 @@ export const devMiddlewareFactory: import("@kosmojs/api").DevMiddlewareFactory =
 ```
 
 By default, `KosmoJS` routes requests based on your `apiurl` configuration.
-If you need more sophisticated routing logic—perhaps certain paths should bypass the API entirely,
-or you want to handle WebSocket connections differently—you can implement custom logic here.
+If you need more sophisticated routing logic-perhaps certain paths should bypass the API entirely,
+or you want to handle WebSocket connections differently-you can implement custom logic here.
 
 ### TeardownHandler
 
@@ -138,7 +138,7 @@ export const teardownHandler: import("@kosmojs/api").TeardownHandler = () => {
 };
 ```
 
-Use this to clean up resources that shouldn't persist across rebuilds—close database connections,
+Use this to clean up resources that shouldn't persist across rebuilds-close database connections,
 shut down WebSocket servers, clear timers, or release any other resources that would otherwise leak.
 
 Without proper cleanup, repeated rebuilds during development can leave orphaned connections or processes that consume resources.

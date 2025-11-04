@@ -17,7 +17,7 @@ you can create custom generators tailored to your specific requirements.
 At the core, a worker thread parses your `api/` and `pages/` directories
 and sends resolved route entries to all registered generators.
 
-Generators receive route information and generate files accordingly —
+Generators receive route information and generate files accordingly -
 type definitions, helper functions, documentation, or anything else
 your project needs.
 

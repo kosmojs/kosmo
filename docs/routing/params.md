@@ -7,7 +7,7 @@ head:
       content: route parameters, dynamic routes, url parameters, required parameters, optional parameters, rest parameters, bracket notation, path segments
 ---
 
-Real applications need to handle dynamic segments in URLs — user IDs, post slugs, category names, and so on.
+Real applications need to handle dynamic segments in URLs - user IDs, post slugs, category names, and so on.
 
 `KosmoJS` supports three types of dynamic parameters using a syntax inspired by
 [`SolidStart`](https://start.solidjs.com/){target="_blank" rel="noopener"}.

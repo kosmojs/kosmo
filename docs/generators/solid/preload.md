@@ -54,7 +54,7 @@ The `preload` export tells the router what function to call for prefetching.
 When your component renders, `createAsync` receives the same function
 and recognizes it as already-fetched data.
 
-The router's internal caching means you're not making duplicate requests —
+The router's internal caching means you're not making duplicate requests -
 the data fetched during preload is the data your component receives.
 
 The type safety flows through this entire chain.

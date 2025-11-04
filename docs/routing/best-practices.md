@@ -32,6 +32,6 @@ Sometimes two separate routes with clearer purposes are easier to maintain than 
 Remember that route structure affects URLs, which affects user bookmarks and search engine indexing for client pages,
 and API contracts for API routes.
 
-Plan your structure with some consideration for stability —
+Plan your structure with some consideration for stability -
 reorganizing routes later means changing URLs, which can break external references.
 

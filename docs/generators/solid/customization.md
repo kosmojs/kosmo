@@ -7,7 +7,7 @@ head:
       content: solidjs customization, app customization, custom router, error boundaries, custom components, generator customization
 ---
 
-The generated files — `App.tsx`, `router.tsx`, `index.tsx`, and `components/Link.tsx`—
+The generated files - `App.tsx`, `router.tsx`, `index.tsx`, and `components/Link.tsx`-
 live in your source folder, not in `lib`.
 
 This means they're yours to customize.
@@ -25,7 +25,7 @@ as you add or remove pages, but the foundational application structure remains u
 If you need more sophisticated data loading patterns than what [useResource](/generators/solid/useResource) provides,
 you can implement custom resources using SolidJS's `createResource` directly.
 
-The generated fetch clients work with any data fetching pattern —
+The generated fetch clients work with any data fetching pattern -
 they're just functions that return typed promises.
 You can wrap them in whatever abstraction makes sense for your application.
 

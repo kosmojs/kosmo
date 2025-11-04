@@ -12,7 +12,7 @@ like the user ID in <span class="text-nowrap">`/api/users/123`</span>.
 
 By default, these parameters are strings because URLs are text.
 
-However, you often need to ensure parameters meet specific criteria —
+However, you often need to ensure parameters meet specific criteria -
 perhaps a numeric ID should actually be a number type,
 or perhaps it should fall within a certain range.
 

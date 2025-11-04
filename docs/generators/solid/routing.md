@@ -34,7 +34,7 @@ Notice several important characteristics of this generated route.
 The path uses SolidJS Router's parameter syntax (`:id` instead of `[id]`),
 automatically converting `KosmoJS`'s directory naming to the router's expectations.
 
-The component is lazy-loaded, which means it's not included in your initial bundle—
+The component is lazy-loaded, which means it's not included in your initial bundle-
 it loads on demand when the route is accessed.
 
 All components are lazy-loaded by default.

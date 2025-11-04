@@ -7,14 +7,14 @@ head:
       content: typescript validation, vite multi-app, type-safe routing, fetch client generator, openapi 3.1, solidjs vite, react vite, koa middleware, runtime type checking, typescript api
 ---
 
-`KosmoJS` brings type-safe structure to full-stack development —
+`KosmoJS` brings type-safe structure to full-stack development -
 using Vite as the foundation for both frontend builds and API development,
 with multiple source folders, directory-based routing, runtime validation,
-and typed fetch clients — while keeping full framework freedom.
+and typed fetch clients - while keeping full framework freedom.
 
 ## 🗂️ Multiple Source Folders
 
-Organize distinct concerns — public site, customer app, admin dashboard —
+Organize distinct concerns - public site, customer app, admin dashboard -
 all connected yet independent in one Vite project.
 
 **Why it matters:**
@@ -53,7 +53,7 @@ Keeping routing configuration separate from file structure creates friction.
 You update a route path in config, but forget to rename the component.
 Or you restructure files but miss updating the router.
 
-Directory-based routing eliminates this drift — your filesystem *is* your routing configuration.
+Directory-based routing eliminates this drift - your filesystem *is* your routing configuration.
 
 **How it works:**
 
@@ -77,9 +77,9 @@ pages/
 
 **Benefits:**
 - No separate routing configuration to maintain
-- Refactoring means moving folders — routes update automatically
-- Same pattern for API and pages — learn once, use everywhere
-- URL structure matches code structure — easy to navigate
+- Refactoring means moving folders - routes update automatically
+- Same pattern for API and pages - learn once, use everywhere
+- URL structure matches code structure - easy to navigate
 
 [Read more: Directory-Based Routing](/routing/intro)
 
@@ -94,7 +94,7 @@ Write TypeScript types once, get runtime validation automatically. No separate s
 TypeScript provides compile-time type checking,
 but can't protect you at runtime when HTTP requests arrive with unpredictable data.
 
-Traditional solutions require maintaining separate validation schemas (Zod, Yup, io-ts) alongside your TypeScript types —
+Traditional solutions require maintaining separate validation schemas (Zod, Yup, io-ts) alongside your TypeScript types -
 doubling your maintenance burden and creating opportunities for drift.
 
 **How it works:**
@@ -148,7 +148,7 @@ defineRoute<[TRefine<number, { minimum: 1 }>]>(({ GET }) => [
 ```
 
 **Benefits:**
-- Single source of truth — types *are* validation
+- Single source of truth - types *are* validation
 - No schema duplication or drift between types and validators
 - Validation errors provide detailed feedback about what failed
 - Compile-time and runtime safety from the same definitions
@@ -222,7 +222,7 @@ await useFetch.POST([invalidId], invalidPayload);
 
 ## 🎨 Framework Freedom
 
-Use any frontend framework — SolidJS, React, Vue, Svelte, or none.
+Use any frontend framework - SolidJS, React, Vue, Svelte, or none.
 Generators make common choices convenient.
 
 **Why it matters:**
@@ -230,7 +230,7 @@ Generators make common choices convenient.
 Full-stack frameworks often lock you into specific frontend choices.
 Next.js assumes React. Nuxt assumes Vue. SvelteKit assumes Svelte.
 
-`KosmoJS` is a Vite template, not a framework — you choose your frontend stack.
+`KosmoJS` is a Vite template, not a framework - you choose your frontend stack.
 
 **How it works:**
 
@@ -280,7 +280,7 @@ export default {
 **Benefits:**
 - Choose the right tool for each source folder
 - Not locked into vendor decisions
-- Generators are optional — use what you need
+- Generators are optional - use what you need
 - Framework ecosystem compatibility
 
 [Read more: Framework Setup](/start) · [SolidJS Generator](/generators/solid/intro)
@@ -296,7 +296,7 @@ Koa for APIs, Vite for frontend, TypeScript for safety. No proprietary abstracti
 New frameworks introduce new abstractions, new APIs to learn, new mental models to internalize.
 When the framework fades, your knowledge doesn't transfer.
 
-`KosmoJS` uses tools you already know (or should know) — Koa, Vite, TypeScript — and just provides organizational structure.
+`KosmoJS` uses tools you already know (or should know) - Koa, Vite, TypeScript - and just provides organizational structure.
 
 **The stack:**
 
@@ -323,7 +323,7 @@ When the framework fades, your knowledge doesn't transfer.
 - Deep ecosystem of tools and libraries
 - Skills transfer to other projects
 
-You're not learning "the `KosmoJS` way" — you're learning industry-standard tools with good organizational structure.
+You're not learning "the `KosmoJS` way" - you're learning industry-standard tools with good organizational structure.
 
 [Read more: API Server](/api-server/intro)
 

@@ -7,7 +7,7 @@ head:
       content: koa middleware, use function, middleware chain, authentication middleware, onion model, middleware composition, request logging
 ---
 
-Beyond the standard HTTP method handlers, you often need to run custom middleware —
+Beyond the standard HTTP method handlers, you often need to run custom middleware -
 code that executes before your main handler to perform tasks like authentication,
 logging, or data transformation.
 
@@ -33,7 +33,7 @@ Middleware functions follow Koa's conventions.
 They receive the context object and a `next` function, and they must call `next()`
 to allow the request to proceed to subsequent middleware or the final handler.
 
-If middleware doesn't call `next()`, the request stops there —
+If middleware doesn't call `next()`, the request stops there -
 useful for cases where you want to reject a request early based on some condition.
 
 ### 🔄 Working with Middleware Chains
@@ -78,7 +78,7 @@ Middleware executes in order until reaching your method handler,
 then unwinds back through the middleware in reverse order.
 
 This "onion" model is a core Koa concept that `KosmoJS` preserves.
-It allows middleware to do work both before and after your handler runs —
+It allows middleware to do work both before and after your handler runs -
 useful for tasks like timing requests, catching errors, or modifying responses.
 
 Global middleware from `core/api/use.ts` executes first,

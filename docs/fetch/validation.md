@@ -22,7 +22,7 @@ This provides instant feedback to users and prevents unnecessary server load fro
 
 ## 🏗️ Validation Process
 
-The validation process is transparent — you don't call validation functions explicitly.
+The validation process is transparent - you don't call validation functions explicitly.
 
 You call the fetch method as you normally would, and validation happens behind the scenes:
 
@@ -271,7 +271,7 @@ or for high-performance UI requirements, this pattern can make a significant dif
 **Important:** When you submit the form, make sure to validate the actual form data,
 not the merged version with placeholder values.
 
-The valid payload is only for input/blur event validation —
+The valid payload is only for input/blur event validation -
 it ensures you're checking one field at a time efficiently.
 
 For final submission, validate the complete actual payload:

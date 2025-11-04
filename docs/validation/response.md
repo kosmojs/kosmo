@@ -9,7 +9,7 @@ head:
 
 Just as you validate incoming request data, you can validate outgoing response data.
 
-Response validation ensures that your API contract is honored —
+Response validation ensures that your API contract is honored -
 that you actually return the data structure your types promise.
 
 This catches bugs where handlers might return incomplete objects, wrong types, or unexpected structures.
@@ -44,8 +44,8 @@ Before sending the response to the client,
 `KosmoJS` validates that `ctx.body` actually contains a properly structured User object
 with all required fields matching their expected types.
 
-If validation fails — perhaps because the database returned a user object that's missing the `preferences` field,
-or because the `profile.email` doesn't match email format constraints — `KosmoJS` throws a ValidationError
+If validation fails - perhaps because the database returned a user object that's missing the `preferences` field,
+or because the `profile.email` doesn't match email format constraints - `KosmoJS` throws a ValidationError
 instead of sending invalid data to the client.
 
 This protects your API consumers from receiving malformed data and helps you catch bugs in your handler logic.

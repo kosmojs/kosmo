@@ -7,7 +7,7 @@ head:
       content: payload validation, request validation, nested types, conditional validation, union types, generic types, json validation, form validation, TRefine
 ---
 
-Request payloads are the data your API receives from clients —
+Request payloads are the data your API receives from clients -
 including query parameters in GET requests and JSON or form bodies in POST/PUT/PATCH requests.
 
 These payloads often have complex nested structures with multiple fields,
@@ -63,7 +63,7 @@ The `minLength` and `maxLength` constraints ensure titles aren't empty or excess
 The `format: "date-time"` constraint leverages JSON Schema's format validation
 to ensure dates are properly formatted.
 
-Without `TRefine`, fields are validated only for their basic type — a string must be a string,
+Without `TRefine`, fields are validated only for their basic type - a string must be a string,
 an array must be an array, but no additional constraints apply.
 
 The question mark after `scheduledPublishAt` makes it optional.
@@ -139,8 +139,8 @@ while the postal code uses a regex pattern to match US zip code formats
 (five digits, optionally followed by a hyphen and four more digits).
 
 All of these constraints are checked at runtime before your handler executes.
-If any field fails validation—wrong type, out of range, doesn't match pattern,
-missing required field, includes unexpected field — `KosmoJS` rejects the request
+If any field fails validation-wrong type, out of range, doesn't match pattern,
+missing required field, includes unexpected field - `KosmoJS` rejects the request
 with a detailed validation error that tells the client exactly what went wrong.
 
 ## 🔗 Working with Referenced Types
@@ -148,7 +148,7 @@ with a detailed validation error that tells the client exactly what went wrong.
 As your application grows, defining complex types inline becomes unwieldy.
 You'll want to define types once and reuse them across multiple routes.
 
-`KosmoJS` fully supports this pattern—you can define types in separate files,
+`KosmoJS` fully supports this pattern-you can define types in separate files,
 import them where needed, and use them for validation just like inline types.
 
 Suppose you have a file defining user-related types:

@@ -26,7 +26,7 @@ hero:
 features:
   - icon: 🗂️
     title: Multiple Source Folders
-    details: Organize distinct concerns — public site, customer app, admin dashboard — all connected in one Vite project.
+    details: Organize distinct concerns - public site, customer app, admin dashboard - all connected in one Vite project.
     link: /features/
 
   - icon: 🛣️
@@ -46,7 +46,7 @@ features:
 
   - icon: 🎨
     title: Framework Freedom
-    details: Use any frontend framework — SolidJS, React, Vue, Svelte, or none.
+    details: Use any frontend framework - SolidJS, React, Vue, Svelte, or none.
     link: /start/
 
   - icon: 🔧
@@ -62,9 +62,9 @@ features:
 
 `KosmoJS` is a **structured Vite template** that keeps your full-stack concerns aligned.
 
-Rather than inventing yet another framework, `KosmoJS` integrates proven tools —
-TypeScript, Vite, Koa, and your frontend framework — into a clear organizational pattern.
-Separation of concerns isn't something you have to remember — it's built into the structure.
+Rather than inventing yet another framework, `KosmoJS` integrates proven tools -
+TypeScript, Vite, Koa, and your frontend framework - into a clear organizational pattern.
+Separation of concerns isn't something you have to remember - it's built into the structure.
 
 No proprietary abstractions. No new paradigms to learn. Just thoughtful structure around tools you already know.
 
@@ -74,7 +74,7 @@ No proprietary abstractions. No new paradigms to learn. Just thoughtful structur
 
 ## 💡 The Why
 
-**Multiple source folders** for distinct concerns — each with its own API and pages directories, eg.:
+**Multiple source folders** for distinct concerns - each with its own API and pages directories, eg.:
 
 🔹 Public marketing site at `/`<br>
 🔹 Customer application at `/app`<br>
@@ -101,7 +101,7 @@ At its core, `KosmoJS` structures full-stack `Vite` development around a `Koa` a
 ## 🛡️ Type Safety & Validation
 
 `KosmoJS` extends TypeScript's compile-time safety to runtime.
-Your type definitions become validation schemas automatically — no duplication, no drift.
+Your type definitions become validation schemas automatically - no duplication, no drift.
 
 Define parameter types, payload structures, and response shapes once. `KosmoJS` generates:
 - Runtime validators for your API
@@ -130,10 +130,10 @@ Invalid data is caught client-side, before network requests. Your API never proc
 
 Build APIs directly inside Vite's dev server with hot-reload support.
 
-**Slot-based middleware** gives you fine-grained control — override global middleware per endpoint,
+**Slot-based middleware** gives you fine-grained control - override global middleware per endpoint,
 compose request handling precisely, maintain consistent patterns across routes.
 
-Development and production use the same structure — what you build locally is what deploys.
+Development and production use the same structure - what you build locally is what deploys.
 
 📘 [Dev workflow](/api-server/development-workflow) · [Middleware patterns](/api-server/use-middleware/intro)
 
@@ -156,7 +156,7 @@ Each generator watches your code and updates artifacts as you develop.
 
 ## 🚀 Production Ready
 
-`pnpm build` produces deployment-ready output — bundled API server and optimized frontend assets.
+`pnpm build` produces deployment-ready output - bundled API server and optimized frontend assets.
 
 Deploy to any Node.js environment: traditional servers, containers, serverless platforms, or edge runtimes.
 

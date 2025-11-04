@@ -56,6 +56,6 @@ function useUser(userId: number) {
 
 The fetch client returns standard promises, so it works with any async pattern your framework supports.
 
-The type safety flows through these abstractions — your custom hooks and components know exactly
+The type safety flows through these abstractions - your custom hooks and components know exactly
 what shape of data to expect based on your API definitions.
 

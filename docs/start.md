@@ -121,7 +121,7 @@ Most importantly, each folder's code is completely encapsulated in its own `api`
 This isn't just organizational convenience. As your application grows,
 this structure prevents the tangling of concerns that makes codebases difficult to maintain.
 
-You're not working around limitations of your build tool —
+You're not working around limitations of your build tool -
 you're working with a structure designed for this pattern from the beginning.
 
 ## 📂 Project Structure Example
@@ -158,9 +158,8 @@ my-app/
 └── vite.base.ts
 ```
 
-The `lib` directory contains generated code that `KosmoJS` maintains for you
-— type definitions and helpers based on your route structure.
-You don't edit these files directly.
+The `lib` directory contains generated code that `KosmoJS` maintains for you -
+type definitions and helpers based on your route structure. You don't edit these files directly.
 
 Your actual code lives in the source folders (`@front`, `@admin`),
 and the TypeScript path mappings make everything import cleanly.
@@ -183,7 +182,7 @@ When you create a source folder, `KosmoJS` automatically updates your `tsconfig.
 Each mapping points to two locations. The first is your source folder where you write code.
 The second is the `lib` directory where `KosmoJS` places generated TypeScript types and helper functions.
 
-This separation keeps your source directories clean —
+This separation keeps your source directories clean -
 you focus on writing business logic while generated artifacts live elsewhere.
 
 With these mappings, you can import from both your code and generated types using the same clean syntax:

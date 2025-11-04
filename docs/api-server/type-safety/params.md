@@ -97,5 +97,5 @@ These type refinements aren't just for TypeScript's benefit.
 If a request comes in with an ID that can't be parsed as a number,
 or an action that isn't one of your allowed values, `KosmoJS` rejects the request before your handler runs.
 
-This validation happens automatically — you don't need to write additional validation code!
+This validation happens automatically - you don't need to write additional validation code!
 

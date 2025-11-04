@@ -55,7 +55,7 @@ Deploy the `.dist/SOURCE_FOLDER` directory and run:
 node .dist/@front/api/index.js
 ```
 
-The API server is a standard Node.js ESM module. Deploy it to any Node.js environment —
+The API server is a standard Node.js ESM module. Deploy it to any Node.js environment -
 traditional servers, containers, serverless platforms, or edge runtimes.
 
 ## 🏗️ Building Multiple Source Folders

@@ -35,7 +35,7 @@ let TypeScript guide you to all the places that need updates.
 
 Remember that the generated route configuration in `lib`
 is derived from your page components.
-Don't edit these files directly — they regenerate whenever your pages change.
+Don't edit these files directly - they regenerate whenever your pages change.
 Make your changes in the source `pages` directory,
 and the generator updates the route configuration automatically.
 

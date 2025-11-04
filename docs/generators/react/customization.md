@@ -7,7 +7,7 @@ head:
       content: react customization, app customization, custom router, error boundaries, custom components, generator customization
 ---
 
-The core generated files — including `App.tsx`, `router.tsx`, `index.tsx`, and `components/Link.tsx` —
+The core generated files - including `App.tsx`, `router.tsx`, `index.tsx`, and `components/Link.tsx` -
 reside directly within your source directory rather than the `lib` folder.
 
 This placement gives you full ownership to customize them as needed.
@@ -21,7 +21,7 @@ Since the generator preserves them across subsequent executions, your modificati
 While the route configurations in `lib` dynamically update as you modify your page structure,
 the core application architecture stays firmly under your direction.
 
-The generated API clients maintain compatibility with any data fetching approach —
+The generated API clients maintain compatibility with any data fetching approach -
 they're essentially promise-returning functions with built-in type safety.
 You're free to incorporate them into whatever abstraction layer best suits your application's architecture.
 

@@ -50,7 +50,7 @@ potentially causing an error deeper in your application.
 
 JSON Schema provides a way to constrain numbers to be multiples of a specific value
 through the `multipleOf` property. When you specify `multipleOf: 1`,
-you're saying the number must be evenly divisible by one —
+you're saying the number must be evenly divisible by one -
 which is exactly how you express that a number should be an integer:
 
 ```ts
@@ -58,7 +58,7 @@ TRefine<number, { minimum: 1000, maximum: 1_000_000, multipleOf: 1 }>
 ```
 
 This pattern of using `TRefine` to add JSON Schema constraints directly in your TypeScript types
-is powerful because it keeps all your validation logic in one place — your type definitions.
+is powerful because it keeps all your validation logic in one place - your type definitions.
 
 You're not maintaining separate validation schemas that could drift out of sync with your types.
 The type is the schema, and the schema is the type.

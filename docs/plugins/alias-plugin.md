@@ -12,7 +12,7 @@ head:
 The AliasPlugin handles the complexity of resolving TypeScript path mappings
 to actual filesystem locations.
 
-You typically don't configure this plugin directly —
+You typically don't configure this plugin directly -
 it reads your `tsconfig.json` automatically and sets up Vite aliases to match.
 
 ```ts
@@ -30,7 +30,7 @@ into Vite alias configurations that point to the correct directories.
 
 This translation is what allows imports like `@front/{api}/users/[id]`
 to resolve correctly during development and build,
-even though these paths don't exist in a traditional sense—
+even though these paths don't exist in a traditional sense-
 they're virtual paths that map to actual files based on your project structure.
 
 The AliasPlugin updates dynamically as you add or remove source folders,

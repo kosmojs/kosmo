@@ -18,8 +18,8 @@ When you need to change what constitutes a valid user profile or post object,
 you change it in one place and the validation updates everywhere.
 
 Use `TRefine` liberally to express meaningful constraints on your data.
-Don't just validate that an email field is a string—validate that it matches email format.
-Don't just validate that an age is a number — validate that it's a positive integer within reasonable bounds.
+Don't just validate that an email field is a string-validate that it matches email format.
+Don't just validate that an age is a number - validate that it's a positive integer within reasonable bounds.
 These constraints prevent invalid data from entering your system and make your API's requirements explicit.
 
 Write your types to represent valid states only.

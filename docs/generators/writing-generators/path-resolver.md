@@ -10,7 +10,7 @@ head:
 The `pathResolver` utility provides consistent path construction
 across `KosmoJS`'s directory structure.
 
-It handles the complexity of different directory types —
+It handles the complexity of different directory types -
 some relative to the project root, some to the source folder,
 and some nested within the `lib` directory.
 

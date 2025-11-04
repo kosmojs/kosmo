@@ -15,12 +15,12 @@ This thorough analysis is what enables the seamless experience
 of writing pure TypeScript types and getting runtime validation,
 with a brief generation step for each route's schema.
 
-Generation time scales with complexity — simple routes process nearly instantly,
+Generation time scales with complexity - simple routes process nearly instantly,
 while routes with deep type hierarchies and extensive dependencies
 may require a few seconds to fully analyze.
 
 But this does not impact your development workflow, as generation happens
-automatically in the background — it consumes computing time, not human time.
+automatically in the background - it consumes computing time, not human time.
 
 You continue performing while schemas generate, and the system intelligently
 caches results to minimize regeneration on subsequent changes.
@@ -37,8 +37,8 @@ regardless of what the generator is doing.
 The system maintains a sophisticated cache that tracks file dependencies,
 regenerating schemas only when the route file or any of its type dependencies actually change.
 
-When you're adding and modifying routes incrementally during normal development—
-which is how development actually happens — generation occurs in the background
+When you're adding and modifying routes incrementally during normal development-
+which is how development actually happens - generation occurs in the background
 while you're writing code in your editor.
 
 By the time you save your file and switch to your browser to test,
@@ -69,7 +69,7 @@ Similarly, initial project setup when schemas are generated for the first time
 takes time proportional to the number of routes you have.
 
 These full-rebuild scenarios are similar in character
-to other development tooling operations —
+to other development tooling operations -
 clearing `node_modules` and reinstalling dependencies,
 rebuilding after switching branches with significant changes,
 or regenerating Prisma client after schema modifications.
@@ -92,7 +92,7 @@ of keeping schemas synchronized with your TypeScript types (if you need ones).
 `KosmoJS` trades a few seconds of automated generation time
 for eliminating this manual maintenance work entirely.
 
-For most development workflows, this tradeoff strongly favors automation —<br>
+For most development workflows, this tradeoff strongly favors automation -<br>
 machine time is cheaper and more reliable than human time.
 
 ## 🚀 Future Performance Improvements

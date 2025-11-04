@@ -12,7 +12,7 @@ head:
 This approach eliminates the need for separate routing configuration files
 and ensures that your routes are always in sync with your actual code structure.
 
-When you create a folder and file, you've created a route — no additional steps required.
+When you create a folder and file, you've created a route - no additional steps required.
 
 ## 🛣️ How Directory-Based Routing Works
 
@@ -25,7 +25,7 @@ and client pages (in your `pages` directory).
 Every route must live inside a folder, even the base route. For the root path,
 you create a folder named `index`, which maps to the base URL.
 
-This consistency means you never have to remember special cases —
+This consistency means you never have to remember special cases -
 every single route follows the same pattern of folder-contains-index-file.
 
 Here's how a typical structure maps to actual URLs:
@@ -57,7 +57,7 @@ The parallel structure makes it easy to understand how your frontend and backend
 ## 📄 Route File Requirements
 
 Every route in `KosmoJS` is defined by an `index.ts` file within a folder.
-This file must export a default value — the specific format of that export
+This file must export a default value - the specific format of that export
 depends on whether you're creating an API route or a client page.
 
 For API routes, you export a route definition that specifies which HTTP methods you handle
@@ -72,7 +72,7 @@ The folder-contains-index pattern might seem verbose at first,
 especially if you're used to frameworks where a single file can be a route.
 
 However, this pattern provides important benefits. Each route gets its own folder,
-giving you a natural place to colocate related files — utility functions, type definitions, test files,
+giving you a natural place to colocate related files - utility functions, type definitions, test files,
 or any other code specific to that route.
 
 As your application grows, this colocalization keeps related code together

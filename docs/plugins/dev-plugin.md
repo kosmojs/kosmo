@@ -53,7 +53,7 @@ plugins: [
 ]
 ```
 
-The order doesn't typically matter —
+The order doesn't typically matter -
 each generator watches for its relevant files and runs independently.
 
 **Formatters** ensure that generated code matches your project's formatting conventions.
@@ -93,6 +93,6 @@ The formatter receives your Biome configuration
 and applies it to all generated code before writing files.
 
 You can use other formatters like Prettier by implementing the formatter interface.
-Formatters are optional — if you don't provide any,
+Formatters are optional - if you don't provide any,
 code is generated with default formatting.
 

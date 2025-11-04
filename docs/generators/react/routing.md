@@ -38,7 +38,7 @@ The generator automatically adapts file system parameters to React Router's expe
 transforming bracket notation like `[id]` into colon-prefixed segments (`:id`).
 
 Components are implemented with lazy loading, ensuring they're excluded from the initial JavaScript bundle.
-Each route's code is fetched only when needed—when a user navigates to that specific path.
+Each route's code is fetched only when needed-when a user navigates to that specific path.
 
 This lazy-loading strategy is applied universally across all routes.
 The benefit is a significantly reduced initial payload, leading to faster application startup.

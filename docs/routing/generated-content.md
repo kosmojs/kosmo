@@ -9,7 +9,7 @@ head:
 
 When you create a new route file, `KosmoJS` detects it and instantly generates appropriate boilerplate code.
 
-This generation is context-aware — it produces different code depending on whether you're creating an API route or a client page,
+This generation is context-aware - it produces different code depending on whether you're creating an API route or a client page,
 and for pages, it adapts to your chosen frontend framework.
 
 This automatic generation serves two purposes.

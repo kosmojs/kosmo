@@ -17,15 +17,15 @@ designed around specific organizational principles.
 
 `KosmoJS`'s approach centers on three key ideas.
 
-🔹 First, it recognizes that applications often comprise multiple distinct areas —
-perhaps a public website, an admin dashboard, a mobile API —
+🔹 First, it recognizes that applications often comprise multiple distinct areas -
+perhaps a public website, an admin dashboard, a mobile API -
 and treats these as independent source folders, each with its own configuration and purpose, all within a single Vite project.
 
 🔹 Second, it organizes each source folder into separate `api/` and `pages/` directories,
 creating a clear boundary between server-side logic and client-side presentation within the same cohesive module.
 
 🔹 Third, it establishes a single source of truth for your data structures.
-Write TypeScript types once, and `KosmoJS` generates runtime validation, typed fetch clients, and OpenAPI schemas automatically —
+Write TypeScript types once, and `KosmoJS` generates runtime validation, typed fetch clients, and OpenAPI schemas automatically -
 keeping compile-time type checking, runtime validation, and API documentation perfectly aligned.
 
 ### 💡 KosmoJS is not a framework

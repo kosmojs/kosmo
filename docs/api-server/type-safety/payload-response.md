@@ -14,9 +14,9 @@ This ensures that your handlers receive the data they expect and return properly
 
 Method handlers (GET, POST, PUT, etc.) are generic functions that accept two optional type arguments.
 
-The first types the payload — what comes in with the request.
+The first types the payload - what comes in with the request.
 
-The second types the response — what your handler should set as `ctx.body`.
+The second types the response - what your handler should set as `ctx.body`.
 
 ```ts [api/example/index.ts]
 import { defineRoute } from "@front/{api}/users";

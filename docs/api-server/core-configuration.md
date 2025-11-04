@@ -15,7 +15,7 @@ Understanding these files helps you customize the behavior of your entire API su
 The first file, `core/api/use.ts`, defines global middleware that applies to every API endpoint.
 We've already seen how it sets up body parsing and payload construction.
 
-You can add your own global middleware here — things like request logging,
+You can add your own global middleware here - things like request logging,
 CORS headers, error handling, or any other cross-cutting concern that should apply universally.
 
 Just remember that anything you add here runs for every request, so keep it efficient.
@@ -93,6 +93,6 @@ export declare module "@kosmojs/api" {
 Now every route handler knows about `ctx.state.permissions`
 and TypeScript will properly type-check your usage of it.
 
-This approach — declaring types once in a central location —
+This approach - declaring types once in a central location -
 keeps your codebase DRY and ensures consistency across all your endpoints.
 
