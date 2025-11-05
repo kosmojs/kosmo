@@ -1,6 +1,7 @@
 import { join } from "node:path";
 
 import crc from "crc/crc32";
+import { type BuildOptions, build as esbuild } from "esbuild";
 import picomatch, { type Matcher } from "picomatch";
 
 import {
@@ -21,7 +22,7 @@ import routeLibIndexTpl from "./templates/route/index.hbs";
 import routePublicTpl from "./templates/route.hbs";
 
 export const factory: GeneratorFactory<Options> = async (
-  { appRoot, sourceFolder, formatters },
+  { appRoot, sourceFolder, outDir, formatters, command },
   { alias, templates, meta },
 ) => {
   const { resolve } = pathResolver({ appRoot, sourceFolder });
@@ -175,6 +176,19 @@ export const factory: GeneratorFactory<Options> = async (
       { formatters },
     );
   };
+
+  if (command === "build") {
+    const esbuildOptions: BuildOptions = await import(
+      join(appRoot, "esbuild.json"),
+      { with: { type: "json" } }
+    ).then((e) => e.default);
+    await esbuild({
+      ...esbuildOptions,
+      bundle: true,
+      entryPoints: [resolve("apiDir", "server.ts")],
+      outfile: join(outDir, defaults.apiDir, "index.js"),
+    });
+  }
 
   return {
     async watchHandler(entries, event) {
