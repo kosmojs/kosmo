@@ -6,10 +6,9 @@ export const defaults = {
   configDir: "config",
   apiDir: "api",
   pagesDir: "pages",
-  ssrDir: "ssr",
+  entryDir: "entry",
 
   apiLibDir: "{api}",
   pagesLibDir: "{pages}",
   fetchLibDir: "{fetch}",
-  ssrLibDir: "{ssr}",
 };
