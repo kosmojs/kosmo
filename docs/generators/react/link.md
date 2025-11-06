@@ -1,5 +1,5 @@
 ---
-title: Type-Safe Link Component
+title: React - Type-Safe Link Component
 description: Type-safe navigation with generated Link component that wraps React Router's Link. Autocomplete for routes, compile-time parameter validation, and query string handling.
 head:
   - - meta

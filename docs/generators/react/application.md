@@ -1,5 +1,5 @@
 ---
-title: React Application Structure
+title: React - Application Structure
 description: Generated React application files including App.tsx with Suspense boundaries, router.tsx with React Router configuration, and index.tsx entry point with StrictMode.
 head:
   - - meta

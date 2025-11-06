@@ -1,5 +1,5 @@
 ---
-title: Loader Pattern
+title: React - Loader Pattern
 description: Integrate data fetching with React Router loaders. Export loader functions that work with useLoaderData for efficient data fetching before component rendering.
 head:
   - - meta

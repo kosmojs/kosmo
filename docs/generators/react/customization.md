@@ -1,5 +1,5 @@
 ---
-title: Customizing Generated Files
+title: React - Customizing Generated Files
 description: Customize generated React application files including App.tsx, router.tsx, Link component, and entry point. Files are generated once and persist through updates.
 head:
   - - meta

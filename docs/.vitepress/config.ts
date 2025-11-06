@@ -148,6 +148,10 @@ export default defineConfig({
               link: "/generators/react/loader",
             },
             {
+              text: "⚡ Server-Side Render",
+              link: "/generators/react/server-side-render",
+            },
+            {
               text: "🧭 Link Navigation",
               link: "/generators/react/link",
             },

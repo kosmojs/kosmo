@@ -1,5 +1,5 @@
 ---
-title: React Routing
+title: React - Routing
 description: Automatic route generation from pages directory with lazy-loaded components, loader functions, and React Router parameter syntax conversion from KosmoJS directory structure.
 head:
   - - meta

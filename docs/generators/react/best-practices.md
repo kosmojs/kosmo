@@ -1,5 +1,5 @@
 ---
-title: React Best Practices
+title: React - Best Practices
 description: Best practices for building React applications with KosmoJS including loader patterns, React Query integration, type-safe navigation, and Suspense boundary strategies.
 head:
   - - meta
