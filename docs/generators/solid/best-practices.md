@@ -1,5 +1,5 @@
 ---
-title: SolidJS Best Practices
+title: SolidJS - Best Practices
 description: Best practices for building SolidJS applications with KosmoJS including preload patterns, resource management, type-safe navigation, and Suspense boundary strategies.
 head:
   - - meta

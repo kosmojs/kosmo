@@ -1,5 +1,5 @@
 ---
-title: Preload Pattern
+title: SolidJS - Preload Pattern
 description: Preload route data with SolidJS Router integration. Export preload functions that work with createAsync for efficient data fetching before component rendering.
 head:
   - - meta

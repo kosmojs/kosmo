@@ -1,5 +1,5 @@
 ---
-title: SolidJS Application Structure
+title: SolidJS - Application Structure
 description: Generated SolidJS application files including App.tsx with Suspense boundaries, router.tsx with route configuration, and index.tsx entry point for rendering to the DOM.
 head:
   - - meta

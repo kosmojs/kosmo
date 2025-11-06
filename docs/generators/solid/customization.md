@@ -1,5 +1,5 @@
 ---
-title: Customizing Generated Files
+title: SolidJS - Customizing Generated Files
 description: Customize generated SolidJS application files including App.tsx, router.tsx, Link component, and entry point. Files are generated once and persist through updates.
 head:
   - - meta

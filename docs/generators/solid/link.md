@@ -1,5 +1,5 @@
 ---
-title: Type-Safe Link Component
+title: SolidJS - Type-Safe Link Component
 description: Type-safe navigation with generated Link component that wraps SolidJS Router's A component. Autocomplete for routes, compile-time parameter validation, and query string handling.
 head:
   - - meta

@@ -96,6 +96,10 @@ export default defineConfig({
               link: "/generators/solid/preload",
             },
             {
+              text: "⚡ Server-Side Render",
+              link: "/generators/solid/server-side-render",
+            },
+            {
               text: "🔄 useResource Helper",
               link: "/generators/solid/useResource",
             },

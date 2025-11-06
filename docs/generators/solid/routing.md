@@ -1,5 +1,5 @@
 ---
-title: SolidJS Routing
+title: SolidJS - Routing
 description: Automatic route generation from pages directory with lazy-loaded components, preload functions, and SolidJS Router parameter syntax conversion from KosmoJS directory structure.
 head:
   - - meta

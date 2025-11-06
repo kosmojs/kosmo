@@ -1,5 +1,5 @@
 ---
-title: Custom Page Templates
+title: SolidJS - Custom Page Templates
 description: Override default page templates for specific routes using glob patterns. Create specialized templates for landing pages, marketing content, and admin interfaces.
 head:
   - - meta
