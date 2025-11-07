@@ -1,3 +1,6 @@
+/packages/*/*/test/**/@fixtures/**/lib/
+/packages/*/*/pkg/
+
 /docs/.vitepress/dist/
 /docs/.vitepress/cache/
 /docs/.vitepress/.temp/
