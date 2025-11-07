@@ -1,0 +1,8 @@
+minimumReleaseAge: 720
+minimumReleaseAgeExclude:
+  - typebox
+  - tfusion
+packages:
+  - "packages/core/*"
+  - "packages/generators/*"
+  - "packages/formatters/*"
