@@ -1,0 +1,36 @@
+import {
+  createBrowserRouter,
+  createStaticRouter,
+  Outlet,
+  RouterProvider,
+  StaticRouterProvider,
+} from "react-router";
+
+import { routes } from "{{importPathmap.react}}";
+
+import App from "./App";
+import { baseurl } from "./config";
+
+export const routeStack = [
+  {
+    path: "/",
+    element: (
+      <App>
+        <Outlet />
+      </App>
+    ),
+    HydrateFallback: () => <div>Loading...</div>,
+    children: routes,
+  },
+];
+
+{{! INFO: HMR broken if default export is an anonymous function }}
+export default function AppRouter(props?: { context?: never }) {
+  if (props?.context) {
+    const router = createStaticRouter(routeStack, props.context);
+    return <StaticRouterProvider router={router} context={props.context} />;
+  }
+  const router = createBrowserRouter(routeStack, { basename: baseurl });
+  return <RouterProvider router={router} />;
+}
+
