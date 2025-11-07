@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
-import type { ResolvedType } from "tsuit";
+import type { ResolvedType } from "tfusion";
 import type { ResolvedConfig } from "vite";
 
 export type PluginOptions = {
