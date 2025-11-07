@@ -16,7 +16,7 @@ It's a **structured Vite template** that gives your Vite project a scalable shap
 * Multiple **source folders** for distinct areas (website, admin dashboard, API).
 * Each folder splits into **`api/` and `pages/`**, creating a clean boundary between server and client.
 * **Generators** that produce validation schemas, fetch clients, and OpenAPI specs from your TypeScript types.
-* **Framework freedom** — works with SolidJS, React, Vue, Svelte, or anything Vite supports.
+* **Framework freedom** - works with SolidJS, React, Vue, Svelte, or anything Vite supports.
 
 📘 [Learn more](https://kosmojs.dev/about)
 
@@ -63,7 +63,7 @@ Each source folder runs on its own port and must be started with a separate comm
 ## ✨ Features
 
 * **🗂️ Multiple Source Folders**<br>
-    Organize distinct concerns — public site, customer app, admin dashboard — all connected in one Vite project.
+    Organize distinct concerns - public site, customer app, admin dashboard - all connected in one Vite project.
 
 * **🛣️ Directory-Based Routing**<br>
     Your folder structure defines your routes. Works identically for both API endpoints and client pages
@@ -75,7 +75,7 @@ Each source folder runs on its own port and must be started with a separate comm
     Fully-typed fetch clients with client-side validation. Invalid requests never reach your server.
 
 * **🎨 Framework Freedom**<br>
-    Use any frontend framework — SolidJS, React, Vue, Svelte, or none.
+    Use any frontend framework - SolidJS, React, Vue, Svelte, or none.
 
 * **🔧 Built on Proven Tools**<br>
     Koa for APIs, Vite for frontend, TypeScript for safety. No proprietary abstractions.

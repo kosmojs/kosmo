@@ -2,7 +2,7 @@ import { join } from "node:path";
 
 import { defaults } from "./defaults";
 
-// Extract keys from defaults that end with "Dir" — e.g., "coreDir", "pagesLibDir", etc.
+// Extract keys from defaults that end with "Dir" - e.g., "coreDir", "pagesLibDir", etc.
 export type Dir =
   | keyof {
       [K in keyof typeof defaults as K extends `${string}Dir`
