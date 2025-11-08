@@ -38,8 +38,8 @@
     "@types/koa": "^3.0.1",
     "@types/koa-compose": "^3.2.9",
     "@types/koa__router": "^12.0.5",
-    "ts-morph": "^27.0.2",
     "tfusion": "^0.0.23",
+    "ts-morph": "^27.0.2",
     "vite": "^7.2.2"
   }
 }

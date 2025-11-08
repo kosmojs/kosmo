@@ -30,13 +30,13 @@
     "prompts": "^2.4.2"
   },
   "devDependencies": {
-    "@kosmojs/config": "workspace:^",
     "@kosmojs/api": "workspace:^",
+    "@kosmojs/config": "workspace:^",
     "@solidjs/router": "^0.15.3",
     "@types/fs-extra": "^11.0.4",
     "@types/koa": "^3.0.1",
     "@types/koa__router": "^12.0.5",
-    "@types/node": "^24.9.2",
+    "@types/node": "^24.10.0",
     "@types/prompts": "^2.4.9",
     "@types/qs": "^6.14.0",
     "@types/react": "^19.2.2",
