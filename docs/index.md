@@ -18,16 +18,16 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /start/
+      link: /start
     - theme: alt
       text: Explore Features
-      link: /features/
+      link: /features
 
 features:
   - icon: 🗂️
     title: Multiple Source Folders
     details: Organize distinct concerns - public site, customer app, admin dashboard - all connected in one Vite project.
-    link: /features/
+    link: /features
 
   - icon: 🛣️
     title: Directory-Based Routing
@@ -47,7 +47,7 @@ features:
   - icon: 🎨
     title: Framework Freedom
     details: Use any frontend framework - SolidJS, React, Vue, Svelte, or none.
-    link: /start/
+    link: /start
 
   - icon: 🔧
     title: Built on Proven Tools
