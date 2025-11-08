@@ -48,6 +48,18 @@ export default defineConfig({
       }),
       setupFactory("generators/solid-generator"),
       setupFactory("generators/react-generator"),
+
+      setupFactory("integration:csr", {
+        include: ["test/integration/**/*.test.ts"],
+        fileParallelism: false,
+      }),
+      setupFactory("integration:ssr", {
+        include: ["test/integration/**/*.test.ts"],
+        fileParallelism: false,
+        provide: {
+          SSR: "true",
+        },
+      }),
     ],
   },
   plugins: [
