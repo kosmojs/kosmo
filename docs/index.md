@@ -1,6 +1,6 @@
 ---
 layout: home
-description: Structured Vite Template for building type-safe full-stack apps
+description: Structured Vite template for type-safe full-stack apps
 
 hero:
   name: KosmoJS
