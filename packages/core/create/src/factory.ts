@@ -3,17 +3,6 @@ import { resolve } from "node:path";
 
 import { defaults, renderToFile } from "@kosmojs/devlib";
 
-import reactGenerator from "~/generators/react-generator/package.json" with {
-  type: "json",
-};
-import solidGenerator from "~/generators/solid-generator/package.json" with {
-  type: "json",
-};
-import ssrGenerator from "~/generators/ssr-generator/package.json" with {
-  type: "json",
-};
-
-import packageJson from "../package.json" with { type: "json" };
 import {
   copyFiles,
   DEFAULT_BASE,
@@ -49,8 +38,6 @@ type Generator = {
   options: string;
 };
 
-const deps = { ...packageJson.devDependencies };
-
 const tsconfigJson = {
   extends: "@kosmojs/config/tsconfig.vite.json",
   compilerOptions: {
@@ -58,6 +45,26 @@ const tsconfigJson = {
       [`${defaults.appPrefix}/*`]: ["./*", `./${defaults.libDir}/*`],
     },
   },
+};
+
+/**
+ * A dynamic import is required because the version changes after publishing.
+ * Using a static import would hard-code the pre-publish version into the file.
+ * */
+const importPackageJson = async () => {
+  return import(resolve(import.meta.dirname, "../package.json"), {
+    with: { type: "json" },
+  }).then((e) => {
+    return {
+      ...e.default,
+      /**
+       * INFO: For best compatibility, all packages should share the same version as the `kosmojs` package.
+       * When bumping the version (even a patch) for a single package, bump it for all packages
+       * to keep versions fully synchronized across the project.
+       * */
+      semver: `^${e.default.version}`,
+    };
+  });
 };
 
 export const createProject = async (
@@ -69,6 +76,8 @@ export const createProject = async (
     devDependencies?: Record<string, string>;
   },
 ) => {
+  const self = await importPackageJson();
+
   const packageJson = {
     type: "module",
     distDir: project.distDir || DEFAULT_DIST,
@@ -77,19 +86,19 @@ export const createProject = async (
       build: "kosmo build",
     },
     dependencies: {
-      "@kosmojs/api": "^0.0.0",
-      qs: deps.qs,
+      "@kosmojs/api": self.semver,
+      qs: self.devDependencies.qs,
       ...assets?.dependencies,
     },
     devDependencies: {
-      "@kosmojs/config": "^0.0.0",
-      "@kosmojs/dev": "^0.0.0",
-      "@types/node": deps["@types/node"],
-      "@types/qs": deps["@types/qs"],
-      esbuild: deps.esbuild,
-      tslib: deps.tslib,
-      typescript: deps.typescript,
-      vite: deps.vite,
+      "@kosmojs/config": self.semver,
+      "@kosmojs/dev": self.semver,
+      "@types/node": self.devDependencies["@types/node"],
+      "@types/qs": self.devDependencies["@types/qs"],
+      esbuild: self.devDependencies.esbuild,
+      tslib: self.devDependencies.tslib,
+      typescript: self.devDependencies.typescript,
+      vite: self.devDependencies.vite,
       ...assets?.devDependencies,
     },
     pnpm: {
@@ -140,6 +149,8 @@ export const createSourceFolder = async (
     devDependencies?: Record<string, string>;
   },
 ) => {
+  const self = await importPackageJson();
+
   const folderPath = resolve(projectRoot, folder.name);
 
   if (await pathExists(folderPath)) {
@@ -179,13 +190,13 @@ export const createSourceFolder = async (
 
   if (framework === "solid") {
     Object.assign(dependencies, {
-      "@solidjs/router": deps["@solidjs/router"],
-      "solid-js": deps["solid-js"],
+      "@solidjs/router": self.devDependencies["@solidjs/router"],
+      "solid-js": self.devDependencies["solid-js"],
     });
 
     Object.assign(devDependencies, {
-      "@kosmojs/solid-generator": `^${solidGenerator.version}`,
-      "vite-plugin-solid": deps["vite-plugin-solid"],
+      "@kosmojs/solid-generator": self.semver,
+      "vite-plugin-solid": self.devDependencies["vite-plugin-solid"],
     });
 
     plugins.push({
@@ -205,16 +216,16 @@ export const createSourceFolder = async (
     compilerOptions.jsxImportSource = "solid-js";
   } else if (framework === "react") {
     Object.assign(dependencies, {
-      react: deps.react,
-      "react-router": deps["react-router"],
+      react: self.devDependencies.react,
+      "react-router": self.devDependencies["react-router"],
     });
 
     Object.assign(devDependencies, {
-      "@kosmojs/react-generator": `^${reactGenerator.version}`,
-      "@vitejs/plugin-react": deps["@vitejs/plugin-react"],
-      "@types/react": deps["@types/react"],
-      "@types/react-dom": deps["@types/react-dom"],
-      "react-dom": deps["react-dom"],
+      "@kosmojs/react-generator": self.semver,
+      "@vitejs/plugin-react": self.devDependencies["@vitejs/plugin-react"],
+      "@types/react": self.devDependencies["@types/react"],
+      "@types/react-dom": self.devDependencies["@types/react-dom"],
+      "react-dom": self.devDependencies["react-dom"],
     });
 
     plugins.push({
@@ -241,7 +252,7 @@ export const createSourceFolder = async (
       options: "",
     });
     Object.assign(devDependencies, {
-      "@kosmojs/ssr-generator": `^${ssrGenerator.version}`,
+      "@kosmojs/ssr-generator": self.semver,
     });
   }
 
