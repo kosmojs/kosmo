@@ -9,6 +9,7 @@ const setupFactory = (name, setup) => {
       name,
       include: [`packages/${name}/test/**/*.test.ts`],
       alias: {
+        "~": resolve(import.meta.dirname, "packages"),
         "@/lib": resolve(
           import.meta.dirname,
           `packages/${name}/test/@fixtures/app/lib/`,
@@ -30,6 +31,9 @@ export default defineConfig({
   reporters: ["verbose"],
   test: {
     projects: [
+      setupFactory("core/create", {
+        setupFiles: ["packages/core/create/test/setup.ts"],
+      }),
       setupFactory("core/api"),
       setupFactory("core/dev"),
       setupFactory("core/devlib"),
