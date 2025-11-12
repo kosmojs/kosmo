@@ -19,7 +19,7 @@ In just a few commands, you'll have a fully-configured Vite project ready to sca
 Run the following command to create a new `KosmoJS` application:
 
 ```bash
-npx kosmojs
+npx kosmojs@latest
 ```
 
 You'll be asked for an app name (required) and a dist directory (optional, defaults to `dist`).
@@ -55,13 +55,12 @@ Server-side rendering is enabled by default but can be disabled for source folde
 Use your favorite package manager:
 
 ::: code-group
+```sh [pnpm]
+pnpm install
+```
 
 ```sh [npm]
 npm install
-```
-
-```sh [pnpm]
-pnpm install
 ```
 
 ```sh [yarn]
@@ -71,20 +70,18 @@ yarn install
 
 ## 4. Start the Dev Server
 
-Use `dev` task with source folder name, for example:
-
 ::: code-group
 
-```sh [npm]
-npm run dev @front
+```sh [pnpm]
+pnpm dev
 ```
 
-```sh [pnpm]
-pnpm dev @front
+```sh [npm]
+npm run dev
 ```
 
 ```sh [yarn]
-yarn dev @front
+yarn dev
 ```
 :::
 

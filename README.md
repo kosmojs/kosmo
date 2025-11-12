@@ -27,7 +27,7 @@ It's a **structured Vite template** that gives your Vite project a scalable shap
 ### 1. Create a new `KosmoJS` project:
 
 ```sh
-npx kosmojs
+npx kosmojs@latest
 ```
 
 ### 2. Create a source folder
@@ -42,20 +42,18 @@ npx kosmojs
 ### 3. Install dependencies with your preferred package manager:
 
 ```sh
-npm install
-# or pnpm install / yarn install
+pnpm install
+# or `npm install` / `yarn install`
 ```
 
 ### 4. Start the Dev Server
 
-Use `dev` task with source folder name, for example:
-
 ```sh
-npm run dev @front
-# or pnpm dev @front / yarn dev @front
+pnpm dev
+# or `npm run dev` / `yarn dev`
 ```
 
-Each source folder runs on its own port and must be started with a separate command.
+Each source folder runs on its own port with own baseurl.
 
 📘 [Learn more](https://kosmojs.dev/start)
 
