@@ -45,10 +45,14 @@ export default defineConfig({
 
       setupFactory("generators/api-generator"),
       setupFactory("generators/openapi-generator", {
-        globalSetup: ["packages/generators/openapi-generator/test/setup.ts"],
+        globalSetup: [
+          "packages/generators/openapi-generator/test/setup.global.ts",
+        ],
       }),
       setupFactory("generators/typebox-generator", {
-        globalSetup: ["packages/generators/typebox-generator/test/setup.ts"],
+        globalSetup: [
+          "packages/generators/typebox-generator/test/setup.global.ts",
+        ],
       }),
       setupFactory("generators/solid-generator"),
       setupFactory("generators/react-generator"),
