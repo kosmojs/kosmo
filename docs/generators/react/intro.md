@@ -27,12 +27,12 @@ flag ensures this tooling stays out of production bundles:
 
 ::: code-group
 
-```sh [npm]
-npm install -D @kosmojs/react-generator
-```
-
 ```sh [pnpm]
 pnpm install -D @kosmojs/react-generator
+```
+
+```sh [npm]
+npm install -D @kosmojs/react-generator
 ```
 
 ```sh [yarn]

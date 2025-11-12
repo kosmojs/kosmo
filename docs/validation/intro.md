@@ -55,14 +55,14 @@ Start by adding the TypeBox generator package to your project, then register it 
 
 ::: code-group
 
-```sh [npm]
-npm install -D @kosmojs/typebox-generator
-npm install typebox
-```
-
 ```sh [pnpm]
 pnpm install -D @kosmojs/typebox-generator
 pnpm install typebox
+```
+
+```sh [npm]
+npm install -D @kosmojs/typebox-generator
+npm install typebox
 ```
 
 ```sh [yarn]

@@ -47,12 +47,12 @@ To enable SSR, install the SSR generator:
 
 ::: code-group
 
-```sh [npm]
-npm install -D @kosmojs/ssr-generator
-```
-
 ```sh [pnpm]
 pnpm install -D @kosmojs/ssr-generator
+```
+
+```sh [npm]
+npm install -D @kosmojs/ssr-generator
 ```
 
 ```sh [yarn]

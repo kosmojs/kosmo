@@ -16,12 +16,12 @@ to produce a complete, standards-compliant OpenAPI spec.
 
 ::: code-group
 
-```sh [npm]
-npm install -D @kosmojs/openapi-generator
-```
-
 ```sh [pnpm]
 pnpm install -D @kosmojs/openapi-generator
+```
+
+```sh [npm]
+npm install -D @kosmojs/openapi-generator
 ```
 
 ```sh [yarn]

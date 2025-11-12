@@ -246,12 +246,12 @@ Install generator:
 
 ::: code-group
 
-```sh [npm]
-npm install -D @kosmojs/solid-generator
-```
-
 ```sh [pnpm]
 pnpm install -D @kosmojs/solid-generator
+```
+
+```sh [npm]
+npm install -D @kosmojs/solid-generator
 ```
 
 ```sh [yarn]

@@ -66,12 +66,12 @@ Install the SSR generator package:
 
 ::: code-group
 
-```sh [npm]
-npm install -D @kosmojs/ssr-generator
-```
-
 ```sh [pnpm]
 pnpm install -D @kosmojs/ssr-generator
+```
+
+```sh [npm]
+npm install -D @kosmojs/ssr-generator
 ```
 
 ```sh [yarn]
