@@ -6,13 +6,6 @@
     ]
   ],
   [
-    "custom-dist-folder/.gitignore",
-    [
-      "/.env",
-      "/__dist/*"
-    ]
-  ],
-  [
     "custom-dist-folder/core/api/app.ts",
     [
       "import { type AppOptions, createApp } from \"@kosmojs/api\";",
@@ -152,7 +145,8 @@
         "scripts",
         {
           "dev": "kosmo dev",
-          "build": "kosmo build"
+          "build": "kosmo build",
+          "+folder": "kosmo folder"
         }
       ],
       [

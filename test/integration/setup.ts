@@ -7,13 +7,13 @@ import got from "got";
 import { chromium } from "playwright";
 import { build, createServer } from "vite";
 
+import routesFactory from "~/core/dev/src/base-plugin/routes";
+import { defaults, type PageRoute } from "~/core/devlib/src";
 import {
   createProject,
   createSourceFolder,
   type FRAMEWORK_OPTIONS,
-} from "~/core/create/src";
-import routesFactory from "~/core/dev/src/base-plugin/routes";
-import { defaults, type PageRoute } from "~/core/devlib/src";
+} from "~/core/kosmojs/src";
 
 import testRoutes from "./routes";
 

@@ -53,7 +53,7 @@ describe("Create API", () => {
 
     for (const folder of [
       { name: "with-defaults" },
-      { name: "with-custom-baseurl", baseurl: "/test" },
+      { name: "with-custom-base", base: "/test" },
       { name: "with-custom-port", port: 5000 },
       { name: "with-solid", framework: "solid" },
       { name: "with-solid-ssr", framework: "solid", ssr: true },

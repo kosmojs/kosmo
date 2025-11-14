@@ -31,8 +31,8 @@ export default defineConfig({
   reporters: ["verbose"],
   test: {
     projects: [
-      setupFactory("core/create", {
-        setupFiles: ["packages/core/create/test/setup.ts"],
+      setupFactory("core/kosmojs", {
+        setupFiles: ["packages/core/kosmojs/test/setup.ts"],
       }),
       setupFactory("core/api"),
       setupFactory("core/dev"),

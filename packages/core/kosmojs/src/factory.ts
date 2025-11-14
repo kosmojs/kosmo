@@ -1,6 +1,16 @@
 import { writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
+/**
+ * Import from published package to ensure correct version at runtime.
+ * Local import would be bundled with pre-bump version; this external
+ * import resolves to the actual published package.json.
+ * INFO: For best compatibility, all packages should share the same version as the `kosmojs` package.
+ * When bumping the version (even a patch) for a single package, bump it for all packages
+ * to keep versions fully synchronized across the project.
+ * */
+import self from "kosmojs/package.json";
+
 import { defaults, renderToFile } from "@kosmojs/devlib";
 
 import {
@@ -21,7 +31,6 @@ import srcApiServerTpl from "./templates/@src/api/server.hbs";
 import srcApiUseTpl from "./templates/@src/api/use.hbs";
 import srcConfigTpl from "./templates/@src/config/index.hbs";
 import srcViteConfigTpl from "./templates/@src/vite.config.hbs";
-import gitignoreTpl from "./templates/.gitignore.hbs";
 import viteBaseTpl from "./templates/vite.base.hbs";
 
 const TPL_DIR = resolve(import.meta.dirname, "templates");
@@ -47,25 +56,7 @@ const tsconfigJson = {
   },
 };
 
-/**
- * A dynamic import is required because the version changes after publishing.
- * Using a static import would hard-code the pre-publish version into the file.
- * */
-const importPackageJson = async () => {
-  return import(resolve(import.meta.dirname, "../package.json"), {
-    with: { type: "json" },
-  }).then((e) => {
-    return {
-      ...e.default,
-      /**
-       * INFO: For best compatibility, all packages should share the same version as the `kosmojs` package.
-       * When bumping the version (even a patch) for a single package, bump it for all packages
-       * to keep versions fully synchronized across the project.
-       * */
-      semver: `^${e.default.version}`,
-    };
-  });
-};
+const SEMVER = `^${self.version}`;
 
 export const createProject = async (
   path: string,
@@ -76,23 +67,22 @@ export const createProject = async (
     devDependencies?: Record<string, string>;
   },
 ) => {
-  const self = await importPackageJson();
-
   const packageJson = {
     type: "module",
     distDir: project.distDir || DEFAULT_DIST,
     scripts: {
       dev: "kosmo dev",
       build: "kosmo build",
+      "+folder": "kosmo folder",
     },
     dependencies: {
-      "@kosmojs/api": self.semver,
+      "@kosmojs/api": SEMVER,
       qs: self.devDependencies.qs,
       ...assets?.dependencies,
     },
     devDependencies: {
-      "@kosmojs/config": self.semver,
-      "@kosmojs/dev": self.semver,
+      "@kosmojs/config": SEMVER,
+      "@kosmojs/dev": SEMVER,
       "@types/node": self.devDependencies["@types/node"],
       "@types/qs": self.devDependencies["@types/qs"],
       esbuild: self.devDependencies.esbuild,
@@ -127,7 +117,6 @@ export const createProject = async (
   });
 
   for (const [file, template] of [
-    [".gitignore", gitignoreTpl],
     ["vite.base.ts", viteBaseTpl],
     ["esbuild.json", JSON.stringify(esbuildJson, null, 2)],
     ["package.json", JSON.stringify(packageJson, null, 2)],
@@ -149,8 +138,6 @@ export const createSourceFolder = async (
     devDependencies?: Record<string, string>;
   },
 ) => {
-  const self = await importPackageJson();
-
   const folderPath = resolve(projectRoot, folder.name);
 
   if (await pathExists(folderPath)) {
@@ -195,7 +182,7 @@ export const createSourceFolder = async (
     });
 
     Object.assign(devDependencies, {
-      "@kosmojs/solid-generator": self.semver,
+      "@kosmojs/solid-generator": SEMVER,
       "vite-plugin-solid": self.devDependencies["vite-plugin-solid"],
     });
 
@@ -221,7 +208,7 @@ export const createSourceFolder = async (
     });
 
     Object.assign(devDependencies, {
-      "@kosmojs/react-generator": self.semver,
+      "@kosmojs/react-generator": SEMVER,
       "@vitejs/plugin-react": self.devDependencies["@vitejs/plugin-react"],
       "@types/react": self.devDependencies["@types/react"],
       "@types/react-dom": self.devDependencies["@types/react-dom"],
@@ -252,13 +239,13 @@ export const createSourceFolder = async (
       options: "",
     });
     Object.assign(devDependencies, {
-      "@kosmojs/ssr-generator": self.semver,
+      "@kosmojs/ssr-generator": SEMVER,
     });
   }
 
   const context = {
     folder: {
-      baseurl: DEFAULT_BASE,
+      base: DEFAULT_BASE,
       port: DEFAULT_PORT,
       ...folder,
     },

@@ -59,8 +59,7 @@
         "./test/**/*.ts",
         "./packages/build/esbuilder/src/index.ts",
         "./packages/core/dev/src/base-plugin/api-handler.ts",
-        "./packages/core/dev/src/cli.ts",
-        "./packages/core/create/**/*.ts"
+        "./packages/core/kosmojs/**/*.ts"
       ],
       "linter": {
         "rules": {

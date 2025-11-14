@@ -10,15 +10,25 @@
   "files": [
     "pkg/*"
   ],
-  "bin": "./pkg/cli.js",
+  "bin": "./pkg/project.js",
+  "exports": {
+    "./cli": {
+      "types": "./pkg/src/cli.d.ts",
+      "default": "./pkg/cli.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "test": "vitest --root ../../.. --project core/create",
+    "test": "vitest --root ../../.. --project core/kosmojs",
     "prebuild": "rsync -av --delete src/templates pkg",
-    "build": "esbuilder src/cli.ts src/factory.ts -s '@/scripts/!(cleanup)*'",
-    "postbuild": "chmod +x pkg/cli.js"
+    "build": "esbuilder src/project.ts src/cli.ts -s '@/scripts/!(cleanup)*'",
+    "postbuild": "chmod +x pkg/project.js"
   },
   "dependencies": {
     "@kosmojs/devlib": "workspace:^",
+    "@kosmojs/biome-formatter": "workspace:^",
+    "concurrently": "^9.2.1",
+    "globby": "^15.0.0",
     "prompts": "^2.4.2"
   },
   "devDependencies": {
@@ -34,7 +44,6 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "esbuild": "^0.27.0",
-    "globby": "^15.0.0",
     "qs": "^6.14.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
