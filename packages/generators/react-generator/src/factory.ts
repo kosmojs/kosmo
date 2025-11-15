@@ -79,7 +79,6 @@ export const factory: GeneratorFactory<Options> = async (
     );
     console.error(styleText("gray", `"compilerOptions": {`));
     console.error(styleText("cyan", `  "jsx": "preserve",`));
-    console.error(styleText("cyan", `  "jsxImportSource": "react",`));
     console.error(styleText("gray", "}"));
     console.error();
   }
