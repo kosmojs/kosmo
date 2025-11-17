@@ -7,12 +7,12 @@ head:
       content: validation performance, type analysis, worker threads, caching, generation time, typescript compiler, background processing, ts-morph, tfusion
 ---
 
-`KosmoJS`'s type-to-schema conversion uses TypeScript's compiler API
+`KosmoJS`'s type-to-schema conversion uses `TypeScript`'s compiler API
 to deeply analyze your types, including tracing through all referenced files
 to build a complete dependency graph.
 
 This thorough analysis is what enables the seamless experience
-of writing pure TypeScript types and getting runtime validation,
+of writing pure `TypeScript` types and getting runtime validation,
 with a brief generation step for each route's schema.
 
 Generation time scales with complexity - simple routes process nearly instantly,
@@ -31,7 +31,7 @@ The generator implements several design decisions
 that keep this process from impacting your development workflow.
 
 Generation runs in a worker thread,
-so your Vite development server remains responsive
+so your `Vite` development server remains responsive
 regardless of what the generator is doing.
 
 The system maintains a sophisticated cache that tracks file dependencies,
@@ -87,7 +87,7 @@ Schema-first validation libraries like Zod or Yup have zero generation overhead
 because they require you to hand-write schemas.
 
 This eliminates generation time, but it creates an ongoing maintenance burden
-of keeping schemas synchronized with your TypeScript types (if you need ones).
+of keeping schemas synchronized with your `TypeScript` types (if you need ones).
 
 `KosmoJS` trades a few seconds of automated generation time
 for eliminating this manual maintenance work entirely.
@@ -97,8 +97,8 @@ machine time is cheaper and more reliable than human time.
 
 ## 🚀 Future Performance Improvements
 
-As the TypeScript ecosystem continues evolving,
-particularly with developments around native TypeScript implementations
+As the `TypeScript` ecosystem continues evolving,
+particularly with developments around native `TypeScript` implementations
 that tools like [ts-morph](https://ts-morph.com/){target="_blank" rel="noopener"}
 and [tfusion](https://github.com/sleewoo/tfusion){target="_blank" rel="noopener"} might leverage,
 generation performance may improve further.

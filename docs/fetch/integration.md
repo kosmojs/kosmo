@@ -32,7 +32,7 @@ function UserProfile(props) {
 }
 ```
 
-For React applications, you might create custom hooks that wrap the fetch client:
+For `React` applications, you might create custom hooks that wrap the fetch client:
 
 ```ts [pages/example/index.tsx]
 import { useState, useEffect } from "react";

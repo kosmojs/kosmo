@@ -70,7 +70,7 @@ Use suffixes like `T` (e.g., `EventT`, `ResponseT`, `DataT`)
 or prefixes like `T` (e.g., `TEvent`, `TResponse`, `TData`)
 to avoid conflicts with built-in types.
 
-Both conventions are widely used in the TypeScript community.
+Both conventions are widely used in the `TypeScript` community.
 Choose one and use it consistently throughout your project.
 
 ## 📋 Common Built-ins to Avoid

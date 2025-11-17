@@ -14,7 +14,7 @@ These payloads often have complex nested structures with multiple fields,
 each requiring specific validation rules to ensure data integrity.
 
 `KosmoJS` makes payload validation straightforward by letting you express validation rules
-directly through TypeScript types.
+directly through `TypeScript` types.
 
 You write the type once, and it serves both as compile-time documentation
 and runtime validation enforcement.
@@ -73,10 +73,10 @@ If they are present, they must match their specified type and pass any refinemen
 ## 🏗️ Complex Nested Structures
 
 Real-world payloads often have deeply nested structures with conditional fields and references to other types.
-`KosmoJS` handles this complexity naturally because you're just writing TypeScript types.
+`KosmoJS` handles this complexity naturally because you're just writing `TypeScript` types.
 
 You can nest objects, use union types for conditional fields, reference other types,
-and generally express any structure that TypeScript can represent.
+and generally express any structure that `TypeScript` can represent.
 
 Here's a more complex example for a payment processing endpoint:
 

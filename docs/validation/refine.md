@@ -57,7 +57,7 @@ which is exactly how you express that a number should be an integer:
 TRefine<number, { minimum: 1000, maximum: 1_000_000, multipleOf: 1 }>
 ```
 
-This pattern of using `TRefine` to add JSON Schema constraints directly in your TypeScript types
+This pattern of using `TRefine` to add JSON Schema constraints directly in your `TypeScript` types
 is powerful because it keeps all your validation logic in one place - your type definitions.
 
 You're not maintaining separate validation schemas that could drift out of sync with your types.

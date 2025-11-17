@@ -9,7 +9,7 @@ head:
 
 ### 🎯 What is KosmoJS?
 
-Simply a Vite template that brings another approach
+Simply a `Vite` template that brings another approach
 (not entirely novel, but proven valuable) to organizing full-stack applications.
 
 You keep all of Vite's power and ecosystem while working within a structure
@@ -19,13 +19,13 @@ designed around specific organizational principles.
 
 🔹 First, it recognizes that applications often comprise multiple distinct areas -
 perhaps a public website, an admin dashboard, a mobile API -
-and treats these as independent source folders, each with its own configuration and purpose, all within a single Vite project.
+and treats these as independent source folders, each with its own configuration and purpose, all within a single `Vite` project.
 
 🔹 Second, it organizes each source folder into separate `api/` and `pages/` directories,
 creating a clear boundary between server-side logic and client-side presentation within the same cohesive module.
 
 🔹 Third, it establishes a single source of truth for your data structures.
-Write TypeScript types once, and `KosmoJS` generates runtime validation, typed fetch clients, and OpenAPI schemas automatically -
+Write `TypeScript` types once, and `KosmoJS` generates runtime validation, typed fetch clients, and OpenAPI schemas automatically -
 keeping compile-time type checking, runtime validation, and API documentation perfectly aligned.
 
 ### 💡 KosmoJS is not a framework

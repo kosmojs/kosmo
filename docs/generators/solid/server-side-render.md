@@ -16,7 +16,7 @@ while keeping your development workflow unchanged.
 
 ## 🎯 Default Client-Side Rendering
 
-When you create a source folder, KosmoJS generates an `entry/client.tsx` file that handles client-side rendering:
+When you create a source folder, `KosmoJS` generates an `entry/client.tsx` file that handles client-side rendering:
 
 ```tsx [entry/client.tsx]
 import { hydrate, render } from "solid-js/web";
@@ -260,8 +260,8 @@ This configuration forwards requests to your SSR server while properly handling 
 
 The SSR generator doesn't change your development workflow. During development:
 
-- Run `pnpm dev @front` as usual
-- Vite dev server handles requests with HMR
+- Run `pnpm dev` as usual
+- `Vite` dev server handles requests with HMR
 - Client-side rendering provides instant feedback
 - Full developer experience remains unchanged
 
@@ -288,10 +288,10 @@ and proper error handling in your server entry point. Server errors shouldn't cr
 
 **Consider source folder separation over hybrid rendering.** Rather than
 implementing complex route-level SSR/CSR switching within a single source
-folder, leverage KosmoJS's separation of concerns principle. Create one
+folder, leverage `KosmoJS`'s separation of concerns principle. Create one
 source folder for marketing content with SSR enabled, and another for your
 customer application using CSR. This architectural approach is cleaner, more
-maintainable, and aligns with KosmoJS's organizational philosophy - each
+maintainable, and aligns with `KosmoJS`'s organizational philosophy - each
 concern gets its own space with appropriate rendering strategy.
 
 ## ⚠️ Limitations and Considerations

@@ -19,7 +19,7 @@ This placement enables integration of error boundaries into App, specialized
 router configurations, Link component enhancement with analytics tracking, or
 entry point extension with initialization logic.
 
-These foundational files generate once during initial React generator setup.
+These foundational files generate once during initial `React` generator setup.
 The generator preserves them across subsequent executions, maintaining your
 modifications indefinitely.
 

@@ -31,7 +31,7 @@ Leverage the Link component's type safety.
 The compile-time checking of route names and parameters
 prevents broken links from reaching production.
 When refactoring routes,
-let TypeScript guide you to all the places that need updates.
+let `TypeScript` guide you to all the places that need updates.
 
 Remember that the generated route configuration in `lib`
 is derived from your page components.

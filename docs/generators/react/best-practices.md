@@ -13,7 +13,7 @@ head:
 
 ### 💡 React Best Practices
 
-Building React applications with KosmoJS benefits from these proven patterns
+Building `React` applications with `KosmoJS` benefits from these proven patterns
 and architectural approaches.
 
 Deploy loader functions when routes require data availability at navigation
@@ -33,7 +33,7 @@ clear separation of concerns.
 
 Exploit the Link component's type enforcement. Compile-time validation of
 route identifiers and parameters catches navigation errors before deployment.
-During refactoring, TypeScript surfaces every reference requiring updates,
+During refactoring, `TypeScript` surfaces every reference requiring updates,
 serving as an automated checklist.
 
 Recognize that `lib` directory contents are generator artifacts. Manual edits

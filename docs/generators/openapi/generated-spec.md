@@ -11,7 +11,7 @@ The generator produces a complete OpenAPI 3.1 specification that includes:
 
 **Paths** - All your API routes with their HTTP methods, parameters, request bodies, and responses
 
-**Schemas** - Type definitions extracted from your TypeScript types and validation schemas
+**Schemas** - Type definitions extracted from your `TypeScript` types and validation schemas
 
 **Parameters** - Path, query, and header parameters with their types and constraints
 

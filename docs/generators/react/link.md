@@ -11,7 +11,7 @@ head:
         navigation, react routing safety
 ---
 
-The generator produces a `Link` component wrapping React Router's native
+The generator produces a `Link` component wrapping `React Router`'s native
 `Link` with compile-time route validation. This wrapper understands your
 complete route structure and parameters, delivering autocomplete and type
 checking throughout navigation code.
@@ -95,11 +95,11 @@ export type LinkProps =
 
 This typing mechanism provides several development advantages.
 
-Typing the first array element triggers TypeScript's IntelliSense with valid
+Typing the first array element triggers `TypeScript`'s IntelliSense with valid
 route suggestions. Selecting parameterized routes requires providing those
 parameters as subsequent array elements - the type system enforces this.
 
-Renaming route directories generates TypeScript errors at every Link
+Renaming route directories generates `TypeScript` errors at every Link
 referencing the old identifier, creating an automatic refactoring checklist
 across your codebase.
 
@@ -116,7 +116,7 @@ manipulation without navigation:
 </Link>
 ```
 
-The Link component extends React Router's `Link` with type safety while
+The Link component extends `React Router`'s `Link` with type safety while
 accepting all standard props. The `to` prop replacement provides autocomplete
 and validation while preserving access to props like `replace`, `state`, and
 other router-specific attributes.

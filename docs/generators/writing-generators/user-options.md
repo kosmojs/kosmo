@@ -27,7 +27,7 @@ export default (options?: Options): GeneratorConstructor => {
 };
 ```
 
-Users configure your generator when adding it to their Vite config:
+Users configure your generator when adding it to their `Vite` config:
 
 ```ts
 import myGenerator from "@my/generator";

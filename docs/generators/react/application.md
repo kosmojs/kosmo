@@ -11,7 +11,7 @@ head:
         structure, strictmode setup
 ---
 
-The React generator automates foundational file creation, establishing routing
+The `React` generator automates foundational file creation, establishing routing
 infrastructure and application structure. This includes router integration,
 type-safe navigation components, and lazy-loaded route definitions forming a
 production-ready foundation.
@@ -42,7 +42,7 @@ application-wide infrastructure concerns.
 
 ## 🛣️ Router Integration
 
-The `router.tsx` file bridges KosmoJS's generated routes with React Router:
+The `router.tsx` file bridges `KosmoJS`'s generated routes with `React` Router:
 
 ```tsx [router.tsx]
 import {
@@ -71,10 +71,10 @@ export const routeStack = [
   },
 ];
 
-export default function AppRouter(props?: { context?: never }) {
-  if (props?.context) {
-    const router = createStaticRouter(routeStack, props.context);
-    return <StaticRouterProvider router={router} context={props.context} />;
+export default function AppRouter(ssrProps?: { context?: never }) {
+  if (ssrProps?.context) {
+    const router = createStaticRouter(routeStack, ssrProps.context);
+    return <StaticRouterProvider router={router} context={ssrProps.context} />;
   }
   const router = createBrowserRouter(routeStack, { basename: baseurl });
   return <RouterProvider router={router} />;
@@ -131,6 +131,6 @@ folder initialization:
 <script type="module" src="./entry/client.tsx"></script>
 ```
 
-The `index.html` file serves as Vite's processing entry point. Vite begins
+The `index.html` file serves as Vite's processing entry point. `Vite` begins
 from this HTML file, follows the script import to `entry/client.tsx`, and
 constructs your complete application graph from there.

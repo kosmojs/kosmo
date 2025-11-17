@@ -7,7 +7,7 @@ head:
       content: route parameters, type refinement, runtime validation, typed params, url parameters, parameter validation, TRefine, typescript routes
 ---
 
-`KosmoJS` generates TypeScript types for your route parameters based on your directory structure.
+`KosmoJS` generates `TypeScript` types for your route parameters based on your directory structure.
 
 When you have a route like `users/[id]/index.ts`, `KosmoJS` knows there's an `id` parameter.
 
@@ -90,7 +90,7 @@ Think of it as providing the "blueprint" directly rather than a "reference to th
 
 ### ✨ Beyond compile-time safety
 
-These type refinements aren't just for TypeScript's benefit.
+These type refinements aren't just for `TypeScript`'s benefit.
 `KosmoJS` also validates parameters at runtime according to your specifications!
 [Details](/validation/params).
 

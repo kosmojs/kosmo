@@ -28,7 +28,7 @@ Common generators include:
 
 - `apiGenerator()` - Generates route helpers and type definitions for API endpoints
 - `fetchGenerator()` - Generates typed fetch clients for consuming your API
-- `typeboxGenerator()` - Generates runtime validation schemas from TypeScript types
+- `typeboxGenerator()` - Generates runtime validation schemas from `TypeScript` types
 - `solidGenerator()` - Generates SolidJS routing and component scaffolding
 
 You configure generators by adding them to the array:

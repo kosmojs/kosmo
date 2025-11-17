@@ -147,7 +147,7 @@ This extracts all keys from defaults that end with `"Dir"`,
 plus the `"@"` shortcut, providing autocomplete and compile-time validation.
 
 If you attempt to use an invalid directory name,
-TypeScript will catch it during development.
+`TypeScript` will catch it during development.
 
 ## Practical Examples
 
@@ -214,8 +214,7 @@ of different directory nesting patterns.
 **Import from `@kosmojs/devlib`** to access the resolver and other utilities
 rather than implementing your own path logic.
 
-**Leverage type safety** by letting TypeScript guide you
-to valid directory names through autocomplete.
+**Leverage type safety** by letting `TypeScript` guide you to valid directory names through autocomplete.
 
 **Use the `@` shortcut** when you need to write directly to the source folder,
 such as for framework setup files that users might customize.

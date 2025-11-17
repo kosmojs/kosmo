@@ -93,12 +93,12 @@ export type LinkProps =
 
 This type structure provides several benefits.
 
-TypeScript autocomplete suggests available routes as you type the first element of the array.
+`TypeScript` autocomplete suggests available routes as you type the first element of the array.
 When you select a route with parameters,
-TypeScript enforces that you provide those parameters as additional array elements.
+`TypeScript` enforces that you provide those parameters as additional array elements.
 
 If you rename a route directory,
-TypeScript errors appear at every Link that references the old name,
+`TypeScript` errors appear at every Link that references the old name,
 helping you find and fix all references.
 
 The optional `query` prop accepts an object that becomes the URL's query string.

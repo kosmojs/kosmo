@@ -46,7 +46,7 @@ export default [
 
 ## 🔧 Default Context/State
 
-The second file, `core/api/env.d.ts`, provides TypeScript type definitions
+The second file, `core/api/env.d.ts`, provides `TypeScript` type definitions
 that extend Koa's context and state objects. By default, it looks like this:
 
 ```ts [core/api/env.d.ts]
@@ -73,7 +73,7 @@ export declare module "@kosmojs/api" {
 ```
 
 Now every route handler knows about `ctx.authorizedUser`
-and TypeScript will properly type-check your usage of it.
+and `TypeScript` will properly type-check your usage of it.
 
 This is much more maintainable than redeclaring these types in every route file.
 
@@ -91,7 +91,7 @@ export declare module "@kosmojs/api" {
 ```
 
 Now every route handler knows about `ctx.state.permissions`
-and TypeScript will properly type-check your usage of it.
+and `TypeScript` will properly type-check your usage of it.
 
 This approach - declaring types once in a central location -
 keeps your codebase DRY and ensures consistency across all your endpoints.

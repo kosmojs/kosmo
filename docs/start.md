@@ -12,7 +12,7 @@ head:
 Begin your project with a solid foundation. `KosmoJS` provides a structured
 yet flexible starting point designed for real-world applications with multiple concerns.
 
-In just a few commands, you'll have a fully-configured Vite project ready to scale with your application's needs.
+In just a few commands, you'll have a fully-configured `Vite` project ready to scale with your application's needs.
 
 ## 1. Create a new `KosmoJS` project:
 
@@ -58,7 +58,7 @@ yarn install
 
 ## 3. Create a source folder
 
-Unlike standard Vite templates, `KosmoJS` doesn't create a source folder automatically.
+Unlike standard `Vite` templates, `KosmoJS` doesn't create a source folder automatically.
 Instead, you create source folders as needed, each organized around a specific concern
 (e.g., marketing site, admin panel, customer app).
 
@@ -74,7 +74,7 @@ You'll be prompted to configure:
 - **Folder name** (required) - Name for your source folder (e.g., `@front`, `@admin`)
 - **Base URL** - Where this folder serves from (default: `/`)
 - **Dev server port** - Port number for development (default: `4000`)
-- **Frontend framework** - SolidJS, React (Vue and Svelte coming soon)
+- **Frontend framework** - SolidJS, React, Vue (and Svelte coming soon)
 - **Server-side rendering (SSR)** - Enable SSR (disabled by default)
 
 The source folder may have added new dependencies. Run the package manager again:
@@ -195,7 +195,7 @@ The `lib` directory contains generated code that `KosmoJS` maintains for you -
 type definitions and helpers based on your route structure. You don't edit these files directly.
 
 Your actual code lives in the source folders (`@front`, `@admin`),
-and the TypeScript path mappings make everything import cleanly.
+and the `TypeScript` path mappings make everything import cleanly.
 
 ## 📝 TypeScript Path Mapping
 
@@ -213,7 +213,7 @@ When you create a source folder, `KosmoJS` automatically updates your `tsconfig.
 ```
 
 Each mapping points to two locations. The first is your source folder where you write code.
-The second is the `lib` directory where `KosmoJS` places generated TypeScript types and helper functions.
+The second is the `lib` directory where `KosmoJS` places generated `TypeScript` types and helper functions.
 
 This separation keeps your source directories clean -
 you focus on writing business logic while generated artifacts live elsewhere.

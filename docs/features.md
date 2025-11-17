@@ -8,14 +8,14 @@ head:
 ---
 
 `KosmoJS` brings type-safe structure to full-stack development -
-using Vite as the foundation for both frontend builds and API development,
+using `Vite` as the foundation for both frontend builds and API development,
 with multiple source folders, directory-based routing, runtime validation,
 and typed fetch clients - while keeping full framework freedom.
 
 ## 🗂️ Multiple Source Folders
 
 Organize distinct concerns - public site, customer app, admin dashboard -
-all connected yet independent in one Vite project.
+all connected yet independent in one `Vite` project.
 
 **Why it matters:**
 
@@ -30,7 +30,7 @@ Cramming everything into one `src` folder creates organizational chaos as your a
 Each source folder is a standalone entity with its own:
 - Base URL and routing namespace
 - Development server and port
-- Vite configuration
+- `Vite` configuration
 - `api/` and `pages/` directories
 
 **Benefits:**
@@ -87,19 +87,19 @@ pages/
 
 ## 🛡️ End-to-End Type Safety
 
-Write TypeScript types once, get runtime validation automatically. No separate schemas to maintain.
+Write `TypeScript` types once, get runtime validation automatically. No separate schemas to maintain.
 
 **Why it matters:**
 
-TypeScript provides compile-time type checking,
+`TypeScript` provides compile-time type checking,
 but can't protect you at runtime when HTTP requests arrive with unpredictable data.
 
-Traditional solutions require maintaining separate validation schemas (Zod, Yup, io-ts) alongside your TypeScript types -
+Traditional solutions require maintaining separate validation schemas (Zod, Yup, io-ts) alongside your `TypeScript` types -
 doubling your maintenance burden and creating opportunities for drift.
 
 **How it works:**
 
-Define your types once in TypeScript and `KosmoJS` generates runtime validators automatically:
+Define your types once in `TypeScript` and `KosmoJS` generates runtime validators automatically:
 
 ```ts
 // Define types once
@@ -230,7 +230,7 @@ Generators make common choices convenient.
 Full-stack frameworks often lock you into specific frontend choices.
 Next.js assumes React. Nuxt assumes Vue. SvelteKit assumes Svelte.
 
-`KosmoJS` is a Vite template, not a framework - you choose your frontend stack.
+`KosmoJS` is a `Vite` template, not a framework - you choose your frontend stack.
 
 **How it works:**
 
@@ -289,14 +289,15 @@ export default {
 
 ## 🔧 Built on Proven Tools
 
-Koa for APIs, Vite for frontend, TypeScript for safety. No proprietary abstractions.
+`Koa` for APIs, `Vite` for frontend, `TypeScript` for safety. No proprietary abstractions.
 
 **Why it matters:**
 
 New frameworks introduce new abstractions, new APIs to learn, new mental models to internalize.
 When the framework fades, your knowledge doesn't transfer.
 
-`KosmoJS` uses tools you already know (or should know) - Koa, Vite, TypeScript - and just provides organizational structure.
+`KosmoJS` uses tools you already know (or should know) - `Koa`, `Vite`, `TypeScript` -
+and just provides organizational structure.
 
 **The stack:**
 

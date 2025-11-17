@@ -41,10 +41,10 @@ The import statement brings in a `defineRoute` helper function from a generated 
 
 Notice the import path: `@front/{api}/users/[id]`.
 
-The `@front` part is your source folder (as configured in your TypeScript path mappings),
+The `@front` part is your source folder (as configured in your `TypeScript` path mappings),
 and the `{api}/users/[id]` part corresponds to the generated route's location.
 
-This generated module includes TypeScript type information about your route's parameters.
+This generated module includes `TypeScript` type information about your route's parameters.
 
 In this case, it knows that this route has an `id` parameter,
 and that information flows through to your handler's context object.
@@ -84,8 +84,8 @@ The component is named `Page` by default but you can rename it to better reflect
 
 Generated component returns JSX that renders a placeholder message indicating which route this is.
 
-If you were using the React generator, the generated code would be nearly identical
-but would follow React-specific patterns and conventions.
+If you were using the `React` generator, the generated code would be nearly identical
+but would follow `React`-specific patterns and conventions.
 
 The generator understands your framework and produces appropriate code.
 

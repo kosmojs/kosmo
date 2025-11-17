@@ -1,6 +1,7 @@
 ---
 title: SolidJS - Application Structure
-description: Generated SolidJS application files including App.tsx with Suspense boundaries, router.tsx with route configuration, and entry/client.tsx entry point for rendering to the DOM.
+description: Generated SolidJS application files including App.tsx with Suspense boundaries,
+    router.tsx with route configuration, and entry/client.tsx entry point for rendering to the DOM.
 head:
   - - meta
     - name: keywords
@@ -34,7 +35,7 @@ like data fetching, showing fallback content until resources are ready.
 You can customize this component to add global layouts, error boundaries,
 or other application-wide concerns.
 
-## 🛣️ The Router Configuration
+## 🛣️ Router Configuration
 
 The `router.tsx` file connects `KosmoJS`'s generated routes to SolidJS Router:
 
@@ -46,9 +47,9 @@ import { routes } from "@src/{solid}";
 import App from "./App";
 import { baseurl } from "./config";
 
-export default function AppRouter(props?: { url?: string }) {
+export default function AppRouter(ssrProps?: { url?: string }) {
   return (
-    <Router root={App} base={baseurl} {...props}>
+    <Router root={App} base={baseurl} {...ssrProps}>
       {routes}
     </Router>
   );
@@ -92,7 +93,7 @@ which `KosmoJS` creates when you initialize a source folder:
 ```
 
 The `index.html` file serves as Vite's entry point.
-When Vite processes your application, it starts from this HTML file,
+When `Vite` processes your application, it starts from this HTML file,
 follows the script import to `entry/client.tsx`,
 and builds your entire application graph from there.
 

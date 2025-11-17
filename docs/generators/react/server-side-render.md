@@ -11,7 +11,7 @@ head:
         stream rendering react
 ---
 
-React source folders default to client-side rendering with
+`React` source folders default to client-side rendering with
 Vite's development server and hot module replacement.
 
 Adding the SSR generator introduces production-ready server rendering while preserving your familiar
@@ -153,7 +153,7 @@ type SSRStringReturn = {
 };
 ```
 
-The default implementation leverages React Router's static handler to prepare
+The default implementation leverages `React` Router's static handler to prepare
 routing context, then uses React's `renderToString` to generate the complete
 HTML in a single pass.
 
@@ -312,8 +312,8 @@ headers and connection upgrades.
 
 The SSR generator preserves your development workflow. During development:
 
-- Execute `pnpm dev @front` normally
-- Vite handles all requests with hot module replacement
+- Execute `pnpm dev` normally
+- `Vite` handles all requests with hot module replacement
 - Client-side rendering provides immediate feedback
 - Complete development experience remains intact
 
@@ -344,11 +344,11 @@ errors shouldn't terminate entire processes.
 
 **Leverage multiple source folders instead of hybrid rendering.** Avoid
 complex route-level SSR/CSR switching logic within a single source folder.
-Instead, utilize KosmoJS's architectural strength: create separate source
+Instead, utilize `KosmoJS`'s architectural strength: create separate source
 folders for different purposes. Deploy SSR for your marketing folder to
 maximize SEO performance, while maintaining CSR in your customer application
 folder for optimal interactivity. This separation delivers cleaner codebases,
-straightforward maintenance, and embodies KosmoJS's core principle - each
+straightforward maintenance, and embodies `KosmoJS`'s core principle - each
 application concern occupies its own domain with the most suitable rendering
 approach.
 
@@ -368,7 +368,7 @@ duration. However, the hydration bundle downloads to clients, making
 optimization crucial.
 
 **Plan state serialization carefully.** Applications with complex state
-require proper serialization for hydration. React handles standard cases
+require proper serialization for hydration. `React` handles standard cases
 automatically, but custom state management or non-serializable data needs
 special handling.
 

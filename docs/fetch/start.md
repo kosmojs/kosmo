@@ -48,7 +48,7 @@ the first argument is an array of parameter values in the order they appear in t
 
 If your route's handler defines a payload type, the second argument accepts payload data.
 
-Both arguments are typed according to your API definition, so TypeScript guides you toward correct usage.
+Both arguments are typed according to your API definition, so `TypeScript` guides you toward correct usage.
 
 Consider an API route with a typed parameter and payload:
 
@@ -81,7 +81,7 @@ const response = await useFetch.GET([123], { name: "John" });
 The `response` variable is typed as `{ id: number; name: string; email: string }`
 because that's what your API route declared as its response type.
 
-TypeScript ensures you handle the response correctly, and when validation is enabled,
+`TypeScript` ensures you handle the response correctly, and when validation is enabled,
 runtime checks ensure the response actually matches this structure.
 
 ### 📭 Routes Without Parameters or Payloads

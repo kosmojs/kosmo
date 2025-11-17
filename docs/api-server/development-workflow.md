@@ -48,7 +48,7 @@ When you start a dev server, `KosmoJS`:
 
 1. **Builds your API** - Uses esbuild to compile `api/app.ts`
 2. **Starts Vite's dev server** - Serves your client pages with HMR
-3. **Integrates middleware** - Routes requests between Vite and your API
+3. **Integrates middleware** - Routes requests between `Vite` and your API
 4. **Watches for changes** - Rebuilds API code automatically
 
 ### API Hot-Reload
@@ -61,7 +61,7 @@ When you modify API files, `KosmoJS`:
 - Routes subsequent requests to the updated API
 
 The rebuild typically completes in about a second, even on larger projects.
-Your Vite dev server remains responsive during API rebuilds since they happen in a worker thread.
+Your `Vite` dev server remains responsive during API rebuilds since they happen in a worker thread.
 
 ### Future: Waiting for Rolldown
 
@@ -181,7 +181,7 @@ export default {
 ```
 
 **API not rebuilding?**
-Check the Vite terminal output for build errors. The file watcher might be detecting changes but the build is failing.
+Check the `Vite` terminal output for build errors. The file watcher might be detecting changes but the build is failing.
 
 **Slow rebuilds?**
 Consider whether your API surface can be split across multiple source folders.

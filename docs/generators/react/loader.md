@@ -11,7 +11,7 @@ head:
         loading react, react router data
 ---
 
-React Router's loader pattern synchronizes data availability with navigation,
+`React Router`'s loader pattern synchronizes data availability with navigation,
 ensuring information readiness when components mount. Define required data at
 the route level, letting the router handle fetch orchestration.
 

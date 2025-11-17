@@ -6,9 +6,9 @@ import App from "./App";
 import { baseurl } from "./config";
 
 {{! INFO: HMR broken if default export is an anonymous function }}
-export default function AppRouter(props?: { url?: string }) {
+export default function AppRouter(ssrProps?: { url?: string }) {
   return (
-    <Router root={App} base={baseurl} {...props}>
+    <Router root={App} base={baseurl} {...ssrProps}>
       {routes}
     </Router>
   );

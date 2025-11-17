@@ -29,10 +29,10 @@ Each route's client module exports:
 
 🔹 Validation schemas for client-side validation
 
-🔹 Full TypeScript types derived from your API route definitions
+🔹 Full `TypeScript` types derived from your API route definitions
 
 The client understands your complete API structure - parameters, payload requirements, response shapes -
-and provides this intelligence through both TypeScript's type system and runtime validation checks,
+and provides this intelligence through both `TypeScript`'s type system and runtime validation checks,
 ensuring your frontend and backend remain perfectly synchronized.
 
 This eliminates the traditional friction between API definition and consumption,

@@ -63,7 +63,7 @@ features:
 `KosmoJS` is a **structured Vite template** that keeps your full-stack concerns aligned.
 
 Rather than inventing yet another framework, `KosmoJS` integrates proven tools -
-TypeScript, Vite, Koa, and your frontend framework - into a clear organizational pattern.
+`TypeScript`, `Vite`, `Koa`, and your frontend framework - into a clear organizational pattern.
 Separation of concerns isn't something you have to remember - it's built into the structure.
 
 No proprietary abstractions. No new paradigms to learn. Just thoughtful structure around tools you already know.
@@ -100,7 +100,7 @@ At its core, `KosmoJS` structures full-stack `Vite` development around a `Koa` a
 
 ## 🛡️ Type Safety & Validation
 
-`KosmoJS` extends TypeScript's compile-time safety to runtime.
+`KosmoJS` extends `TypeScript`'s compile-time safety to runtime.
 Your type definitions become validation schemas automatically - no duplication, no drift.
 
 Define parameter types, payload structures, and response shapes once. `KosmoJS` generates:
@@ -141,12 +141,12 @@ Development and production use the same structure - what you build locally is wh
 
 ## 🧰 Generators
 
-Enable features by adding generators to your Vite config:
+Enable features by adding generators to your `Vite` config:
 
 - **Validation schemas** from TypeScript types
 - **Typed fetch clients** for every API route
 - **OpenAPI 3.1 specs** generated automatically
-- **Framework integration** (SolidJS, React, 🚧 with Vue / Svelte coming soon)
+- **Framework integration** (SolidJS, React, Vue, 🚧 with Svelte coming soon)
 
 Each generator watches your code and updates artifacts as you develop.
 

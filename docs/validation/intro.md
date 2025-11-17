@@ -10,12 +10,12 @@ head:
 One of `KosmoJS`'s most compelling features is its approach to validation.
 
 It's called "runtype" validation -
-your TypeScript types are automatically converted into JSON Schema and validated at runtime.
+your `TypeScript` types are automatically converted into JSON Schema and validated at runtime.
 
 Rather than forcing you to learn and maintain separate schema definition languages,<br>
-`KosmoJS` lets you express validation rules directly in TypeScript.
+`KosmoJS` lets you express validation rules directly in `TypeScript`.
 
-You write standard TypeScript types with optional refinements,
+You write standard `TypeScript` types with optional refinements,
 and `KosmoJS` automatically generates high-performance runtime validators from those types.
 
 This creates a seamless development experience where your type definitions
@@ -25,16 +25,16 @@ all without duplicating your specifications.
 ## 🛡️ Understanding Runtype Validation
 
 By default, when you provide type annotations to your route parameters, payloads, and responses,
-those annotations provide compile-time type checking through TypeScript.
+those annotations provide compile-time type checking through `TypeScript`.
 
 Your editor gives you autocomplete, catches type errors before you run your code, and helps you refactor safely.
 
 However, these compile-time checks don't protect you at runtime.
 When actual HTTP requests arrive with unpredictable data from the outside world,
-TypeScript can't help you - it only exists during development and compilation.
+`TypeScript` can't help you - it only exists during development and compilation.
 
 This is where `KosmoJS`'s runtype validation comes in.
-By installing a validation generator, you enable runtime validation that mirrors your TypeScript types exactly.
+By installing a validation generator, you enable runtime validation that mirrors your `TypeScript` types exactly.
 
 The same type definitions that give you compile-time safety
 also generate validation logic that runs when requests arrive,
@@ -51,7 +51,7 @@ what's possible and how to refine your types for specific validation needs.
 ## ⚙️ Setting Up Validation
 
 To enable runtype validation, you need to install and configure the validation generator.
-Start by adding the TypeBox generator package to your project, then register it in your Vite configuration.
+Start by adding the TypeBox generator package to your project, then register it in your `Vite` configuration.
 
 ::: code-group
 
@@ -127,7 +127,7 @@ since validation errors appear instantly without waiting for a round trip to the
 
 The generated fetch client understands all the specifics of your API routes-the HTTP methods they support,
 the parameters they expect, the structure of their request payloads, and the shape of their responses.
-When you use this client, you get full TypeScript autocomplete for all these aspects,
+When you use this client, you get full `TypeScript` autocomplete for all these aspects,
 making API consumption as type-safe as calling local functions.
 
 ## 🔍 Understanding the Generated Validation Code
@@ -135,7 +135,7 @@ making API consumption as type-safe as calling local functions.
 When you enable validation with the TypeBox generator,
 `KosmoJS` generates validation code in your `lib` directory alongside other generated artifacts.
 
-This code converts your TypeScript types into executable validation functions using the TypeBox library,
+This code converts your `TypeScript` types into executable validation functions using the TypeBox library,
 which in turn generates optimized validators based on JSON Schema.
 
 You don't need to understand the generated code to use validation -

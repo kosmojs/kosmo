@@ -7,7 +7,7 @@ head:
       content: skip validation, opt-out validation, jsdoc comments, gradual adoption, performance optimization, type checking only
 ---
 
-Sometimes you might want TypeScript type checking without runtime validation.
+Sometimes you might want `TypeScript` type checking without runtime validation.
 
 Perhaps you're gradually adding validation to an existing API,
 or perhaps a specific endpoint has unusual performance requirements
@@ -16,7 +16,7 @@ that make validation overhead unacceptable.
 `KosmoJS` provides an escape hatch through the `@skip-validation` JSDoc comment.
 
 When you add this comment to a type parameter,
-`KosmoJS` generates TypeScript types for compile-time checking but skips runtime validation:
+`KosmoJS` generates `TypeScript` types for compile-time checking but skips runtime validation:
 
 ```ts [api/example/index.ts]
 export default defineRoute(({ POST }) => [

@@ -11,7 +11,7 @@ head:
         router automation, dynamic imports
 ---
 
-KosmoJS's React generator maintains continuous observation of your `pages`
+`KosmoJS`'s `React` generator maintains continuous observation of your `pages`
 directory, detecting new components and transforming them into route
 configurations automatically.
 
@@ -39,7 +39,7 @@ this configuration:
 Several characteristics merit attention in this generated structure.
 
 The generator performs automatic parameter syntax transformation, converting
-filesystem bracket notation (`[id]`) into React Router's colon-prefix format
+filesystem bracket notation (`[id]`) into `React Router`'s colon-prefix format
 (`:id`).
 
 Component implementation leverages lazy loading, excluding route code from

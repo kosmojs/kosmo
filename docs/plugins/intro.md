@@ -7,11 +7,11 @@ head:
       content: vite plugins, kosmojs plugins, alias plugin, define plugin, dev plugin, path resolution, code generation, environment variables
 ---
 
-`KosmoJS` is a standard Vite template.
-All its functionality comes from three Vite plugins that handle path resolution,
+`KosmoJS` is a standard `Vite` template.
+All its functionality comes from three `Vite` plugins that handle path resolution,
 environment variable management, and code generation.
 
-Using these plugins is straightforward - import them and add them to your Vite configuration.
+Using these plugins is straightforward - import them and add them to your `Vite` configuration.
 
 ### 🔌 The Three Plugins
 
@@ -19,7 +19,7 @@ Using these plugins is straightforward - import them and add them to your Vite c
 
 🔹 **AliasPlugin** reads the path mappings from your `tsconfig.json`,
 performs filesystem analysis, and provides alias information to Vite.
-This allows Vite to resolve imports like `@front/{api}` and `@front/{fetch}`
+This allows `Vite` to resolve imports like `@front/{api}` and `@front/{fetch}`
 to the correct locations in your source and `lib` directories.
 ([Details](/plugins/alias-plugin))
 

@@ -39,9 +39,9 @@ export default defineRoute(({ POST }) => [
 ]);
 ```
 
-When you provide these types, TypeScript enforces them throughout your handler.
+When you provide these types, `TypeScript` enforces them throughout your handler.
 You get autocomplete on `ctx.payload` properties,
-and TypeScript verifies that whatever you assign to `ctx.body` matches the response type.
+and `TypeScript` verifies that whatever you assign to `ctx.body` matches the response type.
 
 Like parameter refinement, these types aren't just compile-time checks.
 `KosmoJS` validates the incoming payload against your specified type at runtime

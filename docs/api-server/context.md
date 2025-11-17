@@ -21,8 +21,8 @@ this is the query string parameters.
 This normalization means you can write code that accesses `ctx.payload` consistently,
 regardless of the HTTP method, simplifying your handlers when methods share validation or processing logic.
 
-The `ctx.typedParams` property gives you access to route parameters with full TypeScript type information.
-This is similar to the standard `ctx.params` that Koa provides,
+The `ctx.typedParams` property gives you access to route parameters with full `TypeScript` type information.
+This is similar to the standard `ctx.params` that `Koa` provides,
 but with the benefit of type refinement based on your route's parameter definitions.
 
 When you specify that a route parameter should be a number or a specific string union,

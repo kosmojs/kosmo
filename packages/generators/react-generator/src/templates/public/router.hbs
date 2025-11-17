@@ -25,10 +25,10 @@ export const routeStack = [
 ];
 
 {{! INFO: HMR broken if default export is an anonymous function }}
-export default function AppRouter(props?: { context?: never }) {
-  if (props?.context) {
-    const router = createStaticRouter(routeStack, props.context);
-    return <StaticRouterProvider router={router} context={props.context} />;
+export default function AppRouter(ssrProps?: { context?: never }) {
+  if (ssrProps?.context) {
+    const router = createStaticRouter(routeStack, ssrProps.context);
+    return <StaticRouterProvider router={router} context={ssrProps.context} />;
   }
   const router = createBrowserRouter(routeStack, { basename: baseurl });
   return <RouterProvider router={router} />;

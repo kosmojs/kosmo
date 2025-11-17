@@ -11,7 +11,7 @@ head:
         component templates, route customization
 ---
 
-React generator supports template overrides for specific routes
+`React` generator supports template overrides for specific routes
 through pattern-based matching. This capability enables specialized templates
 for promotional content, landing experiences, or routes requiring distinct
 structural approaches.
@@ -148,7 +148,7 @@ Templates receive identical props as defaults, including route parameters.
 
 ## 📝 Template Format
 
-Custom templates follow standard React component structure:
+Custom templates follow standard `React` component structure:
 
 ```ts
 const customTemplate = `

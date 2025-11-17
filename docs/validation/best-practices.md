@@ -24,7 +24,7 @@ These constraints prevent invalid data from entering your system and make your A
 
 Write your types to represent valid states only.
 Rather than allowing any combination of fields and using conditionals in your handler to check what's present,
-use TypeScript's type system to encode which fields are required together.
+use `TypeScript`'s type system to encode which fields are required together.
 Union types with discriminator fields, as we saw in the payment method example,
 express conditional requirements at the type level where they're enforced by validation.
 

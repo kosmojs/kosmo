@@ -36,7 +36,7 @@ export default defineRoute(({ GET }) => [
 ```
 
 This structure gives you a clear, declarative way to define which HTTP methods your endpoint supports.
-Each method handler receives the Koa context object,
+Each method handler receives the `Koa` context object,
 which `KosmoJS` enhances with additional properties to make common tasks easier.
 
 ## ⥃ Working with Multiple HTTP Methods
@@ -138,7 +138,7 @@ with concise one-liners, making your validation logic easier to read.
 
 ### Custom Error Handling
 
-By default, Koa returns plain text error messages.
+By default, `Koa` returns plain text error messages.
 For API endpoints, you'll typically want to return JSON error responses instead.
 You can add custom error handling middleware to format errors consistently across your application.
 

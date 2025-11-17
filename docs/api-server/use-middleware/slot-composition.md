@@ -114,7 +114,7 @@ through the `@kosmojs/api/bodyparser` module, you're not limited to these.
 The slot system for the bodyparser middleware means you can plug in any Koa-compatible body parsing middleware.
 
 If you need to parse XML, multipart form data with file uploads, or any other format,
-you can use existing Koa middleware packages.
+you can use existing `Koa` middleware packages.
 Just use the `bodyparser` slot when registering them
 to ensure they replace the default JSON parser for that specific route:
 

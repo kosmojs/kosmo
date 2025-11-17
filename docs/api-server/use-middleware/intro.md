@@ -77,7 +77,7 @@ First middleware after next
 Middleware executes in order until reaching your method handler,
 then unwinds back through the middleware in reverse order.
 
-This "onion" model is a core Koa concept that `KosmoJS` preserves.
+This "onion" model is a core `Koa` concept that `KosmoJS` preserves.
 It allows middleware to do work both before and after your handler runs -
 useful for tasks like timing requests, catching errors, or modifying responses.
 

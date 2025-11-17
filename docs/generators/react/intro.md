@@ -11,8 +11,8 @@ head:
         plugin, react navigation
 ---
 
-React generator establishes a bridge between directory-based routing
-and React Router, transforming your page components into navigable routes
+`React` generator establishes a bridge between directory-based routing
+and `React Router`, transforming your page components into navigable routes
 automatically. This integration delivers type safety across navigation points
 while implementing efficient code-splitting strategies.
 
@@ -22,8 +22,8 @@ designed around React's Suspense mechanism and modern data loading approaches.
 
 ## 🛠️ Package Installation
 
-Add the React generator to your project's development dependencies. The `-D`
-flag ensures this tooling stays out of production bundles:
+Add the `React` generator to your project's development dependencies.
+The `-D` flag ensures this tooling stays out of production bundles:
 
 ::: code-group
 
@@ -63,12 +63,12 @@ export default defineConfig(import.meta.dirname, {
 ```
 
 After configuration completes, the generator deploys essential files to your
-source folder, establishing your React application's foundation.
+source folder, establishing your `React` application's foundation.
 
 ## 🗂️ Multi-Folder Project Architecture
 
 When projects span multiple source directories, each folder receives its own
-React generator instance with independent configuration capabilities. This
+`React` generator instance with independent configuration capabilities. This
 architectural pattern enables different application areas to coexist with
 distinct approaches.
 
@@ -81,5 +81,5 @@ folder, preventing cross-contamination between application domains. Routes
 defined in your main application won't pollute the admin interface's
 navigation types, preserving architectural boundaries.
 
-Despite operating in separate namespaces, all applications share KosmoJS's
+Despite operating in separate namespaces, all applications share `KosmoJS`'s
 foundational organizational patterns, ensuring consistency where it matters.

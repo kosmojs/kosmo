@@ -24,12 +24,12 @@ creates predictable, testable request handling pipelines.
 ## 🛡️ Type Safety Throughout
 
 `KosmoJS` extends Koa's foundation with type safety throughout the request-response cycle.
-You define your API contracts in TypeScript types - parameters, payloads, responses -
+You define your API contracts in `TypeScript` types - parameters, payloads, responses -
 and these types flow through to runtime validation automatically.
 
 There's no context switching between writing schemas in one DSL
 and implementing logic in another language.
-Everything lives in TypeScript, in the same file, maintaining a cohesive development experience.
+Everything lives in `TypeScript`, in the same file, maintaining a cohesive development experience.
 ([Details](/api-server/type-safety/params))
 
 ## 🔧 Structured Yet Flexible
@@ -47,7 +47,7 @@ complementing global middleware with route-specific behavior.
 
 Context and state extensibility means middleware can augment requests
 with authentication details, database connections, or any other request-scoped data,
-all with proper TypeScript types that flow through your entire handler chain.
+all with proper `TypeScript` types that flow through your entire handler chain.
 
 This approach creates APIs that are both type-safe and pragmatic -
 you get compile-time checking and runtime validation without sacrificing the flexibility

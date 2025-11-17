@@ -9,11 +9,11 @@ head:
 
 ### 🔀 The AliasPlugin
 
-The AliasPlugin handles the complexity of resolving TypeScript path mappings
+The AliasPlugin handles the complexity of resolving `TypeScript` path mappings
 to actual filesystem locations.
 
 You typically don't configure this plugin directly -
-it reads your `tsconfig.json` automatically and sets up Vite aliases to match.
+it reads your `tsconfig.json` automatically and sets up `Vite` aliases to match.
 
 ```ts
 aliasPlugin(import.meta.dirname)
@@ -25,8 +25,8 @@ and performs these operations:
 It reads the `paths` configuration from `tsconfig.json`.
 It analyzes the filesystem to understand what files exist
 in both source directories and the `lib` directory.
-It translates TypeScript path patterns (like `@front/*`)
-into Vite alias configurations that point to the correct directories.
+It translates `TypeScript` path patterns (like `@front/*`)
+into `Vite` alias configurations that point to the correct directories.
 
 This translation is what allows imports like `@front/{api}/users/[id]`
 to resolve correctly during development and build,
