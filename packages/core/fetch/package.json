@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@kosmojs/fetch",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "Slee Woo",
   "license": "MIT",
   "publishConfig": {
