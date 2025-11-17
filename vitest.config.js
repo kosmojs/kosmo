@@ -55,6 +55,7 @@ export default defineConfig({
       }),
       setupFactory("generators/solid-generator"),
       setupFactory("generators/react-generator"),
+      setupFactory("generators/vue-generator"),
 
       setupFactory("integration:csr", {
         include: ["test/integration/**/*.test.ts"],

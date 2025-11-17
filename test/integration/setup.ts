@@ -2,6 +2,7 @@ import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { format } from "node:util";
 
 import got from "got";
 import { chromium } from "playwright";
@@ -52,7 +53,10 @@ export const setupTestProject = async ({
   const createTestRoute = async (routeName: string) => {
     const filePath = resolve(
       sourceFolderPath,
-      `${defaults.pagesDir}/${routeName}/index.tsx`,
+      format(
+        `${defaults.pagesDir}/${routeName}/index.%s`,
+        { solid: "tsx", react: "tsx", vue: "vue" }[framework],
+      ),
     );
     await mkdir(resolve(filePath, ".."), { recursive: true });
     await writeFile(filePath, ""); // Empty file - generator will fill it
@@ -281,7 +285,7 @@ export const setupTestProject = async ({
     await page?.close();
     await browser?.close();
     await closeServer();
-    await cleanup();
+    // await cleanup();
     await new Promise((resolve) => setTimeout(resolve, 1_000));
   };
 
