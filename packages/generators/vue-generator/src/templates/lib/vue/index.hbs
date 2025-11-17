@@ -1,0 +1,36 @@
+import type { RouteRecordRaw } from "vue-router";
+
+export type LinkProps ={{#unless routes.length}} never{{/unless}}
+  {{#each routes}}
+  | [ "{{name}}", {{paramsLiteral}} ]
+  {{/each}};
+
+export type RouteName ={{#unless routes.length}} never{{/unless}}
+  {{#each routes}}
+  | "{{name}}"
+  {{/each}};
+
+{{#if ssr}}
+{{#each routes}}
+import {{importName}} from "{{importPathmap.page}}";
+{{/each}}
+{{else}}
+{{#each routes}}
+const {{importName}} = () => import("{{importPathmap.page}}");
+{{/each}}
+{{/if}}
+
+export const routes: Array<RouteRecordRaw> = [
+  {{#each routes}}
+  {
+    name: "{{name}}",
+    path: "{{path}}",
+    component: {{importName}},
+    {{#if meta}}
+    info: {{meta}},
+    {{/if}}
+  },
+  {{/each}}
+];
+
+export const shouldHydrate = {{#if ssr}}true{{else}}false{{/if}};

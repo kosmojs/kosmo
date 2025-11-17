@@ -1,0 +1,17 @@
+import { createApp, createSSRApp } from "vue";
+
+import App from "../App.vue";
+import createRouter from "../router";
+import { shouldHydrate } from "{{importPathmap.vue}}";
+
+if (shouldHydrate) {
+  const app = createSSRApp(App);
+  const router = await createRouter({ url: location.pathname });
+  app.use(router);
+  app.mount("#app", true);
+} else {
+  const app = createApp(App);
+  const router = await createRouter();
+  app.use(router);
+  app.mount("#app");
+}

@@ -1,0 +1,44 @@
+<script setup lang="ts" generic="T extends LinkProps">
+import { computed } from "vue";
+import { RouterLink, useRoute } from "vue-router";
+
+import { stringify, unwrap } from "{{importPathmap.fetch}}/lib";
+import pageMap from "{{importPathmap.pageMap}}";
+import type { LinkProps } from "{{importPathmap.vue}}";
+import { baseurl } from "{{importPathmap.config}}";
+
+interface Props {
+  to?: T
+  query?: Record<string | number, unknown>
+  replace?: boolean
+  activeClass?: string
+  exactActiveClass?: string
+}
+
+const props = defineProps<Props>()
+
+const route = useRoute()
+
+const href = computed(() => {
+  if (props.to) {
+    const [key, ...params] = props.to
+    return pageMap[key]?.base(params as never, props.query)
+  }
+  const path = route.path.replace(
+    new RegExp(`^${baseurl.replace(/\/+$/, "")}/`),
+    "/",
+  )
+  return props.query ? [path, stringify(unwrap(props.query))].join("?") : path
+})
+</script>
+
+<template>
+  <RouterLink
+    :to="href"
+    :replace="replace"
+    :active-class="activeClass"
+    :exact-active-class="exactActiveClass"
+  >
+    <slot />
+  </RouterLink>
+</template>

@@ -229,6 +229,30 @@ export const createSourceFolder = async (
     });
 
     compilerOptions.jsxImportSource = "react";
+  } else if (framework === "vue") {
+    Object.assign(dependencies, {
+      "vue-router": self.devDependencies["vue-router"],
+      vue: self.devDependencies.vue,
+    });
+
+    Object.assign(devDependencies, {
+      "@kosmojs/vue-generator": SEMVER,
+      "@vitejs/plugin-vue": self.devDependencies["@vitejs/plugin-vue"],
+    });
+
+    plugins.push({
+      importDeclaration: `import vuePlugin from "@vitejs/plugin-vue";`,
+      importName: "vuePlugin",
+      options: "",
+    });
+
+    generators.push({
+      importDeclaration: `import vueGenerator from "@kosmojs/vue-generator";`,
+      importName: "vueGenerator",
+      options: opt?.frameworkOptions
+        ? JSON.stringify(opt.frameworkOptions, null, 2)
+        : "",
+    });
   }
 
   if (folder.ssr) {
@@ -271,6 +295,12 @@ export const createSourceFolder = async (
       ? [
           [`${defaults.pagesDir}/index/index.tsx`, ""],
           [`${defaults.entryDir}/client.tsx`, ""],
+        ]
+      : []),
+    ...(["vue"].includes(framework)
+      ? [
+          [`${defaults.pagesDir}/index/index.vue`, ""],
+          [`${defaults.entryDir}/client.ts`, ""],
         ]
       : []),
   ]) {

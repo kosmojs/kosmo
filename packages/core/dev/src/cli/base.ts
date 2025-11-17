@@ -18,8 +18,8 @@ export const FRAMEWORK_OPTIONS = [
   "none",
   "solid",
   "react",
-  // TODO: implement vue/svelte generators
-  // "vue",
+  "vue",
+  // TODO: implement svelte generator
   // "svelte",
 ] as const;
 
