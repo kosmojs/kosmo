@@ -83,8 +83,8 @@ You'll be prompted to configure:
 - **Folder name** (required) - Name for your source folder (e.g., `@front`, `@admin`)
 - **Base URL** - Where this folder serves from (default: `/`)
 - **Dev server port** - Port number for development (default: `4000`)
-- **Frontend framework** - SolidJS, React, Vue (and Svelte coming soon)
-- **Server-side rendering (SSR)** - Enable SSR (disabled by default)
+- **Frontend framework** - SolidJS / React / Vue (or none for API-only source folders)
+- **Server-side rendering (SSR)** - Enable/Disable SSR
 
 The source folder may have added new dependencies. Run the package manager again:
 

@@ -14,14 +14,7 @@ export type SourceFolder = {
 
 export const CREATE_OPTIONS = ["project", "folder"] as const;
 
-export const FRAMEWORK_OPTIONS = [
-  "none",
-  "solid",
-  "react",
-  "vue",
-  // TODO: implement svelte generator
-  // "svelte",
-] as const;
+export const FRAMEWORK_OPTIONS = ["none", "solid", "react", "vue"] as const;
 
 export const NODE_VERSION = "22";
 export const DEFAULT_DIST = "dist";

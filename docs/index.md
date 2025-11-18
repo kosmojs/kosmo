@@ -45,8 +45,8 @@ features:
     link: /fetch/intro
 
   - icon: 🎨
-    title: Framework Freedom
-    details: Use any frontend framework - SolidJS, React, Vue, Svelte, or none.
+    title: Multiple Frameworks
+    details: Currently supports SolidJS, React, and Vue. Or none for API-only source folders.
     link: /start
 
   - icon: 🔧
@@ -100,13 +100,13 @@ At its core, `KosmoJS` structures full-stack `Vite` development around a `Koa` a
 
 ## 🛡️ Type Safety & Validation
 
-`KosmoJS` extends `TypeScript`'s compile-time safety to runtime.
-Your type definitions become validation schemas automatically - no duplication, no drift.
+`KosmoJS` converts your types into runtime validation routines, ensuring type safety beyond compile time - no duplication, no drift.
 
 Define parameter types, payload structures, and response shapes once. `KosmoJS` generates:
 - Runtime validators for your API
 - Typed fetch clients for your frontend
 - Client-side validation that catches errors before requests
+- As well as OpenAPI schema for your entire API
 
 Everything stays aligned because everything derives from the same source of truth.
 
@@ -139,24 +139,13 @@ Development and production use the same structure - what you build locally is wh
 
 ---
 
-## 🧰 Generators
-
-Enable features by adding generators to your `Vite` config:
-
-- **Validation schemas** from TypeScript types
-- **Typed fetch clients** for every API route
-- **OpenAPI 3.1 specs** generated automatically
-- **Framework integration** (SolidJS, React, Vue, 🚧 with Svelte coming soon)
-
-Each generator watches your code and updates artifacts as you develop.
-
-📘 [SolidJS generator](/generators/solid/intro) · [OpenAPI generator](/generators/openapi/intro)
-
----
-
 ## 🚀 Production Ready
 
-`pnpm build` produces deployment-ready output - bundled API server and optimized frontend assets.
+`pnpm build` produces deployment-ready output:
+
+- a bundled API server
+- optimized frontend assets
+- an SSR bundle enabling smooth server-side rendering
 
 Deploy to any Node.js environment: traditional servers, containers, serverless platforms, or edge runtimes.
 

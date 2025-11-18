@@ -70,7 +70,7 @@ export default async (
 
   const routeFilePatterns = [
     `${defaults.apiDir}/**/index.ts`,
-    `${defaults.pagesDir}/**/index.{ts,tsx,vue,svelte}`,
+    `${defaults.pagesDir}/**/index.{ts,tsx,vue}`,
   ];
 
   const resolveRouteFile: ResolveRouteFile = (file) => {

@@ -1,6 +1,8 @@
 ---
 title: Features
-description: Explore KosmoJS features including multiple source folders, directory-based routing, end-to-end type safety, generated fetch clients, OpenAPI specs, and framework freedom for React, Solid, Vue, and Svelte.
+description: Explore KosmoJS features including multiple source folders,
+    directory-based routing, end-to-end type safety, generated fetch clients,
+    OpenAPI specs, and framework freedom for React, Solid, and Vue.
 head:
   - - meta
     - name: keywords
@@ -220,62 +222,23 @@ await useFetch.POST([invalidId], invalidPayload);
 
 ---
 
-## 🎨 Framework Freedom
+## 🎨 Multiple Frameworks
 
-Use any frontend framework - SolidJS, React, Vue, Svelte, or none.
-Generators make common choices convenient.
+Currently supports `SolidJS`, `React` and `Vue`.
+Additional frameworks may be added based on community interest.
 
 **Why it matters:**
 
 Full-stack frameworks often lock you into specific frontend choices.
-Next.js assumes React. Nuxt assumes Vue. SvelteKit assumes Svelte.
+
+- `Solid Start` assumes `SolidJS`.
+- `Next` assumes `React`.
+- `Nuxt` assumes `Vue`.
 
 `KosmoJS` is a `Vite` template, not a framework - you choose your frontend stack.
 
-**How it works:**
-
-**Built-in generators for:**
-- **SolidJS** - Routing, resources, type-safe navigation
-- **React** - Component scaffolding, routing integration
-- **Vue** - Coming soon 🚧 (community contribution welcome!)
-- **Svelte** - Coming soon 🚧 (community contribution welcome!)
-
-**Example with SolidJS:**
-
-Install generator:
-
-::: code-group
-
-```sh [pnpm]
-pnpm install -D @kosmojs/solid-generator
-```
-
-```sh [npm]
-npm install -D @kosmojs/solid-generator
-```
-
-```sh [yarn]
-yarn add -D @kosmojs/solid-generator
-```
-:::
-
-Configure in `vite.config.ts`:
-
-```ts
-import devPlugin from "@kosmojs/dev";
-import solidGenerator from "@kosmojs/solid-generator";
-
-export default {
-  plugins: [
-    devPlugin(apiurl, {
-      generators: [
-        solidGenerator()
-        // other generators ...
-      ],
-    }),
-  ],
-}
-```
+When you add a source folder, you'll be prompted to select a framework.
+Once selected, `KosmoJS` generates a ready-to-go folder with everything set up and aligned to your choice.
 
 **Benefits:**
 - Choose the right tool for each source folder
