@@ -64,10 +64,19 @@ Instead, you create source folders as needed, each organized around a specific c
 
 To create a new source folder, simply run:
 
-```sh
+::: code-group
+```sh [pnpm]
 pnpm +folder
-# or npm run +folder / yarn +folder
 ```
+
+```sh [npm]
+npm run +folder
+```
+
+```sh [yarn]
+yarn +folder
+```
+:::
 
 You'll be prompted to configure:
 
