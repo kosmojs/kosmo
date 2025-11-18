@@ -531,9 +531,7 @@ export default defineConfig({
       ],
     },
 
-    socialLinks: [
-      { icon: "github", link: "https://github.com/kosmojs/kosmojs" },
-    ],
+    socialLinks: [{ icon: "github", link: "https://github.com/kosmojs/kosmo" }],
 
     footer: {
       message: "Released under the MIT License.",
