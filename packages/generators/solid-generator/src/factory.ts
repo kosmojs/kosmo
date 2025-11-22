@@ -20,7 +20,9 @@ import type { Options } from "./types";
 
 import libFetchUnwrapTpl from "./templates/lib/fetch/unwrap.hbs";
 import libPagesTpl from "./templates/lib/pages.hbs";
+import libSolidClientTpl from "./templates/lib/solid/client.hbs";
 import libSolidIndexTpl from "./templates/lib/solid/index.hbs";
+import libSolidServerTpl from "./templates/lib/solid/server.hbs";
 import stylesTpl from "./templates/lib/solid/styles.css?as=text";
 import libSolidUseTpl from "./templates/lib/solid/use.hbs";
 import paramTpl from "./templates/param.hbs";
@@ -271,7 +273,7 @@ export const factory: GeneratorFactory<Options> = async (
     const context = {
       routes,
       apiRoutes,
-      ssr: ssrGenerator ? command === "build" : false,
+      shouldHydrate: JSON.stringify(ssrGenerator ? command === "build" : false),
       importPathmap: {
         config: join(sourceFolder, defaults.configDir),
         fetch: join(sourceFolder, defaults.fetchLibDir),
@@ -280,6 +282,8 @@ export const factory: GeneratorFactory<Options> = async (
 
     for (const [file, template] of [
       ["{solid}/index.ts", libSolidIndexTpl],
+      ["{solid}/client.ts", libSolidClientTpl],
+      ["{solid}/server.ts", libSolidServerTpl],
       ["{solid}/use.ts", libSolidUseTpl],
       [`${defaults.pagesLibDir}.ts`, libPagesTpl],
     ]) {

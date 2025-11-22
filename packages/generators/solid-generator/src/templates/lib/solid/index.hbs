@@ -1,10 +1,3 @@
-{{#unless ssr}}
-import { lazy } from "solid-js";
-
-type ComponentModule = {
-  preload?: () => Promise<unknown>;
-}
-{{/unless}}
 
 export type LinkProps ={{#unless routes.length}} never{{/unless}}
   {{#each routes}}
@@ -15,33 +8,3 @@ export type RouteName ={{#unless routes.length}} never{{/unless}}
   {{#each routes}}
   | "{{name}}"
   {{/each}};
-
-{{#if ssr}}
-{{#each routes}}
-import {{importName}} from "{{importPathmap.page}}";
-{{/each}}
-{{else}}
-{{#each routes}}
-const {{importName}} = lazy(() => import("{{importPathmap.page}}"));
-{{/each}}
-{{/if}}
-
-export const routes = [
-  {{#each routes}}
-  {
-    name: "{{name}}",
-    path: "{{path}}",
-    component: {{importName}},
-    {{#unless ../ssr}}
-    preload: () => import("{{importPathmap.page}}").then(
-      (mdl) => (mdl as ComponentModule).preload?.()
-    ),
-    {{/unless}}
-    {{#if meta}}
-    info: {{meta}},
-    {{/if}}
-  },
-  {{/each}}
-];
-
-export const shouldHydrate = {{#if ssr}}true{{else}}false{{/if}};

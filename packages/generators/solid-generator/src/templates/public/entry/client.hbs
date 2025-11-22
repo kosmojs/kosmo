@@ -1,12 +1,18 @@
 import { hydrate, render } from "solid-js/web";
 
-import { shouldHydrate } from "{{importPathmap.solid}}";
-import Router from "../router";
+import { routes, shouldHydrate } from "{{importPathmap.solid}}/client";
+import App from "../App";
+import createRouter from "../router";
 
 const root = document.getElementById("app");
 
 if (root) {
-  shouldHydrate ? hydrate(Router, root) : render(Router, root);
+  const router = createRouter(App, routes);
+  if (shouldHydrate) {
+    hydrate(() => router, root)
+  } else {
+    render(() => router, root);
+  }
 } else {
   console.error("Root element not found!");
 }
