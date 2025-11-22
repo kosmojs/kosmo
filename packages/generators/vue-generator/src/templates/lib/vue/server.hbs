@@ -1,0 +1,18 @@
+import type { RouteRecordRaw } from "vue-router";
+
+{{#each routes}}
+import {{importName}} from "{{importPathmap.page}}";
+{{/each}}
+
+export const routes: Array<RouteRecordRaw> = [
+  {{#each routes}}
+  {
+    name: "{{name}}",
+    path: "{{path}}",
+    component: {{importName}},
+    {{#if meta}}
+    info: {{meta}},
+    {{/if}}
+  },
+  {{/each}}
+];

@@ -18,7 +18,9 @@ import type { Options } from "./types";
 
 import libFetchUnwrapTpl from "./templates/lib/fetch/unwrap.hbs";
 import libPagesTpl from "./templates/lib/pages.hbs";
+import libVueClientTpl from "./templates/lib/vue/client.hbs";
 import libVueIndexTpl from "./templates/lib/vue/index.hbs";
+import libVueServerTpl from "./templates/lib/vue/server.hbs";
 import stylesTpl from "./templates/lib/vue/styles.css?as=text";
 import libVueUseTpl from "./templates/lib/vue/use.hbs";
 import paramTpl from "./templates/param.hbs";
@@ -245,7 +247,7 @@ export const factory: GeneratorFactory<Options> = async (
     const context = {
       routes,
       apiRoutes,
-      ssr: ssrGenerator ? command === "build" : false,
+      shouldHydrate: JSON.stringify(ssrGenerator ? command === "build" : false),
       importPathmap: {
         config: join(sourceFolder, defaults.configDir),
         fetch: join(sourceFolder, defaults.fetchLibDir),
@@ -254,6 +256,8 @@ export const factory: GeneratorFactory<Options> = async (
 
     for (const [file, template] of [
       ["{vue}/index.ts", libVueIndexTpl],
+      ["{vue}/client.ts", libVueClientTpl],
+      ["{vue}/server.ts", libVueServerTpl],
       ["{vue}/use.ts", libVueUseTpl],
       [`${defaults.pagesLibDir}.ts`, libPagesTpl],
     ]) {

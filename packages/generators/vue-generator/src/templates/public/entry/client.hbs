@@ -1,17 +1,21 @@
 import { createApp, createSSRApp } from "vue";
 
+import { routes, shouldHydrate } from "{{importPathmap.vue}}/client";
 import App from "../App.vue";
 import createRouter from "../router";
-import { shouldHydrate } from "{{importPathmap.vue}}";
 
-if (shouldHydrate) {
-  const app = createSSRApp(App);
-  const router = await createRouter({ url: location.pathname });
-  app.use(router);
-  app.mount("#app", true);
+const root = document.getElementById("app");
+
+if (root) {
+  if (shouldHydrate) {
+    const app = createSSRApp(App);
+    await createRouter(app, routes);
+    app.mount(root, true);
+  } else {
+    const app = createApp(App);
+    await createRouter(app, routes);
+    app.mount(root);
+  }
 } else {
-  const app = createApp(App);
-  const router = await createRouter();
-  app.use(router);
-  app.mount("#app");
+  console.error("Root element not found!");
 }

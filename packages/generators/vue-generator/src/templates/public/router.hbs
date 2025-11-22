@@ -1,19 +1,31 @@
-import { createRouter, createWebHistory, createMemoryHistory } from "vue-router";
+import type { App } from "vue";
+import {
+  type RouteRecordRaw,
+  createRouter,
+  createWebHistory,
+  createMemoryHistory,
+} from "vue-router";
 
-import { routes } from "{{importPathmap.vue}}";
 import { baseurl } from "./config";
 
-{{! INFO: HMR broken if default export is an anonymous function }}
-export default async function AppRouter(ssrProps?: { url: string }) {
+export default async (
+  app: App,
+  routes: Array<RouteRecordRaw>,
+  ssrProps?: { url: URL },
+) => {
   const router = createRouter({
-    history: ssrProps ? createMemoryHistory(baseurl) : createWebHistory(baseurl),
+    history: ssrProps
+      ? createMemoryHistory(baseurl)
+      : createWebHistory(baseurl),
     routes,
   });
 
   if (ssrProps?.url) {
-    await router.push(ssrProps.url.replace(baseurl, ""));
+    await router.push(ssrProps.url.pathname);
     await router.isReady();
   }
 
+  app.use(router);
+
   return router;
-}
+};
