@@ -1,0 +1,141 @@
+[
+  [
+    "with-source-folders/with-vue-ssr/api/app.ts",
+    [
+      "import createApp from \"@/core/api/app\";",
+      "",
+      "import router from \"./router\";",
+      "",
+      "export default () => {",
+      "  const app = createApp();",
+      "",
+      "  // routes goes latest",
+      "  app.use(router.routes());",
+      "",
+      "  return app;",
+      "};",
+      "",
+      "/**",
+      " * In dev mode, determines whether to pass the request to API handler or to Vite.",
+      "export const devMiddlewareFactory: import(\"@kosmojs/api\").DevMiddlewareFactory = (",
+      "  app,",
+      ") => {",
+      "  return (req, res, next) => {",
+      "    return req.url?.startsWith(\"...\")",
+      "      ? app?.callback()(req, res) // send request to api handler",
+      "      : next(); // send request to vite dev server",
+      "  };",
+      "};",
+      " * */",
+      "",
+      "/**",
+      " * In dev mode, used to cleanup before reloading api handler.",
+      "export const teardownHandler: import(\"@kosmojs/api\").TeardownHandler = () => {",
+      "  // close db connections, server sockets etc.",
+      "};",
+      " * */"
+    ]
+  ],
+  [
+    "with-source-folders/with-vue-ssr/api/index/index.ts",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/with-vue-ssr/api/router.ts",
+    [
+      "import { routerRoutes } from \"with-vue-ssr/{api}\";",
+      "",
+      "import createRouter from \"@/core/api/router\";",
+      "",
+      "const router = createRouter();",
+      "",
+      "for (const { name, path, methods, middleware } of routerRoutes) {",
+      "  router.register(path, methods, middleware, { name });",
+      "}",
+      "",
+      "export default router;"
+    ]
+  ],
+  [
+    "with-source-folders/with-vue-ssr/api/server.ts",
+    [
+      "import createServer from \"@/core/api/server\";",
+      "import createApp from \"./app\";",
+      "",
+      "createServer(createApp);"
+    ]
+  ],
+  [
+    "with-source-folders/with-vue-ssr/api/use.ts",
+    [
+      "import globalMiddleware from \"@/core/api/use\";",
+      "",
+      "export default [",
+      "  // Global middleware applied to all routes",
+      "  ...globalMiddleware,",
+      "];"
+    ]
+  ],
+  [
+    "with-source-folders/with-vue-ssr/config/index.ts",
+    [
+      "export const baseurl = \"/\";",
+      "export const apiurl = \"/api\"; // relative to baseurl"
+    ]
+  ],
+  [
+    "with-source-folders/with-vue-ssr/entry/client.ts",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/with-vue-ssr/index.html",
+    [
+      "<!--",
+      "Do not remove! Build process requires this file for framework-less source folders.",
+      "Framework generators will override this stub with their own setup.",
+      "-->"
+    ]
+  ],
+  [
+    "with-source-folders/with-vue-ssr/pages/index/index.vue",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/with-vue-ssr/vite.config.ts",
+    [
+      "import { join } from \"node:path\";",
+      "",
+      "import vuePlugin from \"@vitejs/plugin-vue\";",
+      "import devPlugin, { apiGenerator, fetchGenerator } from \"@kosmojs/dev\";",
+      "import vueGenerator from \"@kosmojs/vue-generator\";",
+      "import ssrGenerator from \"@kosmojs/ssr-generator\";",
+      "",
+      "import defineConfig from \"../vite.base\";",
+      "import { apiurl, baseurl } from \"./config\";",
+      "",
+      "export default defineConfig(import.meta.dirname, {",
+      "  base: join(baseurl, \"/\"),",
+      "  server: {",
+      "    port: 4000,",
+      "  },",
+      "  plugins: [",
+      "    vuePlugin(),",
+      "    devPlugin(apiurl, {",
+      "      generators: [",
+      "        apiGenerator(),",
+      "        fetchGenerator(),",
+      "        vueGenerator(),",
+      "ssrGenerator(),",
+      "      ],",
+      "    }),",
+      "  ],",
+      "});"
+    ]
+  ]
+]
