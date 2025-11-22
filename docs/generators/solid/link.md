@@ -39,12 +39,14 @@ export default function Link(
     "children",
   ]);
 
+  const location = useLocation();
+
   const href = () => {
     if (knownProps.to) {
       const [key, ...params] = knownProps.to;
       return pageMap[key]?.base(params as never, knownProps.query);
     }
-    const path = useLocation().pathname.replace(
+    const path = location.pathname.replace(
       new RegExp(`^${baseurl.replace(/\/+$/, "")}/`),
       "/",
     );
