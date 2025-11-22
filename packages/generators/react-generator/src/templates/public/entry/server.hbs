@@ -1,21 +1,19 @@
 import { renderToString } from "react-dom/server";
-import { createStaticHandler } from "react-router";
 
-import Router, { routeStack } from "../router";
-import { baseurl } from "../config";
+import { routes } from "{{importPathmap.react}}/server";
+import App from "../App";
+import createRouter from "../router";
 
 export default {
   async factory(url) {
-    const handler = createStaticHandler(routeStack, { basename: baseurl });
-    const context = await handler.query(new Request(`http://localhost${url}`));
-
+    const router = await createRouter(App, routes, { url });
     return {
-      renderToString({ criticalCss }) {
+      async renderToString({ criticalCss }) {
         const head = criticalCss
           .map(({ text }) => `<style>${text}</style>`)
-          .join("");
+          .join("\n");
 
-        const html = renderToString(Router({ context } as never));
+        const html = renderToString(router);
 
         return { head, html };
       },

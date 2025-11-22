@@ -1,25 +1,17 @@
-import { StrictMode } from "react";
 import { hydrateRoot, createRoot } from "react-dom/client";
 
-import { shouldHydrate } from "{{importPathmap.react}}";
-import Router from "../router";
+import { routes, shouldHydrate } from "{{importPathmap.react}}/client";
+import App from "../App";
+import createRouter from "../router";
 
 const root = document.getElementById("app");
 
 if (root) {
+  const router = await createRouter(App, routes);
   if (shouldHydrate) {
-    hydrateRoot(
-      root,
-      <StrictMode>
-        <Router />
-      </StrictMode>,
-    );
+    hydrateRoot(root, router);
   } else {
-    createRoot(root).render(
-      <StrictMode>
-        <Router />
-      </StrictMode>,
-    );
+    createRoot(root).render(router);
   }
 } else {
   console.error("Root element not found!");

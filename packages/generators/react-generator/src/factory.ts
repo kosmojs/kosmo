@@ -19,7 +19,9 @@ import {
 import type { Options } from "./types";
 
 import libPagesTpl from "./templates/lib/pages.hbs";
+import libReactClientTpl from "./templates/lib/react/client.hbs";
 import libReactIndexTpl from "./templates/lib/react/index.hbs";
+import libReactServerTpl from "./templates/lib/react/server.hbs";
 import stylesTpl from "./templates/lib/react/styles.css?as=text";
 import libReactUseTpl from "./templates/lib/react/use.hbs";
 import paramTpl from "./templates/param.hbs";
@@ -224,7 +226,7 @@ export const factory: GeneratorFactory<Options> = async (
 
     const context = {
       routes,
-      ssr: ssrGenerator ? command === "build" : false,
+      shouldHydrate: JSON.stringify(ssrGenerator ? command === "build" : false),
       importPathmap: {
         config: join(sourceFolder, defaults.configDir),
         fetch: join(sourceFolder, defaults.fetchLibDir),
@@ -233,6 +235,8 @@ export const factory: GeneratorFactory<Options> = async (
 
     for (const [file, template] of [
       ["{react}/index.ts", libReactIndexTpl],
+      ["{react}/client.ts", libReactClientTpl],
+      ["{react}/server.ts", libReactServerTpl],
       ["{react}/use.ts", libReactUseTpl],
       [`${defaults.pagesLibDir}.ts`, libPagesTpl],
     ]) {

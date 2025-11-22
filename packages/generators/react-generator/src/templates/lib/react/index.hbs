@@ -1,12 +1,3 @@
-{{#unless ssr}}
-import { lazy } from "react";
-
-type Params = Record<string, string | undefined>;
-
-type ComponentModule = {
-  loader?: (ctx: { params: Params }) => Promise<unknown>;
-}
-{{/unless}}
 
 export type LinkProps ={{#unless routes.length}} never{{/unless}}
   {{#each routes}}
@@ -17,34 +8,3 @@ export type RouteName ={{#unless routes.length}} never{{/unless}}
   {{#each routes}}
   | "{{name}}"
   {{/each}};
-
-{{#if ssr}}
-{{#each routes}}
-import {{importName}} from "{{importPathmap.page}}";
-{{/each}}
-{{else}}
-{{#each routes}}
-const {{importName}} = lazy(() => import("{{importPathmap.page}}"));
-{{/each}}
-{{/if}}
-
-export const routes = [
-  {{#each routes}}
-  {
-    name: "{{name}}",
-    path: "{{path}}",
-    Component: {{importName}},
-    {{#unless ../ssr}}
-    loader: async (ctx: { params: Params }) => {
-      const module = await import("{{importPathmap.page}}") as ComponentModule;
-      return module?.loader ? module.loader(ctx) : undefined;
-    },
-    {{/unless}}
-    {{#if meta}}
-    handle: {{meta}},
-    {{/if}}
-  },
-  {{/each}}
-];
-
-export const shouldHydrate = {{#if ssr}}true{{else}}false{{/if}};

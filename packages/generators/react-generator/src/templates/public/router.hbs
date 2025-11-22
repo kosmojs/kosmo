@@ -1,36 +1,43 @@
+import type { ComponentType, PropsWithChildren } from "react";
 import {
   createBrowserRouter,
+  createStaticHandler,
   createStaticRouter,
-  Outlet,
+  type RouteObject,
   RouterProvider,
   StaticRouterProvider,
 } from "react-router";
 
-import { routes } from "{{importPathmap.react}}";
-
-import App from "./App";
 import { baseurl } from "./config";
 
-export const routeStack = [
-  {
-    path: "/",
-    element: (
-      <App>
-        <Outlet />
-      </App>
-    ),
-    HydrateFallback: () => <div>Loading...</div>,
-    children: routes,
-  },
-];
+export default async (
+  App: ComponentType<PropsWithChildren>,
+  routes: Array<RouteObject>,
+  ssrProps?: { url?: URL },
+) => {
+  const routeStack = [
+    {
+      path: "/",
+      Component: App,
+      children: routes,
+    },
+  ];
 
-{{! INFO: HMR broken if default export is an anonymous function }}
-export default function AppRouter(ssrProps?: { context?: never }) {
-  if (ssrProps?.context) {
-    const router = createStaticRouter(routeStack, ssrProps.context);
-    return <StaticRouterProvider router={router} context={ssrProps.context} />;
+  if (ssrProps?.url) {
+    const handler = createStaticHandler(routeStack, { basename: baseurl });
+
+    const result = await handler.query(new Request(ssrProps.url.href));
+
+    if (result instanceof Response) {
+      // handled by SSR server
+      throw result;
+    }
+
+    const router = createStaticRouter(routeStack, result);
+
+    return <StaticRouterProvider router={router} context={result} />;
   }
+
   const router = createBrowserRouter(routeStack, { basename: baseurl });
   return <RouterProvider router={router} />;
-}
-
+};
