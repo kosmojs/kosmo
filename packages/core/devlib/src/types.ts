@@ -318,7 +318,7 @@ export type SSRSetup = {
    * enables earlier flushing and improved Time-to-First-Byte (TTFB).
    * `renderToString` will only be used if a streaming renderer is not available.
    * */
-  factory: (url: string) =>
+  factory: (url: URL) =>
     | {
         renderToString?: SSRString;
         renderToStream?: SSRStream;

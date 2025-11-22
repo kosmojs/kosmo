@@ -182,7 +182,9 @@ export const requestHandlerFactory = ({
 
     try {
       // Ask the user-provided SSR factory to produce rendering methods
-      const { renderToString, renderToStream } = await renderFactory(request.url);
+      const { renderToString, renderToStream } = await renderFactory(
+        new URL(request.url, `http://${request.headers.host}`)
+      );
 
       if (renderToStream) {
         // Mode 1: streaming SSR.
