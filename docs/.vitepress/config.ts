@@ -12,6 +12,20 @@ const icons = {
 export default defineConfig({
   lang: "en-US",
   title: "KosmoJS",
+
+  // Force .html on all URLs
+  cleanUrls: false,
+
+  // mark .html URLs as canonical
+  transformPageData(pageData) {
+    const canonicalUrl = `https://kosmojs.dev/${pageData.relativePath.replace(/\.md$/, ".html")}`;
+    pageData.frontmatter.head ??= [];
+    pageData.frontmatter.head.push([
+      "link",
+      { rel: "canonical", href: canonicalUrl },
+    ]);
+  },
+
   lastUpdated: true,
 
   sitemap: {
