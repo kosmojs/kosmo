@@ -1,0 +1,13 @@
+{
+  "name": "signup",
+  "folder": "pages",
+  "file": "signup/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "signup",
+      "base": "signup",
+      "path": "signup",
+      "ext": ""
+    }
+  ]
+}

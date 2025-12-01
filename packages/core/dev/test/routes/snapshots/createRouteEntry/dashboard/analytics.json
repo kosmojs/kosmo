@@ -1,0 +1,19 @@
+{
+  "name": "dashboard/analytics",
+  "folder": "pages",
+  "file": "dashboard/analytics/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "dashboard",
+      "base": "dashboard",
+      "path": "dashboard",
+      "ext": ""
+    },
+    {
+      "orig": "analytics",
+      "base": "analytics",
+      "path": "analytics",
+      "ext": ""
+    }
+  ]
+}

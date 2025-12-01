@@ -1,0 +1,51 @@
+{
+  "name": "projects/[projectId]/tasks/[taskId]/comments",
+  "folder": "pages",
+  "file": "projects/[projectId]/tasks/[taskId]/comments/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "projects",
+      "base": "projects",
+      "path": "projects",
+      "ext": ""
+    },
+    {
+      "orig": "[projectId]",
+      "base": "[projectId]",
+      "path": "[projectId]",
+      "ext": "",
+      "param": {
+        "name": "projectId",
+        "const": "projectId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "tasks",
+      "base": "tasks",
+      "path": "tasks",
+      "ext": ""
+    },
+    {
+      "orig": "[taskId]",
+      "base": "[taskId]",
+      "path": "[taskId]",
+      "ext": "",
+      "param": {
+        "name": "taskId",
+        "const": "taskId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "comments",
+      "base": "comments",
+      "path": "comments",
+      "ext": ""
+    }
+  ]
+}

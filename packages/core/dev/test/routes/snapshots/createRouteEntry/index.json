@@ -1,0 +1,13 @@
+{
+  "name": "index",
+  "folder": "api",
+  "file": "index/index.ts",
+  "pathTokens": [
+    {
+      "orig": "index",
+      "base": "index",
+      "path": "/",
+      "ext": ""
+    }
+  ]
+}

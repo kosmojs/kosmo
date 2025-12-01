@@ -1,0 +1,2600 @@
+[
+  {
+    "name": "dashboard/settings/billing",
+    "folder": "pages",
+    "file": "dashboard/settings/billing/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "dashboard",
+        "base": "dashboard",
+        "path": "dashboard",
+        "ext": ""
+      },
+      {
+        "orig": "settings",
+        "base": "settings",
+        "path": "settings",
+        "ext": ""
+      },
+      {
+        "orig": "billing",
+        "base": "billing",
+        "path": "billing",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "dashboard/settings/notifications",
+    "folder": "pages",
+    "file": "dashboard/settings/notifications/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "dashboard",
+        "base": "dashboard",
+        "path": "dashboard",
+        "ext": ""
+      },
+      {
+        "orig": "settings",
+        "base": "settings",
+        "path": "settings",
+        "ext": ""
+      },
+      {
+        "orig": "notifications",
+        "base": "notifications",
+        "path": "notifications",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "dashboard/settings/profile",
+    "folder": "pages",
+    "file": "dashboard/settings/profile/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "dashboard",
+        "base": "dashboard",
+        "path": "dashboard",
+        "ext": ""
+      },
+      {
+        "orig": "settings",
+        "base": "settings",
+        "path": "settings",
+        "ext": ""
+      },
+      {
+        "orig": "profile",
+        "base": "profile",
+        "path": "profile",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "dashboard/settings/security",
+    "folder": "pages",
+    "file": "dashboard/settings/security/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "dashboard",
+        "base": "dashboard",
+        "path": "dashboard",
+        "ext": ""
+      },
+      {
+        "orig": "settings",
+        "base": "settings",
+        "path": "settings",
+        "ext": ""
+      },
+      {
+        "orig": "security",
+        "base": "security",
+        "path": "security",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "shop/checkout/confirm",
+    "folder": "pages",
+    "file": "shop/checkout/confirm/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "shop",
+        "base": "shop",
+        "path": "shop",
+        "ext": ""
+      },
+      {
+        "orig": "checkout",
+        "base": "checkout",
+        "path": "checkout",
+        "ext": ""
+      },
+      {
+        "orig": "confirm",
+        "base": "confirm",
+        "path": "confirm",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "shop/checkout/payment",
+    "folder": "pages",
+    "file": "shop/checkout/payment/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "shop",
+        "base": "shop",
+        "path": "shop",
+        "ext": ""
+      },
+      {
+        "orig": "checkout",
+        "base": "checkout",
+        "path": "checkout",
+        "ext": ""
+      },
+      {
+        "orig": "payment",
+        "base": "payment",
+        "path": "payment",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "shop/checkout/shipping",
+    "folder": "pages",
+    "file": "shop/checkout/shipping/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "shop",
+        "base": "shop",
+        "path": "shop",
+        "ext": ""
+      },
+      {
+        "orig": "checkout",
+        "base": "checkout",
+        "path": "checkout",
+        "ext": ""
+      },
+      {
+        "orig": "shipping",
+        "base": "shipping",
+        "path": "shipping",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "admin/[tenant]/settings/general",
+    "folder": "pages",
+    "file": "admin/[tenant]/settings/general/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "admin",
+        "base": "admin",
+        "path": "admin",
+        "ext": ""
+      },
+      {
+        "orig": "[tenant]",
+        "base": "[tenant]",
+        "path": "[tenant]",
+        "ext": "",
+        "param": {
+          "name": "tenant",
+          "const": "tenant",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "settings",
+        "base": "settings",
+        "path": "settings",
+        "ext": ""
+      },
+      {
+        "orig": "general",
+        "base": "general",
+        "path": "general",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "admin/[tenant]/settings/permissions",
+    "folder": "pages",
+    "file": "admin/[tenant]/settings/permissions/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "admin",
+        "base": "admin",
+        "path": "admin",
+        "ext": ""
+      },
+      {
+        "orig": "[tenant]",
+        "base": "[tenant]",
+        "path": "[tenant]",
+        "ext": "",
+        "param": {
+          "name": "tenant",
+          "const": "tenant",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "settings",
+        "base": "settings",
+        "path": "settings",
+        "ext": ""
+      },
+      {
+        "orig": "permissions",
+        "base": "permissions",
+        "path": "permissions",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "shop/product/[id]/reviews",
+    "folder": "pages",
+    "file": "shop/product/[id]/reviews/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "shop",
+        "base": "shop",
+        "path": "shop",
+        "ext": ""
+      },
+      {
+        "orig": "product",
+        "base": "product",
+        "path": "product",
+        "ext": ""
+      },
+      {
+        "orig": "[id]",
+        "base": "[id]",
+        "path": "[id]",
+        "ext": "",
+        "param": {
+          "name": "id",
+          "const": "id",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "reviews",
+        "base": "reviews",
+        "path": "reviews",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "projects/[projectId]/tasks/[taskId]/comments",
+    "folder": "pages",
+    "file": "projects/[projectId]/tasks/[taskId]/comments/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "projects",
+        "base": "projects",
+        "path": "projects",
+        "ext": ""
+      },
+      {
+        "orig": "[projectId]",
+        "base": "[projectId]",
+        "path": "[projectId]",
+        "ext": "",
+        "param": {
+          "name": "projectId",
+          "const": "projectId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "tasks",
+        "base": "tasks",
+        "path": "tasks",
+        "ext": ""
+      },
+      {
+        "orig": "[taskId]",
+        "base": "[taskId]",
+        "path": "[taskId]",
+        "ext": "",
+        "param": {
+          "name": "taskId",
+          "const": "taskId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "comments",
+        "base": "comments",
+        "path": "comments",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "courses/[courseId]/lessons/[[lessonId]]/assignments/[...assignmentPath]",
+    "folder": "pages",
+    "file": "courses/[courseId]/lessons/[[lessonId]]/assignments/[...assignmentPath]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "courses",
+        "base": "courses",
+        "path": "courses",
+        "ext": ""
+      },
+      {
+        "orig": "[courseId]",
+        "base": "[courseId]",
+        "path": "[courseId]",
+        "ext": "",
+        "param": {
+          "name": "courseId",
+          "const": "courseId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "lessons",
+        "base": "lessons",
+        "path": "lessons",
+        "ext": ""
+      },
+      {
+        "orig": "[[lessonId]]",
+        "base": "[[lessonId]]",
+        "path": "[[lessonId]]",
+        "ext": "",
+        "param": {
+          "name": "lessonId",
+          "const": "lessonId",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "assignments",
+        "base": "assignments",
+        "path": "assignments",
+        "ext": ""
+      },
+      {
+        "orig": "[...assignmentPath]",
+        "base": "[...assignmentPath]",
+        "path": "[...assignmentPath]",
+        "ext": "",
+        "param": {
+          "name": "assignmentPath",
+          "const": "assignmentPath",
+          "isRequired": false,
+          "isOptional": false,
+          "isRest": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "portal/[clientId]/reports/[reportType]/data/[dataView]",
+    "folder": "pages",
+    "file": "portal/[clientId]/reports/[reportType]/data/[dataView]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "portal",
+        "base": "portal",
+        "path": "portal",
+        "ext": ""
+      },
+      {
+        "orig": "[clientId]",
+        "base": "[clientId]",
+        "path": "[clientId]",
+        "ext": "",
+        "param": {
+          "name": "clientId",
+          "const": "clientId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "reports",
+        "base": "reports",
+        "path": "reports",
+        "ext": ""
+      },
+      {
+        "orig": "[reportType]",
+        "base": "[reportType]",
+        "path": "[reportType]",
+        "ext": "",
+        "param": {
+          "name": "reportType",
+          "const": "reportType",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "data",
+        "base": "data",
+        "path": "data",
+        "ext": ""
+      },
+      {
+        "orig": "[dataView]",
+        "base": "[dataView]",
+        "path": "[dataView]",
+        "ext": "",
+        "param": {
+          "name": "dataView",
+          "const": "dataView",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "profile/[username]/posts/[postId]/comments/[...thread]",
+    "folder": "pages",
+    "file": "profile/[username]/posts/[postId]/comments/[...thread]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "profile",
+        "base": "profile",
+        "path": "profile",
+        "ext": ""
+      },
+      {
+        "orig": "[username]",
+        "base": "[username]",
+        "path": "[username]",
+        "ext": "",
+        "param": {
+          "name": "username",
+          "const": "username",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "posts",
+        "base": "posts",
+        "path": "posts",
+        "ext": ""
+      },
+      {
+        "orig": "[postId]",
+        "base": "[postId]",
+        "path": "[postId]",
+        "ext": "",
+        "param": {
+          "name": "postId",
+          "const": "postId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "comments",
+        "base": "comments",
+        "path": "comments",
+        "ext": ""
+      },
+      {
+        "orig": "[...thread]",
+        "base": "[...thread]",
+        "path": "[...thread]",
+        "ext": "",
+        "param": {
+          "name": "thread",
+          "const": "thread",
+          "isRequired": false,
+          "isOptional": false,
+          "isRest": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "projects/[projectId]/tasks/[taskId]/comments/[commentId]",
+    "folder": "pages",
+    "file": "projects/[projectId]/tasks/[taskId]/comments/[commentId]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "projects",
+        "base": "projects",
+        "path": "projects",
+        "ext": ""
+      },
+      {
+        "orig": "[projectId]",
+        "base": "[projectId]",
+        "path": "[projectId]",
+        "ext": "",
+        "param": {
+          "name": "projectId",
+          "const": "projectId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "tasks",
+        "base": "tasks",
+        "path": "tasks",
+        "ext": ""
+      },
+      {
+        "orig": "[taskId]",
+        "base": "[taskId]",
+        "path": "[taskId]",
+        "ext": "",
+        "param": {
+          "name": "taskId",
+          "const": "taskId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "comments",
+        "base": "comments",
+        "path": "comments",
+        "ext": ""
+      },
+      {
+        "orig": "[commentId]",
+        "base": "[commentId]",
+        "path": "[commentId]",
+        "ext": "",
+        "param": {
+          "name": "commentId",
+          "const": "commentId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "workspace/[workspaceId]/team/[memberId]/permissions/[...permissionPath]",
+    "folder": "pages",
+    "file": "workspace/[workspaceId]/team/[memberId]/permissions/[...permissionPath]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "workspace",
+        "base": "workspace",
+        "path": "workspace",
+        "ext": ""
+      },
+      {
+        "orig": "[workspaceId]",
+        "base": "[workspaceId]",
+        "path": "[workspaceId]",
+        "ext": "",
+        "param": {
+          "name": "workspaceId",
+          "const": "workspaceId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "team",
+        "base": "team",
+        "path": "team",
+        "ext": ""
+      },
+      {
+        "orig": "[memberId]",
+        "base": "[memberId]",
+        "path": "[memberId]",
+        "ext": "",
+        "param": {
+          "name": "memberId",
+          "const": "memberId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "permissions",
+        "base": "permissions",
+        "path": "permissions",
+        "ext": ""
+      },
+      {
+        "orig": "[...permissionPath]",
+        "base": "[...permissionPath]",
+        "path": "[...permissionPath]",
+        "ext": "",
+        "param": {
+          "name": "permissionPath",
+          "const": "permissionPath",
+          "isRequired": false,
+          "isOptional": false,
+          "isRest": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "about/team",
+    "folder": "pages",
+    "file": "about/team/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "about",
+        "base": "about",
+        "path": "about",
+        "ext": ""
+      },
+      {
+        "orig": "team",
+        "base": "team",
+        "path": "team",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "account/profile",
+    "folder": "pages",
+    "file": "account/profile/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "account",
+        "base": "account",
+        "path": "account",
+        "ext": ""
+      },
+      {
+        "orig": "profile",
+        "base": "profile",
+        "path": "profile",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "dashboard/analytics",
+    "folder": "pages",
+    "file": "dashboard/analytics/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "dashboard",
+        "base": "dashboard",
+        "path": "dashboard",
+        "ext": ""
+      },
+      {
+        "orig": "analytics",
+        "base": "analytics",
+        "path": "analytics",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "dashboard/settings",
+    "folder": "pages",
+    "file": "dashboard/settings/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "dashboard",
+        "base": "dashboard",
+        "path": "dashboard",
+        "ext": ""
+      },
+      {
+        "orig": "settings",
+        "base": "settings",
+        "path": "settings",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "legal/privacy",
+    "folder": "pages",
+    "file": "legal/privacy/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "legal",
+        "base": "legal",
+        "path": "legal",
+        "ext": ""
+      },
+      {
+        "orig": "privacy",
+        "base": "privacy",
+        "path": "privacy",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "legal/terms",
+    "folder": "pages",
+    "file": "legal/terms/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "legal",
+        "base": "legal",
+        "path": "legal",
+        "ext": ""
+      },
+      {
+        "orig": "terms",
+        "base": "terms",
+        "path": "terms",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "properties/filters",
+    "folder": "pages",
+    "file": "properties/filters/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "properties",
+        "base": "properties",
+        "path": "properties",
+        "ext": ""
+      },
+      {
+        "orig": "filters",
+        "base": "filters",
+        "path": "filters",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "shop/cart",
+    "folder": "pages",
+    "file": "shop/cart/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "shop",
+        "base": "shop",
+        "path": "shop",
+        "ext": ""
+      },
+      {
+        "orig": "cart",
+        "base": "cart",
+        "path": "cart",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "shop/orders",
+    "folder": "pages",
+    "file": "shop/orders/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "shop",
+        "base": "shop",
+        "path": "shop",
+        "ext": ""
+      },
+      {
+        "orig": "orders",
+        "base": "orders",
+        "path": "orders",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "shop/products",
+    "folder": "pages",
+    "file": "shop/products/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "shop",
+        "base": "shop",
+        "path": "shop",
+        "ext": ""
+      },
+      {
+        "orig": "products",
+        "base": "products",
+        "path": "products",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "about/careers/[jobId]",
+    "folder": "pages",
+    "file": "about/careers/[jobId]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "about",
+        "base": "about",
+        "path": "about",
+        "ext": ""
+      },
+      {
+        "orig": "careers",
+        "base": "careers",
+        "path": "careers",
+        "ext": ""
+      },
+      {
+        "orig": "[jobId]",
+        "base": "[jobId]",
+        "path": "[jobId]",
+        "ext": "",
+        "param": {
+          "name": "jobId",
+          "const": "jobId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "admin/[tenant]/resources",
+    "folder": "pages",
+    "file": "admin/[tenant]/resources/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "admin",
+        "base": "admin",
+        "path": "admin",
+        "ext": ""
+      },
+      {
+        "orig": "[tenant]",
+        "base": "[tenant]",
+        "path": "[tenant]",
+        "ext": "",
+        "param": {
+          "name": "tenant",
+          "const": "tenant",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "resources",
+        "base": "resources",
+        "path": "resources",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "admin/[tenant]/settings",
+    "folder": "pages",
+    "file": "admin/[tenant]/settings/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "admin",
+        "base": "admin",
+        "path": "admin",
+        "ext": ""
+      },
+      {
+        "orig": "[tenant]",
+        "base": "[tenant]",
+        "path": "[tenant]",
+        "ext": "",
+        "param": {
+          "name": "tenant",
+          "const": "tenant",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "settings",
+        "base": "settings",
+        "path": "settings",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "admin/[tenant]/users",
+    "folder": "pages",
+    "file": "admin/[tenant]/users/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "admin",
+        "base": "admin",
+        "path": "admin",
+        "ext": ""
+      },
+      {
+        "orig": "[tenant]",
+        "base": "[tenant]",
+        "path": "[tenant]",
+        "ext": "",
+        "param": {
+          "name": "tenant",
+          "const": "tenant",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "users",
+        "base": "users",
+        "path": "users",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "blog/post/[slug]",
+    "folder": "pages",
+    "file": "blog/post/[slug]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "blog",
+        "base": "blog",
+        "path": "blog",
+        "ext": ""
+      },
+      {
+        "orig": "post",
+        "base": "post",
+        "path": "post",
+        "ext": ""
+      },
+      {
+        "orig": "[slug]",
+        "base": "[slug]",
+        "path": "[slug]",
+        "ext": "",
+        "param": {
+          "name": "slug",
+          "const": "slug",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "projects/[projectId]/files",
+    "folder": "pages",
+    "file": "projects/[projectId]/files/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "projects",
+        "base": "projects",
+        "path": "projects",
+        "ext": ""
+      },
+      {
+        "orig": "[projectId]",
+        "base": "[projectId]",
+        "path": "[projectId]",
+        "ext": "",
+        "param": {
+          "name": "projectId",
+          "const": "projectId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "files",
+        "base": "files",
+        "path": "files",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "projects/[projectId]/tasks",
+    "folder": "pages",
+    "file": "projects/[projectId]/tasks/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "projects",
+        "base": "projects",
+        "path": "projects",
+        "ext": ""
+      },
+      {
+        "orig": "[projectId]",
+        "base": "[projectId]",
+        "path": "[projectId]",
+        "ext": "",
+        "param": {
+          "name": "projectId",
+          "const": "projectId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "tasks",
+        "base": "tasks",
+        "path": "tasks",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "projects/[projectId]/team",
+    "folder": "pages",
+    "file": "projects/[projectId]/team/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "projects",
+        "base": "projects",
+        "path": "projects",
+        "ext": ""
+      },
+      {
+        "orig": "[projectId]",
+        "base": "[projectId]",
+        "path": "[projectId]",
+        "ext": "",
+        "param": {
+          "name": "projectId",
+          "const": "projectId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "team",
+        "base": "team",
+        "path": "team",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "shop/orders/[orderId]",
+    "folder": "pages",
+    "file": "shop/orders/[orderId]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "shop",
+        "base": "shop",
+        "path": "shop",
+        "ext": ""
+      },
+      {
+        "orig": "orders",
+        "base": "orders",
+        "path": "orders",
+        "ext": ""
+      },
+      {
+        "orig": "[orderId]",
+        "base": "[orderId]",
+        "path": "[orderId]",
+        "ext": "",
+        "param": {
+          "name": "orderId",
+          "const": "orderId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "shop/product/[id]",
+    "folder": "pages",
+    "file": "shop/product/[id]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "shop",
+        "base": "shop",
+        "path": "shop",
+        "ext": ""
+      },
+      {
+        "orig": "product",
+        "base": "product",
+        "path": "product",
+        "ext": ""
+      },
+      {
+        "orig": "[id]",
+        "base": "[id]",
+        "path": "[id]",
+        "ext": "",
+        "param": {
+          "name": "id",
+          "const": "id",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "shop/products/[[category]]",
+    "folder": "pages",
+    "file": "shop/products/[[category]]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "shop",
+        "base": "shop",
+        "path": "shop",
+        "ext": ""
+      },
+      {
+        "orig": "products",
+        "base": "products",
+        "path": "products",
+        "ext": ""
+      },
+      {
+        "orig": "[[category]]",
+        "base": "[[category]]",
+        "path": "[[category]]",
+        "ext": "",
+        "param": {
+          "name": "category",
+          "const": "category",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "users/[username]/followers",
+    "folder": "pages",
+    "file": "users/[username]/followers/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "users",
+        "base": "users",
+        "path": "users",
+        "ext": ""
+      },
+      {
+        "orig": "[username]",
+        "base": "[username]",
+        "path": "[username]",
+        "ext": "",
+        "param": {
+          "name": "username",
+          "const": "username",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "followers",
+        "base": "followers",
+        "path": "followers",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "users/[username]/following",
+    "folder": "pages",
+    "file": "users/[username]/following/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "users",
+        "base": "users",
+        "path": "users",
+        "ext": ""
+      },
+      {
+        "orig": "[username]",
+        "base": "[username]",
+        "path": "[username]",
+        "ext": "",
+        "param": {
+          "name": "username",
+          "const": "username",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "following",
+        "base": "following",
+        "path": "following",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "users/[username]/posts",
+    "folder": "pages",
+    "file": "users/[username]/posts/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "users",
+        "base": "users",
+        "path": "users",
+        "ext": ""
+      },
+      {
+        "orig": "[username]",
+        "base": "[username]",
+        "path": "[username]",
+        "ext": "",
+        "param": {
+          "name": "username",
+          "const": "username",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "posts",
+        "base": "posts",
+        "path": "posts",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "workspace/[workspaceId]/analytics",
+    "folder": "pages",
+    "file": "workspace/[workspaceId]/analytics/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "workspace",
+        "base": "workspace",
+        "path": "workspace",
+        "ext": ""
+      },
+      {
+        "orig": "[workspaceId]",
+        "base": "[workspaceId]",
+        "path": "[workspaceId]",
+        "ext": "",
+        "param": {
+          "name": "workspaceId",
+          "const": "workspaceId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "analytics",
+        "base": "analytics",
+        "path": "analytics",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "admin/[tenant]/resources/[[type]]",
+    "folder": "pages",
+    "file": "admin/[tenant]/resources/[[type]]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "admin",
+        "base": "admin",
+        "path": "admin",
+        "ext": ""
+      },
+      {
+        "orig": "[tenant]",
+        "base": "[tenant]",
+        "path": "[tenant]",
+        "ext": "",
+        "param": {
+          "name": "tenant",
+          "const": "tenant",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "resources",
+        "base": "resources",
+        "path": "resources",
+        "ext": ""
+      },
+      {
+        "orig": "[[type]]",
+        "base": "[[type]]",
+        "path": "[[type]]",
+        "ext": "",
+        "param": {
+          "name": "type",
+          "const": "type",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "admin/[tenant]/users/[userId]",
+    "folder": "pages",
+    "file": "admin/[tenant]/users/[userId]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "admin",
+        "base": "admin",
+        "path": "admin",
+        "ext": ""
+      },
+      {
+        "orig": "[tenant]",
+        "base": "[tenant]",
+        "path": "[tenant]",
+        "ext": "",
+        "param": {
+          "name": "tenant",
+          "const": "tenant",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "users",
+        "base": "users",
+        "path": "users",
+        "ext": ""
+      },
+      {
+        "orig": "[userId]",
+        "base": "[userId]",
+        "path": "[userId]",
+        "ext": "",
+        "param": {
+          "name": "userId",
+          "const": "userId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "news/[category]/articles/[...articlePath]",
+    "folder": "pages",
+    "file": "news/[category]/articles/[...articlePath]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "news",
+        "base": "news",
+        "path": "news",
+        "ext": ""
+      },
+      {
+        "orig": "[category]",
+        "base": "[category]",
+        "path": "[category]",
+        "ext": "",
+        "param": {
+          "name": "category",
+          "const": "category",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "articles",
+        "base": "articles",
+        "path": "articles",
+        "ext": ""
+      },
+      {
+        "orig": "[...articlePath]",
+        "base": "[...articlePath]",
+        "path": "[...articlePath]",
+        "ext": "",
+        "param": {
+          "name": "articlePath",
+          "const": "articlePath",
+          "isRequired": false,
+          "isOptional": false,
+          "isRest": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "projects/[projectId]/files/[...path]",
+    "folder": "pages",
+    "file": "projects/[projectId]/files/[...path]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "projects",
+        "base": "projects",
+        "path": "projects",
+        "ext": ""
+      },
+      {
+        "orig": "[projectId]",
+        "base": "[projectId]",
+        "path": "[projectId]",
+        "ext": "",
+        "param": {
+          "name": "projectId",
+          "const": "projectId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "files",
+        "base": "files",
+        "path": "files",
+        "ext": ""
+      },
+      {
+        "orig": "[...path]",
+        "base": "[...path]",
+        "path": "[...path]",
+        "ext": "",
+        "param": {
+          "name": "path",
+          "const": "path",
+          "isRequired": false,
+          "isOptional": false,
+          "isRest": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "projects/[projectId]/tasks/[taskId]",
+    "folder": "pages",
+    "file": "projects/[projectId]/tasks/[taskId]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "projects",
+        "base": "projects",
+        "path": "projects",
+        "ext": ""
+      },
+      {
+        "orig": "[projectId]",
+        "base": "[projectId]",
+        "path": "[projectId]",
+        "ext": "",
+        "param": {
+          "name": "projectId",
+          "const": "projectId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "tasks",
+        "base": "tasks",
+        "path": "tasks",
+        "ext": ""
+      },
+      {
+        "orig": "[taskId]",
+        "base": "[taskId]",
+        "path": "[taskId]",
+        "ext": "",
+        "param": {
+          "name": "taskId",
+          "const": "taskId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "projects/[projectId]/team/[userId]",
+    "folder": "pages",
+    "file": "projects/[projectId]/team/[userId]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "projects",
+        "base": "projects",
+        "path": "projects",
+        "ext": ""
+      },
+      {
+        "orig": "[projectId]",
+        "base": "[projectId]",
+        "path": "[projectId]",
+        "ext": "",
+        "param": {
+          "name": "projectId",
+          "const": "projectId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "team",
+        "base": "team",
+        "path": "team",
+        "ext": ""
+      },
+      {
+        "orig": "[userId]",
+        "base": "[userId]",
+        "path": "[userId]",
+        "ext": "",
+        "param": {
+          "name": "userId",
+          "const": "userId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "properties/[[city]]/filters/[...filters]",
+    "folder": "pages",
+    "file": "properties/[[city]]/filters/[...filters]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "properties",
+        "base": "properties",
+        "path": "properties",
+        "ext": ""
+      },
+      {
+        "orig": "[[city]]",
+        "base": "[[city]]",
+        "path": "[[city]]",
+        "ext": "",
+        "param": {
+          "name": "city",
+          "const": "city",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "filters",
+        "base": "filters",
+        "path": "filters",
+        "ext": ""
+      },
+      {
+        "orig": "[...filters]",
+        "base": "[...filters]",
+        "path": "[...filters]",
+        "ext": "",
+        "param": {
+          "name": "filters",
+          "const": "filters",
+          "isRequired": false,
+          "isOptional": false,
+          "isRest": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "store/[category]/filters/[...filters]",
+    "folder": "pages",
+    "file": "store/[category]/filters/[...filters]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "store",
+        "base": "store",
+        "path": "store",
+        "ext": ""
+      },
+      {
+        "orig": "[category]",
+        "base": "[category]",
+        "path": "[category]",
+        "ext": "",
+        "param": {
+          "name": "category",
+          "const": "category",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "filters",
+        "base": "filters",
+        "path": "filters",
+        "ext": ""
+      },
+      {
+        "orig": "[...filters]",
+        "base": "[...filters]",
+        "path": "[...filters]",
+        "ext": "",
+        "param": {
+          "name": "filters",
+          "const": "filters",
+          "isRequired": false,
+          "isOptional": false,
+          "isRest": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "store/[category]/sort/[sortBy]",
+    "folder": "pages",
+    "file": "store/[category]/sort/[sortBy]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "store",
+        "base": "store",
+        "path": "store",
+        "ext": ""
+      },
+      {
+        "orig": "[category]",
+        "base": "[category]",
+        "path": "[category]",
+        "ext": "",
+        "param": {
+          "name": "category",
+          "const": "category",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "sort",
+        "base": "sort",
+        "path": "sort",
+        "ext": ""
+      },
+      {
+        "orig": "[sortBy]",
+        "base": "[sortBy]",
+        "path": "[sortBy]",
+        "ext": "",
+        "param": {
+          "name": "sortBy",
+          "const": "sortBy",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "users/[username]/posts/[postId]",
+    "folder": "pages",
+    "file": "users/[username]/posts/[postId]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "users",
+        "base": "users",
+        "path": "users",
+        "ext": ""
+      },
+      {
+        "orig": "[username]",
+        "base": "[username]",
+        "path": "[username]",
+        "ext": "",
+        "param": {
+          "name": "username",
+          "const": "username",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "posts",
+        "base": "posts",
+        "path": "posts",
+        "ext": ""
+      },
+      {
+        "orig": "[postId]",
+        "base": "[postId]",
+        "path": "[postId]",
+        "ext": "",
+        "param": {
+          "name": "postId",
+          "const": "postId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "workspace/[workspaceId]/analytics/[range]",
+    "folder": "pages",
+    "file": "workspace/[workspaceId]/analytics/[range]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "workspace",
+        "base": "workspace",
+        "path": "workspace",
+        "ext": ""
+      },
+      {
+        "orig": "[workspaceId]",
+        "base": "[workspaceId]",
+        "path": "[workspaceId]",
+        "ext": "",
+        "param": {
+          "name": "workspaceId",
+          "const": "workspaceId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "analytics",
+        "base": "analytics",
+        "path": "analytics",
+        "ext": ""
+      },
+      {
+        "orig": "[range]",
+        "base": "[range]",
+        "path": "[range]",
+        "ext": "",
+        "param": {
+          "name": "range",
+          "const": "range",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "admin/[tenant]/resources/[[type]]/[...path]",
+    "folder": "pages",
+    "file": "admin/[tenant]/resources/[[type]]/[...path]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "admin",
+        "base": "admin",
+        "path": "admin",
+        "ext": ""
+      },
+      {
+        "orig": "[tenant]",
+        "base": "[tenant]",
+        "path": "[tenant]",
+        "ext": "",
+        "param": {
+          "name": "tenant",
+          "const": "tenant",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "resources",
+        "base": "resources",
+        "path": "resources",
+        "ext": ""
+      },
+      {
+        "orig": "[[type]]",
+        "base": "[[type]]",
+        "path": "[[type]]",
+        "ext": "",
+        "param": {
+          "name": "type",
+          "const": "type",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "[...path]",
+        "base": "[...path]",
+        "path": "[...path]",
+        "ext": "",
+        "param": {
+          "name": "path",
+          "const": "path",
+          "isRequired": false,
+          "isOptional": false,
+          "isRest": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "about",
+    "folder": "pages",
+    "file": "about/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "about",
+        "base": "about",
+        "path": "about",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "admin",
+    "folder": "pages",
+    "file": "admin/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "admin",
+        "base": "admin",
+        "path": "admin",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "blog",
+    "folder": "pages",
+    "file": "blog/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "blog",
+        "base": "blog",
+        "path": "blog",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "books",
+    "folder": "api",
+    "file": "books/index.ts",
+    "pathTokens": [
+      {
+        "orig": "books",
+        "base": "books",
+        "path": "books",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "contact",
+    "folder": "pages",
+    "file": "contact/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "contact",
+        "base": "contact",
+        "path": "contact",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "dashboard",
+    "folder": "pages",
+    "file": "dashboard/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "dashboard",
+        "base": "dashboard",
+        "path": "dashboard",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "docs",
+    "folder": "pages",
+    "file": "docs/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "docs",
+        "base": "docs",
+        "path": "docs",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "index",
+    "folder": "api",
+    "file": "index/index.ts",
+    "pathTokens": [
+      {
+        "orig": "index",
+        "base": "index",
+        "path": "/",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "products",
+    "folder": "pages",
+    "file": "products/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "products",
+        "base": "products",
+        "path": "products",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "projects",
+    "folder": "pages",
+    "file": "projects/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "projects",
+        "base": "projects",
+        "path": "projects",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "search",
+    "folder": "pages",
+    "file": "search/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "search",
+        "base": "search",
+        "path": "search",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "shop",
+    "folder": "pages",
+    "file": "shop/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "shop",
+        "base": "shop",
+        "path": "shop",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "signup",
+    "folder": "pages",
+    "file": "signup/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "signup",
+        "base": "signup",
+        "path": "signup",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "users",
+    "folder": "pages",
+    "file": "users/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "users",
+        "base": "users",
+        "path": "users",
+        "ext": ""
+      }
+    ]
+  },
+  {
+    "name": "admin/[tenant]",
+    "folder": "pages",
+    "file": "admin/[tenant]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "admin",
+        "base": "admin",
+        "path": "admin",
+        "ext": ""
+      },
+      {
+        "orig": "[tenant]",
+        "base": "[tenant]",
+        "path": "[tenant]",
+        "ext": "",
+        "param": {
+          "name": "tenant",
+          "const": "tenant",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "articles/[...path]",
+    "folder": "api",
+    "file": "articles/[...path]/index.ts",
+    "pathTokens": [
+      {
+        "orig": "articles",
+        "base": "articles",
+        "path": "articles",
+        "ext": ""
+      },
+      {
+        "orig": "[...path]",
+        "base": "[...path]",
+        "path": "[...path]",
+        "ext": "",
+        "param": {
+          "name": "path",
+          "const": "path",
+          "isRequired": false,
+          "isOptional": false,
+          "isRest": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "blog/[[category]]",
+    "folder": "pages",
+    "file": "blog/[[category]]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "blog",
+        "base": "blog",
+        "path": "blog",
+        "ext": ""
+      },
+      {
+        "orig": "[[category]]",
+        "base": "[[category]]",
+        "path": "[[category]]",
+        "ext": "",
+        "param": {
+          "name": "category",
+          "const": "category",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "books/[category]",
+    "folder": "api",
+    "file": "books/[category]/index.ts",
+    "pathTokens": [
+      {
+        "orig": "books",
+        "base": "books",
+        "path": "books",
+        "ext": ""
+      },
+      {
+        "orig": "[category]",
+        "base": "[category]",
+        "path": "[category]",
+        "ext": "",
+        "param": {
+          "name": "category",
+          "const": "category",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "dashboard/[view]",
+    "folder": "pages",
+    "file": "dashboard/[view]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "dashboard",
+        "base": "dashboard",
+        "path": "dashboard",
+        "ext": ""
+      },
+      {
+        "orig": "[view]",
+        "base": "[view]",
+        "path": "[view]",
+        "ext": "",
+        "param": {
+          "name": "view",
+          "const": "view",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "docs/[...path]",
+    "folder": "pages",
+    "file": "docs/[...path]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "docs",
+        "base": "docs",
+        "path": "docs",
+        "ext": ""
+      },
+      {
+        "orig": "[...path]",
+        "base": "[...path]",
+        "path": "[...path]",
+        "ext": "",
+        "param": {
+          "name": "path",
+          "const": "path",
+          "isRequired": false,
+          "isOptional": false,
+          "isRest": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "files/[...filePath]",
+    "folder": "pages",
+    "file": "files/[...filePath]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "files",
+        "base": "files",
+        "path": "files",
+        "ext": ""
+      },
+      {
+        "orig": "[...filePath]",
+        "base": "[...filePath]",
+        "path": "[...filePath]",
+        "ext": "",
+        "param": {
+          "name": "filePath",
+          "const": "filePath",
+          "isRequired": false,
+          "isOptional": false,
+          "isRest": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "files/[[folder]]",
+    "folder": "api",
+    "file": "files/[[folder]]/index.ts",
+    "pathTokens": [
+      {
+        "orig": "files",
+        "base": "files",
+        "path": "files",
+        "ext": ""
+      },
+      {
+        "orig": "[[folder]]",
+        "base": "[[folder]]",
+        "path": "[[folder]]",
+        "ext": "",
+        "param": {
+          "name": "folder",
+          "const": "folder",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "pages/[...path].html",
+    "folder": "api",
+    "file": "pages/[...path].html/index.ts",
+    "pathTokens": [
+      {
+        "orig": "pages",
+        "base": "pages",
+        "path": "pages",
+        "ext": ""
+      },
+      {
+        "orig": "[...path].html",
+        "base": "[...path]",
+        "path": "[...path].html",
+        "ext": ".html",
+        "param": {
+          "name": "path",
+          "const": "path",
+          "isRequired": false,
+          "isOptional": false,
+          "isRest": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "products/[id]",
+    "folder": "pages",
+    "file": "products/[id]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "products",
+        "base": "products",
+        "path": "products",
+        "ext": ""
+      },
+      {
+        "orig": "[id]",
+        "base": "[id]",
+        "path": "[id]",
+        "ext": "",
+        "param": {
+          "name": "id",
+          "const": "id",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "projects/[projectId]",
+    "folder": "pages",
+    "file": "projects/[projectId]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "projects",
+        "base": "projects",
+        "path": "projects",
+        "ext": ""
+      },
+      {
+        "orig": "[projectId]",
+        "base": "[projectId]",
+        "path": "[projectId]",
+        "ext": "",
+        "param": {
+          "name": "projectId",
+          "const": "projectId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "users/[id].json",
+    "folder": "api",
+    "file": "users/[id].json/index.ts",
+    "pathTokens": [
+      {
+        "orig": "users",
+        "base": "users",
+        "path": "users",
+        "ext": ""
+      },
+      {
+        "orig": "[id].json",
+        "base": "[id]",
+        "path": "[id].json",
+        "ext": ".json",
+        "param": {
+          "name": "id",
+          "const": "id",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "users/[username]",
+    "folder": "pages",
+    "file": "users/[username]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "users",
+        "base": "users",
+        "path": "users",
+        "ext": ""
+      },
+      {
+        "orig": "[username]",
+        "base": "[username]",
+        "path": "[username]",
+        "ext": "",
+        "param": {
+          "name": "username",
+          "const": "username",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "blog/[[category]]/[[tag]]",
+    "folder": "pages",
+    "file": "blog/[[category]]/[[tag]]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "blog",
+        "base": "blog",
+        "path": "blog",
+        "ext": ""
+      },
+      {
+        "orig": "[[category]]",
+        "base": "[[category]]",
+        "path": "[[category]]",
+        "ext": "",
+        "param": {
+          "name": "category",
+          "const": "category",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "[[tag]]",
+        "base": "[[tag]]",
+        "path": "[[tag]]",
+        "ext": "",
+        "param": {
+          "name": "tag",
+          "const": "tag",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "books/[category]/[[author]]",
+    "folder": "api",
+    "file": "books/[category]/[[author]]/index.ts",
+    "pathTokens": [
+      {
+        "orig": "books",
+        "base": "books",
+        "path": "books",
+        "ext": ""
+      },
+      {
+        "orig": "[category]",
+        "base": "[category]",
+        "path": "[category]",
+        "ext": "",
+        "param": {
+          "name": "category",
+          "const": "category",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "[[author]]",
+        "base": "[[author]]",
+        "path": "[[author]]",
+        "ext": "",
+        "param": {
+          "name": "author",
+          "const": "author",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "files/[[folder]]/[[id]].json",
+    "folder": "api",
+    "file": "files/[[folder]]/[[id]].json/index.ts",
+    "pathTokens": [
+      {
+        "orig": "files",
+        "base": "files",
+        "path": "files",
+        "ext": ""
+      },
+      {
+        "orig": "[[folder]]",
+        "base": "[[folder]]",
+        "path": "[[folder]]",
+        "ext": "",
+        "param": {
+          "name": "folder",
+          "const": "folder",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "[[id]].json",
+        "base": "[[id]]",
+        "path": "[[id]].json",
+        "ext": ".json",
+        "param": {
+          "name": "id",
+          "const": "id",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "search/[[query]]/[[page]]",
+    "folder": "pages",
+    "file": "search/[[query]]/[[page]]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "search",
+        "base": "search",
+        "path": "search",
+        "ext": ""
+      },
+      {
+        "orig": "[[query]]",
+        "base": "[[query]]",
+        "path": "[[query]]",
+        "ext": "",
+        "param": {
+          "name": "query",
+          "const": "query",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "[[page]]",
+        "base": "[[page]]",
+        "path": "[[page]]",
+        "ext": "",
+        "param": {
+          "name": "page",
+          "const": "page",
+          "isRequired": false,
+          "isOptional": true,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  {
+    "name": "shop/[category]/[productId]",
+    "folder": "pages",
+    "file": "shop/[category]/[productId]/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "shop",
+        "base": "shop",
+        "path": "shop",
+        "ext": ""
+      },
+      {
+        "orig": "[category]",
+        "base": "[category]",
+        "path": "[category]",
+        "ext": "",
+        "param": {
+          "name": "category",
+          "const": "category",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "[productId]",
+        "base": "[productId]",
+        "path": "[productId]",
+        "ext": "",
+        "param": {
+          "name": "productId",
+          "const": "productId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  }
+]

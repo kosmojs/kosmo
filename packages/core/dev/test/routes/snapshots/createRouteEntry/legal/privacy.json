@@ -1,0 +1,19 @@
+{
+  "name": "legal/privacy",
+  "folder": "pages",
+  "file": "legal/privacy/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "legal",
+      "base": "legal",
+      "path": "legal",
+      "ext": ""
+    },
+    {
+      "orig": "privacy",
+      "base": "privacy",
+      "path": "privacy",
+      "ext": ""
+    }
+  ]
+}

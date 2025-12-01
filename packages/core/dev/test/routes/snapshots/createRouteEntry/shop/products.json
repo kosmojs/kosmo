@@ -1,0 +1,19 @@
+{
+  "name": "shop/products",
+  "folder": "pages",
+  "file": "shop/products/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "shop",
+      "base": "shop",
+      "path": "shop",
+      "ext": ""
+    },
+    {
+      "orig": "products",
+      "base": "products",
+      "path": "products",
+      "ext": ""
+    }
+  ]
+}

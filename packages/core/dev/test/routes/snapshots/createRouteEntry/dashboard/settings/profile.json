@@ -1,0 +1,25 @@
+{
+  "name": "dashboard/settings/profile",
+  "folder": "pages",
+  "file": "dashboard/settings/profile/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "dashboard",
+      "base": "dashboard",
+      "path": "dashboard",
+      "ext": ""
+    },
+    {
+      "orig": "settings",
+      "base": "settings",
+      "path": "settings",
+      "ext": ""
+    },
+    {
+      "orig": "profile",
+      "base": "profile",
+      "path": "profile",
+      "ext": ""
+    }
+  ]
+}

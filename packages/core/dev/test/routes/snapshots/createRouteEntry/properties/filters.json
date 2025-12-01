@@ -1,0 +1,19 @@
+{
+  "name": "properties/filters",
+  "folder": "pages",
+  "file": "properties/filters/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "properties",
+      "base": "properties",
+      "path": "properties",
+      "ext": ""
+    },
+    {
+      "orig": "filters",
+      "base": "filters",
+      "path": "filters",
+      "ext": ""
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "name": "portal/[clientId]/reports/[reportType]/data/[dataView]",
+  "folder": "pages",
+  "file": "portal/[clientId]/reports/[reportType]/data/[dataView]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "portal",
+      "base": "portal",
+      "path": "portal",
+      "ext": ""
+    },
+    {
+      "orig": "[clientId]",
+      "base": "[clientId]",
+      "path": "[clientId]",
+      "ext": "",
+      "param": {
+        "name": "clientId",
+        "const": "clientId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "reports",
+      "base": "reports",
+      "path": "reports",
+      "ext": ""
+    },
+    {
+      "orig": "[reportType]",
+      "base": "[reportType]",
+      "path": "[reportType]",
+      "ext": "",
+      "param": {
+        "name": "reportType",
+        "const": "reportType",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "data",
+      "base": "data",
+      "path": "data",
+      "ext": ""
+    },
+    {
+      "orig": "[dataView]",
+      "base": "[dataView]",
+      "path": "[dataView]",
+      "ext": "",
+      "param": {
+        "name": "dataView",
+        "const": "dataView",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

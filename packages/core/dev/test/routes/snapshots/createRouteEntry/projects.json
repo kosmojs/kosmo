@@ -1,0 +1,13 @@
+{
+  "name": "projects",
+  "folder": "pages",
+  "file": "projects/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "projects",
+      "base": "projects",
+      "path": "projects",
+      "ext": ""
+    }
+  ]
+}

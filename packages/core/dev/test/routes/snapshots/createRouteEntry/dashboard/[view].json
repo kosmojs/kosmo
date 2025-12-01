@@ -1,0 +1,26 @@
+{
+  "name": "dashboard/[view]",
+  "folder": "pages",
+  "file": "dashboard/[view]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "dashboard",
+      "base": "dashboard",
+      "path": "dashboard",
+      "ext": ""
+    },
+    {
+      "orig": "[view]",
+      "base": "[view]",
+      "path": "[view]",
+      "ext": "",
+      "param": {
+        "name": "view",
+        "const": "view",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

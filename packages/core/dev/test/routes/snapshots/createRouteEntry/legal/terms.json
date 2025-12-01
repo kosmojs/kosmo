@@ -1,0 +1,19 @@
+{
+  "name": "legal/terms",
+  "folder": "pages",
+  "file": "legal/terms/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "legal",
+      "base": "legal",
+      "path": "legal",
+      "ext": ""
+    },
+    {
+      "orig": "terms",
+      "base": "terms",
+      "path": "terms",
+      "ext": ""
+    }
+  ]
+}

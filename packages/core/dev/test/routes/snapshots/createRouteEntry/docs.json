@@ -1,0 +1,13 @@
+{
+  "name": "docs",
+  "folder": "pages",
+  "file": "docs/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "docs",
+      "base": "docs",
+      "path": "docs",
+      "ext": ""
+    }
+  ]
+}

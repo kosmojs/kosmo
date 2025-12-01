@@ -1,0 +1,32 @@
+{
+  "name": "shop/products/[[category]]",
+  "folder": "pages",
+  "file": "shop/products/[[category]]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "shop",
+      "base": "shop",
+      "path": "shop",
+      "ext": ""
+    },
+    {
+      "orig": "products",
+      "base": "products",
+      "path": "products",
+      "ext": ""
+    },
+    {
+      "orig": "[[category]]",
+      "base": "[[category]]",
+      "path": "[[category]]",
+      "ext": "",
+      "param": {
+        "name": "category",
+        "const": "category",
+        "isRequired": false,
+        "isOptional": true,
+        "isRest": false
+      }
+    }
+  ]
+}

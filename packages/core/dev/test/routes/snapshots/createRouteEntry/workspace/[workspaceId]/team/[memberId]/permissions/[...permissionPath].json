@@ -1,0 +1,64 @@
+{
+  "name": "workspace/[workspaceId]/team/[memberId]/permissions/[...permissionPath]",
+  "folder": "pages",
+  "file": "workspace/[workspaceId]/team/[memberId]/permissions/[...permissionPath]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "workspace",
+      "base": "workspace",
+      "path": "workspace",
+      "ext": ""
+    },
+    {
+      "orig": "[workspaceId]",
+      "base": "[workspaceId]",
+      "path": "[workspaceId]",
+      "ext": "",
+      "param": {
+        "name": "workspaceId",
+        "const": "workspaceId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "team",
+      "base": "team",
+      "path": "team",
+      "ext": ""
+    },
+    {
+      "orig": "[memberId]",
+      "base": "[memberId]",
+      "path": "[memberId]",
+      "ext": "",
+      "param": {
+        "name": "memberId",
+        "const": "memberId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "permissions",
+      "base": "permissions",
+      "path": "permissions",
+      "ext": ""
+    },
+    {
+      "orig": "[...permissionPath]",
+      "base": "[...permissionPath]",
+      "path": "[...permissionPath]",
+      "ext": "",
+      "param": {
+        "name": "permissionPath",
+        "const": "permissionPath",
+        "isRequired": false,
+        "isOptional": false,
+        "isRest": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "shop/orders/[orderId]",
+  "folder": "pages",
+  "file": "shop/orders/[orderId]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "shop",
+      "base": "shop",
+      "path": "shop",
+      "ext": ""
+    },
+    {
+      "orig": "orders",
+      "base": "orders",
+      "path": "orders",
+      "ext": ""
+    },
+    {
+      "orig": "[orderId]",
+      "base": "[orderId]",
+      "path": "[orderId]",
+      "ext": "",
+      "param": {
+        "name": "orderId",
+        "const": "orderId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}
