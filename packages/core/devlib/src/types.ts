@@ -61,6 +61,13 @@ export type RouteEntry = {
   importFile: string;
 };
 
+export type NestedRouteEntry = {
+  index: Omit<RouteEntry, "fileFullpath"> | undefined;
+  layout: Omit<RouteEntry, "fileFullpath"> | undefined;
+  parent: string | undefined;
+  children: Array<NestedRouteEntry>;
+};
+
 export type ApiRoute = RouteEntry & {
   params: {
     id: string;
@@ -83,9 +90,12 @@ export type PageRoute = RouteEntry & {
   };
 };
 
+export type PageLayout = RouteEntry;
+
 export type ResolvedEntry =
   | { kind: "apiRoute"; entry: ApiRoute }
   | { kind: "pageRoute"; entry: PageRoute }
+  | { kind: "pageLayout"; entry: PageLayout };
 
 export type PayloadType = {
   id: string;

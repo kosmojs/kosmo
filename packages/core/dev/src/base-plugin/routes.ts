@@ -14,6 +14,7 @@ import {
   scanRoutes,
 } from "./routes/resolve";
 
+export * from "./routes/nesting";
 export * from "./routes/resolve";
 
 export default async (pluginOptions: PluginOptionsResolved) => {
