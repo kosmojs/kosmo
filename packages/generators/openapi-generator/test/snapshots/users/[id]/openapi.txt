@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "users_1482590779_ParamsT1482590779_id3208210256": {
+      "users_id_index_ts_2390016005_ParamsT1482590779_id3208210256": {
         "in": "path",
         "name": "id",
         "required": true,
@@ -12,16 +12,46 @@
       },
     },
     "schemas": {
-      "users_1482590779_PayloadT1882830555_expand3016914599": {
+      "users_id_index_ts_2390016005_PayloadT2423334281": {
+        "properties": {
+          "email": {
+            "format": "email",
+            "type": "string",
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+          },
+          "role": {
+            "anyOf": [
+              {
+                "const": "admin",
+                "type": "string",
+              },
+              {
+                "const": "user",
+                "type": "string",
+              },
+              {
+                "const": "moderator",
+                "type": "string",
+              },
+            ],
+          },
+        },
+        "type": "object",
+      },
+      "users_id_index_ts_2390016005_PayloadT3285877293_expand3016914599": {
         "type": "boolean",
       },
-      "users_1482590779_PayloadT1882830555_fields2128995208": {
+      "users_id_index_ts_2390016005_PayloadT3285877293_fields2128995208": {
         "items": {
           "type": "string",
         },
         "type": "array",
       },
-      "users_1482590779_PayloadT1882830555_include1890413707": {
+      "users_id_index_ts_2390016005_PayloadT3285877293_include1890413707": {
         "anyOf": [
           {
             "const": "profile",
@@ -37,37 +67,7 @@
           },
         ],
       },
-      "users_1482590779_PayloadT596775295": {
-        "properties": {
-          "email": {
-            "format": "email",
-            "type": "string",
-          },
-          "name": {
-            "maxLength": 100,
-            "minLength": 1,
-            "type": "string",
-          },
-          "role": {
-            "anyOf": [
-              {
-                "const": "admin",
-                "type": "string",
-              },
-              {
-                "const": "user",
-                "type": "string",
-              },
-              {
-                "const": "moderator",
-                "type": "string",
-              },
-            ],
-          },
-        },
-        "type": "object",
-      },
-      "users_1482590779_ResponseT1882830555": {
+      "users_id_index_ts_2390016005_ResponseT2423334281": {
         "properties": {
           "createdAt": {
             "format": "date-time",
@@ -111,7 +111,7 @@
         ],
         "type": "object",
       },
-      "users_1482590779_ResponseT596775295": {
+      "users_id_index_ts_2390016005_ResponseT3285877293": {
         "properties": {
           "createdAt": {
             "format": "date-time",
@@ -155,7 +155,7 @@
         ],
         "type": "object",
       },
-      "users_1482590779_ResponseT772730175": {
+      "users_id_index_ts_2390016005_ResponseT493789915": {
         "properties": {
           "message": {
             "type": "string",
@@ -177,7 +177,7 @@
       "delete": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/users_1482590779_ParamsT1482590779_id3208210256",
+            "$ref": "#/components/parameters/users_id_index_ts_2390016005_ParamsT1482590779_id3208210256",
           },
         ],
         "responses": {
@@ -185,7 +185,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/users_1482590779_ResponseT772730175",
+                  "$ref": "#/components/schemas/users_id_index_ts_2390016005_ResponseT493789915",
                 },
               },
             },
@@ -196,14 +196,14 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/users_1482590779_ParamsT1482590779_id3208210256",
+            "$ref": "#/components/parameters/users_id_index_ts_2390016005_ParamsT1482590779_id3208210256",
           },
           {
             "in": "query",
             "name": "include",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/users_1482590779_PayloadT1882830555_include1890413707",
+              "$ref": "#/components/schemas/users_id_index_ts_2390016005_PayloadT3285877293_include1890413707",
             },
           },
           {
@@ -211,7 +211,7 @@
             "name": "fields",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/users_1482590779_PayloadT1882830555_fields2128995208",
+              "$ref": "#/components/schemas/users_id_index_ts_2390016005_PayloadT3285877293_fields2128995208",
             },
           },
           {
@@ -219,7 +219,7 @@
             "name": "expand",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/users_1482590779_PayloadT1882830555_expand3016914599",
+              "$ref": "#/components/schemas/users_id_index_ts_2390016005_PayloadT3285877293_expand3016914599",
             },
           },
         ],
@@ -228,7 +228,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/users_1482590779_ResponseT1882830555",
+                  "$ref": "#/components/schemas/users_id_index_ts_2390016005_ResponseT3285877293",
                 },
               },
             },
@@ -239,14 +239,14 @@
       "put": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/users_1482590779_ParamsT1482590779_id3208210256",
+            "$ref": "#/components/parameters/users_id_index_ts_2390016005_ParamsT1482590779_id3208210256",
           },
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/users_1482590779_PayloadT596775295",
+                "$ref": "#/components/schemas/users_id_index_ts_2390016005_PayloadT2423334281",
               },
             },
           },
@@ -257,7 +257,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/users_1482590779_ResponseT596775295",
+                  "$ref": "#/components/schemas/users_id_index_ts_2390016005_ResponseT2423334281",
                 },
               },
             },

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { resolveRouteEntry } from "@kosmojs/dev/routes";
+import { createRouteEntry } from "@kosmojs/dev/routes";
 
 import {
   generateManifestPathVariations,
@@ -33,7 +33,7 @@ describe("SSR Factory", { timeout: 60_000 }, () => {
     const pathVariations = [];
 
     for (const route of routes) {
-      const routeEntry = resolveRouteEntry(
+      const routeEntry = createRouteEntry(
         `${sourceFolder}/pages/${route}/index.tsx`,
         pluginOptions,
       );
@@ -50,7 +50,7 @@ describe("SSR Factory", { timeout: 60_000 }, () => {
     const pathVariations = [];
 
     for (const route of routes) {
-      const routeEntry = resolveRouteEntry(
+      const routeEntry = createRouteEntry(
         `${sourceFolder}/pages/${route}/index.tsx`,
         pluginOptions,
       );

@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "search_4157968314_ParamsT4157968314_type2363381545": {
+      "search_type_index_ts_3588343646_ParamsT4157968314_type2363381545": {
         "in": "path",
         "name": "type",
         "required": true,
@@ -24,7 +24,7 @@
       },
     },
     "schemas": {
-      "search_4157968314_PayloadT3813364389": {
+      "search_type_index_ts_3588343646_PayloadT587329197": {
         "properties": {
           "filters": {
             "properties": {
@@ -96,7 +96,7 @@
         ],
         "type": "object",
       },
-      "search_4157968314_ResponseT3813364389": {
+      "search_type_index_ts_3588343646_ResponseT587329197": {
         "properties": {
           "hasMore": {
             "type": "boolean",
@@ -171,7 +171,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/search_4157968314_PayloadT3813364389",
+                "$ref": "#/components/schemas/search_type_index_ts_3588343646_PayloadT587329197",
               },
             },
           },
@@ -182,7 +182,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/search_4157968314_ResponseT3813364389",
+                  "$ref": "#/components/schemas/search_type_index_ts_3588343646_ResponseT587329197",
                 },
               },
             },
@@ -195,14 +195,14 @@
       "post": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/search_4157968314_ParamsT4157968314_type2363381545",
+            "$ref": "#/components/parameters/search_type_index_ts_3588343646_ParamsT4157968314_type2363381545",
           },
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/search_4157968314_PayloadT3813364389",
+                "$ref": "#/components/schemas/search_type_index_ts_3588343646_PayloadT587329197",
               },
             },
           },
@@ -213,7 +213,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/search_4157968314_ResponseT3813364389",
+                  "$ref": "#/components/schemas/search_type_index_ts_3588343646_ResponseT587329197",
                 },
               },
             },

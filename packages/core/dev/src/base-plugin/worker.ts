@@ -8,13 +8,12 @@ import {
   type GeneratorConstructor,
   type PluginOptionsResolved,
   pathResolver,
-  type RouteResolver,
-  type RouteResolverEntry,
+  type ResolvedEntry,
   type WatcherEvent,
   type WatchHandler,
 } from "@kosmojs/devlib";
 
-import routesFactory, { resolveRouteFile } from "./routes";
+import routesFactory, { isRouteFile, type ResolverSignature } from "./routes";
 import type { SpinnerFactory } from "./spinner";
 
 export type WorkerData = Omit<
@@ -66,9 +65,9 @@ const { appRoot, sourceFolder } = resolvedOptions;
 
 const watchHandlers: Array<{ name: string; handler: WatchHandler }> = [];
 
-const resolvedRoutes = new Map<
+const resolvedEntries = new Map<
   string, // fileFullpath
-  RouteResolverEntry
+  ResolvedEntry
 >();
 
 const { resolvers, resolversFactory } = await routesFactory(resolvedOptions);
@@ -114,9 +113,9 @@ const createEventHandler = async (file: string) => {
   if (resolver) {
     const spinner = spinnerFactory(`Resolving ${resolver.name} Route`);
     try {
-      const resolvedRoute = await resolver.handler();
+      const resolvedEntry = await resolver.handler();
       resolvers.set(file, resolver);
-      resolvedRoutes.set(resolvedRoute.route.fileFullpath, resolvedRoute);
+      resolvedEntries.set(resolvedEntry.entry.fileFullpath, resolvedEntry);
       spinner.succeed();
     } catch (
       // biome-ignore lint: any
@@ -128,9 +127,12 @@ const createEventHandler = async (file: string) => {
 };
 
 const updateEventHandler = async (file: string) => {
-  const relatedResolvers = new Map<string, RouteResolver>();
+  const relatedResolvers = new Map<
+    string, // fileFullpath
+    ResolverSignature
+  >();
 
-  if (resolvedRoutes.has(file)) {
+  if (resolvedEntries.has(file)) {
     // some route updated
     const resolver = resolvers.get(file);
     if (resolver) {
@@ -138,12 +140,16 @@ const updateEventHandler = async (file: string) => {
     }
   } else {
     // checking if changed file is referenced by any routes
-    const referencedRoutes = resolvedRoutes
+    const referencedRoutes = resolvedEntries
       .values()
-      .filter(({ kind, route }) => {
-        return kind === "api" ? route.referencedFiles.includes(file) : false;
+      .flatMap(({ kind, entry }) => {
+        return kind === "apiRoute"
+          ? entry.referencedFiles.includes(file)
+            ? [entry]
+            : []
+          : [];
       });
-    for (const { route } of referencedRoutes) {
+    for (const route of referencedRoutes) {
       const resolver = resolvers.get(route.fileFullpath);
       if (resolver) {
         relatedResolvers.set(route.fileFullpath, resolver);
@@ -156,8 +162,8 @@ const updateEventHandler = async (file: string) => {
   for (const resolver of relatedResolvers.values()) {
     spinner.append(resolver.name);
     try {
-      const route = await resolver.handler(file);
-      resolvedRoutes.set(route.route.fileFullpath, route);
+      const resolvedEntry = await resolver.handler(file);
+      resolvedEntries.set(resolvedEntry.entry.fileFullpath, resolvedEntry);
     } catch (
       // biome-ignore lint: any
       error: any
@@ -178,16 +184,16 @@ const runWatchHandlers = async (event?: WatcherEvent) => {
   let spinner = spinnerFactory("Running Generators");
 
   /**
-   * Watch handlers receive the full list of routes
+   * Watch handlers receive the full list of entries
    * and should process only those whose source file or dependencies were updated.
    */
-  const routes = Array.from(resolvedRoutes.values());
+  const entries = Array.from(resolvedEntries.values());
 
   for (const { name, handler } of watchHandlers) {
     spinner.append(name);
     try {
       // using structuredClone to make sure no generator would alter routes
-      await handler(structuredClone(routes), event);
+      await handler(structuredClone(entries), event);
     } catch (
       // biome-ignore lint: any
       error: any
@@ -228,7 +234,7 @@ watcher.on("all", async (event, file) => {
     return;
   }
 
-  if (!resolveRouteFile(file, { appRoot, sourceFolder })) {
+  if (!isRouteFile(file, { appRoot, sourceFolder })) {
     // not a route file
     return;
   }
@@ -259,11 +265,11 @@ watcher.on("all", async (event, file) => {
 
   for (const { name, handler } of resolvers.values()) {
     spinner.append(
-      `[ ${resolvedRoutes.size + 1} of ${resolvers.size} ] ${name}`,
+      `[ ${resolvedEntries.size + 1} of ${resolvers.size} ] ${name}`,
     );
     try {
       const resolvedEntry = await handler();
-      resolvedRoutes.set(resolvedEntry.route.fileFullpath, resolvedEntry);
+      resolvedEntries.set(resolvedEntry.entry.fileFullpath, resolvedEntry);
     } catch (
       // biome-ignore lint: any
       error: any

@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "orders_2095219978_ParamsT2095219978_date2862495610": {
+      "orders_status_date_index_ts_368469196_ParamsT2095219978_date2862495610": {
         "in": "path",
         "name": "date",
         "required": true,
@@ -10,7 +10,7 @@
           "type": "string",
         },
       },
-      "orders_2095219978_ParamsT2095219978_status2063623452": {
+      "orders_status_date_index_ts_368469196_ParamsT2095219978_status2063623452": {
         "in": "path",
         "name": "status",
         "required": true,
@@ -41,18 +41,7 @@
       },
     },
     "schemas": {
-      "orders_2095219978_PayloadT1324883840_includeCustomer1717088701": {
-        "type": "boolean",
-      },
-      "orders_2095219978_PayloadT1324883840_includeItems1770436788": {
-        "type": "boolean",
-      },
-      "orders_2095219978_PayloadT1324883840_limit2140596320": {
-        "maximum": 100,
-        "minimum": 1,
-        "type": "number",
-      },
-      "orders_2095219978_PayloadT3706355048": {
+      "orders_status_date_index_ts_368469196_PayloadT1115160198": {
         "properties": {
           "items": {
             "items": {
@@ -78,7 +67,37 @@
         ],
         "type": "object",
       },
-      "orders_2095219978_ResponseT1324883840": {
+      "orders_status_date_index_ts_368469196_PayloadT3085849223_includeCustomer1717088701": {
+        "type": "boolean",
+      },
+      "orders_status_date_index_ts_368469196_PayloadT3085849223_includeItems1770436788": {
+        "type": "boolean",
+      },
+      "orders_status_date_index_ts_368469196_PayloadT3085849223_limit2140596320": {
+        "maximum": 100,
+        "minimum": 1,
+        "type": "number",
+      },
+      "orders_status_date_index_ts_368469196_ResponseT1115160198": {
+        "properties": {
+          "orderId": {
+            "type": "number",
+          },
+          "status": {
+            "type": "string",
+          },
+          "total": {
+            "type": "number",
+          },
+        },
+        "required": [
+          "orderId",
+          "status",
+          "total",
+        ],
+        "type": "object",
+      },
+      "orders_status_date_index_ts_368469196_ResponseT3085849223": {
         "properties": {
           "date": {
             "type": "string",
@@ -141,25 +160,6 @@
         ],
         "type": "object",
       },
-      "orders_2095219978_ResponseT3706355048": {
-        "properties": {
-          "orderId": {
-            "type": "number",
-          },
-          "status": {
-            "type": "string",
-          },
-          "total": {
-            "type": "number",
-          },
-        },
-        "required": [
-          "orderId",
-          "status",
-          "total",
-        ],
-        "type": "object",
-      },
     },
   },
   "paths": {
@@ -167,14 +167,14 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/orders_2095219978_ParamsT2095219978_status2063623452",
+            "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_status2063623452",
           },
           {
             "in": "query",
             "name": "includeItems",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/orders_2095219978_PayloadT1324883840_includeItems1770436788",
+              "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT3085849223_includeItems1770436788",
             },
           },
           {
@@ -182,7 +182,7 @@
             "name": "includeCustomer",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/orders_2095219978_PayloadT1324883840_includeCustomer1717088701",
+              "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT3085849223_includeCustomer1717088701",
             },
           },
           {
@@ -190,7 +190,7 @@
             "name": "limit",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/orders_2095219978_PayloadT1324883840_limit2140596320",
+              "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT3085849223_limit2140596320",
             },
           },
         ],
@@ -199,7 +199,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/orders_2095219978_ResponseT1324883840",
+                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseT3085849223",
                 },
               },
             },
@@ -210,14 +210,14 @@
       "post": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/orders_2095219978_ParamsT2095219978_status2063623452",
+            "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_status2063623452",
           },
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/orders_2095219978_PayloadT3706355048",
+                "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT1115160198",
               },
             },
           },
@@ -228,7 +228,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/orders_2095219978_ResponseT3706355048",
+                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseT1115160198",
                 },
               },
             },
@@ -241,17 +241,17 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/orders_2095219978_ParamsT2095219978_status2063623452",
+            "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_status2063623452",
           },
           {
-            "$ref": "#/components/parameters/orders_2095219978_ParamsT2095219978_date2862495610",
+            "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_date2862495610",
           },
           {
             "in": "query",
             "name": "includeItems",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/orders_2095219978_PayloadT1324883840_includeItems1770436788",
+              "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT3085849223_includeItems1770436788",
             },
           },
           {
@@ -259,7 +259,7 @@
             "name": "includeCustomer",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/orders_2095219978_PayloadT1324883840_includeCustomer1717088701",
+              "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT3085849223_includeCustomer1717088701",
             },
           },
           {
@@ -267,7 +267,7 @@
             "name": "limit",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/orders_2095219978_PayloadT1324883840_limit2140596320",
+              "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT3085849223_limit2140596320",
             },
           },
         ],
@@ -276,7 +276,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/orders_2095219978_ResponseT1324883840",
+                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseT3085849223",
                 },
               },
             },
@@ -287,17 +287,17 @@
       "post": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/orders_2095219978_ParamsT2095219978_status2063623452",
+            "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_status2063623452",
           },
           {
-            "$ref": "#/components/parameters/orders_2095219978_ParamsT2095219978_date2862495610",
+            "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_date2862495610",
           },
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/orders_2095219978_PayloadT3706355048",
+                "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT1115160198",
               },
             },
           },
@@ -308,7 +308,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/orders_2095219978_ResponseT3706355048",
+                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseT1115160198",
                 },
               },
             },

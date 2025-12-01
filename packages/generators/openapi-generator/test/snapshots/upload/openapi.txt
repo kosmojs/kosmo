@@ -2,11 +2,11 @@
   "components": {
     "parameters": {},
     "schemas": {
-      "upload_398321183_PayloadT3588961556": {
+      "upload_index_ts_443261549_PayloadT2238362647": {
         "properties": {},
         "type": "object",
       },
-      "upload_398321183_ResponseT3588961556": {
+      "upload_index_ts_443261549_ResponseT2238362647": {
         "properties": {
           "files": {
             "items": {
@@ -37,7 +37,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/upload_398321183_PayloadT3588961556",
+                "$ref": "#/components/schemas/upload_index_ts_443261549_PayloadT2238362647",
               },
             },
           },
@@ -48,7 +48,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/upload_398321183_ResponseT3588961556",
+                  "$ref": "#/components/schemas/upload_index_ts_443261549_ResponseT2238362647",
                 },
               },
             },

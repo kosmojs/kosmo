@@ -2,7 +2,7 @@
   "components": {
     "parameters": {},
     "schemas": {
-      "webhooks_stripe_837743219_PayloadT4042882700": {
+      "webhooks_stripe_index_ts_2600860173_PayloadT3810547467": {
         "properties": {
           "created": {
             "type": "number",
@@ -49,7 +49,7 @@
         ],
         "type": "object",
       },
-      "webhooks_stripe_837743219_ResponseT4042882700": {
+      "webhooks_stripe_index_ts_2600860173_ResponseT3810547467": {
         "properties": {
           "processed": {
             "type": "string",
@@ -77,7 +77,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/webhooks_stripe_837743219_PayloadT4042882700",
+                "$ref": "#/components/schemas/webhooks_stripe_index_ts_2600860173_PayloadT3810547467",
               },
             },
           },
@@ -88,7 +88,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/webhooks_stripe_837743219_ResponseT4042882700",
+                  "$ref": "#/components/schemas/webhooks_stripe_index_ts_2600860173_ResponseT3810547467",
                 },
               },
             },

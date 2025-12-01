@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "versions_282620935_ParamsT282620935_format3736761055": {
+      "versions_version_format_index_ts_2757599858_ParamsT282620935_format3736761055": {
         "in": "path",
         "name": "format",
         "required": true,
@@ -22,7 +22,7 @@
           ],
         },
       },
-      "versions_282620935_ParamsT282620935_version3206337475": {
+      "versions_version_format_index_ts_2757599858_ParamsT282620935_version3206337475": {
         "in": "path",
         "name": "version",
         "required": true,
@@ -45,19 +45,19 @@
       },
     },
     "schemas": {
-      "versions_282620935_PayloadT2758694336_fields2128995208": {
+      "versions_version_format_index_ts_2757599858_PayloadT2270307049_fields2128995208": {
         "items": {
           "type": "string",
         },
         "type": "array",
       },
-      "versions_282620935_PayloadT2758694336_includeDeprecated3364225240": {
+      "versions_version_format_index_ts_2757599858_PayloadT2270307049_includeDeprecated3364225240": {
         "type": "boolean",
       },
-      "versions_282620935_PayloadT2758694336_includeExperimental903296420": {
+      "versions_version_format_index_ts_2757599858_PayloadT2270307049_includeExperimental903296420": {
         "type": "boolean",
       },
-      "versions_282620935_ResponseT2758694336": {
+      "versions_version_format_index_ts_2757599858_ResponseT2270307049": {
         "properties": {
           "data": {
             "properties": {
@@ -106,7 +106,7 @@
             "name": "includeDeprecated",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/versions_282620935_PayloadT2758694336_includeDeprecated3364225240",
+              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_includeDeprecated3364225240",
             },
           },
           {
@@ -114,7 +114,7 @@
             "name": "includeExperimental",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/versions_282620935_PayloadT2758694336_includeExperimental903296420",
+              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_includeExperimental903296420",
             },
           },
           {
@@ -122,7 +122,7 @@
             "name": "fields",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/versions_282620935_PayloadT2758694336_fields2128995208",
+              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_fields2128995208",
             },
           },
         ],
@@ -131,7 +131,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/versions_282620935_ResponseT2758694336",
+                  "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_ResponseT2270307049",
                 },
               },
             },
@@ -144,14 +144,14 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/versions_282620935_ParamsT282620935_version3206337475",
+            "$ref": "#/components/parameters/versions_version_format_index_ts_2757599858_ParamsT282620935_version3206337475",
           },
           {
             "in": "query",
             "name": "includeDeprecated",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/versions_282620935_PayloadT2758694336_includeDeprecated3364225240",
+              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_includeDeprecated3364225240",
             },
           },
           {
@@ -159,7 +159,7 @@
             "name": "includeExperimental",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/versions_282620935_PayloadT2758694336_includeExperimental903296420",
+              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_includeExperimental903296420",
             },
           },
           {
@@ -167,7 +167,7 @@
             "name": "fields",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/versions_282620935_PayloadT2758694336_fields2128995208",
+              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_fields2128995208",
             },
           },
         ],
@@ -176,7 +176,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/versions_282620935_ResponseT2758694336",
+                  "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_ResponseT2270307049",
                 },
               },
             },
@@ -189,17 +189,17 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/versions_282620935_ParamsT282620935_version3206337475",
+            "$ref": "#/components/parameters/versions_version_format_index_ts_2757599858_ParamsT282620935_version3206337475",
           },
           {
-            "$ref": "#/components/parameters/versions_282620935_ParamsT282620935_format3736761055",
+            "$ref": "#/components/parameters/versions_version_format_index_ts_2757599858_ParamsT282620935_format3736761055",
           },
           {
             "in": "query",
             "name": "includeDeprecated",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/versions_282620935_PayloadT2758694336_includeDeprecated3364225240",
+              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_includeDeprecated3364225240",
             },
           },
           {
@@ -207,7 +207,7 @@
             "name": "includeExperimental",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/versions_282620935_PayloadT2758694336_includeExperimental903296420",
+              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_includeExperimental903296420",
             },
           },
           {
@@ -215,7 +215,7 @@
             "name": "fields",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/versions_282620935_PayloadT2758694336_fields2128995208",
+              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_fields2128995208",
             },
           },
         ],
@@ -224,7 +224,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/versions_282620935_ResponseT2758694336",
+                  "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_ResponseT2270307049",
                 },
               },
             },

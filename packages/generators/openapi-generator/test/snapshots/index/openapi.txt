@@ -2,7 +2,7 @@
   "components": {
     "parameters": {},
     "schemas": {
-      "index_2155046657_PayloadT4078336737_format3736761055": {
+      "index_index_ts_2109308135_PayloadT4108373014_format3736761055": {
         "anyOf": [
           {
             "const": "full",
@@ -14,10 +14,10 @@
           },
         ],
       },
-      "index_2155046657_PayloadT4078336737_includeEndpoints284570394": {
+      "index_index_ts_2109308135_PayloadT4108373014_includeEndpoints284570394": {
         "type": "boolean",
       },
-      "index_2155046657_ResponseT4078336737": {
+      "index_index_ts_2109308135_ResponseT4108373014": {
         "properties": {
           "documentation": {
             "type": "string",
@@ -54,7 +54,7 @@
             "name": "format",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/index_2155046657_PayloadT4078336737_format3736761055",
+              "$ref": "#/components/schemas/index_index_ts_2109308135_PayloadT4108373014_format3736761055",
             },
           },
           {
@@ -62,7 +62,7 @@
             "name": "includeEndpoints",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/index_2155046657_PayloadT4078336737_includeEndpoints284570394",
+              "$ref": "#/components/schemas/index_index_ts_2109308135_PayloadT4108373014_includeEndpoints284570394",
             },
           },
         ],
@@ -71,7 +71,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/index_2155046657_ResponseT4078336737",
+                  "$ref": "#/components/schemas/index_index_ts_2109308135_ResponseT4108373014",
                 },
               },
             },

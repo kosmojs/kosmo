@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "settings_4001032770_ParamsT4001032770_section762542831": {
+      "settings_section_index_ts_4127127767_ParamsT4001032770_section762542831": {
         "in": "path",
         "name": "section",
         "required": true,
@@ -24,7 +24,7 @@
       },
     },
     "schemas": {
-      "settings_4001032770_PayloadT3913732431": {
+      "settings_section_index_ts_4127127767_PayloadT2105474209": {
         "properties": {
           "language": {
             "type": "string",
@@ -103,7 +103,7 @@
         },
         "type": "object",
       },
-      "settings_4001032770_PayloadT55508079_format3736761055": {
+      "settings_section_index_ts_4127127767_PayloadT2790158804_format3736761055": {
         "anyOf": [
           {
             "const": "full",
@@ -115,10 +115,10 @@
           },
         ],
       },
-      "settings_4001032770_PayloadT55508079_includeDefaults3940573690": {
+      "settings_section_index_ts_4127127767_PayloadT2790158804_includeDefaults3940573690": {
         "type": "boolean",
       },
-      "settings_4001032770_ResponseT3913732431": {
+      "settings_section_index_ts_4127127767_ResponseT2105474209": {
         "properties": {
           "language": {
             "type": "string",
@@ -208,7 +208,7 @@
         ],
         "type": "object",
       },
-      "settings_4001032770_ResponseT55508079": {
+      "settings_section_index_ts_4127127767_ResponseT2790158804": {
         "properties": {
           "language": {
             "type": "string",
@@ -309,7 +309,7 @@
             "name": "format",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/settings_4001032770_PayloadT55508079_format3736761055",
+              "$ref": "#/components/schemas/settings_section_index_ts_4127127767_PayloadT2790158804_format3736761055",
             },
           },
           {
@@ -317,7 +317,7 @@
             "name": "includeDefaults",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/settings_4001032770_PayloadT55508079_includeDefaults3940573690",
+              "$ref": "#/components/schemas/settings_section_index_ts_4127127767_PayloadT2790158804_includeDefaults3940573690",
             },
           },
         ],
@@ -326,7 +326,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/settings_4001032770_ResponseT55508079",
+                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseT2790158804",
                 },
               },
             },
@@ -339,7 +339,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/settings_4001032770_PayloadT3913732431",
+                "$ref": "#/components/schemas/settings_section_index_ts_4127127767_PayloadT2105474209",
               },
             },
           },
@@ -350,7 +350,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/settings_4001032770_ResponseT3913732431",
+                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseT2105474209",
                 },
               },
             },
@@ -363,14 +363,14 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/settings_4001032770_ParamsT4001032770_section762542831",
+            "$ref": "#/components/parameters/settings_section_index_ts_4127127767_ParamsT4001032770_section762542831",
           },
           {
             "in": "query",
             "name": "format",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/settings_4001032770_PayloadT55508079_format3736761055",
+              "$ref": "#/components/schemas/settings_section_index_ts_4127127767_PayloadT2790158804_format3736761055",
             },
           },
           {
@@ -378,7 +378,7 @@
             "name": "includeDefaults",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/settings_4001032770_PayloadT55508079_includeDefaults3940573690",
+              "$ref": "#/components/schemas/settings_section_index_ts_4127127767_PayloadT2790158804_includeDefaults3940573690",
             },
           },
         ],
@@ -387,7 +387,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/settings_4001032770_ResponseT55508079",
+                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseT2790158804",
                 },
               },
             },
@@ -398,14 +398,14 @@
       "patch": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/settings_4001032770_ParamsT4001032770_section762542831",
+            "$ref": "#/components/parameters/settings_section_index_ts_4127127767_ParamsT4001032770_section762542831",
           },
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/settings_4001032770_PayloadT3913732431",
+                "$ref": "#/components/schemas/settings_section_index_ts_4127127767_PayloadT2105474209",
               },
             },
           },
@@ -416,7 +416,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/settings_4001032770_ResponseT3913732431",
+                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseT2105474209",
                 },
               },
             },

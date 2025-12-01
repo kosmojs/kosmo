@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "usernames_2706213495_ParamsT2706213495_username4166911607": {
+      "usernames_username_index_ts_3531210388_ParamsT2706213495_username4166911607": {
         "in": "path",
         "name": "username",
         "required": true,
@@ -14,16 +14,16 @@
       },
     },
     "schemas": {
-      "usernames_2706213495_PayloadT2681596337_includeBadges3156181363": {
+      "usernames_username_index_ts_3531210388_PayloadT3508795421_includeBadges3156181363": {
         "type": "boolean",
       },
-      "usernames_2706213495_PayloadT2681596337_includeRecent2844427671": {
+      "usernames_username_index_ts_3531210388_PayloadT3508795421_includeRecent2844427671": {
         "type": "boolean",
       },
-      "usernames_2706213495_PayloadT2681596337_includeStats3755947603": {
+      "usernames_username_index_ts_3531210388_PayloadT3508795421_includeStats3755947603": {
         "type": "boolean",
       },
-      "usernames_2706213495_ResponseT2681596337": {
+      "usernames_username_index_ts_3531210388_ResponseT3508795421": {
         "properties": {
           "displayName": {
             "type": "string",
@@ -69,14 +69,14 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/usernames_2706213495_ParamsT2706213495_username4166911607",
+            "$ref": "#/components/parameters/usernames_username_index_ts_3531210388_ParamsT2706213495_username4166911607",
           },
           {
             "in": "query",
             "name": "includeStats",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/usernames_2706213495_PayloadT2681596337_includeStats3755947603",
+              "$ref": "#/components/schemas/usernames_username_index_ts_3531210388_PayloadT3508795421_includeStats3755947603",
             },
           },
           {
@@ -84,7 +84,7 @@
             "name": "includeRecent",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/usernames_2706213495_PayloadT2681596337_includeRecent2844427671",
+              "$ref": "#/components/schemas/usernames_username_index_ts_3531210388_PayloadT3508795421_includeRecent2844427671",
             },
           },
           {
@@ -92,7 +92,7 @@
             "name": "includeBadges",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/usernames_2706213495_PayloadT2681596337_includeBadges3156181363",
+              "$ref": "#/components/schemas/usernames_username_index_ts_3531210388_PayloadT3508795421_includeBadges3156181363",
             },
           },
         ],
@@ -101,7 +101,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/usernames_2706213495_ResponseT2681596337",
+                  "$ref": "#/components/schemas/usernames_username_index_ts_3531210388_ResponseT3508795421",
                 },
               },
             },

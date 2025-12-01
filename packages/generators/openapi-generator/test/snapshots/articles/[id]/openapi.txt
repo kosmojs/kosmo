@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "articles_3442148210_ParamsT3442148210_id3208210256": {
+      "articles_id_index_ts_1137349588_ParamsT3442148210_id3208210256": {
         "in": "path",
         "name": "id",
         "required": true,
@@ -12,7 +12,7 @@
       },
     },
     "schemas": {
-      "articles_3442148210_PayloadT2151867301_format3736761055": {
+      "articles_id_index_ts_1137349588_PayloadT2019094101_format3736761055": {
         "anyOf": [
           {
             "const": "full",
@@ -24,13 +24,13 @@
           },
         ],
       },
-      "articles_3442148210_PayloadT2151867301_includeAuthor2034633249": {
+      "articles_id_index_ts_1137349588_PayloadT2019094101_includeAuthor2034633249": {
         "type": "boolean",
       },
-      "articles_3442148210_PayloadT2151867301_includeComments3103762846": {
+      "articles_id_index_ts_1137349588_PayloadT2019094101_includeComments3103762846": {
         "type": "boolean",
       },
-      "articles_3442148210_ResponseT2151867301": {
+      "articles_id_index_ts_1137349588_ResponseT2019094101": {
         "properties": {
           "author": {
             "type": "string",
@@ -72,14 +72,14 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/articles_3442148210_ParamsT3442148210_id3208210256",
+            "$ref": "#/components/parameters/articles_id_index_ts_1137349588_ParamsT3442148210_id3208210256",
           },
           {
             "in": "query",
             "name": "includeComments",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/articles_3442148210_PayloadT2151867301_includeComments3103762846",
+              "$ref": "#/components/schemas/articles_id_index_ts_1137349588_PayloadT2019094101_includeComments3103762846",
             },
           },
           {
@@ -87,7 +87,7 @@
             "name": "includeAuthor",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/articles_3442148210_PayloadT2151867301_includeAuthor2034633249",
+              "$ref": "#/components/schemas/articles_id_index_ts_1137349588_PayloadT2019094101_includeAuthor2034633249",
             },
           },
           {
@@ -95,7 +95,7 @@
             "name": "format",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/articles_3442148210_PayloadT2151867301_format3736761055",
+              "$ref": "#/components/schemas/articles_id_index_ts_1137349588_PayloadT2019094101_format3736761055",
             },
           },
         ],
@@ -104,7 +104,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/articles_3442148210_ResponseT2151867301",
+                  "$ref": "#/components/schemas/articles_id_index_ts_1137349588_ResponseT2019094101",
                 },
               },
             },

@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "metrics_3905147277_ParamsT3905147277_name1579384326": {
+      "metrics_name_period_index_ts_697537035_ParamsT3905147277_name1579384326": {
         "in": "path",
         "name": "name",
         "required": true,
@@ -9,7 +9,7 @@
           "type": "string",
         },
       },
-      "metrics_3905147277_ParamsT3905147277_period3317178062": {
+      "metrics_name_period_index_ts_697537035_ParamsT3905147277_period3317178062": {
         "in": "path",
         "name": "period",
         "required": true,
@@ -40,7 +40,7 @@
       },
     },
     "schemas": {
-      "metrics_3905147277_PayloadT1897339246": {
+      "metrics_name_period_index_ts_697537035_PayloadT2813146979": {
         "properties": {
           "timestamp": {
             "type": "string",
@@ -55,10 +55,10 @@
         ],
         "type": "object",
       },
-      "metrics_3905147277_PayloadT3558105066_includeRaw2930872922": {
+      "metrics_name_period_index_ts_697537035_PayloadT3097082442_includeRaw2930872922": {
         "type": "boolean",
       },
-      "metrics_3905147277_PayloadT3558105066_resolution4258467722": {
+      "metrics_name_period_index_ts_697537035_PayloadT3097082442_resolution4258467722": {
         "anyOf": [
           {
             "const": "hour",
@@ -74,7 +74,7 @@
           },
         ],
       },
-      "metrics_3905147277_PayloadT3558105066_transform2008187309": {
+      "metrics_name_period_index_ts_697537035_PayloadT3097082442_transform2008187309": {
         "anyOf": [
           {
             "const": "none",
@@ -90,7 +90,7 @@
           },
         ],
       },
-      "metrics_3905147277_ResponseT1897339246": {
+      "metrics_name_period_index_ts_697537035_ResponseT2813146979": {
         "properties": {
           "id": {
             "type": "number",
@@ -109,7 +109,7 @@
         ],
         "type": "object",
       },
-      "metrics_3905147277_ResponseT3558105066": {
+      "metrics_name_period_index_ts_697537035_ResponseT3097082442": {
         "properties": {
           "data": {
             "items": {
@@ -178,14 +178,14 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/metrics_3905147277_ParamsT3905147277_name1579384326",
+            "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_name1579384326",
           },
           {
             "in": "query",
             "name": "resolution",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/metrics_3905147277_PayloadT3558105066_resolution4258467722",
+              "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT3097082442_resolution4258467722",
             },
           },
           {
@@ -193,7 +193,7 @@
             "name": "includeRaw",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/metrics_3905147277_PayloadT3558105066_includeRaw2930872922",
+              "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT3097082442_includeRaw2930872922",
             },
           },
           {
@@ -201,7 +201,7 @@
             "name": "transform",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/metrics_3905147277_PayloadT3558105066_transform2008187309",
+              "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT3097082442_transform2008187309",
             },
           },
         ],
@@ -210,7 +210,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/metrics_3905147277_ResponseT3558105066",
+                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseT3097082442",
                 },
               },
             },
@@ -221,14 +221,14 @@
       "post": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/metrics_3905147277_ParamsT3905147277_name1579384326",
+            "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_name1579384326",
           },
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/metrics_3905147277_PayloadT1897339246",
+                "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT2813146979",
               },
             },
           },
@@ -239,7 +239,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/metrics_3905147277_ResponseT1897339246",
+                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseT2813146979",
                 },
               },
             },
@@ -252,17 +252,17 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/metrics_3905147277_ParamsT3905147277_name1579384326",
+            "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_name1579384326",
           },
           {
-            "$ref": "#/components/parameters/metrics_3905147277_ParamsT3905147277_period3317178062",
+            "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_period3317178062",
           },
           {
             "in": "query",
             "name": "resolution",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/metrics_3905147277_PayloadT3558105066_resolution4258467722",
+              "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT3097082442_resolution4258467722",
             },
           },
           {
@@ -270,7 +270,7 @@
             "name": "includeRaw",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/metrics_3905147277_PayloadT3558105066_includeRaw2930872922",
+              "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT3097082442_includeRaw2930872922",
             },
           },
           {
@@ -278,7 +278,7 @@
             "name": "transform",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/metrics_3905147277_PayloadT3558105066_transform2008187309",
+              "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT3097082442_transform2008187309",
             },
           },
         ],
@@ -287,7 +287,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/metrics_3905147277_ResponseT3558105066",
+                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseT3097082442",
                 },
               },
             },
@@ -298,17 +298,17 @@
       "post": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/metrics_3905147277_ParamsT3905147277_name1579384326",
+            "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_name1579384326",
           },
           {
-            "$ref": "#/components/parameters/metrics_3905147277_ParamsT3905147277_period3317178062",
+            "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_period3317178062",
           },
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/metrics_3905147277_PayloadT1897339246",
+                "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT2813146979",
               },
             },
           },
@@ -319,7 +319,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/metrics_3905147277_ResponseT1897339246",
+                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseT2813146979",
                 },
               },
             },

@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "search_1773160490_ParamsT1773160490_page336246304": {
+      "search_type_page_index_ts_2448809791_ParamsT1773160490_page336246304": {
         "in": "path",
         "name": "page",
         "required": true,
@@ -10,7 +10,7 @@
           "type": "number",
         },
       },
-      "search_1773160490_ParamsT1773160490_type2363381545": {
+      "search_type_page_index_ts_2448809791_ParamsT1773160490_type2363381545": {
         "in": "path",
         "name": "type",
         "required": true,
@@ -33,13 +33,13 @@
       },
     },
     "schemas": {
-      "search_1773160490_PayloadT3546546239_boostRecent570170941": {
+      "search_type_page_index_ts_2448809791_PayloadT984037968_boostRecent570170941": {
         "type": "boolean",
       },
-      "search_1773160490_PayloadT3546546239_q4110462503": {
+      "search_type_page_index_ts_2448809791_PayloadT984037968_q4110462503": {
         "type": "string",
       },
-      "search_1773160490_PayloadT3546546239_type2363381545": {
+      "search_type_page_index_ts_2448809791_PayloadT984037968_type2363381545": {
         "anyOf": [
           {
             "const": "all",
@@ -55,7 +55,7 @@
           },
         ],
       },
-      "search_1773160490_ResponseT3546546239": {
+      "search_type_page_index_ts_2448809791_ResponseT984037968": {
         "properties": {
           "page": {
             "type": "number",
@@ -111,7 +111,7 @@
             "name": "q",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/search_1773160490_PayloadT3546546239_q4110462503",
+              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_q4110462503",
             },
           },
           {
@@ -119,7 +119,7 @@
             "name": "type",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/search_1773160490_PayloadT3546546239_type2363381545",
+              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_type2363381545",
             },
           },
           {
@@ -127,7 +127,7 @@
             "name": "boostRecent",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/search_1773160490_PayloadT3546546239_boostRecent570170941",
+              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_boostRecent570170941",
             },
           },
         ],
@@ -136,7 +136,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/search_1773160490_ResponseT3546546239",
+                  "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_ResponseT984037968",
                 },
               },
             },
@@ -149,14 +149,14 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/search_1773160490_ParamsT1773160490_type2363381545",
+            "$ref": "#/components/parameters/search_type_page_index_ts_2448809791_ParamsT1773160490_type2363381545",
           },
           {
             "in": "query",
             "name": "q",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/search_1773160490_PayloadT3546546239_q4110462503",
+              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_q4110462503",
             },
           },
           {
@@ -164,7 +164,7 @@
             "name": "type",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/search_1773160490_PayloadT3546546239_type2363381545",
+              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_type2363381545",
             },
           },
           {
@@ -172,7 +172,7 @@
             "name": "boostRecent",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/search_1773160490_PayloadT3546546239_boostRecent570170941",
+              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_boostRecent570170941",
             },
           },
         ],
@@ -181,7 +181,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/search_1773160490_ResponseT3546546239",
+                  "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_ResponseT984037968",
                 },
               },
             },
@@ -194,17 +194,17 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/search_1773160490_ParamsT1773160490_type2363381545",
+            "$ref": "#/components/parameters/search_type_page_index_ts_2448809791_ParamsT1773160490_type2363381545",
           },
           {
-            "$ref": "#/components/parameters/search_1773160490_ParamsT1773160490_page336246304",
+            "$ref": "#/components/parameters/search_type_page_index_ts_2448809791_ParamsT1773160490_page336246304",
           },
           {
             "in": "query",
             "name": "q",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/search_1773160490_PayloadT3546546239_q4110462503",
+              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_q4110462503",
             },
           },
           {
@@ -212,7 +212,7 @@
             "name": "type",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/search_1773160490_PayloadT3546546239_type2363381545",
+              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_type2363381545",
             },
           },
           {
@@ -220,7 +220,7 @@
             "name": "boostRecent",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/search_1773160490_PayloadT3546546239_boostRecent570170941",
+              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_boostRecent570170941",
             },
           },
         ],
@@ -229,7 +229,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/search_1773160490_ResponseT3546546239",
+                  "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_ResponseT984037968",
                 },
               },
             },

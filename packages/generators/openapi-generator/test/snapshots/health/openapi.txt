@@ -2,7 +2,7 @@
   "components": {
     "parameters": {},
     "schemas": {
-      "health_3470402323_ResponseT3549018236": {
+      "health_index_ts_3040421798_ResponseT1779970354": {
         "properties": {
           "memory": {
             "properties": {
@@ -72,7 +72,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/health_3470402323_ResponseT3549018236",
+                  "$ref": "#/components/schemas/health_index_ts_3040421798_ResponseT1779970354",
                 },
               },
             },

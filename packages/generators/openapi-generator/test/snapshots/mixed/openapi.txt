@@ -2,10 +2,30 @@
   "components": {
     "parameters": {},
     "schemas": {
-      "mixed_3910795043_PayloadT1597215266_debug1822771111": {
+      "mixed_index_ts_770061503_PayloadT229599985": {
+        "properties": {
+          "email": {
+            "format": "email",
+            "type": "string",
+          },
+          "id": {
+            "type": "number",
+          },
+          "name": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+        ],
+        "type": "object",
+      },
+      "mixed_index_ts_770061503_PayloadT2961733412_debug1822771111": {
         "type": "boolean",
       },
-      "mixed_3910795043_PayloadT1597215266_format3736761055": {
+      "mixed_index_ts_770061503_PayloadT2961733412_format3736761055": {
         "anyOf": [
           {
             "const": "full",
@@ -17,10 +37,10 @@
           },
         ],
       },
-      "mixed_3910795043_PayloadT1597215266_includeMetadata2826242976": {
+      "mixed_index_ts_770061503_PayloadT2961733412_includeMetadata2826242976": {
         "type": "boolean",
       },
-      "mixed_3910795043_PayloadT211301766": {
+      "mixed_index_ts_770061503_PayloadT3810775168": {
         "properties": {
           "data": {
             "properties": {
@@ -43,81 +63,7 @@
         ],
         "type": "object",
       },
-      "mixed_3910795043_PayloadT3827528737": {
-        "properties": {
-          "email": {
-            "format": "email",
-            "type": "string",
-          },
-          "id": {
-            "type": "number",
-          },
-          "name": {
-            "type": "string",
-          },
-        },
-        "required": [
-          "id",
-          "name",
-          "email",
-        ],
-        "type": "object",
-      },
-      "mixed_3910795043_ResponseT1597215266": {
-        "properties": {
-          "data": {
-            "properties": {
-              "id": {
-                "type": "number",
-              },
-              "processed": {
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "id",
-              "processed",
-            ],
-            "type": "object",
-          },
-          "success": {
-            "type": "boolean",
-          },
-        },
-        "required": [
-          "success",
-          "data",
-        ],
-        "type": "object",
-      },
-      "mixed_3910795043_ResponseT211301766": {
-        "properties": {
-          "data": {
-            "properties": {
-              "id": {
-                "type": "number",
-              },
-              "processed": {
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "id",
-              "processed",
-            ],
-            "type": "object",
-          },
-          "success": {
-            "type": "boolean",
-          },
-        },
-        "required": [
-          "success",
-          "data",
-        ],
-        "type": "object",
-      },
-      "mixed_3910795043_ResponseT3827528737": {
+      "mixed_index_ts_770061503_ResponseT229599985": {
         "properties": {
           "custom": {
             "type": "string",
@@ -144,6 +90,60 @@
         ],
         "type": "object",
       },
+      "mixed_index_ts_770061503_ResponseT2961733412": {
+        "properties": {
+          "data": {
+            "properties": {
+              "id": {
+                "type": "number",
+              },
+              "processed": {
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "id",
+              "processed",
+            ],
+            "type": "object",
+          },
+          "success": {
+            "type": "boolean",
+          },
+        },
+        "required": [
+          "success",
+          "data",
+        ],
+        "type": "object",
+      },
+      "mixed_index_ts_770061503_ResponseT3810775168": {
+        "properties": {
+          "data": {
+            "properties": {
+              "id": {
+                "type": "number",
+              },
+              "processed": {
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "id",
+              "processed",
+            ],
+            "type": "object",
+          },
+          "success": {
+            "type": "boolean",
+          },
+        },
+        "required": [
+          "success",
+          "data",
+        ],
+        "type": "object",
+      },
     },
   },
   "paths": {
@@ -155,7 +155,7 @@
             "name": "debug",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/mixed_3910795043_PayloadT1597215266_debug1822771111",
+              "$ref": "#/components/schemas/mixed_index_ts_770061503_PayloadT2961733412_debug1822771111",
             },
           },
           {
@@ -163,7 +163,7 @@
             "name": "includeMetadata",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/mixed_3910795043_PayloadT1597215266_includeMetadata2826242976",
+              "$ref": "#/components/schemas/mixed_index_ts_770061503_PayloadT2961733412_includeMetadata2826242976",
             },
           },
           {
@@ -171,7 +171,7 @@
             "name": "format",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/mixed_3910795043_PayloadT1597215266_format3736761055",
+              "$ref": "#/components/schemas/mixed_index_ts_770061503_PayloadT2961733412_format3736761055",
             },
           },
         ],
@@ -180,7 +180,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/mixed_3910795043_ResponseT1597215266",
+                  "$ref": "#/components/schemas/mixed_index_ts_770061503_ResponseT2961733412",
                 },
               },
             },
@@ -193,7 +193,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/mixed_3910795043_PayloadT3827528737",
+                "$ref": "#/components/schemas/mixed_index_ts_770061503_PayloadT229599985",
               },
             },
           },
@@ -204,7 +204,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/mixed_3910795043_ResponseT3827528737",
+                  "$ref": "#/components/schemas/mixed_index_ts_770061503_ResponseT229599985",
                 },
               },
             },
@@ -217,7 +217,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/mixed_3910795043_PayloadT211301766",
+                "$ref": "#/components/schemas/mixed_index_ts_770061503_PayloadT3810775168",
               },
             },
           },
@@ -228,7 +228,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/mixed_3910795043_ResponseT211301766",
+                  "$ref": "#/components/schemas/mixed_index_ts_770061503_ResponseT3810775168",
                 },
               },
             },

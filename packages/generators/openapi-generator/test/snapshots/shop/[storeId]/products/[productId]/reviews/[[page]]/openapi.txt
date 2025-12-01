@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "shop_4285257638_ParamsT4285257638_page336246304": {
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_page336246304": {
         "in": "path",
         "name": "page",
         "required": true,
@@ -10,7 +10,7 @@
           "type": "number",
         },
       },
-      "shop_4285257638_ParamsT4285257638_productId913937925": {
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_productId913937925": {
         "in": "path",
         "name": "productId",
         "required": true,
@@ -19,7 +19,7 @@
           "type": "number",
         },
       },
-      "shop_4285257638_ParamsT4285257638_storeId796101202": {
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_storeId796101202": {
         "in": "path",
         "name": "storeId",
         "required": true,
@@ -30,18 +30,18 @@
       },
     },
     "schemas": {
-      "shop_4285257638_PayloadT117928027_includeReplies2031277092": {
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_includeReplies2031277092": {
         "type": "boolean",
       },
-      "shop_4285257638_PayloadT117928027_minRating837778626": {
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_minRating837778626": {
         "maximum": 5,
         "minimum": 1,
         "type": "number",
       },
-      "shop_4285257638_PayloadT117928027_verifiedOnly3469940295": {
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_verifiedOnly3469940295": {
         "type": "boolean",
       },
-      "shop_4285257638_ResponseT117928027": {
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_ResponseT635982599": {
         "properties": {
           "averageRating": {
             "type": "number",
@@ -139,17 +139,17 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/shop_4285257638_ParamsT4285257638_storeId796101202",
+            "$ref": "#/components/parameters/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_storeId796101202",
           },
           {
-            "$ref": "#/components/parameters/shop_4285257638_ParamsT4285257638_productId913937925",
+            "$ref": "#/components/parameters/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_productId913937925",
           },
           {
             "in": "query",
             "name": "minRating",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/shop_4285257638_PayloadT117928027_minRating837778626",
+              "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_minRating837778626",
             },
           },
           {
@@ -157,7 +157,7 @@
             "name": "verifiedOnly",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/shop_4285257638_PayloadT117928027_verifiedOnly3469940295",
+              "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_verifiedOnly3469940295",
             },
           },
           {
@@ -165,7 +165,7 @@
             "name": "includeReplies",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/shop_4285257638_PayloadT117928027_includeReplies2031277092",
+              "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_includeReplies2031277092",
             },
           },
         ],
@@ -174,7 +174,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/shop_4285257638_ResponseT117928027",
+                  "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ResponseT635982599",
                 },
               },
             },
@@ -187,20 +187,20 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/shop_4285257638_ParamsT4285257638_storeId796101202",
+            "$ref": "#/components/parameters/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_storeId796101202",
           },
           {
-            "$ref": "#/components/parameters/shop_4285257638_ParamsT4285257638_productId913937925",
+            "$ref": "#/components/parameters/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_productId913937925",
           },
           {
-            "$ref": "#/components/parameters/shop_4285257638_ParamsT4285257638_page336246304",
+            "$ref": "#/components/parameters/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_page336246304",
           },
           {
             "in": "query",
             "name": "minRating",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/shop_4285257638_PayloadT117928027_minRating837778626",
+              "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_minRating837778626",
             },
           },
           {
@@ -208,7 +208,7 @@
             "name": "verifiedOnly",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/shop_4285257638_PayloadT117928027_verifiedOnly3469940295",
+              "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_verifiedOnly3469940295",
             },
           },
           {
@@ -216,7 +216,7 @@
             "name": "includeReplies",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/shop_4285257638_PayloadT117928027_includeReplies2031277092",
+              "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_includeReplies2031277092",
             },
           },
         ],
@@ -225,7 +225,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/shop_4285257638_ResponseT117928027",
+                  "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ResponseT635982599",
                 },
               },
             },

@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "analytics_766317247_ParamsT766317247_period3317178062": {
+      "analytics_period_index_ts_1204912692_ParamsT766317247_period3317178062": {
         "in": "path",
         "name": "period",
         "required": true,
@@ -28,7 +28,7 @@
       },
     },
     "schemas": {
-      "analytics_766317247_PayloadT3984453425": {
+      "analytics_period_index_ts_1204912692_PayloadT3425271542": {
         "properties": {
           "breakdown": {
             "anyOf": [
@@ -78,7 +78,7 @@
         ],
         "type": "object",
       },
-      "analytics_766317247_ResponseT3984453425": {
+      "analytics_period_index_ts_1204912692_ResponseT3425271542": {
         "properties": {
           "metrics": {
             "items": {
@@ -154,7 +154,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/analytics_766317247_PayloadT3984453425",
+                "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_PayloadT3425271542",
               },
             },
           },
@@ -165,7 +165,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/analytics_766317247_ResponseT3984453425",
+                  "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_ResponseT3425271542",
                 },
               },
             },
@@ -178,14 +178,14 @@
       "post": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/analytics_766317247_ParamsT766317247_period3317178062",
+            "$ref": "#/components/parameters/analytics_period_index_ts_1204912692_ParamsT766317247_period3317178062",
           },
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/analytics_766317247_PayloadT3984453425",
+                "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_PayloadT3425271542",
               },
             },
           },
@@ -196,7 +196,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/analytics_766317247_ResponseT3984453425",
+                  "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_ResponseT3425271542",
                 },
               },
             },

@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "hex_1393281580_ParamsT1393281580_color1716930793": {
+      "hex_color_index_ts_1952586627_ParamsT1393281580_color1716930793": {
         "in": "path",
         "name": "color",
         "required": true,
@@ -12,7 +12,7 @@
       },
     },
     "schemas": {
-      "hex_1393281580_PayloadT924346986_format3736761055": {
+      "hex_color_index_ts_1952586627_PayloadT722658517_format3736761055": {
         "anyOf": [
           {
             "const": "hex",
@@ -32,10 +32,10 @@
           },
         ],
       },
-      "hex_1393281580_PayloadT924346986_includeName3458752990": {
+      "hex_color_index_ts_1952586627_PayloadT722658517_includeName3458752990": {
         "type": "boolean",
       },
-      "hex_1393281580_ResponseT924346986": {
+      "hex_color_index_ts_1952586627_ResponseT722658517": {
         "properties": {
           "hex": {
             "type": "string",
@@ -96,14 +96,14 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/hex_1393281580_ParamsT1393281580_color1716930793",
+            "$ref": "#/components/parameters/hex_color_index_ts_1952586627_ParamsT1393281580_color1716930793",
           },
           {
             "in": "query",
             "name": "format",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/hex_1393281580_PayloadT924346986_format3736761055",
+              "$ref": "#/components/schemas/hex_color_index_ts_1952586627_PayloadT722658517_format3736761055",
             },
           },
           {
@@ -111,7 +111,7 @@
             "name": "includeName",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/hex_1393281580_PayloadT924346986_includeName3458752990",
+              "$ref": "#/components/schemas/hex_color_index_ts_1952586627_PayloadT722658517_includeName3458752990",
             },
           },
         ],
@@ -120,7 +120,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/hex_1393281580_ResponseT924346986",
+                  "$ref": "#/components/schemas/hex_color_index_ts_1952586627_ResponseT722658517",
                 },
               },
             },

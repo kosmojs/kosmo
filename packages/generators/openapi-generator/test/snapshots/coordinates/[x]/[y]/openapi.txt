@@ -1,7 +1,7 @@
 {
   "components": {
     "parameters": {
-      "coordinates_2786993400_ParamsT2786993400_x2363233923": {
+      "coordinates_x_y_index_ts_3681158950_ParamsT2786993400_x2363233923": {
         "in": "path",
         "name": "x",
         "required": true,
@@ -12,7 +12,7 @@
           "type": "number",
         },
       },
-      "coordinates_2786993400_ParamsT2786993400_y4225443349": {
+      "coordinates_x_y_index_ts_3681158950_ParamsT2786993400_y4225443349": {
         "in": "path",
         "name": "y",
         "required": true,
@@ -25,7 +25,7 @@
       },
     },
     "schemas": {
-      "coordinates_2786993400_PayloadT269124932_format3736761055": {
+      "coordinates_x_y_index_ts_3681158950_PayloadT2878949573_format3736761055": {
         "anyOf": [
           {
             "const": "decimal",
@@ -37,13 +37,13 @@
           },
         ],
       },
-      "coordinates_2786993400_PayloadT269124932_includeElevation4039203883": {
+      "coordinates_x_y_index_ts_3681158950_PayloadT2878949573_includeElevation4039203883": {
         "type": "boolean",
       },
-      "coordinates_2786993400_PayloadT269124932_includeTimezone3495988515": {
+      "coordinates_x_y_index_ts_3681158950_PayloadT2878949573_includeTimezone3495988515": {
         "type": "boolean",
       },
-      "coordinates_2786993400_ResponseT269124932": {
+      "coordinates_x_y_index_ts_3681158950_ResponseT2878949573": {
         "properties": {
           "elevation": {
             "type": "number",
@@ -75,17 +75,17 @@
       "get": {
         "parameters": [
           {
-            "$ref": "#/components/parameters/coordinates_2786993400_ParamsT2786993400_x2363233923",
+            "$ref": "#/components/parameters/coordinates_x_y_index_ts_3681158950_ParamsT2786993400_x2363233923",
           },
           {
-            "$ref": "#/components/parameters/coordinates_2786993400_ParamsT2786993400_y4225443349",
+            "$ref": "#/components/parameters/coordinates_x_y_index_ts_3681158950_ParamsT2786993400_y4225443349",
           },
           {
             "in": "query",
             "name": "format",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/coordinates_2786993400_PayloadT269124932_format3736761055",
+              "$ref": "#/components/schemas/coordinates_x_y_index_ts_3681158950_PayloadT2878949573_format3736761055",
             },
           },
           {
@@ -93,7 +93,7 @@
             "name": "includeTimezone",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/coordinates_2786993400_PayloadT269124932_includeTimezone3495988515",
+              "$ref": "#/components/schemas/coordinates_x_y_index_ts_3681158950_PayloadT2878949573_includeTimezone3495988515",
             },
           },
           {
@@ -101,7 +101,7 @@
             "name": "includeElevation",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/coordinates_2786993400_PayloadT269124932_includeElevation4039203883",
+              "$ref": "#/components/schemas/coordinates_x_y_index_ts_3681158950_PayloadT2878949573_includeElevation4039203883",
             },
           },
         ],
@@ -110,7 +110,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/coordinates_2786993400_ResponseT269124932",
+                  "$ref": "#/components/schemas/coordinates_x_y_index_ts_3681158950_ResponseT2878949573",
                 },
               },
             },
