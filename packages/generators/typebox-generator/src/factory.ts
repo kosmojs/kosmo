@@ -1,10 +1,10 @@
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 import {
   defaults,
   type GeneratorFactory,
   pathResolver,
-  type RouteResolverEntry,
+  type ResolvedEntry,
   renderToFile,
   typeboxLiteralText,
 } from "@kosmojs/devlib";
@@ -41,32 +41,32 @@ export const factory: GeneratorFactory<Options> = async (
     );
   }
 
-  const generateLibFiles = async (entries: Array<RouteResolverEntry>) => {
-    for (const { kind, route } of entries) {
-      if (kind !== "api") {
+  const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
+    for (const { kind, entry } of entries) {
+      if (kind !== "apiRoute") {
         continue;
       }
 
       await renderToFile(
-        resolve("apiLibDir", route.importPath, "schemas.ts"),
+        resolve("apiLibDir", dirname(entry.file), "schemas.ts"),
         schemasTpl,
         {
-          route,
-          routeMethods: route.methods.map((method) => {
+          route: entry,
+          routeMethods: entry.methods.map((method) => {
             return {
               method,
-              payloadType: route.payloadTypes.find((e) => e.method === method),
-              responseType: route.responseTypes.find(
+              payloadType: entry.payloadTypes.find((e) => e.method === method),
+              responseType: entry.responseTypes.find(
                 (e) => e.method === method,
               ),
             };
           }),
           resolvedTypes: [
-            route.params.resolvedType,
-            ...route.payloadTypes.flatMap((e) =>
+            entry.params.resolvedType,
+            ...entry.payloadTypes.flatMap((e) =>
               e.resolvedType ? [e.resolvedType] : [],
             ),
-            ...route.responseTypes.flatMap((e) =>
+            ...entry.responseTypes.flatMap((e) =>
               e.resolvedType ? [e.resolvedType] : [],
             ),
           ].flatMap((resolvedType) => {
@@ -93,10 +93,10 @@ export const factory: GeneratorFactory<Options> = async (
       if (event) {
         if (event.kind === "update") {
           await generateLibFiles(
-            entries.filter(({ kind, route }) => {
-              return kind === "api"
-                ? route.fileFullpath === event.file ||
-                    route.referencedFiles?.includes(event.file)
+            entries.filter(({ kind, entry }) => {
+              return kind === "apiRoute"
+                ? entry.fileFullpath === event.file ||
+                    entry.referencedFiles?.includes(event.file)
                 : false;
             }),
           );

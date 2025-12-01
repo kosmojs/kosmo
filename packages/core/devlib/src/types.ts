@@ -58,7 +58,7 @@ export type RouteEntry = {
   fileFullpath: string;
   pathTokens: Array<PathToken>;
   importName: string;
-  importPath: string;
+  importFile: string;
 };
 
 export type ApiRoute = RouteEntry & {
@@ -82,6 +82,10 @@ export type PageRoute = RouteEntry & {
     schema: Array<Required<PathToken>["param"]>;
   };
 };
+
+export type ResolvedEntry =
+  | { kind: "apiRoute"; entry: ApiRoute }
+  | { kind: "pageRoute"; entry: PageRoute }
 
 export type PayloadType = {
   id: string;
@@ -131,22 +135,13 @@ export type PathParams = {
   properties: Array<{ name: string; type: string }>;
 };
 
-export type RouteResolverEntry =
-  | { kind: "api"; route: ApiRoute }
-  | { kind: "page"; route: PageRoute };
-
-export type RouteResolver = {
-  name: string;
-  handler: (updatedFile?: string) => Promise<RouteResolverEntry>;
-};
-
 export type WatcherEvent = {
   kind: "create" | "update" | "delete";
   file: string;
 };
 
 export type WatchHandler = (
-  entries: Array<RouteResolverEntry>,
+  entries: Array<ResolvedEntry>,
   event?: WatcherEvent,
 ) => Promise<void>;
 

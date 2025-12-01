@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 import crc from "crc/crc32";
 import { type BuildOptions, build as esbuild } from "esbuild";
@@ -11,8 +11,9 @@ import {
   type PathToken,
   pathResolver,
   pathTokensFactory,
-  type RouteResolverEntry,
+  type ResolvedEntry,
   renderToFile,
+  sortRoutes,
 } from "@kosmojs/devlib";
 
 import type { Options } from "./types";
@@ -42,23 +43,23 @@ export const factory: GeneratorFactory<Options> = async (
       : undefined;
   };
 
-  const generatePublicFiles = async (entries: Array<RouteResolverEntry>) => {
-    for (const { kind, route } of entries) {
-      if (kind !== "api") {
+  const generatePublicFiles = async (entries: Array<ResolvedEntry>) => {
+    for (const { kind, entry } of entries) {
+      if (kind !== "apiRoute") {
         continue;
       }
 
       const customTemplate = customTemplates.find(([isMatch]) => {
-        return isMatch(route.name);
+        return isMatch(entry.name);
       });
 
       await renderToFile(
-        resolve("apiDir", route.file),
+        resolve("apiDir", entry.file),
         customTemplate?.[1] || routePublicTpl,
         {
-          route,
+          route: entry,
           importPathmap: {
-            lib: join(sourceFolder, defaults.apiLibDir, route.importPath),
+            lib: join(sourceFolder, defaults.apiLibDir, entry.importFile),
           },
         },
         {
@@ -70,15 +71,15 @@ export const factory: GeneratorFactory<Options> = async (
     }
   };
 
-  const generateLibFiles = async (entries: Array<RouteResolverEntry>) => {
-    for (const { kind, route } of entries) {
-      if (kind !== "api") {
+  const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
+    for (const { kind, entry } of entries) {
+      if (kind !== "apiRoute") {
         continue;
       }
 
       const context = {
-        route,
-        params: route.params.schema,
+        route: entry,
+        params: entry.params.schema,
       };
 
       for (const [file, template] of [
@@ -86,7 +87,7 @@ export const factory: GeneratorFactory<Options> = async (
         ["index.ts", routeLibIndexTpl],
       ]) {
         await renderToFile(
-          resolve("apiLibDir", route.importPath, file),
+          resolve("apiLibDir", dirname(entry.file), file),
           template,
           context,
           { formatters },
@@ -95,27 +96,23 @@ export const factory: GeneratorFactory<Options> = async (
     }
   };
 
-  const staticSegments = (pathTokens: Array<PathToken>) => {
-    return pathTokens.reduce((a, e) => a + (e.param ? 0 : 1), 0);
-  };
-
-  const generateIndexFiles = async (entries: Array<RouteResolverEntry>) => {
+  const generateIndexFiles = async (entries: Array<ResolvedEntry>) => {
     const routes = entries
-      .flatMap(({ kind, route }) => {
-        if (kind !== "api") {
+      .flatMap(({ kind, entry }) => {
+        if (kind !== "apiRoute") {
           return [];
         }
 
         const baseRoute = {
-          ...route,
-          path: pathFactory(route.pathTokens),
-          meta: resolveMeta(route),
+          ...entry,
+          path: pathFactory(entry.pathTokens),
+          meta: resolveMeta(entry),
           importPathmap: {
-            api: join(sourceFolder, defaults.apiDir, route.importPath),
+            api: join(sourceFolder, defaults.apiDir, entry.importFile),
             schemas: join(
               sourceFolder,
               defaults.apiLibDir,
-              route.importPath,
+              dirname(entry.file),
               "schemas",
             ),
           },
@@ -124,7 +121,7 @@ export const factory: GeneratorFactory<Options> = async (
         const aliases = Object.entries(alias || {}).flatMap(
           ([url, routeName]) => {
             const pathTokens = pathTokensFactory(url);
-            return routeName === route.name
+            return routeName === entry.name
               ? [
                   {
                     ...baseRoute,
@@ -140,28 +137,7 @@ export const factory: GeneratorFactory<Options> = async (
 
         return [baseRoute, ...aliases];
       })
-      .sort((a, b) => {
-        /**
-         * Sort routes so that more specific (static) paths come before dynamic ones.
-         *
-         * This is important because dynamic segments (e.g., `:id`) are more general,
-         * and can match values that should be routed to more specific static paths.
-         *
-         * For example, given:
-         *   - `/users/account`
-         *   - `/users/:id`
-         * If `/users/:id` comes first, visiting `/users/account` would incorrectly match it,
-         * treating "account" as an `id`. So static routes must take precedence.
-         *
-         * Estimating by counting static segments (does not start with `:`).
-         * The route with more static segments is considered more specific.
-         * */
-        const aStaticSegments = staticSegments(a.pathTokens);
-        const bStaticSegments = staticSegments(b.pathTokens);
-        return aStaticSegments === bStaticSegments
-          ? a.path.localeCompare(b.path)
-          : bStaticSegments - aStaticSegments;
-      });
+      .sort(sortRoutes);
 
     await renderToFile(
       resolve("libDir", sourceFolder, `${defaults.apiLibDir}.ts`),
@@ -193,9 +169,9 @@ export const factory: GeneratorFactory<Options> = async (
   return {
     async watchHandler(entries, event) {
       if (event) {
-        const relatedEntries = entries.filter(({ kind, route }) => {
-          return kind === "api" //
-            ? route.fileFullpath === event.file
+        const relatedEntries = entries.filter(({ kind, entry }) => {
+          return kind === "apiRoute" //
+            ? entry.fileFullpath === event.file
             : false;
         });
         if (event.kind === "create") {

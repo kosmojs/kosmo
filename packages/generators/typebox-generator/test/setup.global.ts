@@ -1,7 +1,6 @@
 import { rimraf } from "rimraf";
 
 import routesFactory from "@kosmojs/dev/routes";
-import type { RouteResolverEntry } from "@kosmojs/devlib";
 
 import { appRoot, resolvedOptions } from ".";
 
@@ -10,7 +9,7 @@ export default async () => {
 
   const { resolvers } = await routesFactory(resolvedOptions);
 
-  const resolvedRoutes: RouteResolverEntry[] = [];
+  const resolvedRoutes = [];
 
   for (const { handler } of resolvers.values()) {
     resolvedRoutes.push(await handler());

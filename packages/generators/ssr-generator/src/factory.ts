@@ -92,7 +92,9 @@ export const factory: GeneratorFactory = async ({
         return;
       }
       await generateLibFiles(
-        entries.flatMap((e) => (e.kind === "page" ? [e.route] : [])),
+        entries.flatMap(({ kind, entry }) => {
+          return kind === "pageRoute" ? [entry] : [];
+        }),
       );
     },
   };

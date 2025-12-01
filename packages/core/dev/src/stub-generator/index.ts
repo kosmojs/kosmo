@@ -1,3 +1,5 @@
+import { dirname } from "node:path";
+
 import {
   type GeneratorConstructor,
   pathResolver,
@@ -40,15 +42,15 @@ export default (): GeneratorConstructor => {
             { overwrite: false },
           );
 
-          for (const { kind, route } of entries) {
-            if (kind === "api") {
+          for (const { kind, entry } of entries) {
+            if (kind === "apiRoute") {
               // Generating stub schemas file.
               // It is required by various generators, e.g. api-generator, fetch-generator.
               // Specialized generators (e.g. typebox-generator) may override this later.
               await renderToFile(
-                resolve("apiLibDir", route.importPath, "schemas.ts"),
+                resolve("apiLibDir", dirname(entry.file), "schemas.ts"),
                 schemasTpl,
-                { route },
+                { route: entry },
                 { overwrite: false },
               );
             }

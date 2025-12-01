@@ -1,10 +1,10 @@
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 import {
   defaults,
   type GeneratorFactory,
   pathResolver,
-  type RouteResolverEntry,
+  type ResolvedEntry,
   renderToFile,
 } from "@kosmojs/devlib";
 
@@ -34,22 +34,22 @@ export const factory: GeneratorFactory = async ({
     );
   }
 
-  const generateLibFiles = async (entries: Array<RouteResolverEntry>) => {
-    for (const { kind, route } of entries) {
-      if (kind !== "api") {
+  const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
+    for (const { kind, entry } of entries) {
+      if (kind !== "apiRoute") {
         continue;
       }
 
       await renderToFile(
-        resolve("apiLibDir", route.importPath, "fetch.ts"),
+        resolve("apiLibDir", dirname(entry.file), "fetch.ts"),
         fetchTpl,
         {
-          route,
-          routeMethods: route.methods.map((method) => {
-            const payloadType = route.payloadTypes.find(
+          route: entry,
+          routeMethods: entry.methods.map((method) => {
+            const payloadType = entry.payloadTypes.find(
               (e) => e.method === method,
             );
-            const responseType = route.responseTypes.find(
+            const responseType = entry.responseTypes.find(
               (e) => e.method === method,
             );
             return {
@@ -58,7 +58,7 @@ export const factory: GeneratorFactory = async ({
               responseType,
             };
           }),
-          paramsMapper: route.params.schema.map(({ name }, idx) => ({
+          paramsMapper: entry.params.schema.map(({ name }, idx) => ({
             name,
             idx,
           })),
@@ -73,9 +73,9 @@ export const factory: GeneratorFactory = async ({
     }
   };
 
-  const generateIndexFiles = async (entries: Array<RouteResolverEntry>) => {
+  const generateIndexFiles = async (entries: Array<ResolvedEntry>) => {
     const routes = entries
-      .flatMap(({ kind, route }) => (kind === "api" ? [route] : []))
+      .flatMap(({ kind, entry }) => (kind === "apiRoute" ? [entry] : []))
       .sort((a, b) => a.name.localeCompare(b.name));
 
     for (const [file, template] of [
@@ -94,7 +94,7 @@ export const factory: GeneratorFactory = async ({
                 fetchApi: join(
                   sourceFolder,
                   defaults.apiLibDir,
-                  route.importPath,
+                  dirname(route.file),
                   "fetch",
                 ),
               },
@@ -111,10 +111,10 @@ export const factory: GeneratorFactory = async ({
       if (event) {
         if (event.kind === "update") {
           await generateLibFiles(
-            entries.filter(({ kind, route }) => {
-              return kind === "api"
-                ? route.fileFullpath === event.file ||
-                    route.referencedFiles?.includes(event.file)
+            entries.filter(({ kind, entry }) => {
+              return kind === "apiRoute"
+                ? entry.fileFullpath === event.file ||
+                    entry.referencedFiles?.includes(event.file)
                 : false;
             }),
           );

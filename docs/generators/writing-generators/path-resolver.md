@@ -158,7 +158,7 @@ const { resolve } = pathResolver({ appRoot, sourceFolder });
 
 // Generate route helper
 await renderToFile(
-  resolve("apiLibDir", route.importPath, "helpers.ts"),
+  resolve("apiLibDir", dirname(route.file), "helpers.ts"),
   helperTemplate,
   { route },
   { formatters }
@@ -166,7 +166,7 @@ await renderToFile(
 
 // Generate route types
 await renderToFile(
-  resolve("apiLibDir", route.importPath, "types.ts"),
+  resolve("apiLibDir", dirname(route.file), "types.ts"),
   typesTemplate,
   { route },
   { formatters }

@@ -3,7 +3,7 @@ import YAML from "yaml";
 import {
   type GeneratorFactory,
   pathResolver,
-  type RouteResolverEntry,
+  type ResolvedEntry,
   renderToFile,
 } from "@kosmojs/devlib";
 
@@ -21,10 +21,10 @@ export const factory: GeneratorFactory<Options> = async (
 
   const { generateOpenAPISchema } = openapiFactory(pluginOptions);
 
-  const generateSchemas = async (entries: Array<RouteResolverEntry>) => {
-    const apiRoutes = entries.flatMap((e) =>
-      e.kind === "api" //
-        ? [e.route]
+  const generateSchemas = async (entries: Array<ResolvedEntry>) => {
+    const apiRoutes = entries.flatMap(({ kind, entry }) =>
+      kind === "apiRoute" //
+        ? [entry]
         : [],
     );
 

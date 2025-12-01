@@ -8,7 +8,6 @@ import type {
   GeneratorConstructor,
   PluginOptions,
   PluginOptionsResolved,
-  RouteResolverEntry,
 } from "@kosmojs/devlib";
 
 import apiGenerator from "@kosmojs/api-generator";
@@ -204,16 +203,16 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
 
       if (store.config.command === "build") {
         const { resolvers } = await routesFactory(store.resolvedOptions);
-        const resolvedRoutes: RouteResolverEntry[] = [];
+        const resolvedEntries = [];
 
         {
           const spinner = spinnerFactory("Resolving Routes");
 
           for (const { name, handler } of resolvers.values()) {
             spinner.append(
-              `[ ${resolvedRoutes.length + 1} of ${resolvers.size} ] ${name}`,
+              `[ ${resolvedEntries.length + 1} of ${resolvers.size} ] ${name}`,
             );
-            resolvedRoutes.push(await handler());
+            resolvedEntries.push(await handler());
           }
 
           spinner.succeed();
@@ -225,7 +224,7 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
           for (const { name, factory } of store.resolvedOptions.generators) {
             spinner.append(name);
             const { watchHandler } = await factory(store.resolvedOptions);
-            await watchHandler(resolvedRoutes);
+            await watchHandler(resolvedEntries);
           }
 
           spinner.succeed();

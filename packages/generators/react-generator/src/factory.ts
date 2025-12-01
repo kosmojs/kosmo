@@ -11,9 +11,10 @@ import {
   type PathToken,
   pathExists,
   pathResolver,
-  type RouteResolverEntry,
+  type ResolvedEntry,
   render,
   renderToFile,
+  sortRoutes,
 } from "@kosmojs/devlib";
 
 import type { Options } from "./types";
@@ -145,24 +146,24 @@ export const factory: GeneratorFactory<Options> = async (
     );
   }
 
-  const generatePublicFiles = async (entries: Array<RouteResolverEntry>) => {
-    for (const { kind, route } of entries) {
-      if (kind !== "page") {
+  const generatePublicFiles = async (entries: Array<ResolvedEntry>) => {
+    for (const { kind, entry } of entries) {
+      if (kind !== "pageRoute") {
         continue;
       }
 
       const customTemplate = customTemplates.find(([isMatch]) => {
-        return isMatch(route.name);
+        return isMatch(entry.name);
       });
 
       await renderToFile(
-        resolve("pagesDir", route.file),
-        route.name === "index"
+        resolve("pagesDir", entry.file),
+        entry.name === "index"
           ? welcomePageTpl
           : customTemplate?.[1] || publicPageTpl,
         {
           defaults,
-          route,
+          route: entry,
           message: randomCongratMessage(),
           importPathmap: {
             styles: join(sourceFolder, "{react}/styles.module.css"),
@@ -177,52 +178,26 @@ export const factory: GeneratorFactory<Options> = async (
     }
   };
 
-  const staticSegments = (pathTokens: Array<PathToken>) => {
-    return pathTokens.reduce((a, e) => a + (e.param ? 0 : 1), 0);
-  };
-
-  const generateIndexFiles = async (entries: Array<RouteResolverEntry>) => {
+  const generateIndexFiles = async (entries: Array<ResolvedEntry>) => {
     const routes = entries
-      .flatMap(({ kind, route }) => {
-        return kind === "page"
+      .flatMap(({ kind, entry }) => {
+        return kind === "pageRoute"
           ? [
               {
-                ...route,
-                path: join("/", pathFactory(route.pathTokens)),
-                paramsLiteral: route.params.schema
+                ...entry,
+                path: join("/", pathFactory(entry.pathTokens)),
+                paramsLiteral: entry.params.schema
                   .map((param) => render(paramTpl, { param }).trim())
                   .join(", "),
-                meta: metaResolver(route),
+                meta: metaResolver(entry),
                 importPathmap: {
-                  page: join(sourceFolder, defaults.pagesDir, route.importPath),
+                  page: join(sourceFolder, defaults.pagesDir, entry.importFile),
                 },
               },
             ]
           : [];
       })
-      .sort((a, b) => {
-        /**
-         * Sort routes so that more specific (static) paths come before dynamic ones.
-         *
-         * This is important because dynamic segments
-         * (e.g., `:id` or `*catchall`) are more general,
-         * and can match values that should be routed to more specific static paths.
-         *
-         * For example, given:
-         *   - `/users/account`
-         *   - `/users/:id`
-         * If `/users/:id` comes first, visiting `/users/account` would incorrectly match it,
-         * treating "account" as an `id`. So static routes must take precedence.
-         *
-         * Estimating specificity by counting static segments – i.e., those that don't start
-         * with `:` or `*`. The route with more static segments is considered more specific.
-         * */
-        const aStaticSegments = staticSegments(a.pathTokens);
-        const bStaticSegments = staticSegments(b.pathTokens);
-        return aStaticSegments === bStaticSegments
-          ? a.path.localeCompare(b.path)
-          : bStaticSegments - aStaticSegments;
-      });
+      .sort(sortRoutes);
 
     const context = {
       routes,

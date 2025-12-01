@@ -35,7 +35,7 @@ Both `ApiRoute` and `PageRoute` extend `RouteEntry` with these properties:
 
 **importName** - Generated identifier for importing this route
 
-**importPath** - Path used in import statements
+**importFile** - Path used in import statements
 
 ### PathToken Structure
 

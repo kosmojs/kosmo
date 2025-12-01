@@ -43,7 +43,7 @@ export const factory: GeneratorFactory = async ({
       if (kind !== "api") continue;
 
       await renderToFile(
-        resolve("apiLibDir", route.importPath, "fetch.ts"),
+        resolve("apiLibDir", dirname(route.file), "fetch.ts"),
         fetchTpl,
         {
           route,

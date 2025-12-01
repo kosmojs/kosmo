@@ -17,9 +17,9 @@ describe("openapi", async () => {
   const apiRoutes: ApiRoute[] = [];
 
   for (const { handler } of resolvers.values()) {
-    const { kind, route } = await handler();
-    if (kind === "api") {
-      apiRoutes.push(route);
+    const { kind, entry } = await handler();
+    if (kind === "apiRoute") {
+      apiRoutes.push(entry);
     }
   }
 

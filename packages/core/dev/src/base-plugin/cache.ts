@@ -27,7 +27,7 @@ export type Cache = {
 type ExtraContext = Record<string | number, unknown>;
 
 export const cacheFactory = (
-  route: Pick<ApiRoute, "file" | "fileFullpath" | "importName" | "importPath">,
+  route: Pick<ApiRoute, "file" | "fileFullpath" | "importName">,
   {
     appRoot,
     sourceFolder,
@@ -41,7 +41,7 @@ export const cacheFactory = (
   const cacheFile = pathResolver({
     appRoot,
     sourceFolder,
-  }).resolve("apiLibDir", route.importPath, "cache.json");
+  }).resolve("apiLibDir", dirname(route.file), "cache.json");
 
   const getCache = async (opt?: {
     validate?: boolean;
