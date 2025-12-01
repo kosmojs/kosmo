@@ -6,9 +6,13 @@ import handlebars from "handlebars";
 
 import { pathExists } from "./paths";
 
-export type Options = { noEscape?: boolean };
+export type RenderOptions = {
+  noEscape?: boolean;
+  // handlebars instance
+  renderer?: typeof handlebars;
+};
 
-export type FactoryOptions = Options & {
+export type FactoryOptions = RenderOptions & {
   /**
    * Controls whether to overwrite an existing file.
    * - `false`: skip writing if the file already exists
@@ -24,10 +28,10 @@ type Formatter = (content: string, file: string) => string;
 export const render = <Context = object>(
   template: string,
   context: Context,
-  options?: Options,
+  options?: RenderOptions,
 ): string => {
-  const { noEscape = true } = { ...options };
-  return handlebars.compile(template, { noEscape })(context);
+  const { noEscape = true, renderer = handlebars } = { ...options };
+  return renderer.compile(template, { noEscape })(context);
 };
 
 export const renderAsFile = <Context = object>(
@@ -73,18 +77,35 @@ export const renderToFile = async <Context = object>(
   await writeFile(file, content, "utf8");
 };
 
-export const renderFactory = (outdir: string, options?: FactoryOptions) => {
+export const renderFactory = (
+  options?: FactoryOptions & {
+    outdir?: string;
+    partials?: Record<string, string>;
+    helpers?: Record<string, (...a: Array<never>) => unknown>;
+  },
+) => {
+  const renderer = handlebars.create();
+  if (options?.partials) {
+    renderer.registerPartial(options.partials as never);
+  }
+  if (options?.helpers) {
+    renderer.registerHelper(options.helpers as never);
+  }
   return {
+    render<Context = object>(template: string, context: Context) {
+      return render(template, context, { renderer, ...options });
+    },
     async renderToFile<Context = object>(
       file: string,
       template: string,
       context: Context,
-      selfOptions?: FactoryOptions,
     ) {
-      return renderToFile(join(outdir, file), template, context, {
-        ...options,
-        ...selfOptions,
-      });
+      return renderToFile(
+        options?.outdir ? join(options.outdir, file) : file,
+        template,
+        context,
+        { renderer, ...options },
+      );
     },
   };
 };
