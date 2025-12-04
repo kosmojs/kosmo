@@ -1,22 +1,21 @@
 import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
-import { format } from "node:util";
+import { dirname, join, resolve } from "node:path";
 
 import got from "got";
-import { chromium } from "playwright";
+import { type Browser, chromium, type Page } from "playwright";
 import { build, createServer } from "vite";
 
-import routesFactory from "~/core/dev/src/base-plugin/routes";
 import {
   createProject,
   createSourceFolder,
   type FRAMEWORK_OPTIONS,
-} from "~/core/dev/src/cli";
-import { defaults, type PageRoute } from "~/core/devlib/src";
+} from "@kosmojs/dev/cli";
+import routesFactory from "@kosmojs/dev/routes";
+import { defaults, type PageRoute } from "@kosmojs/devlib";
 
-import testRoutes from "./routes";
+import { nestedRoutes, routes } from "./routes";
 
 const project = {
   name: "integration-test",
@@ -26,46 +25,62 @@ const project = {
 const pkgsDir = resolve(import.meta.dirname, "../../packages");
 const pnpmDir = resolve(tmpdir(), ".kosmojs/pnpm-store");
 
-const sourceFolder = "@front";
+export const sourceFolder = "@src";
 
 const port = 4567;
 const baseURL = `http://localhost:${port}`;
 
-export { testRoutes };
+export * from "./routes";
 
-export const setupTestProject = async (
-  {
-    framework,
-    frameworkOptions,
-    ssr,
-  }: {
-    framework: Exclude<(typeof FRAMEWORK_OPTIONS)[number], "none">;
-    frameworkOptions?: Record<string, unknown>;
-    ssr?: boolean;
-  },
-  onReady?: (p: {
-    projectRoot: string;
-    sourceFolderPath: string;
-  }) => void | Promise<void>,
-) => {
-  const tempDir = await mkdtemp(resolve(tmpdir(), ".kosmojs-"));
+export const setupTestProject = async ({
+  framework,
+  frameworkOptions,
+  ssr,
+  skip,
+}: {
+  framework: Exclude<(typeof FRAMEWORK_OPTIONS)[number], "none">;
+  frameworkOptions?: Record<string, unknown>;
+  ssr?: boolean;
+  skip?: boolean;
+}) => {
+  const tempDir = skip ? "" : await mkdtemp(resolve(tmpdir(), ".kosmojs-"));
   const projectRoot = resolve(tempDir, project.name);
   const sourceFolderPath = resolve(projectRoot, sourceFolder);
 
+  const fileExt = { solid: "tsx", react: "tsx", vue: "vue" }[framework];
+
+  let resolvedRoutes: Array<PageRoute> | undefined;
+  let closeServer: () => Promise<void> | undefined;
+  let browser: Browser | undefined;
+  let page: Page | undefined;
+
   const cleanup = async () => {
+    if (skip) {
+      return;
+    }
     await rm(tempDir, { recursive: true, force: true });
   };
 
-  const createTestRoute = async (routeName: string) => {
+  const createRoute = async (routeName: string) => {
     const filePath = resolve(
       sourceFolderPath,
-      format(
-        `${defaults.pagesDir}/${routeName}/index.%s`,
-        { solid: "tsx", react: "tsx", vue: "vue" }[framework],
-      ),
+      `${defaults.pagesDir}/${routeName}/index.${fileExt}`,
     );
-    await mkdir(resolve(filePath, ".."), { recursive: true });
+    await mkdir(dirname(filePath), { recursive: true });
     await writeFile(filePath, ""); // Empty file - generator will fill it
+  };
+
+  const createNestedRoute = async (
+    name: string,
+    file: string,
+    templateBuilder?: (name: string, file: string) => string,
+  ) => {
+    const path = resolve(
+      sourceFolderPath,
+      `${defaults.pagesDir}/${name}/${file}.${fileExt}`,
+    );
+    await mkdir(dirname(path), { recursive: true });
+    await writeFile(path, templateBuilder?.(name, file) ?? "");
   };
 
   const createRoutePath = (
@@ -103,9 +118,9 @@ export const setupTestProject = async (
     const resolvedRoutes: PageRoute[] = [];
 
     for (const { handler } of resolvers.values()) {
-      const { kind, route } = await handler();
-      if (kind === "page") {
-        resolvedRoutes.push(route);
+      const { kind, entry } = await handler();
+      if (kind === "pageRoute") {
+        resolvedRoutes.push(entry);
       }
     }
 
@@ -150,7 +165,7 @@ export const setupTestProject = async (
   };
 
   const createBrowser = async (baseURL: string) => {
-    const browser = await chromium.launch(
+    browser = await chromium.launch(
       process.env.DEBUG
         ? {
             headless: false,
@@ -158,7 +173,7 @@ export const setupTestProject = async (
         : {},
     );
 
-    const page = await browser.newPage();
+    page = await browser.newPage();
 
     // Initial warmup navigation
     await page.goto(baseURL, {
@@ -167,81 +182,66 @@ export const setupTestProject = async (
       // WARN: do not decrease this timeout!
       timeout: 6_000,
     });
-
-    return { browser, page };
   };
 
-  await cleanup();
+  const bootstrapProject = async () => {
+    if (skip) {
+      return;
+    }
 
-  await createProject(tempDir, project, {
-    dependencies: {
-      "@kosmojs/api": resolve(pkgsDir, "core/api"),
-    },
-    devDependencies: {
-      "@kosmojs/config": resolve(pkgsDir, "core/config"),
-      "@kosmojs/dev": resolve(pkgsDir, "core/dev"),
-      "@kosmojs/fetch": resolve(pkgsDir, "core/fetch"),
-    },
-  });
+    await cleanup();
 
-  await createSourceFolder(
-    projectRoot,
-    {
-      name: sourceFolder,
-      port,
-      framework,
-      ...(ssr ? { ssr: true } : {}),
-    },
-    {
-      ...(frameworkOptions ? { frameworkOptions } : {}),
-      devDependencies: {
-        [`@kosmojs/${framework}-generator`]: resolve(
-          pkgsDir,
-          `generators/${framework}-generator`,
-        ),
-        ["@kosmojs/ssr-generator"]: resolve(
-          pkgsDir,
-          "generators/ssr-generator",
-        ),
+    await createProject(tempDir, project, {
+      dependencies: {
+        "@kosmojs/api": resolve(pkgsDir, "core/api"),
       },
-    },
-  );
-
-  if (onReady) {
-    await onReady({
-      projectRoot,
-      sourceFolderPath,
+      devDependencies: {
+        "@kosmojs/config": resolve(pkgsDir, "core/config"),
+        "@kosmojs/dev": resolve(pkgsDir, "core/dev"),
+        "@kosmojs/fetch": resolve(pkgsDir, "core/fetch"),
+      },
     });
-  }
 
-  await new Promise((resolve, reject) => {
-    execFile(
-      "pnpm",
-      ["install", "--dir", projectRoot, "--store-dir", pnpmDir],
-      (error) => {
-        error //
-          ? reject(error)
-          : resolve(true);
+    await createSourceFolder(
+      projectRoot,
+      {
+        name: sourceFolder,
+        port,
+        framework,
+        ...(ssr ? { ssr: true } : {}),
+      },
+      {
+        ...(frameworkOptions ? { frameworkOptions } : {}),
+        devDependencies: {
+          [`@kosmojs/${framework}-generator`]: resolve(
+            pkgsDir,
+            `generators/${framework}-generator`,
+          ),
+          ["@kosmojs/ssr-generator"]: resolve(
+            pkgsDir,
+            "generators/ssr-generator",
+          ),
+        },
       },
     );
-  });
 
-  for (const { name } of testRoutes) {
-    await createTestRoute(name);
-  }
-
-  const resolvedRoutes = await resolveRoutes();
-
-  const closeServer = await createDevServer();
-
-  const { browser, page } = ssr
-    ? { browser: undefined, page: undefined }
-    : await createBrowser(baseURL);
+    await new Promise((resolve, reject) => {
+      execFile(
+        "pnpm",
+        ["install", "--dir", projectRoot, "--store-dir", pnpmDir],
+        (error) => {
+          error //
+            ? reject(error)
+            : resolve(true);
+        },
+      );
+    });
+  };
 
   const defaultContentPatternFor = (routeName: string | PageRoute) => {
     const route =
       typeof routeName === "string"
-        ? resolvedRoutes.find((e) => e.name === routeName)
+        ? resolvedRoutes?.find((e) => e.name === routeName)
         : routeName;
 
     if (!route) {
@@ -256,57 +256,115 @@ export const setupTestProject = async (
 
   const withRouteContent = async (
     routeName: string,
-    params: Array<string | number>,
-    callback: (a: {
+    paramsOrPath:
+      | Record<string, Array<string | number> | string | number>
+      | Array<string | number>
+      | string,
+    callback?: (a: {
       path: string;
       content: string;
       defaultContentPattern: RegExp;
     }) => void | Promise<void>,
   ) => {
-    const route = resolvedRoutes.find((e) => e.name === routeName);
+    const route = resolvedRoutes?.find((e) => e.name === routeName);
 
     if (!route) {
       throw new Error(`${routeName} route not found`);
     }
 
-    const path = createRoutePath(route, params);
+    const path =
+      typeof paramsOrPath === "string"
+        ? paramsOrPath
+        : createRoutePath(
+            route,
+            Array.isArray(paramsOrPath)
+              ? paramsOrPath.flat()
+              : Object.values(paramsOrPath).flat(),
+          );
+
+    const url =
+      path === ""
+        ? baseURL
+        : path === "/"
+          ? `${baseURL}/`
+          : `${baseURL}/${path}`;
 
     let maybeContent: string | undefined;
 
     if (page) {
-      await page.goto(`${baseURL}/${path}`);
+      await page.goto(url);
       await page.waitForLoadState("networkidle");
 
       // Wait for page content to be rendered
       await page.waitForSelector("body:has-text('')", {
         timeout: 1_000,
       });
+
       maybeContent = await page.content();
     } else {
-      maybeContent = await got(`${baseURL}/${path}`).text();
+      maybeContent = await got(url).text();
     }
 
     const content = maybeContent ?? "";
 
-    await callback({
+    const data = {
       path,
       content,
       defaultContentPattern: defaultContentPatternFor(route),
-    });
-  };
+    };
 
-  const teardown = async () => {
-    await page?.close();
-    await browser?.close();
-    await closeServer();
-    await cleanup();
-    await new Promise((resolve) => setTimeout(resolve, 1_000));
+    await callback?.(data);
+
+    return data;
   };
 
   return {
-    resolvedRoutes,
+    projectRoot,
+    sourceFolder,
+    sourceFolderPath,
     withRouteContent,
     defaultContentPatternFor,
-    teardown,
+    bootstrapProject,
+    async startServer() {
+      if (skip) {
+        return;
+      }
+      closeServer = await createDevServer();
+      await new Promise((resolve) => setTimeout(resolve, 1_000));
+      if (!ssr) {
+        await createBrowser(baseURL);
+      }
+    },
+    async createRoutes() {
+      if (skip) {
+        return;
+      }
+      for (const { name } of routes) {
+        await createRoute(name);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1_000));
+      resolvedRoutes = await resolveRoutes();
+      return resolvedRoutes;
+    },
+    async createNestedRoutes(
+      templateBuilder?: (name: string, file: string) => string,
+    ) {
+      if (skip) {
+        return;
+      }
+      for (const { name, file } of nestedRoutes) {
+        await createNestedRoute(name, file, templateBuilder);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1_000));
+      resolvedRoutes = await resolveRoutes();
+      return resolvedRoutes;
+    },
+    async teardown() {
+      await page?.close();
+      await browser?.close();
+      await closeServer?.();
+      await cleanup();
+      await new Promise((resolve) => setTimeout(resolve, 1_000));
+    },
   };
 };

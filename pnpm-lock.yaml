@@ -14,6 +14,12 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.7
         version: 2.29.7(@types/node@24.10.1)
+      '@kosmojs/dev':
+        specifier: workspace:^
+        version: link:packages/core/dev
+      '@kosmojs/devlib':
+        specifier: workspace:^
+        version: link:packages/core/devlib
       '@types/node':
         specifier: ^24.10.1
         version: 24.10.1
@@ -382,6 +388,9 @@ importers:
 
   packages/generators/react-generator:
     dependencies:
+      '@kosmojs/dev':
+        specifier: workspace:^
+        version: link:../../core/dev
       '@kosmojs/devlib':
         specifier: workspace:^
         version: link:../../core/devlib
@@ -407,6 +416,9 @@ importers:
 
   packages/generators/solid-generator:
     dependencies:
+      '@kosmojs/dev':
+        specifier: workspace:^
+        version: link:../../core/dev
       '@kosmojs/devlib':
         specifier: workspace:^
         version: link:../../core/devlib
@@ -473,6 +485,9 @@ importers:
 
   packages/generators/vue-generator:
     dependencies:
+      '@kosmojs/dev':
+        specifier: workspace:^
+        version: link:../../core/dev
       '@kosmojs/devlib':
         specifier: workspace:^
         version: link:../../core/devlib

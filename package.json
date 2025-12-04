@@ -19,6 +19,7 @@
     ]
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "test": "vitest run",
     "prepub": "./scripts/publish/prepare",
     "pub": "changeset publish",
@@ -27,6 +28,8 @@
   "devDependencies": {
     "@biomejs/biome": "^2.3.5",
     "@changesets/cli": "^2.29.7",
+    "@kosmojs/dev": "workspace:^",
+    "@kosmojs/devlib": "workspace:^",
     "@types/node": "^24.10.1",
     "cheerio": "^1.1.2",
     "crc": "^4.3.2",

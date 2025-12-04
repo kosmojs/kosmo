@@ -7,6 +7,7 @@ const setupFactory = (name, setup) => {
     extends: true,
     test: {
       name,
+      hookTimeout: 30_000,
       include: [`packages/${name}/test/**/*.test.ts`],
       alias: {
         "~": resolve(import.meta.dirname, "packages"),
