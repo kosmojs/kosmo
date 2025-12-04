@@ -1,0 +1,120 @@
+{
+  "index": {
+    "name": "workspace/[workspaceId]/analytics",
+    "folder": "pages",
+    "file": "workspace/[workspaceId]/analytics/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "workspace",
+        "base": "workspace",
+        "path": "workspace",
+        "ext": ""
+      },
+      {
+        "orig": "[workspaceId]",
+        "base": "[workspaceId]",
+        "path": "[workspaceId]",
+        "ext": "",
+        "param": {
+          "name": "workspaceId",
+          "const": "workspaceId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "analytics",
+        "base": "analytics",
+        "path": "analytics",
+        "ext": ""
+      }
+    ],
+    "importFile": "workspace/[workspaceId]/analytics/index.tsx",
+    "importName": "workspace_workspaceId_analytics_index_tsx_2441542851"
+  },
+  "layout": {
+    "name": "workspace/[workspaceId]/analytics",
+    "folder": "pages",
+    "file": "workspace/[workspaceId]/analytics/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "workspace",
+        "base": "workspace",
+        "path": "workspace",
+        "ext": ""
+      },
+      {
+        "orig": "[workspaceId]",
+        "base": "[workspaceId]",
+        "path": "[workspaceId]",
+        "ext": "",
+        "param": {
+          "name": "workspaceId",
+          "const": "workspaceId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "analytics",
+        "base": "analytics",
+        "path": "analytics",
+        "ext": ""
+      }
+    ],
+    "importFile": "workspace/[workspaceId]/analytics/layout.tsx",
+    "importName": "workspace_workspaceId_analytics_layout_tsx_2018023528"
+  },
+  "children": [
+    {
+      "index": {
+        "name": "workspace/[workspaceId]/analytics/[range]",
+        "folder": "pages",
+        "file": "workspace/[workspaceId]/analytics/[range]/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "[range]",
+            "base": "[range]",
+            "path": "[range]",
+            "ext": "",
+            "param": {
+              "name": "range",
+              "const": "range",
+              "isRequired": true,
+              "isOptional": false,
+              "isRest": false
+            }
+          }
+        ],
+        "importFile": "workspace/[workspaceId]/analytics/[range]/index.tsx",
+        "importName": "workspace_workspaceId_analytics_range_index_tsx_2469437584"
+      },
+      "layout": {
+        "name": "workspace/[workspaceId]/analytics/[range]",
+        "folder": "pages",
+        "file": "workspace/[workspaceId]/analytics/[range]/layout.tsx",
+        "pathTokens": [
+          {
+            "orig": "[range]",
+            "base": "[range]",
+            "path": "[range]",
+            "ext": "",
+            "param": {
+              "name": "range",
+              "const": "range",
+              "isRequired": true,
+              "isOptional": false,
+              "isRest": false
+            }
+          }
+        ],
+        "importFile": "workspace/[workspaceId]/analytics/[range]/layout.tsx",
+        "importName": "workspace_workspaceId_analytics_range_layout_tsx_2317889146"
+      },
+      "parent": "workspace/[workspaceId]/analytics",
+      "children": []
+    }
+  ]
+}

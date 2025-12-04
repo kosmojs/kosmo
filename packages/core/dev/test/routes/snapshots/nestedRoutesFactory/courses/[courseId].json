@@ -1,0 +1,83 @@
+{
+  "layout": {
+    "name": "courses/[courseId]",
+    "folder": "pages",
+    "file": "courses/[courseId]/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "courses",
+        "base": "courses",
+        "path": "courses",
+        "ext": ""
+      },
+      {
+        "orig": "[courseId]",
+        "base": "[courseId]",
+        "path": "[courseId]",
+        "ext": "",
+        "param": {
+          "name": "courseId",
+          "const": "courseId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ],
+    "importFile": "courses/[courseId]/layout.tsx",
+    "importName": "courses_courseId_layout_tsx_15431109"
+  },
+  "children": [
+    {
+      "index": {
+        "name": "courses/[courseId]/lessons/[[lessonId]]/assignments/[...assignmentPath]",
+        "folder": "pages",
+        "file": "courses/[courseId]/lessons/[[lessonId]]/assignments/[...assignmentPath]/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "lessons",
+            "base": "lessons",
+            "path": "lessons",
+            "ext": ""
+          },
+          {
+            "orig": "[[lessonId]]",
+            "base": "[[lessonId]]",
+            "path": "[[lessonId]]",
+            "ext": "",
+            "param": {
+              "name": "lessonId",
+              "const": "lessonId",
+              "isRequired": false,
+              "isOptional": true,
+              "isRest": false
+            }
+          },
+          {
+            "orig": "assignments",
+            "base": "assignments",
+            "path": "assignments",
+            "ext": ""
+          },
+          {
+            "orig": "[...assignmentPath]",
+            "base": "[...assignmentPath]",
+            "path": "[...assignmentPath]",
+            "ext": "",
+            "param": {
+              "name": "assignmentPath",
+              "const": "assignmentPath",
+              "isRequired": false,
+              "isOptional": false,
+              "isRest": true
+            }
+          }
+        ],
+        "importFile": "courses/[courseId]/lessons/[[lessonId]]/assignments/[...assignmentPath]/index.tsx",
+        "importName": "courses_courseId_lessons_lessonId_assignments_assignmentPath_index_tsx_3974429676"
+      },
+      "parent": "courses/[courseId]",
+      "children": []
+    }
+  ]
+}

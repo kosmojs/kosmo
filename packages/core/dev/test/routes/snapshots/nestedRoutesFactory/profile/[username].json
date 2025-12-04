@@ -1,0 +1,97 @@
+{
+  "layout": {
+    "name": "profile/[username]",
+    "folder": "pages",
+    "file": "profile/[username]/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "profile",
+        "base": "profile",
+        "path": "profile",
+        "ext": ""
+      },
+      {
+        "orig": "[username]",
+        "base": "[username]",
+        "path": "[username]",
+        "ext": "",
+        "param": {
+          "name": "username",
+          "const": "username",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ],
+    "importFile": "profile/[username]/layout.tsx",
+    "importName": "profile_username_layout_tsx_2113498186"
+  },
+  "children": [
+    {
+      "layout": {
+        "name": "profile/[username]/posts/[postId]",
+        "folder": "pages",
+        "file": "profile/[username]/posts/[postId]/layout.tsx",
+        "pathTokens": [
+          {
+            "orig": "posts",
+            "base": "posts",
+            "path": "posts",
+            "ext": ""
+          },
+          {
+            "orig": "[postId]",
+            "base": "[postId]",
+            "path": "[postId]",
+            "ext": "",
+            "param": {
+              "name": "postId",
+              "const": "postId",
+              "isRequired": true,
+              "isOptional": false,
+              "isRest": false
+            }
+          }
+        ],
+        "importFile": "profile/[username]/posts/[postId]/layout.tsx",
+        "importName": "profile_username_posts_postId_layout_tsx_485444689"
+      },
+      "parent": "profile/[username]",
+      "children": [
+        {
+          "index": {
+            "name": "profile/[username]/posts/[postId]/comments/[...thread]",
+            "folder": "pages",
+            "file": "profile/[username]/posts/[postId]/comments/[...thread]/index.tsx",
+            "pathTokens": [
+              {
+                "orig": "comments",
+                "base": "comments",
+                "path": "comments",
+                "ext": ""
+              },
+              {
+                "orig": "[...thread]",
+                "base": "[...thread]",
+                "path": "[...thread]",
+                "ext": "",
+                "param": {
+                  "name": "thread",
+                  "const": "thread",
+                  "isRequired": false,
+                  "isOptional": false,
+                  "isRest": true
+                }
+              }
+            ],
+            "importFile": "profile/[username]/posts/[postId]/comments/[...thread]/index.tsx",
+            "importName": "profile_username_posts_postId_comments_thread_index_tsx_884272517"
+          },
+          "parent": "profile/[username]/posts/[postId]",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

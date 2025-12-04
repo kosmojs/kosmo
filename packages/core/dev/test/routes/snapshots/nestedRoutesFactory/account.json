@@ -1,0 +1,38 @@
+{
+  "layout": {
+    "name": "account",
+    "folder": "pages",
+    "file": "account/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "account",
+        "base": "account",
+        "path": "account",
+        "ext": ""
+      }
+    ],
+    "importFile": "account/layout.tsx",
+    "importName": "account_layout_tsx_2977242696"
+  },
+  "children": [
+    {
+      "index": {
+        "name": "account/profile",
+        "folder": "pages",
+        "file": "account/profile/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "profile",
+            "base": "profile",
+            "path": "profile",
+            "ext": ""
+          }
+        ],
+        "importFile": "account/profile/index.tsx",
+        "importName": "account_profile_index_tsx_1987383209"
+      },
+      "parent": "account",
+      "children": []
+    }
+  ]
+}

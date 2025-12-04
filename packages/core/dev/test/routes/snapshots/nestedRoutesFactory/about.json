@@ -1,0 +1,99 @@
+{
+  "index": {
+    "name": "about",
+    "folder": "pages",
+    "file": "about/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "about",
+        "base": "about",
+        "path": "about",
+        "ext": ""
+      }
+    ],
+    "importFile": "about/index.tsx",
+    "importName": "about_index_tsx_3061335318"
+  },
+  "layout": {
+    "name": "about",
+    "folder": "pages",
+    "file": "about/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "about",
+        "base": "about",
+        "path": "about",
+        "ext": ""
+      }
+    ],
+    "importFile": "about/layout.tsx",
+    "importName": "about_layout_tsx_2396405898"
+  },
+  "children": [
+    {
+      "layout": {
+        "name": "about/careers",
+        "folder": "pages",
+        "file": "about/careers/layout.tsx",
+        "pathTokens": [
+          {
+            "orig": "careers",
+            "base": "careers",
+            "path": "careers",
+            "ext": ""
+          }
+        ],
+        "importFile": "about/careers/layout.tsx",
+        "importName": "about_careers_layout_tsx_3684129548"
+      },
+      "parent": "about",
+      "children": [
+        {
+          "index": {
+            "name": "about/careers/[jobId]",
+            "folder": "pages",
+            "file": "about/careers/[jobId]/index.tsx",
+            "pathTokens": [
+              {
+                "orig": "[jobId]",
+                "base": "[jobId]",
+                "path": "[jobId]",
+                "ext": "",
+                "param": {
+                  "name": "jobId",
+                  "const": "jobId",
+                  "isRequired": true,
+                  "isOptional": false,
+                  "isRest": false
+                }
+              }
+            ],
+            "importFile": "about/careers/[jobId]/index.tsx",
+            "importName": "about_careers_jobId_index_tsx_2940328380"
+          },
+          "parent": "about/careers",
+          "children": []
+        }
+      ]
+    },
+    {
+      "index": {
+        "name": "about/team",
+        "folder": "pages",
+        "file": "about/team/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "team",
+            "base": "team",
+            "path": "team",
+            "ext": ""
+          }
+        ],
+        "importFile": "about/team/index.tsx",
+        "importName": "about_team_index_tsx_3906889098"
+      },
+      "parent": "about",
+      "children": []
+    }
+  ]
+}

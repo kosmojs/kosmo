@@ -1,0 +1,2921 @@
+[
+  {
+    "index": {
+      "name": "workspace/[workspaceId]/analytics",
+      "folder": "pages",
+      "file": "workspace/[workspaceId]/analytics/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "workspace",
+          "base": "workspace",
+          "path": "workspace",
+          "ext": ""
+        },
+        {
+          "orig": "[workspaceId]",
+          "base": "[workspaceId]",
+          "path": "[workspaceId]",
+          "ext": "",
+          "param": {
+            "name": "workspaceId",
+            "const": "workspaceId",
+            "isRequired": true,
+            "isOptional": false,
+            "isRest": false
+          }
+        },
+        {
+          "orig": "analytics",
+          "base": "analytics",
+          "path": "analytics",
+          "ext": ""
+        }
+      ],
+      "importFile": "workspace/[workspaceId]/analytics/index.tsx",
+      "importName": "workspace_workspaceId_analytics_index_tsx_2441542851"
+    },
+    "layout": {
+      "name": "workspace/[workspaceId]/analytics",
+      "folder": "pages",
+      "file": "workspace/[workspaceId]/analytics/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "workspace",
+          "base": "workspace",
+          "path": "workspace",
+          "ext": ""
+        },
+        {
+          "orig": "[workspaceId]",
+          "base": "[workspaceId]",
+          "path": "[workspaceId]",
+          "ext": "",
+          "param": {
+            "name": "workspaceId",
+            "const": "workspaceId",
+            "isRequired": true,
+            "isOptional": false,
+            "isRest": false
+          }
+        },
+        {
+          "orig": "analytics",
+          "base": "analytics",
+          "path": "analytics",
+          "ext": ""
+        }
+      ],
+      "importFile": "workspace/[workspaceId]/analytics/layout.tsx",
+      "importName": "workspace_workspaceId_analytics_layout_tsx_2018023528"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "workspace/[workspaceId]/analytics/[range]",
+          "folder": "pages",
+          "file": "workspace/[workspaceId]/analytics/[range]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "[range]",
+              "base": "[range]",
+              "path": "[range]",
+              "ext": "",
+              "param": {
+                "name": "range",
+                "const": "range",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "workspace/[workspaceId]/analytics/[range]/index.tsx",
+          "importName": "workspace_workspaceId_analytics_range_index_tsx_2469437584"
+        },
+        "layout": {
+          "name": "workspace/[workspaceId]/analytics/[range]",
+          "folder": "pages",
+          "file": "workspace/[workspaceId]/analytics/[range]/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "[range]",
+              "base": "[range]",
+              "path": "[range]",
+              "ext": "",
+              "param": {
+                "name": "range",
+                "const": "range",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "workspace/[workspaceId]/analytics/[range]/layout.tsx",
+          "importName": "workspace_workspaceId_analytics_range_layout_tsx_2317889146"
+        },
+        "parent": "workspace/[workspaceId]/analytics",
+        "children": []
+      }
+    ]
+  },
+  {
+    "layout": {
+      "name": "workspace/[workspaceId]/team",
+      "folder": "pages",
+      "file": "workspace/[workspaceId]/team/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "workspace",
+          "base": "workspace",
+          "path": "workspace",
+          "ext": ""
+        },
+        {
+          "orig": "[workspaceId]",
+          "base": "[workspaceId]",
+          "path": "[workspaceId]",
+          "ext": "",
+          "param": {
+            "name": "workspaceId",
+            "const": "workspaceId",
+            "isRequired": true,
+            "isOptional": false,
+            "isRest": false
+          }
+        },
+        {
+          "orig": "team",
+          "base": "team",
+          "path": "team",
+          "ext": ""
+        }
+      ],
+      "importFile": "workspace/[workspaceId]/team/layout.tsx",
+      "importName": "workspace_workspaceId_team_layout_tsx_1903886921"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "workspace/[workspaceId]/team/[memberId]/permissions/[...permissionPath]",
+          "folder": "pages",
+          "file": "workspace/[workspaceId]/team/[memberId]/permissions/[...permissionPath]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "[memberId]",
+              "base": "[memberId]",
+              "path": "[memberId]",
+              "ext": "",
+              "param": {
+                "name": "memberId",
+                "const": "memberId",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            },
+            {
+              "orig": "permissions",
+              "base": "permissions",
+              "path": "permissions",
+              "ext": ""
+            },
+            {
+              "orig": "[...permissionPath]",
+              "base": "[...permissionPath]",
+              "path": "[...permissionPath]",
+              "ext": "",
+              "param": {
+                "name": "permissionPath",
+                "const": "permissionPath",
+                "isRequired": false,
+                "isOptional": false,
+                "isRest": true
+              }
+            }
+          ],
+          "importFile": "workspace/[workspaceId]/team/[memberId]/permissions/[...permissionPath]/index.tsx",
+          "importName": "workspace_workspaceId_team_memberId_permissions_permissionPath_index_tsx_2396607561"
+        },
+        "parent": "workspace/[workspaceId]/team",
+        "children": []
+      }
+    ]
+  },
+  {
+    "index": {
+      "name": "about",
+      "folder": "pages",
+      "file": "about/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "about",
+          "base": "about",
+          "path": "about",
+          "ext": ""
+        }
+      ],
+      "importFile": "about/index.tsx",
+      "importName": "about_index_tsx_3061335318"
+    },
+    "layout": {
+      "name": "about",
+      "folder": "pages",
+      "file": "about/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "about",
+          "base": "about",
+          "path": "about",
+          "ext": ""
+        }
+      ],
+      "importFile": "about/layout.tsx",
+      "importName": "about_layout_tsx_2396405898"
+    },
+    "children": [
+      {
+        "layout": {
+          "name": "about/careers",
+          "folder": "pages",
+          "file": "about/careers/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "careers",
+              "base": "careers",
+              "path": "careers",
+              "ext": ""
+            }
+          ],
+          "importFile": "about/careers/layout.tsx",
+          "importName": "about_careers_layout_tsx_3684129548"
+        },
+        "parent": "about",
+        "children": [
+          {
+            "index": {
+              "name": "about/careers/[jobId]",
+              "folder": "pages",
+              "file": "about/careers/[jobId]/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "[jobId]",
+                  "base": "[jobId]",
+                  "path": "[jobId]",
+                  "ext": "",
+                  "param": {
+                    "name": "jobId",
+                    "const": "jobId",
+                    "isRequired": true,
+                    "isOptional": false,
+                    "isRest": false
+                  }
+                }
+              ],
+              "importFile": "about/careers/[jobId]/index.tsx",
+              "importName": "about_careers_jobId_index_tsx_2940328380"
+            },
+            "parent": "about/careers",
+            "children": []
+          }
+        ]
+      },
+      {
+        "index": {
+          "name": "about/team",
+          "folder": "pages",
+          "file": "about/team/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "team",
+              "base": "team",
+              "path": "team",
+              "ext": ""
+            }
+          ],
+          "importFile": "about/team/index.tsx",
+          "importName": "about_team_index_tsx_3906889098"
+        },
+        "parent": "about",
+        "children": []
+      }
+    ]
+  },
+  {
+    "layout": {
+      "name": "account",
+      "folder": "pages",
+      "file": "account/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "account",
+          "base": "account",
+          "path": "account",
+          "ext": ""
+        }
+      ],
+      "importFile": "account/layout.tsx",
+      "importName": "account_layout_tsx_2977242696"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "account/profile",
+          "folder": "pages",
+          "file": "account/profile/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "profile",
+              "base": "profile",
+              "path": "profile",
+              "ext": ""
+            }
+          ],
+          "importFile": "account/profile/index.tsx",
+          "importName": "account_profile_index_tsx_1987383209"
+        },
+        "parent": "account",
+        "children": []
+      }
+    ]
+  },
+  {
+    "index": {
+      "name": "admin",
+      "folder": "pages",
+      "file": "admin/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "admin",
+          "base": "admin",
+          "path": "admin",
+          "ext": ""
+        }
+      ],
+      "importFile": "admin/index.tsx",
+      "importName": "admin_index_tsx_1806534617"
+    },
+    "layout": {
+      "name": "admin",
+      "folder": "pages",
+      "file": "admin/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "admin",
+          "base": "admin",
+          "path": "admin",
+          "ext": ""
+        }
+      ],
+      "importFile": "admin/layout.tsx",
+      "importName": "admin_layout_tsx_2245020265"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "admin/[tenant]",
+          "folder": "pages",
+          "file": "admin/[tenant]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "[tenant]",
+              "base": "[tenant]",
+              "path": "[tenant]",
+              "ext": "",
+              "param": {
+                "name": "tenant",
+                "const": "tenant",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "admin/[tenant]/index.tsx",
+          "importName": "admin_tenant_index_tsx_144548962"
+        },
+        "parent": "admin",
+        "children": [
+          {
+            "index": {
+              "name": "admin/[tenant]/resources",
+              "folder": "pages",
+              "file": "admin/[tenant]/resources/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "resources",
+                  "base": "resources",
+                  "path": "resources",
+                  "ext": ""
+                }
+              ],
+              "importFile": "admin/[tenant]/resources/index.tsx",
+              "importName": "admin_tenant_resources_index_tsx_1533280296"
+            },
+            "layout": {
+              "name": "admin/[tenant]/resources",
+              "folder": "pages",
+              "file": "admin/[tenant]/resources/layout.tsx",
+              "pathTokens": [
+                {
+                  "orig": "resources",
+                  "base": "resources",
+                  "path": "resources",
+                  "ext": ""
+                }
+              ],
+              "importFile": "admin/[tenant]/resources/layout.tsx",
+              "importName": "admin_tenant_resources_layout_tsx_1331315044"
+            },
+            "parent": "admin/[tenant]",
+            "children": [
+              {
+                "index": {
+                  "name": "admin/[tenant]/resources/[[type]]",
+                  "folder": "pages",
+                  "file": "admin/[tenant]/resources/[[type]]/index.tsx",
+                  "pathTokens": [
+                    {
+                      "orig": "[[type]]",
+                      "base": "[[type]]",
+                      "path": "[[type]]",
+                      "ext": "",
+                      "param": {
+                        "name": "type",
+                        "const": "type",
+                        "isRequired": false,
+                        "isOptional": true,
+                        "isRest": false
+                      }
+                    }
+                  ],
+                  "importFile": "admin/[tenant]/resources/[[type]]/index.tsx",
+                  "importName": "admin_tenant_resources_type_index_tsx_1810931496"
+                },
+                "layout": {
+                  "name": "admin/[tenant]/resources/[[type]]",
+                  "folder": "pages",
+                  "file": "admin/[tenant]/resources/[[type]]/layout.tsx",
+                  "pathTokens": [
+                    {
+                      "orig": "[[type]]",
+                      "base": "[[type]]",
+                      "path": "[[type]]",
+                      "ext": "",
+                      "param": {
+                        "name": "type",
+                        "const": "type",
+                        "isRequired": false,
+                        "isOptional": true,
+                        "isRest": false
+                      }
+                    }
+                  ],
+                  "importFile": "admin/[tenant]/resources/[[type]]/layout.tsx",
+                  "importName": "admin_tenant_resources_type_layout_tsx_1332401659"
+                },
+                "parent": "admin/[tenant]/resources",
+                "children": [
+                  {
+                    "index": {
+                      "name": "admin/[tenant]/resources/[[type]]/[...path]",
+                      "folder": "pages",
+                      "file": "admin/[tenant]/resources/[[type]]/[...path]/index.tsx",
+                      "pathTokens": [
+                        {
+                          "orig": "[...path]",
+                          "base": "[...path]",
+                          "path": "[...path]",
+                          "ext": "",
+                          "param": {
+                            "name": "path",
+                            "const": "path",
+                            "isRequired": false,
+                            "isOptional": false,
+                            "isRest": true
+                          }
+                        }
+                      ],
+                      "importFile": "admin/[tenant]/resources/[[type]]/[...path]/index.tsx",
+                      "importName": "admin_tenant_resources_type_path_index_tsx_1114593514"
+                    },
+                    "parent": "admin/[tenant]/resources/[[type]]",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "index": {
+              "name": "admin/[tenant]/settings",
+              "folder": "pages",
+              "file": "admin/[tenant]/settings/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "settings",
+                  "base": "settings",
+                  "path": "settings",
+                  "ext": ""
+                }
+              ],
+              "importFile": "admin/[tenant]/settings/index.tsx",
+              "importName": "admin_tenant_settings_index_tsx_3198274446"
+            },
+            "layout": {
+              "name": "admin/[tenant]/settings",
+              "folder": "pages",
+              "file": "admin/[tenant]/settings/layout.tsx",
+              "pathTokens": [
+                {
+                  "orig": "settings",
+                  "base": "settings",
+                  "path": "settings",
+                  "ext": ""
+                }
+              ],
+              "importFile": "admin/[tenant]/settings/layout.tsx",
+              "importName": "admin_tenant_settings_layout_tsx_1879736946"
+            },
+            "parent": "admin/[tenant]",
+            "children": [
+              {
+                "index": {
+                  "name": "admin/[tenant]/settings/general",
+                  "folder": "pages",
+                  "file": "admin/[tenant]/settings/general/index.tsx",
+                  "pathTokens": [
+                    {
+                      "orig": "general",
+                      "base": "general",
+                      "path": "general",
+                      "ext": ""
+                    }
+                  ],
+                  "importFile": "admin/[tenant]/settings/general/index.tsx",
+                  "importName": "admin_tenant_settings_general_index_tsx_4196017676"
+                },
+                "parent": "admin/[tenant]/settings",
+                "children": []
+              },
+              {
+                "index": {
+                  "name": "admin/[tenant]/settings/permissions",
+                  "folder": "pages",
+                  "file": "admin/[tenant]/settings/permissions/index.tsx",
+                  "pathTokens": [
+                    {
+                      "orig": "permissions",
+                      "base": "permissions",
+                      "path": "permissions",
+                      "ext": ""
+                    }
+                  ],
+                  "importFile": "admin/[tenant]/settings/permissions/index.tsx",
+                  "importName": "admin_tenant_settings_permissions_index_tsx_3508365092"
+                },
+                "parent": "admin/[tenant]/settings",
+                "children": []
+              }
+            ]
+          },
+          {
+            "index": {
+              "name": "admin/[tenant]/users",
+              "folder": "pages",
+              "file": "admin/[tenant]/users/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "users",
+                  "base": "users",
+                  "path": "users",
+                  "ext": ""
+                }
+              ],
+              "importFile": "admin/[tenant]/users/index.tsx",
+              "importName": "admin_tenant_users_index_tsx_1262984270"
+            },
+            "layout": {
+              "name": "admin/[tenant]/users",
+              "folder": "pages",
+              "file": "admin/[tenant]/users/layout.tsx",
+              "pathTokens": [
+                {
+                  "orig": "users",
+                  "base": "users",
+                  "path": "users",
+                  "ext": ""
+                }
+              ],
+              "importFile": "admin/[tenant]/users/layout.tsx",
+              "importName": "admin_tenant_users_layout_tsx_3952846485"
+            },
+            "parent": "admin/[tenant]",
+            "children": [
+              {
+                "index": {
+                  "name": "admin/[tenant]/users/[userId]",
+                  "folder": "pages",
+                  "file": "admin/[tenant]/users/[userId]/index.tsx",
+                  "pathTokens": [
+                    {
+                      "orig": "[userId]",
+                      "base": "[userId]",
+                      "path": "[userId]",
+                      "ext": "",
+                      "param": {
+                        "name": "userId",
+                        "const": "userId",
+                        "isRequired": true,
+                        "isOptional": false,
+                        "isRest": false
+                      }
+                    }
+                  ],
+                  "importFile": "admin/[tenant]/users/[userId]/index.tsx",
+                  "importName": "admin_tenant_users_userId_index_tsx_333896102"
+                },
+                "parent": "admin/[tenant]/users",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "index": {
+      "name": "blog",
+      "folder": "pages",
+      "file": "blog/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "blog",
+          "base": "blog",
+          "path": "blog",
+          "ext": ""
+        }
+      ],
+      "importFile": "blog/index.tsx",
+      "importName": "blog_index_tsx_656698020"
+    },
+    "layout": {
+      "name": "blog",
+      "folder": "pages",
+      "file": "blog/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "blog",
+          "base": "blog",
+          "path": "blog",
+          "ext": ""
+        }
+      ],
+      "importFile": "blog/layout.tsx",
+      "importName": "blog_layout_tsx_2871578117"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "blog/post/[slug]",
+          "folder": "pages",
+          "file": "blog/post/[slug]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "post",
+              "base": "post",
+              "path": "post",
+              "ext": ""
+            },
+            {
+              "orig": "[slug]",
+              "base": "[slug]",
+              "path": "[slug]",
+              "ext": "",
+              "param": {
+                "name": "slug",
+                "const": "slug",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "blog/post/[slug]/index.tsx",
+          "importName": "blog_post_slug_index_tsx_4265829785"
+        },
+        "layout": {
+          "name": "blog/post/[slug]",
+          "folder": "pages",
+          "file": "blog/post/[slug]/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "post",
+              "base": "post",
+              "path": "post",
+              "ext": ""
+            },
+            {
+              "orig": "[slug]",
+              "base": "[slug]",
+              "path": "[slug]",
+              "ext": "",
+              "param": {
+                "name": "slug",
+                "const": "slug",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "blog/post/[slug]/layout.tsx",
+          "importName": "blog_post_slug_layout_tsx_4086949147"
+        },
+        "parent": "blog",
+        "children": []
+      },
+      {
+        "index": {
+          "name": "blog/[[category]]",
+          "folder": "pages",
+          "file": "blog/[[category]]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "[[category]]",
+              "base": "[[category]]",
+              "path": "[[category]]",
+              "ext": "",
+              "param": {
+                "name": "category",
+                "const": "category",
+                "isRequired": false,
+                "isOptional": true,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "blog/[[category]]/index.tsx",
+          "importName": "blog_category_index_tsx_1003139220"
+        },
+        "parent": "blog",
+        "children": [
+          {
+            "index": {
+              "name": "blog/[[category]]/[[tag]]",
+              "folder": "pages",
+              "file": "blog/[[category]]/[[tag]]/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "[[tag]]",
+                  "base": "[[tag]]",
+                  "path": "[[tag]]",
+                  "ext": "",
+                  "param": {
+                    "name": "tag",
+                    "const": "tag",
+                    "isRequired": false,
+                    "isOptional": true,
+                    "isRest": false
+                  }
+                }
+              ],
+              "importFile": "blog/[[category]]/[[tag]]/index.tsx",
+              "importName": "blog_category_tag_index_tsx_4100302857"
+            },
+            "parent": "blog/[[category]]",
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "index": {
+      "name": "contact",
+      "folder": "pages",
+      "file": "contact/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "contact",
+          "base": "contact",
+          "path": "contact",
+          "ext": ""
+        }
+      ],
+      "importFile": "contact/index.tsx",
+      "importName": "contact_index_tsx_3970670992"
+    },
+    "layout": {
+      "name": "contact",
+      "folder": "pages",
+      "file": "contact/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "contact",
+          "base": "contact",
+          "path": "contact",
+          "ext": ""
+        }
+      ],
+      "importFile": "contact/layout.tsx",
+      "importName": "contact_layout_tsx_2321003899"
+    },
+    "children": []
+  },
+  {
+    "index": {
+      "name": "dashboard",
+      "folder": "pages",
+      "file": "dashboard/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "dashboard",
+          "base": "dashboard",
+          "path": "dashboard",
+          "ext": ""
+        }
+      ],
+      "importFile": "dashboard/index.tsx",
+      "importName": "dashboard_index_tsx_3400391192"
+    },
+    "layout": {
+      "name": "dashboard",
+      "folder": "pages",
+      "file": "dashboard/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "dashboard",
+          "base": "dashboard",
+          "path": "dashboard",
+          "ext": ""
+        }
+      ],
+      "importFile": "dashboard/layout.tsx",
+      "importName": "dashboard_layout_tsx_1762834450"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "dashboard/analytics",
+          "folder": "pages",
+          "file": "dashboard/analytics/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "analytics",
+              "base": "analytics",
+              "path": "analytics",
+              "ext": ""
+            }
+          ],
+          "importFile": "dashboard/analytics/index.tsx",
+          "importName": "dashboard_analytics_index_tsx_2467463920"
+        },
+        "parent": "dashboard",
+        "children": []
+      },
+      {
+        "index": {
+          "name": "dashboard/settings",
+          "folder": "pages",
+          "file": "dashboard/settings/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "settings",
+              "base": "settings",
+              "path": "settings",
+              "ext": ""
+            }
+          ],
+          "importFile": "dashboard/settings/index.tsx",
+          "importName": "dashboard_settings_index_tsx_2528451466"
+        },
+        "layout": {
+          "name": "dashboard/settings",
+          "folder": "pages",
+          "file": "dashboard/settings/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "settings",
+              "base": "settings",
+              "path": "settings",
+              "ext": ""
+            }
+          ],
+          "importFile": "dashboard/settings/layout.tsx",
+          "importName": "dashboard_settings_layout_tsx_2001687227"
+        },
+        "parent": "dashboard",
+        "children": [
+          {
+            "index": {
+              "name": "dashboard/settings/billing",
+              "folder": "pages",
+              "file": "dashboard/settings/billing/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "billing",
+                  "base": "billing",
+                  "path": "billing",
+                  "ext": ""
+                }
+              ],
+              "importFile": "dashboard/settings/billing/index.tsx",
+              "importName": "dashboard_settings_billing_index_tsx_3947003682"
+            },
+            "parent": "dashboard/settings",
+            "children": []
+          },
+          {
+            "index": {
+              "name": "dashboard/settings/notifications",
+              "folder": "pages",
+              "file": "dashboard/settings/notifications/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "notifications",
+                  "base": "notifications",
+                  "path": "notifications",
+                  "ext": ""
+                }
+              ],
+              "importFile": "dashboard/settings/notifications/index.tsx",
+              "importName": "dashboard_settings_notifications_index_tsx_3109498012"
+            },
+            "parent": "dashboard/settings",
+            "children": []
+          },
+          {
+            "index": {
+              "name": "dashboard/settings/profile",
+              "folder": "pages",
+              "file": "dashboard/settings/profile/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "profile",
+                  "base": "profile",
+                  "path": "profile",
+                  "ext": ""
+                }
+              ],
+              "importFile": "dashboard/settings/profile/index.tsx",
+              "importName": "dashboard_settings_profile_index_tsx_3821990919"
+            },
+            "parent": "dashboard/settings",
+            "children": []
+          },
+          {
+            "index": {
+              "name": "dashboard/settings/security",
+              "folder": "pages",
+              "file": "dashboard/settings/security/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "security",
+                  "base": "security",
+                  "path": "security",
+                  "ext": ""
+                }
+              ],
+              "importFile": "dashboard/settings/security/index.tsx",
+              "importName": "dashboard_settings_security_index_tsx_2219988972"
+            },
+            "layout": {
+              "name": "dashboard/settings/security",
+              "folder": "pages",
+              "file": "dashboard/settings/security/layout.tsx",
+              "pathTokens": [
+                {
+                  "orig": "security",
+                  "base": "security",
+                  "path": "security",
+                  "ext": ""
+                }
+              ],
+              "importFile": "dashboard/settings/security/layout.tsx",
+              "importName": "dashboard_settings_security_layout_tsx_3549196698"
+            },
+            "parent": "dashboard/settings",
+            "children": []
+          }
+        ]
+      },
+      {
+        "index": {
+          "name": "dashboard/[view]",
+          "folder": "pages",
+          "file": "dashboard/[view]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "[view]",
+              "base": "[view]",
+              "path": "[view]",
+              "ext": "",
+              "param": {
+                "name": "view",
+                "const": "view",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "dashboard/[view]/index.tsx",
+          "importName": "dashboard_view_index_tsx_3510080540"
+        },
+        "parent": "dashboard",
+        "children": []
+      }
+    ]
+  },
+  {
+    "index": {
+      "name": "docs",
+      "folder": "pages",
+      "file": "docs/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "docs",
+          "base": "docs",
+          "path": "docs",
+          "ext": ""
+        }
+      ],
+      "importFile": "docs/index.tsx",
+      "importName": "docs_index_tsx_2030679828"
+    },
+    "layout": {
+      "name": "docs",
+      "folder": "pages",
+      "file": "docs/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "docs",
+          "base": "docs",
+          "path": "docs",
+          "ext": ""
+        }
+      ],
+      "importFile": "docs/layout.tsx",
+      "importName": "docs_layout_tsx_1612140628"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "docs/[...path]",
+          "folder": "pages",
+          "file": "docs/[...path]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "[...path]",
+              "base": "[...path]",
+              "path": "[...path]",
+              "ext": "",
+              "param": {
+                "name": "path",
+                "const": "path",
+                "isRequired": false,
+                "isOptional": false,
+                "isRest": true
+              }
+            }
+          ],
+          "importFile": "docs/[...path]/index.tsx",
+          "importName": "docs_path_index_tsx_434935905"
+        },
+        "parent": "docs",
+        "children": []
+      }
+    ]
+  },
+  {
+    "layout": {
+      "name": "legal",
+      "folder": "pages",
+      "file": "legal/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "legal",
+          "base": "legal",
+          "path": "legal",
+          "ext": ""
+        }
+      ],
+      "importFile": "legal/layout.tsx",
+      "importName": "legal_layout_tsx_1366181041"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "legal/privacy",
+          "folder": "pages",
+          "file": "legal/privacy/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "privacy",
+              "base": "privacy",
+              "path": "privacy",
+              "ext": ""
+            }
+          ],
+          "importFile": "legal/privacy/index.tsx",
+          "importName": "legal_privacy_index_tsx_603606551"
+        },
+        "parent": "legal",
+        "children": []
+      },
+      {
+        "index": {
+          "name": "legal/terms",
+          "folder": "pages",
+          "file": "legal/terms/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "terms",
+              "base": "terms",
+              "path": "terms",
+              "ext": ""
+            }
+          ],
+          "importFile": "legal/terms/index.tsx",
+          "importName": "legal_terms_index_tsx_3828107619"
+        },
+        "parent": "legal",
+        "children": []
+      }
+    ]
+  },
+  {
+    "layout": {
+      "name": "portal",
+      "folder": "pages",
+      "file": "portal/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "portal",
+          "base": "portal",
+          "path": "portal",
+          "ext": ""
+        }
+      ],
+      "importFile": "portal/layout.tsx",
+      "importName": "portal_layout_tsx_4243983674"
+    },
+    "children": [
+      {
+        "layout": {
+          "name": "portal/[clientId]",
+          "folder": "pages",
+          "file": "portal/[clientId]/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "[clientId]",
+              "base": "[clientId]",
+              "path": "[clientId]",
+              "ext": "",
+              "param": {
+                "name": "clientId",
+                "const": "clientId",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "portal/[clientId]/layout.tsx",
+          "importName": "portal_clientId_layout_tsx_3114159634"
+        },
+        "parent": "portal",
+        "children": [
+          {
+            "layout": {
+              "name": "portal/[clientId]/reports",
+              "folder": "pages",
+              "file": "portal/[clientId]/reports/layout.tsx",
+              "pathTokens": [
+                {
+                  "orig": "reports",
+                  "base": "reports",
+                  "path": "reports",
+                  "ext": ""
+                }
+              ],
+              "importFile": "portal/[clientId]/reports/layout.tsx",
+              "importName": "portal_clientId_reports_layout_tsx_1980481456"
+            },
+            "parent": "portal/[clientId]",
+            "children": [
+              {
+                "layout": {
+                  "name": "portal/[clientId]/reports/[reportType]",
+                  "folder": "pages",
+                  "file": "portal/[clientId]/reports/[reportType]/layout.tsx",
+                  "pathTokens": [
+                    {
+                      "orig": "[reportType]",
+                      "base": "[reportType]",
+                      "path": "[reportType]",
+                      "ext": "",
+                      "param": {
+                        "name": "reportType",
+                        "const": "reportType",
+                        "isRequired": true,
+                        "isOptional": false,
+                        "isRest": false
+                      }
+                    }
+                  ],
+                  "importFile": "portal/[clientId]/reports/[reportType]/layout.tsx",
+                  "importName": "portal_clientId_reports_reportType_layout_tsx_3694080843"
+                },
+                "parent": "portal/[clientId]/reports",
+                "children": [
+                  {
+                    "index": {
+                      "name": "portal/[clientId]/reports/[reportType]/data/[dataView]",
+                      "folder": "pages",
+                      "file": "portal/[clientId]/reports/[reportType]/data/[dataView]/index.tsx",
+                      "pathTokens": [
+                        {
+                          "orig": "data",
+                          "base": "data",
+                          "path": "data",
+                          "ext": ""
+                        },
+                        {
+                          "orig": "[dataView]",
+                          "base": "[dataView]",
+                          "path": "[dataView]",
+                          "ext": "",
+                          "param": {
+                            "name": "dataView",
+                            "const": "dataView",
+                            "isRequired": true,
+                            "isOptional": false,
+                            "isRest": false
+                          }
+                        }
+                      ],
+                      "importFile": "portal/[clientId]/reports/[reportType]/data/[dataView]/index.tsx",
+                      "importName": "portal_clientId_reports_reportType_data_dataView_index_tsx_245814616"
+                    },
+                    "layout": {
+                      "name": "portal/[clientId]/reports/[reportType]/data/[dataView]",
+                      "folder": "pages",
+                      "file": "portal/[clientId]/reports/[reportType]/data/[dataView]/layout.tsx",
+                      "pathTokens": [
+                        {
+                          "orig": "data",
+                          "base": "data",
+                          "path": "data",
+                          "ext": ""
+                        },
+                        {
+                          "orig": "[dataView]",
+                          "base": "[dataView]",
+                          "path": "[dataView]",
+                          "ext": "",
+                          "param": {
+                            "name": "dataView",
+                            "const": "dataView",
+                            "isRequired": true,
+                            "isOptional": false,
+                            "isRest": false
+                          }
+                        }
+                      ],
+                      "importFile": "portal/[clientId]/reports/[reportType]/data/[dataView]/layout.tsx",
+                      "importName": "portal_clientId_reports_reportType_data_dataView_layout_tsx_520811149"
+                    },
+                    "parent": "portal/[clientId]/reports/[reportType]",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "index": {
+      "name": "products",
+      "folder": "pages",
+      "file": "products/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "products",
+          "base": "products",
+          "path": "products",
+          "ext": ""
+        }
+      ],
+      "importFile": "products/index.tsx",
+      "importName": "products_index_tsx_3492241869"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "products/[id]",
+          "folder": "pages",
+          "file": "products/[id]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "[id]",
+              "base": "[id]",
+              "path": "[id]",
+              "ext": "",
+              "param": {
+                "name": "id",
+                "const": "id",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "products/[id]/index.tsx",
+          "importName": "products_id_index_tsx_3698327518"
+        },
+        "parent": "products",
+        "children": []
+      }
+    ]
+  },
+  {
+    "index": {
+      "name": "projects",
+      "folder": "pages",
+      "file": "projects/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "projects",
+          "base": "projects",
+          "path": "projects",
+          "ext": ""
+        }
+      ],
+      "importFile": "projects/index.tsx",
+      "importName": "projects_index_tsx_1541817812"
+    },
+    "layout": {
+      "name": "projects",
+      "folder": "pages",
+      "file": "projects/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "projects",
+          "base": "projects",
+          "path": "projects",
+          "ext": ""
+        }
+      ],
+      "importFile": "projects/layout.tsx",
+      "importName": "projects_layout_tsx_4216421654"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "projects/[projectId]",
+          "folder": "pages",
+          "file": "projects/[projectId]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "[projectId]",
+              "base": "[projectId]",
+              "path": "[projectId]",
+              "ext": "",
+              "param": {
+                "name": "projectId",
+                "const": "projectId",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "projects/[projectId]/index.tsx",
+          "importName": "projects_projectId_index_tsx_2013112903"
+        },
+        "layout": {
+          "name": "projects/[projectId]",
+          "folder": "pages",
+          "file": "projects/[projectId]/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "[projectId]",
+              "base": "[projectId]",
+              "path": "[projectId]",
+              "ext": "",
+              "param": {
+                "name": "projectId",
+                "const": "projectId",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "projects/[projectId]/layout.tsx",
+          "importName": "projects_projectId_layout_tsx_2457576455"
+        },
+        "parent": "projects",
+        "children": [
+          {
+            "index": {
+              "name": "projects/[projectId]/files",
+              "folder": "pages",
+              "file": "projects/[projectId]/files/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "files",
+                  "base": "files",
+                  "path": "files",
+                  "ext": ""
+                }
+              ],
+              "importFile": "projects/[projectId]/files/index.tsx",
+              "importName": "projects_projectId_files_index_tsx_3641865118"
+            },
+            "layout": {
+              "name": "projects/[projectId]/files",
+              "folder": "pages",
+              "file": "projects/[projectId]/files/layout.tsx",
+              "pathTokens": [
+                {
+                  "orig": "files",
+                  "base": "files",
+                  "path": "files",
+                  "ext": ""
+                }
+              ],
+              "importFile": "projects/[projectId]/files/layout.tsx",
+              "importName": "projects_projectId_files_layout_tsx_1843012014"
+            },
+            "parent": "projects/[projectId]",
+            "children": [
+              {
+                "index": {
+                  "name": "projects/[projectId]/files/[...path]",
+                  "folder": "pages",
+                  "file": "projects/[projectId]/files/[...path]/index.tsx",
+                  "pathTokens": [
+                    {
+                      "orig": "[...path]",
+                      "base": "[...path]",
+                      "path": "[...path]",
+                      "ext": "",
+                      "param": {
+                        "name": "path",
+                        "const": "path",
+                        "isRequired": false,
+                        "isOptional": false,
+                        "isRest": true
+                      }
+                    }
+                  ],
+                  "importFile": "projects/[projectId]/files/[...path]/index.tsx",
+                  "importName": "projects_projectId_files_path_index_tsx_1805299198"
+                },
+                "parent": "projects/[projectId]/files",
+                "children": []
+              }
+            ]
+          },
+          {
+            "index": {
+              "name": "projects/[projectId]/tasks",
+              "folder": "pages",
+              "file": "projects/[projectId]/tasks/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "tasks",
+                  "base": "tasks",
+                  "path": "tasks",
+                  "ext": ""
+                }
+              ],
+              "importFile": "projects/[projectId]/tasks/index.tsx",
+              "importName": "projects_projectId_tasks_index_tsx_2095702919"
+            },
+            "layout": {
+              "name": "projects/[projectId]/tasks",
+              "folder": "pages",
+              "file": "projects/[projectId]/tasks/layout.tsx",
+              "pathTokens": [
+                {
+                  "orig": "tasks",
+                  "base": "tasks",
+                  "path": "tasks",
+                  "ext": ""
+                }
+              ],
+              "importFile": "projects/[projectId]/tasks/layout.tsx",
+              "importName": "projects_projectId_tasks_layout_tsx_152335102"
+            },
+            "parent": "projects/[projectId]",
+            "children": [
+              {
+                "index": {
+                  "name": "projects/[projectId]/tasks/[taskId]",
+                  "folder": "pages",
+                  "file": "projects/[projectId]/tasks/[taskId]/index.tsx",
+                  "pathTokens": [
+                    {
+                      "orig": "[taskId]",
+                      "base": "[taskId]",
+                      "path": "[taskId]",
+                      "ext": "",
+                      "param": {
+                        "name": "taskId",
+                        "const": "taskId",
+                        "isRequired": true,
+                        "isOptional": false,
+                        "isRest": false
+                      }
+                    }
+                  ],
+                  "importFile": "projects/[projectId]/tasks/[taskId]/index.tsx",
+                  "importName": "projects_projectId_tasks_taskId_index_tsx_876882048"
+                },
+                "layout": {
+                  "name": "projects/[projectId]/tasks/[taskId]",
+                  "folder": "pages",
+                  "file": "projects/[projectId]/tasks/[taskId]/layout.tsx",
+                  "pathTokens": [
+                    {
+                      "orig": "[taskId]",
+                      "base": "[taskId]",
+                      "path": "[taskId]",
+                      "ext": "",
+                      "param": {
+                        "name": "taskId",
+                        "const": "taskId",
+                        "isRequired": true,
+                        "isOptional": false,
+                        "isRest": false
+                      }
+                    }
+                  ],
+                  "importFile": "projects/[projectId]/tasks/[taskId]/layout.tsx",
+                  "importName": "projects_projectId_tasks_taskId_layout_tsx_2537048726"
+                },
+                "parent": "projects/[projectId]/tasks",
+                "children": [
+                  {
+                    "index": {
+                      "name": "projects/[projectId]/tasks/[taskId]/comments",
+                      "folder": "pages",
+                      "file": "projects/[projectId]/tasks/[taskId]/comments/index.tsx",
+                      "pathTokens": [
+                        {
+                          "orig": "comments",
+                          "base": "comments",
+                          "path": "comments",
+                          "ext": ""
+                        }
+                      ],
+                      "importFile": "projects/[projectId]/tasks/[taskId]/comments/index.tsx",
+                      "importName": "projects_projectId_tasks_taskId_comments_index_tsx_2812732982"
+                    },
+                    "layout": {
+                      "name": "projects/[projectId]/tasks/[taskId]/comments",
+                      "folder": "pages",
+                      "file": "projects/[projectId]/tasks/[taskId]/comments/layout.tsx",
+                      "pathTokens": [
+                        {
+                          "orig": "comments",
+                          "base": "comments",
+                          "path": "comments",
+                          "ext": ""
+                        }
+                      ],
+                      "importFile": "projects/[projectId]/tasks/[taskId]/comments/layout.tsx",
+                      "importName": "projects_projectId_tasks_taskId_comments_layout_tsx_3047800545"
+                    },
+                    "parent": "projects/[projectId]/tasks/[taskId]",
+                    "children": [
+                      {
+                        "index": {
+                          "name": "projects/[projectId]/tasks/[taskId]/comments/[commentId]",
+                          "folder": "pages",
+                          "file": "projects/[projectId]/tasks/[taskId]/comments/[commentId]/index.tsx",
+                          "pathTokens": [
+                            {
+                              "orig": "[commentId]",
+                              "base": "[commentId]",
+                              "path": "[commentId]",
+                              "ext": "",
+                              "param": {
+                                "name": "commentId",
+                                "const": "commentId",
+                                "isRequired": true,
+                                "isOptional": false,
+                                "isRest": false
+                              }
+                            }
+                          ],
+                          "importFile": "projects/[projectId]/tasks/[taskId]/comments/[commentId]/index.tsx",
+                          "importName": "projects_projectId_tasks_taskId_comments_commentId_index_tsx_3891983433"
+                        },
+                        "parent": "projects/[projectId]/tasks/[taskId]/comments",
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "index": {
+              "name": "projects/[projectId]/team",
+              "folder": "pages",
+              "file": "projects/[projectId]/team/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "team",
+                  "base": "team",
+                  "path": "team",
+                  "ext": ""
+                }
+              ],
+              "importFile": "projects/[projectId]/team/index.tsx",
+              "importName": "projects_projectId_team_index_tsx_1454304763"
+            },
+            "layout": {
+              "name": "projects/[projectId]/team",
+              "folder": "pages",
+              "file": "projects/[projectId]/team/layout.tsx",
+              "pathTokens": [
+                {
+                  "orig": "team",
+                  "base": "team",
+                  "path": "team",
+                  "ext": ""
+                }
+              ],
+              "importFile": "projects/[projectId]/team/layout.tsx",
+              "importName": "projects_projectId_team_layout_tsx_1351420135"
+            },
+            "parent": "projects/[projectId]",
+            "children": [
+              {
+                "index": {
+                  "name": "projects/[projectId]/team/[userId]",
+                  "folder": "pages",
+                  "file": "projects/[projectId]/team/[userId]/index.tsx",
+                  "pathTokens": [
+                    {
+                      "orig": "[userId]",
+                      "base": "[userId]",
+                      "path": "[userId]",
+                      "ext": "",
+                      "param": {
+                        "name": "userId",
+                        "const": "userId",
+                        "isRequired": true,
+                        "isOptional": false,
+                        "isRest": false
+                      }
+                    }
+                  ],
+                  "importFile": "projects/[projectId]/team/[userId]/index.tsx",
+                  "importName": "projects_projectId_team_userId_index_tsx_1486831611"
+                },
+                "parent": "projects/[projectId]/team",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "layout": {
+      "name": "properties",
+      "folder": "pages",
+      "file": "properties/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "properties",
+          "base": "properties",
+          "path": "properties",
+          "ext": ""
+        }
+      ],
+      "importFile": "properties/layout.tsx",
+      "importName": "properties_layout_tsx_4189224751"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "properties/filters",
+          "folder": "pages",
+          "file": "properties/filters/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "filters",
+              "base": "filters",
+              "path": "filters",
+              "ext": ""
+            }
+          ],
+          "importFile": "properties/filters/index.tsx",
+          "importName": "properties_filters_index_tsx_1571931483"
+        },
+        "parent": "properties",
+        "children": []
+      },
+      {
+        "index": {
+          "name": "properties/[[city]]/filters/[...filters]",
+          "folder": "pages",
+          "file": "properties/[[city]]/filters/[...filters]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "[[city]]",
+              "base": "[[city]]",
+              "path": "[[city]]",
+              "ext": "",
+              "param": {
+                "name": "city",
+                "const": "city",
+                "isRequired": false,
+                "isOptional": true,
+                "isRest": false
+              }
+            },
+            {
+              "orig": "filters",
+              "base": "filters",
+              "path": "filters",
+              "ext": ""
+            },
+            {
+              "orig": "[...filters]",
+              "base": "[...filters]",
+              "path": "[...filters]",
+              "ext": "",
+              "param": {
+                "name": "filters",
+                "const": "filters",
+                "isRequired": false,
+                "isOptional": false,
+                "isRest": true
+              }
+            }
+          ],
+          "importFile": "properties/[[city]]/filters/[...filters]/index.tsx",
+          "importName": "properties_city_filters_filters_index_tsx_455664530"
+        },
+        "parent": "properties",
+        "children": []
+      }
+    ]
+  },
+  {
+    "index": {
+      "name": "search",
+      "folder": "pages",
+      "file": "search/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "search",
+          "base": "search",
+          "path": "search",
+          "ext": ""
+        }
+      ],
+      "importFile": "search/index.tsx",
+      "importName": "search_index_tsx_960598595"
+    },
+    "children": [
+      {
+        "layout": {
+          "name": "search/[[query]]",
+          "folder": "pages",
+          "file": "search/[[query]]/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "[[query]]",
+              "base": "[[query]]",
+              "path": "[[query]]",
+              "ext": "",
+              "param": {
+                "name": "query",
+                "const": "query",
+                "isRequired": false,
+                "isOptional": true,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "search/[[query]]/layout.tsx",
+          "importName": "search_query_layout_tsx_1266362335"
+        },
+        "parent": "search",
+        "children": [
+          {
+            "index": {
+              "name": "search/[[query]]/[[page]]",
+              "folder": "pages",
+              "file": "search/[[query]]/[[page]]/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "[[page]]",
+                  "base": "[[page]]",
+                  "path": "[[page]]",
+                  "ext": "",
+                  "param": {
+                    "name": "page",
+                    "const": "page",
+                    "isRequired": false,
+                    "isOptional": true,
+                    "isRest": false
+                  }
+                }
+              ],
+              "importFile": "search/[[query]]/[[page]]/index.tsx",
+              "importName": "search_query_page_index_tsx_1843385782"
+            },
+            "parent": "search/[[query]]",
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "index": {
+      "name": "shop",
+      "folder": "pages",
+      "file": "shop/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "shop",
+          "base": "shop",
+          "path": "shop",
+          "ext": ""
+        }
+      ],
+      "importFile": "shop/index.tsx",
+      "importName": "shop_index_tsx_2616003680"
+    },
+    "layout": {
+      "name": "shop",
+      "folder": "pages",
+      "file": "shop/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "shop",
+          "base": "shop",
+          "path": "shop",
+          "ext": ""
+        }
+      ],
+      "importFile": "shop/layout.tsx",
+      "importName": "shop_layout_tsx_933036490"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "shop/cart",
+          "folder": "pages",
+          "file": "shop/cart/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "cart",
+              "base": "cart",
+              "path": "cart",
+              "ext": ""
+            }
+          ],
+          "importFile": "shop/cart/index.tsx",
+          "importName": "shop_cart_index_tsx_3461971678"
+        },
+        "parent": "shop",
+        "children": []
+      },
+      {
+        "layout": {
+          "name": "shop/checkout",
+          "folder": "pages",
+          "file": "shop/checkout/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "checkout",
+              "base": "checkout",
+              "path": "checkout",
+              "ext": ""
+            }
+          ],
+          "importFile": "shop/checkout/layout.tsx",
+          "importName": "shop_checkout_layout_tsx_2809742663"
+        },
+        "parent": "shop",
+        "children": [
+          {
+            "index": {
+              "name": "shop/checkout/confirm",
+              "folder": "pages",
+              "file": "shop/checkout/confirm/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "confirm",
+                  "base": "confirm",
+                  "path": "confirm",
+                  "ext": ""
+                }
+              ],
+              "importFile": "shop/checkout/confirm/index.tsx",
+              "importName": "shop_checkout_confirm_index_tsx_457300039"
+            },
+            "parent": "shop/checkout",
+            "children": []
+          },
+          {
+            "index": {
+              "name": "shop/checkout/payment",
+              "folder": "pages",
+              "file": "shop/checkout/payment/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "payment",
+                  "base": "payment",
+                  "path": "payment",
+                  "ext": ""
+                }
+              ],
+              "importFile": "shop/checkout/payment/index.tsx",
+              "importName": "shop_checkout_payment_index_tsx_2839585893"
+            },
+            "parent": "shop/checkout",
+            "children": []
+          },
+          {
+            "index": {
+              "name": "shop/checkout/shipping",
+              "folder": "pages",
+              "file": "shop/checkout/shipping/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "shipping",
+                  "base": "shipping",
+                  "path": "shipping",
+                  "ext": ""
+                }
+              ],
+              "importFile": "shop/checkout/shipping/index.tsx",
+              "importName": "shop_checkout_shipping_index_tsx_4218611208"
+            },
+            "layout": {
+              "name": "shop/checkout/shipping",
+              "folder": "pages",
+              "file": "shop/checkout/shipping/layout.tsx",
+              "pathTokens": [
+                {
+                  "orig": "shipping",
+                  "base": "shipping",
+                  "path": "shipping",
+                  "ext": ""
+                }
+              ],
+              "importFile": "shop/checkout/shipping/layout.tsx",
+              "importName": "shop_checkout_shipping_layout_tsx_1955886922"
+            },
+            "parent": "shop/checkout",
+            "children": []
+          }
+        ]
+      },
+      {
+        "index": {
+          "name": "shop/orders",
+          "folder": "pages",
+          "file": "shop/orders/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "orders",
+              "base": "orders",
+              "path": "orders",
+              "ext": ""
+            }
+          ],
+          "importFile": "shop/orders/index.tsx",
+          "importName": "shop_orders_index_tsx_3044215409"
+        },
+        "layout": {
+          "name": "shop/orders",
+          "folder": "pages",
+          "file": "shop/orders/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "orders",
+              "base": "orders",
+              "path": "orders",
+              "ext": ""
+            }
+          ],
+          "importFile": "shop/orders/layout.tsx",
+          "importName": "shop_orders_layout_tsx_1560526654"
+        },
+        "parent": "shop",
+        "children": [
+          {
+            "index": {
+              "name": "shop/orders/[orderId]",
+              "folder": "pages",
+              "file": "shop/orders/[orderId]/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "[orderId]",
+                  "base": "[orderId]",
+                  "path": "[orderId]",
+                  "ext": "",
+                  "param": {
+                    "name": "orderId",
+                    "const": "orderId",
+                    "isRequired": true,
+                    "isOptional": false,
+                    "isRest": false
+                  }
+                }
+              ],
+              "importFile": "shop/orders/[orderId]/index.tsx",
+              "importName": "shop_orders_orderId_index_tsx_3645959700"
+            },
+            "parent": "shop/orders",
+            "children": []
+          }
+        ]
+      },
+      {
+        "index": {
+          "name": "shop/products",
+          "folder": "pages",
+          "file": "shop/products/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "products",
+              "base": "products",
+              "path": "products",
+              "ext": ""
+            }
+          ],
+          "importFile": "shop/products/index.tsx",
+          "importName": "shop_products_index_tsx_3411274748"
+        },
+        "layout": {
+          "name": "shop/products",
+          "folder": "pages",
+          "file": "shop/products/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "products",
+              "base": "products",
+              "path": "products",
+              "ext": ""
+            }
+          ],
+          "importFile": "shop/products/layout.tsx",
+          "importName": "shop_products_layout_tsx_3463733314"
+        },
+        "parent": "shop",
+        "children": [
+          {
+            "index": {
+              "name": "shop/products/[[category]]",
+              "folder": "pages",
+              "file": "shop/products/[[category]]/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "[[category]]",
+                  "base": "[[category]]",
+                  "path": "[[category]]",
+                  "ext": "",
+                  "param": {
+                    "name": "category",
+                    "const": "category",
+                    "isRequired": false,
+                    "isOptional": true,
+                    "isRest": false
+                  }
+                }
+              ],
+              "importFile": "shop/products/[[category]]/index.tsx",
+              "importName": "shop_products_category_index_tsx_1776737672"
+            },
+            "parent": "shop/products",
+            "children": []
+          }
+        ]
+      },
+      {
+        "index": {
+          "name": "shop/product/[id]",
+          "folder": "pages",
+          "file": "shop/product/[id]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "product",
+              "base": "product",
+              "path": "product",
+              "ext": ""
+            },
+            {
+              "orig": "[id]",
+              "base": "[id]",
+              "path": "[id]",
+              "ext": "",
+              "param": {
+                "name": "id",
+                "const": "id",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "shop/product/[id]/index.tsx",
+          "importName": "shop_product_id_index_tsx_3035235801"
+        },
+        "layout": {
+          "name": "shop/product/[id]",
+          "folder": "pages",
+          "file": "shop/product/[id]/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "product",
+              "base": "product",
+              "path": "product",
+              "ext": ""
+            },
+            {
+              "orig": "[id]",
+              "base": "[id]",
+              "path": "[id]",
+              "ext": "",
+              "param": {
+                "name": "id",
+                "const": "id",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "shop/product/[id]/layout.tsx",
+          "importName": "shop_product_id_layout_tsx_2232356331"
+        },
+        "parent": "shop",
+        "children": [
+          {
+            "index": {
+              "name": "shop/product/[id]/reviews",
+              "folder": "pages",
+              "file": "shop/product/[id]/reviews/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "reviews",
+                  "base": "reviews",
+                  "path": "reviews",
+                  "ext": ""
+                }
+              ],
+              "importFile": "shop/product/[id]/reviews/index.tsx",
+              "importName": "shop_product_id_reviews_index_tsx_1128969612"
+            },
+            "parent": "shop/product/[id]",
+            "children": []
+          }
+        ]
+      },
+      {
+        "index": {
+          "name": "shop/[category]/[productId]",
+          "folder": "pages",
+          "file": "shop/[category]/[productId]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "[category]",
+              "base": "[category]",
+              "path": "[category]",
+              "ext": "",
+              "param": {
+                "name": "category",
+                "const": "category",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            },
+            {
+              "orig": "[productId]",
+              "base": "[productId]",
+              "path": "[productId]",
+              "ext": "",
+              "param": {
+                "name": "productId",
+                "const": "productId",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "shop/[category]/[productId]/index.tsx",
+          "importName": "shop_category_productId_index_tsx_3761077416"
+        },
+        "layout": {
+          "name": "shop/[category]/[productId]",
+          "folder": "pages",
+          "file": "shop/[category]/[productId]/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "[category]",
+              "base": "[category]",
+              "path": "[category]",
+              "ext": "",
+              "param": {
+                "name": "category",
+                "const": "category",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            },
+            {
+              "orig": "[productId]",
+              "base": "[productId]",
+              "path": "[productId]",
+              "ext": "",
+              "param": {
+                "name": "productId",
+                "const": "productId",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "shop/[category]/[productId]/layout.tsx",
+          "importName": "shop_category_productId_layout_tsx_2723777336"
+        },
+        "parent": "shop",
+        "children": []
+      }
+    ]
+  },
+  {
+    "index": {
+      "name": "signup",
+      "folder": "pages",
+      "file": "signup/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "signup",
+          "base": "signup",
+          "path": "signup",
+          "ext": ""
+        }
+      ],
+      "importFile": "signup/index.tsx",
+      "importName": "signup_index_tsx_1574634146"
+    },
+    "children": []
+  },
+  {
+    "layout": {
+      "name": "store",
+      "folder": "pages",
+      "file": "store/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "store",
+          "base": "store",
+          "path": "store",
+          "ext": ""
+        }
+      ],
+      "importFile": "store/layout.tsx",
+      "importName": "store_layout_tsx_1661449985"
+    },
+    "children": [
+      {
+        "layout": {
+          "name": "store/[category]/sort",
+          "folder": "pages",
+          "file": "store/[category]/sort/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "[category]",
+              "base": "[category]",
+              "path": "[category]",
+              "ext": "",
+              "param": {
+                "name": "category",
+                "const": "category",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            },
+            {
+              "orig": "sort",
+              "base": "sort",
+              "path": "sort",
+              "ext": ""
+            }
+          ],
+          "importFile": "store/[category]/sort/layout.tsx",
+          "importName": "store_category_sort_layout_tsx_1255246087"
+        },
+        "parent": "store",
+        "children": [
+          {
+            "index": {
+              "name": "store/[category]/sort/[sortBy]",
+              "folder": "pages",
+              "file": "store/[category]/sort/[sortBy]/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "[sortBy]",
+                  "base": "[sortBy]",
+                  "path": "[sortBy]",
+                  "ext": "",
+                  "param": {
+                    "name": "sortBy",
+                    "const": "sortBy",
+                    "isRequired": true,
+                    "isOptional": false,
+                    "isRest": false
+                  }
+                }
+              ],
+              "importFile": "store/[category]/sort/[sortBy]/index.tsx",
+              "importName": "store_category_sort_sortBy_index_tsx_282881663"
+            },
+            "parent": "store/[category]/sort",
+            "children": []
+          }
+        ]
+      },
+      {
+        "index": {
+          "name": "store/[category]/filters/[...filters]",
+          "folder": "pages",
+          "file": "store/[category]/filters/[...filters]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "[category]",
+              "base": "[category]",
+              "path": "[category]",
+              "ext": "",
+              "param": {
+                "name": "category",
+                "const": "category",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            },
+            {
+              "orig": "filters",
+              "base": "filters",
+              "path": "filters",
+              "ext": ""
+            },
+            {
+              "orig": "[...filters]",
+              "base": "[...filters]",
+              "path": "[...filters]",
+              "ext": "",
+              "param": {
+                "name": "filters",
+                "const": "filters",
+                "isRequired": false,
+                "isOptional": false,
+                "isRest": true
+              }
+            }
+          ],
+          "importFile": "store/[category]/filters/[...filters]/index.tsx",
+          "importName": "store_category_filters_filters_index_tsx_2499318545"
+        },
+        "parent": "store",
+        "children": []
+      }
+    ]
+  },
+  {
+    "index": {
+      "name": "users",
+      "folder": "pages",
+      "file": "users/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "users",
+          "base": "users",
+          "path": "users",
+          "ext": ""
+        }
+      ],
+      "importFile": "users/index.tsx",
+      "importName": "users_index_tsx_3827824650"
+    },
+    "layout": {
+      "name": "users",
+      "folder": "pages",
+      "file": "users/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "users",
+          "base": "users",
+          "path": "users",
+          "ext": ""
+        }
+      ],
+      "importFile": "users/layout.tsx",
+      "importName": "users_layout_tsx_2592424824"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "users/[username]",
+          "folder": "pages",
+          "file": "users/[username]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "[username]",
+              "base": "[username]",
+              "path": "[username]",
+              "ext": "",
+              "param": {
+                "name": "username",
+                "const": "username",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "users/[username]/index.tsx",
+          "importName": "users_username_index_tsx_2988217479"
+        },
+        "layout": {
+          "name": "users/[username]",
+          "folder": "pages",
+          "file": "users/[username]/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "[username]",
+              "base": "[username]",
+              "path": "[username]",
+              "ext": "",
+              "param": {
+                "name": "username",
+                "const": "username",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "users/[username]/layout.tsx",
+          "importName": "users_username_layout_tsx_165316489"
+        },
+        "parent": "users",
+        "children": [
+          {
+            "index": {
+              "name": "users/[username]/followers",
+              "folder": "pages",
+              "file": "users/[username]/followers/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "followers",
+                  "base": "followers",
+                  "path": "followers",
+                  "ext": ""
+                }
+              ],
+              "importFile": "users/[username]/followers/index.tsx",
+              "importName": "users_username_followers_index_tsx_3491047874"
+            },
+            "parent": "users/[username]",
+            "children": []
+          },
+          {
+            "index": {
+              "name": "users/[username]/following",
+              "folder": "pages",
+              "file": "users/[username]/following/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "following",
+                  "base": "following",
+                  "path": "following",
+                  "ext": ""
+                }
+              ],
+              "importFile": "users/[username]/following/index.tsx",
+              "importName": "users_username_following_index_tsx_1569883917"
+            },
+            "parent": "users/[username]",
+            "children": []
+          },
+          {
+            "index": {
+              "name": "users/[username]/posts",
+              "folder": "pages",
+              "file": "users/[username]/posts/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "posts",
+                  "base": "posts",
+                  "path": "posts",
+                  "ext": ""
+                }
+              ],
+              "importFile": "users/[username]/posts/index.tsx",
+              "importName": "users_username_posts_index_tsx_3051146060"
+            },
+            "layout": {
+              "name": "users/[username]/posts",
+              "folder": "pages",
+              "file": "users/[username]/posts/layout.tsx",
+              "pathTokens": [
+                {
+                  "orig": "posts",
+                  "base": "posts",
+                  "path": "posts",
+                  "ext": ""
+                }
+              ],
+              "importFile": "users/[username]/posts/layout.tsx",
+              "importName": "users_username_posts_layout_tsx_90922222"
+            },
+            "parent": "users/[username]",
+            "children": [
+              {
+                "index": {
+                  "name": "users/[username]/posts/[postId]",
+                  "folder": "pages",
+                  "file": "users/[username]/posts/[postId]/index.tsx",
+                  "pathTokens": [
+                    {
+                      "orig": "[postId]",
+                      "base": "[postId]",
+                      "path": "[postId]",
+                      "ext": "",
+                      "param": {
+                        "name": "postId",
+                        "const": "postId",
+                        "isRequired": true,
+                        "isOptional": false,
+                        "isRest": false
+                      }
+                    }
+                  ],
+                  "importFile": "users/[username]/posts/[postId]/index.tsx",
+                  "importName": "users_username_posts_postId_index_tsx_2337624193"
+                },
+                "layout": {
+                  "name": "users/[username]/posts/[postId]",
+                  "folder": "pages",
+                  "file": "users/[username]/posts/[postId]/layout.tsx",
+                  "pathTokens": [
+                    {
+                      "orig": "[postId]",
+                      "base": "[postId]",
+                      "path": "[postId]",
+                      "ext": "",
+                      "param": {
+                        "name": "postId",
+                        "const": "postId",
+                        "isRequired": true,
+                        "isOptional": false,
+                        "isRest": false
+                      }
+                    }
+                  ],
+                  "importFile": "users/[username]/posts/[postId]/layout.tsx",
+                  "importName": "users_username_posts_postId_layout_tsx_3766512504"
+                },
+                "parent": "users/[username]/posts",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "layout": {
+      "name": "courses/[courseId]",
+      "folder": "pages",
+      "file": "courses/[courseId]/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "courses",
+          "base": "courses",
+          "path": "courses",
+          "ext": ""
+        },
+        {
+          "orig": "[courseId]",
+          "base": "[courseId]",
+          "path": "[courseId]",
+          "ext": "",
+          "param": {
+            "name": "courseId",
+            "const": "courseId",
+            "isRequired": true,
+            "isOptional": false,
+            "isRest": false
+          }
+        }
+      ],
+      "importFile": "courses/[courseId]/layout.tsx",
+      "importName": "courses_courseId_layout_tsx_15431109"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "courses/[courseId]/lessons/[[lessonId]]/assignments/[...assignmentPath]",
+          "folder": "pages",
+          "file": "courses/[courseId]/lessons/[[lessonId]]/assignments/[...assignmentPath]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "lessons",
+              "base": "lessons",
+              "path": "lessons",
+              "ext": ""
+            },
+            {
+              "orig": "[[lessonId]]",
+              "base": "[[lessonId]]",
+              "path": "[[lessonId]]",
+              "ext": "",
+              "param": {
+                "name": "lessonId",
+                "const": "lessonId",
+                "isRequired": false,
+                "isOptional": true,
+                "isRest": false
+              }
+            },
+            {
+              "orig": "assignments",
+              "base": "assignments",
+              "path": "assignments",
+              "ext": ""
+            },
+            {
+              "orig": "[...assignmentPath]",
+              "base": "[...assignmentPath]",
+              "path": "[...assignmentPath]",
+              "ext": "",
+              "param": {
+                "name": "assignmentPath",
+                "const": "assignmentPath",
+                "isRequired": false,
+                "isOptional": false,
+                "isRest": true
+              }
+            }
+          ],
+          "importFile": "courses/[courseId]/lessons/[[lessonId]]/assignments/[...assignmentPath]/index.tsx",
+          "importName": "courses_courseId_lessons_lessonId_assignments_assignmentPath_index_tsx_3974429676"
+        },
+        "parent": "courses/[courseId]",
+        "children": []
+      }
+    ]
+  },
+  {
+    "index": {
+      "name": "files/[...filePath]",
+      "folder": "pages",
+      "file": "files/[...filePath]/index.tsx",
+      "pathTokens": [
+        {
+          "orig": "files",
+          "base": "files",
+          "path": "files",
+          "ext": ""
+        },
+        {
+          "orig": "[...filePath]",
+          "base": "[...filePath]",
+          "path": "[...filePath]",
+          "ext": "",
+          "param": {
+            "name": "filePath",
+            "const": "filePath",
+            "isRequired": false,
+            "isOptional": false,
+            "isRest": true
+          }
+        }
+      ],
+      "importFile": "files/[...filePath]/index.tsx",
+      "importName": "files_filePath_index_tsx_1124244064"
+    },
+    "layout": {
+      "name": "files/[...filePath]",
+      "folder": "pages",
+      "file": "files/[...filePath]/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "files",
+          "base": "files",
+          "path": "files",
+          "ext": ""
+        },
+        {
+          "orig": "[...filePath]",
+          "base": "[...filePath]",
+          "path": "[...filePath]",
+          "ext": "",
+          "param": {
+            "name": "filePath",
+            "const": "filePath",
+            "isRequired": false,
+            "isOptional": false,
+            "isRest": true
+          }
+        }
+      ],
+      "importFile": "files/[...filePath]/layout.tsx",
+      "importName": "files_filePath_layout_tsx_927329884"
+    },
+    "children": []
+  },
+  {
+    "layout": {
+      "name": "news/[category]",
+      "folder": "pages",
+      "file": "news/[category]/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "news",
+          "base": "news",
+          "path": "news",
+          "ext": ""
+        },
+        {
+          "orig": "[category]",
+          "base": "[category]",
+          "path": "[category]",
+          "ext": "",
+          "param": {
+            "name": "category",
+            "const": "category",
+            "isRequired": true,
+            "isOptional": false,
+            "isRest": false
+          }
+        }
+      ],
+      "importFile": "news/[category]/layout.tsx",
+      "importName": "news_category_layout_tsx_4074534343"
+    },
+    "children": [
+      {
+        "index": {
+          "name": "news/[category]/articles/[...articlePath]",
+          "folder": "pages",
+          "file": "news/[category]/articles/[...articlePath]/index.tsx",
+          "pathTokens": [
+            {
+              "orig": "articles",
+              "base": "articles",
+              "path": "articles",
+              "ext": ""
+            },
+            {
+              "orig": "[...articlePath]",
+              "base": "[...articlePath]",
+              "path": "[...articlePath]",
+              "ext": "",
+              "param": {
+                "name": "articlePath",
+                "const": "articlePath",
+                "isRequired": false,
+                "isOptional": false,
+                "isRest": true
+              }
+            }
+          ],
+          "importFile": "news/[category]/articles/[...articlePath]/index.tsx",
+          "importName": "news_category_articles_articlePath_index_tsx_4163752645"
+        },
+        "parent": "news/[category]",
+        "children": []
+      }
+    ]
+  },
+  {
+    "layout": {
+      "name": "profile/[username]",
+      "folder": "pages",
+      "file": "profile/[username]/layout.tsx",
+      "pathTokens": [
+        {
+          "orig": "profile",
+          "base": "profile",
+          "path": "profile",
+          "ext": ""
+        },
+        {
+          "orig": "[username]",
+          "base": "[username]",
+          "path": "[username]",
+          "ext": "",
+          "param": {
+            "name": "username",
+            "const": "username",
+            "isRequired": true,
+            "isOptional": false,
+            "isRest": false
+          }
+        }
+      ],
+      "importFile": "profile/[username]/layout.tsx",
+      "importName": "profile_username_layout_tsx_2113498186"
+    },
+    "children": [
+      {
+        "layout": {
+          "name": "profile/[username]/posts/[postId]",
+          "folder": "pages",
+          "file": "profile/[username]/posts/[postId]/layout.tsx",
+          "pathTokens": [
+            {
+              "orig": "posts",
+              "base": "posts",
+              "path": "posts",
+              "ext": ""
+            },
+            {
+              "orig": "[postId]",
+              "base": "[postId]",
+              "path": "[postId]",
+              "ext": "",
+              "param": {
+                "name": "postId",
+                "const": "postId",
+                "isRequired": true,
+                "isOptional": false,
+                "isRest": false
+              }
+            }
+          ],
+          "importFile": "profile/[username]/posts/[postId]/layout.tsx",
+          "importName": "profile_username_posts_postId_layout_tsx_485444689"
+        },
+        "parent": "profile/[username]",
+        "children": [
+          {
+            "index": {
+              "name": "profile/[username]/posts/[postId]/comments/[...thread]",
+              "folder": "pages",
+              "file": "profile/[username]/posts/[postId]/comments/[...thread]/index.tsx",
+              "pathTokens": [
+                {
+                  "orig": "comments",
+                  "base": "comments",
+                  "path": "comments",
+                  "ext": ""
+                },
+                {
+                  "orig": "[...thread]",
+                  "base": "[...thread]",
+                  "path": "[...thread]",
+                  "ext": "",
+                  "param": {
+                    "name": "thread",
+                    "const": "thread",
+                    "isRequired": false,
+                    "isOptional": false,
+                    "isRest": true
+                  }
+                }
+              ],
+              "importFile": "profile/[username]/posts/[postId]/comments/[...thread]/index.tsx",
+              "importName": "profile_username_posts_postId_comments_thread_index_tsx_884272517"
+            },
+            "parent": "profile/[username]/posts/[postId]",
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]
