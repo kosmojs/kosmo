@@ -1,27 +1,30 @@
 import { mkdir, writeFile } from "node:fs/promises";
-import { basename, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { styleText } from "node:util";
 
 import picomatch, { type Matcher } from "picomatch";
 
+import { nestedRoutesFactory } from "@kosmojs/dev/routes";
 import {
   defaults,
   type GeneratorFactory,
-  type PageRoute,
-  type PathToken,
   pathExists,
   pathResolver,
-  type RouteResolverEntry,
-  render,
+  type ResolvedEntry,
+  type RouteEntry,
+  renderFactory,
   renderToFile,
+  sortRoutes,
 } from "@kosmojs/devlib";
 
+import { randomCongratMessage, traverseFactory } from "./base";
 import type { Options } from "./types";
 
 import libFetchUnwrapTpl from "./templates/lib/fetch/unwrap.hbs";
 import libPagesTpl from "./templates/lib/pages.hbs";
 import libSolidClientTpl from "./templates/lib/solid/client.hbs";
 import libSolidIndexTpl from "./templates/lib/solid/index.hbs";
+import libSolidRoutePartialTpl from "./templates/lib/solid/routePartial.hbs";
 import libSolidServerTpl from "./templates/lib/solid/server.hbs";
 import stylesTpl from "./templates/lib/solid/styles.css?as=text";
 import libSolidUseTpl from "./templates/lib/solid/use.hbs";
@@ -31,29 +34,14 @@ import publicComponentsLinkTpl from "./templates/public/components/Link.hbs";
 import publicEntryClientTpl from "./templates/public/entry/client.hbs";
 import publicEntryServerTpl from "./templates/public/entry/server.hbs";
 import publicIndexTpl from "./templates/public/index.html?as=text";
+import publicLayoutTpl from "./templates/public/layout.hbs";
 import publicPageTpl from "./templates/public/page.hbs";
 import publicRouterTpl from "./templates/public/router.hbs";
 import welcomePageTpl from "./templates/public/welcome-page.hbs";
 
-function randomCongratMessage(): string {
-  const messages = [
-    "🎉 Well done! You just created a new Solid route.",
-    "🚀 Success! A fresh Solid route is ready to roll.",
-    "🌟 Nice work! Another Solid route added to your app.",
-    "🧩 All set! A new Solid route has been scaffolded.",
-    "🔧 Scaffold complete! Your new Solid route is in place.",
-    "✅ Built! Your Solid route is scaffolded and ready.",
-    "✨ Fantastic! Your new Solid route is good to go.",
-    "🎯 Nailed it! A brand new Solid route just landed.",
-    "💫 Awesome! Another Solid route joins the party.",
-    "⚡ Lightning fast! A new Solid route created successfully.",
-  ];
-  return messages[Math.floor(Math.random() * messages.length)];
-}
-
 export const factory: GeneratorFactory<Options> = async (
   { appRoot, sourceFolder, formatters, generators, command },
-  { templates, meta },
+  options,
 ) => {
   const { resolve } = pathResolver({ appRoot, sourceFolder });
 
@@ -87,22 +75,13 @@ export const factory: GeneratorFactory<Options> = async (
     console.error();
   }
 
-  const customTemplates: Array<[Matcher, string]> = Object.entries(
-    templates || {},
-  ).map(([pattern, template]) => [picomatch(pattern), template]);
-
-  const metaMatchers: Array<[Matcher, unknown]> = Object.entries(
-    meta || {},
-  ).map(([pattern, meta]) => [picomatch(pattern), meta]);
-
-  const metaResolver = ({ name }: PageRoute) => {
-    const match = metaMatchers.find(([isMatch]) => isMatch(name));
-    return Object.prototype.toString.call(match?.[1]) === "[object Object]"
-      ? JSON.stringify(match?.[1])
-      : undefined;
-  };
+  const customTemplates: Array<[Matcher, string]> = Object.entries({
+    ...options.templates,
+  }).map(([pattern, template]) => [picomatch(pattern), template]);
 
   const ssrGenerator = generators.some((e) => e.kind === "ssr");
+
+  const entriesTraverser = traverseFactory(options);
 
   await mkdir(resolve("libDir", sourceFolder, "{solid}"), { recursive: true });
 
@@ -154,130 +133,122 @@ export const factory: GeneratorFactory<Options> = async (
     );
   }
 
-  const generatePublicFiles = async (entries: Array<RouteResolverEntry>) => {
-    for (const { kind, route } of entries) {
-      if (kind !== "page") {
-        continue;
-      }
+  const generatePublicFiles = async (entries: Array<ResolvedEntry>) => {
+    for (const { kind, entry } of entries) {
+      if (kind === "pageRoute") {
+        const customTemplate = customTemplates.find(([isMatch]) => {
+          return isMatch(entry.name);
+        });
 
-      const customTemplate = customTemplates.find(([isMatch]) => {
-        return isMatch(route.name);
-      });
-
-      await renderToFile(
-        resolve("pagesDir", route.file),
-        route.name === "index"
-          ? welcomePageTpl
-          : customTemplate?.[1] || publicPageTpl,
-        {
-          defaults,
-          route,
-          message: randomCongratMessage(),
-          importPathmap: {
-            styles: join(sourceFolder, "{solid}/styles.module.css"),
+        await renderToFile(
+          resolve("pagesDir", entry.file),
+          entry.name === "index"
+            ? welcomePageTpl
+            : customTemplate?.[1] || publicPageTpl,
+          {
+            defaults,
+            route: entry,
+            message: randomCongratMessage(),
+            importPathmap: {
+              styles: join(sourceFolder, "{solid}/styles.module.css"),
+            },
           },
-        },
-        {
-          // write only to blank files
-          overwrite: (fileContent) => !fileContent?.trim().length,
-          formatters,
-        },
-      );
+          {
+            // write only to blank files
+            overwrite: (fileContent) => !fileContent?.trim().length,
+            formatters,
+          },
+        );
+      } else if (kind === "pageLayout") {
+        await renderToFile(
+          resolve("pagesDir", entry.file),
+          publicLayoutTpl,
+          { route: entry },
+          {
+            // write only to blank files
+            overwrite: (fileContent) => !fileContent?.trim().length,
+            formatters,
+          },
+        );
+      }
     }
   };
 
-  const staticSegments = (pathTokens: Array<PathToken>) => {
-    return pathTokens.reduce((a, e) => a + (e.param ? 0 : 1), 0);
-  };
+  const generateIndexFiles = async (entries: Array<ResolvedEntry>) => {
+    const { render, renderToFile } = renderFactory({
+      formatters,
+      partials: {
+        routePartial: libSolidRoutePartialTpl,
+      },
+      helpers: {
+        importPath({ importFile }: RouteEntry) {
+          return join(sourceFolder, defaults.pagesDir, importFile);
+        },
+      },
+    });
 
-  const generateIndexFiles = async (entries: Array<RouteResolverEntry>) => {
-    const routes = entries
-      .flatMap(({ kind, route }) => {
-        return kind === "page"
+    const indexRoutes = entries
+      .flatMap(({ kind, entry }) => {
+        return kind === "pageRoute"
           ? [
               {
-                ...route,
-                path: join("/", pathFactory(route.pathTokens)),
-                paramsLiteral: route.params.schema
+                ...entry,
+                paramsLiteral: entry.params.schema
                   .map((param) => render(paramTpl, { param }).trim())
                   .join(", "),
-                meta: metaResolver(route),
-                importPathmap: {
-                  page: join(sourceFolder, defaults.pagesDir, route.importPath),
-                },
               },
             ]
           : [];
       })
-      .sort((a, b) => {
-        /**
-         * Sort routes so that more specific (static) paths come before dynamic ones.
-         *
-         * This is important because dynamic segments
-         * (e.g., `:id` or `*catchall`) are more general,
-         * and can match values that should be routed to more specific static paths.
-         *
-         * For example, given:
-         *   - `/users/account`
-         *   - `/users/:id`
-         * If `/users/:id` comes first, visiting `/users/account` would incorrectly match it,
-         * treating "account" as an `id`. So static routes must take precedence.
-         *
-         * Estimating specificity by counting static segments - i.e., those that don't start
-         * with `:` or `*`. The route with more static segments is considered more specific.
-         * */
-        const aStaticSegments = staticSegments(a.pathTokens);
-        const bStaticSegments = staticSegments(b.pathTokens);
-        return aStaticSegments === bStaticSegments
-          ? a.path.localeCompare(b.path)
-          : bStaticSegments - aStaticSegments;
-      });
+      .sort(sortRoutes);
+
+    const pageEntries = entries.flatMap(({ kind, entry }) => {
+      return kind === "pageRoute" || kind === "pageLayout" ? [entry] : [];
+    });
+
+    const nestedRoutes = entriesTraverser(nestedRoutesFactory(pageEntries));
 
     /**
      * Selecting api routes eligible for `useResource`.
      * Only considering api routes that handle GET requests without params.
      * */
     const apiRoutes = entries
-      .flatMap(({ kind, route }) => {
-        if (kind !== "api") {
+      .flatMap(({ kind, entry }) => {
+        if (kind !== "apiRoute") {
           return [];
         }
 
-        if (!route.methods.includes("GET")) {
+        if (!entry.methods.includes("GET")) {
           return [];
         }
 
-        if (!route.optionalParams) {
+        if (!entry.optionalParams) {
           return [];
         }
 
         return [
           {
-            ...route,
+            ...entry,
             importPathmap: {
               fetch: join(
                 sourceFolder,
                 defaults.apiLibDir,
-                route.importPath,
+                dirname(entry.file),
                 "fetch",
               ),
             },
           },
         ];
       })
-      .sort(
-        // cosmetic sort, needed for consistency between builds
-        (a, b) => a.name.localeCompare(b.name),
-      );
+      .sort(sortRoutes);
 
-    const context = {
-      routes,
-      apiRoutes,
-      shouldHydrate: JSON.stringify(ssrGenerator ? command === "build" : false),
-      importPathmap: {
-        config: join(sourceFolder, defaults.configDir),
-        fetch: join(sourceFolder, defaults.fetchLibDir),
-      },
+    const shouldHydrate = JSON.stringify(
+      ssrGenerator ? command === "build" : false,
+    );
+
+    const importPathmap = {
+      config: join(sourceFolder, defaults.configDir),
+      fetch: join(sourceFolder, defaults.fetchLibDir),
     };
 
     for (const [file, template] of [
@@ -286,13 +257,15 @@ export const factory: GeneratorFactory<Options> = async (
       ["{solid}/server.ts", libSolidServerTpl],
       ["{solid}/use.ts", libSolidUseTpl],
       [`${defaults.pagesLibDir}.ts`, libPagesTpl],
-    ]) {
-      await renderToFile(
-        resolve("libDir", sourceFolder, file),
-        template,
-        context,
-        { formatters },
-      );
+    ] as const) {
+      await renderToFile(resolve("libDir", sourceFolder, file), template, {
+        pageEntries,
+        indexRoutes,
+        nestedRoutes,
+        apiRoutes,
+        shouldHydrate,
+        importPathmap,
+      });
     }
   };
 
@@ -309,22 +282,4 @@ export const factory: GeneratorFactory<Options> = async (
       await generateIndexFiles(entries);
     },
   };
-};
-
-export const pathFactory = (pathTokens: Array<PathToken>) => {
-  return pathTokens
-    .flatMap(({ path, param }) => {
-      if (param?.isRest) {
-        return [`*${param.name}`];
-      }
-      if (param?.isOptional) {
-        return [`:${param.name}?`];
-      }
-      if (param) {
-        return [`:${param.name}`];
-      }
-      return path === "/" ? [] : [path];
-    })
-    .join("/")
-    .replace(/\+/g, "\\\\+");
 };

@@ -7,7 +7,7 @@ import type { LinkProps } from "{{importPathmap.solid}}";
 import { baseurl } from "{{importPathmap.config}}";
 
 export default function Link(
-  props: AnchorProps & {
+  props: Omit<AnchorProps, "href"> & {
     to?: LinkProps;
     query?: Record<string | number, unknown>;
     children: JSXElement;

@@ -1,27 +1,18 @@
 import { lazy } from "solid-js";
 
-type ComponentModule = {
-  preload?: () => Promise<unknown>;
-}
+import { loaderFactory } from ".";
 
-{{#each routes}}
-const {{importName}} = lazy(() => import("{{importPathmap.page}}"));
+{{#each pageEntries}}
+const {{importName}}_component = lazy(() => import("{{importPath .}}"));
+const {{importName}}_loader = () => import("{{importPath .}}");
 {{/each}}
 
-export const routes = [
-  {{#each routes}}
-  {
-    name: "{{name}}",
-    path: "{{path}}",
-    component: {{importName}},
-    preload: () => import("{{importPathmap.page}}").then(
-      (mdl) => (mdl as ComponentModule).preload?.()
-    ),
-    {{#if meta}}
-    info: {{meta}},
-    {{/if}}
-  },
-  {{/each}}
-];
+export const routeStackBuilder = (opt?: { withPreload?: boolean }) => {
+  const maybeLoader = loaderFactory(opt);
+  return [
+    {{#each nestedRoutes}}{{> routePartial}},
+    {{/each}}
+  ];
+}
 
-export const shouldHydrate = {{shouldHydrate}};
+export const shouldHydrate = () => {{shouldHydrate}};

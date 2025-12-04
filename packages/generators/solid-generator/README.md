@@ -45,7 +45,7 @@ export default {
 - **Type-safe Link component** - Navigation with autocomplete and parameter validation
 - **useResource hook** - Typed data fetching with automatic refetching
 - **Preload utilities** - Route data prefetching integration
-- **Application structure** - App.tsx, router.tsx, and entry points
+- **Application structure** - app.tsx, router.tsx, and entry points
 
 ## Features
 

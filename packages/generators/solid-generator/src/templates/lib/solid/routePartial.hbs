@@ -1,0 +1,16 @@
+{
+  path: "{{path}}",
+  {{#if component}}
+  component: {{component}}_component,
+  ...maybeLoader({{component}}_loader as never),
+  {{/if}}
+  {{#if children.length}}
+  children: [
+    {{#each children}}{{> routePartial}},
+    {{/each}}
+  ],
+  {{/if}}
+  {{#if meta}}
+  info: {{meta}},
+  {{/if}}
+}

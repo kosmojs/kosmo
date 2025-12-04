@@ -21,6 +21,7 @@
     "test": "vitest --root ../../.. --project generators/solid-generator"
   },
   "dependencies": {
+    "@kosmojs/dev": "workspace:^",
     "@kosmojs/devlib": "workspace:^",
     "picomatch": "^4.0.3"
   },

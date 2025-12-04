@@ -1,8 +1,10 @@
 import { renderToString, generateHydrationScript } from "solid-js/web";
 
-import { routes } from "{{importPathmap.solid}}/server";
+import { routeStackBuilder } from "{{importPathmap.solid}}/server";
 import App from "../App";
 import createRouter from "../router";
+
+const routes = routeStackBuilder({ withPreload: false });
 
 export default {
   async factory(url) {
