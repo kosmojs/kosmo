@@ -1,8 +1,8 @@
 ---
-title: Data Loading with React Router
-description: Implement React Router's loader pattern for pre-fetch data
-  delivery. Export loader functions working with useLoaderData for optimized
-  data availability before component render.
+title: React - Loader Pattern
+description: Implement React Router's loader pattern for data prefetching.
+    Export loader functions that work with useLoaderData for type-safe
+    data availability before component rendering.
 head:
   - - meta
     - name: keywords
@@ -11,15 +11,14 @@ head:
         loading react, react router data
 ---
 
-React Router's loader pattern synchronizes data availability with navigation,
-ensuring information readiness when components mount. Define required data at
-the route level, letting the router handle fetch orchestration.
+React Router's loader pattern ensures data is ready before components render.
+You define what data a route needs, and the router handles fetching it during navigation.
 
-Begin by establishing an API endpoint supplying the required data. Consider
-`api/users/data/index.ts`:
+First, create an API endpoint that provides the data,
+eg.: `api/users/data/index.ts`:
 
 ```ts [api/users/data/index.ts]
-import { defineRoute } from "@front/{api}/users/data";
+import { defineRoute } from "@src/{api}/users/data";
 
 export default defineRoute(({ GET }) => [
   GET<never, Data>(async (ctx) => {
@@ -29,17 +28,17 @@ export default defineRoute(({ GET }) => [
 ]);
 ```
 
-Within your page component, import the fetch client's GET method, utilizing
-it for both loading export and component data access:
+In your page component, import the fetch client's GET method
+and use it both for the loader export and for accessing the data in your component:
 
 ```tsx [pages/users/index.tsx]
-import { useLoaderData } from "react-router-dom";
-import { GET as fetchData } from "@front/{api}/users/data/fetch";
+import { useLoaderData } from "react-router";
+import { GET as loader, type ResponseT } from "@front/{api}/users/data/fetch";
+
+export { loader };
 
 export default function Page() {
-  // useLoaderData recognizes that fetchData is the same function from loader
-  // and reuses the fetched data instead of fetching again
-  const data = useLoaderData();
+  const data = useLoaderData<ResponseT["GET"]>();
 
   return (
     <div>
@@ -47,25 +46,22 @@ export default function Page() {
     </div>
   );
 }
-
-// Export the fetch function as loader
-export const loader = fetchData;
 ```
 
-This pattern achieves elegance through simplicity.
+This pattern is elegant in its simplicity.
 
-Exporting a `loader` function instructs the router which fetch logic executes
-ahead of component mount. During render, `useLoaderData` recognizes this
-identical function reference and retrieves pre-fetched information directly
-from the router's cache.
+The `loader` export tells the router what function to call for prefetching.
+When your component renders, `useLoaderData` retrieves the data
+that was already fetched by the loader.
 
-The router's internal caching mechanism prevents redundant network requests,
-guaranteeing your component receives the exact dataset acquired during the
-pre-fetch phase.
+The router's internal caching means you're not making duplicate requests -
+the data fetched during the loader phase is the data your component receives.
 
-Type consistency flows through this entire pipeline automatically. The fetch
-client's GET method inherits typing from your API endpoint's response
-structure. The `useLoaderData` hook derives its return type from the loader
-function's signature. Your component consequently receives precise type
-information about data shape, all originating from your API specification
-without manual type declarations.
+The type safety flows through this entire chain.
+The fetch client's GET method is typed based on your API endpoint's response type.
+
+`useLoaderData` can be typed with the response type from the fetch client.
+Your component knows exactly what shape of data to expect,
+all derived from your API definition.
+
+For more details on React Router's loader pattern, see the [React Router documentation](https://reactrouter.com/start/data/data-loading).
