@@ -1,10 +1,10 @@
-import { afterAll, describe, expect, inject, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
 
 import { setupTestProject } from "../setup";
 
 const ssr = inject("SSR" as never);
 
-describe(`SolidJS Generator - Custom Templates: { ssr: ${ssr} }`, async () => {
+describe(`SolidJS - Custom Templates: { ssr: ${ssr} }`, async () => {
   const landingContentID = `landing-content-${Date.now()}`;
   const landingContent = `Landing Page Content: [ ${landingContentID} ]`;
   const landingTemplate = `
@@ -24,9 +24,11 @@ export default () => {
 }`;
 
   const {
-    //
+    bootstrapProject,
     withRouteContent,
     defaultContentPatternFor,
+    createRoutes,
+    startServer,
     teardown,
   } = await setupTestProject({
     framework: "solid",
@@ -40,9 +42,11 @@ export default () => {
     ssr,
   });
 
-  afterAll(async () => {
-    await teardown();
-  });
+  await bootstrapProject();
+  await createRoutes();
+
+  beforeAll(startServer);
+  afterAll(teardown);
 
   describe("Pattern Matching", () => {
     it("should use custom template for matching route pattern", async () => {
