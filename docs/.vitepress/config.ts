@@ -26,7 +26,16 @@ export default defineConfig({
     ]);
   },
 
-  lastUpdated: true,
+  head: [
+    [
+      "script",
+      {
+        defer: "true",
+        src: "https://cloud.umami.is/script.js",
+        "data-website-id": "e1b463f8-11fa-49ec-a4af-d88f9bef6c05",
+      },
+    ],
+  ],
 
   sitemap: {
     hostname: "https://kosmojs.dev",
