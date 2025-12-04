@@ -373,6 +373,10 @@ export default defineConfig({
               link: "/routing/params",
             },
             {
+              text: "🍀 Nested Routes",
+              link: "/routing/nested-routes",
+            },
+            {
               text: "🤖 Generated Content",
               link: "/routing/generated-content",
             },
