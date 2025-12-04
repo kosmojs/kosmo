@@ -1,12 +1,13 @@
 import { createApp, createSSRApp } from "vue";
 
-import { routes, shouldHydrate } from "{{importPathmap.vue}}/client";
+import { routeStackBuilder, shouldHydrate } from "{{importPathmap.vue}}/client";
 import App from "../App.vue";
 import createRouter from "../router";
 
 const root = document.getElementById("app");
 
 if (root) {
+  const routes = routeStackBuilder();
   if (shouldHydrate) {
     const app = createSSRApp(App);
     await createRouter(app, routes);

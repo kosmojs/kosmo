@@ -1,10 +1,10 @@
 
-export type LinkProps ={{#unless routes.length}} never{{/unless}}
-  {{#each routes}}
+export type LinkProps ={{#unless indexRoutes.length}} never{{/unless}}
+  {{#each indexRoutes}}
   | [ "{{name}}", {{paramsLiteral}} ]
   {{/each}};
 
-export type RouteName ={{#unless routes.length}} never{{/unless}}
-  {{#each routes}}
+export type RouteName ={{#unless indexRoutes.length}} never{{/unless}}
+  {{#each indexRoutes}}
   | "{{name}}"
   {{/each}};

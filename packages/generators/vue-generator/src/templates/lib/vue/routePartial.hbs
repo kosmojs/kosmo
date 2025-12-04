@@ -1,0 +1,18 @@
+{
+  path: "{{path}}",
+  {{#if name}}
+  name: "{{name}}",
+  {{/if}}
+  {{#if component}}
+  component: {{component}},
+  {{/if}}
+  {{#if children.length}}
+  children: [
+    {{#each children}}{{> routePartial}},
+    {{/each}}
+  ],
+  {{/if}}
+  {{#if meta}}
+  meta: {{meta}},
+  {{/if}}
+}

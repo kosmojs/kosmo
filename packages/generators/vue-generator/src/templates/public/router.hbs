@@ -18,6 +18,7 @@ export default async (
       ? createMemoryHistory(baseurl)
       : createWebHistory(baseurl),
     routes,
+    strict: true,
   });
 
   if (ssrProps?.url) {

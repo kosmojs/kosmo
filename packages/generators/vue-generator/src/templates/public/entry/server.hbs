@@ -1,9 +1,11 @@
 import { createSSRApp } from "vue";
 import { renderToString } from "vue/server-renderer";
 
-import { routes } from "{{importPathmap.vue}}/server";
+import { routeStackBuilder } from "{{importPathmap.vue}}/server";
 import App from "../App.vue";
 import createRouter from "../router";
+
+const routes = routeStackBuilder();
 
 export default {
   async factory(url) {

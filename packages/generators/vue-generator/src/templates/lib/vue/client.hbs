@@ -1,20 +1,13 @@
-import type { RouteRecordRaw } from "vue-router";
 
-{{#each routes}}
-const {{importName}} = () => import("{{importPathmap.page}}");
+{{#each pageEntries}}
+const {{importName}} = () => import("{{importPath .}}");
 {{/each}}
 
-export const routes: Array<RouteRecordRaw> = [
-  {{#each routes}}
-  {
-    name: "{{name}}",
-    path: "{{path}}",
-    component: {{importName}},
-    {{#if meta}}
-    info: {{meta}},
-    {{/if}}
-  },
-  {{/each}}
-];
+export const routeStackBuilder = () => {
+  return [
+    {{#each nestedRoutes}}{{> routePartial}},
+    {{/each}}
+  ];
+}
 
-export const shouldHydrate = {{shouldHydrate}};
+export const shouldHydrate = () => {{shouldHydrate}};

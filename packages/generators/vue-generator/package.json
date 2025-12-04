@@ -21,6 +21,7 @@
     "test": "vitest --root ../../.. --project generators/vue-generator"
   },
   "dependencies": {
+    "@kosmojs/dev": "workspace:^",
     "@kosmojs/devlib": "workspace:^",
     "picomatch": "^4.0.3"
   },
