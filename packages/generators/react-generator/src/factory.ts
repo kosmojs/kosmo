@@ -4,56 +4,42 @@ import { styleText } from "node:util";
 
 import picomatch, { type Matcher } from "picomatch";
 
+import { nestedRoutesFactory } from "@kosmojs/dev/routes";
 import {
   defaults,
   type GeneratorFactory,
-  type PageRoute,
-  type PathToken,
   pathExists,
   pathResolver,
   type ResolvedEntry,
-  render,
+  type RouteEntry,
+  renderFactory,
   renderToFile,
   sortRoutes,
 } from "@kosmojs/devlib";
 
+import { randomCongratMessage, traverseFactory } from "./base";
 import type { Options } from "./types";
 
 import libPagesTpl from "./templates/lib/pages.hbs";
 import libReactClientTpl from "./templates/lib/react/client.hbs";
 import libReactIndexTpl from "./templates/lib/react/index.hbs";
+import libReactRoutePartialTpl from "./templates/lib/react/routePartial.hbs";
 import libReactServerTpl from "./templates/lib/react/server.hbs";
 import stylesTpl from "./templates/lib/react/styles.css?as=text";
-import libReactUseTpl from "./templates/lib/react/use.hbs";
 import paramTpl from "./templates/param.hbs";
 import publicAppTpl from "./templates/public/App.hbs";
 import publicComponentsLinkTpl from "./templates/public/components/Link.hbs";
 import publicEntryClientTpl from "./templates/public/entry/client.hbs";
 import publicEntryServerTpl from "./templates/public/entry/server.hbs";
 import publicIndexTpl from "./templates/public/index.html?as=text";
+import publicLayoutTpl from "./templates/public/layout.hbs";
 import publicPageTpl from "./templates/public/page.hbs";
 import publicRouterTpl from "./templates/public/router.hbs";
 import welcomePageTpl from "./templates/public/welcome-page.hbs";
 
-function randomCongratMessage(): string {
-  const messages = [
-    "🎉 Well done! You just created a new React route.",
-    "🚀 Success! A fresh React route is ready to roll.",
-    "🌟 Nice work! Another React route added to your app.",
-    "⚡ Quick and easy! Your new React route is good to go.",
-    "🥳 Congrats! Your app just leveled up with a new React route.",
-    "🧩 All set! A new React route has been scaffolded.",
-    "🔧 Scaffold complete! Your new React route is in place.",
-    "✨ Fantastic! Your new React route is ready.",
-    "🎯 Nailed it! A brand new React route just landed.",
-    "💫 Awesome! Another React route joins the lineup.",
-  ];
-  return messages[Math.floor(Math.random() * messages.length)];
-}
-
 export const factory: GeneratorFactory<Options> = async (
   { appRoot, sourceFolder, command, formatters, generators },
-  { templates, meta },
+  options,
 ) => {
   const { resolve } = pathResolver({ appRoot, sourceFolder });
 
@@ -86,22 +72,13 @@ export const factory: GeneratorFactory<Options> = async (
     console.error();
   }
 
-  const customTemplates: Array<[Matcher, string]> = Object.entries(
-    templates || {},
-  ).map(([pattern, template]) => [picomatch(pattern), template]);
-
-  const metaMatchers: Array<[Matcher, unknown]> = Object.entries(
-    meta || {},
-  ).map(([pattern, meta]) => [picomatch(pattern), meta]);
-
-  const metaResolver = ({ name }: PageRoute) => {
-    const match = metaMatchers.find(([isMatch]) => isMatch(name));
-    return Object.prototype.toString.call(match?.[1]) === "[object Object]"
-      ? JSON.stringify(match?.[1])
-      : undefined;
-  };
+  const customTemplates: Array<[Matcher, string]> = Object.entries({
+    ...options.templates,
+  }).map(([pattern, template]) => [picomatch(pattern), template]);
 
   const ssrGenerator = generators.some((e) => e.kind === "ssr");
+
+  const entriesTraverser = traverseFactory(options);
 
   await mkdir(resolve("libDir", sourceFolder, "{react}"), { recursive: true });
 
@@ -148,79 +125,101 @@ export const factory: GeneratorFactory<Options> = async (
 
   const generatePublicFiles = async (entries: Array<ResolvedEntry>) => {
     for (const { kind, entry } of entries) {
-      if (kind !== "pageRoute") {
-        continue;
-      }
+      if (kind === "pageRoute") {
+        const customTemplate = customTemplates.find(([isMatch]) => {
+          return isMatch(entry.name);
+        });
 
-      const customTemplate = customTemplates.find(([isMatch]) => {
-        return isMatch(entry.name);
-      });
-
-      await renderToFile(
-        resolve("pagesDir", entry.file),
-        entry.name === "index"
-          ? welcomePageTpl
-          : customTemplate?.[1] || publicPageTpl,
-        {
-          defaults,
-          route: entry,
-          message: randomCongratMessage(),
-          importPathmap: {
-            styles: join(sourceFolder, "{react}/styles.module.css"),
+        await renderToFile(
+          resolve("pagesDir", entry.file),
+          entry.name === "index"
+            ? welcomePageTpl
+            : customTemplate?.[1] || publicPageTpl,
+          {
+            defaults,
+            route: entry,
+            message: randomCongratMessage(),
+            importPathmap: {
+              styles: join(sourceFolder, "{react}/styles.module.css"),
+            },
           },
-        },
-        {
-          // write only to blank files
-          overwrite: (fileContent) => !fileContent?.trim().length,
-          formatters,
-        },
-      );
+          {
+            // write only to blank files
+            overwrite: (fileContent) => !fileContent?.trim().length,
+            formatters,
+          },
+        );
+      } else if (kind === "pageLayout") {
+        await renderToFile(
+          resolve("pagesDir", entry.file),
+          publicLayoutTpl,
+          { route: entry },
+          {
+            // write only to blank files
+            overwrite: (fileContent) => !fileContent?.trim().length,
+            formatters,
+          },
+        );
+      }
     }
   };
 
   const generateIndexFiles = async (entries: Array<ResolvedEntry>) => {
-    const routes = entries
+    const { render, renderToFile } = renderFactory({
+      formatters,
+      partials: {
+        routePartial: libReactRoutePartialTpl,
+      },
+      helpers: {
+        importPath({ importFile }: RouteEntry) {
+          return join(sourceFolder, defaults.pagesDir, importFile);
+        },
+      },
+    });
+
+    const indexRoutes = entries
       .flatMap(({ kind, entry }) => {
         return kind === "pageRoute"
           ? [
               {
                 ...entry,
-                path: join("/", pathFactory(entry.pathTokens)),
                 paramsLiteral: entry.params.schema
                   .map((param) => render(paramTpl, { param }).trim())
                   .join(", "),
-                meta: metaResolver(entry),
-                importPathmap: {
-                  page: join(sourceFolder, defaults.pagesDir, entry.importFile),
-                },
               },
             ]
           : [];
       })
       .sort(sortRoutes);
 
-    const context = {
-      routes,
-      shouldHydrate: JSON.stringify(ssrGenerator ? command === "build" : false),
-      importPathmap: {
-        config: join(sourceFolder, defaults.configDir),
-        fetch: join(sourceFolder, defaults.fetchLibDir),
-      },
+    const pageEntries = entries.flatMap(({ kind, entry }) => {
+      return kind === "pageRoute" || kind === "pageLayout" ? [entry] : [];
+    });
+
+    const nestedRoutes = entriesTraverser(nestedRoutesFactory(pageEntries));
+
+    const shouldHydrate = JSON.stringify(
+      ssrGenerator ? command === "build" : false,
+    );
+
+    const importPathmap = {
+      config: join(sourceFolder, defaults.configDir),
+      fetch: join(sourceFolder, defaults.fetchLibDir),
     };
 
     for (const [file, template] of [
       ["{react}/index.ts", libReactIndexTpl],
       ["{react}/client.ts", libReactClientTpl],
       ["{react}/server.ts", libReactServerTpl],
-      ["{react}/use.ts", libReactUseTpl],
       [`${defaults.pagesLibDir}.ts`, libPagesTpl],
     ]) {
-      await renderToFile(
-        resolve("libDir", sourceFolder, file),
-        template,
-        context,
-        { formatters },
-      );
+      await renderToFile(resolve("libDir", sourceFolder, file), template, {
+        pageEntries,
+        indexRoutes,
+        nestedRoutes,
+        shouldHydrate,
+        importPathmap,
+      });
     }
   };
 
@@ -237,23 +236,4 @@ export const factory: GeneratorFactory<Options> = async (
       await generateIndexFiles(entries);
     },
   };
-};
-
-export const pathFactory = (pathTokens: Array<PathToken>) => {
-  return pathTokens
-    .flatMap(({ path, param }) => {
-      if (param?.isRest) {
-        // React Router v7 uses the unnamed splat syntax * for catch-all routes
-        return ["*"];
-      }
-      if (param?.isOptional) {
-        return [`:${param.name}?`];
-      }
-      if (param) {
-        return [`:${param.name}`];
-      }
-      return path === "/" ? [] : [path];
-    })
-    .join("/")
-    .replace(/\+/g, "\\\\+");
 };

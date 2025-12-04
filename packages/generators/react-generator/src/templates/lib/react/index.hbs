@@ -1,10 +1,30 @@
+export type ComponentLoader = () => Promise<{
+  loader?: (arg: unknown) => Promise<unknown>;
+}>;
 
-export type LinkProps ={{#unless routes.length}} never{{/unless}}
-  {{#each routes}}
+export const loaderFactory = (opt?: { withPreload?: boolean }) => {
+  return (componentLoader: ComponentLoader) => {
+    const loader = async (arg: unknown) => {
+      try {
+        const component = await componentLoader();
+        return typeof component.loader === "function"
+          ? component.loader(arg)
+          : undefined;
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+    };
+    return opt?.withPreload ? { loader } : {};
+  };
+};
+
+export type LinkProps ={{#unless indexRoutes.length}} never{{/unless}}
+  {{#each indexRoutes}}
   | [ "{{name}}", {{paramsLiteral}} ]
   {{/each}};
 
-export type RouteName ={{#unless routes.length}} never{{/unless}}
-  {{#each routes}}
+export type RouteName ={{#unless indexRoutes.length}} never{{/unless}}
+  {{#each indexRoutes}}
   | "{{name}}"
   {{/each}};

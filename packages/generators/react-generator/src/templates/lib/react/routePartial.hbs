@@ -1,0 +1,24 @@
+{
+  {{#if name}}
+  id: "{{name}}",
+  {{/if}}
+  {{#if path}}
+  path: "{{path}}",
+  {{/if}}
+  {{#if index}}
+  index: true,
+  {{/if}}
+  {{#if component}}
+  Component: {{component}}_component,
+  ...maybeLoader({{component}}_loader as never),
+  {{/if}}
+  {{#if children.length}}
+  children: [
+    {{#each children}}{{> routePartial}},
+    {{/each}}
+  ],
+  {{/if}}
+  {{#if meta}}
+  handle: {{meta}},
+  {{/if}}
+}

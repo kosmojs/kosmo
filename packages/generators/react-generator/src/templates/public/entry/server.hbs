@@ -1,8 +1,10 @@
 import { renderToString } from "react-dom/server";
 
-import { routes } from "{{importPathmap.react}}/server";
+import { routeStackBuilder } from "{{importPathmap.react}}/server";
 import App from "../App";
 import createRouter from "../router";
+
+const routes = routeStackBuilder({ withPreload: false });
 
 export default {
   async factory(url) {

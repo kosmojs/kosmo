@@ -1,14 +1,15 @@
 import { hydrateRoot, createRoot } from "react-dom/client";
 
-import { routes, shouldHydrate } from "{{importPathmap.react}}/client";
+import { routeStackBuilder, shouldHydrate } from "{{importPathmap.react}}/client";
 import App from "../App";
 import createRouter from "../router";
 
 const root = document.getElementById("app");
 
 if (root) {
+  const routes = routeStackBuilder({ withPreload: true });
   const router = await createRouter(App, routes);
-  if (shouldHydrate) {
+  if (shouldHydrate()) {
     hydrateRoot(root, router);
   } else {
     createRoot(root).render(router);

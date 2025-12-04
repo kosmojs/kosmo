@@ -1,17 +1,15 @@
+import { loaderFactory } from ".";
 
-{{#each routes}}
-import {{importName}} from "{{importPathmap.page}}";
+{{#each pageEntries}}
+import * as {{importName}} from "{{importPath .}}";
+const {{importName}}_component = {{importName}}.default;
+const {{importName}}_loader = async () => {{importName}};
 {{/each}}
 
-export const routes = [
-  {{#each routes}}
-  {
-    name: "{{name}}",
-    path: "{{path}}",
-    Component: {{importName}},
-    {{#if meta}}
-    handle: {{meta}},
-    {{/if}}
-  },
-  {{/each}}
-];
+export const routeStackBuilder = (opt?: { withPreload?: boolean }) => {
+  const maybeLoader = loaderFactory(opt);
+  return [
+    {{#each nestedRoutes}}{{> routePartial}},
+    {{/each}}
+  ];
+}

@@ -50,7 +50,7 @@ const resolverFactory = <ParamsT>(
 }
 
 export default {
-  {{#each routes}}
+  {{#each indexRoutes}}
   "{{name}}": resolverFactory<[ {{paramsLiteral}} ]>([
     {{#each pathTokens}}
     [

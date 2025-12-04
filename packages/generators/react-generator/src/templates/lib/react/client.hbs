@@ -1,29 +1,18 @@
 import { lazy } from "react";
 
-type Params = Record<string, string | undefined>;
+import { loaderFactory } from ".";
 
-type ComponentModule = {
-  loader?: (ctx: { params: Params }) => Promise<unknown>;
-}
-{{#each routes}}
-const {{importName}} = lazy(() => import("{{importPathmap.page}}"));
+{{#each pageEntries}}
+const {{importName}}_component = lazy(() => import("{{importPath .}}"));
+const {{importName}}_loader = () => import("{{importPath .}}");
 {{/each}}
 
-export const routes = [
-  {{#each routes}}
-  {
-    name: "{{name}}",
-    path: "{{path}}",
-    Component: {{importName}},
-    loader: async (ctx: { params: Params }) => {
-      const module = await import("{{importPathmap.page}}") as ComponentModule;
-      return module?.loader ? module.loader(ctx) : undefined;
-    },
-    {{#if meta}}
-    handle: {{meta}},
-    {{/if}}
-  },
-  {{/each}}
-];
+export const routeStackBuilder = (opt?: { withPreload?: boolean }) => {
+  const maybeLoader = loaderFactory(opt);
+  return [
+    {{#each nestedRoutes}}{{> routePartial}},
+    {{/each}}
+  ];
+}
 
-export const shouldHydrate = {{shouldHydrate}};
+export const shouldHydrate = () => {{shouldHydrate}};
