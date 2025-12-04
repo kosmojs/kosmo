@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, inject, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
 
 import { setupTestProject } from "../setup";
 
@@ -24,9 +24,11 @@ export default () => {
 }`;
 
   const {
-    //
+    bootstrapProject,
     withRouteContent,
     defaultContentPatternFor,
+    createRoutes,
+    startServer,
     teardown,
   } = await setupTestProject({
     framework: "react",
@@ -40,9 +42,11 @@ export default () => {
     ssr,
   });
 
-  afterAll(async () => {
-    await teardown();
-  });
+  await bootstrapProject();
+  await createRoutes();
+
+  beforeAll(startServer);
+  afterAll(teardown);
 
   describe("Pattern Matching", () => {
     it("should use custom template for matching route pattern", async () => {
