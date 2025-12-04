@@ -7,9 +7,10 @@ import {
   defaults,
   type GeneratorFactory,
   type PageRoute,
-  type PathToken,
   pathResolver,
+  type RouteEntry,
   renderToFile,
+  sortRoutes,
 } from "@kosmojs/devlib";
 
 import serverTpl from "./templates/server.hbs";
@@ -63,15 +64,17 @@ export const factory: GeneratorFactory = async ({
     const ssrLisbFile = resolve("libDir", sourceFolder, "{ssr}.ts");
 
     await renderToFile(ssrLisbFile, serverTpl, {
-      routes: routes.map((route) => {
-        return {
-          ...route,
-          pathVariations: JSON.stringify(generatePathVariations(route)),
-          manifestPathVariations: JSON.stringify(
-            generateManifestPathVariations(route),
-          ),
-        };
-      }),
+      routes: routes
+        .map((route) => {
+          return {
+            ...route,
+            pathPattern: generatePathPattern(route),
+            manifestPathVariations: JSON.stringify(
+              generateManifestPathVariations(route),
+            ),
+          };
+        })
+        .sort(sortRoutes),
       importPathmap: {
         config: join(sourceFolder, "config"),
       },
@@ -100,8 +103,8 @@ export const factory: GeneratorFactory = async ({
   };
 };
 
-const generatePathPattern = (tokens: PathToken[]): string => {
-  return tokens
+export const generatePathPattern = ({ pathTokens }: RouteEntry): string => {
+  return pathTokens
     .map(({ param, path }) => {
       if (param?.isRest) {
         return [`{/*${param.name}}`];
@@ -117,30 +120,6 @@ const generatePathPattern = (tokens: PathToken[]): string => {
     .join("/")
     .replace(/\/\{/g, "{")
     .replace(/\+/g, "\\\\+");
-};
-
-/**
- * Path Variation Generator
- *   variations for a/b/c:
- *   [ a/b/c ]
- *   variations for a/b/[c]:
- *   [ a/b/:c ]
- *   variations for a/b/[[c]]:
- *   [ a/b/{/:c}, a/b ]
- *   variations for a/[b]/[[c]]:
- *   [ a/:b/{/:c}, a/:b ]
- *   variations for a/[[b]]/[[c]]:
- *   [ a/{/:b}/{/:c}, a/{/:b}, a ]
- * */
-export const generatePathVariations = ({
-  pathTokens,
-}: Pick<PageRoute, "pathTokens">) => {
-  return pathTokens.flatMap((e, i) => {
-    const next = pathTokens[i + 1];
-    return !next || next.param?.isOptional || next.param?.isRest
-      ? [generatePathPattern([...pathTokens.slice(0, i), e])]
-      : [];
-  });
 };
 
 export const generateManifestPathVariations = ({

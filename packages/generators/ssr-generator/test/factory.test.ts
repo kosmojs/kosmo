@@ -2,10 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { createRouteEntry } from "@kosmojs/dev/routes";
 
-import {
-  generateManifestPathVariations,
-  generatePathVariations,
-} from "@/factory";
+import { generateManifestPathVariations, generatePathPattern } from "@/factory";
 
 const routes = [
   "about",
@@ -29,8 +26,8 @@ describe("SSR Factory", { timeout: 60_000 }, () => {
 
   const pluginOptions = { appRoot, sourceFolder };
 
-  test("generatePathVariations", async () => {
-    const pathVariations = [];
+  test("generatePathPattern", async () => {
+    const pathPatterns = [];
 
     for (const route of routes) {
       const routeEntry = createRouteEntry(
@@ -38,11 +35,11 @@ describe("SSR Factory", { timeout: 60_000 }, () => {
         pluginOptions,
       );
       expect(routeEntry).toBeTruthy();
-      pathVariations.push(generatePathVariations(routeEntry as never));
+      pathPatterns.push(generatePathPattern(routeEntry as never));
     }
 
-    await expect(JSON.stringify(pathVariations, null, 2)).toMatchFileSnapshot(
-      `snapshots/generatePathVariations.json`,
+    await expect(JSON.stringify(pathPatterns, null, 2)).toMatchFileSnapshot(
+      `snapshots/generatePathPattern.json`,
     );
   });
 

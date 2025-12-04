@@ -54,7 +54,7 @@ type ResolvedAsset = {
 const cssMatchers = [
   {{#each routes}}
   [
-    {{pathVariations}}.map((path) => match(path)),
+    match("{{pathPattern}}"),
     {{manifestPathVariations}},
   ],
   {{/each}}
@@ -123,37 +123,34 @@ export const requestHandlerFactory = ({
 
     const criticalURLs = new Set<string>();
 
-    for (const [pathMatchers, manifestPathVariations] of cssMatchers) {
-      // For the current incoming request path (like "/products/123"),
-      // check each route pattern (pre-compiled via path-to-regexp)
-      // to see if it describes this URL.
-      //
-      // Example:
-      //   Incoming path: "/products/123"
-      //   Matchers:
-      //     "/products/:id"     → match ✓
-      //     "/about"            → no
-      //     "/blog/:slug"       → no
-      //
-      // Because this match is based on framework routes, not filenames,
-      // this works cleanly with dynamic params - e.g., [id], [[slug]], [...path].
-      if (pathMatchers.some((match) => match(path))) {
-        for (const manifestPath of manifestPathVariations) {
-          // At this point we know *which route* the user asked for.
-          // Now we pivot to the *manifest graph*:
-          //
-          // manifestPathVariations links this route to the Vite manifest's entries,
-          // such as: "pages/products/[id]/index.tsx".
-          //
-          // Each manifest entry knows every CSS file it eventually imports -
-          // directly or indirectly - thanks to resolveAssets().
-          //
-          // So now we select *only* CSS assets whose dependency graph
-          // includes matched route's manifestPath.
-          for (const { url, paths } of cssAssets) {
-            if (paths.includes(manifestPath)) {
-              criticalURLs.add(url);
-            }
+    // For the current incoming request path (like "/products/123"),
+    // check each route pattern (pre-compiled via path-to-regexp)
+    // to see if it describes this URL.
+    //
+    // Example:
+    //   Incoming path: "/products/123"
+    //   Matchers:
+    //     "/products/:id"     → match ✓
+    //     "/about"            → no
+    //     "/blog/:slug"       → no
+    const cssMatch = cssMatchers.find(([pathMatcher]) => pathMatcher(path));
+
+    if (cssMatch) {
+      for (const manifestPath of cssMatch[1]) {
+        // At this point we know *which route* the user asked for.
+        // Now we pivot to the *manifest graph*:
+        //
+        // manifestPath links this route to the Vite manifest's entries,
+        // such as: "pages/products/[id]/index.tsx".
+        //
+        // Each manifest entry knows every CSS file it eventually imports -
+        // directly or indirectly - thanks to resolveAssets().
+        //
+        // So now we select *only* CSS assets whose dependency graph
+        // includes matched route's manifestPath.
+        for (const { url, paths } of cssAssets) {
+          if (paths.includes(manifestPath)) {
+            criticalURLs.add(url);
           }
         }
       }
@@ -214,7 +211,7 @@ export const requestHandlerFactory = ({
         //
         // - renderToString() returns { head, html } for the current route.
         // - We splice that into the Vite-generated index.html template by replacing:
-        //   - <!--app-head--> with collected head tags (critical CSS + optional user head)
+        //   - <!--app-head--> with collected head tags (CSS + optional user head)
         //   - <!--app-html--> with the app HTML markup
         //
         // This mode is simple and works well when you don't need streaming.
@@ -559,6 +556,6 @@ if (port || sock) {
       // can connect without permission issues.
       await chmod(sock, 0o777);
     }
-    console.log("\n  ➜ Server Started ✨n");
+    console.log("\n  ➜ Server Started ✨");
   });
 }
