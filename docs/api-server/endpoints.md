@@ -1,10 +1,12 @@
 ---
 title: API Server Endpoints
-description: Learn how to build KosmoJS API endpoints using defineRoute with Koa middleware, handle multiple HTTP methods (GET, POST, PUT, DELETE), and implement error handling with ctx.throw and ctx.assert.
+description: Learn how to build KosmoJS API endpoints using defineRoute with Koa middleware,
+    handle multiple HTTP methods (GET, POST, PUT, DELETE), and implement error handling with ctx.throw and ctx.assert.
 head:
   - - meta
     - name: keywords
-      content: koa endpoints, defineRoute, http methods, koa context, ctx.throw, ctx.assert, rest api, koa error handling, middleware composition
+      content: koa endpoints, defineRoute, http methods, koa context, ctx.throw,
+        ctx.assert, rest api, koa error handling, middleware composition
 ---
 
 API endpoints in `KosmoJS` are built using the `defineRoute` function,
@@ -143,5 +145,4 @@ For API endpoints, you'll typically want to return JSON error responses instead.
 You can add custom error handling middleware to format errors consistently across your application.
 
 For more information about implementing custom error handlers and Koa's error handling capabilities,
-refer to the [Koa documentation](https://koajs.com/#error-handling){target="_blank" rel="noopener"}.
-
+refer to the [Koa documentation](https://koajs.com/#error-handling).

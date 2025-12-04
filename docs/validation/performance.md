@@ -99,8 +99,8 @@ machine time is cheaper and more reliable than human time.
 
 As the `TypeScript` ecosystem continues evolving,
 particularly with developments around native `TypeScript` implementations
-that tools like [ts-morph](https://ts-morph.com/){target="_blank" rel="noopener"}
-and [tfusion](https://github.com/sleewoo/tfusion){target="_blank" rel="noopener"} might leverage,
+that tools like [ts-morph](https://ts-morph.com/)
+and [tfusion](https://github.com/sleewoo/tfusion) might leverage,
 generation performance may improve further.
 
 The current performance characteristics already support productive development,

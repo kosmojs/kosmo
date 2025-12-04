@@ -32,7 +32,7 @@ TRefine<number, { minimum: 1000, maximum: 1_000_000 }>
 ```
 
 The `minimum` and `maximum` properties come from JSON Schema's numeric validation vocabulary.
-They're part of the [JSON Schema Validation specification](https://json-schema.org/draft/2020-12/json-schema-validation.html){target="_blank" rel="noopener"},
+They're part of the [JSON Schema Validation specification](https://json-schema.org/draft/2020-12/json-schema-validation.html),
 which defines a comprehensive set of keywords for validating different data types.
 
 You can explore the full range of available refinements in the JSON Schema documentation,

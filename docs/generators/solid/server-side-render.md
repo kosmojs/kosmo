@@ -21,15 +21,16 @@ When you create a source folder, `KosmoJS` generates an `entry/client.tsx` file 
 ```tsx [entry/client.tsx]
 import { hydrate, render } from "solid-js/web";
 
-import { routes, shouldHydrate } from "@src/{solid}/client";
+import { routeStackBuilder, shouldHydrate } from "@src/{solid}/client";
 import App from "../App";
 import createRouter from "../router";
 
 const root = document.getElementById("app");
 
 if (root) {
+  const routes = routeStackBuilder({ withPreload: true });
   const router = createRouter(App, routes);
-  if (shouldHydrate) {
+  if (shouldHydrate()) {
     hydrate(() => router, root)
   } else {
     render(() => router, root);
@@ -96,9 +97,11 @@ Once the SSR generator is added, it creates an `entry/server.ts` file with the d
 ```ts [entry/server.ts]
 import { renderToString, generateHydrationScript } from "solid-js/web";
 
-import { routes } from "@src/{solid}/server";
+import { routeStackBuilder } from "@src/{solid}/server";
 import App from "../App";
 import createRouter from "../router";
+
+const routes = routeStackBuilder({ withPreload: false });
 
 export default {
   async factory(url) {
@@ -231,9 +234,11 @@ A common pattern is to split the template and stream in chunks:
 ```ts [entry/server.ts]
 import { renderToStream, generateHydrationScript } from "solid-js/web";
 
-import { routes } from "@src/{solid}/server";
+import { routeStackBuilder } from "@src/{solid}/server";
 import App from "../App";
 import createRouter from "../router";
+
+const routes = routeStackBuilder({ withPreload: false });
 
 export default {
   async factory(url) {

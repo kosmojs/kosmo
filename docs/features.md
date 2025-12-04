@@ -65,11 +65,11 @@ Create a folder, add an `index.ts` file, and you have a route. The folder name b
 api/
   users/
     [id]/
-      index.ts       → /api/users/:id
+      index.ts       🢂 /api/users/:id
 pages/
   users/
     [id]/
-      index.tsx      → /users/:id
+      index.tsx      🢂 /users/:id
 ```
 
 **Dynamic parameters:**

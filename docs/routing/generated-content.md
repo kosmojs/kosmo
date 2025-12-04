@@ -22,6 +22,9 @@ and imports the right types from the beginning.
 
 You get a working starting point that's already integrated with `KosmoJS`'s type system.
 
+> ❗ **Auto-generated boilerplate may require editor refocus:** Some editors loads generated content immediately,
+others may require you to briefly unfocus and refocus the editor to load the new content.
+
 ## ⚙️ API Route Generation
 
 When you create a file like `api/users/[id]/index.ts`, `KosmoJS` generates this content:
@@ -51,15 +54,15 @@ In this case, it knows that this route has an `id` parameter,
 and that information flows through to your handler's context object.
 
 **Import Path Convention:**
-- `@front/api/` → Your hand-written route files
-- `@front/{api}/` → Auto-generated type definitions and utilities
+- `@front/api/` 🢂 Your hand-written route files
+- `@front/{api}/` 🢂 Auto-generated type definitions and utilities
 
 The `defineRoute` function accepts a callback that receives HTTP method helpers.<br>
 In this example, you see `GET`, but you also have access to `POST`, `PUT`, `DELETE`, `PATCH`, and other HTTP methods.
 
 You can define handlers for multiple methods in the same route by adding more method calls to the array.
 
-Each method handler receives a [Koa context](https://koajs.com/#context){target="_blank" rel="noopener"} object (`ctx`).
+Each method handler receives a [Koa context](https://koajs.com/#context) object (`ctx`).
 
 This object gives you access to the request (including headers, body, and parameters)
 and the response (where you set status codes, headers, and body content).

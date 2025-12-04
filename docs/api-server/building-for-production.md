@@ -116,11 +116,11 @@ Deploy each source folder to its own environment:
 ```sh
 # Deploy customer app
 pnpm build @front
-deploy dist/@front → app.example.com
+deploy dist/@front 🢂 app.example.com
 
 # Deploy admin panel
 pnpm build @admin
-deploy dist/@admin → admin.example.com
+deploy dist/@admin 🢂 admin.example.com
 ```
 
 **Benefits:**
@@ -137,13 +137,13 @@ Deploy all source folders to the same server with different base URLs:
 pnpm build
 
 # Deploy to single server
-deploy dist/ → example.com
+deploy dist/ 🢂 example.com
 ```
 
 Configure nginx/caddy to route:
-- `/` → `@front` assets
-- `/admin` → `@admin` assets
-- `/api` → API server
+- `/` 🢂 `@front` assets
+- `/admin` 🢂 `@admin` assets
+- `/api` 🢂 API server
 
 ### Deployment Environments
 

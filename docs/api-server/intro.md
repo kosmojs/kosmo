@@ -7,7 +7,7 @@ head:
       content: koa api, middleware composition, type-safe api, sinatra-style routing, koa context, typescript api, defineRoute, api middleware
 ---
 
-`KosmoJS`'s API layer is built on [Koa](https://koajs.com/){target="_blank" rel="noopener"}, leveraging its elegant middleware composition model
+`KosmoJS`'s API layer is built on [Koa](https://koajs.com/), leveraging its elegant middleware composition model
 and powerful context object to create a clean, extensible foundation for API development.
 
 ## 🏗️ Built on Koa
@@ -38,7 +38,7 @@ The `defineRoute` function provides structure for organizing HTTP method handler
 while preserving Koa's flexibility.
 
 Veterans will recognize the familiar elegance of `KosmoJS`'s HTTP methods mapper,
-which draw inspiration from [Sinatra framework](https://sinatrarb.com/){target="_blank" rel="noopener"} -
+which draw inspiration from [Sinatra framework](https://sinatrarb.com/) -
 the Ruby framework that pioneered minimalist web development back in 2007.
 
 The `use` function enables fine-grained middleware control at the route level,

@@ -1,20 +1,22 @@
 ---
 title: Getting Started
-description: Get started with KosmoJS in minutes. Create a new Vite project with multiple source folders, set up directory-based routing, and configure your frontend framework of choice.
+description: Get started with KosmoJS in minutes. Create a new Vite project with multiple source folders,
+    set up directory-based routing, and configure your frontend framework of choice.
 head:
   - - meta
     - name: keywords
-      content: vite setup, typescript project setup, create vite app, multi-folder vite, koa api setup, solidjs setup, react setup, typescript path mapping, vite dev server
+      content: vite setup, typescript project setup, create vite app, multi-folder vite,
+        koa api, solidjs setup, react setup, vue setup, vite dev server
 ---
 
-**Starting your `KosmoJS` journey is a breeze!** ✨
+**Starting your KosmoJS journey is a breeze!** ✨
 
 Begin your project with a solid foundation. `KosmoJS` provides a structured
 yet flexible starting point designed for real-world applications with multiple concerns.
 
 In just a few commands, you'll have a fully-configured `Vite` project ready to scale with your application's needs.
 
-## 1. Create a new `KosmoJS` project:
+## 1. Create a new project
 
 ::: code-group
 ```sh [pnpm]
@@ -102,7 +104,7 @@ yarn install
 ```
 :::
 
-## 4. Start the Dev Server
+## 4. Start the dev server
 
 ::: code-group
 
@@ -120,13 +122,15 @@ yarn dev
 :::
 
 Each source folder runs on its own port with its own base URL.
+Dev server will handle all source folders in parallel.
+You need a single command to run the whole app - `pnpm dev`.
 
 ## 5. Enjoy the Breeze!
 
 Create pages by adding `index.*` files to the `pages/` directory.
 Build API routes by adding `index.ts` files to the `api/` directory.
 
-[Learn more about routing →](/routing/intro.html)
+[Learn more about routing 🢂](/routing/intro.html)
 
 `KosmoJS` provides structure, not constraints. Your project, your rules!
 

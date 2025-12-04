@@ -9,7 +9,7 @@ head:
 
 ### 🔧 The Enhanced Context Object
 
-`KosmoJS` extends the standard [Koa context](https://koajs.com/#context){target="_blank" rel="noopener"}
+`KosmoJS` extends the standard [Koa context](https://koajs.com/#context)
 context with two helpful additions that streamline how you access request data and route parameters.
 
 The `ctx.payload` property provides normalized access to incoming data.

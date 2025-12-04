@@ -13,6 +13,8 @@ export default defineConfig({
   lang: "en-US",
   title: "KosmoJS",
 
+  lastUpdated: true,
+
   // Force .html on all URLs
   cleanUrls: false,
 
@@ -497,7 +499,7 @@ export default defineConfig({
               link: "/validation/response",
             },
             {
-              text: "⏭ Skip Validation",
+              text: "🏁 Skip Validation",
               link: "/validation/skip-validation",
             },
             {

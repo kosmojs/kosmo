@@ -241,7 +241,7 @@ Generated files bypass default scaffolding - test navigation + data loading.
 
 ## 📌 Reference Templates (Official)
 
-`KosmoJS` provides helpful [example templates](https://github.com/kosmojs/kosmo/tree/main/packages/generators/vue-generator/src/templates/public){target="_blank" rel="noopener"} you can adapt.
+`KosmoJS` provides helpful [example templates](https://github.com/kosmojs/kosmo/tree/main/packages/generators/vue-generator/src/templates/public) you can adapt.
 
 These demonstrate common patterns such as styled page shells and placeholder
 content.

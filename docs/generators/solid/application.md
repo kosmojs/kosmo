@@ -80,15 +80,16 @@ rendering your router into the DOM:
 ```tsx [entry/client.tsx]
 import { hydrate, render } from "solid-js/web";
 
-import { routes, shouldHydrate } from "@src/{solid}/client";
+import { routeStackBuilder, shouldHydrate } from "@src/{solid}/client";
 import App from "../App";
 import createRouter from "../router";
 
 const root = document.getElementById("app");
 
 if (root) {
+  const routes = routeStackBuilder({ withPreload: true });
   const router = createRouter(App, routes);
-  if (shouldHydrate) {
+  if (shouldHydrate()) {
     hydrate(() => router, root)
   } else {
     render(() => router, root);

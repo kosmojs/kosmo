@@ -139,7 +139,7 @@ if (!useFetch.validationSchemas.payload.POST.check(payload)) {
 
 ## 🪆 Handling Nested Field Paths
 
-When working with nested objects, the `path` property uses friendly arrow notation ( → )
+When working with nested objects, the `path` property uses friendly arrow notation ( 🢂 )
 to represent the hierarchy, making error messages more readable for end-users.
 
 For example, if your payload has nested structure:
@@ -156,8 +156,8 @@ const payload = {
 ```
 
 Validation errors will have `path` like:
-- "customer → email" for the invalid email
-- "customer → address → city" for city validation failures
+- "customer 🢂 email" for the invalid email
+- "customer 🢂 address 🢂 city" for city validation failures
 
 **Match nested fields using regex with word boundaries:**
 
