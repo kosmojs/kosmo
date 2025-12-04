@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, inject, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
 
 import { setupTestProject } from "../setup";
 
@@ -22,9 +22,11 @@ describe(`Vue Generator - Custom Templates: { ssr: ${ssr} }`, async () => {
 `;
 
   const {
-    //
+    bootstrapProject,
     withRouteContent,
     defaultContentPatternFor,
+    createRoutes,
+    startServer,
     teardown,
   } = await setupTestProject({
     framework: "vue",
@@ -38,9 +40,11 @@ describe(`Vue Generator - Custom Templates: { ssr: ${ssr} }`, async () => {
     ssr,
   });
 
-  afterAll(async () => {
-    await teardown();
-  });
+  await bootstrapProject();
+  await createRoutes();
+
+  beforeAll(startServer);
+  afterAll(teardown);
 
   describe("Pattern Matching", () => {
     it("should use custom template for matching route pattern", async () => {

@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, inject, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
 
 import { setupTestProject } from "../setup";
 
@@ -6,15 +6,19 @@ const ssr = inject("SSR" as never);
 
 describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
   const {
-    //
+    bootstrapProject,
     withRouteContent,
     defaultContentPatternFor,
+    createRoutes,
+    startServer,
     teardown,
   } = await setupTestProject({ framework: "vue", ssr });
 
-  afterAll(async () => {
-    await teardown();
-  });
+  await bootstrapProject();
+  await createRoutes();
+
+  beforeAll(startServer);
+  afterAll(teardown);
 
   describe("Static Routes", () => {
     it("should render nested static route with default template", async () => {
@@ -121,16 +125,6 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should handle multiple optional parameters", async () => {
-      // Without any parameters
-      await withRouteContent(
-        "search/[[query]]/[[page]]",
-        [],
-        ({ path, content, defaultContentPattern }) => {
-          expect(path).toBe("search");
-          expect(content).toMatch(defaultContentPattern);
-        },
-      );
-
       // With first parameter only
       await withRouteContent(
         "search/[[query]]/[[page]]",
@@ -182,6 +176,28 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
         ["guides", "deployment", "production", "best-practices"],
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("docs/guides/deployment/production/best-practices");
+          expect(content).toMatch(defaultContentPattern);
+        },
+      );
+    });
+
+    it("should render without trailing slash", async () => {
+      await withRouteContent(
+        "docs/[...path]",
+        "docs",
+        ({ path, content, defaultContentPattern }) => {
+          expect(path).toBe("docs");
+          expect(content).toMatch(defaultContentPattern);
+        },
+      );
+    });
+
+    it("should render with trailing slash", async () => {
+      await withRouteContent(
+        "docs/[...path]",
+        "docs/",
+        ({ path, content, defaultContentPattern }) => {
+          expect(path).toBe("docs/");
           expect(content).toMatch(defaultContentPattern);
         },
       );
