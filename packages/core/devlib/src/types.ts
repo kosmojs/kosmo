@@ -241,15 +241,15 @@ export type SSROptions = {
   // determined by resolving the manifest graph back to routes.
   //
   // Each entry includes:
-  //   - `url`  → the browser-loadable asset path (for <link> usage)
   //   - `text` → decoded CSS content for inline <style> usage
+  //   - `path` → the browser-loadable asset path (for <link> usage)
   //
   // What the SSR renderer can do with `criticalCss`:
   //
   //   ✓ Inline style text (<style>…</style>) for fastest first paint
   //   ✓ Insert <link rel="stylesheet" href="..."> for cache reuse
   //   ✓ Insert <link rel="preload" as="style"> for warm loading
-  criticalCss: Array<{ text: string; url: string }>;
+  criticalCss: Array<{ text: string; path: string }>;
 
   // The underlying Node.js HTTP request/response objects.
   //

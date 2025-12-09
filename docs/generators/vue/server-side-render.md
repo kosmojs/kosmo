@@ -174,7 +174,7 @@ The same argument object is provided to both `renderToString` and `renderToStrea
 type SSROptions = {
   template: string;
   manifest: Record<string, SSRManifestEntry>;
-  criticalCss: Array<{ text: string; url: string }>;
+  criticalCss: Array<{ text: string; path: string }>;
   request: IncomingMessage;
   response: ServerResponse;
 };
@@ -192,16 +192,16 @@ type SSROptions = {
 
 Each item in `criticalCss` exposes two properties:
 
-- `url` — a browser-ready path to the stylesheet
-- `text` — the stylesheet content, as plain text
+- `text` - the stylesheet content, as plain text
+- `path` - a browser-ready path to the stylesheet
 
 You can tailor style delivery to your performance needs:
 
 | Strategy | Benefit |
 |----------|---------|
 | `<style>${text}</style>` | Inlines styles for the quickest first paint |
-| `<link rel="stylesheet" href="${url}">` | Leverages browser cache across page navigations |
-| `<link rel="preload" as="style" href="${url}">` | Warms up styles for later application |
+| `<link rel="stylesheet" href="${path}">` | Leverages browser cache across page navigations |
+| `<link rel="preload" as="style" href="${path}">` | Warms up styles for later application |
 
 ### Request/Response Access
 

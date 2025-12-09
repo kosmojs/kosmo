@@ -152,7 +152,7 @@ Both `renderToString` and `renderToStream` receive the same argument object:
 type SSROptions = {
   template: string;
   manifest: Record<string, SSRManifestEntry>;
-  criticalCss: Array<{ text: string; url: string }>;
+  criticalCss: Array<{ text: string; path: string }>;
   request: IncomingMessage;
   response: ServerResponse;
 };
@@ -170,16 +170,16 @@ type SSROptions = {
 
 Each `criticalCss` entry provides both the asset URL and the decoded content:
 
-- `url` - browser-loadable asset path
 - `text` - decoded CSS content
+- `path` - browser-loadable asset path
 
 This gives you flexibility in how styles are delivered:
 
 | Strategy | Benefit |
 |----------|---------|
 | `<style>${text}</style>` | Fastest first paint - no extra requests |
-| `<link rel="stylesheet" href="${url}">` | Better cache reuse across pages |
-| `<link rel="preload" as="style" href="${url}">` | Warm loading for deferred styles |
+| `<link rel="stylesheet" href="${path}">` | Better cache reuse across pages |
+| `<link rel="preload" as="style" href="${path}">` | Warm loading for deferred styles |
 
 ### Request/Response Access
 
