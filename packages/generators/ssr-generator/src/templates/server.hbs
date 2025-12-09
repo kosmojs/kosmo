@@ -1,12 +1,12 @@
-import { chmod, readFile, access, constants, unlink } from "node:fs/promises";
+import { access, chmod, constants, readFile, unlink } from "node:fs/promises";
 import http, { type IncomingMessage, type ServerResponse } from "node:http";
-import { dirname, extname, resolve, relative, join } from "node:path";
+import { extname, join, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
 
 import type { SSRSetup, SSRManifestEntry } from "@kosmojs/dev";
-import { match } from "path-to-regexp";
 
 import { baseurl } from "{{importPathmap.config}}";
+import { match } from "./path-to-regexp";
 
 /**
  * Root directory where Vite client assets are emitted.
@@ -34,31 +34,44 @@ type AssetInfo = {
 
 type Manifest = Record<string, SSRManifestEntry>;
 
-/**
- * Normalized, graph-resolved asset description.
- * Each asset knows its type and all manifest paths that eventually use it.
- * */
 type ResolvedAsset = {
   kind: "js" | "css" | "asset";
-  url: string;
-  // All manifest paths that uses this asset.
-  paths: Array<string>;
+  path: string;
+  // All manifest paths that uses this asset
+  use: Set<string>;
 };
 
 /**
- * For each route we pre-compute:
- * - pathMatchers: functions that test incoming URLs (via path-to-regexp)
- * - manifestPathVariations: which manifest entries correspond to that route
- * This lets us map a request URL → manifest entries → CSS to inline.
+ * Pre-computed route matchers for efficient URL-to-asset resolution.
  * */
-const cssMatchers = [
-  {{#each routes}}
-  [
-    match("{{pathPattern}}"),
-    {{manifestPathVariations}},
-  ],
+const routeMap: Array<{
+  // path-to-regexp matcher function that tests if a URL matches this route
+  match: (path: string) => boolean;
+
+  // Route file path used to search within cssAssets.use entries.
+  // Each CSS asset has a `use` property - a set of route files that import it.
+  // This enables identifying CSS assets used by the current route for critical CSS.
+  file: string;
+
+  // Layout chain - ordered array of layouts wrapping this route.
+  // Used to identify CSS assets imported by each layout.
+  // This enables adding layout CSS to critical CSS for the current route.
+  layouts: Array<string>;
+}> = [
+  {{#each routeMap}}
+  {
+    match: match("{{path}}"),
+    file: "{{file}}",
+    layouts: [ {{#each layouts}}"{{.}}", {{/each}}],
+  },
   {{/each}}
-] as const;
+];
+
+const criticalCssOrder: Record<"global" | "layout" | "index", number> = {
+  global: 1,
+  layout: 2,
+  index: 3,
+};
 
 export const requestHandlerFactory = ({
   template,
@@ -82,20 +95,20 @@ export const requestHandlerFactory = ({
     request: IncomingMessage,
     response: ServerResponse,
   ) => {
-    // If Node's IncomingMessage somehow lacks a URL, treat as a server error.
+    // If Node's IncomingMessage somehow lacks URL, treat as a server error.
     if (request.url === undefined) {
       response.writeHead(500, { "Content-Type": "text/html" });
       response.end("<h1>500 · Server Error</h1>");
       return;
     }
 
-    // Normalize the request URL into a pathname we can match against routes.
+    // Normalize the request URL into a pathname to match against routes.
     const { pathname } = new URL(request.url, `http://${request.headers.host}`);
 
-    // Strip baseurl (if app is mounted under a sub-path) to get the internal route path.
+    // Strip baseurl to get the internal route path.
     const path = relative(baseurl, pathname);
 
-    // 1) Static asset path: if it matches something cached at startup, serve it directly.
+    // If incoming request path matches something cached at startup, serve it directly.
     // This covers JS, CSS, images, fonts, etc., including their .map siblings.
     const asset = assetCache.get(path);
 
@@ -114,68 +127,45 @@ export const requestHandlerFactory = ({
       return;
     }
 
-    // 2) Non-asset request → treat as an SSR page response.
-    // Use chunked transfer so we can stream HTML (or at least flush in stages).
+    // Match incoming request path (e.g., "/products/123") against
+    // pre-compiled route patterns (e.g., "/products/:id")
+    const route = routeMap.find(({ match }) => match(path));
+
+    if (!route) {
+      // not a static file and no route matched, return 404
+      response.writeHead(404, { "Content-Type": "text/html" });
+      response.end("<h1>404 · Not Found</h1>");
+      return;
+    }
+
+    // There is a route matched, prepare response for SSR pipelines.
     response.writeHead(200, {
       "Content-Type": "text/html",
       "Transfer-Encoding": "chunked",
     });
 
-    const criticalURLs = new Set<string>();
+    // Collect critical CSS for the matched route.
+    const criticalCss = cssAssets
+      .flatMap(({ text, path, use }) => {
+        // CSS assets referenced by index.html entrypoint are always critical,
+        // regardless incoming request path
+        let kind: keyof typeof criticalCssOrder | undefined = manifest[
+          "index.html"
+        ]?.css?.includes(path)
+          ? "global"
+          : undefined;
 
-    // For the current incoming request path (like "/products/123"),
-    // check each route pattern (pre-compiled via path-to-regexp)
-    // to see if it describes this URL.
-    //
-    // Example:
-    //   Incoming path: "/products/123"
-    //   Matchers:
-    //     "/products/:id"     → match ✓
-    //     "/about"            → no
-    //     "/blog/:slug"       → no
-    const cssMatch = cssMatchers.find(([pathMatcher]) => pathMatcher(path));
-
-    if (cssMatch) {
-      for (const manifestPath of cssMatch[1]) {
-        // At this point we know *which route* the user asked for.
-        // Now we pivot to the *manifest graph*:
-        //
-        // manifestPath links this route to the Vite manifest's entries,
-        // such as: "pages/products/[id]/index.tsx".
-        //
-        // Each manifest entry knows every CSS file it eventually imports -
-        // directly or indirectly - thanks to resolveAssets().
-        //
-        // So now we select *only* CSS assets whose dependency graph
-        // includes matched route's manifestPath.
-        for (const { url, paths } of cssAssets) {
-          if (paths.includes(manifestPath)) {
-            criticalURLs.add(url);
-          }
+        if (use.has(route.file)) {
+          // Imported by the current route
+          kind = "index";
+        } else if (route.layouts.some((e) => use.has(e))) {
+          // Imported by any layout wrapping current route
+          kind = "layout";
         }
-      }
-    }
 
-    // Collect critical CSS for the current request.
-    //
-    // We include two categories of CSS assets:
-    //
-    // 1️⃣ → Route-specific assets:
-    //     Assets explicitly linked to the route via manifest graph
-    //
-    // 2️⃣ → Global / root-level assets:
-    //     Assets referenced by the main entrypoint (index.html)
-    //     always included regardless of current URL
-    //
-    // Reason:
-    //   Some global styles (resets, typography, layout, fonts, etc.)
-    //   may not be directly imported by every route but are still
-    //   required to avoid layout shift or FOUC on first paint.
-    const criticalCss = cssAssets.flatMap(({ text, url }) => {
-      return criticalURLs.has(url) || manifest["index.html"]?.css?.includes(url)
-        ? [{ text, url: join(baseurl, url) }]
-        : [];
-    });
+        return kind ? [{ text, path: join(baseurl, path), kind }] : [];
+      })
+      .sort((a, b) => criticalCssOrder[a.kind] - criticalCssOrder[b.kind]);
 
     try {
       // Ask the user-provided SSR factory to produce rendering methods
@@ -210,7 +200,7 @@ export const requestHandlerFactory = ({
         // Mode 2: string-based SSR.
         //
         // - renderToString() returns { head, html } for the current route.
-        // - We splice that into the Vite-generated index.html template by replacing:
+        // - Splice that into the Vite-generated index.html template by replacing:
         //   - <!--app-head--> with collected head tags (CSS + optional user head)
         //   - <!--app-html--> with the app HTML markup
         //
@@ -230,10 +220,12 @@ export const requestHandlerFactory = ({
         return;
       }
 
-      // If the SSR factory returned neither mode, we can't handle the request.
+      // SSR factory returned neither mode
       response.writeHead(501, { "Content-Type": "text/html" });
       response.end("<h1>501 · Not Implemented</h1>");
     } catch (error) {
+      // Handle thrown Response instances as redirects.
+      // Re-throw other errors for upstream handling.
       if (error instanceof Response) {
         const Location = error.headers.get("Location");
 
@@ -253,95 +245,90 @@ export const requestHandlerFactory = ({
 };
 
 /**
- * Walk Vite's manifest graph and build a normalized asset list.
- *
- * For each asset (JS, CSS, other), we compute:
- * - its type (kind)
- * - its URL (final file path)
- * - all manifest keys (entries) that eventually import it, directly or indirectly.
- *
- * This is what powers the critical CSS lookup above (route → manifest path → CSS).
+ * Traverse Vite's manifest graph and build a plain asset list.
  * */
 const resolveAssets = (manifest: Manifest): Array<ResolvedAsset> => {
-  const resolvedAssets: Record<string, ResolvedAsset> = {};
-  const visiting = new Set<string>();
-
-  const walk = (
-    path: string,
+  const traverse = (
+    key: string,
     entry: SSRManifestEntry,
-    ancestors: Array<string>,
-  ) => {
+    data: {
+      resolvedAssets: Record<string, ResolvedAsset>;
+      visiting: Set<string>;
+      use: Set<string>;
+    },
+  ): Record<string, ResolvedAsset> => {
     // Protect against cyclic graphs (just in case Rollup creates loops).
-    if (visiting.has(path)) {
-      return;
+    if (data.visiting.has(key)) {
+      return data.resolvedAssets;
     }
 
-    visiting.add(path);
+    const visiting = new Set(data.visiting).add(key);
 
-    try {
-      // Each step extends the list of "ancestor" manifest paths that lead to this entry.
-      // For a page entry like pages/about/index.tsx we record its dirname
-      // so CSS imported from shared chunks can be associated back to that page.
-      const newAncestors = [
-        ...ancestors,
-        ...(path.includes("/") ? [dirname(path)] : [path]),
-      ];
+    // Start with a copy of resolvedAssets
+    const resolvedAssets = { ...data.resolvedAssets };
 
-      const assetFactory = (url: string, kind: ResolvedAsset["kind"]) => {
-        return {
-          ...resolvedAssets[url],
-          kind,
-          url,
-          // Merge existing paths with the newly discovered ancestors,
-          // deduplicated via a Set so shared chunks don't create duplicates.
-          paths: [
-            ...new Set([
-              ...(resolvedAssets[url]?.paths || []),
-              ...newAncestors,
-            ]),
-          ],
-        };
-      };
+    const use = new Set([ ...data.use, key ]);
 
-      // Register JS assets produced by this manifest entry.
-      if (entry.file?.endsWith(".js")) {
-        resolvedAssets[entry.file] = assetFactory(entry.file, "js");
+    const createAsset = (path: string, kind: ResolvedAsset["kind"]) => {
+      return {
+        kind,
+        path,
+        // Each step extends the list of manifest paths that "use" this entry
+        use: new Set([
+          ...(resolvedAssets[path]?.use || []),
+          ...use,
+        ]),
       }
+    };
 
-      // Register any CSS chunks associated with this entry.
-      for (const url of entry.css || []) {
-        resolvedAssets[url] = assetFactory(url, "css");
-      }
-
-      // Register any additional assets (images, fonts, etc.).
-      for (const url of entry.assets || []) {
-        resolvedAssets[url] = assetFactory(url, "asset");
-      }
-
-      // Recursively walk both static and dynamic imports to propagate ancestry.
-      for (const key of [
-        ...(entry.imports || []),
-        ...(entry.dynamicImports || []),
-      ]) {
-        // Skip Vite's synthetic index.html key; it's not a real module.
-        const imported = key === "index.html" ? undefined : manifest[key];
-        if (imported) {
-          walk(key, imported, newAncestors);
-        }
-      }
-    } finally {
-      // Ensure the visiting flag is cleared even if something throws.
-      visiting.delete(path);
+    // Register JS assets produced by this manifest entry.
+    if (entry.file?.endsWith(".js")) {
+      resolvedAssets[entry.file] = createAsset(entry.file, "js");
     }
+
+    // Register any CSS chunks associated with this entry.
+    for (const path of entry.css || []) {
+      resolvedAssets[path] = createAsset(path, "css");
+    }
+
+    // Register any additional assets (images, fonts, etc.).
+    for (const path of entry.assets || []) {
+      resolvedAssets[path] = createAsset(path, "asset");
+    }
+
+    // Recursively traverse both static and dynamic imports to propagate ancestry.
+    for (const key of [
+      ...(entry.imports || []),
+      ...(entry.dynamicImports || []),
+    ]) {
+      // Skip Vite's synthetic index.html key; it's not a real module.
+      const entry = key === "index.html" ? undefined : manifest[key];
+      if (entry) {
+        Object.assign(
+          resolvedAssets,
+          traverse(key, entry, {
+            resolvedAssets,
+            visiting,
+            use,
+          }),
+        );
+      }
+    }
+
+    return resolvedAssets;
   };
 
-  // Kick off the graph walk from every manifest entry.
-  // This ensures shared chunks discovered from any page are fully wired.
-  for (const [key, entry] of Object.entries(manifest)) {
-    walk(key, entry, []);
-  }
+  const resolvedAssets = Object.entries(manifest).reduce(
+    (resolvedAssets: Record<string, ResolvedAsset>, [key, entry]) => {
+      return traverse(key, entry, {
+        resolvedAssets,
+        visiting: new Set(),
+        use: new Set(),
+      });
+    },
+    {},
+  );
 
-  // Return the deduplicated list of all known assets.
   return Object.values(resolvedAssets);
 };
 
@@ -371,18 +358,6 @@ const resolveAssets = (manifest: Manifest): Array<ResolvedAsset> => {
  *       unless served by a proxy/CDN/static host.
  *     → Ideal when a reverse proxy is expected to serve static assets.
  *
- * Always loaded regardless of mode:
- *   ✓ CSS Buffers → required for inline critical CSS
- *   ✓ CSS decoded text → provided to user SSR function
- *
- * Sourcemaps:
- *   - When loading a JS/CSS asset into memory,
- *     we also attempt to read `<file>.map` if present.
- *
- * Summary:
- *   - Asset *URLs* are always tracked (for correct routing + 404 detection)
- *   - Asset *content* is loaded only when requested by deployment strategy
- *   - SSR remains fully capable of inlining CSS in all configurations
  * */
 export const loadAssets = async (
   resolvedAssets: Array<ResolvedAsset>,
@@ -415,17 +390,17 @@ export const loadAssets = async (
   // Map from URL path (as used in requests) to asset metadata.
   const assetCache = new Map<string, AssetInfo>();
 
-  // Load all files into memory at server start.
-  // This front-loads I/O cost, so per-request cost is just a Map lookup.
+  // Load files into memory at server start (unless loadIntoMemory is false).
   await Promise.all(
-    resolvedAssets.map(async ({ url }) => {
-      const filePath = resolve(STATIC_DIR, url);
+    resolvedAssets.map(async ({ kind, path }) => {
+      const filePath = resolve(STATIC_DIR, path);
 
-      const buffer = loadIntoMemory || /\.css$/i.test(url) // css loaded anyway
-        ? await readFile(filePath)
-        : undefined;
+      const buffer =
+        loadIntoMemory || kind === "css" // css loaded anyway
+          ? await readFile(filePath)
+          : undefined;
 
-      assetCache.set(url, {
+      assetCache.set(path, {
         buffer,
         contentType: contentTypeResolver(filePath),
         size: buffer?.length || 0,
@@ -438,13 +413,13 @@ export const loadAssets = async (
           const buffer = loadIntoMemory //
             ? await readFile(`${filePath}.map`)
             : undefined;
-          assetCache.set(`${url}.map`, {
+          assetCache.set(`${path}.map`, {
             buffer,
             contentType: "application/json",
             size: buffer?.length || 0,
           });
         } catch {
-          return
+          return;
         }
       }
     }),
@@ -490,18 +465,18 @@ export const createServer = async () => {
   );
 
   // Create the HTTP server using the factory configured above.
-  // For CSS assets we also precompute their text form for inlining.
+  // For CSS assets also precompute their text form for inlining.
   const server = http.createServer(
     requestHandlerFactory({
       template,
       renderFactory: ssrSetup.factory,
       // provide only css assets and only ones with a valid cache.
-      cssAssets: resolvedAssets.flatMap(({ kind, url, ...rest }) => {
-        const cache = kind === "css" ? assetCache.get(url) : undefined;
+      cssAssets: resolvedAssets.flatMap(({ kind, path, ...rest }) => {
+        const cache = kind === "css" ? assetCache.get(path) : undefined;
         // Decode CSS once at startup so SSR can inline
         // without calling toString() on every request.
         return cache?.buffer
-          ? [{ kind, url, text: cache.buffer.toString(), ...rest }]
+          ? [{ kind, path, text: cache.buffer.toString(), ...rest }]
           : [];
       }),
       assetCache,

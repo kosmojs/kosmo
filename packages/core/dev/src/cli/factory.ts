@@ -261,9 +261,6 @@ export const createSourceFolder = async (
       importName: "ssrGenerator",
       options: "",
     });
-    Object.assign(dependencies, {
-      "path-to-regexp": self.devDependencies["path-to-regexp"],
-    });
     Object.assign(devDependencies, {
       "@kosmojs/ssr-generator": SEMVER,
     });

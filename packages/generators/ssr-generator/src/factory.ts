@@ -1,4 +1,5 @@
-import { join } from "node:path";
+import { readFile, writeFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
 
 import { type BuildOptions, build as esbuild } from "esbuild";
 import { build, loadConfigFromFile, type Plugin } from "vite";
@@ -6,8 +7,8 @@ import { build, loadConfigFromFile, type Plugin } from "vite";
 import {
   defaults,
   type GeneratorFactory,
-  type PageRoute,
   pathResolver,
+  type ResolvedEntry,
   type RouteEntry,
   renderToFile,
   sortRoutes,
@@ -21,8 +22,21 @@ export const factory: GeneratorFactory = async ({
   outDir,
   command,
 }) => {
-  const generateLibFiles = async (routes: Array<PageRoute>) => {
+  const pathToRegexp = await readFile(
+    resolve(import.meta.dirname, "path-to-regexp.js"),
+    "utf8",
+  );
+
+  const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
     const { resolve } = pathResolver({ appRoot, sourceFolder });
+
+    const routes = entries.flatMap(({ kind, entry }) => {
+      return kind === "pageRoute" ? [entry] : [];
+    });
+
+    const layouts = entries.flatMap(({ kind, entry }) => {
+      return kind === "pageLayout" ? [entry] : [];
+    });
 
     const viteConfig = await loadConfigFromFile(
       { command: "build", mode: "ssr" },
@@ -61,20 +75,32 @@ export const factory: GeneratorFactory = async ({
       },
     });
 
-    const ssrLisbFile = resolve("libDir", sourceFolder, "{ssr}.ts");
+    const ssrLibFile = resolve("libDir", sourceFolder, "{ssr}.ts");
 
-    await renderToFile(ssrLisbFile, serverTpl, {
-      routes: routes
-        .map((route) => {
-          return {
-            ...route,
-            pathPattern: generatePathPattern(route),
-            manifestPathVariations: JSON.stringify(
-              generateManifestPathVariations(route),
-            ),
-          };
-        })
-        .sort(sortRoutes),
+    await writeFile(
+      resolve("libDir", sourceFolder, "path-to-regexp.ts"),
+      pathToRegexp,
+      "utf8",
+    );
+
+    const routeMap: Array<{
+      path: string;
+      file: string;
+      layouts: Array<string>;
+    }> = [...routes].sort(sortRoutes).map((route) => {
+      return {
+        path: generatePathPattern(route),
+        file: join(defaults.pagesDir, route.file),
+        layouts: layouts.flatMap(({ name, file }) => {
+          return name === route.name || route.file.startsWith(`${name}/`)
+            ? [join(defaults.pagesDir, file)]
+            : [];
+        }),
+      };
+    }, {});
+
+    await renderToFile(ssrLibFile, serverTpl, {
+      routeMap: routeMap,
       importPathmap: {
         config: join(sourceFolder, "config"),
       },
@@ -84,7 +110,7 @@ export const factory: GeneratorFactory = async ({
       ...esbuildOptions,
       bundle: true,
       legalComments: "inline",
-      entryPoints: [ssrLisbFile],
+      entryPoints: [ssrLibFile],
       outfile: join(outDir, "ssr", "index.js"),
     });
   };
@@ -94,11 +120,7 @@ export const factory: GeneratorFactory = async ({
       if (event || command !== "build") {
         return;
       }
-      await generateLibFiles(
-        entries.flatMap(({ kind, entry }) => {
-          return kind === "pageRoute" ? [entry] : [];
-        }),
-      );
+      await generateLibFiles(entries);
     },
   };
 };
@@ -120,20 +142,4 @@ export const generatePathPattern = ({ pathTokens }: RouteEntry): string => {
     .join("/")
     .replace(/\/\{/g, "{")
     .replace(/\+/g, "\\\\+");
-};
-
-export const generateManifestPathVariations = ({
-  pathTokens,
-}: Pick<PageRoute, "pathTokens">) => {
-  return pathTokens.flatMap((e, i) => {
-    const next = pathTokens[i + 1];
-    return !next || next.param?.isOptional || next.param?.isRest
-      ? [
-          join(
-            defaults.pagesDir,
-            ...[...pathTokens.slice(0, i), e].map((e) => e.orig),
-          ),
-        ]
-      : [];
-  });
 };

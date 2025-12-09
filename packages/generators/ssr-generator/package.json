@@ -17,16 +17,17 @@
     }
   },
   "scripts": {
-    "build": "esbuilder src/index.ts",
+    "build": "esbuilder --external-exclude path-to-regexp src/index.ts src/path-to-regexp.ts",
     "test": "vitest --root ../../.. --project generators/ssr-generator"
   },
   "dependencies": {
     "@kosmojs/devlib": "workspace:^",
     "esbuild": "^0.27.0",
+    "path-to-regexp": "^8.3.0",
     "vite": "^7.2.2"
   },
   "devDependencies": {
-    "@kosmojs/dev": "workspace:^",
-    "@kosmojs/config": "workspace:^"
+    "@kosmojs/config": "workspace:^",
+    "@kosmojs/dev": "workspace:^"
   }
 }
