@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
 
-import { setupTestProject } from "../setup";
+import { routes, setupTestProject } from "../setup";
 
+const framework = "vue";
 const ssr = inject("SSR" as never);
 
 describe(`Vue Generator - Custom Templates: { ssr: ${ssr} }`, async () => {
@@ -29,7 +30,7 @@ describe(`Vue Generator - Custom Templates: { ssr: ${ssr} }`, async () => {
     startServer,
     teardown,
   } = await setupTestProject({
-    framework: "vue",
+    framework,
     frameworkOptions: {
       templates: {
         landing: landingTemplate,
@@ -41,7 +42,7 @@ describe(`Vue Generator - Custom Templates: { ssr: ${ssr} }`, async () => {
   });
 
   await bootstrapProject();
-  await createRoutes();
+  await createRoutes(routes);
 
   beforeAll(startServer);
   afterAll(teardown);

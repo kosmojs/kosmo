@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
 
-import { setupTestProject } from "../setup";
+import { routes, setupTestProject } from "../setup";
 
+const framework = "solid";
 const ssr = inject("SSR" as never);
 
 describe(`SolidJS - Custom Templates: { ssr: ${ssr} }`, async () => {
@@ -31,7 +32,7 @@ export default () => {
     startServer,
     teardown,
   } = await setupTestProject({
-    framework: "solid",
+    framework,
     frameworkOptions: {
       templates: {
         landing: landingTemplate,
@@ -43,7 +44,7 @@ export default () => {
   });
 
   await bootstrapProject();
-  await createRoutes();
+  await createRoutes(routes);
 
   beforeAll(startServer);
   afterAll(teardown);

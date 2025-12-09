@@ -1,95 +1,64 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
-
 import { load } from "cheerio";
-import crc from "crc/crc32";
-import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, inject, test } from "vitest";
 
-import { routes, setupTestProject, sourceFolder } from "../setup";
+import { nestedRoutes, setupTestProject, snapshotNameFor } from "../setup";
 
+const framework = "vue";
 const ssr = inject("SSR" as never);
-
 const skip = !ssr;
 
-describe(
-  `Vue Generator - Critical CSS: { ssr: ${ssr} }`,
-  { skip },
-  async () => {
-    const routeMap = [...new Set(routes.map((e) => e.name))].map((name) => {
-      return {
-        name,
-        cssFile: `assets/${name}/base.css`,
-        css: `a[data-test="${crc(name)}"]{content:"${name}"}`,
-      };
-    });
+describe(`Vue - Critical CSS: { ssr: ${ssr} }`, { skip }, async () => {
+  const {
+    bootstrapProject,
+    startServer,
+    teardown,
+    withRouteContent,
+    createRoutes,
+  } = await setupTestProject({ framework, skip, ssr });
 
-    const {
-      bootstrapProject,
-      startServer,
-      teardown,
-      sourceFolderPath,
-      withRouteContent,
-      createRoutes,
-    } = await setupTestProject({
-      skip,
-      framework: "vue",
-      frameworkOptions: {
-        templates: routeMap.reduce(
-          (map: Record<string, string>, { name, cssFile }) => {
-            map[name] = `
-              <script setup>
-                import "${sourceFolder}/${cssFile}";
-              </script>
-              <template>
-                <div>${name}</div>
-              </template>
-            `;
-            return map;
-          },
-          {},
-        ),
-      },
-      ssr,
-    });
+  await bootstrapProject();
 
-    await bootstrapProject();
-    await createRoutes();
-
-    beforeAll(startServer);
-    afterAll(teardown);
-
-    if (ssr) {
-      for (const { cssFile, css } of routeMap) {
-        await mkdir(dirname(resolve(sourceFolderPath, cssFile)), {
-          recursive: true,
-        });
-        await writeFile(resolve(sourceFolderPath, cssFile), css, "utf8");
+  await createRoutes(nestedRoutes, async ({ name, file, cssFile }) => {
+    return () => {
+      if (file === "layout") {
+        return `
+          <script setup>
+            import "${cssFile}";
+          </script>
+          <template>
+            <div>${name} layout <router-view /></div>
+          </template>
+        `;
       }
-    }
+      return `
+        <script setup>
+          import "${cssFile}";
+        </script>
+        <template>
+          <div>${name}</div>
+        </template>
+      `;
+    };
+  });
 
-    for (const { name, params } of routes) {
-      const snapshotName = [
-        name,
-        Object.entries(params)
-          .map(([k, v]) => `${k}=${v}`)
-          .join(";") || "index",
-      ].join("/");
+  beforeAll(startServer);
+  afterAll(teardown);
 
-      it(snapshotName, async () => {
-        const route = routeMap.find((e) => e.name === name);
-        expect(route).toBeTruthy();
-        await withRouteContent(name, params, async ({ content }) => {
-          expect(content).toMatch(route?.css ?? "");
-          const $ = load(content);
-          const styles = $("style")
-            .map((_, el) => $(el).html()?.trim())
-            .get()
-            .join("\n");
-          await expect(styles).toMatchFileSnapshot(
-            `../@snapshots/css/${snapshotName}.css`,
-          );
-        });
+  for (const { name, params } of nestedRoutes.filter(
+    ({ file }) => file === "index",
+  )) {
+    const snapshotName = snapshotNameFor(name, params);
+    test(snapshotName, async () => {
+      await withRouteContent(name, params, async ({ content }) => {
+        const $ = load(content);
+        const styles = $("style")
+          .map((_, el) => $(el).html()?.trim())
+          .get()
+          .join("\n");
+        await expect(styles).toMatchFileSnapshot(
+          `../@snapshots/css/${snapshotName}.css`,
+        );
       });
-    }
-  },
-);
+    });
+  }
+});

@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
 
 import { routes, setupTestProject, sourceFolder } from "../setup";
 
+const framework = "solid";
 const ssr = inject("SSR" as never);
 
 describe(`SolidJS - Link Component: { ssr: ${ssr} }`, async () => {
@@ -40,7 +41,7 @@ describe(`SolidJS - Link Component: { ssr: ${ssr} }`, async () => {
     startServer,
     teardown,
   } = await setupTestProject({
-    framework: "solid",
+    framework,
     frameworkOptions: {
       templates: {
         navigation: navigationTemplate,
@@ -50,7 +51,7 @@ describe(`SolidJS - Link Component: { ssr: ${ssr} }`, async () => {
   });
 
   await bootstrapProject();
-  await createRoutes();
+  await createRoutes(routes);
 
   beforeAll(startServer);
   afterAll(teardown);

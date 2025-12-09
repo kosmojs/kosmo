@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
 
-import { setupTestProject } from "../setup";
+import { routes, setupTestProject } from "../setup";
 
+const framework = "react";
 const ssr = inject("SSR" as never);
 
 describe(`React Generator - Route Integration: { ssr: ${ssr} }`, async () => {
@@ -12,10 +13,10 @@ describe(`React Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     createRoutes,
     startServer,
     teardown,
-  } = await setupTestProject({ framework: "react", ssr });
+  } = await setupTestProject({ framework, ssr });
 
   await bootstrapProject();
-  await createRoutes();
+  await createRoutes(routes);
 
   beforeAll(startServer);
   afterAll(teardown);

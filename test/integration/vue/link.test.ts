@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
 
 import { routes, setupTestProject, sourceFolder } from "../setup";
 
+const framework = "vue";
 const ssr = inject("SSR" as never);
 
 describe(`Vue Generator - Link Component: { ssr: ${ssr} }`, async () => {
@@ -21,7 +22,7 @@ describe(`Vue Generator - Link Component: { ssr: ${ssr} }`, async () => {
 
   const navigationTemplate = `
     <script setup>
-    import Link from "${sourceFolder}/components/Link.vue";
+      import Link from "${sourceFolder}/components/Link.vue";
     </script>
     <template>
       <div data-testid="navigation-page">
@@ -40,7 +41,7 @@ describe(`Vue Generator - Link Component: { ssr: ${ssr} }`, async () => {
     startServer,
     teardown,
   } = await setupTestProject({
-    framework: "vue",
+    framework,
     frameworkOptions: {
       templates: {
         navigation: navigationTemplate,
@@ -50,7 +51,7 @@ describe(`Vue Generator - Link Component: { ssr: ${ssr} }`, async () => {
   });
 
   await bootstrapProject();
-  await createRoutes();
+  await createRoutes(routes);
 
   beforeAll(startServer);
   afterAll(teardown);

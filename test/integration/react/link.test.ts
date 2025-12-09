@@ -3,9 +3,10 @@ import { afterAll, beforeAll, describe, inject, it } from "vitest";
 
 import { routes, setupTestProject, sourceFolder } from "../setup";
 
+const framework = "react";
 const ssr = inject("SSR" as never);
 
-describe(`React Generator - Link Component: { ssr: ${ssr} }`, async () => {
+describe(`React - Link Component: { ssr: ${ssr} }`, async () => {
   // Generate template from test cases
   const navigationLinks = routes.map(({ id, name, params, label }) => {
     const paramsArr = Object.values(params).flat();
@@ -40,7 +41,7 @@ describe(`React Generator - Link Component: { ssr: ${ssr} }`, async () => {
     startServer,
     teardown,
   } = await setupTestProject({
-    framework: "react",
+    framework,
     frameworkOptions: {
       templates: {
         navigation: navigationTemplate,
@@ -50,7 +51,7 @@ describe(`React Generator - Link Component: { ssr: ${ssr} }`, async () => {
   });
 
   await bootstrapProject();
-  await createRoutes();
+  await createRoutes(routes);
 
   beforeAll(startServer);
   afterAll(teardown);

@@ -1,10 +1,11 @@
 import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
 
-import { setupTestProject } from "../setup";
+import { routes, setupTestProject } from "../setup";
 
+const framework = "react";
 const ssr = inject("SSR" as never);
 
-describe(`React Generator - Custom Templates: { ssr: ${ssr} }`, async () => {
+describe(`React - Custom Templates: { ssr: ${ssr} }`, async () => {
   const landingContentID = `landing-content-${Date.now()}`;
   const landingContent = `Landing Page Content: [ ${landingContentID} ]`;
   const landingTemplate = `
@@ -31,7 +32,7 @@ export default () => {
     startServer,
     teardown,
   } = await setupTestProject({
-    framework: "react",
+    framework,
     frameworkOptions: {
       templates: {
         landing: landingTemplate,
@@ -43,7 +44,7 @@ export default () => {
   });
 
   await bootstrapProject();
-  await createRoutes();
+  await createRoutes(routes);
 
   beforeAll(startServer);
   afterAll(teardown);

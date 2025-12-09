@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
+import crc from "crc/crc32";
 import got from "got";
 import { type Browser, chromium, type Page } from "playwright";
 import { build, createServer } from "vite";
@@ -13,9 +14,7 @@ import {
   type FRAMEWORK_OPTIONS,
 } from "@kosmojs/dev/cli";
 import routesFactory from "@kosmojs/dev/routes";
-import { defaults, type PageRoute } from "@kosmojs/devlib";
-
-import { nestedRoutes, routes } from "./routes";
+import { defaults, type PageRoute, pathTokensFactory } from "@kosmojs/devlib";
 
 const project = {
   name: "integration-test",
@@ -45,11 +44,13 @@ export const setupTestProject = async ({
 }) => {
   const tempDir = skip ? "" : await mkdtemp(resolve(tmpdir(), ".kosmojs-"));
   const projectRoot = resolve(tempDir, project.name);
-  const sourceFolderPath = resolve(projectRoot, sourceFolder);
 
-  const fileExt = { solid: "tsx", react: "tsx", vue: "vue" }[framework];
+  const fileExt = {
+    solid: "tsx",
+    react: "tsx",
+    vue: "vue",
+  }[framework];
 
-  let resolvedRoutes: Array<PageRoute> | undefined;
   let closeServer: () => Promise<void> | undefined;
   let browser: Browser | undefined;
   let page: Page | undefined;
@@ -61,34 +62,43 @@ export const setupTestProject = async ({
     await rm(tempDir, { recursive: true, force: true });
   };
 
-  const createRoute = async (routeName: string) => {
-    const filePath = resolve(
-      sourceFolderPath,
-      `${defaults.pagesDir}/${routeName}/index.${fileExt}`,
-    );
-    await mkdir(dirname(filePath), { recursive: true });
-    await writeFile(filePath, ""); // Empty file - generator will fill it
-  };
+  type TemplateFactory = (a: {
+    name: string;
+    file: string;
+    cssFile: string;
+    cssText: string;
+  }) => Promise<() => string>;
 
-  const createNestedRoute = async (
+  const createRoute = async (
     name: string,
     file: string,
-    templateBuilder?: (name: string, file: string) => string,
+    templateFactory?: TemplateFactory,
   ) => {
-    const path = resolve(
-      sourceFolderPath,
-      `${defaults.pagesDir}/${name}/${file}.${fileExt}`,
+    const filePath = resolve(
+      projectRoot,
+      `${sourceFolder}/${defaults.pagesDir}/${name}/${file}.${fileExt}`,
     );
-    await mkdir(dirname(path), { recursive: true });
-    await writeFile(path, templateBuilder?.(name, file) ?? "");
+
+    const cssFile = `${sourceFolder}/assets/${name}/${file}.css`;
+    const cssText = `[id="${crc(name + file)}"]{content:"${name}/${file}"}`;
+
+    await mkdir(dirname(filePath), { recursive: true });
+    await mkdir(dirname(resolve(projectRoot, cssFile)), { recursive: true });
+
+    const templateBuilder = templateFactory
+      ? await templateFactory({ file, name, cssFile, cssText })
+      : () => "";
+
+    await writeFile(filePath, templateBuilder());
+    await writeFile(resolve(projectRoot, cssFile), cssText, "utf8");
   };
 
   const createRoutePath = (
-    route: PageRoute,
+    routeName: string,
     params: Array<string | number>,
   ) => {
     const paramsClone = structuredClone(params);
-    return route.pathTokens
+    return pathTokensFactory(routeName)
       .flatMap(({ path, param }) => {
         if (param?.isRest) {
           return paramsClone;
@@ -96,7 +106,7 @@ export const setupTestProject = async ({
         if (param) {
           return paramsClone.splice(0, 1);
         }
-        return [path];
+        return path ? [path] : [];
       })
       .join("/");
   };
@@ -130,7 +140,7 @@ export const setupTestProject = async ({
   const createDevServer = async () => {
     if (ssr) {
       await build({
-        root: sourceFolderPath,
+        root: resolve(projectRoot, sourceFolder),
       });
 
       // INFO: wait for files to persist
@@ -150,7 +160,7 @@ export const setupTestProject = async ({
     }
 
     const server = await createServer({
-      root: sourceFolderPath,
+      root: resolve(projectRoot, sourceFolder),
       logLevel: "error",
     });
 
@@ -238,18 +248,9 @@ export const setupTestProject = async ({
     });
   };
 
-  const defaultContentPatternFor = (routeName: string | PageRoute) => {
-    const route =
-      typeof routeName === "string"
-        ? resolvedRoutes?.find((e) => e.name === routeName)
-        : routeName;
-
-    if (!route) {
-      throw new Error(`${routeName} route not found`);
-    }
-
+  const defaultContentPatternFor = (routeName: string) => {
     return new RegExp(
-      `Edit this page at .*${route.name.replace(/[[\]]/g, "\\$&")}.*`,
+      `Edit this page at .*${routeName.replace(/[[\]]/g, "\\$&")}.*`,
       "i",
     );
   };
@@ -266,17 +267,11 @@ export const setupTestProject = async ({
       defaultContentPattern: RegExp;
     }) => void | Promise<void>,
   ) => {
-    const route = resolvedRoutes?.find((e) => e.name === routeName);
-
-    if (!route) {
-      throw new Error(`${routeName} route not found`);
-    }
-
     const path =
       typeof paramsOrPath === "string"
         ? paramsOrPath
         : createRoutePath(
-            route,
+            routeName,
             Array.isArray(paramsOrPath)
               ? paramsOrPath.flat()
               : Object.values(paramsOrPath).flat(),
@@ -310,7 +305,7 @@ export const setupTestProject = async ({
     const data = {
       path,
       content,
-      defaultContentPattern: defaultContentPatternFor(route),
+      defaultContentPattern: defaultContentPatternFor(routeName),
     };
 
     await callback?.(data);
@@ -321,10 +316,10 @@ export const setupTestProject = async ({
   return {
     projectRoot,
     sourceFolder,
-    sourceFolderPath,
     withRouteContent,
     defaultContentPatternFor,
     bootstrapProject,
+    resolveRoutes,
     async startServer() {
       if (skip) {
         return;
@@ -335,29 +330,16 @@ export const setupTestProject = async ({
         await createBrowser(baseURL);
       }
     },
-    async createRoutes() {
-      if (skip) {
-        return;
-      }
-      for (const { name } of routes) {
-        await createRoute(name);
-      }
-      await new Promise((resolve) => setTimeout(resolve, 1_000));
-      resolvedRoutes = await resolveRoutes();
-      return resolvedRoutes;
-    },
-    async createNestedRoutes(
-      templateBuilder?: (name: string, file: string) => string,
+    async createRoutes(
+      routes: Array<{ name: string; file?: string }>,
+      templateFactory?: TemplateFactory,
     ) {
-      if (skip) {
-        return;
+      if (!skip) {
+        for (const { name, file } of routes) {
+          await createRoute(name, file || "index", templateFactory);
+        }
       }
-      for (const { name, file } of nestedRoutes) {
-        await createNestedRoute(name, file, templateBuilder);
-      }
-      await new Promise((resolve) => setTimeout(resolve, 1_000));
-      resolvedRoutes = await resolveRoutes();
-      return resolvedRoutes;
+      return routes;
     },
     async teardown() {
       await page?.close();
@@ -367,4 +349,16 @@ export const setupTestProject = async ({
       await new Promise((resolve) => setTimeout(resolve, 1_000));
     },
   };
+};
+
+export const snapshotNameFor = (
+  name: string,
+  params: Record<string, unknown>,
+) => {
+  return [
+    name,
+    Object.entries(params)
+      .map(([k, v]) => `${k}=${v}`)
+      .join(";") || "index",
+  ].join("/");
 };

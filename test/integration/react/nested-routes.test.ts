@@ -1,39 +1,39 @@
 import { load } from "cheerio";
 import { afterAll, beforeAll, describe, expect, inject, test } from "vitest";
 
-import { nestedRoutes, setupTestProject } from "../setup";
+import { nestedRoutes, setupTestProject, snapshotNameFor } from "../setup";
 
+const framework = "react";
 const ssr = inject("SSR" as never);
 
 describe(`React - Nested Routes: { ssr: ${ssr} }`, async () => {
   const {
     bootstrapProject,
     withRouteContent,
-    createNestedRoutes,
+    createRoutes,
     startServer,
     teardown,
-  } = await setupTestProject({
-    framework: "react",
-    ssr,
-  });
+  } = await setupTestProject({ framework, ssr });
 
   await bootstrapProject();
 
-  await createNestedRoutes((name, file) => {
-    if (file === "index") {
+  await createRoutes(nestedRoutes, async ({ name, file }) => {
+    return () => {
+      if (file === "index") {
+        return `
+          export default function Page() {
+            return <div>${name}</div>;
+          };
+        `;
+      }
+
       return `
-        export default function Page() {
-          return <div>${name}</div>;
+        import { Outlet } from "react-router";
+        export default function Layout(props) {
+          return <div data-layout="${name}"><Outlet /></div>;
         };
       `;
-    }
-
-    return `
-      import { Outlet } from "react-router";
-      export default function Layout(props) {
-        return <div data-layout="${name}"><Outlet /></div>;
-      };
-    `;
+    };
   });
 
   beforeAll(startServer);
@@ -42,13 +42,7 @@ describe(`React - Nested Routes: { ssr: ${ssr} }`, async () => {
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {
-    const snapshotName = [
-      name,
-      Object.entries(params)
-        .map(([k, v]) => `${k}=${v}`)
-        .join(";") || "index",
-    ].join("/");
-
+    const snapshotName = snapshotNameFor(name, params);
     test(snapshotName, async () => {
       const { content } = await withRouteContent(name, params);
       const $ = load(content);
