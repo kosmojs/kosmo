@@ -96,21 +96,12 @@ export const isRouteFile = (
     : undefined;
 };
 
-export const isPageFile = (
-  file: string,
-): { kind: "index" | "layout" } | undefined => {
-  return picomatch.matchBase(file, `**/${PAGE_INDEX_PATTERN}`)
-    ? { kind: "index" }
-    : picomatch.matchBase(file, `**/${PAGE_LAYOUT_PATTERN}`)
-      ? { kind: "layout" }
-      : undefined;
+export const isPageIndex = (file: string) => {
+  return picomatch.matchBase(file, `**/${PAGE_INDEX_PATTERN}`);
 };
 
-export const isIndexFile = (file: string) => {
-  return (
-    picomatch.matchBase(file, `**/${API_INDEX_PATTERN}`) ||
-    picomatch.matchBase(file, `**/${PAGE_INDEX_PATTERN}`)
-  );
+export const isPageLayout = (file: string) => {
+  return picomatch.matchBase(file, `**/${PAGE_LAYOUT_PATTERN}`);
 };
 
 export const createRouteEntry = (

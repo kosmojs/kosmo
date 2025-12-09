@@ -1,0 +1,32 @@
+{
+  "name": "admin/[tenant]/settings",
+  "folder": "pages",
+  "file": "admin/[tenant]/settings/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "admin",
+      "base": "admin",
+      "path": "admin",
+      "ext": ""
+    },
+    {
+      "orig": "[tenant]",
+      "base": "[tenant]",
+      "path": "[tenant]",
+      "ext": "",
+      "param": {
+        "name": "tenant",
+        "const": "tenant",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "settings",
+      "base": "settings",
+      "path": "settings",
+      "ext": ""
+    }
+  ]
+}

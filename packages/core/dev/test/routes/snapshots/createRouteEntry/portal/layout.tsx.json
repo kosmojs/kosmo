@@ -1,0 +1,13 @@
+{
+  "name": "portal",
+  "folder": "pages",
+  "file": "portal/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "portal",
+      "base": "portal",
+      "path": "portal",
+      "ext": ""
+    }
+  ]
+}

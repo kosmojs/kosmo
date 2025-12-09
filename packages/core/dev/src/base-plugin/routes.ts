@@ -7,7 +7,8 @@ import {
 import {
   apiRouteResolverFactory,
   createRouteEntry,
-  isPageFile,
+  isPageIndex,
+  isPageLayout,
   pageLayoutResolverFactory,
   pageRouteResolverFactory,
   type ResolverSignature,
@@ -39,10 +40,9 @@ export default async (pluginOptions: PluginOptionsResolved) => {
       if (entry.folder === defaults.apiDir) {
         resolvers.set(entry.fileFullpath, apiRouteResolver(entry));
       } else if (entry.folder === defaults.pagesDir) {
-        const pageFile = isPageFile(entry.file);
-        if (pageFile?.kind === "index") {
+        if (isPageIndex(entry.file)) {
           resolvers.set(entry.fileFullpath, pageRouteResolver(entry));
-        } else if (pageFile?.kind === "layout") {
+        } else if (isPageLayout(entry.file)) {
           resolvers.set(entry.fileFullpath, pageLayoutResolver(entry));
         }
       }

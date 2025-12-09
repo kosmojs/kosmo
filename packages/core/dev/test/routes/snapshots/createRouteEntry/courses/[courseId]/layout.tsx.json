@@ -1,0 +1,26 @@
+{
+  "name": "courses/[courseId]",
+  "folder": "pages",
+  "file": "courses/[courseId]/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "courses",
+      "base": "courses",
+      "path": "courses",
+      "ext": ""
+    },
+    {
+      "orig": "[courseId]",
+      "base": "[courseId]",
+      "path": "[courseId]",
+      "ext": "",
+      "param": {
+        "name": "courseId",
+        "const": "courseId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

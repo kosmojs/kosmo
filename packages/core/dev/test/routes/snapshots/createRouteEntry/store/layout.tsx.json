@@ -1,0 +1,13 @@
+{
+  "name": "store",
+  "folder": "pages",
+  "file": "store/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "store",
+      "base": "store",
+      "path": "store",
+      "ext": ""
+    }
+  ]
+}

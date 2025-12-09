@@ -1,0 +1,13 @@
+{
+  "name": "about",
+  "folder": "pages",
+  "file": "about/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "about",
+      "base": "about",
+      "path": "about",
+      "ext": ""
+    }
+  ]
+}

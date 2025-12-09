@@ -1,0 +1,13 @@
+{
+  "name": "account",
+  "folder": "pages",
+  "file": "account/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "account",
+      "base": "account",
+      "path": "account",
+      "ext": ""
+    }
+  ]
+}

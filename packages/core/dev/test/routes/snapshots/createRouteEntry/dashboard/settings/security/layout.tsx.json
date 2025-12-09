@@ -1,0 +1,25 @@
+{
+  "name": "dashboard/settings/security",
+  "folder": "pages",
+  "file": "dashboard/settings/security/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "dashboard",
+      "base": "dashboard",
+      "path": "dashboard",
+      "ext": ""
+    },
+    {
+      "orig": "settings",
+      "base": "settings",
+      "path": "settings",
+      "ext": ""
+    },
+    {
+      "orig": "security",
+      "base": "security",
+      "path": "security",
+      "ext": ""
+    }
+  ]
+}
