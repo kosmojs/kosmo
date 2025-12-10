@@ -11,6 +11,9 @@ head:
 
 **Starting your KosmoJS journey is a breeze!** ✨
 
+Begin your project with a solid foundation.
+`KosmoJS` provides a structured yet flexible starting point designed for real-world applications with multiple concerns.
+
 In just a few commands, you'll have a fully-configured Vite project with:
 - **Directory-based routing** - Folders become URLs automatically
 - **Type-safe APIs** - Runtime validation from TypeScript types (aka Runtype Validation)
@@ -576,7 +579,7 @@ That's it. The generator analyzes your routes, type definitions, and validation 
 
 You can use the generated `openapi.json` with tools like Swagger UI, Postman, or any OpenAPI-compatible client generator.
 
-[More details: OpenAPI Generator →](/openapi/intro)
+[More details: OpenAPI Generator →](/generators/openapi/intro)
 
 ## 🔐 Add Middleware
 
