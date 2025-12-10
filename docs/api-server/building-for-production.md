@@ -38,7 +38,8 @@ When you run `pnpm build`, `KosmoJS` produces:
 - Chunked and tree-shaken for minimal size
 
 **API server:**
-- Bundled Node.js application at `dist/SOURCE_FOLDER/api/index.js`
+- Bundled Node.js server at `dist/SOURCE_FOLDER/api/server.js`
+- App factory at `dist/SOURCE_FOLDER/api/app.js` - for custom deployments.
 - All routes, middleware, and dependencies bundled together
 - Ready to run with Node.js
 
@@ -46,7 +47,7 @@ When you run `pnpm build`, `KosmoJS` produces:
 
 When [SSR is enabled](/generators/solid/server-side-render#🛠%EF%B8%8F-enabling-ssr),
 the build process also generates a production-ready SSR bundle at
-`dist/SOURCE_FOLDER/ssr/index.js`. This standalone Node.js server is ready
+`dist/SOURCE_FOLDER/ssr/server.js`. This standalone Node.js server is ready
 to deploy for server-side rendering.
 
 ## 📂 Build Output Structure
@@ -55,24 +56,81 @@ to deploy for server-side rendering.
 dist/
 └── @src
     ├── api
-    │   └── index.js     # Bundled API server
+    │   ├── app.js       # App factory
+    │   └── server.js    # Bundled API server
     ├── client
     │   ├── assets/      # Scripts, Styles, Images etc.
     │   └── index.html   # Entry point
     └── ssr
-        └── index.js     # SSR Bundle (if enabled)
+        ├── app.js       # App factory (built by Vite for SSR)
+        └── server.js    # SSR Bundle
 ```
 
 ## 🚀 Running the Production Build
 
+### Using the Built-in Server
+
 Deploy the `dist/SOURCE_FOLDER` directory and run:
 
 ```bash
-node dist/@front/api/index.js
+node dist/@front/api/server.js
 ```
 
-The API server is a standard Node.js ESM module. Deploy it to any Node.js environment -
+The API server is a standalone Node.js ESM module ready to run immediately.
+
+### Custom Deployment with App Factory
+
+For more control over deployment, use the app factory at `dist/*/api/app.js`:
+
+```js
+import createApp from "./dist/@front/api/app.js";
+
+const app = createApp();
+
+// Run on any server that supports Koa
+app.listen(3000);
+```
+
+The app factory returns a Koa application instance, giving you full flexibility:
+
+**Node.js:**
+```js
+import createApp from "./dist/@front/api/app.js";
+import http from "node:http";
+
+const app = createApp();
+const server = http.createServer(app.callback());
+server.listen(3000);
+```
+
+**Deno:**
+```ts
+import createApp from "./dist/@front/api/app.js";
+
+const app = createApp();
+Deno.serve({ port: 3000 }, app.callback());
+```
+
+**Bun:**
+```ts
+import createApp from "./dist/@front/api/app.js";
+
+const app = createApp();
+Bun.serve({
+  port: 3000,
+  fetch: app.callback(),
+});
+```
+
+This pattern is particularly useful for:
+- Custom server initialization logic
+- Integration with existing Node.js applications
+- Deployment to runtimes with specific server requirements
+- Adding middleware at the server level (compression, helmet, etc.)
+
+The bundled output works on any environment that supports Koa -
 traditional servers, containers, serverless platforms, or edge runtimes.
+
 
 ## 🏗️ Building Multiple Source Folders
 
@@ -105,65 +163,16 @@ API builds use the `esbuild.json` configuration at your project root:
 - `sourcemap` - Source map type (`linked`, `inline`, `false`)
 - `logLevel` - Build verbosity (`info`, `warning`, `error`, `silent`)
 
-**Important:** The `bundle: true` option is enforced for production builds, ensuring your API is bundled into a single executable file.
+**Important:** The `bundle: true` option is enforced for production builds,
+ensuring your API is bundled into a single executable file.
 
-## 🌐 Deployment Strategies
-
-### Independent Deployment
-
-Deploy each source folder to its own environment:
-
-```sh
-# Deploy customer app
-pnpm build @front
-deploy dist/@front 🢂 app.example.com
-
-# Deploy admin panel
-pnpm build @admin
-deploy dist/@admin 🢂 admin.example.com
-```
-
-**Benefits:**
-- Scale concerns independently
-- Deploy updates without rebuilding everything
-- Different teams can own different deployments
-
-### Unified Deployment
-
-Deploy all source folders to the same server with different base URLs:
-
-```sh
-# Build everything
-pnpm build
-
-# Deploy to single server
-deploy dist/ 🢂 example.com
-```
-
-Configure nginx/caddy to route:
-- `/` 🢂 `@front` assets
-- `/admin` 🢂 `@admin` assets
-- `/api` 🢂 API server
-
-### Deployment Environments
-
-The bundled output works on:
-
-- ✅ **Traditional servers** - VPS, dedicated servers
-- ✅ **Containers** - Docker, Kubernetes
-- ✅ **Serverless** - AWS Lambda, Google Cloud Functions (with adapter)
-- ✅ **Edge runtimes** - Cloudflare Workers, Deno Deploy (with adapter)
-- ✅ **PaaS** - Heroku, Railway, Render
-
-The standard Node.js output ensures portability across platforms.
-
-## 💡 Production Best Practices
+## 💡 Best Practices
 
 **Test builds locally** before deploying:
 
 ```bash
 pnpm build
-node dist/SOURCE_FOLDER/api/index.js -p 3000
+node dist/SOURCE_FOLDER/api/server.js -p 3000
 # Test at localhost:3000
 ```
 
@@ -189,7 +198,7 @@ Source maps help debug production errors but increase bundle size slightly. Cons
 
 ```sh
 pnpm build
-# Check dist/SOURCE_FOLDER/api/index.js size
+# Check dist/SOURCE_FOLDER/api/server.js size
 ```
 
 If the bundle grows significantly, review dependencies and consider marking some as external.
@@ -205,4 +214,3 @@ If the bundle grows significantly, review dependencies and consider marking some
 - Verify environment variables are set
 - Check Node.js version matches `target` in `esbuild.json`
 - Test database/service connections
-
