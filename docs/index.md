@@ -11,7 +11,7 @@ hero:
         <span>Directory-based routing.</span>
         <span>Runtime validation.</span>
         <span>Generated fetch clients.</span>
-        <span>Any framework.</span>
+        <span>Multiple frameworks.</span>
     </span>
   image:
     src: /KosmoJS.svg
