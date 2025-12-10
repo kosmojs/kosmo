@@ -453,8 +453,12 @@ export default defineConfig({
                 },
                 {
                   text: "🔹 Slot Composition",
-                  docFooterText: "🔹 Middleware Composition",
                   link: "/api-server/use-middleware/slot-composition",
+                },
+                {
+                  text: "🔹 Route Level Middleware",
+                  docFooterText: "🔹 Route Level Middleware",
+                  link: "/api-server/use-middleware/route-level-middleware",
                 },
               ],
             },
