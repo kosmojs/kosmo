@@ -14,7 +14,7 @@ head:
 Begin your project with a solid foundation.
 `KosmoJS` provides a structured yet flexible starting point designed for real-world applications with multiple concerns.
 
-In just a few commands, you'll have a fully-configured Vite project with:
+In just a few commands, you'll have a fully-configured `Vite` project with:
 - **Directory-based routing** - Folders become URLs automatically
 - **Type-safe APIs** - Runtime validation from TypeScript types (aka Runtype Validation)
 - **Auto-generated fetch clients** - Typed client-side validation before requests
@@ -217,7 +217,7 @@ type User = {
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {
-    const { id } = ctx.params;
+    const { id } = ctx.params; // [!code focus:10]
 
     // In a real app, this would query your database
     const user: User = {
@@ -255,7 +255,12 @@ The route works, but there's no validation yet. Let's fix that.
 
 ## 🛡️ Add Runtime Validation
 
-Here's where it gets interesting. Install the `TypeBox` generator:
+Here's where it gets interesting - `KosmoJS` automatically converts your `TypeScript` types
+into high-performance runtime validators.
+It uses the state-of-the-art [TypeBox](https://github.com/sinclairzx81/typebox)
+library to convert types into JSON Schema validators - no magic, just solid tooling.
+
+Install the `TypeBox` generator:
 
 ::: code-group
 ```sh [pnpm]
@@ -295,6 +300,9 @@ export default {
 Once configured, you can add validation to your routes through type arguments.
 Let's explore each type of validation step by step.
 
+> The dev server should restart automatically, but after adding new generators
+it's recommended to manually stop and restart it with `pnpm dev`
+
 ### Parameter Validation
 
 Route parameters come from the URL path itself (like the `[id]` in `/api/users/123`).
@@ -329,10 +337,12 @@ Each position corresponds to a route parameter in order.
 
 The validated parameter is available through `ctx.typedParams.id` (not `ctx.params.id`).
 
-You can refine parameters further using `TRefine`(globally available, no need to import):
+You can refine parameters further by using `TRefine`(globally available, no need to import):
 
 ```ts
-defineRoute<[TRefine<number, { minimum: 1, multipleOf: 1 }>]>(...)
+defineRoute<[
+  TRefine<number, { minimum: 1, multipleOf: 1 }>
+]>(...)
 ```
 
 This ensures the ID is not only a number, but a positive integer.
@@ -357,7 +367,7 @@ type CreateUserPayload = {
 }
 
 type User = {
-  id: string;
+  id: number;
   name: string;
   email: string;
   age?: number;
@@ -369,7 +379,7 @@ export default defineRoute(({ POST }) => [
     const { name, email, age } = ctx.payload;
 
     const newUser: User = {
-      id: crypto.randomUUID(),
+      id: 1,
       name,
       email,
       age,
@@ -394,11 +404,14 @@ This catches bugs where you accidentally return incomplete or malformed data:
 
 ```ts [api/users/index.ts]
 export default defineRoute(({ POST }) => [
-  POST<CreateUserPayload, User>(async (ctx) => { // [!code hl]
+  POST<
+    CreateUserPayload,
+    User // [!code hl]
+  >(async (ctx) => {
     const { name, email, age } = ctx.payload;
 
     const newUser: User = {
-      id: crypto.randomUUID(),
+      id: 1,
       name,
       email,
       age,
@@ -417,7 +430,10 @@ For our GET endpoint:
 
 ```ts [api/users/[id]/index.ts]
 export default defineRoute<[number]>(({ GET }) => [
-  GET<never, User>(async (ctx) => { // [!code hl]
+  GET< // [!code focus:4]
+    never,
+    User
+  >(async (ctx) => {
     const { id } = ctx.typedParams;
 
     const user: User = {
@@ -434,13 +450,16 @@ export default defineRoute<[number]>(({ GET }) => [
 We use `never` for the first argument because here GET request don't have a payload we want to validate
 (though you could validate query parameters if needed).
 
-[More details: Runtime Validation →](/validation/intro)
+[More details: Runtype Validation →](/validation/intro)
 
 ## ⇆ Generated Fetch Clients
 
 Here's the continuation of powerful validation pattern:
 `KosmoJS` generates fully-typed fetch clients
 that validate on the **client side** before sending requests.
+
+Fetch clients use the exact same high-performance validation schemas as your server.
+No shifts, no drifts - client-side validation produces identical results to server-side validation.
 
 Import the generated fetch client for type-safe API calls with built-in validation.
 
@@ -451,11 +470,11 @@ Import the generated fetch client for type-safe API calls with built-in validati
 ```tsx [SolidJS]
 import { useParams } from "@solidjs/router";
 import { createAsync } from "@solidjs/router";
-import { GET } from "@front/{api}/users/[id]/fetch";
+import { GET } from "@front/{api}/users/[id]/fetch"; // [!code hl]
 
 export default function UserPage() {
   const params = useParams();
-  const user = createAsync(() => GET([params.id])); // Tuple matches route params
+  const user = createAsync(() => GET([params.id])); // [!code hl]
   // ...
 }
 ```
@@ -463,14 +482,14 @@ export default function UserPage() {
 ```tsx [React]
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { GET } from "@front/{api}/users/[id]/fetch";
+import { GET } from "@front/{api}/users/[id]/fetch"; // [!code hl]
 
 export default function UserPage() {
   const params = useParams();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    GET([params.id]).then(setUser);
+    GET([params.id]).then(setUser); // [!code hl]
   }, [params.id]);
 
   // ...
@@ -481,13 +500,13 @@ export default function UserPage() {
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { GET } from "@front/{api}/users/[id]/fetch";
+import { GET } from "@front/{api}/users/[id]/fetch"; // [!code hl]
 
 const route = useRoute();
 const user = ref(null);
 
 onMounted(async () => {
-  user.value = await GET([route.params.id]);
+  user.value = await GET([route.params.id]); // [!code hl]
 });
 </script>
 
@@ -526,7 +545,11 @@ Invalid requests never reach your server, saving bandwidth and giving instant fe
 
 ## 📋 Automatic OpenAPI Documentation
 
-Here's a bonus: `KosmoJS` can generate complete OpenAPI 3.1 specifications from your validated routes.
+OpenAPI (formerly Swagger) is the industry standard for documenting REST APIs.
+It provides machine-readable API specifications that power interactive documentation,
+client code generators, and testing tools.
+
+`KosmoJS` can automatically generate complete OpenAPI 3.1 specifications for your API.
 
 Install the OpenAPI generator:
 
@@ -570,6 +593,9 @@ export default {
 ```
 
 That's it. The generator analyzes your routes, type definitions, and validation schemas to produce a complete OpenAPI spec.
+
+> The dev server should restart automatically, but after adding new generators
+it's recommended to manually stop and restart it with `pnpm dev`
 
 **What gets generated:**
 - All route paths with HTTP methods
@@ -646,13 +672,13 @@ import { use } from "@kosmojs/api";
 
 export default use([
   async (ctx, next) => {
-    const token = ctx.headers.authorization?.replace("Bearer ", ""); // [!code ++]
-    ctx.assert(token, 401, "Authentication required"); // [!code ++]
+    const token = ctx.headers.authorization?.replace("Bearer ", ""); // [!code focus:8]
+    ctx.assert(token, 401, "Authentication required");
 
-    const user = await verifyToken(token); // [!code ++]
-    ctx.assert(user, 401, "Invalid token"); // [!code ++]
+    const user = await verifyToken(token);
+    ctx.assert(user, 401, "Invalid token");
 
-    ctx.state.user = user; // Available in all child routes // [!code ++]
+    ctx.state.user = user; // Available in all child routes
     return next();
   },
 ]);
@@ -667,9 +693,21 @@ Parent folders wrap child routes automatically.
 
 ## 🎨 Build Client Pages
 
-Now let's create the frontend. Pages live in the `pages/` folder and follow the same directory-based routing as API routes.
+Now let's create the frontend.
+Pages live in the `pages/` folder and follow the same directory-based routing as API routes.
 
-Create users page:
+The `pages/` folder is where your client-side UI lives.
+Each `index.tsx` (React/SolidJS) or `index.vue` (Vue) file contains a page component
+written in whichever framework you selected during source folder creation.
+
+`KosmoJS` enforces strict architectural boundaries:
+client code never runs on your API server, and API code never runs in the browser.
+
+> Even in SSR mode, your client code runs on a separate server
+(different process, different port, potentially different machine) -
+your API server stays lean and focused.
+
+Create users page - `pages/users/index.tsx` (or `.vue`):
 
 ```txt
 @front/
@@ -679,6 +717,8 @@ Create users page:
 ```
 
 `KosmoJS` detects the new file and generates framework-specific boilerplate.
+
+> Some editors show it immediately; others need you to briefly refocus the file.
 
 **Key points:**
 
@@ -760,7 +800,16 @@ export default {
 }
 ```
 
-`KosmoJS` creates `entry/server.ts` based on selected framework:
+> The dev server should restart automatically, but after adding new generators
+it's recommended to manually stop and restart it with `pnpm dev`
+
+`KosmoJS` creates `entry/server.ts` - your SSR orchestration file.
+
+This is where you control the server-side rendering process.
+By default, it uses `renderToString` which renders the entire page before sending it.
+
+For more advanced scenarios, you can switch to `renderToStream` to enable streaming SSR,
+where the browser receives and displays content progressively as it's rendered.
 
 ::: code-group
 ```ts [SolidJS]
@@ -794,19 +843,24 @@ export default {
 
 ```ts [React]
 import { renderToString } from "react-dom/server";
-import { routes } from "@src/{react}/server";
+
+import { routeStackBuilder } from "@src/{react}/server";
 import App from "../App";
 import createRouter from "../router";
+
+const routes = routeStackBuilder({ withPreload: false });
 
 export default {
   async factory(url) {
     const router = await createRouter(App, routes, { url });
     return {
-      renderToString({ criticalCss }) {
+      async renderToString({ criticalCss }) {
         const head = criticalCss
           .map(({ text }) => `<style>${text}</style>`)
           .join("\n");
+
         const html = renderToString(router);
+
         return { head, html };
       },
     };
@@ -818,9 +872,11 @@ export default {
 import { createSSRApp } from "vue";
 import { renderToString } from "vue/server-renderer";
 
-import { routes } from "@src/{vue}/server";
+import { routeStackBuilder } from "@src/{vue}/server";
 import App from "../App.vue";
 import createRouter from "../router";
+
+const routes = routeStackBuilder();
 
 export default {
   async factory(url) {
@@ -850,14 +906,24 @@ The critical CSS optimization is automatic:
 
 Your pages render instantly with styled content - no flash of unstyled content, no render-blocking CSS.
 
-Build and run:
+### Build and run:
 
 ```sh
 pnpm build
-node dist/@front/ssr/server.js -p 4001
+node dist/@src/ssr/server.js -p 4001
 ```
 
 Your app is now server-rendered with optimized CSS delivery.
+
+**Worth Noting:** During build, `KosmoJS` bundles two separate servers:
+- API server for handling API requests
+- SSR server for rendering your UI
+
+You can deploy them separately, to different machines, scale them independently,
+or run them side-by-side.
+
+Your API server stays clean and dedicated to handling API requests,
+while the SSR server is dedicated entirely to rendering your app.
 
 More details on SSR:
 [SolidJS](/generators/solid/server-side-render)
@@ -868,19 +934,23 @@ More details on SSR:
 
 As your app grows, add more source folders for different concerns:
 
+Add `admin` source folder - `Vue` framework, no SSR:
+
 ::: code-group
 ```sh [Interactive]
 pnpm +folder
 # name: @admin
 # baseurl: /admin
 # port: 4001
-# framework: React
+# framework: vue
 ```
 
 ```sh [Non-interactive]
-pnpm +folder --name @admin --base /admin --port 4001 --framework react
+pnpm +folder --name @admin --base /admin --port 4001 --framework vue
 ```
 :::
+
+Add `marketing` source folder - `SolidJS` framework, with SSR:
 
 ::: code-group
 ```sh [Interactive]
@@ -888,7 +958,8 @@ pnpm +folder
 # name: @marketing
 # baseurl: /
 # port: 4002
-# framework: SolidJS
+# framework: solid
+# SSR: enabled
 ```
 
 ```sh [Non-interactive]
