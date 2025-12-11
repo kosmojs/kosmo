@@ -33,13 +33,14 @@ Here is the default implementation:
 ```ts [entry/client.ts]
 import { createApp, createSSRApp } from "vue";
 
-import { routes, shouldHydrate } from "@src/{vue}/client";
+import { routeStackBuilder, shouldHydrate } from "@src/{vue}/client";
 import App from "../App.vue";
 import createRouter from "../router";
 
 const root = document.getElementById("app");
 
 if (root) {
+  const routes = routeStackBuilder();
   if (shouldHydrate) {
     const app = createSSRApp(App);
     await createRouter(app, routes);
@@ -112,9 +113,11 @@ implementation:
 import { createSSRApp } from "vue";
 import { renderToString } from "vue/server-renderer";
 
-import { routes } from "@src/{vue}/server";
+import { routeStackBuilder } from "@src/{vue}/server";
 import App from "../App.vue";
 import createRouter from "../router";
+
+const routes = routeStackBuilder();
 
 export default {
   async factory(url) {

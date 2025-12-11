@@ -16,7 +16,7 @@ and maintain type safety throughout your request-response cycle.
 This system builds on Koa's middleware architecture
 while adding `KosmoJS`-specific enhancements for routing, validation, and type inference.
 
-## ⇿ Basic Endpoint Structure
+## ⇆ Basic Endpoint Structure
 
 Every API endpoint must export a route definition as its default export.
 You create this definition using the `defineRoute` function,
@@ -76,7 +76,7 @@ If a request comes in for a method you haven't defined,
 The available method builders are HEAD, OPTIONS, GET, POST, PUT, PATCH, and DELETE,
 covering all the standard HTTP methods you'll typically need in a REST API.
 
-## ⚠️ Error Handling
+## 🚧 Error Handling
 
 `KosmoJS` uses Koa's built-in error handling system, which provides a clean and flexible way to handle errors in your API endpoints.
 

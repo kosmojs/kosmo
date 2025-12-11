@@ -25,15 +25,16 @@ client-side rendering:
 ```tsx [entry/client.tsx]
 import { hydrateRoot, createRoot } from "react-dom/client";
 
-import { routes, shouldHydrate } from "@src/{react}/client";
+import { routeStackBuilder, shouldHydrate } from "@src/{react}/client";
 import App from "../App";
 import createRouter from "../router";
 
 const root = document.getElementById("app");
 
 if (root) {
+  const routes = routeStackBuilder({ withPreload: true });
   const router = await createRouter(App, routes);
-  if (shouldHydrate) {
+  if (shouldHydrate()) {
     hydrateRoot(root, router);
   } else {
     createRoot(root).render(router);
@@ -100,19 +101,24 @@ The SSR generator creates `entry/server.ts` with a default server rendering impl
 
 ```ts [entry/server.ts]
 import { renderToString } from "react-dom/server";
-import { routes } from "@src/{react}/server";
+
+import { routeStackBuilder } from "@src/{react}/server";
 import App from "../App";
 import createRouter from "../router";
+
+const routes = routeStackBuilder({ withPreload: false });
 
 export default {
   async factory(url) {
     const router = await createRouter(App, routes, { url });
     return {
-      renderToString({ criticalCss }) {
+      async renderToString({ criticalCss }) {
         const head = criticalCss
           .map(({ text }) => `<style>${text}</style>`)
           .join("\n");
+
         const html = renderToString(router);
+
         return { head, html };
       },
     };
