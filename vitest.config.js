@@ -7,7 +7,7 @@ const setupFactory = (name, setup) => {
     extends: true,
     test: {
       name,
-      hookTimeout: 30_000,
+      hookTimeout: 60_000,
       include: [`packages/${name}/test/**/*.test.ts`],
       alias: {
         "~": resolve(import.meta.dirname, "packages"),
@@ -63,12 +63,15 @@ export default defineConfig({
       setupFactory("generators/ssr-generator"),
 
       setupFactory("integration:csr", {
-        include: ["test/integration/**/*.test.ts"],
+        include: ["test/integration/{react,solid,vue}/*.test.ts"],
         fileParallelism: false,
+        provide: {
+          CSR: "true",
+        },
       }),
+
       setupFactory("integration:ssr", {
-        include: ["test/integration/**/*.test.ts"],
-        fileParallelism: false,
+        include: ["test/integration/{react,solid,vue}/*.test.ts"],
         provide: {
           SSR: "true",
         },

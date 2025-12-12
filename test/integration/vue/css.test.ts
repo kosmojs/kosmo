@@ -1,24 +1,28 @@
 import { load } from "cheerio";
-import { afterAll, beforeAll, describe, expect, inject, test } from "vitest";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 import { nestedRoutes, setupTestProject, snapshotNameFor } from "../setup";
 
-const framework = "vue";
-const ssr = inject("SSR" as never);
-const skip = !ssr;
+const {
+  skip,
+  bootstrapProject,
+  startServer,
+  teardown,
+  withPageContent,
+  createPageRoutes,
+} = await setupTestProject({
+  framework: "vue",
+  // skip if not SSR mode
+  skip: ({ ssr }) => !ssr,
+});
 
-describe(`Vue - Critical CSS: { ssr: ${ssr} }`, { skip }, async () => {
-  const {
-    bootstrapProject,
-    startServer,
-    teardown,
-    withRouteContent,
-    createRoutes,
-  } = await setupTestProject({ framework, skip, ssr });
+beforeAll(startServer);
+afterAll(teardown);
 
+describe("Vue - Critical CSS", { skip }, async () => {
   await bootstrapProject();
 
-  await createRoutes(nestedRoutes, async ({ name, file, cssFile }) => {
+  await createPageRoutes(nestedRoutes, async ({ name, file, cssFile }) => {
     return () => {
       if (file === "layout") {
         return `
@@ -41,15 +45,12 @@ describe(`Vue - Critical CSS: { ssr: ${ssr} }`, { skip }, async () => {
     };
   });
 
-  beforeAll(startServer);
-  afterAll(teardown);
-
   for (const { name, params } of nestedRoutes.filter(
     ({ file }) => file === "index",
   )) {
     const snapshotName = snapshotNameFor(name, params);
     test(snapshotName, async () => {
-      await withRouteContent(name, params, async ({ content }) => {
+      await withPageContent(name, params, async ({ content }) => {
         const $ = load(content);
         const styles = $("style")
           .map((_, el) => $(el).html()?.trim())

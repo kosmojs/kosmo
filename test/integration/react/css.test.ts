@@ -1,66 +1,63 @@
 import { load } from "cheerio";
-import { afterAll, beforeAll, describe, expect, inject, test } from "vitest";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 import { nestedRoutes, setupTestProject, snapshotNameFor } from "../setup";
 
-const framework = "react";
-const ssr = inject("SSR" as never);
-const skip = !ssr;
+const {
+  skip,
+  bootstrapProject,
+  withPageContent,
+  createPageRoutes,
+  startServer,
+  teardown,
+} = await setupTestProject({
+  framework: "react",
+  // skip if not SSR mode
+  skip: ({ ssr }) => !ssr,
+});
 
-describe(
-  `React Generator - Critical CSS: { ssr: ${ssr} }`,
-  { skip },
-  async () => {
-    const {
-      bootstrapProject,
-      withRouteContent,
-      createRoutes,
-      startServer,
-      teardown,
-    } = await setupTestProject({ framework, skip, ssr });
+beforeAll(startServer);
+afterAll(teardown);
 
-    await bootstrapProject();
+describe("React - Critical CSS", { skip }, async () => {
+  await bootstrapProject();
 
-    await createRoutes(nestedRoutes, async ({ name, file, cssFile }) => {
-      return () => {
-        if (file === "layout") {
-          return `
-            import { Outlet } from "react-router";
-            import "${cssFile}";
-            export default () => {
-              return <div>${name} layout <Outlet /></div>;
-            }
-          `;
-        }
-
+  await createPageRoutes(nestedRoutes, async ({ name, file, cssFile }) => {
+    return () => {
+      if (file === "layout") {
         return `
+          import { Outlet } from "react-router";
           import "${cssFile}";
           export default () => {
-            return <div>${name}</div>;
+            return <div>${name} layout <Outlet /></div>;
           }
         `;
-      };
-    });
+      }
 
-    beforeAll(startServer);
-    afterAll(teardown);
+      return `
+        import "${cssFile}";
+        export default () => {
+          return <div>${name}</div>;
+        }
+      `;
+    };
+  });
 
-    for (const { name, params } of nestedRoutes.filter(
-      ({ file }) => file === "index",
-    )) {
-      const snapshotName = snapshotNameFor(name, params);
-      test(snapshotName, async () => {
-        await withRouteContent(name, params, async ({ content }) => {
-          const $ = load(content);
-          const styles = $("style")
-            .map((_, el) => $(el).html()?.trim())
-            .get()
-            .join("\n");
-          await expect(styles).toMatchFileSnapshot(
-            `../@snapshots/css/${snapshotName}.css`,
-          );
-        });
+  for (const { name, params } of nestedRoutes.filter(
+    ({ file }) => file === "index",
+  )) {
+    const snapshotName = snapshotNameFor(name, params);
+    test(snapshotName, async () => {
+      await withPageContent(name, params, async ({ content }) => {
+        const $ = load(content);
+        const styles = $("style")
+          .map((_, el) => $(el).html()?.trim())
+          .get()
+          .join("\n");
+        await expect(styles).toMatchFileSnapshot(
+          `../@snapshots/css/${snapshotName}.css`,
+        );
       });
-    }
-  },
-);
+    });
+  }
+});

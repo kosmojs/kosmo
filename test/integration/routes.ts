@@ -775,3 +775,14 @@ export const nestedRoutes = [
     },
   },
 ];
+
+export const apiRoutes: Array<{
+  name: string;
+  file: "index" | "use";
+  params: Record<string, unknown>;
+}> = nestedRoutes.map(({ file, ...route }) => {
+  return {
+    ...route,
+    file: file === "layout" ? "use" : file,
+  };
+});

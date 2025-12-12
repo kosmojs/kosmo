@@ -1,23 +1,23 @@
 import { load } from "cheerio";
-import { afterAll, beforeAll, describe, expect, inject, test } from "vitest";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 import { nestedRoutes, setupTestProject, snapshotNameFor } from "../setup";
 
-const framework = "react";
-const ssr = inject("SSR" as never);
+const {
+  bootstrapProject,
+  withPageContent,
+  createPageRoutes,
+  startServer,
+  teardown,
+} = await setupTestProject({ framework: "react" });
 
-describe(`React - Nested Routes: { ssr: ${ssr} }`, async () => {
-  const {
-    bootstrapProject,
-    withRouteContent,
-    createRoutes,
-    startServer,
-    teardown,
-  } = await setupTestProject({ framework, ssr });
+beforeAll(startServer);
+afterAll(teardown);
 
+describe("React - Nested Routes", async () => {
   await bootstrapProject();
 
-  await createRoutes(nestedRoutes, async ({ name, file }) => {
+  await createPageRoutes(nestedRoutes, async ({ name, file }) => {
     return () => {
       if (file === "index") {
         return `
@@ -36,15 +36,12 @@ describe(`React - Nested Routes: { ssr: ${ssr} }`, async () => {
     };
   });
 
-  beforeAll(startServer);
-  afterAll(teardown);
-
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {
     const snapshotName = snapshotNameFor(name, params);
     test(snapshotName, async () => {
-      const { content } = await withRouteContent(name, params);
+      const { content } = await withPageContent(name, params);
       const $ = load(content);
       await expect(
         $("#app")

@@ -1,57 +1,53 @@
-import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { routes, setupTestProject } from "../setup";
 
-const framework = "solid";
-const ssr = inject("SSR" as never);
-
-describe(`SolidJS - Custom Templates: { ssr: ${ssr} }`, async () => {
-  const landingContentID = `landing-content-${Date.now()}`;
-  const landingContent = `Landing Page Content: [ ${landingContentID} ]`;
-  const landingTemplate = `
+const landingContentID = `landing-content-${Date.now()}`;
+const landingContent = `Landing Page Content: [ ${landingContentID} ]`;
+const landingTemplate = `
 export default () => {
   return (
     <div data-testid="${landingContentID}">${landingContent}</div>
   );
 }`;
 
-  const marketingContentID = `marketing-content-${Date.now()}`;
-  const marketingContent = `Marketing Page Content: [ ${marketingContentID} ]`;
-  const marketingTemplate = `
+const marketingContentID = `marketing-content-${Date.now()}`;
+const marketingContent = `Marketing Page Content: [ ${marketingContentID} ]`;
+const marketingTemplate = `
 export default () => {
   return (
     <div data-testid="${marketingContentID}">${marketingContent}</div>
   );
 }`;
 
-  const {
-    bootstrapProject,
-    withRouteContent,
-    defaultContentPatternFor,
-    createRoutes,
-    startServer,
-    teardown,
-  } = await setupTestProject({
-    framework,
-    frameworkOptions: {
-      templates: {
-        landing: landingTemplate,
-        "landing/**/*": landingTemplate,
-        "marketing/**/*": marketingTemplate,
-      },
+const {
+  bootstrapProject,
+  withPageContent,
+  defaultContentPatternFor,
+  createPageRoutes,
+  startServer,
+  teardown,
+} = await setupTestProject({
+  framework: "solid",
+  frameworkOptions: {
+    templates: {
+      landing: landingTemplate,
+      "landing/**/*": landingTemplate,
+      "marketing/**/*": marketingTemplate,
     },
-    ssr,
-  });
+  },
+});
 
+beforeAll(startServer);
+afterAll(teardown);
+
+describe("SolidJS - Custom Templates", async () => {
   await bootstrapProject();
-  await createRoutes(routes);
-
-  beforeAll(startServer);
-  afterAll(teardown);
+  await createPageRoutes(routes);
 
   describe("Pattern Matching", () => {
     it("should use custom template for matching route pattern", async () => {
-      await withRouteContent("landing", [], ({ content }) => {
+      await withPageContent("landing", [], ({ content }) => {
         expect(content).toMatch(landingContent);
         expect(content, content).toMatch(`data-testid="${landingContentID}"`);
         expect(content).not.toMatch(defaultContentPatternFor("landing"));
@@ -59,27 +55,23 @@ export default () => {
     });
 
     it("should use custom template for nested matching route", async () => {
-      await withRouteContent("landing/about", [], ({ content }) => {
+      await withPageContent("landing/about", [], ({ content }) => {
         expect(content).toMatch(landingContent);
         expect(content).not.toMatch(defaultContentPatternFor("landing/about"));
       });
     });
 
     it("should use custom template for glob pattern match", async () => {
-      await withRouteContent(
-        "marketing/campaigns/summer",
-        [],
-        ({ content }) => {
-          expect(content).toMatch(marketingContent);
-          expect(content).not.toMatch(
-            defaultContentPatternFor("marketing/campaigns/summer"),
-          );
-        },
-      );
+      await withPageContent("marketing/campaigns/summer", [], ({ content }) => {
+        expect(content).toMatch(marketingContent);
+        expect(content).not.toMatch(
+          defaultContentPatternFor("marketing/campaigns/summer"),
+        );
+      });
     });
 
     it("should use default template for non-matching route", async () => {
-      await withRouteContent(
+      await withPageContent(
         "products/list",
         [],
         ({ content, defaultContentPattern }) => {
@@ -93,19 +85,19 @@ export default () => {
 
   describe("Dynamic Routes with Custom Templates", () => {
     it("should apply custom template to dynamic routes", async () => {
-      await withRouteContent("landing/[slug]", ["product-a"], ({ content }) => {
+      await withPageContent("landing/[slug]", ["product-a"], ({ content }) => {
         expect(content).toMatch(landingContent);
       });
     });
 
     it("should apply custom template to routes with optional params", async () => {
       // Without optional param
-      await withRouteContent("landing/search/[[query]]", [], ({ content }) => {
+      await withPageContent("landing/search/[[query]]", [], ({ content }) => {
         expect(content).toMatch(landingContent);
       });
 
       // With optional param
-      await withRouteContent(
+      await withPageContent(
         "landing/search/[[query]]",
         ["shoes"],
         ({ content }) => {
@@ -115,7 +107,7 @@ export default () => {
     });
 
     it("should apply custom template to routes with rest params", async () => {
-      await withRouteContent(
+      await withPageContent(
         "landing/docs/[...path]",
         ["guide", "getting-started"],
         ({ content }) => {

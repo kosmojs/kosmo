@@ -1,29 +1,26 @@
-import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { routes, setupTestProject } from "../setup";
 
-const framework = "vue";
-const ssr = inject("SSR" as never);
+const {
+  bootstrapProject,
+  withPageContent,
+  defaultContentPatternFor,
+  createPageRoutes,
+  startServer,
+  teardown,
+} = await setupTestProject({ framework: "vue" });
 
-describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
-  const {
-    bootstrapProject,
-    withRouteContent,
-    defaultContentPatternFor,
-    createRoutes,
-    startServer,
-    teardown,
-  } = await setupTestProject({ framework, ssr });
+beforeAll(startServer);
+afterAll(teardown);
 
+describe("Vue - Routes", async () => {
   await bootstrapProject();
-  await createRoutes(routes);
-
-  beforeAll(startServer);
-  afterAll(teardown);
+  await createPageRoutes(routes);
 
   describe("Static Routes", () => {
     it("should render nested static route with default template", async () => {
-      await withRouteContent(
+      await withPageContent(
         "about",
         [],
         ({ path, content, defaultContentPattern }) => {
@@ -34,7 +31,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should render deeply nested static route with default template", async () => {
-      await withRouteContent(
+      await withPageContent(
         "blog/posts",
         [],
         ({ path, content, defaultContentPattern }) => {
@@ -45,7 +42,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should render static route with extension", async () => {
-      await withRouteContent(
+      await withPageContent(
         "blog/index.html",
         [],
         ({ path, content, defaultContentPattern }) => {
@@ -58,7 +55,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
 
   describe("Required Parameters", () => {
     it("should render route with single required parameter", async () => {
-      await withRouteContent(
+      await withPageContent(
         "users/[id]",
         ["123"],
         ({ path, content, defaultContentPattern }) => {
@@ -69,7 +66,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should render route with multiple required parameters", async () => {
-      await withRouteContent(
+      await withPageContent(
         "posts/[userId]/comments/[commentId]",
         ["456", "789"],
         ({ path, content, defaultContentPattern }) => {
@@ -80,7 +77,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should handle numeric parameter values", async () => {
-      await withRouteContent(
+      await withPageContent(
         "users/[id]",
         ["999"],
         ({ path, content, defaultContentPattern }) => {
@@ -91,7 +88,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should handle string parameter values", async () => {
-      await withRouteContent(
+      await withPageContent(
         "users/[id]",
         ["john-doe"],
         ({ path, content, defaultContentPattern }) => {
@@ -104,7 +101,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
 
   describe("Optional Parameters", () => {
     it("should render route without optional parameter", async () => {
-      await withRouteContent(
+      await withPageContent(
         "products/[[category]]",
         [],
         ({ path, content, defaultContentPattern }) => {
@@ -115,7 +112,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should render route with optional parameter provided", async () => {
-      await withRouteContent(
+      await withPageContent(
         "products/[[category]]",
         ["electronics"],
         ({ path, content, defaultContentPattern }) => {
@@ -127,7 +124,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
 
     it("should handle multiple optional parameters", async () => {
       // With first parameter only
-      await withRouteContent(
+      await withPageContent(
         "search/[[query]]/[[page]]",
         ["laptops"],
         ({ path, content, defaultContentPattern }) => {
@@ -137,7 +134,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
       );
 
       // With both parameters
-      await withRouteContent(
+      await withPageContent(
         "search/[[query]]/[[page]]",
         ["laptops", "2"],
         ({ path, content, defaultContentPattern }) => {
@@ -150,7 +147,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
 
   describe("Rest Parameters", () => {
     it("should render route with rest parameter - single segment", async () => {
-      await withRouteContent(
+      await withPageContent(
         "docs/[...path]",
         ["getting-started"],
         ({ path, content, defaultContentPattern }) => {
@@ -161,7 +158,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should render route with rest parameter - multiple segments", async () => {
-      await withRouteContent(
+      await withPageContent(
         "docs/[...path]",
         ["api", "reference", "types"],
         ({ path, content, defaultContentPattern }) => {
@@ -172,7 +169,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should render route with rest parameter - deeply nested", async () => {
-      await withRouteContent(
+      await withPageContent(
         "docs/[...path]",
         ["guides", "deployment", "production", "best-practices"],
         ({ path, content, defaultContentPattern }) => {
@@ -183,7 +180,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should render without trailing slash", async () => {
-      await withRouteContent(
+      await withPageContent(
         "docs/[...path]",
         "docs",
         ({ path, content, defaultContentPattern }) => {
@@ -194,7 +191,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should render with trailing slash", async () => {
-      await withRouteContent(
+      await withPageContent(
         "docs/[...path]",
         "docs/",
         ({ path, content, defaultContentPattern }) => {
@@ -208,7 +205,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
   describe("Combined Parameters", () => {
     it("should handle required + optional parameters", async () => {
       // Without optional
-      await withRouteContent(
+      await withPageContent(
         "shop/[category]/[[subcategory]]",
         ["electronics"],
         ({ path, content, defaultContentPattern }) => {
@@ -218,7 +215,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
       );
 
       // With optional
-      await withRouteContent(
+      await withPageContent(
         "shop/[category]/[[subcategory]]",
         ["electronics", "laptops"],
         ({ path, content, defaultContentPattern }) => {
@@ -229,7 +226,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should handle required + rest parameters", async () => {
-      await withRouteContent(
+      await withPageContent(
         "files/[bucket]/[...path]",
         ["my-bucket", "folder", "subfolder", "file.txt"],
         ({ path, content, defaultContentPattern }) => {
@@ -241,7 +238,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
 
     it("should handle complex parameter combinations", async () => {
       // With optional
-      await withRouteContent(
+      await withPageContent(
         "admin/[tenant]/resources/[[type]]/[...path]",
         ["acme", "users", "active", "list"],
         ({ path, content, defaultContentPattern }) => {
@@ -251,7 +248,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
       );
 
       // Without optional (skipped optional param)
-      await withRouteContent(
+      await withPageContent(
         "admin/[tenant]/resources/[[type]]/[...path]",
         ["acme", "active", "list"],
         ({ path, content, defaultContentPattern }) => {
@@ -264,7 +261,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
 
   describe("Route Specificity", () => {
     it("should prioritize static routes over dynamic routes", async () => {
-      await withRouteContent(
+      await withPageContent(
         "priority/profile",
         [],
         ({ path, content, defaultContentPattern }) => {
@@ -278,7 +275,7 @@ describe(`Vue Generator - Route Integration: { ssr: ${ssr} }`, async () => {
     });
 
     it("should match dynamic route for non-static values", async () => {
-      await withRouteContent(
+      await withPageContent(
         "priority/[id]",
         ["123"],
         ({ path, content, defaultContentPattern }) => {

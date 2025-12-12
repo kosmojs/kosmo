@@ -1,63 +1,59 @@
 import { load } from "cheerio";
-import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { routes, setupTestProject, sourceFolder } from "../setup";
 
-const framework = "vue";
-const ssr = inject("SSR" as never);
-
-describe(`Vue Generator - Link Component: { ssr: ${ssr} }`, async () => {
-  // Generate template from test cases
-  const navigationLinks = routes.map(({ id, name, params, label }) => {
-    const paramsArr = Object.values(params).flat();
-    const paramsStr = paramsArr.length
-      ? `, ${paramsArr.map((p) => `'${p}'`).join(", ")}`
-      : "";
-    return `
+// Generate template from test cases
+const navigationLinks = routes.map(({ id, name, params, label }) => {
+  const paramsArr = Object.values(params).flat();
+  const paramsStr = paramsArr.length
+    ? `, ${paramsArr.map((p) => `'${p}'`).join(", ")}`
+    : "";
+  return `
       <Link :to="['${name}'${paramsStr}]" data-testid="${id}">
         ${label}
       </Link>
     `;
-  });
+});
 
-  const navigationTemplate = `
-    <script setup>
-      import Link from "${sourceFolder}/components/Link.vue";
-    </script>
-    <template>
-      <div data-testid="navigation-page">
-        <h1>Navigation Links Test</h1>
-        <ol>
-          ${navigationLinks.map((e) => `<li>${e}</li>`).join("")}
-        </ol>
-      </div>
-    </template>
-  `;
+const navigationTemplate = `
+  <script setup>
+    import Link from "${sourceFolder}/components/Link.vue";
+  </script>
+  <template>
+    <div data-testid="navigation-page">
+      <h1>Navigation Links Test</h1>
+      <ol>
+        ${navigationLinks.map((e) => `<li>${e}</li>`).join("")}
+      </ol>
+    </div>
+  </template>
+`;
 
-  const {
-    bootstrapProject,
-    withRouteContent,
-    createRoutes,
-    startServer,
-    teardown,
-  } = await setupTestProject({
-    framework,
-    frameworkOptions: {
-      templates: {
-        navigation: navigationTemplate,
-      },
+const {
+  bootstrapProject,
+  withPageContent,
+  createPageRoutes,
+  startServer,
+  teardown,
+} = await setupTestProject({
+  framework: "vue",
+  frameworkOptions: {
+    templates: {
+      navigation: navigationTemplate,
     },
-    ssr,
-  });
+  },
+});
 
+beforeAll(startServer);
+afterAll(teardown);
+
+describe("Vue - Link Component", async () => {
   await bootstrapProject();
-  await createRoutes(routes);
-
-  beforeAll(startServer);
-  afterAll(teardown);
+  await createPageRoutes(routes);
 
   it("should render all links with correct hrefs", async () => {
-    await withRouteContent("navigation", {}, async ({ content }) => {
+    await withPageContent("navigation", {}, async ({ content }) => {
       // Verify page renders
       expect(content).toMatch("Navigation Links Test");
       expect(content).toMatch('data-testid="navigation-page"');
