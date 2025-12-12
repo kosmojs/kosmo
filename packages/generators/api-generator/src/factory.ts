@@ -20,7 +20,8 @@ import type { Options } from "./types";
 
 import indexTpl from "./templates/index.hbs";
 import routeLibIndexTpl from "./templates/route/index.hbs";
-import routePublicTpl from "./templates/route.hbs";
+import routeTpl from "./templates/route.hbs";
+import useTpl from "./templates/use.hbs";
 
 export const factory: GeneratorFactory<Options> = async (
   { appRoot, sourceFolder, outDir, formatters, command },
@@ -45,29 +46,38 @@ export const factory: GeneratorFactory<Options> = async (
 
   const generatePublicFiles = async (entries: Array<ResolvedEntry>) => {
     for (const { kind, entry } of entries) {
-      if (kind !== "apiRoute") {
-        continue;
-      }
+      if (kind === "apiRoute") {
+        const customTemplate = customTemplates.find(([isMatch]) => {
+          return isMatch(entry.name);
+        });
 
-      const customTemplate = customTemplates.find(([isMatch]) => {
-        return isMatch(entry.name);
-      });
-
-      await renderToFile(
-        resolve("apiDir", entry.file),
-        customTemplate?.[1] || routePublicTpl,
-        {
-          route: entry,
-          importPathmap: {
-            lib: join(sourceFolder, defaults.apiLibDir, entry.importFile),
+        await renderToFile(
+          resolve("apiDir", entry.file),
+          customTemplate?.[1] || routeTpl,
+          {
+            route: entry,
+            importPathmap: {
+              lib: join(sourceFolder, defaults.apiLibDir, entry.importFile),
+            },
           },
-        },
-        {
-          // write only to blank files
-          overwrite: (content) => content?.trim().length === 0,
-          formatters,
-        },
-      );
+          {
+            // write only to blank files
+            overwrite: (content) => content?.trim().length === 0,
+            formatters,
+          },
+        );
+      } else if (kind === "apiUse") {
+        await renderToFile(
+          resolve("apiDir", entry.file),
+          useTpl,
+          {},
+          {
+            // write only to blank files
+            overwrite: (content) => content?.trim().length === 0,
+            formatters,
+          },
+        );
+      }
     }
   };
 
@@ -103,10 +113,27 @@ export const factory: GeneratorFactory<Options> = async (
           return [];
         }
 
+        const pathVariations = entry.name
+          .split("/")
+          .reduce<Array<string>>((acc, segment) => {
+            const prev = acc[acc.length - 1];
+            acc.push(prev ? join(prev, segment) : segment);
+            return acc;
+          }, []);
+
+        const useWrappers = entries.flatMap((e) => {
+          return e.kind === "apiUse"
+            ? pathVariations.some((path) => e.entry.name === path)
+              ? [e.entry]
+              : []
+            : [];
+        });
+
         const baseRoute = {
           ...entry,
           path: pathFactory(entry.pathTokens),
           meta: resolveMeta(entry),
+          useWrappers,
           importPathmap: {
             api: join(sourceFolder, defaults.apiDir, entry.importFile),
             schemas: join(
@@ -139,11 +166,23 @@ export const factory: GeneratorFactory<Options> = async (
       })
       .sort(sortRoutes);
 
+    const useWrappers = entries.flatMap(({ kind, entry }) => {
+      return kind === "apiUse"
+        ? [
+            {
+              ...entry,
+              importPath: join(sourceFolder, defaults.apiDir, entry.importFile),
+            },
+          ]
+        : [];
+    });
+
     await renderToFile(
       resolve("libDir", sourceFolder, `${defaults.apiLibDir}.ts`),
       indexTpl,
       {
         routes,
+        useWrappers,
         importPathmap: {
           config: join(sourceFolder, defaults.configDir),
           coreMiddleware: join(sourceFolder, defaults.apiDir, "use"),
@@ -161,8 +200,14 @@ export const factory: GeneratorFactory<Options> = async (
     await esbuild({
       ...esbuildOptions,
       bundle: true,
-      entryPoints: [resolve("apiDir", "server.ts")],
-      outfile: join(outDir, defaults.apiDir, "index.js"),
+      entryPoints: [
+        // Build both app factory and server bundle for deployment flexibility.
+        // The app exports a function returning a Koa instance (Node/Deno/Bun compatible).
+        // For custom deployment, use the app factory directly and discard the built server.
+        resolve("apiDir", "app.ts"),
+        resolve("apiDir", "server.ts"),
+      ],
+      outdir: join(outDir, defaults.apiDir),
     });
   }
 
@@ -170,7 +215,7 @@ export const factory: GeneratorFactory<Options> = async (
     async watchHandler(entries, event) {
       if (event) {
         const relatedEntries = entries.filter(({ kind, entry }) => {
-          return kind === "apiRoute" //
+          return kind === "apiRoute" || kind === "apiUse" //
             ? entry.fileFullpath === event.file
             : false;
         });

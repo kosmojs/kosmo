@@ -100,16 +100,9 @@ export const routerRoutesFactory = (
   const stack: Array<RouterRoute> = [];
 
   // Iterate over each route definition
-  for (const route of routeSources) {
-    const {
-      name,
-      path,
-      file,
-      definitionItems, // Includes both middleware and HTTP method handlers
-      params,
-      numericParams,
-      validationSchemas,
-    } = route;
+  for (const { name, path, file, ...rest } of routeSources) {
+    // Include both middleware and HTTP method handlers
+    const definitionItems = [...rest.useWrappers, ...rest.definitionItems];
 
     const routeMiddleware: Array<MiddlewareDefinition> = definitionItems.filter(
       (e) => e.kind === "middleware",
@@ -118,8 +111,8 @@ export const routerRoutesFactory = (
     // WARN: the order is critical!
     // the last defined middleware will take precedence.
     const middlewareStack: Array<MiddlewareDefinition> = [
-      ...paramsMiddlewareFactory(params, numericParams),
-      ...validationMiddlewareFactory(validationSchemas),
+      ...paramsMiddlewareFactory(rest.params, rest.numericParams),
+      ...validationMiddlewareFactory(rest.validationSchemas),
       // core middleware overrides builtin middleware (of same slot)
       ...coreMiddleware,
       // route middleware overrides core middleware (of same slot)

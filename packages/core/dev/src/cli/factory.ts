@@ -76,14 +76,12 @@ export const createProject = async (
     },
     dependencies: {
       "@kosmojs/api": SEMVER,
-      qs: self.devDependencies.qs,
       ...assets?.dependencies,
     },
     devDependencies: {
       "@kosmojs/config": SEMVER,
       "@kosmojs/dev": SEMVER,
       "@types/node": self.devDependencies["@types/node"],
-      "@types/qs": self.devDependencies["@types/qs"],
       esbuild: self.dependencies.esbuild,
       tslib: self.devDependencies.tslib,
       typescript: self.dependencies.typescript,

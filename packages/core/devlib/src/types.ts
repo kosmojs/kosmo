@@ -84,6 +84,8 @@ export type ApiRoute = RouteEntry & {
   referencedFiles: Array<string>;
 };
 
+export type ApiUse = RouteEntry;
+
 export type PageRoute = RouteEntry & {
   params: {
     schema: Array<Required<PathToken>["param"]>;
@@ -94,6 +96,7 @@ export type PageLayout = RouteEntry;
 
 export type ResolvedEntry =
   | { kind: "apiRoute"; entry: ApiRoute }
+  | { kind: "apiUse"; entry: ApiUse }
   | { kind: "pageRoute"; entry: PageRoute }
   | { kind: "pageLayout"; entry: PageLayout };
 

@@ -17,6 +17,7 @@ export const middlewareStackBuilder = (
         name: "",
         path: "",
         file: "",
+        useWrappers: [],
         definitionItems: [],
         params: [],
         numericParams: [],

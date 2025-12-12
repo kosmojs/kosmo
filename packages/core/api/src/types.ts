@@ -1,7 +1,7 @@
 import type {
-  Middleware,
+  RouterContext,
+  RouterMiddleware,
   RouterOptions,
-  RouterParamContext,
 } from "@koa/router";
 import type { Next } from "koa";
 
@@ -25,7 +25,7 @@ export enum HTTPMethods {
   DELETE = "DELETE",
 }
 
-export type { Middleware };
+export type { RouterMiddleware as Middleware };
 
 export type HTTPMethod = keyof typeof HTTPMethods;
 
@@ -35,10 +35,9 @@ export type ParameterizedContext<
   ContextT,
   PayloadT = unknown,
   ResponseT = unknown,
-> = import("koa").ParameterizedContext<
+> = RouterContext<
   DefaultState & StateT,
-  RouterParamContext<StateT, ContextT> &
-    DefaultContext &
+  DefaultContext &
     ContextT & {
       typedParams: ParamsT;
       payload: PayloadT;
@@ -64,13 +63,13 @@ export type RouteHandler<
 
 export type MiddlewareDefinition = {
   kind: "middleware";
-  middleware: Array<Middleware>;
+  middleware: Array<RouterMiddleware>;
   options?: UseOptions | undefined;
 };
 
 export type HandlerDefinition = {
   kind: "handler";
-  middleware: Array<Middleware>;
+  middleware: Array<RouterMiddleware>;
   method: HTTPMethod;
 };
 
@@ -143,6 +142,9 @@ export type RouterRouteSource = {
   name: string;
   path: string;
   file: string;
+  // useWrappers is same as defining middleware inside route definition,
+  // just automatically imported from use.ts files
+  useWrappers: Array<MiddlewareDefinition>;
   definitionItems: Array<RouteDefinitionItem>;
   params: Array<[name: string, isRest?: boolean]>;
   numericParams: Array<string>;
@@ -155,7 +157,7 @@ export type RouterRoute = {
   path: string;
   file: string;
   methods: Array<string>;
-  middleware: Array<Middleware>;
+  middleware: Array<RouterMiddleware>;
   kind: "middleware" | "handler";
   slot?: keyof UseSlots | undefined;
   debug?: string | undefined;

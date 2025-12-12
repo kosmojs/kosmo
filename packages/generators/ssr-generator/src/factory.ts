@@ -106,12 +106,14 @@ export const factory: GeneratorFactory = async ({
       },
     });
 
+    // Build default server for SSR. It is using node:http server.
+    // For custom deployment, use the app factory directly and discard the built server.
     await esbuild({
       ...esbuildOptions,
       bundle: true,
       legalComments: "inline",
       entryPoints: [ssrLibFile],
-      outfile: join(outDir, "ssr", "index.js"),
+      outfile: join(outDir, "ssr", "server.js"),
     });
   };
 

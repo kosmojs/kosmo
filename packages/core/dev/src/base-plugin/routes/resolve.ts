@@ -30,6 +30,9 @@ export type ResolverSignature = {
 export const API_INDEX_BASENAME = "index";
 export const API_INDEX_PATTERN = `${API_INDEX_BASENAME}.ts`;
 
+export const API_USE_BASENAME = "use";
+export const API_USE_PATTERN = `${API_USE_BASENAME}.ts`;
+
 export const PAGE_INDEX_BASENAME = "index";
 export const PAGE_INDEX_PATTERN = `${PAGE_INDEX_BASENAME}.{tsx,vue}`;
 
@@ -39,6 +42,8 @@ export const PAGE_LAYOUT_PATTERN = `${PAGE_LAYOUT_BASENAME}.{tsx,vue}`;
 const ROUTE_FILE_PATTERNS = [
   // match index files in api dir
   `${defaults.apiDir}/**/${API_INDEX_PATTERN}`,
+  // match use files in api dir
+  `${defaults.apiDir}/**/${API_USE_PATTERN}`,
   // match index files in pages dir
   `${defaults.pagesDir}/**/${PAGE_INDEX_PATTERN}`,
   // match layout files in pages dir
@@ -57,6 +62,7 @@ export const scanRoutes = async ({
     ignore: [
       // ignore top-level matches, routes resides in folders, even index route
       `${defaults.apiDir}/${API_INDEX_PATTERN}`,
+      `${defaults.apiDir}/${API_USE_PATTERN}`,
       `${defaults.pagesDir}/${PAGE_INDEX_PATTERN}`,
       `${defaults.pagesDir}/${PAGE_LAYOUT_PATTERN}`,
     ],
@@ -96,7 +102,15 @@ export const isRouteFile = (
     : undefined;
 };
 
-export const isPageIndex = (file: string) => {
+export const isApiRoute = (file: string) => {
+  return picomatch.matchBase(file, `**/${API_INDEX_PATTERN}`);
+};
+
+export const isApiUse = (file: string) => {
+  return picomatch.matchBase(file, `**/${API_USE_PATTERN}`);
+};
+
+export const isPageRoute = (file: string) => {
   return picomatch.matchBase(file, `**/${PAGE_INDEX_PATTERN}`);
 };
 
@@ -189,6 +203,21 @@ export const pageRouteResolverFactory: ResolverFactory = () => {
 
       return {
         kind: "pageRoute",
+        entry,
+      };
+    };
+
+    return { name, handler };
+  };
+};
+
+export const apiUseResolverFactory: ResolverFactory = () => {
+  return (entry) => {
+    const { name } = entry;
+
+    const handler: ResolverSignature["handler"] = async () => {
+      return {
+        kind: "apiUse",
         entry,
       };
     };

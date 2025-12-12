@@ -6,9 +6,12 @@ import {
 
 import {
   apiRouteResolverFactory,
+  apiUseResolverFactory,
   createRouteEntry,
-  isPageIndex,
+  isApiRoute,
+  isApiUse,
   isPageLayout,
+  isPageRoute,
   pageLayoutResolverFactory,
   pageRouteResolverFactory,
   type ResolverSignature,
@@ -22,6 +25,7 @@ export default async (pluginOptions: PluginOptionsResolved) => {
   const { appRoot, sourceFolder } = pluginOptions;
 
   const apiRouteResolver = apiRouteResolverFactory(pluginOptions);
+  const apiUseResolver = apiUseResolverFactory(pluginOptions);
   const pageRouteResolver = pageRouteResolverFactory(pluginOptions);
   const pageLayoutResolver = pageLayoutResolverFactory(pluginOptions);
 
@@ -38,9 +42,13 @@ export default async (pluginOptions: PluginOptionsResolved) => {
 
     for (const entry of entries) {
       if (entry.folder === defaults.apiDir) {
-        resolvers.set(entry.fileFullpath, apiRouteResolver(entry));
+        if (isApiRoute(entry.file)) {
+          resolvers.set(entry.fileFullpath, apiRouteResolver(entry));
+        } else if (isApiUse(entry.file)) {
+          resolvers.set(entry.fileFullpath, apiUseResolver(entry));
+        }
       } else if (entry.folder === defaults.pagesDir) {
-        if (isPageIndex(entry.file)) {
+        if (isPageRoute(entry.file)) {
           resolvers.set(entry.fileFullpath, pageRouteResolver(entry));
         } else if (isPageLayout(entry.file)) {
           resolvers.set(entry.fileFullpath, pageLayoutResolver(entry));

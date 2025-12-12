@@ -23,8 +23,6 @@ export default async (options: PluginOptionsResolved) => {
   let teardownHandler: Function | undefined;
 
   const watcher = async () => {
-    const outfile = join(outDir, "dev.js");
-
     const rebuildPlugin: Plugin = {
       name: "rebuild",
       setup(build) {
@@ -33,7 +31,7 @@ export default async (options: PluginOptionsResolved) => {
             await teardownHandler?.(app);
           }
           try {
-            const exports = await import([outfile, Date.now()].join("?"));
+            const exports = await import(`${outDir}/app.js?${Date.now()}`);
             devMiddlewareFactory = exports.devMiddlewareFactory;
             teardownHandler = exports.teardownHandler;
             app = await exports.default();
@@ -52,7 +50,7 @@ export default async (options: PluginOptionsResolved) => {
       bundle: true,
       entryPoints: [join(apiDir, "app.ts")],
       plugins: [rebuildPlugin],
-      outfile,
+      outdir: outDir,
     });
 
     return {
