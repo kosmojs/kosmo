@@ -236,7 +236,11 @@ export const routes = [
   },
 ];
 
-export const nestedRoutes = [
+export const nestedRoutes: Array<{
+  name: string;
+  file: "index" | "layout";
+  params: Record<string, unknown>;
+}> = [
   // about
   { name: "about", file: "index", params: {} },
   { name: "about", file: "layout", params: {} },

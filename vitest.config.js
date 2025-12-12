@@ -62,6 +62,13 @@ export default defineConfig({
       setupFactory("generators/vue-generator"),
       setupFactory("generators/ssr-generator"),
 
+      setupFactory("integration:api", {
+        include: ["test/integration/api/*.test.ts"],
+        provide: {
+          API: "true",
+        },
+      }),
+
       setupFactory("integration:csr", {
         include: ["test/integration/{react,solid,vue}/*.test.ts"],
         fileParallelism: false,
