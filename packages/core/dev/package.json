@@ -43,7 +43,7 @@
     "@kosmojs/api-generator": "workspace:^",
     "@kosmojs/devlib": "workspace:^",
     "@kosmojs/fetch-generator": "workspace:^",
-    "chokidar": "^4.0.3",
+    "chokidar": "^5.0.0",
     "concurrently": "^9.2.1",
     "crc": "^4.3.2",
     "dotenv": "^17.2.3",
