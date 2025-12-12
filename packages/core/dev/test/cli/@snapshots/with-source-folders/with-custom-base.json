@@ -45,13 +45,13 @@
   [
     "with-source-folders/with-custom-base/api/router.ts",
     [
-      "import { routerRoutes } from \"with-custom-base/{api}\";",
+      "import { routeStackBuilder } from \"with-custom-base/{api}\";",
       "",
       "import createRouter from \"@/core/api/router\";",
       "",
       "const router = createRouter();",
       "",
-      "for (const { name, path, methods, middleware } of routerRoutes) {",
+      "for (const { name, path, methods, middleware } of routeStackBuilder()) {",
       "  router.register(path, methods, middleware, { name });",
       "}",
       "",

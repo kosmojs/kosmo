@@ -1,6 +1,6 @@
 [
   [
-    "with-source-folders/with-vue-ssr/api/app.ts",
+    "with-source-folders/with-solid/api/app.ts",
     [
       "import createApp from \"@/core/api/app\";",
       "",
@@ -37,21 +37,21 @@
     ]
   ],
   [
-    "with-source-folders/with-vue-ssr/api/index/index.ts",
+    "with-source-folders/with-solid/api/index/index.ts",
     [
       ""
     ]
   ],
   [
-    "with-source-folders/with-vue-ssr/api/router.ts",
+    "with-source-folders/with-solid/api/router.ts",
     [
-      "import { routerRoutes } from \"with-vue-ssr/{api}\";",
+      "import { routeStackBuilder } from \"with-solid/{api}\";",
       "",
       "import createRouter from \"@/core/api/router\";",
       "",
       "const router = createRouter();",
       "",
-      "for (const { name, path, methods, middleware } of routerRoutes) {",
+      "for (const { name, path, methods, middleware } of routeStackBuilder()) {",
       "  router.register(path, methods, middleware, { name });",
       "}",
       "",
@@ -59,7 +59,7 @@
     ]
   ],
   [
-    "with-source-folders/with-vue-ssr/api/server.ts",
+    "with-source-folders/with-solid/api/server.ts",
     [
       "import createServer from \"@/core/api/server\";",
       "import createApp from \"./app\";",
@@ -68,7 +68,7 @@
     ]
   ],
   [
-    "with-source-folders/with-vue-ssr/api/use.ts",
+    "with-source-folders/with-solid/api/use.ts",
     [
       "import globalMiddleware from \"@/core/api/use\";",
       "",
@@ -79,20 +79,20 @@
     ]
   ],
   [
-    "with-source-folders/with-vue-ssr/config/index.ts",
+    "with-source-folders/with-solid/config/index.ts",
     [
       "export const baseurl = \"/\";",
       "export const apiurl = \"/api\"; // relative to baseurl"
     ]
   ],
   [
-    "with-source-folders/with-vue-ssr/entry/client.ts",
+    "with-source-folders/with-solid/entry/client.tsx",
     [
       ""
     ]
   ],
   [
-    "with-source-folders/with-vue-ssr/index.html",
+    "with-source-folders/with-solid/index.html",
     [
       "<!--",
       "Do not remove! Build process requires this file for framework-less source folders.",
@@ -101,20 +101,19 @@
     ]
   ],
   [
-    "with-source-folders/with-vue-ssr/pages/index/index.vue",
+    "with-source-folders/with-solid/pages/index/index.tsx",
     [
       ""
     ]
   ],
   [
-    "with-source-folders/with-vue-ssr/vite.config.ts",
+    "with-source-folders/with-solid/vite.config.ts",
     [
       "import { join } from \"node:path\";",
       "",
-      "import vuePlugin from \"@vitejs/plugin-vue\";",
+      "import solidPlugin from \"vite-plugin-solid\";",
       "import devPlugin, { apiGenerator, fetchGenerator } from \"@kosmojs/dev\";",
-      "import vueGenerator from \"@kosmojs/vue-generator\";",
-      "import ssrGenerator from \"@kosmojs/ssr-generator\";",
+      "import solidGenerator from \"@kosmojs/solid-generator\";",
       "",
       "import defineConfig from \"../vite.base\";",
       "import { apiurl, baseurl } from \"./config\";",
@@ -125,13 +124,12 @@
       "    port: 4000,",
       "  },",
       "  plugins: [",
-      "    vuePlugin(),",
+      "    solidPlugin(),",
       "    devPlugin(apiurl, {",
       "      generators: [",
       "        apiGenerator(),",
       "        fetchGenerator(),",
-      "        vueGenerator(),",
-      "ssrGenerator(),",
+      "        solidGenerator(),",
       "      ],",
       "    }),",
       "  ],",

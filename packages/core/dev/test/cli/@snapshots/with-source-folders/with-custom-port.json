@@ -1,6 +1,6 @@
 [
   [
-    "with-source-folders/with-custom-baseurl/api/app.ts",
+    "with-source-folders/with-custom-port/api/app.ts",
     [
       "import createApp from \"@/core/api/app\";",
       "",
@@ -37,21 +37,21 @@
     ]
   ],
   [
-    "with-source-folders/with-custom-baseurl/api/index/index.ts",
+    "with-source-folders/with-custom-port/api/index/index.ts",
     [
       ""
     ]
   ],
   [
-    "with-source-folders/with-custom-baseurl/api/router.ts",
+    "with-source-folders/with-custom-port/api/router.ts",
     [
-      "import { routerRoutes } from \"with-custom-baseurl/{api}\";",
+      "import { routeStackBuilder } from \"with-custom-port/{api}\";",
       "",
       "import createRouter from \"@/core/api/router\";",
       "",
       "const router = createRouter();",
       "",
-      "for (const { name, path, methods, middleware } of routerRoutes) {",
+      "for (const { name, path, methods, middleware } of routeStackBuilder()) {",
       "  router.register(path, methods, middleware, { name });",
       "}",
       "",
@@ -59,7 +59,7 @@
     ]
   ],
   [
-    "with-source-folders/with-custom-baseurl/api/server.ts",
+    "with-source-folders/with-custom-port/api/server.ts",
     [
       "import createServer from \"@/core/api/server\";",
       "import createApp from \"./app\";",
@@ -68,7 +68,7 @@
     ]
   ],
   [
-    "with-source-folders/with-custom-baseurl/api/use.ts",
+    "with-source-folders/with-custom-port/api/use.ts",
     [
       "import globalMiddleware from \"@/core/api/use\";",
       "",
@@ -79,14 +79,14 @@
     ]
   ],
   [
-    "with-source-folders/with-custom-baseurl/config/index.ts",
+    "with-source-folders/with-custom-port/config/index.ts",
     [
-      "export const baseurl = \"/test\";",
+      "export const baseurl = \"/\";",
       "export const apiurl = \"/api\"; // relative to baseurl"
     ]
   ],
   [
-    "with-source-folders/with-custom-baseurl/index.html",
+    "with-source-folders/with-custom-port/index.html",
     [
       "<!--",
       "Do not remove! Build process requires this file for framework-less source folders.",
@@ -95,7 +95,7 @@
     ]
   ],
   [
-    "with-source-folders/with-custom-baseurl/vite.config.ts",
+    "with-source-folders/with-custom-port/vite.config.ts",
     [
       "import { join } from \"node:path\";",
       "",
@@ -107,7 +107,7 @@
       "export default defineConfig(import.meta.dirname, {",
       "  base: join(baseurl, \"/\"),",
       "  server: {",
-      "    port: 4000,",
+      "    port: 5000,",
       "  },",
       "  plugins: [",
       "        devPlugin(apiurl, {",

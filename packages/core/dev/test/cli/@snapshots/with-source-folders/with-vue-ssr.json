@@ -1,6 +1,6 @@
 [
   [
-    "with-source-folders/with-vue/api/app.ts",
+    "with-source-folders/with-vue-ssr/api/app.ts",
     [
       "import createApp from \"@/core/api/app\";",
       "",
@@ -37,21 +37,21 @@
     ]
   ],
   [
-    "with-source-folders/with-vue/api/index/index.ts",
+    "with-source-folders/with-vue-ssr/api/index/index.ts",
     [
       ""
     ]
   ],
   [
-    "with-source-folders/with-vue/api/router.ts",
+    "with-source-folders/with-vue-ssr/api/router.ts",
     [
-      "import { routerRoutes } from \"with-vue/{api}\";",
+      "import { routeStackBuilder } from \"with-vue-ssr/{api}\";",
       "",
       "import createRouter from \"@/core/api/router\";",
       "",
       "const router = createRouter();",
       "",
-      "for (const { name, path, methods, middleware } of routerRoutes) {",
+      "for (const { name, path, methods, middleware } of routeStackBuilder()) {",
       "  router.register(path, methods, middleware, { name });",
       "}",
       "",
@@ -59,7 +59,7 @@
     ]
   ],
   [
-    "with-source-folders/with-vue/api/server.ts",
+    "with-source-folders/with-vue-ssr/api/server.ts",
     [
       "import createServer from \"@/core/api/server\";",
       "import createApp from \"./app\";",
@@ -68,7 +68,7 @@
     ]
   ],
   [
-    "with-source-folders/with-vue/api/use.ts",
+    "with-source-folders/with-vue-ssr/api/use.ts",
     [
       "import globalMiddleware from \"@/core/api/use\";",
       "",
@@ -79,20 +79,20 @@
     ]
   ],
   [
-    "with-source-folders/with-vue/config/index.ts",
+    "with-source-folders/with-vue-ssr/config/index.ts",
     [
       "export const baseurl = \"/\";",
       "export const apiurl = \"/api\"; // relative to baseurl"
     ]
   ],
   [
-    "with-source-folders/with-vue/entry/client.ts",
+    "with-source-folders/with-vue-ssr/entry/client.ts",
     [
       ""
     ]
   ],
   [
-    "with-source-folders/with-vue/index.html",
+    "with-source-folders/with-vue-ssr/index.html",
     [
       "<!--",
       "Do not remove! Build process requires this file for framework-less source folders.",
@@ -101,19 +101,20 @@
     ]
   ],
   [
-    "with-source-folders/with-vue/pages/index/index.vue",
+    "with-source-folders/with-vue-ssr/pages/index/index.vue",
     [
       ""
     ]
   ],
   [
-    "with-source-folders/with-vue/vite.config.ts",
+    "with-source-folders/with-vue-ssr/vite.config.ts",
     [
       "import { join } from \"node:path\";",
       "",
       "import vuePlugin from \"@vitejs/plugin-vue\";",
       "import devPlugin, { apiGenerator, fetchGenerator } from \"@kosmojs/dev\";",
       "import vueGenerator from \"@kosmojs/vue-generator\";",
+      "import ssrGenerator from \"@kosmojs/ssr-generator\";",
       "",
       "import defineConfig from \"../vite.base\";",
       "import { apiurl, baseurl } from \"./config\";",
@@ -130,6 +131,7 @@
       "        apiGenerator(),",
       "        fetchGenerator(),",
       "        vueGenerator(),",
+      "ssrGenerator(),",
       "      ],",
       "    }),",
       "  ],",

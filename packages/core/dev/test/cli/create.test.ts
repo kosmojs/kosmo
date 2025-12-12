@@ -19,7 +19,7 @@ describe("Create API", () => {
     const snapshot = await createProject();
 
     await expect(snapshot).toMatchFileSnapshot(
-      "snapshots/default-project.json",
+      "@snapshots/default-project.json",
     );
   });
 
@@ -34,7 +34,7 @@ describe("Create API", () => {
     const snapshot = await createProject();
 
     await expect(snapshot).toMatchFileSnapshot(
-      "snapshots/custom-dist-folder.json",
+      "@snapshots/custom-dist-folder.json",
     );
   });
 
@@ -64,7 +64,7 @@ describe("Create API", () => {
     ] satisfies Array<SourceFolder>) {
       const snapshot = await createSourceFolder(folder);
       await expect(snapshot).toMatchFileSnapshot(
-        `snapshots/with-source-folders/${folder.name}.json`,
+        `@snapshots/with-source-folders/${folder.name}.json`,
       );
     }
   });
