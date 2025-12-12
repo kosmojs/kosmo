@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@biomejs/js-api": "^4.0.0",
-    "@biomejs/wasm-nodejs": "^2.3.5",
+    "@biomejs/wasm-nodejs": "^2.3.8",
     "@kosmojs/devlib": "workspace:^"
   },
   "devDependencies": {

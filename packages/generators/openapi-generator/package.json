@@ -23,8 +23,8 @@
   "dependencies": {
     "@kosmojs/devlib": "workspace:^",
     "crc": "^4.3.2",
-    "typebox": "^1.0.51",
-    "yaml": "^2.8.1"
+    "typebox": "^1.0.61",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "@kosmojs/api": "workspace:^",
