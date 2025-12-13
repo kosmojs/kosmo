@@ -46,23 +46,23 @@ understanding its complete structure helps you make the most of its capabilities
 Each generated fetch client exports:
 
 **HTTP method functions** corresponding to the methods your API route handles (GET, POST, PUT, DELETE, etc.).
-([Details](/fetch/start))
+([Details ➜ ](/fetch/start))
 
 Each function accepts parameters and payload according to your type definitions
 and returns a typed promise for the response.
 
 **The `path` utility function** for constructing relative URLs with proper parameter handling
 and optional query string support.
-([Details](/fetch/utilities))
+([Details ➜ ](/fetch/utilities))
 
 **The `href` utility function** for constructing absolute URLs with host, parameters, and query strings.
-([Details](/fetch/utilities))
+([Details ➜ ](/fetch/utilities))
 
 **The `validationSchemas` object** containing validation schemas for parameters, payloads and responses,
 organized by HTTP method.
 
 Each schema provides `check`, `errors`, `errorMessage`, `errorSummary`, and `validate` methods.
-([Details](/fetch/validation))
+([Details ➜ ](/fetch/validation))
 
 **A default export** that bundles all of these together,
 making it convenient to destructure what you need or pass the entire client around as a single object.

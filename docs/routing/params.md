@@ -26,7 +26,7 @@ and the matched value is made available to your route handler or component.
 ```
 users/
   [id]/
-    index.ts         🢂 matches /users/123, /users/abc, /users/anything
+    index.ts         ➜ matches /users/123, /users/abc, /users/anything
 ```
 
 This route matches `/users/123` or `/users/abc` but does not match `/users`
@@ -48,7 +48,7 @@ giving you flexibility to handle both cases in a single route handler.
 ```
 users/
   [[id]]/
-    index.ts         🢂 matches both /users and /users/123
+    index.ts         ➜ matches both /users and /users/123
 ```
 
 This is useful when you want a route that can show either a list view (when no ID is provided)
@@ -85,8 +85,8 @@ properties/
 ```
 
 **What matches:**
-- ✅ `/properties/NY/filters` 🢂 `city = "NY"`, renders filters page
-- ❌ `/properties/filters` 🢂 **404 Not Found**
+- ✅ `/properties/NY/filters` ➜ `city = "NY"`, renders filters page
+- ❌ `/properties/filters` ➜ **404 Not Found**
 
 ### Why It Fails
 
@@ -113,8 +113,8 @@ properties/
 ```
 
 **Now it works:**
-- `/properties/filters` 🢂 Matches static `properties/filters/index.tsx`
-- `/properties/NY/filters` 🢂 Matches dynamic `properties/[[city]]/filters/index.tsx`
+- `/properties/filters` ➜ Matches static `properties/filters/index.tsx`
+- `/properties/NY/filters` ➜ Matches dynamic `properties/[[city]]/filters/index.tsx`
 
 **Static routes always win over dynamic/optional routes!**
 
@@ -150,9 +150,9 @@ file browsers, or any situation where you need to handle arbitrarily nested path
 ```
 docs/
   [...path]/
-    index.ts         🢂 matches /docs/getting-started
-                     🢂 matches /docs/api/reference
-                     🢂 matches /docs/guides/deployment/production
+    index.ts         ➜ matches /docs/getting-started
+                     ➜ matches /docs/api/reference
+                     ➜ matches /docs/guides/deployment/production
 ```
 
 The matched segments are provided to your handler as an array,
@@ -220,8 +220,8 @@ shop/
 ```
 
 **Routes:**
-- ❌ `/shop/product` 🢂 NO MATCH (no index.tsx)
-- ✅ `/shop/product/123` 🢂 MATCHES
+- ❌ `/shop/product` ➜ NO MATCH (no index.tsx)
+- ✅ `/shop/product/123` ➜ MATCHES
 
 **Use case:** The page cannot function without the parameter.
 There's no "product listing" page - you must specify a product ID.
@@ -243,8 +243,8 @@ careers/
 ```
 
 **Routes:**
-- ✅ `/careers` 🢂 MATCHES `careers/index.tsx` (list all jobs)
-- ✅ `/careers/123` 🢂 MATCHES `careers/[jobId]/index.tsx` (specific job)
+- ✅ `/careers` ➜ MATCHES `careers/index.tsx` (list all jobs)
+- ✅ `/careers/123` ➜ MATCHES `careers/[jobId]/index.tsx` (specific job)
 
 **Use case:** Two **different pages** with different purposes.
 
@@ -267,8 +267,8 @@ careers/
 ```
 
 **Routes:**
-- ✅ `/careers` 🢂 MATCHES (jobId is undefined)
-- ✅ `/careers/123` 🢂 MATCHES (jobId is "123")
+- ✅ `/careers` ➜ MATCHES (jobId is undefined)
+- ✅ `/careers/123` ➜ MATCHES (jobId is "123")
 
 **Use case:** **Same page** that changes behavior based on parameter presence.
 
@@ -292,15 +292,15 @@ you cannot mix static text and parameter syntax within a single folder name.
 api/
   products/
     book-[id]/       ❌ Cannot mix "book-" prefix with [id] parameter
-      index.ts       🢂 Would try to match /api/products/book-[id] literally
+      index.ts       ➜ Would try to match /api/products/book-[id] literally
 
   results.[ext]/     ❌ Cannot mix "results." with [ext] parameter
-    index.ts         🢂 Would try to match /api/results.[ext] literally
+    index.ts         ➜ Would try to match /api/results.[ext] literally
 
 pages/
   shop/
     [category]-sale/ ❌ Cannot mix [category] with "-sale" suffix
-      index.ts       🢂 Would try to match /shop/[category]-sale literally
+      index.ts       ➜ Would try to match /shop/[category]-sale literally
 ```
 
 These patterns don't work because the routing system treats each folder name as a complete unit –
@@ -314,17 +314,17 @@ Use separate folders to create the routing patterns you need:
 api/
   products/
     [bookId]/        ✅ Entire folder name is the dynamic parameter
-      index.ts       🢂 Matches /api/products/123, /api/products/abc
+      index.ts       ➜ Matches /api/products/123, /api/products/abc
 
   results/
     [ext]/           ✅ Separate folders for static and dynamic parts
-      index.ts       🢂 Matches /api/results/json, /api/results/xml
+      index.ts       ➜ Matches /api/results/json, /api/results/xml
 
 pages/
   shop/
     [category]/
       sale/          ✅ Static folder follows dynamic folder
-        index.ts     🢂 Matches /shop/electronics/sale, /shop/books/sale
+        index.ts     ➜ Matches /shop/electronics/sale, /shop/books/sale
 ```
 
 This structure maintains the clean mapping between folders and URL paths that makes directory-based routing predictable.
@@ -338,11 +338,11 @@ they can include static file extensions as part of their complete static name:
 pages/
   data.html/
     index.ts         ✅ Static folder name with extension
-                     🢂 Matches /data.html
+                     ➜ Matches /data.html
 
   results.json/
     index.ts         ✅ Another static folder with extension
-                     🢂 Matches /results.json
+                     ➜ Matches /results.json
 
   [filename].html/
     index.ts         ❌ Cannot mix parameter with extension
@@ -361,8 +361,8 @@ api/
   products/
     [id]/
       index.json/    ✅ Static folder with extension
-        index.ts     🢂 Serves /api/products/123/index.json
-                     🢂 Works seamlessly with HTTP servers (nginx, etc.)
+        index.ts     ➜ Serves /api/products/123/index.json
+                     ➜ Works seamlessly with HTTP servers (nginx, etc.)
 ```
 
 The `index.*` naming convention for folders is universally understood by web servers.

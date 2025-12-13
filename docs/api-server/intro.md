@@ -19,7 +19,7 @@ while the context object provides a clean way to pass request-scoped data throug
 The middleware composition pattern - where each piece can modify the request,
 delegate to the next middleware, and then modify the response on the way back -
 creates predictable, testable request handling pipelines.
-([Details](/api-server/endpoints))
+([Details ➜ ](/api-server/endpoints))
 
 ## 🛡️ Type Safety Throughout
 
@@ -30,7 +30,7 @@ and these types flow through to runtime validation automatically.
 There's no context switching between writing schemas in one DSL
 and implementing logic in another language.
 Everything lives in `TypeScript`, in the same file, maintaining a cohesive development experience.
-([Details](/api-server/type-safety/params))
+([Details ➜ ](/api-server/type-safety/params))
 
 ## 🔧 Structured Yet Flexible
 
@@ -43,7 +43,7 @@ the Ruby framework that pioneered minimalist web development back in 2007.
 
 The `use` function enables fine-grained middleware control at the route level,
 complementing global middleware with route-specific behavior.
-([Details](/api-server/use-middleware/intro))
+([Details ➜ ](/api-server/use-middleware/intro))
 
 Context and state extensibility means middleware can augment requests
 with authentication details, database connections, or any other request-scoped data,

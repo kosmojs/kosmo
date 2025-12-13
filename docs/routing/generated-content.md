@@ -54,8 +54,8 @@ In this case, it knows that this route has an `id` parameter,
 and that information flows through to your handler's context object.
 
 **Import Path Convention:**
-- `@front/api/` 🢂 Your hand-written route files
-- `@front/{api}/` 🢂 Auto-generated type definitions and utilities
+- `@front/api/` ➜ Your hand-written route files
+- `@front/{api}/` ➜ Auto-generated type definitions and utilities
 
 The `defineRoute` function accepts a callback that receives HTTP method helpers.<br>
 In this example, you see `GET`, but you also have access to `POST`, `PUT`, `DELETE`, `PATCH`, and other HTTP methods.

@@ -33,14 +33,14 @@ A route deep in your hierarchy might be wrapped by several layouts, each adding 
 ```txt
 dashboard/
 ├── analytics/
-│   └── index.tsx       🢂 Wrapped by dashboard/layout
+│   └── index.tsx       ➜ Wrapped by dashboard/layout
 ├── settings/
 │   ├── profile/
-│   │   └── index.tsx   🢂 Wrapped by dashboard/layout + settings/layout
-│   ├── index.tsx       🢂 Wrapped by dashboard/layout + settings/layout
-│   └── layout.tsx      🢂 Wraps all settings/* routes
-├── index.tsx           🢂 Wrapped by dashboard/layout
-└── layout.tsx          🢂 Wraps all dashboard/* routes
+│   │   └── index.tsx   ➜ Wrapped by dashboard/layout + settings/layout
+│   ├── index.tsx       ➜ Wrapped by dashboard/layout + settings/layout
+│   └── layout.tsx      ➜ Wraps all settings/* routes
+├── index.tsx           ➜ Wrapped by dashboard/layout
+└── layout.tsx          ➜ Wraps all dashboard/* routes
 ```
 
 In this structure, `/dashboard/settings/profile` gets wrapped by two layouts:

@@ -8,7 +8,7 @@
             Require <code>id</code> to be a number
           </div>
         </div>
-        <a href="/validation/params" class="details-button">Details →</a>
+        <a href="/validation/params" class="details-button">Details ➜</a>
       </div>
       <div class="hero-image" @click="openLightbox('/ParamsValidation001.png', 'Simple params validation')">
         <img src="/ParamsValidation001.png" alt="Simple params validation" loading="lazy" />
@@ -31,7 +31,7 @@
             Use <code>TRefine</code> to specify JSON Schema constraints.
           </div>
         </div>
-        <a href="/validation/params" class="details-button">Details →</a>
+        <a href="/validation/params" class="details-button">Details ➜</a>
       </div>
     </div>
 
@@ -46,7 +46,7 @@
             <code>TRefine</code> can be used to specify JSON Schema constraints.
           </div>
         </div>
-        <a href="/validation/payload" class="details-button">Details →</a>
+        <a href="/validation/payload" class="details-button">Details ➜</a>
       </div>
       <div class="hero-image" @click="openLightbox('/PayloadValidation.png', 'Payload validation')">
         <img src="/PayloadValidation.png" alt="Payload validation" loading="lazy" />
@@ -72,7 +72,7 @@
             </div>
           </div>
         </div>
-        <a href="/validation/response" class="details-button">Details →</a>
+        <a href="/validation/response" class="details-button">Details ➜</a>
       </div>
     </div>
 
@@ -88,7 +88,7 @@
             Use the <code>on</code> option to run middleware only for specific HTTP methods.
           </div>
         </div>
-        <a href="/api-server/use-middleware/slot-composition" class="details-button">Details →</a>
+        <a href="/api-server/use-middleware/slot-composition" class="details-button">Details ➜</a>
       </div>
       <div class="hero-image" @click="openLightbox('/GlobalMiddleware.png', 'Global Middleware')">
         <img src="/GlobalMiddleware.png" alt="Global Middleware" loading="lazy" />
@@ -114,7 +114,7 @@
             </div>
           </div>
         </div>
-        <a href="/api-server/use-middleware/slot-composition" class="details-button">Details →</a>
+        <a href="/api-server/use-middleware/slot-composition" class="details-button">Details ➜</a>
       </div>
     </div>
 

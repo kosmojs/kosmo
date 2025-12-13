@@ -44,7 +44,7 @@ In this structure:
 - `users/account/use.ts` wraps **only** routes under `/api/users/account`
 
 When a request hits `/api/users/account`, the middleware execution order is:
-1. Global middleware from `core/api/use.ts` ([Details](/api-server/core-configuration))
+1. Global middleware from `core/api/use.ts` ([Details ➜ ](/api-server/core-configuration))
 2. `users/use.ts` (parent folder)
 3. `users/account/use.ts` (current folder)
 4. Route-specific middleware from `users/account/index.ts`
@@ -154,7 +154,7 @@ for all routes under `/api/webhooks`.
 
 Remember to specify the `on` option when using slots -
 slot configurations don't inherit from the middleware they replace.
-([Details](/api-server/use-middleware/slot-composition))
+([Details ➜ ](/api-server/use-middleware/slot-composition))
 
 ### Rate Limiting
 

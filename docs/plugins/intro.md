@@ -21,18 +21,18 @@ Using these plugins is straightforward - import them and add them to your `Vite`
 performs filesystem analysis, and provides alias information to Vite.
 This allows `Vite` to resolve imports like `@front/{api}` and `@front/{fetch}`
 to the correct locations in your source and `lib` directories.
-([Details](/plugins/alias-plugin))
+([Details ➜ ](/plugins/alias-plugin))
 
 🔹 **DefinePlugin** manages environment variables with fine-grained control.
 Unlike Vite's default environment handling,
 this plugin lets you explicitly specify which variables to expose to client code,
 both from `process.env` and from `.env` files.
-([Details](/plugins/define-plugin))
+([Details ➜ ](/plugins/define-plugin))
 
 🔹 **DevPlugin** is the main plugin that coordinates code generation.
 It manages generators (for API routes, fetch clients, validation schemas, etc.)
 and formatters (for ensuring generated code matches your project's style conventions).
-([Details](/plugins/dev-plugin))
+([Details ➜ ](/plugins/dev-plugin))
 
 ### 🎨 Customizing Plugin Behavior
 
@@ -43,15 +43,15 @@ For AliasPlugin, customization typically isn't needed
 since it derives everything from your `tsconfig.json`.
 If you need custom behavior, you can modify the `tsconfig.json` path mappings
 and the plugin will adapt.
-([Details](/plugins/alias-plugin))
+([Details ➜ ](/plugins/alias-plugin))
 
 For DefinePlugin, adjust which environment variables to expose
 by modifying the `keys` arrays in your base configuration.
-([Details](/plugins/define-plugin))
+([Details ➜ ](/plugins/define-plugin))
 
 For DevPlugin, add or remove generators and formatters
 in each source folder's configuration.
 Different source folders can use different generators -
 perhaps your main app uses SolidJS while your admin panel uses React.
-([Details](/plugins/dev-plugin))
+([Details ➜ ](/plugins/dev-plugin))
 

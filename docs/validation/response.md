@@ -38,7 +38,7 @@ export default defineRoute(({ GET }) => [
 In this example, we use `never` as the payload type because request not supposed to have any payload.
 The second type argument specifies that the response should match the `User` type.
 
-Also `TRefine` can be used for fine-grained validation. ([Details](/validation/refine))
+Also `TRefine` can be used for fine-grained validation. ([Details ➜ ](/validation/refine))
 
 Before sending the response to the client,
 `KosmoJS` validates that `ctx.body` actually contains a properly structured User object

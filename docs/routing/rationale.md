@@ -19,11 +19,11 @@ In file-based routing systems, each route is a single file:
 ```
 products/
   [id]/
-    index.json.ts    🢂 Handles /products/:id/index.json
-    index.html.ts    🢂 Handles /products/:id/index.html
-    index.xml.ts     🢂 Handles /products/:id/index.xml
-    helper.ts        🢂 Shared utilities... but for which route?
-    validator.ts     🢂 Validation logic... but for what?
+    index.json.ts    ➜ Handles /products/:id/index.json
+    index.html.ts    ➜ Handles /products/:id/index.html
+    index.xml.ts     ➜ Handles /products/:id/index.xml
+    helper.ts        ➜ Shared utilities... but for which route?
+    validator.ts     ➜ Validation logic... but for what?
 ```
 
 This looks simpler initially, but quickly becomes problematic:
@@ -41,15 +41,15 @@ With directory-based routing, each route gets its own folder:
 products/
   [id]/
     index.json/
-      index.ts       🢂 Route handler
-      validator.ts   🢂 JSON-specific validation
-      types.ts       🢂 Type definitions
-      helper.ts      🢂 JSON endpoint utilities
-      index.test.ts  🢂 Tests for this endpoint
+      index.ts       ➜ Route handler
+      validator.ts   ➜ JSON-specific validation
+      types.ts       ➜ Type definitions
+      helper.ts      ➜ JSON endpoint utilities
+      index.test.ts  ➜ Tests for this endpoint
     index.html/
-      index.ts       🢂 Route handler
-      formatter.ts   🢂 HTML-specific formatting
-      template.ts    🢂 HTML template logic
+      index.ts       ➜ Route handler
+      formatter.ts   ➜ HTML-specific formatting
+      template.ts    ➜ HTML template logic
 ```
 
 The benefits become apparent at scale:

@@ -41,7 +41,7 @@ export default defineRoute<
 This approach is useful for route-specific types, but remember
 that if you find yourself declaring the same context properties in many routes,
 it's better to add them to `DefaultContext` in `core/api/env.d.ts` instead.
-([Details](/api-server/core-configuration))
+([Details ➜ ](/api-server/core-configuration))
 
 Use route-specific type arguments for properties that truly are unique to specific endpoints.
 

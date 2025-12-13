@@ -83,7 +83,5 @@ useful for tasks like timing requests, catching errors, or modifying responses.
 
 Global middleware from `core/api/use.ts` executes first,
 followed by route-specific middleware defined with `use`, and finally your method handler.
-([Details](/api-server/core-configuration))
 
 This predictable order makes it easier to reason about what happens during a request.
-

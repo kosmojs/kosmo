@@ -46,7 +46,7 @@ and `TypeScript` verifies that whatever you assign to `ctx.body` matches the res
 Like parameter refinement, these types aren't just compile-time checks.
 `KosmoJS` validates the incoming payload against your specified type at runtime
 and validates the outgoing response as well.
-[Details](/validation/payload).
+([Details ➜ ](/validation/payload)).
 
 If validation fails, `KosmoJS` handles the error appropriately without your handler code running.
 

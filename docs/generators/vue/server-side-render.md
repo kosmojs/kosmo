@@ -303,8 +303,8 @@ yarn build
 This produces two outputs:
 
 ```text
-dist/SOURCE_FOLDER/client/  🢂 static browser assets
-dist/SOURCE_FOLDER/ssr/     🢂 server entry bundle
+dist/SOURCE_FOLDER/client/  ➜ static browser assets
+dist/SOURCE_FOLDER/ssr/     ➜ server entry bundle
 ```
 
 The server bundle can be executed on any Node.js environment.

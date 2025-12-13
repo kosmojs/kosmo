@@ -47,7 +47,7 @@ The typed version gives you the refined type (number in this case) rather than t
 The standard `ctx.params` still exists if you need it for some reason,
 but `ctx.typedParams` is what you'll typically use when you've provided type refinements.
 
-Also `TRefine` can be used for fine-grained validation. ([Details](/validation/refine))
+Also `TRefine` can be used for fine-grained validation. ([Details ➜ ](/validation/refine))
 
 ## 🚥 Validating Multiple Parameters
 

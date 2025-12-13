@@ -9,6 +9,7 @@ hero:
         <span>Build type-safe full-stack apps.</span>
         <span>Multiple source folders.</span>
         <span>Directory-based routing.</span>
+        <span>Nested layouts.</span>
         <span>Runtime validation.</span>
         <span>Generated fetch clients.</span>
         <span>Multiple frameworks.</span>

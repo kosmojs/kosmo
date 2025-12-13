@@ -1,10 +1,12 @@
 ---
 title: Type Safety - Route Parameters
-description: Refine route parameter types in KosmoJS with compile-time TypeScript checking and automatic runtime validation using defineRoute type arguments and TRefine constraints.
+description: Refine route parameter types in KosmoJS with compile-time TypeScript checking
+    and automatic runtime validation using defineRoute type arguments and TRefine constraints.
 head:
   - - meta
     - name: keywords
-      content: route parameters, type refinement, runtime validation, typed params, url parameters, parameter validation, TRefine, typescript routes
+      content: route parameters, type refinement, runtime validation, typed params,
+        url parameters, parameter validation, TRefine, typescript routes
 ---
 
 `KosmoJS` generates `TypeScript` types for your route parameters based on your directory structure.
@@ -92,10 +94,9 @@ Think of it as providing the "blueprint" directly rather than a "reference to th
 
 These type refinements aren't just for `TypeScript`'s benefit.
 `KosmoJS` also validates parameters at runtime according to your specifications!
-[Details](/validation/params).
+([Details ➜ ](/validation/params)).
 
 If a request comes in with an ID that can't be parsed as a number,
 or an action that isn't one of your allowed values, `KosmoJS` rejects the request before your handler runs.
 
 This validation happens automatically - you don't need to write additional validation code!
-

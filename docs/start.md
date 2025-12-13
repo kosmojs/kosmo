@@ -16,7 +16,7 @@ Begin your project with a solid foundation.
 
 In just a few commands, you'll have a fully-configured `Vite` project with:
 - **Directory-based routing** - Folders become URLs automatically
-- **Type-safe APIs** - Runtime validation from TypeScript types (aka Runtype Validation)
+- **Type-safe APIs** - Runtime validation from TypeScript types
 - **Auto-generated fetch clients** - Typed client-side validation before requests
 - **OpenAPI documentation** - API specs generated automatically
 - **Route-level middleware** - Hierarchical organization without imports
@@ -150,19 +150,19 @@ Before we create routes, let's understand how `KosmoJS` maps folders to URLs.
 ```txt
 api/
   index/
-    index.ts          🢂 /api
+    index.ts          ➜ /api
   users/
-    index.ts          🢂 /api/users
+    index.ts          ➜ /api/users
     [id]/
-      index.ts        🢂 /api/users/:id
+      index.ts        ➜ /api/users/:id
 
 pages/
   index/
-    index.tsx         🢂 /
+    index.tsx         ➜ /
   users/
-    index.tsx         🢂 /users
+    index.tsx         ➜ /users
     [id]/
-      index.tsx       🢂 /users/:id
+      index.tsx       ➜ /users/:id
 ```
 
 **Key benefits:**
@@ -297,11 +297,11 @@ export default {
 }
 ```
 
-Once configured, you can add validation to your routes through type arguments.
-Let's explore each type of validation step by step.
-
 > The dev server should restart automatically, but after adding new generators
 it's recommended to manually stop and restart it with `pnpm dev`
+
+Once configured, you can add validation to your routes through type arguments.
+Let's explore each type of validation step by step.
 
 ### Parameter Validation
 
@@ -592,10 +592,11 @@ export default {
 }
 ```
 
-That's it. The generator analyzes your routes, type definitions, and validation schemas to produce a complete OpenAPI spec.
-
 > The dev server should restart automatically, but after adding new generators
 it's recommended to manually stop and restart it with `pnpm dev`
+
+That's it. The generator analyzes your routes, type definitions,
+and validation schemas to produce a complete OpenAPI spec.
 
 **What gets generated:**
 - All route paths with HTTP methods
@@ -755,7 +756,7 @@ Layouts can be nested - deeper layouts wrap inner layouts, creating a hierarchy 
 
 [More details: Nested Routes & Layouts →](/routing/nested-routes)
 
-## ⚡ Enable Server-Side Rendering
+## ⚡ Server-Side Rendering
 
 Want SEO, faster initial page loads, and critical CSS optimization? Enable SSR.
 
@@ -927,8 +928,8 @@ while the SSR server is dedicated entirely to rendering your app.
 
 More details on SSR:
 [SolidJS](/generators/solid/server-side-render)
-/ [React](/generators/react/server-side-render)
-/ [Vue](/generators/vue/server-side-render)
+ · [React](/generators/react/server-side-render)
+ · [Vue](/generators/vue/server-side-render)
 
 ## 🌐 Scale with Multiple Source Folders
 

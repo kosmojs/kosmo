@@ -46,7 +46,7 @@ and constructs paths accordingly:
 
 ```ts
 resolve("@", "config/index.ts")
-// 🢂 @front/config/index.ts
+// ➜ @front/config/index.ts
 ```
 
 ### Root-Level Directories
@@ -55,10 +55,10 @@ resolve("@", "config/index.ts")
 
 ```ts
 resolve("coreDir", "api/middleware.ts")
-// 🢂 core/api/middleware.ts
+// ➜ core/api/middleware.ts
 
 resolve("libDir", "types.ts")
-// 🢂 lib/types.ts
+// ➜ lib/types.ts
 ```
 
 These directories exist at the project root, not within source folders.
@@ -70,13 +70,13 @@ resolve relative to the current source folder:
 
 ```ts
 resolve("apiDir", "users/index.ts")
-// 🢂 @front/api/users/index.ts
+// ➜ @front/api/users/index.ts
 
 resolve("pagesDir", "dashboard/index.tsx")
-// 🢂 @front/pages/dashboard/index.tsx
+// ➜ @front/pages/dashboard/index.tsx
 
 resolve("configDir", "index.ts")
-// 🢂 @front/config/index.ts
+// ➜ @front/config/index.ts
 ```
 
 ### Lib Directories
@@ -86,13 +86,13 @@ combine the global `lib` directory with the source folder and the specific lib s
 
 ```ts
 resolve("apiLibDir", "users/[id]/types.ts")
-// 🢂 lib/@front/{api}/users/[id]/types.ts
+// ➜ lib/@front/{api}/users/[id]/types.ts
 
 resolve("fetchLibDir", "index.ts")
-// 🢂 lib/@front/{fetch}/index.ts
+// ➜ lib/@front/{fetch}/index.ts
 
 resolve("pagesLibDir", "dashboard/route.ts")
-// 🢂 lib/@front/{pages}/dashboard/route.ts
+// ➜ lib/@front/{pages}/dashboard/route.ts
 ```
 
 This structure keeps generated files organized by source folder
@@ -102,10 +102,10 @@ while maintaining a global `lib` directory for all generated code.
 
 The resolver applies these rules:
 
-1. **`@` shortcut** 🢂 Source folder directly
-2. **`coreDir` or `libDir`** 🢂 Project root location
-3. **Directories ending in `LibDir`** 🢂 `lib/{sourceFolder}/{specificLibDir}`
-4. **All other directories** 🢂 `{sourceFolder}/{specificDir}`
+1. **`@` shortcut** ➜ Source folder directly
+2. **`coreDir` or `libDir`** ➜ Project root location
+3. **Directories ending in `LibDir`** ➜ `lib/{sourceFolder}/{specificLibDir}`
+4. **All other directories** ➜ `{sourceFolder}/{specificDir}`
 
 The `appRoot` parameter, when provided, prefixes all resolved paths
 to create absolute file paths suitable for file system operations.

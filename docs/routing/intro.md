@@ -34,19 +34,19 @@ Here's how a typical structure maps to actual URLs:
 ```
 api/
   index/
-    index.ts          🢂 /api
+    index.ts          ➜ /api
   users/
-    index.ts          🢂 /api/users
+    index.ts          ➜ /api/users
     [id]/
-      index.ts        🢂 /api/users/:id
+      index.ts        ➜ /api/users/:id
 
 pages/
   index/
-    index.tsx          🢂 /
+    index.tsx          ➜ /
   users/
-    index.tsx          🢂 /users
+    index.tsx          ➜ /users
     [id]/
-      index.tsx        🢂 /users/:id
+      index.tsx        ➜ /users/:id
 ```
 
 Notice how the structure mirrors itself between API and pages.
@@ -90,4 +90,4 @@ For client pages, nested routes often benefit from layout components
 that wrap child routes and provide common UI elements like navigation or headers.
 
 `KosmoJS` supports nested routes naturally, featuring same consistent pattern across all frameworks.
-[( Details 🢂 )](/routing/nested-routes)
+([Details ➜ ](/routing/nested-routes))
