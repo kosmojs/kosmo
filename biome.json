@@ -60,6 +60,19 @@
   "overrides": [
     {
       "includes": [
+        "test/**/*.ts",
+        "./packages/core/dev/src/cli/templates/core/api/errors.ts"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
         "esbuilder/esbuilder.js",
         "./test/**/*.ts",
         "./packages/build/esbuilder/src/index.ts",
