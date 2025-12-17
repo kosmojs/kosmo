@@ -11,10 +11,7 @@ const {
   teardown,
 } = await setupTestProject({ framework: "solid" });
 
-beforeAll(startServer);
-afterAll(teardown);
-
-describe("SolidJS - Nested Routes", async () => {
+beforeAll(async () => {
   await bootstrapProject();
 
   await createPageRoutes(nestedRoutes, async ({ name, file }) => {
@@ -35,6 +32,12 @@ describe("SolidJS - Nested Routes", async () => {
     };
   });
 
+  await startServer();
+});
+
+afterAll(teardown);
+
+describe("SolidJS - Nested Routes", async () => {
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {

@@ -45,13 +45,15 @@ const {
   },
 });
 
-beforeAll(startServer);
+beforeAll(async () => {
+  await bootstrapProject();
+  await createPageRoutes(routes);
+  await startServer();
+});
+
 afterAll(teardown);
 
 describe("React - Link Component", async () => {
-  await bootstrapProject();
-  await createPageRoutes(routes);
-
   it("should render all links with correct hrefs", async ({ expect }) => {
     await withPageContent("navigation", {}, async ({ content }) => {
       // Verify page renders

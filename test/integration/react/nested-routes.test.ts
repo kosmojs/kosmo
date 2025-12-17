@@ -11,10 +11,7 @@ const {
   teardown,
 } = await setupTestProject({ framework: "react" });
 
-beforeAll(startServer);
-afterAll(teardown);
-
-describe("React - Nested Routes", async () => {
+beforeAll(async () => {
   await bootstrapProject();
 
   await createPageRoutes(nestedRoutes, async ({ name, file }) => {
@@ -36,6 +33,12 @@ describe("React - Nested Routes", async () => {
     };
   });
 
+  await startServer();
+});
+
+afterAll(teardown);
+
+describe("React - Nested Routes", async () => {
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {

@@ -16,10 +16,7 @@ const {
   skip: ({ ssr }) => !ssr,
 });
 
-beforeAll(startServer);
-afterAll(teardown);
-
-describe("Vue - Critical CSS", { skip }, async () => {
+beforeAll(async () => {
   await bootstrapProject();
 
   await createPageRoutes(nestedRoutes, async ({ name, file, cssFile }) => {
@@ -45,6 +42,12 @@ describe("Vue - Critical CSS", { skip }, async () => {
     };
   });
 
+  await startServer();
+});
+
+afterAll(teardown);
+
+describe("Vue - Critical CSS", { skip }, async () => {
   for (const { name, params } of nestedRoutes.filter(
     ({ file }) => file === "index",
   )) {

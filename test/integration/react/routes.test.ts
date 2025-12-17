@@ -11,13 +11,15 @@ const {
   teardown,
 } = await setupTestProject({ framework: "react" });
 
-beforeAll(startServer);
+beforeAll(async () => {
+  await bootstrapProject();
+  await createPageRoutes(routes);
+  await startServer();
+});
+
 afterAll(teardown);
 
 describe("React - Route Integration", async () => {
-  await bootstrapProject();
-  await createPageRoutes(routes);
-
   describe("Static Routes", () => {
     it("should render nested static route with default template", async () => {
       await withPageContent(

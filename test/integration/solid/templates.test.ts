@@ -38,13 +38,15 @@ const {
   },
 });
 
-beforeAll(startServer);
+beforeAll(async () => {
+  await bootstrapProject();
+  await createPageRoutes(routes);
+  await startServer();
+});
+
 afterAll(teardown);
 
 describe("SolidJS - Custom Templates", async () => {
-  await bootstrapProject();
-  await createPageRoutes(routes);
-
   describe("Pattern Matching", () => {
     it("should use custom template for matching route pattern", async () => {
       await withPageContent("landing", [], ({ content }) => {

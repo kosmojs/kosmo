@@ -45,13 +45,15 @@ const {
   },
 });
 
-beforeAll(startServer);
+beforeAll(async () => {
+  await bootstrapProject();
+  await createPageRoutes(routes);
+  await startServer();
+});
+
 afterAll(teardown);
 
 describe("SolidJS - Link Component", async () => {
-  await bootstrapProject();
-  await createPageRoutes(routes);
-
   it("should render all links with correct hrefs", async () => {
     await withPageContent("navigation", {}, async ({ content }) => {
       // Verify page renders

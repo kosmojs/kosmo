@@ -11,13 +11,15 @@ const {
   teardown,
 } = await setupTestProject({ framework: "solid" });
 
-beforeAll(startServer);
+beforeAll(async () => {
+  await bootstrapProject();
+  await createPageRoutes(routes);
+  await startServer();
+});
+
 afterAll(teardown);
 
 describe("SolidJS - Routes", async () => {
-  await bootstrapProject();
-  await createPageRoutes(routes);
-
   describe("Static Routes", () => {
     it("should render nested static route with default template", async () => {
       await withPageContent(
