@@ -18,8 +18,8 @@ import {
 
 import type { Options } from "./types";
 
-import indexTpl from "./templates/index.hbs";
-import routeLibIndexTpl from "./templates/route/index.hbs";
+import libIndexTpl from "./templates/lib/index.hbs";
+import libRouteTpl from "./templates/lib/route.hbs";
 import routeTpl from "./templates/route.hbs";
 import useTpl from "./templates/use.hbs";
 
@@ -70,7 +70,15 @@ export const factory: GeneratorFactory<Options> = async (
         await renderToFile(
           resolve("apiDir", entry.file),
           useTpl,
-          {},
+          {
+            funcName: [
+              "use",
+              entry.name
+                .replace(/\[|\]/g, "")
+                .replace(/\W+(\w)/g, (...a) => String(a[1]).toUpperCase())
+                .replace(/^(\w)/, (m) => m.toUpperCase()),
+            ].join(""),
+          },
           {
             // write only to blank files
             overwrite: (content) => content?.trim().length === 0,
@@ -94,7 +102,7 @@ export const factory: GeneratorFactory<Options> = async (
 
       for (const [file, template] of [
         //
-        ["index.ts", routeLibIndexTpl],
+        ["index.ts", libRouteTpl],
       ]) {
         await renderToFile(
           resolve("apiLibDir", dirname(entry.file), file),
@@ -178,8 +186,8 @@ export const factory: GeneratorFactory<Options> = async (
     });
 
     await renderToFile(
-      resolve("libDir", sourceFolder, `${defaults.apiLibDir}.ts`),
-      indexTpl,
+      resolve("apiLibDir", "index.ts"),
+      libIndexTpl,
       {
         routes,
         useWrappers,

@@ -1,4 +1,4 @@
-import { routerRoutesFactory } from "@/router";
+import { defineRoute, routerRoutesFactory } from "@/router";
 import {
   HTTPMethods,
   type MiddlewareDefinition,
@@ -18,7 +18,9 @@ export const middlewareStackBuilder = (
         path: "",
         file: "",
         useWrappers: [],
-        definitionItems: [],
+        definitionItems: defineRoute(({ GET }) => [
+          GET(async function get() {}),
+        ]),
         params: [],
         numericParams: [],
         validationSchemas: {},

@@ -1,18 +1,17 @@
 import { styleText } from "node:util";
 
-import picomatch from "picomatch";
 import stringWidth from "string-width";
 
-import type { RouterRoute } from "./types";
-
-type Printer = (line: string) => void;
-
-const dot = "·";
+import type {
+  HandlerDefinition,
+  MiddlewareDefinition,
+  RouterRoute,
+} from "./types";
 
 const colorizeMethod = (method: string): string => {
   const color = (
     {
-      HEAD: "grey",
+      HEAD: "gray",
       GET: "green",
       POST: "blue",
       PATCH: "blue",
@@ -23,67 +22,90 @@ const colorizeMethod = (method: string): string => {
   return color ? styleText(color, method) : method;
 };
 
-export default (
-  routes: Array<RouterRoute>,
-  printer: Printer,
-  patterns?: Array<string> | undefined, // picomatch patterns
-) => {
-  const patternMatchers = patterns?.flatMap((pattern) => {
-    return pattern?.trim?.() ? [picomatch(pattern)] : [];
+export default (entry: {
+  name: string;
+  path: string;
+  file: string;
+  methods: Array<string>;
+  middleware: Array<MiddlewareDefinition>;
+  handler: HandlerDefinition;
+}): RouterRoute["debug"] => {
+  const { path, file } = entry;
+
+  const methodLines = entry.methods.flatMap((method) => {
+    const coloredMethod = colorizeMethod(method);
+    return method === "GET"
+      ? [coloredMethod + styleText("gray", "|HEAD")]
+      : [coloredMethod];
   });
 
-  for (const { path, file, methods, slot, debug, kind } of routes.filter(
-    ({ name, path }) => {
-      return patternMatchers?.length
-        ? patternMatchers.some((isMatch) => isMatch(name) || isMatch(path))
-        : true;
+  const middlewareLines = entry.middleware
+    .map(({ options, middleware }) => {
+      const lines: Array<string> = [];
+
+      if (options?.slot) {
+        lines.push(
+          `${styleText("dim", "slot:")} ${styleText("blue", options.slot)};`,
+        );
+      }
+
+      const funcNames = middleware.map((fn) => {
+        return styleText("magenta", funcName(fn));
+      });
+
+      lines.push(`${styleText("dim", "exec:")} ${funcNames.join("; ")}`);
+
+      return lines.join(" ");
+    })
+    .join(`\n${Array(12).fill(" ").join("")}`);
+
+  const handlerLines = entry.handler.middleware.map((fn) => {
+    return styleText("yellow", funcName(fn));
+  });
+
+  const headline = `${styleText("bgBlue", styleText("black", ` ${path} `))} ${styleText("gray", `[ ${file} ]`)}`;
+  const methods = `${styleText("dim", "   methods:")} ${methodLines.join(" ")}`;
+  const middleware = `${styleText("dim", "middleware:")} ${middlewareLines}`;
+  const handler = `${styleText("dim", "   handler:")} ${handlerLines.join(Array(7).fill(" ").join(""))}`;
+
+  const maxColumns = process.stdout.isTTY
+    ? Number(process.stdout.columns || 80)
+    : 80;
+
+  const debugEntries = [
+    ["headline", headline],
+    ["methods", methods],
+    ["middleware", middleware],
+    ["handler", handler],
+  ] as const;
+
+  const lineMapper = (line: string) => {
+    const freeColumns = maxColumns - stringWidth(line);
+    return freeColumns > 0
+      ? [
+          line,
+          styleText(
+            "dim",
+            styleText("gray", Array(freeColumns).fill("·").join("")),
+          ),
+        ].join("")
+      : line;
+  };
+
+  const debug = debugEntries.reduce(
+    (map, [key, line]) => {
+      map[key] = line.split("\n").map(lineMapper).join("\n");
+      return map;
     },
-  )) {
-    const lines: Array<string> = [];
+    {} as RouterRoute["debug"],
+  );
 
-    lines.push(
-      `[ ${styleText("bgBlue", styleText("black", ` ${path} `))} ] ${styleText("gray", file)}`,
-    );
+  return {
+    ...debug,
+    full: Object.values(debug).join("\n"),
+  };
+};
 
-    const methodsLine = methods
-      .map((method) => {
-        const coloredMethod = colorizeMethod(method);
-        if (method === "GET" && kind === "handler") {
-          return coloredMethod + styleText("gray", "|HEAD");
-        }
-        return coloredMethod;
-      })
-      .join(" ");
-
-    lines.push(`${styleText("dim", "  methods:")} ${methodsLine}`);
-
-    if (slot) {
-      lines.push(
-        `${styleText("dim", "  slot:   ")} ${styleText("cyan", slot)}`,
-      );
-    }
-
-    if (debug) {
-      lines.push(`  ${styleText("cyan", debug)}`);
-    }
-
-    const maxColumns = process.stdout.isTTY
-      ? Number(process.stdout.columns || 80)
-      : 80;
-
-    for (const line of lines.map((e) => `${e} `)) {
-      const freeColumns = maxColumns - stringWidth(line);
-      printer(
-        freeColumns > 0 //
-          ? line +
-              styleText(
-                "dim",
-                styleText("gray", Array(freeColumns).fill(dot).join("")),
-              )
-          : line,
-      );
-    }
-
-    printer("\n");
-  }
+const funcName = (fn: Function) => {
+  return fn.name || fn.toString().split("\n")[0].slice(0, 30);
 };

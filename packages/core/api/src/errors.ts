@@ -1,4 +1,5 @@
 import type {
+  ParameterizedMiddleware,
   ValidationErrorData,
   ValidationErrorEntry,
   ValidationErrorScope,
@@ -29,3 +30,5 @@ export class ValidationError extends Error {
     this.errorSummary = errorSummary;
   }
 }
+
+export const createErrorHandler = (handler: ParameterizedMiddleware) => handler;

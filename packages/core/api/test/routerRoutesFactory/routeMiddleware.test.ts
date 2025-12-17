@@ -1,22 +1,25 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it, test } from "vitest";
 
 import { defineRoute } from "@/router";
+import { use } from "@/use";
 
-import { defaultMethods, middlewareStackBuilder } from "..";
+import { middlewareStackBuilder } from "..";
 
 describe("routerRoutesFactory", () => {
   describe("route middleware", () => {
-    test("route middleware inserted after prioritized and core middleware", () => {
-      async function preMiddleware() {}
-      async function postMiddleware() {}
+    test("route middleware inserted after prioritized middleware", () => {
+      function preMiddleware() {}
+      function postMiddleware() {}
+      function get() {}
+      function post() {}
 
       const stack = middlewareStackBuilder(
         [
           {
             definitionItems: defineRoute(({ use, GET, POST }) => [
               use(preMiddleware),
-              GET(() => {}),
-              POST(() => {}),
+              GET(get),
+              POST(post),
               use(postMiddleware),
             ]),
           },
@@ -24,83 +27,63 @@ describe("routerRoutesFactory", () => {
         {},
       );
 
-      expect(stack[4].kind).toEqual("middleware");
-      expect(stack[4].methods).toEqual(defaultMethods);
-      expect(stack[4].middleware[0]).toEqual(preMiddleware);
+      expect(stack[0].methods).toEqual(["GET"]);
+      expect(stack[0].middleware[0].name).toEqual("useParams");
+      expect(stack[0].middleware[1].name).toEqual("useValidateParams");
+      expect(stack[0].middleware[2]).toEqual(preMiddleware);
+      expect(stack[0].middleware[3]).toEqual(postMiddleware);
+      expect(stack[0].middleware[4]).toEqual(get);
+      expect(stack[0].middleware.length).toEqual(5);
 
-      expect(stack[5].kind).toEqual("handler");
-      expect(stack[5].methods).toEqual(["GET"]);
-      expect(stack[5].middleware.length).toEqual(1);
-
-      expect(stack[6].kind).toEqual("handler");
-      expect(stack[6].methods).toEqual(["POST"]);
-      expect(stack[6].middleware.length).toEqual(1);
-
-      expect(stack[7].kind).toEqual("middleware");
-      expect(stack[7].methods).toEqual(defaultMethods);
-      expect(stack[7].middleware[0]).toEqual(postMiddleware);
-
-      expect(stack.length).toEqual(8);
+      expect(stack[1].methods).toEqual(["POST"]);
+      expect(stack[0].middleware[0].name).toEqual("useParams");
+      expect(stack[0].middleware[1].name).toEqual("useValidateParams");
+      expect(stack[1].middleware[2]).toEqual(preMiddleware);
+      expect(stack[1].middleware[3]).toEqual(postMiddleware);
+      expect(stack[1].middleware[4]).toEqual(post);
+      expect(stack[1].middleware.length).toEqual(5);
     });
 
-    test("when overriding prioritized slots, last middleware takes precedence", () => {
+    it("overrides prioritized slots", () => {
       async function paramsHandler() {}
       async function validateParams() {}
       async function payloadHandler() {}
       async function validatePayload() {}
       async function validateResponse() {}
+      async function get() {}
 
-      const stack = middlewareStackBuilder(
+      const [stack] = middlewareStackBuilder(
         [
           {
-            definitionItems: defineRoute(({ use }) => [
-              use(async () => {}, { slot: "validatePayload" }),
+            definitionItems: defineRoute(({ use, GET }) => [
               use(validatePayload, { slot: "validatePayload" }),
-
-              use(async () => {}, { slot: "payload" }),
               use(payloadHandler, { slot: "payload" }),
-
-              use(async () => {}, { slot: "validateParams" }),
               use(validateParams, { slot: "validateParams" }),
-
-              use(async () => {}, { slot: "validateResponse" }),
               use(validateResponse, { slot: "validateResponse" }),
-
-              use(async () => {}, { slot: "params" }),
               use(paramsHandler, { slot: "params" }),
+              GET(get),
             ]),
           },
         ],
-        {},
+        {
+          coreMiddleware: [
+            use(async () => {}, { slot: "validatePayload" }),
+            use(async () => {}, { slot: "payload" }),
+            use(async () => {}, { slot: "validateParams" }),
+            use(async () => {}, { slot: "validateResponse" }),
+            use(async () => {}, { slot: "params" }),
+          ],
+        },
       );
 
-      expect(stack[0].kind).toEqual("middleware");
-      expect(stack[0].middleware[0]).toEqual(paramsHandler);
-      expect(stack.filter((e) => e.slot === "params").length).toEqual(1);
+      expect(stack.middleware[0]).toEqual(paramsHandler);
+      expect(stack.middleware[1]).toEqual(validateParams);
+      expect(stack.middleware[2]).toEqual(payloadHandler);
+      expect(stack.middleware[3]).toEqual(validatePayload);
+      expect(stack.middleware[4]).toEqual(validateResponse);
+      expect(stack.middleware[5]).toEqual(get);
 
-      expect(stack[1].kind).toEqual("middleware");
-      expect(stack[1].middleware[0]).toEqual(validateParams);
-      expect(stack.filter((e) => e.slot === "validateParams").length).toEqual(
-        1,
-      );
-
-      expect(stack[2].kind).toEqual("middleware");
-      expect(stack[2].middleware[0]).toEqual(payloadHandler);
-      expect(stack.filter((e) => e.slot === "payload").length).toEqual(1);
-
-      expect(stack[3].kind).toEqual("middleware");
-      expect(stack[3].middleware[0]).toEqual(validatePayload);
-      expect(stack.filter((e) => e.slot === "validatePayload").length).toEqual(
-        1,
-      );
-
-      expect(stack[4].kind).toEqual("middleware");
-      expect(stack[4].middleware[0]).toEqual(validateResponse);
-      expect(stack.filter((e) => e.slot === "validateResponse").length).toEqual(
-        1,
-      );
-
-      expect(stack.length).toEqual(5);
+      expect(stack.middleware.length).toEqual(6);
     });
   });
 });

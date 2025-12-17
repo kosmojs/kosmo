@@ -1,6 +1,6 @@
 ---
 title: Validation Error Handler
-description: Handle ValidationError instances in core/api/error-handler.ts with detailed error information including scope, error messages, field paths, and structured ValidationErrorEntry data.
+description: Handle ValidationError instances in core/api/errors.ts with detailed error information including scope, error messages, field paths, and structured ValidationErrorEntry data.
 head:
   - - meta
     - name: keywords
@@ -14,21 +14,32 @@ This error contains detailed information about the validation failure,
 including the scope (whether it was a parameter, payload, or response that failed)
 and descriptive error messages.
 
-Your `core/api/error-handler.ts` file catches these errors and handles them appropriately.
+Your `core/api/errors.ts` file catches these errors and handles them appropriately.
 
-## 🚨 Default Error Handler
+## 📦 Default Error Handler
 
 The default error handler checks if an error is a `ValidationError`
 and returns a 400 Bad Request status:
 
-```ts [core/api/error-handler.ts]
-import { ValidationError } from "@kosmojs/api";
+```ts [core/api/errors.ts]
+import { createErrorHandler, ValidationError } from "@kosmojs/api";
 
-// ...
-if (error instanceof ValidationError) {
-  const { scope, errorMessage } = error;
-  return [400, `${scope}ValidationError: ${errorMessage}`];
-}
+export const errorHandler = createErrorHandler(
+  async function useErrorHandler(ctx, next) {
+    try {
+      await next();
+    } catch (error: any) {
+      if (error instanceof ValidationError) {
+        const { scope, errorMessage } = error;
+        ctx.status = 400;
+        ctx.body = { error: `ValidationError: ${scope} - ${errorMessage}` };
+      } else {
+        ctx.status = error.statusCode || error.status || 500;
+        ctx.body = { error: error.message };
+      }
+    }
+  },
+);
 ```
 
 This file is yours to customize.
@@ -38,21 +49,36 @@ or handle specific error types differently.
 Perhaps you want to return validation errors in a specific JSON format that your frontend expects.
 Or maybe you want to log validation failures for monitoring purposes.
 
-```ts [core/api/error-handler.ts]
-if (error instanceof ValidationError) {
-  const { scope, errorMessage } = error;
+```ts [core/api/errors.ts]
+import { createErrorHandler, ValidationError } from "@kosmojs/api";
 
-  // Log validation failures
-  logger.warn("Validation failed", { scope, message: errorMessage });
+export const errorHandler = createErrorHandler(
+  async function useErrorHandler(ctx, next) {
+    try {
+      await next();
+    } catch (error: any) {
+      if (error instanceof ValidationError) {
+        const { scope, errorMessage } = error;
 
-  // Return a structured error response
-  return [400, {
-    error: "validation_error",
-    scope,
-    message: errorMessage,
-    timestamp: new Date().toISOString(),
-  }];
-}
+        // [!code focus:11]
+        // Log validation failures
+        logger.warn("Validation failed", { scope, message: errorMessage });
+
+        // Return a structured error response
+        ctx.status = 400;
+        ctx.body = {
+          error: "validation_error",
+          scope,
+          message: errorMessage,
+          timestamp: new Date().toISOString(),
+        };
+      } else {
+        ctx.status = error.statusCode || error.status || 500;
+        ctx.body = { error: error.message };
+      }
+    }
+  },
+);
 ```
 
 ## 🔧 ValidationError Details
@@ -125,41 +151,43 @@ each describing a specific validation failure.
 
 You can iterate through this array to collect error details and format them as needed:
 
-```ts [core/api/error-handler.ts]
+```ts
 if (error instanceof ValidationError) {
   const { scope, errors } = error;
 
   // Collect all error messages
   const messages = errors.map(e => `${e.path}: ${e.message}`);
 
-  return [400, {
+  ctx.status = 400;
+  ctx.body = {
     error: "validation_error",
     scope,
-    fields: messages,
-  }];
+    messages,
+  };
 }
 ```
 
 Or extract just the first error for a simple response:
 
-```ts [core/api/error-handler.ts]
+```ts
 if (error instanceof ValidationError) {
   const { scope, errors } = error;
   const firstError = errors[0];
 
-  return [400, {
+  ctx.status = 400;
+  ctx.body = {
     error: "validation_error",
     scope,
     field: firstError.path,
     message: firstError.message,
-  }];
+  };
 }
 ```
 
 For convenience, the `errorMessage` property provides a human-readable message
 containing all error messages concatenated:
 
-```ts [core/api/error-handler.ts]
+```ts
 if (error instanceof ValidationError) {
   const { scope, errorMessage } = error;
 
@@ -167,13 +195,14 @@ if (error instanceof ValidationError) {
   // "Validation failed: user: missing required properties: "email", "name";
   //  password: must be at least 8 characters long"
 
-  return [400, errorMessage];
+  ctx.status = 400;
+  ctx.body = { error: errorMessage };
 }
 ```
 
 The `errorSummary` property offers a brief overview of validation failures:
 
-```ts [core/api/error-handler.ts]
+```ts [core/api/errors.ts]
 if (error instanceof ValidationError) {
   const { scope, errorSummary } = error;
 
@@ -181,7 +210,8 @@ if (error instanceof ValidationError) {
 
   logger.warn(`Validation failed in ${scope}: ${errorSummary}`);
 
-  return [400, errorSummary];
+  ctx.status = 400;
+  ctx.body = { error: errorSummary };
 }
 ```
 

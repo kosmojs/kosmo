@@ -463,6 +463,10 @@ export default defineConfig({
               ],
             },
             {
+              text: "🚨 Error Handling",
+              link: "/api-server/error-handling",
+            },
+            {
               text: "💻 Development Workflow",
               link: "/api-server/development-workflow",
             },
@@ -507,8 +511,8 @@ export default defineConfig({
               link: "/validation/skip-validation",
             },
             {
-              text: "🚧 Error Handler",
-              link: "/validation/error-handler",
+              text: "🚨 Error Handling",
+              link: "/validation/error-handling",
             },
             {
               text: "🏷 Naming Conventions",
@@ -547,7 +551,7 @@ export default defineConfig({
               link: "/fetch/validation",
             },
             {
-              text: "🚧 Error Handling",
+              text: "🚨 Error Handling",
               link: "/fetch/error-handling",
             },
             {

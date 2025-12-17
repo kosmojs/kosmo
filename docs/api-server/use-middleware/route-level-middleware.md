@@ -44,7 +44,7 @@ In this structure:
 - `users/account/use.ts` wraps **only** routes under `/api/users/account`
 
 When a request hits `/api/users/account`, the middleware execution order is:
-1. Global middleware from `core/api/use.ts` ([Details ➜ ](/api-server/core-configuration))
+1. Global middleware from `core/api/use.ts`
 2. `users/use.ts` (parent folder)
 3. `users/account/use.ts` (current folder)
 4. Route-specific middleware from `users/account/index.ts`
@@ -63,15 +63,14 @@ The generated structure gives you a starting point:
 ```ts [api/users/use.ts]
 import { use } from "@kosmojs/api";
 
-export default use([
-  async (ctx, next) => {
+export default [
+  use(async (ctx, next) => {
     // Your middleware logic here
     return next();
-  },
-]);
+  })
+];
 ```
 
-The `use` helper accepts an array of middleware functions.
 You can define multiple middleware in a single `use.ts` file,
 and they'll execute in the order you define them.
 
@@ -87,9 +86,9 @@ Apply authentication to entire route subtrees without repeating the logic:
 ```ts [api/admin/use.ts]
 import { use } from "@kosmojs/api";
 
-export default use([
-  async (ctx, next) => {
-    const token = ctx.headers.authorization?.replace("Bearer ", "");
+export default [
+  use(async (ctx, next) => {
+    const token = ctx.headers.authorization?.replace("Bearer ", ""); // [!code focus:8]
     ctx.assert(token, 401, "Authentication required");
 
     const user = await verifyToken(token);
@@ -97,8 +96,8 @@ export default use([
 
     ctx.state.user = user;
     return next();
-  },
-]);
+  })
+];
 ```
 
 Now every route under `/api/admin` requires admin authentication.
@@ -112,9 +111,9 @@ Add structured logging for specific parts of your API:
 ```ts [api/payments/use.ts]
 import { use } from "@kosmojs/api";
 
-export default use([
-  async (ctx, next) => {
-    const start = Date.now();
+export default [
+  use(async (ctx, next) => {
+    const start = Date.now(); // [!code focus:12]
     const requestId = crypto.randomUUID();
 
     ctx.state.requestId = requestId;
@@ -126,7 +125,7 @@ export default use([
       const duration = Date.now() - start;
       console.log(`[${requestId}] completed in ${duration}ms`);
     }
-  },
+  })
 ]);
 ```
 
@@ -141,12 +140,12 @@ Override the default JSON body parser for routes that need different formats:
 import { use } from "@kosmojs/api";
 import bodyparser from "@kosmojs/api/bodyparser";
 
-export default use([
-  bodyparser.text({
+export default [
+  use(bodyparser.text(), {
     on: ["POST"],
     slot: "bodyparser",
-  }),
-]);
+  })
+];
 ```
 
 By using the `bodyparser` slot, this replaces the default JSON parser
@@ -164,14 +163,16 @@ Apply rate limits to specific endpoint groups:
 import { use } from "@kosmojs/api";
 import rateLimit from "koa-ratelimit";
 
-export default use([
-  rateLimit({
-    driver: "memory",
-    db: new Map(),
-    duration: 60000, // 1 minute
-    max: 100,
-  }),
-]);
+export default [
+  use(
+    rateLimit({
+      driver: "memory",
+      db: new Map(),
+      duration: 60000, // 1 minute
+      max: 100,
+    })
+  )
+];
 ```
 
 Public endpoints get rate limiting, while internal or authenticated endpoints
@@ -209,11 +210,11 @@ Middleware executes from the outermost scope inward:
 
 ```txt
 api/
-├── use.ts              // Runs 2nd (after global)
+├── use.ts               // Runs 2nd (after global)
 └── admin/
-    ├── use.ts          // Runs 3rd
+    ├── use.ts           // Runs 3rd
     └── users/
-        ├── use.ts      // Runs 4th
+        ├── use.ts       // Runs 4th
         └── [id]/
             └── index.ts // Runs 5th (route handler)
 ```
@@ -237,16 +238,18 @@ Just like inline middleware, you can restrict route-level middleware to specific
 ```ts [api/users/use.ts]
 import { use } from "@kosmojs/api";
 
-export default use([
-  async (ctx, next) => {
-    // Authentication required for state-changing operations
-    const token = ctx.headers.authorization?.replace("Bearer ", "");
-    ctx.assert(token, 401, "Authentication required");
-    ctx.state.user = await verifyToken(token);
-    return next();
-  },
-  { on: ["POST", "PUT", "PATCH", "DELETE"] },
-]);
+export default [
+  use(
+    async (ctx, next) => {
+      // Authentication required for state-changing operations
+      const token = ctx.headers.authorization?.replace("Bearer ", "");
+      ctx.assert(token, 401, "Authentication required");
+      ctx.state.user = await verifyToken(token);
+      return next();
+    },
+    { on: ["POST", "PUT", "PATCH", "DELETE"] },
+  )
+];
 ```
 
 This middleware only runs for methods that modify data,
@@ -260,29 +263,31 @@ They execute in the order you define them:
 ```ts [api/users/use.ts]
 import { use } from "@kosmojs/api";
 
-export default use([
+export default [
   // First: Logging
-  async (ctx, next) => {
+  use(async (ctx, next) => {
     console.log(`Request: ${ctx.method} ${ctx.path}`);
     return next();
-  },
+  }),
 
   // Second: Authentication (only for certain methods)
-  async (ctx, next) => {
-    const token = ctx.headers.authorization?.replace("Bearer ", "");
-    ctx.assert(token, 401, "Authentication required");
-    ctx.state.user = await verifyToken(token);
-    return next();
-  },
-  { on: ["POST", "PUT", "DELETE"] },
+  use(
+    async (ctx, next) => {
+      const token = ctx.headers.authorization?.replace("Bearer ", "");
+      ctx.assert(token, 401, "Authentication required");
+      ctx.state.user = await verifyToken(token);
+      return next();
+    },
+    { on: ["POST", "PUT", "DELETE"] },
+  ),
 
   // Third: Request timing
-  async (ctx, next) => {
+  use(async (ctx, next) => {
     const start = Date.now();
     await next();
     ctx.set("X-Response-Time", `${Date.now() - start}ms`);
-  },
-]);
+  }),
+];
 ```
 
 This keeps related middleware organized in one place while maintaining clear separation of concerns.
@@ -295,8 +300,8 @@ These apply broadly to groups of routes.
 **Keep it generic:** Avoid parameter-specific logic or assumptions about request structure
 that won't hold for all routes in the hierarchy.
 
-**Leverage slots for overrides:** When you need to replace global middleware (like body parsers)
-for a subset of routes, use the `slot` option to make your intent explicit.
+**Use slots for overrides:** Use the `slot` option when you need to replace global middleware -
+without slot your middleware runs alongside the global middleware instead of replacing it.
 
 **Organize by feature:** If you have a `/api/admin` section with different authentication requirements,
 give it its own `use.ts` rather than adding conditional logic to a parent middleware.
@@ -306,19 +311,6 @@ Make sure they compose well - each layer should add value without conflicting wi
 
 **Document middleware behavior:** Leave comments in your `use.ts` files explaining what they do
 and why they're needed. Future you (and your teammates) will appreciate the context.
-
-## 🔄 Relationship to Other Middleware Patterns
-
-Route-level middleware complements rather than replaces other middleware patterns:
-
-- **Global middleware** (`core/api/use.ts`): For truly universal concerns that apply to every single route
-- **Route-level middleware** (`use.ts` files): For subtree-specific concerns that apply to groups of related routes
-- **Inline middleware** (within route definitions): For route-specific logic that only applies to one endpoint
-
-Use the right tool for the scope of your concern.
-Authentication that applies to all admin routes? Route-level middleware.
-Request validation specific to one endpoint? Inline middleware.
-Body parsing that applies everywhere? Global middleware.
 
 ---
 

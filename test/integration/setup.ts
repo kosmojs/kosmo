@@ -35,6 +35,15 @@ const browser = csr
     })
   : undefined;
 
+const apiClient = got.extend({
+  retry: {
+    limit: 0, // ✅ Fast failures in tests
+  },
+  timeout: {
+    request: 5000, // Also set reasonable timeout
+  },
+});
+
 export const sourceFolder = "@src";
 
 export * from "./routes";
@@ -313,7 +322,7 @@ export const setupTestProject = async (opt?: {
 
       await page.close();
     } else {
-      maybeContent = await got(url).text();
+      maybeContent = await apiClient(url).text();
     }
 
     const content = maybeContent ?? "";
@@ -344,7 +353,7 @@ export const setupTestProject = async (opt?: {
 
     const url = `${baseURL}/api/${path}`;
 
-    const response = await got(url);
+    const response = await apiClient(url);
 
     await callback?.({ path, response });
 

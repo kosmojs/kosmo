@@ -13,10 +13,7 @@ const {
   teardown,
 } = await setupTestProject();
 
-beforeAll(startServer);
-afterAll(teardown);
-
-describe("API - useWrappers", async () => {
+beforeAll(async () => {
   await bootstrapProject();
 
   await createApiRoutes(apiRoutes, async ({ name, file }) => {
@@ -24,15 +21,15 @@ describe("API - useWrappers", async () => {
       if (file === "use") {
         return `
           import { use } from "@kosmojs/api";
-          export default use([
-            async (ctx, next) => {
+          export default [
+            use((ctx, next) => {
               if (!ctx.state.stack) {
                 ctx.state.stack = []
               }
               ctx.state.stack.push("${name}/${file}");
               return next();
-            },
-          ]);
+            }),
+          ];
         `;
       }
       return `
@@ -47,6 +44,12 @@ describe("API - useWrappers", async () => {
     };
   });
 
+  await startServer();
+});
+
+afterAll(teardown);
+
+describe("API - useWrappers", async () => {
   for (const { name, params } of apiRoutes.filter(
     ({ file }) => file === "index",
   )) {

@@ -1,15 +1,15 @@
-import Router from "@koa/router";
+import Router, { type RouterMiddleware } from "@koa/router";
 
-import {
-  type CreateRouter,
-  type DefineRoute,
-  type HandlerDefinition,
-  HTTPMethods,
-  type MiddlewareDefinition,
-  type RouterRoute,
-  type RouterRouteSource,
-  type UseSlots,
-  type ValidationSchemas,
+import debugRouteEntry from "./debug";
+import type {
+  CreateRouter,
+  DefineRoute,
+  HandlerDefinition,
+  MiddlewareDefinition,
+  RouterRoute,
+  RouterRouteSource,
+  UseSlots,
+  ValidationSchemas,
 } from "./types";
 import { use } from "./use";
 
@@ -86,9 +86,10 @@ export const routerRoutesFactory = (
   }: {
     coreMiddleware: Array<MiddlewareDefinition>;
   },
-) => {
+): Array<RouterRoute> => {
   // WARN:: prioritized middleware must run in this exact order!
   const prioritizedSlots: Array<keyof UseSlots> = [
+    "errorHandler",
     "params", // Path params processing
     "validateParams", // Path params validation
     "bodyparser", // Raw request body parsing
@@ -102,7 +103,10 @@ export const routerRoutesFactory = (
   // Iterate over each route definition
   for (const { name, path, file, ...rest } of routeSources) {
     // Include both middleware and HTTP method handlers
-    const definitionItems = [...rest.useWrappers, ...rest.definitionItems];
+    const definitionItems = [
+      ...rest.useWrappers,
+      ...rest.definitionItems,
+    ].flat();
 
     const routeMiddleware: Array<MiddlewareDefinition> = definitionItems.filter(
       (e) => e.kind === "middleware",
@@ -170,25 +174,32 @@ export const routerRoutesFactory = (
     ];
 
     for (const entry of routeStack) {
-      if (entry.kind === "middleware") {
-        stack.push({
-          name,
-          path,
-          file,
-          methods: entry.options?.on || Object.keys(HTTPMethods),
-          middleware: entry.middleware,
-          kind: entry.kind,
-          slot: entry.options?.slot,
-          debug: entry.options?.debug,
+      if (entry.kind === "handler") {
+        const middleware = routeStack.flatMap((e) => {
+          if (e.kind === "middleware") {
+            return !e.options?.on || e.options.on.includes(entry.method)
+              ? [e]
+              : [];
+          }
+          return [];
         });
-      } else if (entry.kind === "handler") {
         stack.push({
           name,
           path,
           file,
           methods: [entry.method],
-          middleware: entry.middleware,
-          kind: entry.kind,
+          middleware: [
+            ...middleware.flatMap((e) => e.middleware),
+            ...entry.middleware,
+          ] as unknown as Array<RouterMiddleware>,
+          debug: debugRouteEntry({
+            name,
+            path,
+            file,
+            methods: [entry.method],
+            middleware,
+            handler: entry,
+          }),
         });
       }
     }
@@ -202,7 +213,7 @@ const paramsMiddlewareFactory = (
   numericParams: RouterRouteSource["numericParams"],
 ) => [
   use(
-    (ctx, next) => {
+    function useParams(ctx, next) {
       ctx.typedParams = params.reduce(
         (map: Record<string, unknown>, [name, isRest]) => {
           const value = ctx.params[name];
@@ -229,7 +240,7 @@ const paramsMiddlewareFactory = (
 
 const validationMiddlewareFactory = (validationSchemas: ValidationSchemas) => [
   use(
-    (ctx, next) => {
+    function useValidateParams(ctx, next) {
       validationSchemas.params?.validate(ctx.typedParams);
       return next();
     },
@@ -237,7 +248,7 @@ const validationMiddlewareFactory = (validationSchemas: ValidationSchemas) => [
   ),
 
   use(
-    (ctx, next) => {
+    function useValidatePayload(ctx, next) {
       validationSchemas.payload?.[ctx.method]?.validate(ctx.payload);
       return next();
     },
@@ -248,7 +259,7 @@ const validationMiddlewareFactory = (validationSchemas: ValidationSchemas) => [
   ),
 
   use(
-    async (ctx, next) => {
+    async function useValidateResponse(ctx, next) {
       if (validationSchemas.response?.[ctx.method]) {
         await next();
         validationSchemas.response?.[ctx.method]?.validate(ctx.body);

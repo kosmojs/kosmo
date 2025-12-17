@@ -25,8 +25,6 @@ export enum HTTPMethods {
   DELETE = "DELETE",
 }
 
-export type { RouterMiddleware as Middleware };
-
 export type HTTPMethod = keyof typeof HTTPMethods;
 
 export type ParameterizedContext<
@@ -45,7 +43,11 @@ export type ParameterizedContext<
   ResponseT
 >;
 
-type RouteMiddleware<ParamsT, StateT, ContextT> = (
+export type ParameterizedMiddleware<
+  ParamsT = {},
+  StateT = {},
+  ContextT = {},
+> = (
   ctx: ParameterizedContext<ParamsT, StateT, ContextT>,
   next: Next,
 ) => Promise<void> | void;
@@ -63,13 +65,13 @@ export type RouteHandler<
 
 export type MiddlewareDefinition = {
   kind: "middleware";
-  middleware: Array<RouterMiddleware>;
+  middleware: Array<ParameterizedMiddleware>;
   options?: UseOptions | undefined;
 };
 
 export type HandlerDefinition = {
   kind: "handler";
-  middleware: Array<RouterMiddleware>;
+  middleware: Array<ParameterizedMiddleware>;
   method: HTTPMethod;
 };
 
@@ -88,8 +90,8 @@ export type DefineRouteHelpers<
   // since middleware operates across multiple request methods with varying types.
   use: (
     middleware:
-      | RouteMiddleware<ParamsT, StateT, ContextT>
-      | Array<RouteMiddleware<ParamsT, StateT, ContextT>>,
+      | ParameterizedMiddleware<ParamsT, StateT, ContextT>
+      | Array<ParameterizedMiddleware<ParamsT, StateT, ContextT>>,
     options?: UseOptions,
   ) => RouteDefinitionItem;
 } & {
@@ -117,6 +119,7 @@ export type DefineRoute = <
 ) => Array<RouteDefinitionItem>;
 
 export interface UseSlots {
+  errorHandler: string;
   params: string;
   validateParams: string;
   bodyparser: string;
@@ -133,8 +136,8 @@ export type UseOptions = {
 
 export type Use = <StateT = DefaultState, ContextT = DefaultContext>(
   middleware:
-    | RouteMiddleware<Record<string, string>, StateT, ContextT>
-    | Array<RouteMiddleware<Record<string, string>, StateT, ContextT>>,
+    | ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
+    | Array<ParameterizedMiddleware<Record<string, string>, StateT, ContextT>>,
   options?: UseOptions,
 ) => MiddlewareDefinition;
 
@@ -144,7 +147,7 @@ export type RouterRouteSource = {
   file: string;
   // useWrappers is same as defining middleware inside route definition,
   // just automatically imported from use.ts files
-  useWrappers: Array<MiddlewareDefinition>;
+  useWrappers: [...a: Array<MiddlewareDefinition>];
   definitionItems: Array<RouteDefinitionItem>;
   params: Array<[name: string, isRest?: boolean]>;
   numericParams: Array<string>;
@@ -158,9 +161,13 @@ export type RouterRoute = {
   file: string;
   methods: Array<string>;
   middleware: Array<RouterMiddleware>;
-  kind: "middleware" | "handler";
-  slot?: keyof UseSlots | undefined;
-  debug?: string | undefined;
+  debug: {
+    headline: string;
+    methods: string;
+    middleware: string;
+    handler: string;
+    full: string;
+  };
 };
 
 import type Koa from "koa";

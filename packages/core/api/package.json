@@ -22,21 +22,16 @@
     "./queryparser": {
       "types": "./pkg/src/queryparser/index.d.ts",
       "default": "./pkg/queryparser/index.js"
-    },
-    "./debug": {
-      "types": "./pkg/src/debug.d.ts",
-      "default": "./pkg/debug.js"
     }
   },
   "scripts": {
-    "build": "esbuilder src/index.ts src/bodyparser/index.ts src/queryparser/index.ts src/debug.ts",
+    "build": "esbuilder src/index.ts src/bodyparser/index.ts src/queryparser/index.ts",
     "test": "vitest --root ../../.. --project core/api"
   },
   "dependencies": {
     "@koa/router": "^15.0.0",
     "formidable": "^3.5.4",
     "koa": "^3.1.1",
-    "picomatch": "^4.0.3",
     "qs": "^6.14.0",
     "raw-body": "^3.0.2",
     "string-width": "^8.1.0"

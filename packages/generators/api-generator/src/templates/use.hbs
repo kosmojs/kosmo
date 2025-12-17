@@ -1,8 +1,8 @@
 import { use } from "@kosmojs/api";
 
-export default use([
-  async (ctx, next) => {
-    // await next() only if this middleware should run last
+export default [
+  use(async function {{funcName}}(ctx, next) {
+    // Always `return next()` or `await next()`; 🚫 Never call `next()` by itself!
     return next();
-  },
-]);
+  }),
+];

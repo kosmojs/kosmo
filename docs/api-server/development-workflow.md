@@ -1,10 +1,12 @@
 ---
 title: Development Workflow
-description: Run multiple KosmoJS source folders independently with separate dev servers, automatic API hot-reload, custom middleware routing, and resource cleanup with teardown handlers.
+description: Run multiple KosmoJS source folders independently with separate dev servers,
+    automatic API hot-reload, custom middleware routing, and resource cleanup with teardown handlers.
 head:
   - - meta
     - name: keywords
-      content: vite dev server, hot reload, esbuild, rolldown, api development, multiple ports, teardown handler, development middleware, file watching
+      content: vite dev server, hot reload, esbuild, rolldown, api development,
+        multiple ports, teardown handler, development middleware, file watching
 ---
 
 Each source folder in `KosmoJS` is a **standalone entity** with its own dev server, port, and configuration.
@@ -142,11 +144,126 @@ export const teardownHandler = async () => {
 
 This pattern prevents database connection exhaustion during active development with frequent rebuilds.
 
+## 👀 Inspecting Routes
+
+During development, you may want to inspect which routes are being registered,
+what middleware applies to them, and which handlers they use.
+
+`KosmoJS` provides debugging information for every route through the `routeStackBuilder`.
+
+### Debug Information
+
+Each route returned by `routeStackBuilder` includes a `debug` property with formatted output:
+
+```ts
+export type RouterRoute = {
+  name: string;
+  path: string;
+  file: string;
+  methods: Array<string>;
+  middleware: Array<RouterMiddleware>;
+  debug: { // [!code focus:7]
+    headline: string;   // Route name and path
+    methods: string;    // HTTP methods
+    middleware: string; // Middleware chain
+    handler: string;    // Handler function
+    full: string;       // Complete route info
+  };
+};
+```
+
+### Inspecting Routes
+
+The `routeStackBuilder` is lightweight and can be called anywhere without adding overhead -
+import it wherever you need route information.
+
+**The easiest way** - modify the default `@src/api/router.ts` by adding debugging.
+
+You can add it directly and remember to remove it before production builds,
+or read `process.env.DEBUG` to display only when needed:
+
+```ts [api/router.ts]
+import { routeStackBuilder } from "@src/{api}";
+import createRouter from "@/core/api/router";
+
+const router = createRouter();
+
+const DEBUG = // [!code ++:3]
+  process.env.DEBUG?.match(/(?<=\bapi(?:\+[^+]+)*\+)[^+]+/g) ||
+  /\bapi\b/i.test(process.env.DEBUG ?? "");
+
+for (const { name, path, methods, middleware, debug } of routeStackBuilder()) {
+  if (DEBUG === true) { // [!code ++:7]
+    // Debug all routes when DEBUG=api
+    console.log(debug.full);
+  } else if (Array.isArray(DEBUG) && DEBUG.some((e) => name.includes(e))) {
+    // Debug specific route when DEBUG=api+a+b+c
+    console.log(debug.full);
+  }
+  router.register(path, methods, middleware, { name });
+}
+
+export default router;
+```
+
+This way you can run:
+- `DEBUG=api pnpm dev` - to see all routes
+- `DEBUG=api+user pnpm dev` - to see only routes containing "user"
+- `DEBUG=api+user+blog pnpm dev` - to see only routes containing "user" or "blog"
+
+Or call it from anywhere else in your codebase - a debugging script, test file, or development utility:
+
+```ts
+import { routeStackBuilder } from "@src/{api}";
+
+// Inspect routes from anywhere
+const routes = routeStackBuilder();
+routes.forEach(route => {
+  console.log(route.debug.headline);
+});
+```
+
+The `debug.full` property displays complete route information. Here's example output:
+
+```txt
+ /api/users  [ users/index.ts ]
+   methods: POST
+middleware: slot: params; exec: useParams
+            slot: validateParams; exec: useValidateParams
+            slot: bodyparser; exec: async (ctx, next) => {
+            slot: payload; exec: (ctx, next) => {
+   handler: postHandler
+```
+
+Named functions like `postHandler` show their function name.
+Anonymous functions show their first line only, like `(ctx, next) => {`.
+
+**Tip:** Name your middleware functions to make debug output clearer.
+Instead of anonymous functions like `(ctx, next) => {...}`,
+use named functions like `validateAuth` or `logRequest` -
+they'll show up by name in the debug output, making it easier to trace what's happening.
+
+### Selective Debugging
+
+For terser output, use individual debug properties instead of `full`:
+
+```ts
+// Just the route headline
+console.log(debug.headline);
+
+// Headline with methods
+console.log(debug.headline);
+console.log(debug.methods);
+
+// Middleware chain and handler
+console.log(debug.middleware);
+console.log(debug.handler);
+```
+
+This is useful when you only need specific information,
+such as verifying middleware ordering or checking which methods a route supports.
+
 ## 💡 Development Best Practices
-
-**Work on one source folder at a time** when making focused changes. No need to run everything if you're only working on the admin panel.
-
-**Run multiple source folders** when working on integration points or testing cross-concern interactions.
 
 **Use the stability threshold** setting if you're experiencing unnecessary rebuilds from your editor's save behavior:
 
