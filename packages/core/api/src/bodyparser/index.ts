@@ -3,7 +3,7 @@ import zlib from "node:zlib";
 import IncomingForm from "formidable";
 import rawParser from "raw-body";
 
-import type { Middleware } from "@kosmojs/api";
+import type { ParameterizedMiddleware } from "@kosmojs/api";
 
 import config from "./config";
 import type {
@@ -18,9 +18,9 @@ export * from "./types";
 export { config };
 export default { json, form, raw };
 
-export function json(opts: JsonOptions = {}): Array<Middleware> {
+export function json(opts: JsonOptions = {}): Array<ParameterizedMiddleware> {
   return [
-    async (ctx, next) => {
+    async function useJSONBodyparser(ctx, next) {
       const form = IncomingForm({
         maxFieldsSize: opts.limit || config.json.limit,
         ...opts,
@@ -43,9 +43,9 @@ export function json(opts: JsonOptions = {}): Array<Middleware> {
   ];
 }
 
-export function form(opts: FormOptions = {}): Array<Middleware> {
+export function form(opts: FormOptions = {}): Array<ParameterizedMiddleware> {
   return [
-    async (ctx, next) => {
+    async function useFormBodyparser(ctx, next) {
       const form = IncomingForm({
         maxFieldsSize: opts.limit || config.form.limit,
         maxFileSize: opts.limit || config.form.limit,
@@ -76,9 +76,9 @@ export function form(opts: FormOptions = {}): Array<Middleware> {
   ];
 }
 
-export function raw(opts: RawOptions = {}): Array<Middleware> {
+export function raw(opts: RawOptions = {}): Array<ParameterizedMiddleware> {
   return [
-    async (ctx, next) => {
+    async function useRawBodyparser(ctx, next) {
       const { chunkSize, ...rawParserOptions } = { ...config.raw, ...opts };
 
       const stream = ctx.request.req.pipe(zlib.createUnzip({ chunkSize }));

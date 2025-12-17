@@ -236,6 +236,7 @@ const handlers: Record<
       {
         prefixColors,
         handleInput: true,
+        raw: true,
       },
     );
 
@@ -262,7 +263,7 @@ const handlers: Record<
       folders.map((name) => {
         return { name, command: "vite build", cwd: name };
       }),
-      { prefixColors },
+      { prefixColors, raw: true },
     );
     await result;
   },
