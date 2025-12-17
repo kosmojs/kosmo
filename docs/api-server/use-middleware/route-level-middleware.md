@@ -141,7 +141,7 @@ import { use } from "@kosmojs/api";
 import bodyparser from "@kosmojs/api/bodyparser";
 
 export default [
-  use(bodyparser.text(), {
+  use(bodyparser.raw(), {
     on: ["POST"],
     slot: "bodyparser",
   })
