@@ -2,8 +2,8 @@
 
 ### Structured Vite template for type-safe full-stack apps
 
-Multiple source folders. Directory-based routing. Runtime validation.
-Generated fetch clients. Any framework.
+Structured Vite template for type-safe full-stack apps. Multiple source folders.
+Directory-based routing. Nested layouts. Runtime validation. Generated fetch clients. Multiple frameworks.
 
 📘 [Documentation → kosmojs.dev](https://kosmojs.dev)
 
@@ -17,7 +17,7 @@ It's a **structured Vite template** that gives your `Vite` project a scalable sh
 * Each folder splits into **`api/` and `pages/`**, creating a clean boundary between server and client.
 * **Generators** that produce validation schemas, fetch clients, and `OpenAPI` specs from your types.
 
-📘 [Learn more](https://kosmojs.dev/about)
+📘 [Learn more](https://kosmojs.dev/about.html)
 
 ---
 
@@ -70,7 +70,7 @@ pnpm dev
 
 Each source folder runs on its own port with its own base URL.
 
-📘 [Learn more](https://kosmojs.dev/start)
+📘 [Learn more](https://kosmojs.dev/start.html)
 
 ---
 
@@ -94,7 +94,7 @@ Each source folder runs on its own port with its own base URL.
 * **🔧 Built on Proven Tools**<br>
     `Koa` for APIs, `Vite` for frontend, `TypeScript` for safety. No proprietary abstractions.
 
-📘 [Learn more](https://kosmojs.dev/features)
+📘 [Learn more](https://kosmojs.dev/features.html)
 
 ---
 
