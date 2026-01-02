@@ -1,6 +1,8 @@
 import { glob } from "tinyglobby";
 import type { Alias, Plugin } from "vite";
 
+import { createTsconfigPaths } from "@/paths";
+
 export default (
   appRoot: string,
   opt?: {
@@ -11,15 +13,19 @@ export default (
     name: "@kosmojs:aliasPlugin",
 
     async config() {
-      const compilerOptions: {
-        paths: Record<string, Array<string>>;
-      } = await import(`${appRoot}/tsconfig.json`, {
-        with: { type: "json" },
-      }).then((e) => e.default.compilerOptions);
+      const paths: Record<string, Array<string>> = await import(
+        `${appRoot}/tsconfig.json`,
+        { with: { type: "json" } }
+      ).then((e) => {
+        return {
+          ...e.default.compilerOptions?.paths,
+          ...createTsconfigPaths("."),
+        };
+      });
 
       const aliasmap: Array<Alias> = [];
 
-      const pathEntries = Object.entries({ ...compilerOptions?.paths });
+      const pathEntries = Object.entries(paths);
 
       for (const [aliasPattern, pathPatterns] of pathEntries) {
         const alias = aliasPattern.replace("/*", "");
