@@ -1,14 +1,11 @@
 import { describe, expect, test } from "vitest";
 
-import { defaults, type NestedRouteEntry } from "@kosmojs/devlib";
+import { defaults } from "@/defaults";
+import { nestedRoutesFactory } from "@/routes-factory/nesting";
+import { createRouteEntry, scanRoutes } from "@/routes-factory/resolve";
+import type { NestedRouteEntry } from "@/types";
 
-import {
-  createRouteEntry,
-  nestedRoutesFactory,
-  scanRoutes,
-} from "@/base-plugin/routes";
-
-import { pluginOptions } from "./base";
+import { pluginOptions } from ".";
 
 describe("Nested Routes", async () => {
   const routeFiles = await scanRoutes(pluginOptions);
@@ -36,7 +33,7 @@ describe("Nested Routes", async () => {
     const { name } = { ...entry?.index, ...entry?.layout };
     test(`nestedRoutesFactory: ${name}`, async () => {
       await expect(JSON.stringify(entry, null, 2)).toMatchFileSnapshot(
-        `snapshots/nestedRoutesFactory/${name}.json`,
+        `@snapshots/nestedRoutesFactory/${name}.json`,
       );
     });
   }
@@ -44,7 +41,7 @@ describe("Nested Routes", async () => {
   // it is highly important to also check whole config
   test("nestedRoutesFactory", async () => {
     await expect(JSON.stringify(config, null, 2)).toMatchFileSnapshot(
-      "snapshots/nestedRoutesFactory.json",
+      "@snapshots/nestedRoutesFactory.json",
     );
   });
 });

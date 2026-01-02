@@ -1,0 +1,65 @@
+{
+  "id": "projects_projectId_tasks_taskId_comments_commentId_index_tsx_3891983433",
+  "name": "projects/[projectId]/tasks/[taskId]/comments/[commentId]",
+  "folder": "pages",
+  "file": "projects/[projectId]/tasks/[taskId]/comments/[commentId]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "projects",
+      "base": "projects",
+      "path": "projects",
+      "ext": ""
+    },
+    {
+      "orig": "[projectId]",
+      "base": "[projectId]",
+      "path": "[projectId]",
+      "ext": "",
+      "param": {
+        "name": "projectId",
+        "const": "projectId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "tasks",
+      "base": "tasks",
+      "path": "tasks",
+      "ext": ""
+    },
+    {
+      "orig": "[taskId]",
+      "base": "[taskId]",
+      "path": "[taskId]",
+      "ext": "",
+      "param": {
+        "name": "taskId",
+        "const": "taskId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "comments",
+      "base": "comments",
+      "path": "comments",
+      "ext": ""
+    },
+    {
+      "orig": "[commentId]",
+      "base": "[commentId]",
+      "path": "[commentId]",
+      "ext": "",
+      "param": {
+        "name": "commentId",
+        "const": "commentId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

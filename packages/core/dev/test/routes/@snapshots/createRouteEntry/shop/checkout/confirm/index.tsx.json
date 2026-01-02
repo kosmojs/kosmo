@@ -1,0 +1,26 @@
+{
+  "id": "shop_checkout_confirm_index_tsx_457300039",
+  "name": "shop/checkout/confirm",
+  "folder": "pages",
+  "file": "shop/checkout/confirm/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "shop",
+      "base": "shop",
+      "path": "shop",
+      "ext": ""
+    },
+    {
+      "orig": "checkout",
+      "base": "checkout",
+      "path": "checkout",
+      "ext": ""
+    },
+    {
+      "orig": "confirm",
+      "base": "confirm",
+      "path": "confirm",
+      "ext": ""
+    }
+  ]
+}

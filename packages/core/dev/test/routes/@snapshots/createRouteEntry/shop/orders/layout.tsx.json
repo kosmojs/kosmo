@@ -1,0 +1,20 @@
+{
+  "id": "shop_orders_layout_tsx_1560526654",
+  "name": "shop/orders",
+  "folder": "pages",
+  "file": "shop/orders/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "shop",
+      "base": "shop",
+      "path": "shop",
+      "ext": ""
+    },
+    {
+      "orig": "orders",
+      "base": "orders",
+      "path": "orders",
+      "ext": ""
+    }
+  ]
+}

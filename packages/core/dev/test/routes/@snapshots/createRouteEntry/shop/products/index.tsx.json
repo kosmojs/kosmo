@@ -1,0 +1,20 @@
+{
+  "id": "shop_products_index_tsx_3411274748",
+  "name": "shop/products",
+  "folder": "pages",
+  "file": "shop/products/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "shop",
+      "base": "shop",
+      "path": "shop",
+      "ext": ""
+    },
+    {
+      "orig": "products",
+      "base": "products",
+      "path": "products",
+      "ext": ""
+    }
+  ]
+}

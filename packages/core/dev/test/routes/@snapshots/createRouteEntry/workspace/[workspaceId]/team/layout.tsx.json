@@ -1,0 +1,33 @@
+{
+  "id": "workspace_workspaceId_team_layout_tsx_1903886921",
+  "name": "workspace/[workspaceId]/team",
+  "folder": "pages",
+  "file": "workspace/[workspaceId]/team/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "workspace",
+      "base": "workspace",
+      "path": "workspace",
+      "ext": ""
+    },
+    {
+      "orig": "[workspaceId]",
+      "base": "[workspaceId]",
+      "path": "[workspaceId]",
+      "ext": "",
+      "param": {
+        "name": "workspaceId",
+        "const": "workspaceId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "team",
+      "base": "team",
+      "path": "team",
+      "ext": ""
+    }
+  ]
+}

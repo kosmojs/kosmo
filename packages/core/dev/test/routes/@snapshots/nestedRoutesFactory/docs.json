@@ -1,0 +1,57 @@
+{
+  "index": {
+    "id": "docs_index_tsx_2030679828",
+    "name": "docs",
+    "folder": "pages",
+    "file": "docs/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "docs",
+        "base": "docs",
+        "path": "docs",
+        "ext": ""
+      }
+    ]
+  },
+  "layout": {
+    "id": "docs_layout_tsx_1612140628",
+    "name": "docs",
+    "folder": "pages",
+    "file": "docs/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "docs",
+        "base": "docs",
+        "path": "docs",
+        "ext": ""
+      }
+    ]
+  },
+  "children": [
+    {
+      "index": {
+        "id": "docs_path_index_tsx_434935905",
+        "name": "docs/[...path]",
+        "folder": "pages",
+        "file": "docs/[...path]/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "[...path]",
+            "base": "[...path]",
+            "path": "[...path]",
+            "ext": "",
+            "param": {
+              "name": "path",
+              "const": "path",
+              "isRequired": false,
+              "isOptional": false,
+              "isRest": true
+            }
+          }
+        ]
+      },
+      "parent": "docs",
+      "children": []
+    }
+  ]
+}

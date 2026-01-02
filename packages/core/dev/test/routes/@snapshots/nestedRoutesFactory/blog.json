@@ -1,0 +1,141 @@
+{
+  "index": {
+    "id": "blog_index_tsx_656698020",
+    "name": "blog",
+    "folder": "pages",
+    "file": "blog/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "blog",
+        "base": "blog",
+        "path": "blog",
+        "ext": ""
+      }
+    ]
+  },
+  "layout": {
+    "id": "blog_layout_tsx_2871578117",
+    "name": "blog",
+    "folder": "pages",
+    "file": "blog/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "blog",
+        "base": "blog",
+        "path": "blog",
+        "ext": ""
+      }
+    ]
+  },
+  "children": [
+    {
+      "index": {
+        "id": "blog_post_slug_index_tsx_4265829785",
+        "name": "blog/post/[slug]",
+        "folder": "pages",
+        "file": "blog/post/[slug]/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "post",
+            "base": "post",
+            "path": "post",
+            "ext": ""
+          },
+          {
+            "orig": "[slug]",
+            "base": "[slug]",
+            "path": "[slug]",
+            "ext": "",
+            "param": {
+              "name": "slug",
+              "const": "slug",
+              "isRequired": true,
+              "isOptional": false,
+              "isRest": false
+            }
+          }
+        ]
+      },
+      "layout": {
+        "id": "blog_post_slug_layout_tsx_4086949147",
+        "name": "blog/post/[slug]",
+        "folder": "pages",
+        "file": "blog/post/[slug]/layout.tsx",
+        "pathTokens": [
+          {
+            "orig": "post",
+            "base": "post",
+            "path": "post",
+            "ext": ""
+          },
+          {
+            "orig": "[slug]",
+            "base": "[slug]",
+            "path": "[slug]",
+            "ext": "",
+            "param": {
+              "name": "slug",
+              "const": "slug",
+              "isRequired": true,
+              "isOptional": false,
+              "isRest": false
+            }
+          }
+        ]
+      },
+      "parent": "blog",
+      "children": []
+    },
+    {
+      "index": {
+        "id": "blog_category_index_tsx_1003139220",
+        "name": "blog/[[category]]",
+        "folder": "pages",
+        "file": "blog/[[category]]/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "[[category]]",
+            "base": "[[category]]",
+            "path": "[[category]]",
+            "ext": "",
+            "param": {
+              "name": "category",
+              "const": "category",
+              "isRequired": false,
+              "isOptional": true,
+              "isRest": false
+            }
+          }
+        ]
+      },
+      "parent": "blog",
+      "children": [
+        {
+          "index": {
+            "id": "blog_category_tag_index_tsx_4100302857",
+            "name": "blog/[[category]]/[[tag]]",
+            "folder": "pages",
+            "file": "blog/[[category]]/[[tag]]/index.tsx",
+            "pathTokens": [
+              {
+                "orig": "[[tag]]",
+                "base": "[[tag]]",
+                "path": "[[tag]]",
+                "ext": "",
+                "param": {
+                  "name": "tag",
+                  "const": "tag",
+                  "isRequired": false,
+                  "isOptional": true,
+                  "isRest": false
+                }
+              }
+            ]
+          },
+          "parent": "blog/[[category]]",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

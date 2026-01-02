@@ -1,0 +1,39 @@
+{
+  "id": "admin_tenant_settings_permissions_index_tsx_3508365092",
+  "name": "admin/[tenant]/settings/permissions",
+  "folder": "pages",
+  "file": "admin/[tenant]/settings/permissions/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "admin",
+      "base": "admin",
+      "path": "admin",
+      "ext": ""
+    },
+    {
+      "orig": "[tenant]",
+      "base": "[tenant]",
+      "path": "[tenant]",
+      "ext": "",
+      "param": {
+        "name": "tenant",
+        "const": "tenant",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "settings",
+      "base": "settings",
+      "path": "settings",
+      "ext": ""
+    },
+    {
+      "orig": "permissions",
+      "base": "permissions",
+      "path": "permissions",
+      "ext": ""
+    }
+  ]
+}

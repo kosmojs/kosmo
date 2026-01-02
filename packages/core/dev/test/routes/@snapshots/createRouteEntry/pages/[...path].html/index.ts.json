@@ -1,0 +1,27 @@
+{
+  "id": "pages_path_html_index_ts_3748839169",
+  "name": "pages/[...path].html",
+  "folder": "api",
+  "file": "pages/[...path].html/index.ts",
+  "pathTokens": [
+    {
+      "orig": "pages",
+      "base": "pages",
+      "path": "pages",
+      "ext": ""
+    },
+    {
+      "orig": "[...path].html",
+      "base": "[...path]",
+      "path": "[...path].html",
+      "ext": ".html",
+      "param": {
+        "name": "path",
+        "const": "path",
+        "isRequired": false,
+        "isOptional": false,
+        "isRest": true
+      }
+    }
+  ]
+}

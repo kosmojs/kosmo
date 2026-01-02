@@ -1,0 +1,40 @@
+{
+  "id": "shop_category_productId_index_tsx_3761077416",
+  "name": "shop/[category]/[productId]",
+  "folder": "pages",
+  "file": "shop/[category]/[productId]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "shop",
+      "base": "shop",
+      "path": "shop",
+      "ext": ""
+    },
+    {
+      "orig": "[category]",
+      "base": "[category]",
+      "path": "[category]",
+      "ext": "",
+      "param": {
+        "name": "category",
+        "const": "category",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "[productId]",
+      "base": "[productId]",
+      "path": "[productId]",
+      "ext": "",
+      "param": {
+        "name": "productId",
+        "const": "productId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

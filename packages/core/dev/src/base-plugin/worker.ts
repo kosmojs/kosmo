@@ -3,17 +3,18 @@ import { parentPort, workerData } from "node:worker_threads";
 import chokidar from "chokidar";
 import crc from "crc/crc32";
 
-import {
-  type Formatter,
-  type GeneratorConstructor,
-  type PluginOptionsResolved,
-  pathResolver,
-  type ResolvedEntry,
-  type WatcherEvent,
-  type WatchHandler,
-} from "@kosmojs/devlib";
+import { pathResolver } from "@/paths";
+import { routesFactory } from "@/routes-factory";
+import { isRouteFile, type ResolverSignature } from "@/routes-factory/resolve";
+import type {
+  Formatter,
+  GeneratorConstructor,
+  PluginOptionsResolved,
+  ResolvedEntry,
+  WatcherEvent,
+  WatchHandler,
+} from "@/types";
 
-import routesFactory, { isRouteFile, type ResolverSignature } from "./routes";
 import type { SpinnerFactory } from "./spinner";
 
 export type WorkerData = Omit<
@@ -71,8 +72,6 @@ const resolvedEntries = new Map<
 >();
 
 const { resolvers, resolversFactory } = await routesFactory(resolvedOptions);
-
-const { resolve } = pathResolver({ appRoot, sourceFolder });
 
 const spinnerFactory = (startText: string) => {
   const id = [startText, Date.now().toString()].map(crc).join(":");
@@ -206,11 +205,13 @@ const runWatchHandlers = async (event?: WatcherEvent) => {
   spinner.succeed();
 };
 
+const { createPath } = pathResolver({ appRoot, sourceFolder });
+
 const watcher = chokidar.watch(
   [
     // watching for changes in sourceFolder's apiDir and pagesDir
-    resolve("apiDir"),
-    resolve("pagesDir"),
+    createPath.api(),
+    createPath.pages(),
   ],
   {
     ...resolvedOptions.watcher.options,
@@ -288,8 +289,8 @@ watcher.on("all", async (event, file) => {
   for (const { name, factory } of generators) {
     spinner.append(name);
     try {
-      const { watchHandler } = await factory(resolvedOptions);
-      watchHandlers.push({ name, handler: watchHandler });
+      const { watch } = await factory(resolvedOptions);
+      watchHandlers.push({ name, handler: watch });
     } catch (
       // biome-ignore lint: any
       error: any

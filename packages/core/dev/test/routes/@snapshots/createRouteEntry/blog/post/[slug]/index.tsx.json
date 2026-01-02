@@ -1,0 +1,33 @@
+{
+  "id": "blog_post_slug_index_tsx_4265829785",
+  "name": "blog/post/[slug]",
+  "folder": "pages",
+  "file": "blog/post/[slug]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "blog",
+      "base": "blog",
+      "path": "blog",
+      "ext": ""
+    },
+    {
+      "orig": "post",
+      "base": "post",
+      "path": "post",
+      "ext": ""
+    },
+    {
+      "orig": "[slug]",
+      "base": "[slug]",
+      "path": "[slug]",
+      "ext": "",
+      "param": {
+        "name": "slug",
+        "const": "slug",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

@@ -5,12 +5,15 @@ import { styleText } from "node:util";
 import { type BuildOptions, context, type Plugin } from "esbuild";
 
 import type { App } from "@kosmojs/api";
-import { defaults, type PluginOptionsResolved } from "@kosmojs/devlib";
+
+import { defaults } from "@/defaults";
+import { pathResolver } from "@/paths";
+import type { PluginOptionsResolved } from "@/types";
 
 export default async (options: PluginOptionsResolved) => {
   const { appRoot, sourceFolder, baseurl, apiurl } = options;
+  const { createPath } = pathResolver({ appRoot, sourceFolder });
 
-  const apiDir = join(sourceFolder, defaults.apiDir);
   const outDir = join(options.outDir, defaults.apiDir);
 
   const esbuildOptions: BuildOptions = await import(
@@ -48,7 +51,7 @@ export default async (options: PluginOptionsResolved) => {
       ...esbuildOptions,
       logLevel: "error",
       bundle: true,
-      entryPoints: [join(apiDir, "app.ts")],
+      entryPoints: [createPath.api("app.ts")],
       plugins: [rebuildPlugin],
       outdir: outDir,
     });

@@ -4,7 +4,7 @@ import {
   createProject,
   extractDefaultExport,
   extractParamsRefinements,
-} from "@/base-plugin/ast";
+} from "@/ast";
 
 describe("extractParamsRefinements", () => {
   const project = createProject();

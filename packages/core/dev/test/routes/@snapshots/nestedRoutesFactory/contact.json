@@ -1,0 +1,31 @@
+{
+  "index": {
+    "id": "contact_index_tsx_3970670992",
+    "name": "contact",
+    "folder": "pages",
+    "file": "contact/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "contact",
+        "base": "contact",
+        "path": "contact",
+        "ext": ""
+      }
+    ]
+  },
+  "layout": {
+    "id": "contact_layout_tsx_2321003899",
+    "name": "contact",
+    "folder": "pages",
+    "file": "contact/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "contact",
+        "base": "contact",
+        "path": "contact",
+        "ext": ""
+      }
+    ]
+  },
+  "children": []
+}

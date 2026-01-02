@@ -1,0 +1,27 @@
+{
+  "id": "projects_projectId_layout_tsx_2457576455",
+  "name": "projects/[projectId]",
+  "folder": "pages",
+  "file": "projects/[projectId]/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "projects",
+      "base": "projects",
+      "path": "projects",
+      "ext": ""
+    },
+    {
+      "orig": "[projectId]",
+      "base": "[projectId]",
+      "path": "[projectId]",
+      "ext": "",
+      "param": {
+        "name": "projectId",
+        "const": "projectId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "id": "projects_projectId_tasks_taskId_index_tsx_876882048",
+  "name": "projects/[projectId]/tasks/[taskId]",
+  "folder": "pages",
+  "file": "projects/[projectId]/tasks/[taskId]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "projects",
+      "base": "projects",
+      "path": "projects",
+      "ext": ""
+    },
+    {
+      "orig": "[projectId]",
+      "base": "[projectId]",
+      "path": "[projectId]",
+      "ext": "",
+      "param": {
+        "name": "projectId",
+        "const": "projectId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "tasks",
+      "base": "tasks",
+      "path": "tasks",
+      "ext": ""
+    },
+    {
+      "orig": "[taskId]",
+      "base": "[taskId]",
+      "path": "[taskId]",
+      "ext": "",
+      "param": {
+        "name": "taskId",
+        "const": "taskId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "index": {
+    "id": "dashboard_index_tsx_3400391192",
+    "name": "dashboard",
+    "folder": "pages",
+    "file": "dashboard/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "dashboard",
+        "base": "dashboard",
+        "path": "dashboard",
+        "ext": ""
+      }
+    ]
+  },
+  "layout": {
+    "id": "dashboard_layout_tsx_1762834450",
+    "name": "dashboard",
+    "folder": "pages",
+    "file": "dashboard/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "dashboard",
+        "base": "dashboard",
+        "path": "dashboard",
+        "ext": ""
+      }
+    ]
+  },
+  "children": [
+    {
+      "index": {
+        "id": "dashboard_analytics_index_tsx_2467463920",
+        "name": "dashboard/analytics",
+        "folder": "pages",
+        "file": "dashboard/analytics/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "analytics",
+            "base": "analytics",
+            "path": "analytics",
+            "ext": ""
+          }
+        ]
+      },
+      "parent": "dashboard",
+      "children": []
+    },
+    {
+      "index": {
+        "id": "dashboard_settings_index_tsx_2528451466",
+        "name": "dashboard/settings",
+        "folder": "pages",
+        "file": "dashboard/settings/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "settings",
+            "base": "settings",
+            "path": "settings",
+            "ext": ""
+          }
+        ]
+      },
+      "layout": {
+        "id": "dashboard_settings_layout_tsx_2001687227",
+        "name": "dashboard/settings",
+        "folder": "pages",
+        "file": "dashboard/settings/layout.tsx",
+        "pathTokens": [
+          {
+            "orig": "settings",
+            "base": "settings",
+            "path": "settings",
+            "ext": ""
+          }
+        ]
+      },
+      "parent": "dashboard",
+      "children": [
+        {
+          "index": {
+            "id": "dashboard_settings_billing_index_tsx_3947003682",
+            "name": "dashboard/settings/billing",
+            "folder": "pages",
+            "file": "dashboard/settings/billing/index.tsx",
+            "pathTokens": [
+              {
+                "orig": "billing",
+                "base": "billing",
+                "path": "billing",
+                "ext": ""
+              }
+            ]
+          },
+          "parent": "dashboard/settings",
+          "children": []
+        },
+        {
+          "index": {
+            "id": "dashboard_settings_notifications_index_tsx_3109498012",
+            "name": "dashboard/settings/notifications",
+            "folder": "pages",
+            "file": "dashboard/settings/notifications/index.tsx",
+            "pathTokens": [
+              {
+                "orig": "notifications",
+                "base": "notifications",
+                "path": "notifications",
+                "ext": ""
+              }
+            ]
+          },
+          "parent": "dashboard/settings",
+          "children": []
+        },
+        {
+          "index": {
+            "id": "dashboard_settings_profile_index_tsx_3821990919",
+            "name": "dashboard/settings/profile",
+            "folder": "pages",
+            "file": "dashboard/settings/profile/index.tsx",
+            "pathTokens": [
+              {
+                "orig": "profile",
+                "base": "profile",
+                "path": "profile",
+                "ext": ""
+              }
+            ]
+          },
+          "parent": "dashboard/settings",
+          "children": []
+        },
+        {
+          "index": {
+            "id": "dashboard_settings_security_index_tsx_2219988972",
+            "name": "dashboard/settings/security",
+            "folder": "pages",
+            "file": "dashboard/settings/security/index.tsx",
+            "pathTokens": [
+              {
+                "orig": "security",
+                "base": "security",
+                "path": "security",
+                "ext": ""
+              }
+            ]
+          },
+          "layout": {
+            "id": "dashboard_settings_security_layout_tsx_3549196698",
+            "name": "dashboard/settings/security",
+            "folder": "pages",
+            "file": "dashboard/settings/security/layout.tsx",
+            "pathTokens": [
+              {
+                "orig": "security",
+                "base": "security",
+                "path": "security",
+                "ext": ""
+              }
+            ]
+          },
+          "parent": "dashboard/settings",
+          "children": []
+        }
+      ]
+    },
+    {
+      "index": {
+        "id": "dashboard_view_index_tsx_3510080540",
+        "name": "dashboard/[view]",
+        "folder": "pages",
+        "file": "dashboard/[view]/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "[view]",
+            "base": "[view]",
+            "path": "[view]",
+            "ext": "",
+            "param": {
+              "name": "view",
+              "const": "view",
+              "isRequired": true,
+              "isOptional": false,
+              "isRest": false
+            }
+          }
+        ]
+      },
+      "parent": "dashboard",
+      "children": []
+    }
+  ]
+}

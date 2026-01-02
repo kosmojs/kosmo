@@ -1,0 +1,27 @@
+{
+  "id": "admin_tenant_index_tsx_144548962",
+  "name": "admin/[tenant]",
+  "folder": "pages",
+  "file": "admin/[tenant]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "admin",
+      "base": "admin",
+      "path": "admin",
+      "ext": ""
+    },
+    {
+      "orig": "[tenant]",
+      "base": "[tenant]",
+      "path": "[tenant]",
+      "ext": "",
+      "param": {
+        "name": "tenant",
+        "const": "tenant",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

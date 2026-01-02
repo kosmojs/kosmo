@@ -1,0 +1,26 @@
+{
+  "id": "shop_checkout_shipping_layout_tsx_1955886922",
+  "name": "shop/checkout/shipping",
+  "folder": "pages",
+  "file": "shop/checkout/shipping/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "shop",
+      "base": "shop",
+      "path": "shop",
+      "ext": ""
+    },
+    {
+      "orig": "checkout",
+      "base": "checkout",
+      "path": "checkout",
+      "ext": ""
+    },
+    {
+      "orig": "shipping",
+      "base": "shipping",
+      "path": "shipping",
+      "ext": ""
+    }
+  ]
+}

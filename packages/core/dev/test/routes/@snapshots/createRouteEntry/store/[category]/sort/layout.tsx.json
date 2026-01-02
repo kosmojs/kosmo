@@ -1,0 +1,33 @@
+{
+  "id": "store_category_sort_layout_tsx_1255246087",
+  "name": "store/[category]/sort",
+  "folder": "pages",
+  "file": "store/[category]/sort/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "store",
+      "base": "store",
+      "path": "store",
+      "ext": ""
+    },
+    {
+      "orig": "[category]",
+      "base": "[category]",
+      "path": "[category]",
+      "ext": "",
+      "param": {
+        "name": "category",
+        "const": "category",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "sort",
+      "base": "sort",
+      "path": "sort",
+      "ext": ""
+    }
+  ]
+}

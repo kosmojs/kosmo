@@ -1,0 +1,27 @@
+{
+  "id": "portal_clientId_layout_tsx_3114159634",
+  "name": "portal/[clientId]",
+  "folder": "pages",
+  "file": "portal/[clientId]/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "portal",
+      "base": "portal",
+      "path": "portal",
+      "ext": ""
+    },
+    {
+      "orig": "[clientId]",
+      "base": "[clientId]",
+      "path": "[clientId]",
+      "ext": "",
+      "param": {
+        "name": "clientId",
+        "const": "clientId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

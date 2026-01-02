@@ -1,0 +1,33 @@
+{
+  "id": "shop_product_id_layout_tsx_2232356331",
+  "name": "shop/product/[id]",
+  "folder": "pages",
+  "file": "shop/product/[id]/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "shop",
+      "base": "shop",
+      "path": "shop",
+      "ext": ""
+    },
+    {
+      "orig": "product",
+      "base": "product",
+      "path": "product",
+      "ext": ""
+    },
+    {
+      "orig": "[id]",
+      "base": "[id]",
+      "path": "[id]",
+      "ext": "",
+      "param": {
+        "name": "id",
+        "const": "id",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

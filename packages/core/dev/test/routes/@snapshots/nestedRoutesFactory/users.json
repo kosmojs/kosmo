@@ -1,0 +1,194 @@
+{
+  "index": {
+    "id": "users_index_tsx_3827824650",
+    "name": "users",
+    "folder": "pages",
+    "file": "users/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "users",
+        "base": "users",
+        "path": "users",
+        "ext": ""
+      }
+    ]
+  },
+  "layout": {
+    "id": "users_layout_tsx_2592424824",
+    "name": "users",
+    "folder": "pages",
+    "file": "users/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "users",
+        "base": "users",
+        "path": "users",
+        "ext": ""
+      }
+    ]
+  },
+  "children": [
+    {
+      "index": {
+        "id": "users_username_index_tsx_2988217479",
+        "name": "users/[username]",
+        "folder": "pages",
+        "file": "users/[username]/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "[username]",
+            "base": "[username]",
+            "path": "[username]",
+            "ext": "",
+            "param": {
+              "name": "username",
+              "const": "username",
+              "isRequired": true,
+              "isOptional": false,
+              "isRest": false
+            }
+          }
+        ]
+      },
+      "layout": {
+        "id": "users_username_layout_tsx_165316489",
+        "name": "users/[username]",
+        "folder": "pages",
+        "file": "users/[username]/layout.tsx",
+        "pathTokens": [
+          {
+            "orig": "[username]",
+            "base": "[username]",
+            "path": "[username]",
+            "ext": "",
+            "param": {
+              "name": "username",
+              "const": "username",
+              "isRequired": true,
+              "isOptional": false,
+              "isRest": false
+            }
+          }
+        ]
+      },
+      "parent": "users",
+      "children": [
+        {
+          "index": {
+            "id": "users_username_followers_index_tsx_3491047874",
+            "name": "users/[username]/followers",
+            "folder": "pages",
+            "file": "users/[username]/followers/index.tsx",
+            "pathTokens": [
+              {
+                "orig": "followers",
+                "base": "followers",
+                "path": "followers",
+                "ext": ""
+              }
+            ]
+          },
+          "parent": "users/[username]",
+          "children": []
+        },
+        {
+          "index": {
+            "id": "users_username_following_index_tsx_1569883917",
+            "name": "users/[username]/following",
+            "folder": "pages",
+            "file": "users/[username]/following/index.tsx",
+            "pathTokens": [
+              {
+                "orig": "following",
+                "base": "following",
+                "path": "following",
+                "ext": ""
+              }
+            ]
+          },
+          "parent": "users/[username]",
+          "children": []
+        },
+        {
+          "index": {
+            "id": "users_username_posts_index_tsx_3051146060",
+            "name": "users/[username]/posts",
+            "folder": "pages",
+            "file": "users/[username]/posts/index.tsx",
+            "pathTokens": [
+              {
+                "orig": "posts",
+                "base": "posts",
+                "path": "posts",
+                "ext": ""
+              }
+            ]
+          },
+          "layout": {
+            "id": "users_username_posts_layout_tsx_90922222",
+            "name": "users/[username]/posts",
+            "folder": "pages",
+            "file": "users/[username]/posts/layout.tsx",
+            "pathTokens": [
+              {
+                "orig": "posts",
+                "base": "posts",
+                "path": "posts",
+                "ext": ""
+              }
+            ]
+          },
+          "parent": "users/[username]",
+          "children": [
+            {
+              "index": {
+                "id": "users_username_posts_postId_index_tsx_2337624193",
+                "name": "users/[username]/posts/[postId]",
+                "folder": "pages",
+                "file": "users/[username]/posts/[postId]/index.tsx",
+                "pathTokens": [
+                  {
+                    "orig": "[postId]",
+                    "base": "[postId]",
+                    "path": "[postId]",
+                    "ext": "",
+                    "param": {
+                      "name": "postId",
+                      "const": "postId",
+                      "isRequired": true,
+                      "isOptional": false,
+                      "isRest": false
+                    }
+                  }
+                ]
+              },
+              "layout": {
+                "id": "users_username_posts_postId_layout_tsx_3766512504",
+                "name": "users/[username]/posts/[postId]",
+                "folder": "pages",
+                "file": "users/[username]/posts/[postId]/layout.tsx",
+                "pathTokens": [
+                  {
+                    "orig": "[postId]",
+                    "base": "[postId]",
+                    "path": "[postId]",
+                    "ext": "",
+                    "param": {
+                      "name": "postId",
+                      "const": "postId",
+                      "isRequired": true,
+                      "isOptional": false,
+                      "isRest": false
+                    }
+                  }
+                ]
+              },
+              "parent": "users/[username]/posts",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

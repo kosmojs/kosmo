@@ -1,0 +1,20 @@
+{
+  "id": "about_careers_layout_tsx_3684129548",
+  "name": "about/careers",
+  "folder": "pages",
+  "file": "about/careers/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "about",
+      "base": "about",
+      "path": "about",
+      "ext": ""
+    },
+    {
+      "orig": "careers",
+      "base": "careers",
+      "path": "careers",
+      "ext": ""
+    }
+  ]
+}

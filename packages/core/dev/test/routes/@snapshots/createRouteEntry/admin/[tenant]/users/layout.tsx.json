@@ -1,0 +1,33 @@
+{
+  "id": "admin_tenant_users_layout_tsx_3952846485",
+  "name": "admin/[tenant]/users",
+  "folder": "pages",
+  "file": "admin/[tenant]/users/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "admin",
+      "base": "admin",
+      "path": "admin",
+      "ext": ""
+    },
+    {
+      "orig": "[tenant]",
+      "base": "[tenant]",
+      "path": "[tenant]",
+      "ext": "",
+      "param": {
+        "name": "tenant",
+        "const": "tenant",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "users",
+      "base": "users",
+      "path": "users",
+      "ext": ""
+    }
+  ]
+}

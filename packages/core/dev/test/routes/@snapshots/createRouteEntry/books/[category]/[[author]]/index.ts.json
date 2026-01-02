@@ -1,0 +1,40 @@
+{
+  "id": "books_category_author_index_ts_711822287",
+  "name": "books/[category]/[[author]]",
+  "folder": "api",
+  "file": "books/[category]/[[author]]/index.ts",
+  "pathTokens": [
+    {
+      "orig": "books",
+      "base": "books",
+      "path": "books",
+      "ext": ""
+    },
+    {
+      "orig": "[category]",
+      "base": "[category]",
+      "path": "[category]",
+      "ext": "",
+      "param": {
+        "name": "category",
+        "const": "category",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "[[author]]",
+      "base": "[[author]]",
+      "path": "[[author]]",
+      "ext": "",
+      "param": {
+        "name": "author",
+        "const": "author",
+        "isRequired": false,
+        "isOptional": true,
+        "isRest": false
+      }
+    }
+  ]
+}

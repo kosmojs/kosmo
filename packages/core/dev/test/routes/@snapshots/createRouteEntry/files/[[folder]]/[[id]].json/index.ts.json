@@ -1,0 +1,40 @@
+{
+  "id": "files_folder_id_json_index_ts_1464171524",
+  "name": "files/[[folder]]/[[id]].json",
+  "folder": "api",
+  "file": "files/[[folder]]/[[id]].json/index.ts",
+  "pathTokens": [
+    {
+      "orig": "files",
+      "base": "files",
+      "path": "files",
+      "ext": ""
+    },
+    {
+      "orig": "[[folder]]",
+      "base": "[[folder]]",
+      "path": "[[folder]]",
+      "ext": "",
+      "param": {
+        "name": "folder",
+        "const": "folder",
+        "isRequired": false,
+        "isOptional": true,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "[[id]].json",
+      "base": "[[id]]",
+      "path": "[[id]].json",
+      "ext": ".json",
+      "param": {
+        "name": "id",
+        "const": "id",
+        "isRequired": false,
+        "isOptional": true,
+        "isRest": false
+      }
+    }
+  ]
+}

@@ -1,10 +1,9 @@
 import { describe, expect, test } from "vitest";
 
-import { sortRoutes } from "@kosmojs/devlib";
+import { sortRoutes } from "@/routes-factory/base";
+import { createRouteEntry, scanRoutes } from "@/routes-factory/resolve";
 
-import { createRouteEntry, scanRoutes } from "@/base-plugin/routes";
-
-import { pluginOptions } from "./base";
+import { pluginOptions } from ".";
 
 describe("Routes Resolver", async () => {
   const routeFiles = await scanRoutes(pluginOptions);
@@ -15,12 +14,12 @@ describe("Routes Resolver", async () => {
       return entry ? [entry] : [];
     })
     .sort(sortRoutes)
-    .map(({ fileFullpath, importName, importFile, ...entry }) => entry);
+    .map(({ fileFullpath, ...entry }) => entry);
 
   for (const entry of routeEntries) {
     test(`createRouteEntry: ${entry.name}`, async () => {
       await expect(JSON.stringify(entry, null, 2)).toMatchFileSnapshot(
-        `snapshots/createRouteEntry/${entry.file}.json`,
+        `@snapshots/createRouteEntry/${entry.file}.json`,
       );
     });
   }
@@ -28,7 +27,7 @@ describe("Routes Resolver", async () => {
   // also compare whole stack
   test("createRouteEntry", async () => {
     await expect(JSON.stringify(routeEntries, null, 2)).toMatchFileSnapshot(
-      "snapshots/createRouteEntry.json",
+      "@snapshots/createRouteEntry.json",
     );
   });
 });

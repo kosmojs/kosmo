@@ -1,0 +1,116 @@
+{
+  "index": {
+    "id": "workspace_workspaceId_analytics_index_tsx_2441542851",
+    "name": "workspace/[workspaceId]/analytics",
+    "folder": "pages",
+    "file": "workspace/[workspaceId]/analytics/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "workspace",
+        "base": "workspace",
+        "path": "workspace",
+        "ext": ""
+      },
+      {
+        "orig": "[workspaceId]",
+        "base": "[workspaceId]",
+        "path": "[workspaceId]",
+        "ext": "",
+        "param": {
+          "name": "workspaceId",
+          "const": "workspaceId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "analytics",
+        "base": "analytics",
+        "path": "analytics",
+        "ext": ""
+      }
+    ]
+  },
+  "layout": {
+    "id": "workspace_workspaceId_analytics_layout_tsx_2018023528",
+    "name": "workspace/[workspaceId]/analytics",
+    "folder": "pages",
+    "file": "workspace/[workspaceId]/analytics/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "workspace",
+        "base": "workspace",
+        "path": "workspace",
+        "ext": ""
+      },
+      {
+        "orig": "[workspaceId]",
+        "base": "[workspaceId]",
+        "path": "[workspaceId]",
+        "ext": "",
+        "param": {
+          "name": "workspaceId",
+          "const": "workspaceId",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      },
+      {
+        "orig": "analytics",
+        "base": "analytics",
+        "path": "analytics",
+        "ext": ""
+      }
+    ]
+  },
+  "children": [
+    {
+      "index": {
+        "id": "workspace_workspaceId_analytics_range_index_tsx_2469437584",
+        "name": "workspace/[workspaceId]/analytics/[range]",
+        "folder": "pages",
+        "file": "workspace/[workspaceId]/analytics/[range]/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "[range]",
+            "base": "[range]",
+            "path": "[range]",
+            "ext": "",
+            "param": {
+              "name": "range",
+              "const": "range",
+              "isRequired": true,
+              "isOptional": false,
+              "isRest": false
+            }
+          }
+        ]
+      },
+      "layout": {
+        "id": "workspace_workspaceId_analytics_range_layout_tsx_2317889146",
+        "name": "workspace/[workspaceId]/analytics/[range]",
+        "folder": "pages",
+        "file": "workspace/[workspaceId]/analytics/[range]/layout.tsx",
+        "pathTokens": [
+          {
+            "orig": "[range]",
+            "base": "[range]",
+            "path": "[range]",
+            "ext": "",
+            "param": {
+              "name": "range",
+              "const": "range",
+              "isRequired": true,
+              "isOptional": false,
+              "isRest": false
+            }
+          }
+        ]
+      },
+      "parent": "workspace/[workspaceId]/analytics",
+      "children": []
+    }
+  ]
+}

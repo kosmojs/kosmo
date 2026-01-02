@@ -1,0 +1,33 @@
+{
+  "id": "workspace_workspaceId_analytics_layout_tsx_2018023528",
+  "name": "workspace/[workspaceId]/analytics",
+  "folder": "pages",
+  "file": "workspace/[workspaceId]/analytics/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "workspace",
+      "base": "workspace",
+      "path": "workspace",
+      "ext": ""
+    },
+    {
+      "orig": "[workspaceId]",
+      "base": "[workspaceId]",
+      "path": "[workspaceId]",
+      "ext": "",
+      "param": {
+        "name": "workspaceId",
+        "const": "workspaceId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "analytics",
+      "base": "analytics",
+      "path": "analytics",
+      "ext": ""
+    }
+  ]
+}

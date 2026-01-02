@@ -1,0 +1,26 @@
+{
+  "id": "dashboard_settings_notifications_index_tsx_3109498012",
+  "name": "dashboard/settings/notifications",
+  "folder": "pages",
+  "file": "dashboard/settings/notifications/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "dashboard",
+      "base": "dashboard",
+      "path": "dashboard",
+      "ext": ""
+    },
+    {
+      "orig": "settings",
+      "base": "settings",
+      "path": "settings",
+      "ext": ""
+    },
+    {
+      "orig": "notifications",
+      "base": "notifications",
+      "path": "notifications",
+      "ext": ""
+    }
+  ]
+}

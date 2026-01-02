@@ -2,7 +2,7 @@ import { resolve } from "node:path";
 
 import { describe, expect, test } from "vitest";
 
-import { createProject, extractTypeDeclarations } from "@/base-plugin/ast";
+import { createProject, extractTypeDeclarations } from "@/ast";
 
 describe("extractTypeDeclarations", () => {
   const project = createProject();

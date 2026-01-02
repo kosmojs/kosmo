@@ -1,0 +1,26 @@
+{
+  "id": "dashboard_settings_profile_index_tsx_3821990919",
+  "name": "dashboard/settings/profile",
+  "folder": "pages",
+  "file": "dashboard/settings/profile/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "dashboard",
+      "base": "dashboard",
+      "path": "dashboard",
+      "ext": ""
+    },
+    {
+      "orig": "settings",
+      "base": "settings",
+      "path": "settings",
+      "ext": ""
+    },
+    {
+      "orig": "profile",
+      "base": "profile",
+      "path": "profile",
+      "ext": ""
+    }
+  ]
+}

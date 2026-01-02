@@ -1,0 +1,20 @@
+{
+  "id": "legal_privacy_index_tsx_603606551",
+  "name": "legal/privacy",
+  "folder": "pages",
+  "file": "legal/privacy/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "legal",
+      "base": "legal",
+      "path": "legal",
+      "ext": ""
+    },
+    {
+      "orig": "privacy",
+      "base": "privacy",
+      "path": "privacy",
+      "ext": ""
+    }
+  ]
+}

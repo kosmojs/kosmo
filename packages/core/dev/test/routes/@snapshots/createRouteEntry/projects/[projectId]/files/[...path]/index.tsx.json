@@ -1,0 +1,46 @@
+{
+  "id": "projects_projectId_files_path_index_tsx_1805299198",
+  "name": "projects/[projectId]/files/[...path]",
+  "folder": "pages",
+  "file": "projects/[projectId]/files/[...path]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "projects",
+      "base": "projects",
+      "path": "projects",
+      "ext": ""
+    },
+    {
+      "orig": "[projectId]",
+      "base": "[projectId]",
+      "path": "[projectId]",
+      "ext": "",
+      "param": {
+        "name": "projectId",
+        "const": "projectId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "files",
+      "base": "files",
+      "path": "files",
+      "ext": ""
+    },
+    {
+      "orig": "[...path]",
+      "base": "[...path]",
+      "path": "[...path]",
+      "ext": "",
+      "param": {
+        "name": "path",
+        "const": "path",
+        "isRequired": false,
+        "isOptional": false,
+        "isRest": true
+      }
+    }
+  ]
+}

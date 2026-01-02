@@ -1,0 +1,20 @@
+{
+  "id": "about_team_index_tsx_3906889098",
+  "name": "about/team",
+  "folder": "pages",
+  "file": "about/team/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "about",
+      "base": "about",
+      "path": "about",
+      "ext": ""
+    },
+    {
+      "orig": "team",
+      "base": "team",
+      "path": "team",
+      "ext": ""
+    }
+  ]
+}

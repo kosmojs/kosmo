@@ -1,0 +1,46 @@
+{
+  "id": "portal_clientId_reports_reportType_layout_tsx_3694080843",
+  "name": "portal/[clientId]/reports/[reportType]",
+  "folder": "pages",
+  "file": "portal/[clientId]/reports/[reportType]/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "portal",
+      "base": "portal",
+      "path": "portal",
+      "ext": ""
+    },
+    {
+      "orig": "[clientId]",
+      "base": "[clientId]",
+      "path": "[clientId]",
+      "ext": "",
+      "param": {
+        "name": "clientId",
+        "const": "clientId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "reports",
+      "base": "reports",
+      "path": "reports",
+      "ext": ""
+    },
+    {
+      "orig": "[reportType]",
+      "base": "[reportType]",
+      "path": "[reportType]",
+      "ext": "",
+      "param": {
+        "name": "reportType",
+        "const": "reportType",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

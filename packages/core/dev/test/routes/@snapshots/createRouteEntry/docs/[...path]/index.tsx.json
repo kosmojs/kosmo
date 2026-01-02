@@ -1,0 +1,27 @@
+{
+  "id": "docs_path_index_tsx_434935905",
+  "name": "docs/[...path]",
+  "folder": "pages",
+  "file": "docs/[...path]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "docs",
+      "base": "docs",
+      "path": "docs",
+      "ext": ""
+    },
+    {
+      "orig": "[...path]",
+      "base": "[...path]",
+      "path": "[...path]",
+      "ext": "",
+      "param": {
+        "name": "path",
+        "const": "path",
+        "isRequired": false,
+        "isOptional": false,
+        "isRest": true
+      }
+    }
+  ]
+}

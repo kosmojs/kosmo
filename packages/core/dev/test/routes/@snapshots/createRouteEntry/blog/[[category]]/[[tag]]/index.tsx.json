@@ -1,0 +1,40 @@
+{
+  "id": "blog_category_tag_index_tsx_4100302857",
+  "name": "blog/[[category]]/[[tag]]",
+  "folder": "pages",
+  "file": "blog/[[category]]/[[tag]]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "blog",
+      "base": "blog",
+      "path": "blog",
+      "ext": ""
+    },
+    {
+      "orig": "[[category]]",
+      "base": "[[category]]",
+      "path": "[[category]]",
+      "ext": "",
+      "param": {
+        "name": "category",
+        "const": "category",
+        "isRequired": false,
+        "isOptional": true,
+        "isRest": false
+      }
+    },
+    {
+      "orig": "[[tag]]",
+      "base": "[[tag]]",
+      "path": "[[tag]]",
+      "ext": "",
+      "param": {
+        "name": "tag",
+        "const": "tag",
+        "isRequired": false,
+        "isOptional": true,
+        "isRest": false
+      }
+    }
+  ]
+}

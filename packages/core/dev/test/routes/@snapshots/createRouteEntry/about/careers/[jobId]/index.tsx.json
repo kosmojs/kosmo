@@ -1,0 +1,33 @@
+{
+  "id": "about_careers_jobId_index_tsx_2940328380",
+  "name": "about/careers/[jobId]",
+  "folder": "pages",
+  "file": "about/careers/[jobId]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "about",
+      "base": "about",
+      "path": "about",
+      "ext": ""
+    },
+    {
+      "orig": "careers",
+      "base": "careers",
+      "path": "careers",
+      "ext": ""
+    },
+    {
+      "orig": "[jobId]",
+      "base": "[jobId]",
+      "path": "[jobId]",
+      "ext": "",
+      "param": {
+        "name": "jobId",
+        "const": "jobId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

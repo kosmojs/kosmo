@@ -1,0 +1,69 @@
+{
+  "index": {
+    "id": "search_index_tsx_960598595",
+    "name": "search",
+    "folder": "pages",
+    "file": "search/index.tsx",
+    "pathTokens": [
+      {
+        "orig": "search",
+        "base": "search",
+        "path": "search",
+        "ext": ""
+      }
+    ]
+  },
+  "children": [
+    {
+      "layout": {
+        "id": "search_query_layout_tsx_1266362335",
+        "name": "search/[[query]]",
+        "folder": "pages",
+        "file": "search/[[query]]/layout.tsx",
+        "pathTokens": [
+          {
+            "orig": "[[query]]",
+            "base": "[[query]]",
+            "path": "[[query]]",
+            "ext": "",
+            "param": {
+              "name": "query",
+              "const": "query",
+              "isRequired": false,
+              "isOptional": true,
+              "isRest": false
+            }
+          }
+        ]
+      },
+      "parent": "search",
+      "children": [
+        {
+          "index": {
+            "id": "search_query_page_index_tsx_1843385782",
+            "name": "search/[[query]]/[[page]]",
+            "folder": "pages",
+            "file": "search/[[query]]/[[page]]/index.tsx",
+            "pathTokens": [
+              {
+                "orig": "[[page]]",
+                "base": "[[page]]",
+                "path": "[[page]]",
+                "ext": "",
+                "param": {
+                  "name": "page",
+                  "const": "page",
+                  "isRequired": false,
+                  "isOptional": true,
+                  "isRest": false
+                }
+              }
+            ]
+          },
+          "parent": "search/[[query]]",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

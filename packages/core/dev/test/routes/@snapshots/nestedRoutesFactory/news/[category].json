@@ -1,0 +1,62 @@
+{
+  "layout": {
+    "id": "news_category_layout_tsx_4074534343",
+    "name": "news/[category]",
+    "folder": "pages",
+    "file": "news/[category]/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "news",
+        "base": "news",
+        "path": "news",
+        "ext": ""
+      },
+      {
+        "orig": "[category]",
+        "base": "[category]",
+        "path": "[category]",
+        "ext": "",
+        "param": {
+          "name": "category",
+          "const": "category",
+          "isRequired": true,
+          "isOptional": false,
+          "isRest": false
+        }
+      }
+    ]
+  },
+  "children": [
+    {
+      "index": {
+        "id": "news_category_articles_articlePath_index_tsx_4163752645",
+        "name": "news/[category]/articles/[...articlePath]",
+        "folder": "pages",
+        "file": "news/[category]/articles/[...articlePath]/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "articles",
+            "base": "articles",
+            "path": "articles",
+            "ext": ""
+          },
+          {
+            "orig": "[...articlePath]",
+            "base": "[...articlePath]",
+            "path": "[...articlePath]",
+            "ext": "",
+            "param": {
+              "name": "articlePath",
+              "const": "articlePath",
+              "isRequired": false,
+              "isOptional": false,
+              "isRest": true
+            }
+          }
+        ]
+      },
+      "parent": "news/[category]",
+      "children": []
+    }
+  ]
+}

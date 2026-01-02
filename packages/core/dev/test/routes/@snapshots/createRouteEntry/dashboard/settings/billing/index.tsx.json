@@ -1,0 +1,26 @@
+{
+  "id": "dashboard_settings_billing_index_tsx_3947003682",
+  "name": "dashboard/settings/billing",
+  "folder": "pages",
+  "file": "dashboard/settings/billing/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "dashboard",
+      "base": "dashboard",
+      "path": "dashboard",
+      "ext": ""
+    },
+    {
+      "orig": "settings",
+      "base": "settings",
+      "path": "settings",
+      "ext": ""
+    },
+    {
+      "orig": "billing",
+      "base": "billing",
+      "path": "billing",
+      "ext": ""
+    }
+  ]
+}

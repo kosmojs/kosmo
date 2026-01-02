@@ -1,0 +1,54 @@
+{
+  "layout": {
+    "id": "legal_layout_tsx_1366181041",
+    "name": "legal",
+    "folder": "pages",
+    "file": "legal/layout.tsx",
+    "pathTokens": [
+      {
+        "orig": "legal",
+        "base": "legal",
+        "path": "legal",
+        "ext": ""
+      }
+    ]
+  },
+  "children": [
+    {
+      "index": {
+        "id": "legal_privacy_index_tsx_603606551",
+        "name": "legal/privacy",
+        "folder": "pages",
+        "file": "legal/privacy/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "privacy",
+            "base": "privacy",
+            "path": "privacy",
+            "ext": ""
+          }
+        ]
+      },
+      "parent": "legal",
+      "children": []
+    },
+    {
+      "index": {
+        "id": "legal_terms_index_tsx_3828107619",
+        "name": "legal/terms",
+        "folder": "pages",
+        "file": "legal/terms/index.tsx",
+        "pathTokens": [
+          {
+            "orig": "terms",
+            "base": "terms",
+            "path": "terms",
+            "ext": ""
+          }
+        ]
+      },
+      "parent": "legal",
+      "children": []
+    }
+  ]
+}

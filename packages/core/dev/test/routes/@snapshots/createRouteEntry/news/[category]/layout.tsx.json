@@ -1,0 +1,27 @@
+{
+  "id": "news_category_layout_tsx_4074534343",
+  "name": "news/[category]",
+  "folder": "pages",
+  "file": "news/[category]/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "news",
+      "base": "news",
+      "path": "news",
+      "ext": ""
+    },
+    {
+      "orig": "[category]",
+      "base": "[category]",
+      "path": "[category]",
+      "ext": "",
+      "param": {
+        "name": "category",
+        "const": "category",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

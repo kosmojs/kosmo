@@ -1,0 +1,20 @@
+{
+  "id": "dashboard_analytics_index_tsx_2467463920",
+  "name": "dashboard/analytics",
+  "folder": "pages",
+  "file": "dashboard/analytics/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "dashboard",
+      "base": "dashboard",
+      "path": "dashboard",
+      "ext": ""
+    },
+    {
+      "orig": "analytics",
+      "base": "analytics",
+      "path": "analytics",
+      "ext": ""
+    }
+  ]
+}

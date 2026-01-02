@@ -1,0 +1,27 @@
+{
+  "id": "projects_projectId_index_tsx_2013112903",
+  "name": "projects/[projectId]",
+  "folder": "pages",
+  "file": "projects/[projectId]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "projects",
+      "base": "projects",
+      "path": "projects",
+      "ext": ""
+    },
+    {
+      "orig": "[projectId]",
+      "base": "[projectId]",
+      "path": "[projectId]",
+      "ext": "",
+      "param": {
+        "name": "projectId",
+        "const": "projectId",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

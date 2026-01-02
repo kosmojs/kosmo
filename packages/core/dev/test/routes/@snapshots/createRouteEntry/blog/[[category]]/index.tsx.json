@@ -1,0 +1,27 @@
+{
+  "id": "blog_category_index_tsx_1003139220",
+  "name": "blog/[[category]]",
+  "folder": "pages",
+  "file": "blog/[[category]]/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "blog",
+      "base": "blog",
+      "path": "blog",
+      "ext": ""
+    },
+    {
+      "orig": "[[category]]",
+      "base": "[[category]]",
+      "path": "[[category]]",
+      "ext": "",
+      "param": {
+        "name": "category",
+        "const": "category",
+        "isRequired": false,
+        "isOptional": true,
+        "isRest": false
+      }
+    }
+  ]
+}

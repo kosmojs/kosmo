@@ -4,18 +4,12 @@ import { Worker } from "node:worker_threads";
 
 import type { Plugin, ResolvedConfig } from "vite";
 
-import type {
-  GeneratorConstructor,
-  PluginOptions,
-  PluginOptionsResolved,
-} from "@kosmojs/devlib";
-
-import apiGenerator from "@kosmojs/api-generator";
 import stubGenerator from "@kosmojs/dev/stub-generator";
-import fetchGenerator from "@kosmojs/fetch-generator";
+
+import { routesFactory } from "@/routes-factory";
+import type { PluginOptions, PluginOptionsResolved } from "@/types";
 
 import apiHandlerFactory from "./api-handler";
-import routesFactory from "./routes";
 import { type SpinnerFactory, spinnerFactory, withSpinner } from "./spinner";
 import type { WorkerData, WorkerError, WorkerSpinner } from "./worker";
 
@@ -142,7 +136,7 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
     async configResolved(_config) {
       store.config = _config;
 
-      const appRoot = resolve(store.config.root, "..");
+      const appRoot = resolve(store.config.root, "../..");
       const sourceFolder = basename(store.config.root);
 
       // removing outDirSuffix
@@ -167,9 +161,15 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
           refineTypeName = "TRefine",
         } = { ...pluginOptions };
 
-        const _apiGenerator = generators.find((e) => e.kind === "api");
-        const _fetchGenerator = generators.find((e) => e.kind === "fetch");
-        const _ssrGenerator = generators.find((e) => e.kind === "ssr");
+        const apiGenerator = generators.find((e) => e.kind === "api");
+        const fetchGenerator = generators.find((e) => e.kind === "fetch");
+        const ssrGenerator = generators.find((e) => e.kind === "ssr");
+
+        if (!apiGenerator || !fetchGenerator) {
+          throw new Error(
+            "Some of required generators missing, make sure both `api` and `fetch` generators configured properly",
+          );
+        }
 
         store.resolvedOptions = {
           ...pluginOptions,
@@ -179,9 +179,9 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
             // 1. stub generator should run first
             stubGenerator(),
             // 2. then api generator
-            _apiGenerator || (apiGenerator() as GeneratorConstructor),
+            apiGenerator,
             // 3. then fetch generator
-            _fetchGenerator || (fetchGenerator() as GeneratorConstructor),
+            fetchGenerator,
             // 4. user generators in the order they were added
             ...generators.filter((e) => {
               return e.kind //
@@ -189,7 +189,7 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
                 : true;
             }),
             // 5. ssr generator should run last
-            ...(_ssrGenerator ? [_ssrGenerator] : []),
+            ...(ssrGenerator ? [ssrGenerator] : []),
           ],
           formatters: formatters.map((e) => e.formatter),
           refineTypeName,
@@ -223,8 +223,8 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
 
           for (const { name, factory } of store.resolvedOptions.generators) {
             spinner.append(name);
-            const { watchHandler } = await factory(store.resolvedOptions);
-            await watchHandler(resolvedEntries);
+            const { build } = await factory(store.resolvedOptions);
+            await build(resolvedEntries);
           }
 
           spinner.succeed();

@@ -1,0 +1,14 @@
+{
+  "id": "books_index_ts_873720432",
+  "name": "books",
+  "folder": "api",
+  "file": "books/index.ts",
+  "pathTokens": [
+    {
+      "orig": "books",
+      "base": "books",
+      "path": "books",
+      "ext": ""
+    }
+  ]
+}

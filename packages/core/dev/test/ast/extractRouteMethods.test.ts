@@ -4,7 +4,7 @@ import {
   createProject,
   extractDefaultExport,
   extractRouteMethods,
-} from "@/base-plugin/ast";
+} from "@/ast";
 
 describe("extractRouteMethods", () => {
   const project = createProject();
@@ -24,7 +24,7 @@ describe("extractRouteMethods", () => {
     );
     const methods = defaultExport
       ? extractRouteMethods(defaultExport, {
-          importName: "test",
+          id: "test",
           optionalParams: false,
         })
       : [];
@@ -68,7 +68,7 @@ describe("extractRouteMethods", () => {
     );
     const methods = defaultExport
       ? extractRouteMethods(defaultExport, {
-          importName: "test",
+          id: "test",
           optionalParams: false,
         })
       : [];
@@ -99,7 +99,7 @@ describe("extractRouteMethods", () => {
     );
     const methods = defaultExport
       ? extractRouteMethods(defaultExport, {
-          importName: "test",
+          id: "test",
           optionalParams: false,
         })
       : [];
@@ -138,7 +138,7 @@ describe("extractRouteMethods", () => {
     );
     const methods = defaultExport
       ? extractRouteMethods(defaultExport, {
-          importName: "test",
+          id: "test",
           optionalParams: false,
         })
       : [];

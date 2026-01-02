@@ -1,0 +1,27 @@
+{
+  "id": "profile_username_layout_tsx_2113498186",
+  "name": "profile/[username]",
+  "folder": "pages",
+  "file": "profile/[username]/layout.tsx",
+  "pathTokens": [
+    {
+      "orig": "profile",
+      "base": "profile",
+      "path": "profile",
+      "ext": ""
+    },
+    {
+      "orig": "[username]",
+      "base": "[username]",
+      "path": "[username]",
+      "ext": "",
+      "param": {
+        "name": "username",
+        "const": "username",
+        "isRequired": true,
+        "isOptional": false,
+        "isRest": false
+      }
+    }
+  ]
+}

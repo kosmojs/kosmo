@@ -1,0 +1,20 @@
+{
+  "id": "legal_terms_index_tsx_3828107619",
+  "name": "legal/terms",
+  "folder": "pages",
+  "file": "legal/terms/index.tsx",
+  "pathTokens": [
+    {
+      "orig": "legal",
+      "base": "legal",
+      "path": "legal",
+      "ext": ""
+    },
+    {
+      "orig": "terms",
+      "base": "terms",
+      "path": "terms",
+      "ext": ""
+    }
+  ]
+}
