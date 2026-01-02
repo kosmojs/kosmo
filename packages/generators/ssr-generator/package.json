@@ -21,13 +21,9 @@
     "test": "vitest --root ../../.. --project generators/ssr-generator"
   },
   "dependencies": {
-    "@kosmojs/devlib": "workspace:^",
+    "@kosmojs/dev": "workspace:^",
     "esbuild": "^0.27.2",
     "path-to-regexp": "^8.3.0",
     "vite": "^7.3.0"
-  },
-  "devDependencies": {
-    "@kosmojs/config": "workspace:^",
-    "@kosmojs/dev": "workspace:^"
   }
 }

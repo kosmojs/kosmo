@@ -20,11 +20,8 @@
     "build": "esbuilder src/index.ts"
   },
   "dependencies": {
+    "@kosmojs/dev": "workspace:^",
     "@biomejs/js-api": "^4.0.0",
-    "@biomejs/wasm-nodejs": "^2.3.9",
-    "@kosmojs/devlib": "workspace:^"
-  },
-  "devDependencies": {
-    "@kosmojs/config": "workspace:^"
+    "@biomejs/wasm-nodejs": "^2.3.9"
   }
 }

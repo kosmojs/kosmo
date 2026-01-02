@@ -3,6 +3,20 @@
   "compilerOptions": {
     "allowImportingTsExtensions": true,
     "noEmit": true,
-    "types": ["vite/client"]
+    "jsx": "preserve",
+    "types": [
+      "vite/client"
+    ],
+    "paths": {
+      "~/*": [
+        "${configDir}/*"
+      ],
+      "@/*": [
+        "${configDir}/src/*"
+      ],
+      "_/*": [
+        "${configDir}/lib/src/*"
+      ]
+    }
   }
 }

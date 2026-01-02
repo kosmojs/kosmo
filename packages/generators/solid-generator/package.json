@@ -22,11 +22,9 @@
   },
   "dependencies": {
     "@kosmojs/dev": "workspace:^",
-    "@kosmojs/devlib": "workspace:^",
     "picomatch": "^4.0.3"
   },
   "devDependencies": {
-    "@kosmojs/config": "workspace:^",
     "@types/picomatch": "^4.0.2",
     "vite": "^7.3.0"
   },

@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.vite.json",
+  "compilerOptions": {
+    "jsxImportSource": "react",
+    "paths": {
+      "~/*": [
+        "${configDir}/../../*"
+      ],
+      "@/*": [
+        "${configDir}/../../src/*"
+      ],
+      "_/*": [
+        "${configDir}/../../lib/src/*"
+      ]
+    }
+  }
+}

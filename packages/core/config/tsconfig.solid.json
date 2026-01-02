@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.vite.json",
+  "compilerOptions": {
+    "jsxImportSource": "solid-js",
+    "paths": {
+      "~/*": [
+        "${configDir}/../../*"
+      ],
+      "@/*": [
+        "${configDir}/../../src/*"
+      ],
+      "_/*": [
+        "${configDir}/../../lib/src/*"
+      ]
+    }
+  }
+}

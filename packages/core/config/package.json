@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "@kosmojs/config",
   "version": "0.0.11",
   "author": "Slee Woo",
@@ -10,10 +11,17 @@
     "*.json"
   ],
   "exports": {
-    "./tsconfig.kosmojs.json": "./tsconfig.kosmojs.json",
-    "./tsconfig.vite.json": "./tsconfig.vite.json"
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./tsconfig.kosmo.json": "./tsconfig.kosmo.json",
+    "./tsconfig.vite.json": "./tsconfig.vite.json",
+    "./tsconfig.solid.json": "./tsconfig.solid.json",
+    "./tsconfig.react.json": "./tsconfig.react.json",
+    "./tsconfig.vue.json": "./tsconfig.vue.json"
   },
   "scripts": {
-    "build": "echo"
+    "build": "node ./index.js"
+  },
+  "devDependencies": {
+    "@kosmojs/dev": "workspace:^"
   }
 }
