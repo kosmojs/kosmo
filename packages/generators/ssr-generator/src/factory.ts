@@ -10,9 +10,9 @@ import {
   pathResolver,
   type ResolvedEntry,
   type RouteEntry,
-  renderToFile,
+  renderFactory,
   sortRoutes,
-} from "@kosmojs/devlib";
+} from "@kosmojs/dev";
 
 import serverTpl from "./templates/server.hbs";
 
@@ -20,7 +20,7 @@ export const factory: GeneratorFactory = async ({
   appRoot,
   sourceFolder,
   outDir,
-  command,
+  formatters,
 }) => {
   const pathToRegexp = await readFile(
     resolve(import.meta.dirname, "path-to-regexp.js"),
@@ -28,7 +28,17 @@ export const factory: GeneratorFactory = async ({
   );
 
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
-    const { resolve } = pathResolver({ appRoot, sourceFolder });
+    const { createPath, createImportHelper } = pathResolver({
+      appRoot,
+      sourceFolder,
+    });
+
+    const { renderToFile } = renderFactory({
+      formatters,
+      helpers: {
+        createImport: createImportHelper,
+      },
+    });
 
     const routes = entries.flatMap(({ kind, entry }) => {
       return kind === "pageRoute" ? [entry] : [];
@@ -40,7 +50,7 @@ export const factory: GeneratorFactory = async ({
 
     const viteConfig = await loadConfigFromFile(
       { command: "build", mode: "ssr" },
-      resolve("@", "vite.config.ts"),
+      createPath.src("vite.config.ts"),
     );
 
     const esbuildOptions: BuildOptions = await import(
@@ -61,7 +71,7 @@ export const factory: GeneratorFactory = async ({
         ? plugins.filter((e) => (e as Plugin)?.name !== "@kosmojs:basePlugin")
         : [],
       build: {
-        ssr: resolve("entryDir", "server.ts"),
+        ssr: createPath.entry("server.ts"),
         ssrEmitAssets: false,
         outDir: join(outDir, "ssr"),
         emptyOutDir: true,
@@ -75,13 +85,9 @@ export const factory: GeneratorFactory = async ({
       },
     });
 
-    const ssrLibFile = resolve("libDir", sourceFolder, "{ssr}.ts");
+    const ssrLibFile = createPath.lib("ssr.ts");
 
-    await writeFile(
-      resolve("libDir", sourceFolder, "path-to-regexp.ts"),
-      pathToRegexp,
-      "utf8",
-    );
+    await writeFile(createPath.lib("path-to-regexp.ts"), pathToRegexp, "utf8");
 
     const routeMap: Array<{
       path: string;
@@ -99,12 +105,7 @@ export const factory: GeneratorFactory = async ({
       };
     }, {});
 
-    await renderToFile(ssrLibFile, serverTpl, {
-      routeMap: routeMap,
-      importPathmap: {
-        config: join(sourceFolder, "config"),
-      },
-    });
+    await renderToFile(ssrLibFile, serverTpl, { routeMap });
 
     // Build default server for SSR. It is using node:http server.
     // For custom deployment, use the app factory directly and discard the built server.
@@ -118,10 +119,8 @@ export const factory: GeneratorFactory = async ({
   };
 
   return {
-    async watchHandler(entries, event) {
-      if (event || command !== "build") {
-        return;
-      }
+    async watch() {},
+    async build(entries) {
       await generateLibFiles(entries);
     },
   };

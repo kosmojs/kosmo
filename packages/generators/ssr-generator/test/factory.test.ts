@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { createRouteEntry } from "@kosmojs/dev/routes";
+import { createRouteEntry, pathResolver } from "@kosmojs/dev";
 
 import { generatePathPattern } from "@/factory";
 
@@ -22,16 +22,17 @@ const routes = [
 
 describe("SSR Factory", { timeout: 60_000 }, () => {
   const appRoot = "/test";
-  const sourceFolder = "@src";
-
+  const sourceFolder = "test";
   const pluginOptions = { appRoot, sourceFolder };
+
+  const { createPath } = pathResolver({ appRoot, sourceFolder });
 
   test("generatePathPattern", async () => {
     const pathPatterns = [];
 
     for (const route of routes) {
       const routeEntry = createRouteEntry(
-        `${sourceFolder}/pages/${route}/index.tsx`,
+        createPath.pages(route, "index.tsx"),
         pluginOptions,
       );
       expect(routeEntry).toBeTruthy();
@@ -39,7 +40,7 @@ describe("SSR Factory", { timeout: 60_000 }, () => {
     }
 
     await expect(JSON.stringify(pathPatterns, null, 2)).toMatchFileSnapshot(
-      `snapshots/generatePathPattern.json`,
+      `@snapshots/generatePathPattern.json`,
     );
   });
 });
