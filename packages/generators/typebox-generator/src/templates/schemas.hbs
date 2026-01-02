@@ -1,6 +1,6 @@
 import type { ValidationSchemas } from "@kosmojs/api";
 
-import { validationSchemaFactory } from "{{importPathmap.typebox}}";
+import { validationSchemaFactory } from "{{ createImport "lib" "@typebox" }}";
 
 const schemas = {
 {{#each resolvedTypes}}  {{name}}: `{{text}}`,

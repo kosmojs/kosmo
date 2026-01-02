@@ -2,16 +2,13 @@ import Type from "typebox";
 import { Compile } from "typebox/compile";
 import Value from "typebox/value";
 
-import {
-  type ValidationErrorScope,
-  type ValidationSchema,
-  ValidationError,
-} from "@kosmojs/api";
+import type { ValidationErrorScope, ValidationSchema } from "@kosmojs/api";
+import { ValidationError } from "@kosmojs/api/errors";
 
 import errorHandlerFactory from "./error-handler";
 
-{{#if importPathmap.customTypes}}
-import customTypes from "{{importPathmap.customTypes}}";
+{{#if importCustomTypes}}
+import customTypes from "{{importCustomTypes}}";
 {{else}}
 const customTypes = {} as const;
 {{/if}}

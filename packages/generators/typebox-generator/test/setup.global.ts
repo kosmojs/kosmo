@@ -1,11 +1,11 @@
-import { rimraf } from "rimraf";
+import { rm } from "node:fs/promises";
 
-import routesFactory from "@kosmojs/dev/routes";
+import { routesFactory } from "@kosmojs/dev";
 
 import { appRoot, resolvedOptions } from ".";
 
 export default async () => {
-  await rimraf(`${appRoot}/lib`, { preserveRoot: false });
+  await rm(`${appRoot}/lib`, { force: true, recursive: true });
 
   const { resolvers } = await routesFactory(resolvedOptions);
 
@@ -16,8 +16,8 @@ export default async () => {
   }
 
   for (const { factory } of resolvedOptions.generators) {
-    const { watchHandler } = await factory(resolvedOptions);
-    await watchHandler(resolvedRoutes);
+    const { build } = await factory(resolvedOptions);
+    await build(resolvedRoutes);
   }
 
   return async () => {};

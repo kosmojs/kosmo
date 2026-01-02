@@ -1,13 +1,10 @@
-import { dirname, join } from "node:path";
-
 import {
-  defaults,
   type GeneratorFactory,
   pathResolver,
   type ResolvedEntry,
-  renderToFile,
+  renderFactory,
   typeboxLiteralText,
-} from "@kosmojs/devlib";
+} from "@kosmojs/dev";
 
 import errorHandlerTpl from "./error-handler.ts?as=text";
 import type { Options } from "./types";
@@ -22,23 +19,26 @@ export const factory: GeneratorFactory<Options> = async (
   const { appRoot, sourceFolder, formatters } = pluginoptions;
   const { validationMessages = {}, importCustomTypes } = { ...options };
 
-  const { resolve } = pathResolver({ appRoot, sourceFolder });
+  const { createPath, createImportHelper } = pathResolver({
+    appRoot,
+    sourceFolder,
+  });
+
+  const { renderToFile } = renderFactory({
+    formatters,
+    helpers: {
+      createImport: createImportHelper,
+    },
+  });
 
   for (const [file, template] of [
     ["index.ts", libTpl],
     ["error-handler.ts", errorHandlerTpl],
   ]) {
-    await renderToFile(
-      resolve("libDir", `{typebox}/${file}`),
-      template,
-      {
-        validationMessages: JSON.stringify(validationMessages),
-        importPathmap: {
-          customTypes: importCustomTypes,
-        },
-      },
-      { formatters },
-    );
+    await renderToFile(createPath.lib("@typebox", file), template, {
+      validationMessages: JSON.stringify(validationMessages),
+      importCustomTypes,
+    });
   }
 
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
@@ -48,7 +48,7 @@ export const factory: GeneratorFactory<Options> = async (
       }
 
       await renderToFile(
-        resolve("apiLibDir", dirname(entry.file), "schemas.ts"),
+        createPath.libApi(entry.name, "schemas.ts"),
         schemasTpl,
         {
           route: entry,
@@ -79,32 +79,33 @@ export const factory: GeneratorFactory<Options> = async (
                 ]
               : [];
           }),
-          importPathmap: {
-            typebox: join(defaults.appPrefix, defaults.libDir, "{typebox}"),
-          },
         },
-        { formatters },
       );
     }
   };
 
   return {
-    async watchHandler(entries, event) {
-      if (event) {
-        if (event.kind === "update") {
-          await generateLibFiles(
-            entries.filter(({ kind, entry }) => {
-              return kind === "apiRoute"
-                ? entry.fileFullpath === event.file ||
-                    entry.referencedFiles?.includes(event.file)
+    async watch(entries, event) {
+      await generateLibFiles(
+        // create/overwrite lib files with proper content.
+        // handle 2 cases:
+        // - event is undefined (means initial call): process all routes
+        // - `update` event given: process updated route
+        event
+          ? entries.filter(({ kind, entry }) => {
+              return event.kind === "update"
+                ? kind === "apiRoute"
+                  ? entry.fileFullpath === event.file
+                  : false
                 : false;
-            }),
-          );
-        }
-      } else {
-        // no event means initial call
-        await generateLibFiles(entries);
-      }
+            })
+          : entries,
+      );
+
+      // TODO: handle `delete` event, cleanup lib files
+    },
+    async build(entries) {
+      await generateLibFiles(entries);
     },
   };
 };

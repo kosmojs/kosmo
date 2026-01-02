@@ -1,5 +1,3 @@
-import { format } from "node:util";
-
 import type { TValidationError } from "typebox/error";
 
 import type { ValidationErrorEntry } from "@kosmojs/api";
@@ -336,7 +334,7 @@ export default (
     // Remove leading slash and convert to readable format
     const formatted = instancePath
       .replace(/^\//, "")
-      .replace(/\//g, " → ")
+      .replace(/\//g, " ➜ ")
       .replace(/(\d+)/g, (match) => {
         const index = Number(match);
         // For tuples, use more readable position labels
@@ -354,8 +352,8 @@ export default (
         }
         return `[${match}]`;
       })
-      .replace(/→ \[/g, "[")
-      .replace(/→ \(/g, " ");
+      .replace(/➜ \[/g, "[")
+      .replace(/➜ \(/g, " ");
 
     return formatted;
   }
@@ -1137,4 +1135,50 @@ export default (
     formatValidationErrorMessage,
     getErrorSummary,
   };
+};
+
+/**
+ * Standalone format function for browser builds.
+ * Avoids importing node:util to keep bundle size small and browser-compatible.
+ * Supports: %s (string), %d (number), %i (integer), %f (float), %% (literal %)
+ * */
+const format = (fmt: string, ...args: unknown[]): string => {
+  const argsIterator = args[Symbol.iterator]();
+
+  // Handle format specifiers
+  const str = String(fmt).replace(/%[sdif%]/g, (match) => {
+    if (match === "%%") {
+      return "%";
+    }
+
+    const next = argsIterator.next();
+
+    if (next.done) {
+      return match;
+    }
+
+    const arg = next.value;
+
+    switch (match) {
+      case "%s": // String
+        return String(arg);
+      case "%d": // Number
+        return String(Number(arg));
+      case "%i": // Integer
+        return String(parseInt(String(arg), 10));
+      case "%f": // Float
+        return String(parseFloat(String(arg)));
+      default:
+        return match;
+    }
+  });
+
+  // Append remaining arguments
+  const remaining = [...argsIterator];
+
+  if (remaining.length > 0) {
+    return [str, remaining.map((arg) => String(arg)).join(" ")].join(" ");
+  }
+
+  return str;
 };

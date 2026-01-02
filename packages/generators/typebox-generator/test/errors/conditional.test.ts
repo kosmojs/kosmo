@@ -1,7 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { MESSAGE_CODES } from "@/error-handler";
-
+import { MESSAGE_CODES } from "../../src/error-handler";
 import { importSchema } from "..";
 
 describe("errors/conditional", async () => {

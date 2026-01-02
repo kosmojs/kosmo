@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 
 import type { ValidationSchemas } from "@kosmojs/api";
-import { type PluginOptionsResolved, pathResolver } from "@kosmojs/devlib";
+import { type PluginOptionsResolved, pathResolver } from "@kosmojs/dev";
 
 import typeboxGenerator from "../src";
 
@@ -10,7 +10,7 @@ export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 export const resolvedOptions: PluginOptionsResolved = {
   generators: [
     typeboxGenerator({
-      importCustomTypes: "@/core/typebox",
+      importCustomTypes: "~/core/typebox",
     }),
   ],
   formatters: [],
@@ -19,7 +19,7 @@ export const resolvedOptions: PluginOptionsResolved = {
   baseurl: "",
   apiurl: "",
   appRoot,
-  sourceFolder: "@src",
+  sourceFolder: "test",
   outDir: "_dist",
   command: "build",
 };
@@ -28,17 +28,21 @@ export const importSchema = async (
   route: string,
   schemaPath: "params" | `${"payload" | "response"}.${"GET" | "POST"}`,
 ) => {
-  const { resolve } = pathResolver(resolvedOptions);
+  const { createPath } = pathResolver(resolvedOptions);
+
   const schemas: { validationSchemas: ValidationSchemas } = await import(
-    resolve("apiLibDir", route, `schemas.ts?${Date.now()}`)
+    createPath.libApi(route, `schemas.ts?${Date.now()}`)
   );
+
   if (schemaPath === "params") {
     return schemas.validationSchemas.params;
   }
+
   const [scope, method] = schemaPath.split(".") as [
     "payload" | "response",
     "GET" | "POST",
   ];
+
   return schemas.validationSchemas[scope]?.[method];
 };
 
