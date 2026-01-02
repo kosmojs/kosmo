@@ -1,0 +1,24 @@
+import { hydrate, render } from "solid-js/web";
+
+import { renderFactory, createRoutes } from "{{ createImport "libEntry" "client" }}";
+import App from "{{ createImport "src" "App" }}";
+import createRouter from "{{ createImport "src" "router" }}";
+
+const root = document.getElementById("app");
+
+if (root) {
+  const routes = createRoutes({ withPreload: true });
+  renderFactory(async () => {
+    const router = await createRouter(App, routes);
+    return {
+      clientRender() {
+        render(() => router, root);
+      },
+      serverRender() {
+        hydrate(() => router, root)
+      },
+    }
+  });
+} else {
+  console.error("Root element not found!");
+}

@@ -1,0 +1,22 @@
+import { renderToString, generateHydrationScript } from "solid-js/web";
+
+import { renderFactory, createRoutes } from "{{ createImport "libEntry" "server" }}";
+import App from "{{ createImport "src" "App" }}";
+import createRouter from "{{ createImport "src" "router" }}";
+
+const routes = createRoutes({ withPreload: false });
+
+export default renderFactory(() => {
+  const hydrationScript = generateHydrationScript();
+  return {
+    async renderToString(url, { criticalCss }) {
+      const router = await createRouter(App, routes, { url });
+      const head = criticalCss.reduce(
+        (head, { text }) => `${head}\n<style>${text}</style>`,
+        hydrationScript,
+      );
+      const html = renderToString(() => router);
+      return { head, html };
+    },
+  };
+});

@@ -1,0 +1,21 @@
+import type { SSRFactory } from "@kosmojs/dev";
+
+import { loaderFactory } from "../solid";
+
+{{#each pageEntries}}
+import * as {{id}} from "{{ createImport "pages" file }}";
+const {{id}}_component = {{id}}.default;
+const {{id}}_loader = async () => {{id}};
+{{/each}}
+
+export const createRoutes = (opt?: { withPreload?: boolean }) => {
+  const maybeLoader = loaderFactory(opt);
+  return [
+    {{#each nestedRoutes}}{{> routePartial}},
+    {{/each}}
+  ];
+}
+
+export const renderFactory: SSRFactory = (factory) => {
+  return factory();
+};

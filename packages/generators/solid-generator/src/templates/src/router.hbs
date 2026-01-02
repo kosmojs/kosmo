@@ -1,0 +1,23 @@
+import { Router } from "@solidjs/router";
+
+import { routerFactory } from "{{ createImport "lib" "router" }}";
+import { baseurl } from "{{ createImport "config" }}";
+
+export default routerFactory((App, routes) => {
+  return {
+    clientRouter() {
+      return (
+        <Router root={App} base={baseurl}>
+          {routes}
+        </Router>
+      );
+    },
+    serverRouter({ url }) {
+      return (
+        <Router root={App} base={baseurl} url={url.pathname}>
+          {routes}
+        </Router>
+      );
+    },
+  }
+});

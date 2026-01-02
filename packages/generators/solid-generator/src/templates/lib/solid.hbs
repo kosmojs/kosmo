@@ -1,0 +1,107 @@
+import { query, useLocation } from "@solidjs/router";
+import { createResource } from "solid-js";
+
+import {
+  type HostOpt,
+  createHost,
+  stringify,
+  join,
+} from "@kosmojs/fetch";
+
+import fetchMap from "{{ createImport "fetch" }}";
+import { baseurl } from "{{ createImport "config" }}";
+
+{{#each apiRoutes}}
+import type { ResponseT as {{id}} } from "{{ createImport "fetch" name }}";
+{{/each}}
+
+export const ssrMode = () => {{ssrMode}};
+
+export type ComponentLoader = () => Promise<{
+  preload?: () => Promise<unknown>;
+}>;
+
+export const loaderFactory = (opt?: { withPreload?: boolean }) => {
+  return (
+    componentLoader: ComponentLoader,
+  ) => {
+    const preload = async () => {
+      try {
+        const component = await componentLoader();
+        return typeof component.preload === "function"
+          ? component.preload
+          : undefined;
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+    };
+    return opt?.withPreload ? { preload } : {};
+  };
+};
+
+export const pageFactory = <ParamsT>(
+  pathTokens: Array<[ path: string, param?: { isRest: boolean } ]>
+) => {
+  type QueryT = Record<string, unknown>;
+
+  return {
+    parametrize(params: ParamsT) {
+      const paramsClone = structuredClone(params) as Array<string>;
+      return pathTokens
+        .flatMap(([ path, param ]) => {
+          if (param?.isRest) {
+            return paramsClone;
+          }
+          if (param) {
+            return paramsClone.splice(0, 1);
+          }
+          return [path];
+        })
+        .join("/");
+    },
+
+    base(
+      params: ParamsT,
+      query?: QueryT,
+    ) {
+      const base = join("/", this.parametrize(params));
+      return query
+        ? [ base, stringify(query) ].join("?")
+        : base;
+    },
+
+    path(
+      params: ParamsT,
+      query?: QueryT,
+    ) {
+      return join(baseurl, this.base(params, query));
+    },
+
+    href(
+      host: HostOpt,
+      params: ParamsT,
+      query?: QueryT,
+    ) {
+      return createHost(host) + this.path(params, query);
+    },
+  }
+}
+
+type ResourceMap = {
+  {{#each apiRoutes}}
+  "{{name}}": {{id}} extends { GET: unknown }
+    ? {{id}}["GET"]
+    : unknown;
+  {{/each}}
+}
+
+export const useResource = <K extends keyof ResourceMap>(routeName: K) => {
+  const location = useLocation();
+  const fetchData = () => fetchMap[routeName].GET();
+  const queryData = query(fetchData, routeName);
+  return createResource<ResourceMap[K]>(
+    () => location.pathname as never,
+    queryData as never,
+  );
+};
