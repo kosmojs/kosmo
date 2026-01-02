@@ -1,0 +1,16 @@
+import type { SSRFactory } from "@kosmojs/dev";
+
+{{#each pageEntries}}
+import {{id}} from "{{ createImport "pages" file }}";
+{{/each}}
+
+export const createRoutes = () => {
+  return [
+    {{#each nestedRoutes}}{{> routePartial}},
+    {{/each}}
+  ];
+}
+
+export const renderFactory: SSRFactory = (factory) => {
+  return factory();
+};

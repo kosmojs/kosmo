@@ -1,0 +1,27 @@
+import { createApp, createSSRApp } from "vue";
+
+import { renderFactory, createRoutes } from "{{ createImport "libEntry" "client" }}";
+import App from "{{ createImport "src" "App.vue" }}";
+import createRouter from "{{ createImport "src" "router" }}";
+
+const root = document.getElementById("app");
+
+if (root) {
+  const routes = createRoutes();
+  renderFactory(async () => {
+    return {
+      async clientRender() {
+        const app = createApp(App);
+        await createRouter(app, routes);
+        app.mount(root);
+      },
+      async serverRender() {
+        const app = createSSRApp(App);
+        await createRouter(app, routes);
+        app.mount(root, true);
+      },
+    }
+  });
+} else {
+  console.error("Root element not found!");
+}

@@ -1,0 +1,32 @@
+import type { RenderFactory } from "@kosmojs/dev";
+
+import { ssrMode } from "../vue";
+
+{{#each pageEntries}}
+const {{id}} = () => import("{{ createImport "pages" file }}");
+{{/each}}
+
+export const createRoutes = () => {
+  return [
+    {{#each nestedRoutes}}{{> routePartial}},
+    {{/each}}
+  ];
+}
+
+export const renderFactory: RenderFactory = async (factory) => {
+  const {
+    clientRender = fallbackRender("client"),
+    serverRender = fallbackRender("server"),
+  } = await factory();
+  if (ssrMode()) {
+    await serverRender();
+  } else {
+    await clientRender();
+  }
+}
+
+const fallbackRender = (scope: "client" | "server") => {
+  return () => {
+    throw new Error(`${scope}Render not implemented`);
+  }
+}

@@ -2,7 +2,7 @@ import { join } from "node:path";
 
 import picomatch, { type Matcher } from "picomatch";
 
-import type { NestedRouteEntry, PathToken, RouteEntry } from "@kosmojs/devlib";
+import type { NestedRouteEntry, PathToken, RouteEntry } from "@kosmojs/dev";
 
 import type { Options } from "./types";
 
@@ -64,10 +64,10 @@ export const traverseFactory = (options: Options) => {
             {
               name: layoutName,
               path,
-              component: layout.importName,
+              component: layout.id,
               children: [
                 // no recursion here - splat params always goes last
-                { name, path: "", component: index.importName },
+                { name, path: "", component: index.id },
               ],
               meta,
             },
@@ -80,7 +80,7 @@ export const traverseFactory = (options: Options) => {
               // prefix-only entry, no name no component
               path,
               children: [
-                { name, path: "", component: index.importName },
+                { name, path: "", component: index.id },
                 ...traverseEntries(children, name),
               ],
               meta,
@@ -93,7 +93,7 @@ export const traverseFactory = (options: Options) => {
             {
               name: layoutName,
               path,
-              component: layout.importName,
+              component: layout.id,
               children: traverseEntries(children, name),
               meta,
             },
@@ -108,9 +108,9 @@ export const traverseFactory = (options: Options) => {
           {
             name: layoutName,
             path,
-            component: layout.importName,
+            component: layout.id,
             children: [
-              { name, path: "", component: index.importName },
+              { name, path: "", component: index.id },
               ...traverseEntries(children, name),
             ],
             meta,
@@ -124,7 +124,7 @@ export const traverseFactory = (options: Options) => {
             // prefix-only entry, no name no component
             path,
             children: [
-              { name, path: "", component: index.importName },
+              { name, path: "", component: index.id },
               ...traverseEntries(children, name),
             ],
             meta,
@@ -137,7 +137,7 @@ export const traverseFactory = (options: Options) => {
           {
             name: layoutName,
             path,
-            component: layout.importName,
+            component: layout.id,
             children: traverseEntries(children, name),
             meta,
           },

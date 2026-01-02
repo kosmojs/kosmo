@@ -1,22 +1,32 @@
 <script setup lang="ts">
-import styles from "{{importPathmap.styles}}";
+import styles from "./styles.module.css";
+defineProps<{
+  message: string;
+  routeName: string;
+  pathMap: { page: string; pages: string; api: string }
+}>();
 </script>
 
 <template>
-  <div :class="styles.container">
+  <div :data-page-route="routeName" :class="styles.container">
     <div :class="styles.card">
       <h2 :class="styles.subtitle">
-        {{message}}
+        \{{message}}
       </h2>
       <br />
 
       <div :class="styles.stepsBox">
         <ul :class="styles.stepsList">
           <li>
-            Edit this page at <code>{{defaults.pagesDir}}/{{route.file}}</code>
+            Edit this page at <code>\{{pathMap.page}}</code>
           </li>
-          <li>Create new routes by adding folders in <code>{{defaults.pagesDir}}/</code></li>
-          <li>Add API endpoints in <code>{{defaults.apiDir}}/</code></li>
+          <li>
+            Create new routes by adding folders in
+            <code>\{{pathMap.pages}}/</code>
+          </li>
+          <li>
+            Add API endpoints in <code>\{{pathMap.api}}/</code>
+          </li>
         </ul>
       </div>
 

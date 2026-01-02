@@ -1,48 +1,57 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import { join } from "node:path";
-
 import picomatch, { type Matcher } from "picomatch";
 
-import { nestedRoutesFactory } from "@kosmojs/dev/routes";
 import {
   defaults,
   type GeneratorFactory,
+  nestedRoutesFactory,
   pathResolver,
   type ResolvedEntry,
-  type RouteEntry,
   renderFactory,
-  renderToFile,
   sortRoutes,
-} from "@kosmojs/devlib";
+} from "@kosmojs/dev";
 
 import { randomCongratMessage, traverseFactory } from "./base";
 import type { Options } from "./types";
 
-import libFetchUnwrapTpl from "./templates/lib/fetch/unwrap.hbs";
-import libPagesTpl from "./templates/lib/pages.hbs";
-import libVueClientTpl from "./templates/lib/vue/client.hbs";
-import libVueIndexTpl from "./templates/lib/vue/index.hbs";
-import libVueRoutePartialTpl from "./templates/lib/vue/routePartial.hbs";
-import libVueServerTpl from "./templates/lib/vue/server.hbs";
-import stylesTpl from "./templates/lib/vue/styles.css?as=text";
-import libVueUseTpl from "./templates/lib/vue/use.hbs";
+import libEntryClientTpl from "./templates/lib/entry/client.hbs";
+import libEntryRoutePartialTpl from "./templates/lib/entry/routePartial.hbs";
+import libEntryServerTpl from "./templates/lib/entry/server.hbs";
+import libPageSamplesPageTpl from "./templates/lib/pageSamples/page.hbs";
+import libPageSamplesStylesTpl from "./templates/lib/pageSamples/styles.css?as=text";
+import libPageSamplesWelcomeTpl from "./templates/lib/pageSamples/welcome.hbs";
+import libRouterTpl from "./templates/lib/router.hbs";
+import libUnwrapTpl from "./templates/lib/unwrap.hbs";
+import libVueTpl from "./templates/lib/vue.hbs";
 import paramTpl from "./templates/param.hbs";
-import publicAppTpl from "./templates/public/App.hbs";
-import publicComponentsLinkTpl from "./templates/public/components/Link.hbs";
-import publicEntryClientTpl from "./templates/public/entry/client.hbs";
-import publicEntryServerTpl from "./templates/public/entry/server.hbs";
-import publicEnvTpl from "./templates/public/env.hbs";
-import publicIndexTpl from "./templates/public/index.html?as=text";
-import publicLayoutTpl from "./templates/public/layout.hbs";
-import publicPageTpl from "./templates/public/page.hbs";
-import publicRouterTpl from "./templates/public/router.hbs";
-import welcomePageTpl from "./templates/public/welcome-page.hbs";
+import srcAppTpl from "./templates/src/App.hbs";
+import srcComponentsLinkTpl from "./templates/src/components/Link.hbs";
+import srcEntryClientTpl from "./templates/src/entry/client.hbs";
+import srcEntryServerTpl from "./templates/src/entry/server.hbs";
+import srcEnvDTpl from "./templates/src/env.d.ts?as=text";
+import srcIndexTpl from "./templates/src/index.html?as=text";
+import srcPageSamplesLayoutTpl from "./templates/src/pageSamples/layout.hbs";
+import srcPageSamplesPageTpl from "./templates/src/pageSamples/page.hbs";
+import srcPageSamplesWelcomeTpl from "./templates/src/pageSamples/welcome.hbs";
+import srcRouterTpl from "./templates/src/router.hbs";
 
 export const factory: GeneratorFactory<Options> = async (
   { appRoot, sourceFolder, formatters, generators, command },
   options,
 ) => {
-  const { resolve } = pathResolver({ appRoot, sourceFolder });
+  const { createPath, createImportHelper } = pathResolver({
+    appRoot,
+    sourceFolder,
+  });
+
+  const { render, renderToFile } = renderFactory({
+    formatters,
+    helpers: {
+      createImport: createImportHelper,
+    },
+    partials: {
+      routePartial: libEntryRoutePartialTpl,
+    },
+  });
 
   const customTemplates: Array<[Matcher, string]> = Object.entries({
     ...options.templates,
@@ -52,45 +61,27 @@ export const factory: GeneratorFactory<Options> = async (
 
   const entriesTraverser = traverseFactory(options);
 
-  await mkdir(resolve("libDir", sourceFolder, "{vue}"), { recursive: true });
-
-  await writeFile(
-    resolve("libDir", sourceFolder, "{vue}/styles.module.css"),
-    stylesTpl,
-    "utf8",
-  );
-
-  await renderToFile(
-    resolve("fetchLibDir", "unwrap.ts"),
-    libFetchUnwrapTpl,
-    {},
-    { formatters },
-  );
+  await renderToFile(createPath.lib("unwrap.ts"), libUnwrapTpl, {});
 
   for (const [file, template] of [
-    ["env.d.ts", publicEnvTpl],
-    ["components/Link.vue", publicComponentsLinkTpl],
-    ["App.vue", publicAppTpl],
-    ["router.ts", publicRouterTpl],
-    [join(defaults.entryDir, "client.ts"), publicEntryClientTpl],
-    ["index.html", publicIndexTpl],
-    ...(ssrGenerator
-      ? [[join(defaults.entryDir, "server.ts"), publicEntryServerTpl]]
-      : []),
+    ["styles.module.css", libPageSamplesStylesTpl],
+    ["welcome.vue", libPageSamplesWelcomeTpl],
+    ["page.vue", libPageSamplesPageTpl],
+  ]) {
+    await renderToFile(createPath.lib("pageSamples", file), template, {});
+  }
+
+  for (const [file, template] of [
+    ["env.d.ts", srcEnvDTpl],
+    ["components/Link.vue", srcComponentsLinkTpl],
+    ["App.vue", srcAppTpl],
+    ["router.ts", srcRouterTpl],
+    ["index.html", srcIndexTpl],
   ] as const) {
     await renderToFile(
-      resolve("@", file),
+      createPath.src(file),
       template,
-      {
-        defaults,
-        sourceFolder,
-        importPathmap: {
-          config: join(sourceFolder, defaults.configDir),
-          pageMap: join(sourceFolder, defaults.pagesLibDir),
-          fetch: join(sourceFolder, defaults.fetchLibDir),
-          vue: join(sourceFolder, "{vue}"),
-        },
-      },
+      { defaults },
       {
         // For index.html: overwrite only if empty or missing "<!--app-html-->".
         // For other files: overwrite only if blank.
@@ -103,60 +94,41 @@ export const factory: GeneratorFactory<Options> = async (
     );
   }
 
-  const generatePublicFiles = async (entries: Array<ResolvedEntry>) => {
+  const overwrite = (content: string) => !content?.trim().length;
+
+  for (const [file, template] of [
+    ["client.ts", srcEntryClientTpl],
+    ...(ssrGenerator ? [["server.ts", srcEntryServerTpl]] : []),
+  ]) {
+    await renderToFile(createPath.entry(file), template, {}, { overwrite });
+  }
+
+  const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
     for (const { kind, entry } of entries) {
       if (kind === "pageRoute") {
         const customTemplate = customTemplates.find(([isMatch]) => {
           return isMatch(entry.name);
         });
-
         await renderToFile(
-          resolve("pagesDir", entry.file),
+          createPath.pages(entry.file),
           entry.name === "index"
-            ? welcomePageTpl
-            : customTemplate?.[1] || publicPageTpl,
-          {
-            defaults,
-            route: entry,
-            message: randomCongratMessage(),
-            importPathmap: {
-              styles: join(sourceFolder, "{vue}/styles.module.css"),
-            },
-          },
-          {
-            // write only to blank files
-            overwrite: (fileContent) => !fileContent?.trim().length,
-            formatters,
-          },
+            ? srcPageSamplesWelcomeTpl
+            : customTemplate?.[1] || srcPageSamplesPageTpl,
+          { route: entry, message: randomCongratMessage() },
+          { overwrite },
         );
       } else if (kind === "pageLayout") {
         await renderToFile(
-          resolve("pagesDir", entry.file),
-          publicLayoutTpl,
+          createPath.pages(entry.file),
+          srcPageSamplesLayoutTpl,
           { route: entry },
-          {
-            // write only to blank files
-            overwrite: (fileContent) => !fileContent?.trim().length,
-            formatters,
-          },
+          { overwrite },
         );
       }
     }
   };
 
-  const generateIndexFiles = async (entries: Array<ResolvedEntry>) => {
-    const { render, renderToFile } = renderFactory({
-      formatters,
-      partials: {
-        routePartial: libVueRoutePartialTpl,
-      },
-      helpers: {
-        importPath({ importFile }: RouteEntry) {
-          return join(sourceFolder, defaults.pagesDir, importFile);
-        },
-      },
-    });
-
+  const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
     const indexRoutes = entries
       .flatMap(({ kind, entry }) => {
         return kind === "pageRoute"
@@ -178,43 +150,48 @@ export const factory: GeneratorFactory<Options> = async (
 
     const nestedRoutes = entriesTraverser(nestedRoutesFactory(pageEntries));
 
-    const shouldHydrate = JSON.stringify(
-      ssrGenerator ? command === "build" : false,
-    );
-
-    const importPathmap = {
-      config: join(sourceFolder, defaults.configDir),
-      fetch: join(sourceFolder, defaults.fetchLibDir),
-    };
+    const ssrMode = JSON.stringify(ssrGenerator ? command === "build" : false);
 
     for (const [file, template] of [
-      ["{vue}/index.ts", libVueIndexTpl],
-      ["{vue}/client.ts", libVueClientTpl],
-      ["{vue}/server.ts", libVueServerTpl],
-      ["{vue}/use.ts", libVueUseTpl],
-      [`${defaults.pagesLibDir}.ts`, libPagesTpl],
+      ["client.ts", libEntryClientTpl],
+      ["server.ts", libEntryServerTpl],
     ]) {
-      await renderToFile(resolve("libDir", sourceFolder, file), template, {
+      await renderToFile(createPath.libEntry(file), template, {
         pageEntries,
-        indexRoutes,
         nestedRoutes,
-        shouldHydrate,
-        importPathmap,
+      });
+    }
+
+    for (const [file, template] of [
+      ["router.ts", libRouterTpl],
+      ["vue.ts", libVueTpl],
+    ]) {
+      await renderToFile(createPath.lib(file), template, {
+        indexRoutes,
+        ssrMode,
       });
     }
   };
 
   return {
-    async watchHandler(entries, event) {
-      // Fill empty route files with templates (default or custom)
-      // - Initial call (event is undefined): process all routes
-      // - Create event: process newly added route
+    async watch(entries, event) {
+      // fill empty src files with proper content.
+      // handle 2 cases:
+      // - event is undefined (means initial call): process all routes
+      // - `create` event given: process newly added route
       if (!event || event.kind === "create") {
-        await generatePublicFiles(entries);
+        // always generateSrcFiles before generateLibFiles
+        await generateSrcFiles(entries);
       }
 
       // Always regenerate index files to keep router in sync
-      await generateIndexFiles(entries);
+      await generateLibFiles(entries);
+
+      // TODO: handle `delete` event, cleanup lib files
+    },
+    async build(entries) {
+      await generateSrcFiles(entries);
+      await generateLibFiles(entries);
     },
   };
 };

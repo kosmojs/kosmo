@@ -1,0 +1,33 @@
+import {
+  createMemoryHistory,
+  createRouter,
+  createWebHistory,
+} from "vue-router";
+
+import { routerFactory } from "{{ createImport "lib" "router" }}";
+import { baseurl } from "{{ createImport "config" }}";
+
+export default routerFactory((app, routes) => {
+  return {
+    clientRouter() {
+      const router = createRouter({
+        history: createWebHistory(baseurl),
+        routes,
+        strict: true,
+      });
+      app.use(router);
+      return router;
+    },
+    async serverRouter({ url }) {
+      const router = createRouter({
+        history: createMemoryHistory(baseurl),
+        routes,
+        strict: true,
+      });
+      await router.push(url.pathname);
+      await router.isReady();
+      app.use(router);
+      return router;
+    },
+  };
+});

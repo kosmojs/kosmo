@@ -1,11 +1,11 @@
 <script setup lang="ts" generic="T extends LinkProps">
 import { computed } from "vue";
 import { RouterLink, useRoute } from "vue-router";
+import { stringify } from "@kosmojs/fetch";
 
-import { stringify, unwrap } from "{{importPathmap.fetch}}/lib";
-import pageMap from "{{importPathmap.pageMap}}";
-import type { LinkProps } from "{{importPathmap.vue}}";
-import { baseurl } from "{{importPathmap.config}}";
+import { unwrap } from "{{ createImport "lib" "unwrap" }}";
+import { type LinkProps, pageMap } from "{{ createImport "lib" "router" }}";
+import { baseurl } from "{{ createImport "config" }}";
 
 interface Props {
   to?: T

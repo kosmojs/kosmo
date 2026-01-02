@@ -1,0 +1,22 @@
+import { createSSRApp } from "vue";
+import { renderToString } from "vue/server-renderer";
+
+import { renderFactory, createRoutes } from "{{ createImport "libEntry" "server" }}";
+import App from "{{ createImport "src" "App.vue" }}";
+import createRouter from "{{ createImport "src" "router" }}";
+
+const routes = createRoutes();
+
+export default renderFactory(() => {
+  return {
+    async renderToString(url, { criticalCss }) {
+      const app = createSSRApp(App);
+      await createRouter(app, routes, { url });
+      const head = criticalCss
+        .map(({ text }) => `<style>${text}</style>`)
+        .join("\n");
+      const html = await renderToString(app);
+      return { head, html };
+    },
+  };
+});
