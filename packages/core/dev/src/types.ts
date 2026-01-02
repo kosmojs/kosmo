@@ -50,6 +50,7 @@ export type PathToken = {
  * route entry as found in file-system, before any processing
  * */
 export type RouteEntry = {
+  id: string;
   name: string;
   // root folder route defined in; either api or pages
   folder: string;
@@ -57,8 +58,6 @@ export type RouteEntry = {
   file: string;
   fileFullpath: string;
   pathTokens: Array<PathToken>;
-  importName: string;
-  importFile: string;
 };
 
 export type NestedRouteEntry = {
@@ -159,7 +158,8 @@ export type WatchHandler = (
 ) => Promise<void>;
 
 type GeneratorFactoryReturn = {
-  watchHandler: WatchHandler;
+  watch: WatchHandler;
+  build: (entries: Array<ResolvedEntry>) => Promise<void>;
 };
 
 export type GeneratorFactory<T = undefined> = T extends undefined
@@ -211,6 +211,31 @@ export type FormatterConstructor<
   moduleConfig: ModuleConfig;
   formatter: Formatter;
 };
+
+type RouterSetup<R> = {
+  clientRouter: () => R | Promise<R>;
+  serverRouter: (ssrOpts: { url: URL }) => R | Promise<R>;
+};
+
+export type RouterFactory<AppT, RouteT, RouterT> = (
+  factory: (
+    app: AppT,
+    routes: Array<RouteT>,
+  ) => RouterSetup<RouterT> | Promise<RouterSetup<RouterT>>,
+) => (
+  app: AppT,
+  routes: Array<RouteT>,
+  ssrOpts?: { url: URL },
+) => RouterT | Promise<RouterT>;
+
+type RenderSetup = {
+  clientRender: () => void | Promise<void>;
+  serverRender: () => void | Promise<void>;
+};
+
+export type RenderFactory = (
+  factory: () => RenderSetup | Promise<RenderSetup>,
+) => void | Promise<void>;
 
 /**
  * Minimal shape of Vite's manifest.json entries.
@@ -293,6 +318,7 @@ export type SSRStringReturn = {
  * - place returned `html` into the body placeholder
  * */
 export type SSRString = (
+  url: URL,
   opt: SSROptions,
 ) => SSRStringReturn | Promise<SSRStringReturn>;
 
@@ -309,32 +335,21 @@ export type SSRString = (
  * thus the renderer **must call `response.end()`** when streaming is finished,
  * otherwise the HTTP request will remain open and the client will hang.
  * */
-export type SSRStream = (opt: SSROptions) => void | Promise<void>;
+export type SSRStream = (url: URL, opt: SSROptions) => void | Promise<void>;
 
 /**
  * Default exported object from the SSR entry module (e.g. entry/server.ts).
  * */
 export type SSRSetup = {
   /**
-   * The server calls this factory with current request URL.
-   * The factory returns the appropriate SSR rendering functions based on given URL.
-   *
-   * - `renderToString`  → SSR full HTML prior to sending (small apps)
-   * - `renderToStream`  → progressive HTML flushing (large apps / SEO)
+   * The server calls render functions with current request URL and SSROptions.
    *
    * If both are provided, `renderToStream` takes precedence since streaming
    * enables earlier flushing and improved Time-to-First-Byte (TTFB).
    * `renderToString` will only be used if a streaming renderer is not available.
    * */
-  factory: (url: URL) =>
-    | {
-        renderToString?: SSRString;
-        renderToStream?: SSRStream;
-      }
-    | Promise<{
-        renderToString?: SSRString;
-        renderToStream?: SSRStream;
-      }>;
+  renderToString?: SSRString;
+  renderToStream?: SSRStream;
 
   /**
    * Controls whether the SSR server should handle static asset requests (JS, CSS, images, fonts, etc.)
@@ -357,3 +372,7 @@ export type SSRSetup = {
    * */
   serveStaticAssets?: boolean;
 };
+
+export type SSRFactory = (
+  factory: () => SSRSetup | Promise<SSRSetup>,
+) => SSRSetup | Promise<SSRSetup>;

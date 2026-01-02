@@ -1,14 +1,15 @@
 export const defaults = {
-  appPrefix: "@",
+  appPrefix: "~",
+  srcPrefix: "@",
+  libPrefix: "_",
 
   coreDir: "core",
+  srcDir: "src",
   libDir: "lib",
+
   configDir: "config",
   apiDir: "api",
   pagesDir: "pages",
   entryDir: "entry",
-
-  apiLibDir: "{api}",
-  pagesLibDir: "{pages}",
-  fetchLibDir: "{fetch}",
+  fetchDir: "fetch",
 };

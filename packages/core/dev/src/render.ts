@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import crc from "crc/crc32";
 import handlebars from "handlebars";
 
-import { pathExists } from "./paths";
+import { pathExists } from "./fs";
 
 export type RenderOptions = {
   noEscape?: boolean;
@@ -92,19 +92,28 @@ export const renderFactory = (
     renderer.registerHelper(options.helpers as never);
   }
   return {
-    render<Context = object>(template: string, context: Context) {
-      return render(template, context, { renderer, ...options });
+    render<Context = object>(
+      template: string,
+      context: Context,
+      selfOoptions?: FactoryOptions,
+    ) {
+      return render(template, context, {
+        renderer,
+        ...options,
+        ...selfOoptions,
+      });
     },
     async renderToFile<Context = object>(
       file: string,
       template: string,
       context: Context,
+      selfOoptions?: FactoryOptions,
     ) {
       return renderToFile(
         options?.outdir ? join(options.outdir, file) : file,
         template,
         context,
-        { renderer, ...options },
+        { renderer, ...options, ...selfOoptions },
       );
     },
   };
