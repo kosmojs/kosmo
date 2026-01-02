@@ -14,8 +14,8 @@ import {
   createProject,
   createSourceFolder,
   type FRAMEWORK_OPTIONS,
-} from "@kosmojs/dev/cli";
-import { defaults, pathTokensFactory } from "@kosmojs/devlib";
+} from "@kosmojs/cli";
+import { defaults, pathResolver, pathTokensFactory } from "@kosmojs/dev";
 
 const project = {
   name: "integration-test",
@@ -30,9 +30,7 @@ const csr = inject("CSR");
 const ssr = inject("SSR");
 
 const browser = csr
-  ? await chromium.launch({
-      headless: !process.env.DEBUG,
-    })
+  ? await chromium.launch({ headless: !process.env.DEBUG })
   : undefined;
 
 const apiClient = got.extend({
@@ -44,7 +42,9 @@ const apiClient = got.extend({
   },
 });
 
-export const sourceFolder = "@src";
+const PORT_RANGE = [40_600, 40_800];
+
+export const sourceFolder = "test";
 
 export * from "./routes";
 
@@ -59,7 +59,7 @@ export const setupTestProject = async (opt?: {
     ? opt.skip({ csr, ssr, api })
     : false;
 
-  const port = await findFreePort(60_000, 60_200);
+  const port = await findFreePort();
   const baseURL = `http://localhost:${port}`;
 
   const tempDir = skip ? "" : await mkdtemp(resolve(tmpdir(), ".kosmojs-"));
@@ -72,6 +72,11 @@ export const setupTestProject = async (opt?: {
       await rm(tempDir, { recursive: true, force: true });
     }
   };
+
+  const { createPath, createImport } = pathResolver({
+    appRoot: projectRoot,
+    sourceFolder,
+  });
 
   type PageTemplateFactory = (a: {
     name: string;
@@ -89,23 +94,25 @@ export const setupTestProject = async (opt?: {
       ? { solid: "tsx", react: "tsx", vue: "vue" }[framework]
       : "ts";
 
-    const filePath = resolve(
-      projectRoot,
-      `${sourceFolder}/${defaults.pagesDir}/${name}/${file}.${fileExt}`,
-    );
+    const filePath = createPath.pages(`${name}/${file}.${fileExt}`);
 
-    const cssFile = `${sourceFolder}/assets/${name}/${file}.css`;
+    const cssFile = `assets/${name}/${file}.css`;
     const cssText = `[id="${crc(name + file)}"]{content:"${name}/${file}"}`;
 
     await mkdir(dirname(filePath), { recursive: true });
-    await mkdir(dirname(resolve(projectRoot, cssFile)), { recursive: true });
+    await mkdir(dirname(createPath.src(cssFile)), { recursive: true });
 
     const templateBuilder = templateFactory
-      ? await templateFactory({ file, name, cssFile, cssText })
+      ? await templateFactory({
+          file,
+          name,
+          cssFile: createImport.src(cssFile),
+          cssText,
+        })
       : () => "";
 
     await writeFile(filePath, templateBuilder());
-    await writeFile(resolve(projectRoot, cssFile), cssText, "utf8");
+    await writeFile(createPath.src(cssFile), cssText, "utf8");
   };
 
   type ApiTemplateFactory = (a: {
@@ -118,10 +125,7 @@ export const setupTestProject = async (opt?: {
     file: string,
     templateFactory?: ApiTemplateFactory,
   ) => {
-    const filePath = resolve(
-      projectRoot,
-      `${sourceFolder}/${defaults.apiDir}/${name}/${file}.ts`,
-    );
+    const filePath = createPath.api(`${name}/${file}.ts`);
 
     await mkdir(dirname(filePath), { recursive: true });
 
@@ -153,7 +157,7 @@ export const setupTestProject = async (opt?: {
   const createDevServer = async () => {
     if (ssr) {
       await build({
-        root: resolve(projectRoot, sourceFolder),
+        root: createPath.src(),
       });
 
       // INFO: wait for files to persist
@@ -174,7 +178,7 @@ export const setupTestProject = async (opt?: {
 
     if (api) {
       await build({
-        root: resolve(projectRoot, sourceFolder),
+        root: createPath.src(),
       });
 
       // INFO: wait for files to persist
@@ -199,7 +203,7 @@ export const setupTestProject = async (opt?: {
     }
 
     const server = await createServer({
-      root: resolve(projectRoot, sourceFolder),
+      root: createPath.src(),
       logLevel: "error",
     });
 
@@ -223,11 +227,13 @@ export const setupTestProject = async (opt?: {
     await createProject(tempDir, project, {
       dependencies: {
         "@kosmojs/api": resolve(pkgsDir, "core/api"),
+        "@kosmojs/fetch": resolve(pkgsDir, "core/fetch"),
       },
       devDependencies: {
         "@kosmojs/config": resolve(pkgsDir, "core/config"),
+        "@kosmojs/cli": resolve(pkgsDir, "core/cli"),
         "@kosmojs/dev": resolve(pkgsDir, "core/dev"),
-        "@kosmojs/fetch": resolve(pkgsDir, "core/fetch"),
+        "@kosmojs/generators": resolve(pkgsDir, "generators/generators"),
       },
     });
 
@@ -241,20 +247,6 @@ export const setupTestProject = async (opt?: {
       },
       {
         ...(frameworkOptions ? { frameworkOptions } : {}),
-        devDependencies: {
-          ...(framework
-            ? {
-                [`@kosmojs/${framework}-generator`]: resolve(
-                  pkgsDir,
-                  `generators/${framework}-generator`,
-                ),
-              }
-            : {}),
-          ["@kosmojs/ssr-generator"]: resolve(
-            pkgsDir,
-            "generators/ssr-generator",
-          ),
-        },
       },
     );
 
@@ -271,11 +263,8 @@ export const setupTestProject = async (opt?: {
     });
   };
 
-  const defaultContentPatternFor = (routeName: string) => {
-    return new RegExp(
-      `Edit this page at .*${routeName.replace(/[[\]]/g, "\\$&")}.*`,
-      "i",
-    );
+  const defaultContentPatternFor = (route: string) => {
+    return new RegExp(`data-page-route="${route.replace(/[[\]]/g, "\\$&")}"`);
   };
 
   const withPageContent = async (
@@ -427,10 +416,9 @@ export const snapshotNameFor = (
   ].join("/");
 };
 
-const findFreePort = async (
-  minPort: number,
-  maxPort: number,
-): Promise<number> => {
+const findFreePort = async (): Promise<number> => {
+  const [minPort, maxPort] = PORT_RANGE;
+
   const range = maxPort - minPort + 1;
   const startOffset = Math.floor(Math.random() * range);
 

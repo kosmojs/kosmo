@@ -1,7 +1,11 @@
 import { load } from "cheerio";
 import { afterAll, beforeAll, describe, it } from "vitest";
 
+import { pathResolver } from "@kosmojs/dev";
+
 import { routes, setupTestProject, sourceFolder } from "../setup";
+
+const { createImport } = pathResolver({ sourceFolder });
 
 // Generate template from test cases
 const navigationLinks = routes.map(({ id, name, params, label }) => {
@@ -17,7 +21,7 @@ const navigationLinks = routes.map(({ id, name, params, label }) => {
 });
 
 const navigationTemplate = `
-  import Link from "${sourceFolder}/components/Link";
+  import Link from "${createImport.src("components/Link")}";
   export default () => {
     return (
       <div data-testid="navigation-page">

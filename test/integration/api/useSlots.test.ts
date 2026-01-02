@@ -1,9 +1,8 @@
 import { writeFile } from "node:fs/promises";
-import { join } from "node:path";
 
 import { afterAll, beforeAll, describe, it } from "vitest";
 
-import { defaults } from "@kosmojs/devlib";
+import { pathResolver } from "@kosmojs/dev";
 
 import { setupTestProject } from "../setup";
 
@@ -26,6 +25,11 @@ const coreSlots = [
   "validateResponse",
 ];
 
+const { createPath, createImport } = pathResolver({
+  appRoot: projectRoot,
+  sourceFolder,
+});
+
 beforeAll(async () => {
   await bootstrapProject();
 
@@ -38,14 +42,21 @@ beforeAll(async () => {
   };
 
   await writeFile(
-    join(projectRoot, defaults.coreDir, defaults.apiDir, "use.ts"),
+    createPath.coreApi("use.ts"),
     `
       import { use } from "@kosmojs/api";
-      import { errorHandler } from "./errors";
       export default [
-        use(errorHandler, {
-          slot: "errorHandler",
-        }),
+        use(
+          async (ctx, next) => {
+            try {
+              await next();
+            } catch (error) {
+              ctx.status = 400;
+              ctx.body = error.message;
+            }
+          },
+          { slot: "errorHandler" },
+        ),
         ${coreSlots.map(coreSlotsMapper).join(",\n")}
       ]
     `,
@@ -74,7 +85,7 @@ beforeAll(async () => {
     await createApiRoutes([route], async ({ name }) => {
       return () => {
         return `
-          import { defineRoute } from "${sourceFolder}/${defaults.apiLibDir}/${name}";
+          import { defineRoute } from "${createImport.libApi(name)}";
           export default defineRoute(({ use, GET }) => [
             ${coreSlots.flatMap(coreSlotsMapper).join(",\n")},
             GET(() => {
@@ -105,7 +116,7 @@ beforeAll(async () => {
     await createApiRoutes([route], async ({ name }) => {
       return () => {
         return `
-          import { defineRoute } from "${sourceFolder}/${defaults.apiLibDir}/${name}";
+          import { defineRoute } from "${createImport.libApi(name)}";
           export default defineRoute(({ use, GET }) => [
             ${coreSlots.map(coreSlotsMapper).join(",\n")},
             GET(async (ctx) => {

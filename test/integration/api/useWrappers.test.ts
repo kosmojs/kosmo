@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-import { defaults } from "@kosmojs/devlib";
+import { pathResolver } from "@kosmojs/dev";
 
 import { apiRoutes, setupTestProject, snapshotNameFor } from "../setup";
 
@@ -12,6 +12,8 @@ const {
   startServer,
   teardown,
 } = await setupTestProject();
+
+const { createImport } = pathResolver({ sourceFolder });
 
 beforeAll(async () => {
   await bootstrapProject();
@@ -33,7 +35,7 @@ beforeAll(async () => {
         `;
       }
       return `
-        import { defineRoute } from "${sourceFolder}/${defaults.apiLibDir}/${name}";
+        import { defineRoute } from "${createImport.libApi(name)}";
         export default defineRoute(({ GET }) => [
           GET(async (ctx) => {
             ctx.state.stack?.push("${name}/${file}");
