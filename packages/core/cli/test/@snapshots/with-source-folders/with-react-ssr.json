@@ -1,0 +1,76 @@
+[
+  [
+    "with-source-folders/src/with-react-ssr/api/index/index.ts",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/src/with-react-ssr/config/index.ts",
+    [
+      "export const baseurl = \"/\";",
+      "export const apiurl = \"/api\"; // relative to baseurl"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-react-ssr/entry/client.tsx",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/src/with-react-ssr/index.html",
+    [
+      "<!--",
+      "Do not remove! Build process requires this file for framework-less source folders.",
+      "Framework generators will override this stub with their own setup.",
+      "-->"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-react-ssr/pages/index/index.tsx",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/src/with-react-ssr/tsconfig.json",
+    [
+      "{",
+      "  \"extends\": \"@kosmojs/config/tsconfig.react.json\"",
+      "}"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-react-ssr/vite.config.ts",
+    [
+      "import { join } from \"node:path\";",
+      "",
+      "import reactPlugin from \"@vitejs/plugin-react\";",
+      "import devPlugin from \"@kosmojs/dev\";",
+      "import {",
+      "  apiGenerator,",
+      "  fetchGenerator,",
+      "  typeboxGenerator,",
+      "  reactGenerator,",
+      "  ssrGenerator,",
+      "} from \"@kosmojs/generators\";",
+      "",
+      "import defineConfig from \"../../vite.base\";",
+      "import { apiurl, baseurl } from \"./config\";",
+      "",
+      "export default defineConfig(import.meta.dirname, {",
+      "  base: join(baseurl, \"/\"),",
+      "  server: {",
+      "    port: 4000,",
+      "  },",
+      "  plugins: [",
+      "    reactPlugin(),",
+      "    devPlugin(apiurl, {",
+      "      generators: [ apiGenerator(), fetchGenerator(), typeboxGenerator(), reactGenerator(), ssrGenerator(), ],",
+      "    }),",
+      "  ],",
+      "});"
+    ]
+  ]
+]

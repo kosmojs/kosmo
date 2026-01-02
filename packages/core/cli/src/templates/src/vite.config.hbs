@@ -2,11 +2,13 @@ import { join } from "node:path";
 
 {{#each plugins}}{{importDeclaration}}
 {{/each}}
-import devPlugin, { apiGenerator, fetchGenerator } from "@kosmojs/dev";
-{{#each generators}}{{importDeclaration}}
+import devPlugin from "@kosmojs/dev";
+import {
+{{#each generators}}  {{name}},
 {{/each}}
+} from "@kosmojs/generators";
 
-import defineConfig from "../vite.base";
+import defineConfig from "../../vite.base";
 import { apiurl, baseurl } from "./config";
 
 export default defineConfig(import.meta.dirname, {
@@ -18,12 +20,7 @@ export default defineConfig(import.meta.dirname, {
     {{#each plugins}}{{importName}}({{options}}),
     {{/each}}
     devPlugin(apiurl, {
-      generators: [
-        apiGenerator(),
-        fetchGenerator(),
-        {{#each generators}}{{importName}}({{options}}),
-        {{/each}}
-      ],
+      generators: [ {{#each generators}}{{name}}({{options}}), {{/each}}],
     }),
   ],
 });

@@ -11,71 +11,38 @@
   "files": [
     "pkg/*"
   ],
-  "bin": {
-    "kosmo": "pkg/cli/cli.js"
-  },
   "exports": {
     ".": {
       "types": "./pkg/src/index.d.ts",
       "default": "./pkg/index.js"
     },
-    "./routes": {
-      "types": "./pkg/src/base-plugin/routes.d.ts",
-      "default": "./pkg/base-plugin/routes.js"
-    },
     "./stub-generator": {
       "types": "./pkg/src/stub-generator/index.d.ts",
       "default": "./pkg/stub-generator/index.js"
     },
-    "./cli": {
-      "types": "./pkg/src/cli/index.d.ts",
-      "default": "./pkg/cli/index.js"
-    },
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "esbuilder src/index.ts src/base-plugin/routes.ts src/base-plugin/worker.ts src/stub-generator/index.ts src/cli/cli.ts src/cli/index.ts",
-    "postbuild": "rsync -av --delete src/cli/templates/ pkg/cli/templates",
+    "build": "esbuilder src/index.ts src/base-plugin/worker.ts src/stub-generator/index.ts",
     "test": "vitest --root ../../.. --project core/dev"
   },
   "dependencies": {
-    "@kosmojs/api": "workspace:^",
-    "@kosmojs/api-generator": "workspace:^",
-    "@kosmojs/devlib": "workspace:^",
-    "@kosmojs/fetch-generator": "workspace:^",
     "chokidar": "^5.0.0",
-    "concurrently": "^9.2.1",
     "crc": "^4.3.2",
     "dotenv": "^17.2.3",
     "esbuild": "^0.27.2",
+    "handlebars": "^4.7.8",
     "ora": "^9.0.0",
     "picomatch": "^4.0.3",
-    "prompts": "^2.4.2",
     "tfusion": "^0.0.23",
     "tinyglobby": "^0.2.15",
     "ts-morph": "^27.0.2",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@kosmojs/config": "workspace:^",
-    "@solidjs/router": "^0.15.4",
-    "@types/koa": "^3.0.1",
-    "@types/koa__router": "^12.0.5",
-    "@types/node": "^25.0.3",
-    "@types/picomatch": "^4.0.2",
-    "@types/prompts": "^2.4.9",
-    "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.2",
-    "@vitejs/plugin-vue": "^6.0.3",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "react-router": "^7.10.1",
-    "solid-js": "^1.9.10",
-    "tslib": "^2.8.1",
-    "vite": "^7.3.0",
-    "vite-plugin-solid": "^2.11.10",
-    "vue": "^3.5.25",
-    "vue-router": "^4.6.4"
+    "@types/picomatch": "^4.0.2"
+  },
+  "peerDependencies": {
+    "@kosmojs/api": "workspace:^"
   }
 }

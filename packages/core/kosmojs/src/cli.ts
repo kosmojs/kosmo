@@ -8,7 +8,7 @@ import {
   messageFactory,
   type Project,
   validateName,
-} from "@kosmojs/dev/cli";
+} from "@kosmojs/cli";
 
 const usage = [
   "",

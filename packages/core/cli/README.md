@@ -1,11 +1,11 @@
-# kosmojs
+# @kosmojs/cli
 
 TODO: Add package description
 
-## Create a new Project
+## Installation
 
 ```sh
-npx kosmojs my-app  # or any name for your project
+npm install -D @kosmojs/cli
 ```
 
 ## Documentation

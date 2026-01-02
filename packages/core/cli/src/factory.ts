@@ -9,8 +9,8 @@ import { resolve } from "node:path";
  * When bumping the version (even a patch) for a single package, bump it for all packages
  * to keep versions fully synchronized across the project.
  * */
-import self from "@kosmojs/dev/package.json" with { type: "json" };
-import { defaults, renderToFile } from "@kosmojs/devlib";
+import self from "@kosmojs/cli/package.json" with { type: "json" };
+import { defaults, renderToFile } from "@kosmojs/dev";
 
 import {
   copyFiles,
@@ -24,12 +24,8 @@ import {
   type SourceFolder,
 } from "./base";
 
-import srcApiAppTpl from "./templates/@src/api/app.hbs";
-import srcApiRouterTpl from "./templates/@src/api/router.hbs";
-import srcApiServerTpl from "./templates/@src/api/server.hbs";
-import srcApiUseTpl from "./templates/@src/api/use.hbs";
-import srcConfigTpl from "./templates/@src/config/index.hbs";
-import srcViteConfigTpl from "./templates/@src/vite.config.hbs";
+import srcConfigTpl from "./templates/src/config/index.hbs";
+import srcViteConfigTpl from "./templates/src/vite.config.hbs";
 import viteBaseTpl from "./templates/vite.base.hbs";
 
 const TPL_DIR = resolve(import.meta.dirname, "templates");
@@ -41,21 +37,15 @@ type Plugin = {
 };
 
 type Generator = {
-  importDeclaration: string;
-  importName: string;
+  name: string;
   options: string;
 };
 
 const tsconfigJson = {
   extends: "@kosmojs/config/tsconfig.vite.json",
-  compilerOptions: {
-    paths: {
-      [`${defaults.appPrefix}/*`]: ["./*", `./${defaults.libDir}/*`],
-    },
-  },
 };
 
-const SEMVER = `^${self.version}`;
+const SELF_VERSION = `^${self.version}`;
 
 export const createProject = async (
   path: string,
@@ -75,16 +65,20 @@ export const createProject = async (
       "+folder": "kosmo folder",
     },
     dependencies: {
-      "@kosmojs/api": SEMVER,
+      "@kosmojs/api": SELF_VERSION,
+      "@kosmojs/fetch": SELF_VERSION,
+      typebox: self.devDependencies.typebox,
       ...assets?.dependencies,
     },
     devDependencies: {
-      "@kosmojs/config": SEMVER,
-      "@kosmojs/dev": SEMVER,
+      "@kosmojs/config": SELF_VERSION,
+      "@kosmojs/cli": SELF_VERSION,
+      "@kosmojs/dev": SELF_VERSION,
+      "@kosmojs/generators": SELF_VERSION,
       "@types/node": self.devDependencies["@types/node"],
-      esbuild: self.dependencies.esbuild,
+      esbuild: self.devDependencies.esbuild,
       tslib: self.devDependencies.tslib,
-      typescript: self.dependencies.typescript,
+      typescript: self.devDependencies.typescript,
       vite: self.devDependencies.vite,
       ...assets?.devDependencies,
     },
@@ -110,7 +104,7 @@ export const createProject = async (
   }
 
   await copyFiles(TPL_DIR, projectPath, {
-    exclude: [/@src/, /.+\.hbs/],
+    exclude: [/src/, /.+\.hbs/],
   });
 
   for (const [file, template] of [
@@ -135,13 +129,13 @@ export const createSourceFolder = async (
     devDependencies?: Record<string, string>;
   },
 ) => {
-  const folderPath = resolve(projectRoot, folder.name);
+  const folderPath = resolve(projectRoot, defaults.srcDir, folder.name);
 
   if (await pathExists(folderPath)) {
     throw new Error(`${folder.name} already exists`);
   }
 
-  await copyFiles(resolve(TPL_DIR, "@src"), folderPath, {
+  await copyFiles(resolve(TPL_DIR, "src"), folderPath, {
     exclude: [/.+\.hbs/],
   });
 
@@ -151,26 +145,20 @@ export const createSourceFolder = async (
     with: { type: "json" },
   }).then((e) => e.default);
 
-  const tsconfigFile = resolve(projectRoot, "tsconfig.json");
-
-  const tsconfigImport = await import(tsconfigFile, {
-    with: { type: "json" },
-  }).then((e) => e.default);
-
-  const compilerOptions = {
-    ...tsconfigImport?.compilerOptions,
-    // instruct TypeScript to preserve JSX
-    jsx: "preserve",
-  };
-
   const plugins: Array<Plugin> = [];
-  const generators: Array<Generator> = [];
+
+  const generators: Array<Generator> = [
+    { name: "apiGenerator", options: "" },
+    { name: "fetchGenerator", options: "" },
+    { name: "typeboxGenerator", options: "" },
+  ];
 
   const dependencies: Record<string, string> = {};
   const devDependencies: Record<string, string> = {};
 
-  const framework: SourceFolder["framework"] =
-    folder.framework || DEFAULT_FRAMEWORK;
+  const framework = folder.framework || DEFAULT_FRAMEWORK;
+
+  let tsconfig: Record<string, unknown> | undefined;
 
   if (framework === "solid") {
     Object.assign(dependencies, {
@@ -179,7 +167,6 @@ export const createSourceFolder = async (
     });
 
     Object.assign(devDependencies, {
-      "@kosmojs/solid-generator": SEMVER,
       "vite-plugin-solid": self.devDependencies["vite-plugin-solid"],
     });
 
@@ -190,14 +177,15 @@ export const createSourceFolder = async (
     });
 
     generators.push({
-      importDeclaration: `import solidGenerator from "@kosmojs/solid-generator";`,
-      importName: "solidGenerator",
+      name: "solidGenerator",
       options: opt?.frameworkOptions
         ? JSON.stringify(opt.frameworkOptions, null, 2)
         : "",
     });
 
-    compilerOptions.jsxImportSource = "solid-js";
+    tsconfig = {
+      extends: `@kosmojs/config/tsconfig.${framework}.json`,
+    };
   } else if (framework === "react") {
     Object.assign(dependencies, {
       react: self.devDependencies.react,
@@ -205,7 +193,6 @@ export const createSourceFolder = async (
     });
 
     Object.assign(devDependencies, {
-      "@kosmojs/react-generator": SEMVER,
       "@vitejs/plugin-react": self.devDependencies["@vitejs/plugin-react"],
       "@types/react": self.devDependencies["@types/react"],
       "@types/react-dom": self.devDependencies["@types/react-dom"],
@@ -219,14 +206,15 @@ export const createSourceFolder = async (
     });
 
     generators.push({
-      importDeclaration: `import reactGenerator from "@kosmojs/react-generator";`,
-      importName: "reactGenerator",
+      name: "reactGenerator",
       options: opt?.frameworkOptions
         ? JSON.stringify(opt.frameworkOptions, null, 2)
         : "",
     });
 
-    compilerOptions.jsxImportSource = "react";
+    tsconfig = {
+      extends: `@kosmojs/config/tsconfig.${framework}.json`,
+    };
   } else if (framework === "vue") {
     Object.assign(dependencies, {
       "vue-router": self.devDependencies["vue-router"],
@@ -234,7 +222,6 @@ export const createSourceFolder = async (
     });
 
     Object.assign(devDependencies, {
-      "@kosmojs/vue-generator": SEMVER,
       "@vitejs/plugin-vue": self.devDependencies["@vitejs/plugin-vue"],
     });
 
@@ -245,22 +232,21 @@ export const createSourceFolder = async (
     });
 
     generators.push({
-      importDeclaration: `import vueGenerator from "@kosmojs/vue-generator";`,
-      importName: "vueGenerator",
+      name: "vueGenerator",
       options: opt?.frameworkOptions
         ? JSON.stringify(opt.frameworkOptions, null, 2)
         : "",
     });
+
+    tsconfig = {
+      extends: `@kosmojs/config/tsconfig.${framework}.json`,
+    };
   }
 
   if (folder.ssr) {
     generators.push({
-      importDeclaration: `import ssrGenerator from "@kosmojs/ssr-generator";`,
-      importName: "ssrGenerator",
+      name: "ssrGenerator",
       options: "",
-    });
-    Object.assign(devDependencies, {
-      "@kosmojs/ssr-generator": SEMVER,
     });
   }
 
@@ -273,19 +259,11 @@ export const createSourceFolder = async (
     defaults,
     plugins,
     generators,
-    importPathmap: {
-      core: [defaults.appPrefix, defaults.coreDir, defaults.apiDir].join("/"),
-      lib: [folder.name, defaults.apiLibDir].join("/"),
-    },
   };
 
   for (const [file, template] of [
-    [`${defaults.configDir}/index.ts`, srcConfigTpl],
-    [`${defaults.apiDir}/app.ts`, srcApiAppTpl],
-    [`${defaults.apiDir}/router.ts`, srcApiRouterTpl],
-    [`${defaults.apiDir}/server.ts`, srcApiServerTpl],
-    [`${defaults.apiDir}/use.ts`, srcApiUseTpl],
     ["vite.config.ts", srcViteConfigTpl],
+    [`${defaults.configDir}/index.ts`, srcConfigTpl],
     // stub files for initial build to pass;
     // generators will fill them with appropriate content.
     [`${defaults.apiDir}/index/index.ts`, ""],
@@ -305,26 +283,13 @@ export const createSourceFolder = async (
     await renderToFile(resolve(folderPath, file), template, context);
   }
 
-  const tsconfigUpdated = {
-    ...tsconfigJson,
-    ...tsconfigImport,
-    compilerOptions: {
-      ...compilerOptions,
-      paths: {
-        ...compilerOptions?.paths,
-        [`${folder.name}/*`]: [
-          `./${folder.name}/*`,
-          `./${defaults.libDir}/${folder.name}/*`,
-        ],
-      },
-    },
-  };
-
-  await writeFile(
-    tsconfigFile,
-    JSON.stringify(tsconfigUpdated, null, 2),
-    "utf8",
-  );
+  if (tsconfig) {
+    await writeFile(
+      resolve(folderPath, "tsconfig.json"),
+      JSON.stringify(tsconfig, null, 2),
+      "utf8",
+    );
+  }
 
   const packageUpdated = {
     ...packageImport,

@@ -33,10 +33,13 @@ export default defineConfig({
   test: {
     projects: [
       setupFactory("core/api"),
-      setupFactory("core/dev", {
-        setupFiles: ["packages/core/dev/test/setup.ts"],
+
+      setupFactory("core/cli", {
+        setupFiles: ["packages/core/cli/test/setup.ts"],
       }),
-      setupFactory("core/devlib"),
+
+      setupFactory("core/dev"),
+
       setupFactory("core/fetch", {
         setupFiles: ["packages/core/fetch/test/setup.ts"],
         environment: "jsdom",

@@ -16,9 +16,6 @@
     "postbuild": "chmod +x pkg/cli.js"
   },
   "dependencies": {
-    "@kosmojs/dev": "workspace:^"
-  },
-  "devDependencies": {
-    "@kosmojs/config": "workspace:^"
+    "@kosmojs/cli": "workspace:^"
   }
 }

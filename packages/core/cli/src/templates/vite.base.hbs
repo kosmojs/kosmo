@@ -5,8 +5,9 @@ import { loadEnv, mergeConfig, type UserConfig } from "vite";
 
 import pkg from "./package.json" with { type: "json" };
 
-export default async (sourceFolderPath: string, config: UserConfig) => {
-  const env = loadEnv("mock", import.meta.dirname);
+const env = loadEnv("mock", import.meta.dirname);
+
+export default (sourceFolderPath: string, config: UserConfig) => {
   const sourceFolder = basename(sourceFolderPath);
   return mergeConfig(config, {
     build: {

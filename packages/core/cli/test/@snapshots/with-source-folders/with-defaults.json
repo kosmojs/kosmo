@@ -1,0 +1,52 @@
+[
+  [
+    "with-source-folders/src/with-defaults/api/index/index.ts",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/src/with-defaults/config/index.ts",
+    [
+      "export const baseurl = \"/\";",
+      "export const apiurl = \"/api\"; // relative to baseurl"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-defaults/index.html",
+    [
+      "<!--",
+      "Do not remove! Build process requires this file for framework-less source folders.",
+      "Framework generators will override this stub with their own setup.",
+      "-->"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-defaults/vite.config.ts",
+    [
+      "import { join } from \"node:path\";",
+      "",
+      "import devPlugin from \"@kosmojs/dev\";",
+      "import {",
+      "  apiGenerator,",
+      "  fetchGenerator,",
+      "  typeboxGenerator,",
+      "} from \"@kosmojs/generators\";",
+      "",
+      "import defineConfig from \"../../vite.base\";",
+      "import { apiurl, baseurl } from \"./config\";",
+      "",
+      "export default defineConfig(import.meta.dirname, {",
+      "  base: join(baseurl, \"/\"),",
+      "  server: {",
+      "    port: 4000,",
+      "  },",
+      "  plugins: [",
+      "        devPlugin(apiurl, {",
+      "      generators: [ apiGenerator(), fetchGenerator(), typeboxGenerator(), ],",
+      "    }),",
+      "  ],",
+      "});"
+    ]
+  ]
+]

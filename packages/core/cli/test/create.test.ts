@@ -5,8 +5,8 @@ import { relative, resolve } from "node:path";
 import { glob } from "tinyglobby";
 import { describe, expect, it, test } from "vitest";
 
-import type { Project, SourceFolder } from "@/cli/base";
-import { createProject, createSourceFolder } from "@/cli/factory";
+import type { Project, SourceFolder } from "@/base";
+import { createProject, createSourceFolder } from "@/factory";
 
 describe("Create API", () => {
   it("should create default project", async (ctx) => {
