@@ -1,17 +1,13 @@
-import { dirname, join } from "node:path";
-
 import {
-  defaults,
   type GeneratorFactory,
   pathResolver,
   type ResolvedEntry,
-  renderToFile,
-} from "@kosmojs/devlib";
+  renderFactory,
+  sortRoutes,
+} from "@kosmojs/dev";
 
 import fetchTpl from "./templates/fetch.hbs";
-import indexTpl from "./templates/index.hbs";
-import libTpl from "./templates/lib.hbs";
-import typesTpl from "./templates/types.hbs";
+import routeTpl from "./templates/route.hbs";
 import unwrapTpl from "./templates/unwrap.hbs";
 
 export const factory: GeneratorFactory = async ({
@@ -19,114 +15,86 @@ export const factory: GeneratorFactory = async ({
   sourceFolder,
   formatters,
 }) => {
-  const { resolve } = pathResolver({ appRoot, sourceFolder });
+  const { createPath, createImportHelper } = pathResolver({
+    appRoot,
+    sourceFolder,
+  });
 
-  for (const [file, template] of [
-    // These files supposed to be replaced by specialized generators,
-    // so write them only during initialization.
-    ["unwrap.ts", unwrapTpl],
-  ]) {
-    await renderToFile(
-      resolve("fetchLibDir", file),
-      template,
-      {},
-      { formatters },
-    );
-  }
+  const { renderToFile } = renderFactory({
+    formatters,
+    helpers: {
+      createImport: createImportHelper,
+    },
+  });
 
-  const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
-    for (const { kind, entry } of entries) {
-      if (kind !== "apiRoute") {
-        continue;
-      }
+  // supposed to be replaced by specialized generators, write it only at initialization.
+  // fetch generator always runs before other generators
+  // so it is safe to re-initialize this file before specialized generators update it.
+  await renderToFile(createPath.lib("unwrap.ts"), unwrapTpl, {});
 
-      await renderToFile(
-        resolve("apiLibDir", dirname(entry.file), "fetch.ts"),
-        fetchTpl,
-        {
-          route: entry,
-          routeMethods: entry.methods.map((method) => {
-            const payloadType = entry.payloadTypes.find(
-              (e) => e.method === method,
-            );
-            const responseType = entry.responseTypes.find(
-              (e) => e.method === method,
-            );
-            return {
-              method,
-              payloadType,
-              responseType,
-            };
-          }),
-          paramsMapper: entry.params.schema.map(({ name }, idx) => ({
-            name,
-            idx,
-          })),
-          importPathmap: {
-            core: join(defaults.appPrefix, defaults.coreDir),
-            config: join(sourceFolder, defaults.configDir),
-            fetchLib: join(sourceFolder, defaults.fetchLibDir, "lib"),
-          },
-        },
-        { formatters },
-      );
-    }
-  };
-
-  const generateIndexFiles = async (entries: Array<ResolvedEntry>) => {
+  const generateLibFiles = async (
+    entries: Array<ResolvedEntry>,
+    updatedEntries: Array<ResolvedEntry>,
+  ) => {
     const routes = entries
       .flatMap(({ kind, entry }) => (kind === "apiRoute" ? [entry] : []))
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort(sortRoutes);
 
-    for (const [file, template] of [
-      ["index.ts", indexTpl],
-      ["lib.ts", libTpl],
-      ["types.ts", typesTpl],
-    ]) {
-      await renderToFile(
-        resolve("fetchLibDir", file),
-        template,
-        {
-          routes: routes.map((route) => {
-            return {
-              ...route,
-              importPathmap: {
-                fetchApi: join(
-                  sourceFolder,
-                  defaults.apiLibDir,
-                  dirname(route.file),
-                  "fetch",
-                ),
-              },
-            };
-          }),
-        },
-        { formatters },
-      );
+    await renderToFile(`${createPath.fetch()}.ts`, fetchTpl, { routes });
+
+    for (const { kind, entry } of updatedEntries) {
+      if (kind === "apiRoute") {
+        const routeMethods = entry.methods.map((method) => {
+          const payloadType = entry.payloadTypes.find(
+            (e) => e.method === method,
+          );
+          const responseType = entry.responseTypes.find(
+            (e) => e.method === method,
+          );
+          return {
+            method,
+            payloadType,
+            responseType,
+          };
+        });
+
+        const paramsMapper = entry.params.schema.map(({ name }, idx) => ({
+          name,
+          idx,
+        }));
+
+        await renderToFile(createPath.fetch(entry.file), routeTpl, {
+          route: entry,
+          routeMethods,
+          paramsMapper,
+        });
+      }
     }
   };
 
   return {
-    async watchHandler(entries, event) {
-      if (event) {
-        if (event.kind === "update") {
-          await generateLibFiles(
-            entries.filter(({ kind, entry }) => {
-              return kind === "apiRoute"
-                ? entry.fileFullpath === event.file ||
-                    entry.referencedFiles?.includes(event.file)
+    async watch(entries, event) {
+      await generateLibFiles(
+        entries,
+        // create/overwrite lib files with proper content.
+        // handle 2 cases:
+        // - event is undefined (means initial call): process all routes
+        // - `update` event given: process updated route
+        event
+          ? entries.filter(({ kind, entry }) => {
+              return event.kind === "update"
+                ? kind === "apiRoute"
+                  ? entry.fileFullpath === event.file
+                  : false
                 : false;
-            }),
-          );
-        }
-      } else {
-        // no event means initial call
-        await generateLibFiles(entries);
-      }
+            })
+          : entries,
+      );
 
-      await generateIndexFiles(entries);
-
-      return undefined;
+      // TODO: handle `delete` event, cleanup lib files
+    },
+    async build(entries) {
+      await generateLibFiles(entries, entries);
     },
   };
 };

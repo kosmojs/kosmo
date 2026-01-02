@@ -1,131 +1,22 @@
-import useFetch from "@kosmojs/fetch";
+{{#each routes}}
+import {{id}} from "{{ createImport "fetch" name }}";
+{{/each}}
 
-import { baseurl, apiurl } from "{{importPathmap.config}}";
-import { validationSchemas } from "./schemas";
-
-import {
-  type MaybeWrapped,
-  type HostOpt,
-  unwrap,
-  join,
-  stringify,
-  createHost,
-} from "{{importPathmap.fetchLib}}";
-
-export { ValidationError } from "@kosmojs/api";
-
-export type ParamsT = [
-  {{#each route.params.schema}}
-  {{#if isRest}}
-  ...{{const}}: Array<string | number>
-  {{else}}
-  {{const}}{{#unless isRequired}}?{{/unless}}: import("./types").{{../route.params.id}}["{{name}}"],
-  {{/if}}
-  {{/each}}
-];
+export { ValidationError } from "@kosmojs/api/errors";
 
 export type PayloadT = {
-  {{#each route.payloadTypes}}
-  {{method}}: import("./types").{{id}};
-  {{/each}}
+{{#each routes}}  "{{name}}": import("{{ createImport "fetch" name }}").PayloadT;
+{{/each}}
 }
 
 export type ResponseT = {
-  {{#each route.responseTypes}}
-  {{method}}: import("./types").{{id}};
-  {{/each}}
-}
-
-const paramsMapper = (params: ParamsT) => {
-  return {
-    {{#each paramsMapper}}
-    "{{name}}": params[{{idx}}],
-    {{/each}}
-  }
-}
-
-const pathTokens: Array<[ path: string, param?: { isRest: boolean } ]> = [
-  {{#each route.pathTokens}}
-  [
-    "{{path}}",{{#if param}}
-    { isRest: {{#if param.isRest}}true{{else}}false{{/if}} }{{/if}}
-  ],
-  {{/each}}
-];
-
-const parametrize = (params: ParamsT) => {
-  const paramsClone = structuredClone(params);
-  return pathTokens
-    .flatMap(([ path, param ]) => {
-      if (param?.isRest) {
-        return paramsClone;
-      }
-      if (param) {
-        return paramsClone.splice(0, 1);
-      }
-      return [path];
-    })
-    .join("/");
-}
-
-const fetchApi = useFetch(join(baseurl, apiurl), { stringify });
-
-{{#each routeMethods}}
-export const {{method}} = (
-  _params{{#if ../route.optionalParams}}?{{/if}}: MaybeWrapped<ParamsT>,
-  {{#if payloadType}}
-  _payload{{#if payloadType.isOptional}}?{{/if}}: MaybeWrapped<
-    PayloadT["{{method}}"]
-  >,
-  {{else}}
-  _payload?: unknown,
-  {{/if}}
-): Promise<
-  {{#if responseType}}
-  ResponseT["{{method}}"]
-  {{else}}
-  unknown
-  {{/if}}
-> => {
-  const [params, payload] = [unwrap(_params || []), unwrap(_payload || {})];
-  if (validationSchemas.params) {
-    validationSchemas.params.validate(paramsMapper(params as never));
-  }
-  if (validationSchemas.payload?.{{method}}) {
-    validationSchemas.payload.{{method}}.validate(payload);
-  }
-  return fetchApi.{{method}}(
-    parametrize(params as never),
-    payload,
-  )
-};
+{{#each routes}}  "{{name}}": import("{{ createImport "fetch" name }}").ResponseT;
 {{/each}}
-
-export const path = (
-  params: ParamsT,
-  query?: Record<string, unknown>,
-) => {
-  const path = join(
-    baseurl,
-    {{#if route.base}}"{{route.base}}"{{else}}apiurl{{/if}},
-    parametrize(params)
-  );
-  return query
-    ? [ path, stringify(query) ].join("?")
-    : path;
 }
-
-export const href = (
-  host: HostOpt,
-  params: ParamsT,
-  query?: Record<string, unknown>,
-) => createHost(host) + path(params, query);
 
 export default {
-  {{#each routeMethods}}
-  {{method}},
-  {{/each}}
-  path,
-  href,
-  validationSchemas,
-};
+{{#each routes}}  "{{name}}": {{id}},
+{{#each alias }}  "{{this}}": {{../id}},
+{{/each}}
+{{/each}}
+}
