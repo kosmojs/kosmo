@@ -1,22 +1,32 @@
-import styles from "{{importPathmap.styles}}";
+import styles from "./styles.module.css";
 
-export default function Page() {
+export default function PageSample(props: {
+  message: string;
+  routeName: string;
+  pathMap: { page: string; pages: string; api: string }
+}) {
   return (
-    <div className={styles.container}>
+    <div data-page-route={props.routeName} className={styles.container}>
       <div className={styles.card}>
 
         <h2 className={styles.subtitle}>
-          {{message}}
+          {props.message}
         </h2>
         <br />
 
         <div className={styles.stepsBox}>
           <ul className={styles.stepsList}>
             <li>
-              Edit this page at <code>{{defaults.pagesDir}}/{{route.file}}</code>
+              Edit this page at <code>{props.pathMap.page}</code>
             </li>
-            <li>Create new routes by adding folders in <code>{{defaults.pagesDir}}/</code></li>
-            <li>Add API endpoints in <code>{{defaults.apiDir}}/</code></li>
+            <li>
+              Create new pages by adding folders in
+              <code>{props.pathMap.pages}/</code>
+            </li>
+            <li>
+              Add API endpoints in
+              <code>{props.pathMap.api}/</code>
+            </li>
           </ul>
         </div>
 

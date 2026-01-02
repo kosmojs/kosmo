@@ -1,76 +1,57 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import { basename, join } from "node:path";
-import { styleText } from "node:util";
+import { access, constants } from "node:fs/promises";
 
 import picomatch, { type Matcher } from "picomatch";
 
-import { nestedRoutesFactory } from "@kosmojs/dev/routes";
 import {
   defaults,
   type GeneratorFactory,
-  pathExists,
+  nestedRoutesFactory,
   pathResolver,
   type ResolvedEntry,
-  type RouteEntry,
   renderFactory,
-  renderToFile,
   sortRoutes,
-} from "@kosmojs/devlib";
+} from "@kosmojs/dev";
 
 import { randomCongratMessage, traverseFactory } from "./base";
 import type { Options } from "./types";
 
-import libPagesTpl from "./templates/lib/pages.hbs";
-import libReactClientTpl from "./templates/lib/react/client.hbs";
-import libReactIndexTpl from "./templates/lib/react/index.hbs";
-import libReactRoutePartialTpl from "./templates/lib/react/routePartial.hbs";
-import libReactServerTpl from "./templates/lib/react/server.hbs";
-import stylesTpl from "./templates/lib/react/styles.css?as=text";
+import libEntryClientTpl from "./templates/lib/entry/client.hbs";
+import libEntryRoutePartialTpl from "./templates/lib/entry/routePartial.hbs";
+import libEntryServerTpl from "./templates/lib/entry/server.hbs";
+import libPageSamplesPageTpl from "./templates/lib/pageSamples/page.hbs";
+import libPageSamplesStylesTpl from "./templates/lib/pageSamples/styles.css?as=text";
+import libPageSamplesWelcomeTpl from "./templates/lib/pageSamples/welcome.hbs";
+import libReactTpl from "./templates/lib/react.hbs";
+import libRouterTpl from "./templates/lib/router.hbs";
 import paramTpl from "./templates/param.hbs";
-import publicAppTpl from "./templates/public/App.hbs";
-import publicComponentsLinkTpl from "./templates/public/components/Link.hbs";
-import publicEntryClientTpl from "./templates/public/entry/client.hbs";
-import publicEntryServerTpl from "./templates/public/entry/server.hbs";
-import publicIndexTpl from "./templates/public/index.html?as=text";
-import publicLayoutTpl from "./templates/public/layout.hbs";
-import publicPageTpl from "./templates/public/page.hbs";
-import publicRouterTpl from "./templates/public/router.hbs";
-import welcomePageTpl from "./templates/public/welcome-page.hbs";
+import srcAppTpl from "./templates/src/App.hbs";
+import srcComponentsLinkTpl from "./templates/src/components/Link.hbs";
+import srcEntryClientTpl from "./templates/src/entry/client.hbs";
+import srcEntryServerTpl from "./templates/src/entry/server.hbs";
+import srcIndexTpl from "./templates/src/index.html?as=text";
+import srcPageSamplesLayoutTpl from "./templates/src/pageSamples/layout.hbs";
+import srcPageSamplesPageTpl from "./templates/src/pageSamples/page.hbs";
+import srcPageSamplesWelcomeTpl from "./templates/src/pageSamples/welcome.hbs";
+import srcRouterTpl from "./templates/src/router.hbs";
 
 export const factory: GeneratorFactory<Options> = async (
   { appRoot, sourceFolder, command, formatters, generators },
   options,
 ) => {
-  const { resolve } = pathResolver({ appRoot, sourceFolder });
+  const { createPath, createImportHelper } = pathResolver({
+    appRoot,
+    sourceFolder,
+  });
 
-  const tsconfigFile = join(appRoot, "tsconfig.json");
-  const tsconfigExists = await pathExists(tsconfigFile);
-
-  if (!tsconfigExists) {
-    throw new Error("SolidGenerator: missing tsconfig.json file");
-  }
-
-  const compilerOptions = await import(tsconfigFile, {
-    with: { type: "json" },
-  }).then((e) => e.default.compilerOptions);
-
-  if (compilerOptions?.jsx !== "preserve") {
-    console.error();
-    console.error(
-      styleText("red", "✗ ReactGenerator: tsconfig issue detected"),
-    );
-    console.error(
-      [
-        `  It is highly recommended to add the following lines\n`,
-        `  to your ${styleText("blue", basename(tsconfigFile))}, `,
-        `  inside the ${styleText("magenta", "compilerOptions")} section:`,
-      ].join(""),
-    );
-    console.error(styleText("gray", `"compilerOptions": {`));
-    console.error(styleText("cyan", `  "jsx": "preserve",`));
-    console.error(styleText("gray", "}"));
-    console.error();
-  }
+  const { render, renderToFile } = renderFactory({
+    formatters,
+    helpers: {
+      createImport: createImportHelper,
+    },
+    partials: {
+      routePartial: libEntryRoutePartialTpl,
+    },
+  });
 
   const customTemplates: Array<[Matcher, string]> = Object.entries({
     ...options.templates,
@@ -80,37 +61,24 @@ export const factory: GeneratorFactory<Options> = async (
 
   const entriesTraverser = traverseFactory(options);
 
-  await mkdir(resolve("libDir", sourceFolder, "{react}"), { recursive: true });
-
-  await writeFile(
-    resolve("libDir", sourceFolder, "{react}/styles.module.css"),
-    stylesTpl,
-    "utf8",
-  );
+  for (const [file, template] of [
+    ["styles.module.css", libPageSamplesStylesTpl],
+    ["welcome.tsx", libPageSamplesWelcomeTpl],
+    ["page.tsx", libPageSamplesPageTpl],
+  ]) {
+    await renderToFile(createPath.lib("pageSamples", file), template, {});
+  }
 
   for (const [file, template] of [
-    ["components/Link.tsx", publicComponentsLinkTpl],
-    ["App.tsx", publicAppTpl],
-    ["router.tsx", publicRouterTpl],
-    [join(defaults.entryDir, "client.tsx"), publicEntryClientTpl],
-    ["index.html", publicIndexTpl],
-    ...(ssrGenerator
-      ? [[join(defaults.entryDir, "server.ts"), publicEntryServerTpl]]
-      : []),
+    ["components/Link.tsx", srcComponentsLinkTpl],
+    ["App.tsx", srcAppTpl],
+    ["router.tsx", srcRouterTpl],
+    ["index.html", srcIndexTpl],
   ]) {
     await renderToFile(
-      resolve("@", file),
+      createPath.src(file),
       template,
-      {
-        defaults,
-        sourceFolder,
-        importPathmap: {
-          config: join(sourceFolder, defaults.configDir),
-          pageMap: join(sourceFolder, defaults.pagesLibDir),
-          fetch: join(sourceFolder, defaults.fetchLibDir),
-          react: join(sourceFolder, "{react}"),
-        },
-      },
+      { defaults },
       {
         // For index.html: overwrite only if empty or missing "<!--app-html-->".
         // For other files: overwrite only if blank.
@@ -118,65 +86,45 @@ export const factory: GeneratorFactory<Options> = async (
           file === "index.html"
             ? (c) => !c?.trim().length || !c?.includes("<!--app-html-->")
             : (c) => !c?.trim().length,
-        formatters,
       },
     );
   }
 
-  const generatePublicFiles = async (entries: Array<ResolvedEntry>) => {
+  const overwrite = (content: string) => !content?.trim().length;
+
+  for (const [file, template] of [
+    ["client.tsx", srcEntryClientTpl],
+    ...(ssrGenerator ? [["server.ts", srcEntryServerTpl]] : []),
+  ]) {
+    await renderToFile(createPath.entry(file), template, {}, { overwrite });
+  }
+
+  const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
     for (const { kind, entry } of entries) {
       if (kind === "pageRoute") {
         const customTemplate = customTemplates.find(([isMatch]) => {
           return isMatch(entry.name);
         });
-
         await renderToFile(
-          resolve("pagesDir", entry.file),
+          createPath.pages(entry.file),
           entry.name === "index"
-            ? welcomePageTpl
-            : customTemplate?.[1] || publicPageTpl,
-          {
-            defaults,
-            route: entry,
-            message: randomCongratMessage(),
-            importPathmap: {
-              styles: join(sourceFolder, "{react}/styles.module.css"),
-            },
-          },
-          {
-            // write only to blank files
-            overwrite: (fileContent) => !fileContent?.trim().length,
-            formatters,
-          },
+            ? srcPageSamplesWelcomeTpl
+            : customTemplate?.[1] || srcPageSamplesPageTpl,
+          { route: entry, message: randomCongratMessage() },
+          { overwrite },
         );
       } else if (kind === "pageLayout") {
         await renderToFile(
-          resolve("pagesDir", entry.file),
-          publicLayoutTpl,
+          createPath.pages(entry.file),
+          srcPageSamplesLayoutTpl,
           { route: entry },
-          {
-            // write only to blank files
-            overwrite: (fileContent) => !fileContent?.trim().length,
-            formatters,
-          },
+          { overwrite },
         );
       }
     }
   };
 
-  const generateIndexFiles = async (entries: Array<ResolvedEntry>) => {
-    const { render, renderToFile } = renderFactory({
-      formatters,
-      partials: {
-        routePartial: libReactRoutePartialTpl,
-      },
-      helpers: {
-        importPath({ importFile }: RouteEntry) {
-          return join(sourceFolder, defaults.pagesDir, importFile);
-        },
-      },
-    });
-
+  const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
     const indexRoutes = entries
       .flatMap(({ kind, entry }) => {
         return kind === "pageRoute"
@@ -198,42 +146,57 @@ export const factory: GeneratorFactory<Options> = async (
 
     const nestedRoutes = entriesTraverser(nestedRoutesFactory(pageEntries));
 
-    const shouldHydrate = JSON.stringify(
-      ssrGenerator ? command === "build" : false,
-    );
-
-    const importPathmap = {
-      config: join(sourceFolder, defaults.configDir),
-      fetch: join(sourceFolder, defaults.fetchLibDir),
-    };
+    const ssrMode = JSON.stringify(ssrGenerator ? command === "build" : false);
 
     for (const [file, template] of [
-      ["{react}/index.ts", libReactIndexTpl],
-      ["{react}/client.ts", libReactClientTpl],
-      ["{react}/server.ts", libReactServerTpl],
-      [`${defaults.pagesLibDir}.ts`, libPagesTpl],
+      ["client.ts", libEntryClientTpl],
+      ["server.ts", libEntryServerTpl],
     ]) {
-      await renderToFile(resolve("libDir", sourceFolder, file), template, {
+      await renderToFile(createPath.libEntry(file), template, {
         pageEntries,
-        indexRoutes,
         nestedRoutes,
-        shouldHydrate,
-        importPathmap,
+      });
+    }
+
+    for (const [file, template] of [
+      ["router.ts", libRouterTpl],
+      ["react.ts", libReactTpl],
+    ]) {
+      await renderToFile(createPath.lib(file), template, {
+        indexRoutes,
+        ssrMode,
       });
     }
   };
 
   return {
-    async watchHandler(entries, event) {
-      // Fill empty route files with templates (default or custom)
-      // - Initial call (event is undefined): process all routes
-      // - Create event: process newly added route
+    async watch(entries, event) {
+      // fill empty src files with proper content.
+      // handle 2 cases:
+      // - event is undefined (means initial call): process all routes
+      // - `create` event given: process newly added route
       if (!event || event.kind === "create") {
-        await generatePublicFiles(entries);
+        // always generateSrcFiles before generateLibFiles
+        await generateSrcFiles(entries);
       }
 
       // Always regenerate index files to keep router in sync
-      await generateIndexFiles(entries);
+      await generateLibFiles(entries);
+
+      // TODO: handle `delete` event, cleanup lib files
+    },
+    async build(entries) {
+      await generateSrcFiles(entries);
+      await generateLibFiles(entries);
     },
   };
+};
+
+export const pathExists = async (path: string): Promise<boolean> => {
+  try {
+    await access(path, constants.F_OK);
+    return true;
+  } catch {
+    return false;
+  }
 };

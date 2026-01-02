@@ -1,0 +1,39 @@
+import type { ComponentType, PropsWithChildren, JSX } from "react";
+import type { RouteObject } from "react-router";
+import type { RouterFactory } from "@kosmojs/dev";
+
+import { pageFactory } from "./react";
+
+export type LinkProps ={{#unless indexRoutes.length}} never{{/unless}}
+  {{#each indexRoutes}}
+  | [ "{{name}}", {{paramsLiteral}} ]
+  {{/each}};
+
+export type RouteName ={{#unless indexRoutes.length}} never{{/unless}}
+  {{#each indexRoutes}}
+  | "{{name}}"
+  {{/each}};
+
+export const pageMap = {
+  {{#each indexRoutes}}
+  "{{name}}": pageFactory<[ {{paramsLiteral}} ]>([
+    {{#each pathTokens}}
+    [
+      "{{path}}",{{#if param}}
+      { isRest: {{#if param.isRest}}true{{else}}false{{/if}} }{{/if}}
+    ],
+    {{/each}}
+  ]),
+  {{/each}}
+};
+
+export const routerFactory: RouterFactory<
+  ComponentType<PropsWithChildren>,
+  RouteObject,
+  JSX.Element
+> = (factory) => {
+  return async (app, routes, ssrProps) => {
+    const { clientRouter, serverRouter } = await factory(app, routes);
+    return ssrProps?.url ? serverRouter(ssrProps) : clientRouter();
+  };
+};

@@ -1,0 +1,35 @@
+import { lazy } from "react";
+import type { RenderFactory } from "@kosmojs/dev";
+
+import { loaderFactory, ssrMode } from "../react";
+
+{{#each pageEntries}}
+const {{id}}_component = lazy(() => import("{{ createImport "pages" file }}"));
+const {{id}}_loader = () => import("{{ createImport "pages" file }}");
+{{/each}}
+
+export const createRoutes = (opt?: { withPreload?: boolean }) => {
+  const maybeLoader = loaderFactory(opt);
+  return [
+    {{#each nestedRoutes}}{{> routePartial}},
+    {{/each}}
+  ];
+}
+
+export const renderFactory: RenderFactory = async (factory) => {
+  const {
+    clientRender = fallbackRender("client"),
+    serverRender = fallbackRender("server"),
+  } = await factory();
+  if (ssrMode()) {
+    await serverRender();
+  } else {
+    await clientRender();
+  }
+}
+
+const fallbackRender = (scope: "client" | "server") => {
+  return () => {
+    throw new Error(`${scope}Render not implemented`);
+  }
+}

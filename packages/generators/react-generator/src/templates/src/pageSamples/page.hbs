@@ -1,0 +1,13 @@
+import PageSample from "{{ createImport "lib" "pageSamples/page.tsx" }}";
+
+export default function Page() {
+  return PageSample({
+    message: "{{message}}",
+    routeName: "{{route.name}}",
+    pathMap: {
+      page: "{{ createImport "pages" route.file }}",
+      pages: "{{ createImport "pages" }}",
+      api: "{{ createImport "api" }}",
+    },
+  })
+}

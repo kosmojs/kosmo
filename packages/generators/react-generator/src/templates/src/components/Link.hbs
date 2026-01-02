@@ -1,10 +1,13 @@
-import { Link as RouterLink, type LinkProps as RouterLinkProps, useLocation } from "react-router";
+import {
+  type LinkProps as RouterLinkProps,
+  Link as RouterLink,
+  useLocation,
+} from "react-router";
 import type { ReactNode } from "react";
+import { stringify } from "@kosmojs/fetch";
 
-import { stringify } from "{{importPathmap.fetch}}/lib";
-import pageMap from "{{importPathmap.pageMap}}";
-import type { LinkProps } from "{{importPathmap.react}}";
-import { baseurl } from "{{importPathmap.config}}";
+import { type LinkProps, pageMap } from "{{ createImport "lib" "router" }}";
+import { baseurl } from "{{ createImport "config" }}";
 
 export default function Link(
   props: Omit<RouterLinkProps, "to"> & {
@@ -16,7 +19,7 @@ export default function Link(
   const { to, query, children, ...restProps } = props;
   const location = useLocation();
 
-  const href = (() => {
+  const href = () => {
     if (to) {
       const [key, ...params] = to;
       return pageMap[key]?.base(params as never, query);
@@ -26,10 +29,10 @@ export default function Link(
       "/",
     );
     return query ? [path, stringify(query)].join("?") : path;
-  })();
+  };
 
   return (
-    <RouterLink {...restProps} to={href}>
+    <RouterLink {...restProps} to={href()}>
       {children}
     </RouterLink>
   );

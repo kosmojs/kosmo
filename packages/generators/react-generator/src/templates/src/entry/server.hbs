@@ -1,0 +1,20 @@
+import { renderToString } from "react-dom/server";
+
+import { renderFactory, createRoutes } from "{{ createImport "libEntry" "server" }}";
+import App from "{{ createImport "src" "App" }}";
+import createRouter from "{{ createImport "src" "router" }}";
+
+const routes = createRoutes({ withPreload: false });
+
+export default renderFactory(() => {
+  return {
+    async renderToString(url, { criticalCss }) {
+      const router = await createRouter(App, routes, { url });
+      const head = criticalCss
+        .map(({ text }) => `<style>${text}</style>`)
+        .join("\n");
+      const html = renderToString(router);
+      return { head, html };
+    },
+  };
+});

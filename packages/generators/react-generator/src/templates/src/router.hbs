@@ -1,0 +1,41 @@
+import {
+  createBrowserRouter,
+  createStaticHandler,
+  createStaticRouter,
+  RouterProvider,
+  StaticRouterProvider,
+} from "react-router";
+
+import { routerFactory } from "{{ createImport "lib" "router" }}";
+import { baseurl } from "{{ createImport "config" }}";
+
+export default routerFactory((App, routes) => {
+  const routeStack = [
+    {
+      path: "/",
+      Component: App,
+      children: routes,
+    },
+  ];
+
+  return {
+    clientRouter() {
+      const router = createBrowserRouter(routeStack, { basename: baseurl });
+      return <RouterProvider router={router} />;
+    },
+    async serverRouter({ url }) {
+      const handler = createStaticHandler(routeStack, { basename: baseurl });
+
+      const result = await handler.query(new Request(url.href));
+
+      if (result instanceof Response) {
+        // handled by SSR server
+        throw result;
+      }
+
+      const router = createStaticRouter(routeStack, result);
+
+      return <StaticRouterProvider router={router} context={result} />;
+    },
+  };
+});

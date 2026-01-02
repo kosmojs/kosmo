@@ -1,7 +1,40 @@
-import { type HostOpt, createHost, stringify, join } from "{{importPathmap.fetch}}/lib";
-import { baseurl } from "{{importPathmap.config}}";
+import {
+  type HostOpt,
+  createHost,
+  stringify,
+  join,
+} from "@kosmojs/fetch";
 
-const resolverFactory = <ParamsT>(
+import { baseurl } from "{{ createImport "config" }}";
+
+{{#each apiRoutes}}
+import type { ResponseT as {{id}} } from "{{ createImport "fetch" name }}";
+{{/each}}
+
+export const ssrMode = () => {{ssrMode}};
+
+export type ComponentLoader = () => Promise<{
+  loader?: (arg: unknown) => Promise<unknown>;
+}>;
+
+export const loaderFactory = (opt?: { withPreload?: boolean }) => {
+  return (componentLoader: ComponentLoader) => {
+    const loader = async (arg: unknown) => {
+      try {
+        const component = await componentLoader();
+        return typeof component.loader === "function"
+          ? component.loader(arg)
+          : undefined;
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+    };
+    return opt?.withPreload ? { loader } : {};
+  };
+};
+
+export const pageFactory = <ParamsT>(
   pathTokens: Array<[ path: string, param?: { isRest: boolean } ]>
 ) => {
   type QueryT = Record<string, unknown>;
@@ -47,17 +80,4 @@ const resolverFactory = <ParamsT>(
       return createHost(host) + this.path(params, query);
     },
   }
-}
-
-export default {
-  {{#each indexRoutes}}
-  "{{name}}": resolverFactory<[ {{paramsLiteral}} ]>([
-    {{#each pathTokens}}
-    [
-      "{{path}}",{{#if param}}
-      { isRest: {{#if param.isRest}}true{{else}}false{{/if}} }{{/if}}
-    ],
-    {{/each}}
-  ]),
-  {{/each}}
-}
+};
