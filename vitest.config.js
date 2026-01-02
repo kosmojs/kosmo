@@ -10,17 +10,6 @@ const setupFactory = (name, setup) => {
       hookTimeout: 60_000,
       include: [`packages/${name}/test/**/*.test.ts`],
       alias: {
-        "~": resolve(import.meta.dirname, "packages"),
-        "@/lib": resolve(
-          import.meta.dirname,
-          `packages/${name}/test/@fixtures/app/lib/`,
-        ),
-        "@/core": resolve(
-          import.meta.dirname,
-          `packages/${name}/test/@fixtures/app/core/`,
-        ),
-        "@test": resolve(import.meta.dirname, `packages/${name}/test`),
-        // should go last
         "@": resolve(import.meta.dirname, `packages/${name}/src`),
       },
       ...setup,
@@ -58,6 +47,20 @@ export default defineConfig({
         globalSetup: [
           "packages/generators/typebox-generator/test/setup.global.ts",
         ],
+        alias: {
+          "~": resolve(
+            import.meta.dirname,
+            "packages/generators/typebox-generator/test/@fixtures/app",
+          ),
+          "@": resolve(
+            import.meta.dirname,
+            "packages/generators/typebox-generator/test/@fixtures/app/src",
+          ),
+          _: resolve(
+            import.meta.dirname,
+            "packages/generators/typebox-generator/test/@fixtures/app/lib/src",
+          ),
+        },
       }),
 
       setupFactory("generators/solid-generator"),
