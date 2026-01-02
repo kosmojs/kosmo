@@ -1,13 +1,15 @@
 ---
 title: Generated OpenAPI Specification
-description: Complete OpenAPI 3.1 spec with paths, schemas, parameters, request bodies, responses, and validation rules. Automatic regeneration on route changes with Swagger UI and Redoc integration.
+description: Complete OpenAPI 3.1 spec with paths, schemas, parameters, request bodies,
+    responses, and validation rules. Automatic regeneration on route changes with Swagger UI and Redoc integration.
 head:
   - - meta
     - name: keywords
-      content: openapi spec, api paths, json schema, request bodies, response schemas, swagger ui, redoc, api documentation tools
+      content: openapi spec, api paths, json schema, request bodies,
+        response schemas, swagger ui, redoc, api documentation tools
 ---
 
-The generator produces a complete OpenAPI 3.1 specification that includes:
+The generator produces a complete `OpenAPI 3.1` specification that includes:
 
 **Paths** - All your API routes with their HTTP methods, parameters, request bodies, and responses
 
@@ -45,4 +47,3 @@ You can serve the generated spec with documentation tools like:
 - **Swagger UI** - Interactive API documentation
 - **Redoc** - Clean, responsive API docs
 - **Stoplight Elements** - Customizable documentation components
-

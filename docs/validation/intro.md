@@ -1,10 +1,12 @@
 ---
 title: Runtime Validation
-description: KosmoJS runtype validation automatically converts TypeScript types into JSON Schema with runtime validators. Write types once, get compile-time and runtime safety without schema duplication.
+description: KosmoJS runtype validation automatically converts TypeScript types into JSON Schema
+    with runtime validators. Write types once, get compile-time and runtime safety without schema duplication.
 head:
   - - meta
     - name: keywords
-      content: runtime validation, typebox, json schema, runtype validation, typescript validation, type safety, validation generator, end-to-end validation
+      content: runtime validation, typebox, json schema, runtype validation,
+        typescript validation, type safety, validation generator, end-to-end validation
 ---
 
 One of `KosmoJS`'s most compelling features is its approach to validation.
@@ -21,6 +23,10 @@ and `KosmoJS` automatically generates high-performance runtime validators from t
 This creates a seamless development experience where your type definitions
 serve as both compile-time type checking and runtime validation,
 all without duplicating your specifications.
+
+<div class="text-center">
+  <LinkButton href="/validation/params">Get Started</LinkButton>
+</div>
 
 ## 🛡️ Understanding Runtype Validation
 
@@ -47,60 +53,6 @@ which is the widely-recognized standard for data validation across programming l
 You don't need to learn JSON Schema directly - `KosmoJS` handles the conversion transparently.
 But knowing that JSON Schema powers the validation under the hood helps you understand
 what's possible and how to refine your types for specific validation needs.
-
-## ⚙️ Setting Up Validation
-
-To enable runtype validation, you need to install and configure the validation generator.
-Start by adding the TypeBox generator package to your project, then register it in your `Vite` configuration.
-
-::: code-group
-
-```sh [pnpm]
-pnpm install -D @kosmojs/typebox-generator
-pnpm install typebox
-```
-
-```sh [npm]
-npm install -D @kosmojs/typebox-generator
-npm install typebox
-```
-
-```sh [yarn]
-yarn add -D @kosmojs/typebox-generator
-yarn add typebox
-```
-:::
-
-Then in your source folder's `vite.config.ts`, import the generator and add it to the generators array:
-
-```ts [vite.config.ts]
-import devPlugin from "@kosmojs/dev";
-import typeboxGenerator from "@kosmojs/typebox-generator";
-
-export default {
-  plugins: [
-    devPlugin(apiurl, {
-      generators: [
-        typeboxGenerator(),
-        // other generators you're using
-      ],
-    }),
-  ],
-}
-```
-
-Once configured, the generator watches your API route definitions
-and automatically generates validation code whenever you save changes.
-
-This validation code lives in the `lib` directory alongside other generated artifacts,
-keeping your source directories clean.
-
-With the generator in place, every type annotation you provide for route parameters,
-request payloads, and responses becomes a runtime validation check.
-You don't need to write additional validation code or call validation functions explicitly.
-
-`KosmoJS` integrates validation directly into the request processing pipeline,
-checking data before it reaches your handlers and after your handlers produce responses.
 
 ## 🔄 The Power of End-to-End Validation
 
@@ -129,6 +81,10 @@ The generated fetch client understands all the specifics of your API routes-the 
 the parameters they expect, the structure of their request payloads, and the shape of their responses.
 When you use this client, you get full `TypeScript` autocomplete for all these aspects,
 making API consumption as type-safe as calling local functions.
+
+<div class="text-center">
+  <LinkButton href="/validation/params">Get Started</LinkButton>
+</div>
 
 ## 🔍 Understanding the Generated Validation Code
 
@@ -159,4 +115,3 @@ For most applications, the benefits of guaranteed data correctness far outweigh 
 The generated validation code lives in `lib` rather than in your source directories,
 keeping your code focused on business logic.
 When you build for production, this generated code is included in the bundle just like any other dependency.
-

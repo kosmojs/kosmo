@@ -1,10 +1,12 @@
 ---
 title: Fetch Client Error Handling
-description: Handle fetch request errors with try-catch blocks, distinguish ValidationError from network errors, and implement defense in depth with client-side and server-side validation.
+description: Handle fetch request errors with try-catch blocks, distinguish ValidationError from network errors,
+    and implement defense in depth with client-side and server-side validation.
 head:
   - - meta
     - name: keywords
-      content: fetch error handling, ValidationError, client-side validation, error catching, try-catch, network errors, validation feedback, defensive programming
+      content: fetch error handling, ValidationError, client-side validation, error catching,
+        try-catch, network errors, validation feedback, defensive programming
 ---
 
 When fetch requests fail, the client throws errors
@@ -17,7 +19,7 @@ Network errors, server errors, and other runtime failures follow standard fetch 
 You handle them the same way you'd handle any fetch-based API calls:
 
 ```ts [pages/example/index.tsx]
-import fetchMap, { ValidationError } from "@front/{fetch}";
+import fetchMap, { ValidationError } from "_/front/fetch";
 const useFetch = fetchMap["users/[id]"];
 
 try {

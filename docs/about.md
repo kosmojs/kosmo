@@ -1,10 +1,12 @@
 ---
 title: About KosmoJS
-description: KosmoJS is a structured Vite template for type-safe full-stack development. Organize multiple apps with automatic runtime validation, typed fetch clients, and OpenAPI generation.
+description: KosmoJS is a structured Vite template for type-safe full-stack development.
+    Organize multiple apps with automatic runtime validation, typed fetch clients, and OpenAPI generation.
 head:
   - - meta
     - name: keywords
-      content: vite template, type-safe api, runtime validation, openapi generator, multi-app vite, directory-based routing, koa api
+      content: vite template, type-safe api, runtime validation, openapi generator,
+        multi-app vite, directory-based routing, koa api
 ---
 
 ### 🎯 What is KosmoJS?
@@ -25,7 +27,7 @@ and treats these as independent source folders, each with its own configuration 
 creating a clear boundary between server-side logic and client-side presentation within the same cohesive module.
 
 🔹 Third, it establishes a single source of truth for your data structures.
-Write `TypeScript` types once, and `KosmoJS` generates runtime validation, typed fetch clients, and OpenAPI schemas automatically -
+Write `TypeScript` types once, and `KosmoJS` generates runtime validation, typed fetch clients, and `OpenAPI` schemas automatically -
 keeping compile-time type checking, runtime validation, and API documentation perfectly aligned.
 
 ### 💡 KosmoJS is not a framework
@@ -42,5 +44,5 @@ Try `KosmoJS` and experience how much clearer full-stack development becomes
 when separation of concerns is the default, not something you have to enforce yourself.
 
 <div class="text-center">
-  <LinkButton href="./start">Get Started</LinkButton>
+  <LinkButton href="/start">Get Started</LinkButton>
 </div>

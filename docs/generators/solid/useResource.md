@@ -1,10 +1,12 @@
 ---
 title: useResource Helper
-description: Generated useResource helper that wraps SolidJS createResource with type safety, automatic refetching on navigation, and integration with SolidJS Router query function.
+description: Generated useResource helper that wraps SolidJS createResource with type safety,
+    automatic refetching on navigation, and integration with SolidJS Router query function.
 head:
   - - meta
     - name: keywords
-      content: solidjs resource, createResource, useResource, data fetching, reactive data, solidjs query, resource refetch, type-safe resource
+      content: solidjs resource, createResource, useResource, data fetching,
+        reactive data, solidjs query, resource refetch, type-safe resource
 ---
 
 For common data fetching patterns,
@@ -14,45 +16,19 @@ with type safety and smart refetching behavior.
 This helper is generated in your `lib` directory and easily imported:
 
 ```ts
-import { useResource } from "@front/{solid}";
+import { useResource, type ResourceMap } from "_/front/solid";
 ```
 
 The implementation combines SolidJS Router's query function with createResource,
-creating a resource that refetches when appropriate:
+creating a resource that refetches when appropriate.
 
-```ts [lib/@front/{solid}/index.ts]
-import { query, useLocation } from "@solidjs/router";
-import { createResource } from "solid-js";
-
-import fetch from "@front/{fetch}";
-
-type ResourceMap = {
-  "users/data": import("@front/{api}/users/data/fetch").ResponseT extends {
-    GET: unknown;
-  }
-    ? import("@front/{api}/users/data/fetch").ResponseT["GET"]
-    : unknown;
-};
-
-export const useResource = <K extends keyof ResourceMap>(routeName: K) => {
-  const location = useLocation();
-  const fetchData = () => fetch[routeName].GET();
-  const queryData = query(fetchData, routeName);
-  return createResource<ResourceMap[K]>(
-    () => location.pathname as never,
-    queryData as never,
-  );
-};
-```
-
-The `ResourceMap` type is generated based on your API routes
-that have GET handlers with response types.
+The `ResourceMap` type is generated based on your API routes that have GET handlers with response types.
 This provides autocomplete for available routes and types the returned data correctly.
 
 Using `useResource` in a component is straightforward:
 
 ```tsx [pages/users/index.tsx]
-import { useResource } from "@front/{solid}";
+import { useResource } from "_/front/solid";
 
 export default function Page() {
   const [data, { mutate, refetch }] = useResource("users/data");
@@ -86,4 +62,3 @@ such as disabling automatic refetching or providing custom refetch triggers.
 
 For now, the helper covers the common case of route-dependent data
 that should refresh on navigation.
-

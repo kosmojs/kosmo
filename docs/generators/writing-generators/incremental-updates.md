@@ -1,17 +1,19 @@
 ---
 title: Incremental Updates
-description: Optimize generator performance with incremental updates that regenerate only affected routes when files change using referencedFiles dependency tracking.
+description: Optimize generator performance with incremental updates
+    that regenerate only affected routes when files change using referencedFiles dependency tracking.
 head:
   - - meta
     - name: keywords
-      content: incremental generation, performance optimization, file dependencies, referencedFiles, change detection, selective regeneration
+      content: incremental generation, performance optimization, file dependencies,
+        referencedFiles, change detection, selective regeneration
 ---
 
 For better performance, implement incremental updates
 by checking the `event` parameter:
 
 ```ts
-async watchHandler(entries, event) {
+async watch(entries, event) {
   if (event) {
     // File changed - regenerate only affected routes
     if (event.kind === "update" || event.kind === "create") {
@@ -44,4 +46,3 @@ async watchHandler(entries, event) {
 The `referencedFiles` array helps you track dependencies.
 When a type definition file changes, all routes that import from it
 should be regenerated.
-

@@ -1,13 +1,15 @@
 ---
 title: Vue Generator - Utilities
-description: Framework utilities that help unwrap Vue refs and handle reactive values inside typed fetch client APIs in KosmoJS.
+description: Framework utilities that help unwrap Vue refs and handle reactive values
+    inside typed fetch client APIs in KosmoJS.
 head:
   - - meta
     - name: keywords
-      content: vue unwrap, ref unwrap, vue3 reactive utilities, kosmojs vue fetch, typed data handling, MaybeWrapped type
+      content: vue unwrap, ref unwrap, vue3 reactive utilities,
+        kosmojs vue fetch, typed data handling, MaybeWrapped type
 ---
 
-`KosmoJS` fetch clients are framework-agnostic - they accept plain objects as
+Generated fetch clients are framework-agnostic - they accept plain objects as
 request bodies. But many UI frameworks wrap data in reactive structures,
 including Vue's `Ref` type.
 
@@ -15,10 +17,9 @@ Rather than forcing developers to unwrap values manually before each request,
 `KosmoJS` includes a unified `unwrap` helper that each framework generator
 overrides with its own implementation.
 
-The `Vue` generator provides an implementation that seamlessly works with `Ref`
-values:
+The `Vue` generator provides an implementation that seamlessly works with `Ref` values:
 
-```ts [lib/@src/{vue}/unwrap.ts]
+```ts [lib/src/front/unwrap.ts]
 import { type Ref, unref } from "vue";
 
 export type MaybeWrapped<T> = Ref<T> | T;
@@ -35,7 +36,7 @@ directly into network requests:
 ```vue [pages/users/index.vue]
 <script setup lang="ts">
 import { ref } from "vue";
-import useFetch from "@src/{api}/users/fetch";
+import useFetch from "_/front/fetch/users";
 
 const formData = ref({
   name: "",
@@ -68,4 +69,3 @@ For Vue, the rule is simple:
 > If it's already a value, return it unchanged.
 
 Small utility - big boost in API developer experience.
-

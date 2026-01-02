@@ -23,10 +23,10 @@ pnpm build
 Build a specific source folder for production:
 
 ```sh
-pnpm build @front
+pnpm build front
 ```
 
-Replace `@front` with your source folder name (`@admin`, `@marketing`, etc.).
+Replace `front` with your source folder name (`admin`, `app`, etc.).
 
 ## 📦 What Gets Built
 
@@ -54,7 +54,7 @@ to deploy for server-side rendering.
 
 ```txt [# tree -L3 dist]
 dist/
-└── @src
+└── front
     ├── api
     │   ├── app.js       # App factory
     │   └── server.js    # Bundled API server
@@ -73,7 +73,7 @@ dist/
 Deploy the `dist/SOURCE_FOLDER` directory and run:
 
 ```bash
-node dist/@front/api/server.js
+node dist/front/api/server.js
 ```
 
 The API server is a standalone Node.js ESM module ready to run immediately.
@@ -83,7 +83,7 @@ The API server is a standalone Node.js ESM module ready to run immediately.
 For more control over deployment, use the app factory at `dist/*/api/app.js`:
 
 ```js
-import createApp from "./dist/@front/api/app.js";
+import createApp from "./dist/front/api/app.js";
 
 const app = createApp();
 
@@ -95,7 +95,7 @@ The app factory returns a Koa application instance, giving you full flexibility:
 
 **Node.js:**
 ```js
-import createApp from "./dist/@front/api/app.js";
+import createApp from "./dist/front/api/app.js";
 import http from "node:http";
 
 const app = createApp();
@@ -105,7 +105,7 @@ server.listen(3000);
 
 **Deno:**
 ```ts
-import createApp from "./dist/@front/api/app.js";
+import createApp from "./dist/front/api/app.js";
 
 const app = createApp();
 Deno.serve({ port: 3000 }, app.callback());
@@ -113,7 +113,7 @@ Deno.serve({ port: 3000 }, app.callback());
 
 **Bun:**
 ```ts
-import createApp from "./dist/@front/api/app.js";
+import createApp from "./dist/front/api/app.js";
 
 const app = createApp();
 Bun.serve({

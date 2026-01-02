@@ -1,14 +1,17 @@
 ---
 title: SolidJS - Customizing Generated Files
-description: Customize generated SolidJS application files including App.tsx, router.tsx, Link component, and entry point. Files are generated once and persist through updates.
+description: Customize generated SolidJS application files including App.tsx,
+    router.tsx, entry/client.tsx and entry/server.tsx.
+    Files are generated once and persist through updates.
 head:
   - - meta
     - name: keywords
-      content: solidjs customization, app customization, custom router, error boundaries, custom components, generator customization
+      content: solidjs customization, app customization, custom router,
+        error boundaries, custom components, generator customization
 ---
 
-The generated files - `App.tsx`, `router.tsx`, `entry/client.tsx`, and `components/Link.tsx` -
-live in your source folder, not in `lib`.
+The core files - `App.tsx`, `router.tsx`, `entry/client.tsx`, `entry/server.tsx` -
+live in your source folder, not in `lib`, so you own can customize them however you need.
 
 This means they're yours to customize.
 You can add error boundaries to App, implement custom router configurations,
@@ -28,4 +31,3 @@ you can implement custom resources using SolidJS's `createResource` directly.
 The generated fetch clients work with any data fetching pattern -
 they're just functions that return typed promises.
 You can wrap them in whatever abstraction makes sense for your application.
-

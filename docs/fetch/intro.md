@@ -1,10 +1,12 @@
 ---
 title: Generated Fetch Clients
-description: KosmoJS automatically generates fully-typed fetch clients with runtime validation for every API route. End-to-end type safety from frontend to backend with validation schemas and URL utilities.
+description: KosmoJS automatically generates fully-typed fetch clients with runtime validation for every API route.
+    End-to-end type safety from frontend to backend with validation schemas and URL utilities.
 head:
   - - meta
     - name: keywords
-      content: generated fetch client, typed api client, runtime validation, type safety, fetch generator, api consumption, validation schemas, url utilities
+      content: generated fetch client, typed api client, runtime validation, type safety,
+        fetch generator, api consumption, validation schemas, url utilities
 ---
 
 `KosmoJS` automatically generates a fully-typed fetch client for every API route,
@@ -72,7 +74,7 @@ Import the specific method you need, use the default export to access everything
 or destructure multiple capabilities at once:
 
 ```ts [pages/example/index.tsx]
-import useFetch, { path, validationSchemas } from "@front/{api}/users/[id]/fetch";
+import useFetch, { path, validationSchemas } from "_/front/fetch/users/[id]";
 
 // Use the fetch method
 const user = await useFetch.GET([123]);
@@ -83,4 +85,3 @@ const url = path([123]);
 // Validate form data
 const isValid = validationSchemas.payload.POST.check(formData);
 ```
-

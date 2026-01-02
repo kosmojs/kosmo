@@ -1,10 +1,12 @@
 ---
 title: Slot Composition
-description: Override global middleware using KosmoJS's slot system. Replace default body parsers, customize payload construction, and use multer for file uploads with fine-grained middleware control.
+description: Override global middleware using KosmoJS's slot system. Replace default body parsers,
+    customize payload construction, and use multer for file uploads with fine-grained middleware control.
 head:
   - - meta
     - name: keywords
-      content: middleware slots, bodyparser override, form data, file upload, multer, middleware composition, custom parsers, middleware replacement
+      content: middleware slots, bodyparser override, form data, file upload, multer,
+        middleware composition, custom parsers, middleware replacement
 ---
 
 `KosmoJS`'s slot system gives you fine-grained control over middleware composition and override behavior.
@@ -59,7 +61,7 @@ You can override the bodyparser middleware by using the same slot name:
 
 ```ts [api/example/index.ts]
 import bodyparser from "@kosmojs/api/bodyparser";
-import { defineRoute } from "@front/{api}/upload";
+import { defineRoute } from "_/front/api/upload";
 
 export default defineRoute(({ POST, use }) => [
   use(bodyparser.form(), {
@@ -119,8 +121,8 @@ Just use the `bodyparser` slot when registering them
 to ensure they replace the default JSON parser for that specific route:
 
 ```ts [api/example/index.ts]
-import { defineRoute } from "@front/{api}/upload";
 import multer from "@koa/multer";
+import { defineRoute } from "_/front/api/upload";
 
 const upload = multer({ dest: "uploads/" });
 
@@ -139,4 +141,3 @@ export default defineRoute(({ POST, use }) => [
 
 This flexibility means `KosmoJS` doesn't box you into specific formats or parsers.
 Use what makes sense for your application, and `KosmoJS`'s structure accommodates it.
-

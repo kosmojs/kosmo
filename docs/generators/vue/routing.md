@@ -5,7 +5,8 @@ description: Automatic route generation from the pages directory with lazy-loade
 head:
   - - meta
     - name: keywords
-      content: vue routing, directory-based routing, lazy loading, route parameters, preload hook, vue router 4, kosmojs vue
+      content: vue routing, directory-based routing, lazy loading, route parameters,
+        preload hook, vue router 4, kosmojs vue
 ---
 
 The `Vue` generator continuously watches your `pages` directory for new or changed
@@ -15,14 +16,14 @@ Whenever you add a page, the generator inspects its location in the folder
 hierarchy and produces a matching route definition. Those generated routes are
 written into your `lib` directory and then consumed by your `router.ts` file.
 
-For example, if you create a page component at
-`pages/users/[id]/index.vue`, the generator produces a route entry similar to:
+For example, if you create a page component at `pages/users/[id]/index.vue`,
+the generator produces a route entry similar to:
 
 ```ts
 {
   name: "users/[id]",
   path: "/users/:id",
-  component: () => import("@src/pages/users/[id]/index.vue"),
+  component: () => import("@/front/pages/users/[id]/index.vue"),
 }
 ```
 
@@ -40,4 +41,3 @@ the screens they actually visit.
 > ⚙️ Preload hooks, hover prefetching, and other advanced patterns are currently
 > under consideration for the `Vue` generator. If you're interested in helping
 > shape this feature, **contributions are very welcome!** 🙌
-

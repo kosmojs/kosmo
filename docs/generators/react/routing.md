@@ -11,7 +11,7 @@ head:
         router automation, dynamic imports
 ---
 
-`KosmoJS`'s `React` generator maintains continuous observation of your `pages`
+`React` generator maintains continuous observation of your `pages`
 directory, detecting new components and transforming them into route
 configurations automatically.
 
@@ -19,25 +19,8 @@ Component creation triggers analysis of its filesystem location, generating
 corresponding route configuration written to your `lib` directory for router
 import.
 
-Consider a component at `pages/users/[id]/index.tsx` - the generator produces
-this configuration:
-
-```ts
-  {
-    path: "users/:id",
-    Component: lazy(() => import("@admin/pages/users/[id]")),
-    loader: async ({ params }) => {
-      const module = await import("@admin/pages/users/[id]") as ComponentModule;
-      if (module.loader) {
-        return module.loader({ params });
-      }
-      return null;
-    },
-  }
-```
-
 The generator performs automatic parameter syntax transformation, converting
-filesystem bracket notation (`[id]`) into `React Router`'s colon-prefix format
+filesystem bracket notation (`[id]`) into React Router's colon-prefix format
 (`:id`).
 
 Component implementation leverages lazy loading, excluding route code from

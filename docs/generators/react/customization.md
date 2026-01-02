@@ -11,9 +11,9 @@ head:
         entry point customization
 ---
 
-Core generated files - `App.tsx`, `router.tsx`, `entry/client.tsx`, and
-`components/Link.tsx` - reside within your source directory rather than the
-`lib` folder, granting complete customization ownership.
+Core files - `App.tsx`, `router.tsx`, `entry/client.tsx`, `entry/server.tsx` -
+reside within your source directory rather than the `lib` folder,
+so you can modify them as needed.
 
 This placement enables integration of error boundaries into App, specialized
 router configurations, Link component enhancement with analytics tracking, or

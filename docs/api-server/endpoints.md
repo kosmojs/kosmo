@@ -28,7 +28,7 @@ and the `use` function for custom middleware.
 You typically destructure this object to access only the methods you need for that particular endpoint.
 
 ```ts [api/users/[id]/index.ts]
-import { defineRoute } from "@front/{api}/users/[id]";
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {
@@ -75,10 +75,6 @@ If a request comes in for a method you haven't defined,
 
 The available method builders are HEAD, OPTIONS, GET, POST, PUT, PATCH, and DELETE,
 covering all the standard HTTP methods you'll typically need in a REST API.
-
-## 🚧 Error Handling
-
-`KosmoJS` uses Koa's built-in error handling system, which provides a clean and flexible way to handle errors in your API endpoints.
 
 ### Using ctx.throw()
 
@@ -137,12 +133,3 @@ export default defineRoute(({ GET }) => [
 
 The `ctx.assert(condition, status, message)` pattern is especially useful for replacing verbose if-throw blocks
 with concise one-liners, making your validation logic easier to read.
-
-### Custom Error Handling
-
-By default, `Koa` returns plain text error messages.
-For API endpoints, you'll typically want to return JSON error responses instead.
-You can add custom error handling middleware to format errors consistently across your application.
-
-For more information about implementing custom error handlers and Koa's error handling capabilities,
-refer to the [Koa documentation](https://koajs.com/#error-handling).

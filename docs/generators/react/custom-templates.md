@@ -23,9 +23,14 @@ Supply custom templates via generator options in `vite.config.ts`:
 ```ts [vite.config.ts]
 import reactPlugin from "@vitejs/plugin-react";
 import devPlugin from "@kosmojs/dev";
-import reactGenerator from "@kosmojs/react-generator";
+import {
+  // ...
+  reactGenerator,
+} from "@kosmojs/generators";
+
 import defineConfig from "../vite.base";
 
+// [!code ++:9]
 const landingTemplate = `
 export default function Page() {
   return (
@@ -34,8 +39,7 @@ export default function Page() {
       <p>This uses a custom template!</p>
     </div>
   );
-}
-`;
+}`;
 
 export default defineConfig(import.meta.dirname, {
   // ...
@@ -43,13 +47,13 @@ export default defineConfig(import.meta.dirname, {
     reactPlugin(),
     devPlugin(apiurl, {
       generators: [
-        reactGenerator({
+        // ...
+        reactGenerator({// [!code ++:6]
           templates: {
             "landing/*": landingTemplate,
             "marketing/**/*": landingTemplate,
           },
         }),
-        // other generators ...
       ],
     }),
   ],
@@ -152,7 +156,7 @@ Custom templates follow standard `React` component structure:
 
 ```ts
 const customTemplate = `
-import { useParams } from "@reactjs/router";
+import { useParams } from "react-router";
 
 export default function Page() {
   const params = useParams();

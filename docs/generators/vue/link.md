@@ -59,11 +59,11 @@ hood. It constructs the final URL and triggers navigation through
 <script setup lang="ts" generic="T extends LinkProps">
 import { computed } from "vue";
 import { RouterLink, useRoute } from "vue-router";
+import { stringify } from "@kosmojs/fetch";
 
-import { stringify, unwrap } from "@src/{fetch}/lib";
-import pageMap from "@src/{pages}";
-import type { LinkProps } from "@src/{vue}";
-import { baseurl } from "@src/config";
+import { unwrap } from "_/front/unwrap";
+import { type LinkProps, pageMap } from "_/front/router";
+import { baseurl } from "@/front/config";
 
 interface Props {
   to?: T
@@ -108,8 +108,3 @@ This approach provides:
 - **autocomplete** for route templates
 - **compile-time safety** against missing params
 - consistent navigation across all source folders
-
-## 🧩 Navigation Helpers
-
-All navigation logic is centralized inside generated helpers in:
-

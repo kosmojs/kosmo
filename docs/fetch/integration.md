@@ -1,10 +1,12 @@
 ---
 title: Fetch Client Integration
-description: Integrate KosmoJS fetch clients with SolidJS createResource, React hooks, and custom state management patterns. Type safety flows through all framework abstractions.
+description: Integrate KosmoJS fetch clients with SolidJS createResource,
+    React hooks, and custom state management patterns. Type safety flows through all framework abstractions.
 head:
   - - meta
     - name: keywords
-      content: solidjs integration, react hooks, createResource, custom hooks, fetch client integration, state management, promise handling, typescript hooks
+      content: solidjs integration, react hooks, createResource, custom hooks,
+        fetch client integration, state management, promise handling, typescript hooks
 ---
 
 The generated fetch client integrates naturally with modern frontend patterns.
@@ -15,7 +17,7 @@ For SolidJS, you might use it with `createResource`:
 
 ```ts [pages/example/index.tsx]
 import { createResource } from "solid-js";
-import useFetch from "@front/{api}/users/[id]/fetch";
+import useFetch from "_/front/fetch/users/[id]";
 
 function UserProfile(props) {
   const [user] = createResource(
@@ -36,7 +38,7 @@ For `React` applications, you might create custom hooks that wrap the fetch clie
 
 ```ts [pages/example/index.tsx]
 import { useState, useEffect } from "react";
-import useFetch from "@front/{api}/users/[id]/fetch";
+import useFetch from "_/front/fetch/users/[id]";
 
 function useUser(userId: number) {
   const [user, setUser] = useState(null);
@@ -58,4 +60,3 @@ The fetch client returns standard promises, so it works with any async pattern y
 
 The type safety flows through these abstractions - your custom hooks and components know exactly
 what shape of data to expect based on your API definitions.
-

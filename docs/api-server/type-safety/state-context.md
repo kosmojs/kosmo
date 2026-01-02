@@ -1,10 +1,12 @@
 ---
 title: Type Safety - State and Context
-description: Add route-specific TypeScript types for ctx.state and context properties in KosmoJS using defineRoute generic type arguments for endpoints with unique middleware requirements.
+description: Add route-specific TypeScript types for ctx.state and context properties
+    in KosmoJS using defineRoute generic type arguments for endpoints with unique middleware requirements.
 head:
   - - meta
     - name: keywords
-      content: typescript context, koa state typing, route-specific types, context properties, type arguments, middleware types, DefaultContext
+      content: typescript context, koa state typing, route-specific types,
+        context properties, type arguments, middleware types, DefaultContext
 ---
 
 Beyond parameter types, you might need to provide additional type information
@@ -22,8 +24,8 @@ The `defineRoute` function is a generic that accepts three type arguments, all o
 🔹 The third lets you declare additional properties on the context object.
 
 ```ts [api/example/index.ts]
-import { defineRoute } from "@front/{api}/users/[id]";
-import type { User } from "@front/types";
+import { defineRoute } from "_/front/api/users/[id]";
+import type { User } from "@/front/types";
 
 export default defineRoute<
   [number], // params refinements
@@ -44,4 +46,3 @@ it's better to add them to `DefaultContext` in `core/api/env.d.ts` instead.
 ([Details ➜ ](/api-server/core-configuration))
 
 Use route-specific type arguments for properties that truly are unique to specific endpoints.
-

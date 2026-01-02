@@ -18,86 +18,32 @@ especially for public-facing pages and marketing content.
 The SSR generator provides the required server runtime,
 while keeping your development workflow unchanged.
 
-## 🎯 Default Rendering Mode
-
-Every source folder contains a `entry/client.ts` file responsible for starting your application in the browser.
-It runs in **both** client-side and server-rendered modes.
-
-- In pure client-side rendering (CSR), it creates a standard `Vue` app instance
-  and mounts it directly to the DOM.
-- In server-side rendering (SSR), it hydrates HTML that was produced on the
-  server, preserving the existing markup and attaching interactivity.
-
-Here is the default implementation:
-
-```ts [entry/client.ts]
-import { createApp, createSSRApp } from "vue";
-
-import { routeStackBuilder, shouldHydrate } from "@src/{vue}/client";
-import App from "../App.vue";
-import createRouter from "../router";
-
-const root = document.getElementById("app");
-
-if (root) {
-  const routes = routeStackBuilder();
-  if (shouldHydrate) {
-    const app = createSSRApp(App);
-    await createRouter(app, routes);
-    app.mount(root, true);
-  } else {
-    const app = createApp(App);
-    await createRouter(app, routes);
-    app.mount(root);
-  }
-} else {
-  console.error("Root element not found!");
-}
-```
-
-When SSR is active, `shouldHydrate` is set by the generated runtime.
-The client entry hydrates the server-rendered markup **without re-rendering it**,
-preserving the content the server already delivered.
-
-During development, hydration is typically disabled so the workflow remains fast
-and relies entirely on Vite's dev server and hot-module replacement.
-
 ## 🛠️ Enabling SSR
 
-First, install the SSR generator:
+Selecting SSR during source folder creation activates it automatically.
 
-::: code-group
-
-```sh [pnpm]
-pnpm install -D @kosmojs/ssr-generator
-```
-
-```sh [npm]
-npm install -D @kosmojs/ssr-generator
-```
-
-```sh [yarn]
-yarn add -D @kosmojs/ssr-generator
-```
-
-:::
-
-Then update your source folder's `vite.config.ts`:
+For folders created without SSR (or when adding SSR capabilities to existing setups),
+manual activation is available through generator registration in your source folder's `vite.config.ts`:
 
 ```ts [vite.config.ts]
-import vue from "@vitejs/plugin-vue";
+import vuePlugin from "@vitejs/plugin-vue";
 import devPlugin from "@kosmojs/dev";
-import vueGenerator from "@kosmojs/vue-generator";
-import ssrGenerator from "@kosmojs/ssr-generator";
+import {
+  // ...
+  vueGenerator,
+  ssrGenerator, // [!code ++]
+} from "@kosmojs/generators";
+
 import defineConfig from "../vite.base";
 
 export default defineConfig(import.meta.dirname, {
   plugins: [
-    vue({ ssr: true }),
+    vuePlugin(),
     devPlugin(apiurl, {
       generators: [
+        // ...
         vueGenerator(),
-        ssrGenerator(),
+        ssrGenerator(), // add SSR support // [!code ++]
       ],
     }),
   ],
@@ -106,72 +52,65 @@ export default defineConfig(import.meta.dirname, {
 
 ## 📄 Server Entry Point
 
-When SSR is activated, `KosmoJS` generates `entry/server.ts` with the default
-implementation:
+When SSR is activated, `KosmoJS` generates `entry/server.ts` with the default implementation.
+
+The `renderFactory` function on the server side orchestrates SSR rendering.
+
+It accepts a callback that returns an object with rendering methods:
+- `renderToString(url, { criticalCss })` - Default implementation that renders the complete page before transmission
+- `renderToStream(url, { criticalCss })` - Optional advanced implementation for progressive streaming SSR
+
+**Important:** Only `renderToString` is provided by default.
+Streaming SSR requires manual `renderToStream` implementation.
+When both methods exist, `renderToStream` takes precedence.
 
 ```ts [entry/server.ts]
 import { createSSRApp } from "vue";
 import { renderToString } from "vue/server-renderer";
 
-import { routeStackBuilder } from "@src/{vue}/server";
-import App from "../App.vue";
-import createRouter from "../router";
+import { renderFactory, createRoutes } from "_/front/entry/server";
+import App from "@/front/App.vue";
+import createRouter from "@/front/router";
 
-const routes = routeStackBuilder();
+const routes = createRoutes();
 
-export default {
-  async factory(url) {
-    const app = createSSRApp(App);
-    await createRouter(app, routes, { url });
-    return {
-      async renderToString({ criticalCss }) {
-        const head = criticalCss
-          .map(({ text }) => `<style>${text}</style>`)
-          .join("\n");
+export default renderFactory(() => {
+  return {
+    async renderToString(url, { criticalCss }) {
+      const app = createSSRApp(App);
+      await createRouter(app, routes, { url });
+      const head = criticalCss
+        .map(({ text }) => `<style>${text}</style>`)
+        .join("\n");
+      const html = await renderToString(app);
+      return { head, html };
+    },
 
-        const html = await renderToString(app);
-
-        return { head, html };
-      },
-    };
-  },
-} satisfies import("@kosmojs/dev").SSRSetup;
+    // Optional: implement renderToStream for streaming SSR
+    // async renderToStream(url, { criticalCss }) {
+    //   // Your streaming implementation here
+    //   // If provided, this takes precedence over renderToString
+    // },
+  };
+});
 ```
 
-This factory:
+**Default implementation** - `renderToString` - is taking two arguments -
+`URL` and `SSROptions` - and should return:
 
-- receives the request URL
-- creates a fresh SSR app instance
-- prepares the router at the correct navigation state
-- returns an object with `renderToString`, `renderToStream`, or both.
+- `head` - HTML to inject into `<head>` (typically critical CSS)
+- `html` - The rendered application markup
 
-When both `renderToString` and `renderToStream` returned, stream rendering preffered.
-
-### Static Asset Handling
-
-When the SSR server initializes, it loads client assets into memory
-and delivers them in response to incoming requests.
-
-This behavior can be controlled via the `serveStaticAssets` export:
-
-```ts [entry/server.ts]
-export default {
-  serveStaticAssets: false,
-  async factory(url) {
-    // ...
-  },
-} satisfies import("@kosmojs/dev").SSRSetup;
-```
-
-Setting this to `false` prevents asset loading at startup -
-any static file requests will receive a `404 Not Found` response.
-
-This setup works well when a reverse proxy like `Nginx` sits in front of your application
-and handles static file delivery.
+This approach renders pages completely and synchronously, returning the full HTML string.
+For advanced scenarios requiring faster time-to-first-byte or handling large pages,
+implement `renderToStream` for progressive content delivery (more on that later).
 
 ## 🎛️ Render Factory Arguments
 
-The same argument object is provided to both `renderToString` and `renderToStream`:
+The same two arguments provided to both `renderToString` and `renderToStream`:
+
+- `URL` - The requested URL for server rendering
+- `SSROptions` object
 
 ```ts
 type SSROptions = {
@@ -229,45 +168,46 @@ Below is an example implementation:
 import { createSSRApp } from "vue";
 import { renderToNodeStream } from "vue/server-renderer";
 
-import { routes } from "@src/{vue}/server";
-import App from "../App.vue";
-import createRouter from "../router";
+import { renderFactory, createRoutes } from "_/front/entry/server";
+import App from "@/front/App.vue";
+import createRouter from "@/front/router";
 
-export default {
-  async factory(url) {
-    const app = createSSRApp(App);
-    await createRouter(app, routes, { url });
-    return {
-      async renderToStream({ response, template, criticalCss }) {
-        const head = criticalCss
-          .map(({ text }) => `<style>${text}</style>`)
-          .join("\n");
+const routes = createRoutes();
 
-        // Divide template at application insertion point
-        const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
+export default renderFactory(() => {
+  return {
+    async renderToStream(url, { criticalCss }) {
+      const app = createSSRApp(App);
+      await createRouter(app, routes, { url });
 
-        // Send initial HTML with head content
-        response.write(htmlStart.replace("<!--app-head-->", head));
+      const head = criticalCss
+        .map(({ text }) => `<style>${text}</style>`)
+        .join("\n");
 
-        // Create the stream
-        const stream = renderToNodeStream(app);
+      // Divide template at application insertion point
+      const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
 
-        stream.on("data", (chunk) => response.write(chunk));
+      // Send initial HTML with head content
+      response.write(htmlStart.replace("<!--app-head-->", head));
 
-        stream.on("end", () => {
-          response.write(htmlEnd);
-          response.end();
-        });
+      // Create the stream
+      const stream = renderToNodeStream(app);
 
-        stream.on("error", (err) => {
-          console.error("SSR stream error:", err);
-          response.statusCode = 500;
-          response.end();
-        });
-      },
-    };
-  },
-} satisfies import("@kosmojs/dev").SSRSetup;
+      stream.on("data", (chunk) => response.write(chunk));
+
+      stream.on("end", () => {
+        response.write(htmlEnd);
+        response.end();
+      });
+
+      stream.on("error", (err) => {
+        console.error("SSR stream error:", err);
+        response.statusCode = 500;
+        response.end();
+      });
+    },
+  };
+});
 ```
 
 > 💡 The streaming pattern and where you inject styles, preload links, or other
@@ -280,6 +220,27 @@ Streaming is particularly useful when:
 - first paint time matters for user experience
 - reducing server memory pressure on large HTML payloads
 
+## 📦 Static Asset Handling
+
+Client assets are loaded into memory when the SSR server starts
+and served automatically for incoming requests.
+
+To disable this behavior, set `serveStaticAssets` to `false`:
+
+```ts [entry/server.ts]
+export default renderFactory(() => {
+  return {
+    serveStaticAssets: false, // [!code ++]
+    // ...
+  };
+});
+```
+
+With this option disabled, the server skips asset loading entirely
+and responds with `404 Not Found` for static file requests.
+
+This configuration is ideal for deployments where a reverse proxy
+such as `Nginx` handles static file delivery.
 
 ## 🏗️ Production Builds
 
@@ -314,7 +275,7 @@ The server bundle can be executed on any Node.js environment.
 Start the SSR server locally:
 
 ```sh
-node dist/@front/ssr --port 4000
+node dist/front/ssr/server.js --port 4000
 ```
 
 Then open:
@@ -354,4 +315,3 @@ Use guards or client-entry hooks instead.
 
 SSR unlocks real performance and SEO gains for `Vue` apps - and `KosmoJS` makes the
 setup lightweight, predictable, and aligned with modern `Vue` best practices.
-

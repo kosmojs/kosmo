@@ -110,9 +110,9 @@ Export a `loader` function that fetches data, and access it in your component wi
 ```tsx [dashboard/settings/layout.tsx]
 import { Outlet, useLoaderData } from "react-router";
 
-import { GET as loader, type ResponseT } from "@src/{api}/dashboard/data/fetch";
+import { GET, type ResponseT } from "_/front/fetch/dashboard/data";
 
-export { loader };
+export { GET as loader };
 
 export default function Layout() {
   const data = useLoaderData<ResponseT["GET"]>();
@@ -162,9 +162,9 @@ Export a `preload` function that returns a promise, and use `createAsync` to acc
 import { ParentComponent } from "solid-js";
 import { createAsync } from "@solidjs/router";
 
-import { GET as preload, type ResponseT } from "@src/{api}/dashboard/data/fetch";
+import { GET, type ResponseT } from "_/front/fetch/dashboard/data";
 
-export { preload };
+export { GET as preload };
 
 const Layout: ParentComponent = (props) => {
   const data = createAsync(preload);
@@ -180,7 +180,8 @@ The `preload` export tells the router to fetch data before rendering.
 This pattern integrates seamlessly with `KosmoJS`'s generated fetch clients.
 You can import the typed fetch function from your API route and use it as both the preload function and the createAsync source.
 
-For more on SolidJS Router's data loading patterns, see the [SolidJS Router documentation](https://docs.solidjs.com/solid-router/reference/data-apis/create-async).
+For more on SolidJS Router's data loading patterns,
+see the [SolidJS Router documentation](https://docs.solidjs.com/solid-router/reference/data-apis/create-async).
 
 ## 💎 Vue Layouts
 
@@ -216,7 +217,7 @@ Instead, you use Vue's lifecycle hooks to fetch data when the component mounts o
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 
-import { GET, type ResponseT } from "@src/{api}/dashboard/data/fetch";
+import { GET, type ResponseT } from "_/front/fetch/dashboard/data";
 
 const data = ref<ResponseT["GET"] | null>(null);
 const loading = ref(true);
@@ -242,9 +243,10 @@ This approach gives you full control over when and how data loads.
 You can use `onMounted` for initial data, watch route parameters for updates,
 or integrate with Vue Router's navigation guards for more advanced scenarios.
 
-For more on Vue Router navigation guards and data fetching patterns, see the [Vue Router documentation](https://router.vuejs.org/guide/advanced/data-fetching.html).
+For more on Vue Router navigation guards and data fetching patterns,
+see the [Vue Router documentation](https://router.vuejs.org/guide/advanced/data-fetching.html).
 
-## 🌐 Global Layouts with App Files
+## 🌐 Global Layout with App File
 
 Sometimes you need a layout that wraps every single route in your application -
 perhaps for analytics tracking, global error boundaries, or authentication checks.
@@ -253,14 +255,13 @@ The `App.{tsx,vue}` file at the root of your source folder serves this purpose.
 It's the application entry point and wraps all routes, providing a place for truly global concerns.
 
 ```txt
-src/
-├── api/
-├── pages/
-│   ├── dashboard/
-│   │   └── layout.tsx
-│   └── index/
-│       └── index.tsx
-└── App.tsx              🢀 Wraps everything
+front/
+├── App.tsx              🢀 Wraps everything
+└── pages/
+    ├── dashboard/
+    │   └── layout.tsx
+    └── index/
+        └── index.tsx
 ```
 
 The `App` file sits at the top of your layout hierarchy.
@@ -271,7 +272,7 @@ Every route, including those with their own layouts, renders within the `App` wr
 Here's how layouts stack for a deeply nested route:
 
 ```txt
-@src/
+front/
 ├── App.tsx                        🢀 Level 1: Global wrapper
 └── pages/
     └── dashboard/
@@ -298,41 +299,41 @@ creating a natural flow of context and shared state.
 
 ## 💡 Best Practices
 
-**Keep layouts focused:** Each layout should provide UI elements relevant to its scope.
+- **Keep layouts focused:** Each layout should provide UI elements relevant to its scope.
 The dashboard layout handles dashboard-wide navigation, not global authentication state.
 
-**Consider data dependencies:** If multiple child routes need the same data,
+- **Consider data dependencies:** If multiple child routes need the same data,
 load it in a parent layout rather than repeating the fetch in each child.
 
-**Use layouts for shared behavior:** Beyond UI, layouts are perfect for shared logic like analytics tracking,
+- **Use layouts for shared behavior:** Beyond UI, layouts are perfect for shared logic like analytics tracking,
 permission checks, or subscription state management that applies to a group of routes.
 
-**Avoid deep nesting without purpose:** Three or four levels of layouts is reasonable.
+- **Avoid deep nesting without purpose:** Three or four levels of layouts is reasonable.
 Beyond that, consider whether you're creating unnecessary hierarchy.
 
-**Leverage typed fetch clients:** When loading data in React or SolidJS layouts,
+- **Leverage typed fetch clients:** When loading data in React or SolidJS layouts,
 use `KosmoJS`'s generated fetch clients for end-to-end type safety from your API to your UI.
 
-**Handle loading states gracefully:** Layout data loading can delay rendering.
+- **Handle loading states gracefully:** Layout data loading can delay rendering.
 Show appropriate loading states rather than flashing empty content, especially in Vue where you manage loading manually.
 
 ## ⚠️ Common Pitfalls
 
-**Case sensitivity matters:** Only `layout.tsx` and `layout.vue` (lowercase) are recognized.
+- **Case sensitivity matters:** Only `layout.tsx` and `layout.vue` (lowercase) are recognized.
 `Layout.tsx` or `LAYOUT.vue` won't work as layout files.
 
-**Framework files are ignored across boundaries:** `.vue` files in a React/SolidJS source folder are ignored,
+- **Framework files are ignored across boundaries:** `.vue` files in a React/SolidJS source folder are ignored,
 and `.tsx` files in a Vue folder are ignored. Each source folder sticks to its configured framework.
 
-**You cannot skip parent layouts:** If a parent folder has a layout, all child routes inherit it.
+- **You cannot skip parent layouts:** If a parent folder has a layout, all child routes inherit it.
 There's no opt-out mechanism. If you need routes that don't share a layout,
 they belong in a different part of your directory structure.
 
-**Auto-generated boilerplate may require editor refocus:** When you create a new layout file,
+- **Auto-generated boilerplate may require editor refocus:** When you create a new layout file,
 `KosmoJS` generates boilerplate content. Some editors loads generated content immediately,
 others may require you to briefly unfocus and refocus the editor to load the new content.
 
-**Layout data loading differs by framework:** React and SolidJS have built-in patterns for layout data loading.
+- **Layout data loading differs by framework:** React and SolidJS have built-in patterns for layout data loading.
 Vue requires manual lifecycle management. Don't expect the same API across frameworks.
 
 ---

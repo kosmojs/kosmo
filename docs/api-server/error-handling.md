@@ -17,33 +17,31 @@ globally for your entire API, for route subtrees, or for individual endpoints.
 
 ## 📦 Default Error Handler
 
-When you create a new project, `KosmoJS` generates `core/api/errors.ts` with a basic error handler:
-
-```ts [core/api/errors.ts]
-import { createErrorHandler, ValidationError } from "@kosmojs/api";
-
-export const errorHandler = createErrorHandler(
-  async function useErrorHandler(ctx, next) {
-    try {
-      await next();
-    } catch (error: any) {
-      // ...
-    }
-  },
-);
-```
-
-This handler is automatically wired into the global middleware chain in `core/api/use.ts` using the `errorHandler` slot:
+When you create a new project, `KosmoJS` generates `core/api/use.ts` with a basic error handler middleware:
 
 ```ts [core/api/use.ts]
-import { use } from "@kosmojs/api";
-import { errorHandler } from "./errors";
+import { use, ValidationError } from "@kosmojs/api";
 
 export default [
-  use(errorHandler, {
-    slot: "errorHandler", // [!code hl]
-  }),
-  // ... more middleware
+  use(
+    async function useErrorHandler(ctx, next) {
+      try {
+        await next();
+      } catch (error: any) {
+        if (error instanceof ValidationError) {
+          const { scope, errorMessage } = error;
+          ctx.status = 400;
+          ctx.body = { error: `ValidationError: ${scope} - ${errorMessage}` };
+        } else {
+          ctx.status = error.statusCode || error.status || 500;
+          ctx.body = { error: error.message };
+        }
+      }
+    },
+    { slot: "errorHandler" }, // slot is essential // [!code hl]
+  ),
+
+  // ...
 ];
 ```
 
@@ -60,28 +58,18 @@ this error handler catches it and formats a consistent response.
 You can customize the default error handler to match your application's needs.
 For example, add error logging or emit events for monitoring:
 
-```ts [core/api/errors.ts]
-import { createErrorHandler, ValidationError } from "@kosmojs/api";
+```ts [core/api/use.ts]
+async function useErrorHandler(ctx, next) {
+  try {
+    await next();
+  } catch (error: any) {
+    // ...
 
-export const errorHandler = createErrorHandler(
-  async function useErrorHandler(ctx, next) {
-    try {
-      await next();
-    } catch (error: any) {
-      if (error instanceof ValidationError) { // [!code focus:11]
-        const { scope, errorMessage } = error;
-        ctx.status = 400;
-        ctx.body = { error: `ValidationError: ${scope} - ${errorMessage}` };
-      } else {
-        ctx.status = error.statusCode || error.status || 500;
-        ctx.body = { error: error.message };
-      }
+    // Emit error event for logging/monitoring // [!code ++:2]
+    ctx.app.emit("error", error, ctx);
 
-      // Emit error event for logging/monitoring
-      ctx.app.emit("error", error, ctx);
-    }
-  },
-);
+  }
+}
 ```
 
 You can then add listeners to handle these events:

@@ -24,7 +24,9 @@ The tuple positions correspond directly to the order of parameters in your route
 For a route at `users/[id]/index.ts` where the ID should be a number:
 
 ```ts [api/users/[id]/index.ts]
-export default defineRoute<[number]>(({ GET }) => [
+export default defineRoute<[
+  number // validate id as number // [!code hl]
+]>(({ GET }) => [
   GET(async (ctx) => {
     // ctx.typedParams.id is now typed as number
     const userId = ctx.typedParams.id;
@@ -42,8 +44,8 @@ export default defineRoute<[
   UserAction
 ]>(({ GET, POST }) => [
   GET(async (ctx) => {
-    // ctx.typedParams.id is number
-    // ctx.typedParams.action is "retrieve" | "update" | "delete"
+    // ctx.typedParams.id is number // [!code hl:2]
+    // ctx.typedParams.action is one of "retrieve" | "update" | "delete"
     const { id, action } = ctx.typedParams;
   }),
 ]);

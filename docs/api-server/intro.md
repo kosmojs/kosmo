@@ -1,10 +1,12 @@
 ---
 title: API Server
-description: KosmoJS API layer built on Koa with elegant middleware composition, end-to-end type safety, and flexible route definitions inspired by Sinatra framework.
+description: KosmoJS API layer built on Koa with elegant middleware composition,
+    end-to-end type safety, and flexible route definitions inspired by Sinatra framework.
 head:
   - - meta
     - name: keywords
-      content: koa api, middleware composition, type-safe api, sinatra-style routing, koa context, typescript api, defineRoute, api middleware
+      content: koa api, middleware composition, type-safe api, sinatra-style routing,
+        koa context, typescript api, defineRoute, api middleware
 ---
 
 `KosmoJS`'s API layer is built on [Koa](https://koajs.com/), leveraging its elegant middleware composition model
@@ -52,4 +54,3 @@ all with proper `TypeScript` types that flow through your entire handler chain.
 This approach creates APIs that are both type-safe and pragmatic -
 you get compile-time checking and runtime validation without sacrificing the flexibility
 to handle real-world requirements that don't fit neat abstractions.
-

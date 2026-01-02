@@ -1,21 +1,21 @@
 ---
 title: Getting Started with Fetch Client
-description: Import and use KosmoJS generated fetch clients with full TypeScript typing. Access routes directly or through a centralized map with automatic parameter and payload validation.
+description: Import and use KosmoJS generated fetch clients with full TypeScript typing.
+    Access routes directly or through a centralized map with automatic parameter and payload validation.
 head:
   - - meta
     - name: keywords
-      content: fetch client, typed fetch, api client, http methods, route parameters, payload typing, response types, typescript api client
+      content: fetch client, typed fetch, api client, http methods, route parameters,
+        payload typing, response types, typescript api client
 ---
 
 You can import fetch clients in two ways, depending on whether you want to access a specific route's client
 or work with all your routes through a centralized map.
 
-For direct access to a specific route's client, import from the route's generated fetch file.
-The import path follows the pattern of your source folder,
-followed by `{api}`, then the route path, and finally `/fetch`:
+For direct access to a specific route's client, import from the route's generated fetch file:
 
 ```ts [pages/example/index.tsx]
-import useFetch from "@front/{api}/users/[id]/fetch";
+import useFetch from "_/front/fetch/users/[id]";
 
 // Use the client directly
 const response = await useFetch.GET([123]);
@@ -24,7 +24,7 @@ const response = await useFetch.GET([123]);
 For access to all routes through a centralized map, import from your source folder's fetch index:
 
 ```ts [pages/example/index.tsx]
-import fetchMap from "@front/{fetch}";
+import fetchMap from "_/front/fetch";
 
 // Access a specific route through the map
 const useFetch = fetchMap["users/[id]"];
@@ -54,7 +54,7 @@ Consider an API route with a typed parameter and payload:
 
 ```ts [api/users/[id]/index.ts]
 // API route definition
-import { defineRoute } from "@front/{api}/users/[id]";
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute<[number]>(({ GET }) => [
   GET<
@@ -69,7 +69,7 @@ export default defineRoute<[number]>(({ GET }) => [
 The generated fetch client for this route expects a number parameter and optional payload:
 
 ```ts [pages/example/index.tsx]
-import useFetch from "@front/{api}/users/[id]/fetch";
+import useFetch from "_/front/fetch/users/[id]";
 
 // Call with just parameters
 const response = await useFetch.GET([123]);
@@ -90,7 +90,7 @@ Not all routes need parameters or payloads. A route at `api/users/index.ts`
 with no parameters and no payload or response types can be called without arguments:
 
 ```ts
-import useFetch from "@front/{api}/users/fetch";
+import useFetch from "_/front/fetch/users";
 
 const response = await useFetch.GET();
 ```

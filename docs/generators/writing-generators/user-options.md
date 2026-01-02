@@ -1,10 +1,12 @@
 ---
 title: Generator User Options
-description: Make generators configurable by defining options types that users can pass through Vite config for custom output paths, formats, and behavior.
+description: Make generators configurable by defining options types
+    that users can pass through Vite config for custom output paths, formats, and behavior.
 head:
   - - meta
     - name: keywords
-      content: generator options, plugin configuration, user config, generator settings, configurable generators, vite config
+      content: generator options, plugin configuration, user config,
+        generator settings, configurable generators, vite config
 ---
 
 To make your generator configurable, define an options type
@@ -17,7 +19,7 @@ export type Options = {
   includeExamples?: boolean;
 };
 
-export default (options?: Options): GeneratorConstructor => {
+export default (options?: Options): GeneratorConstructor<Options> => {
   return {
     name: "MyGenerator",
     moduleImport: import.meta.filename,
@@ -45,4 +47,3 @@ export default {
   ],
 }
 ```
-

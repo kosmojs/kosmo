@@ -1,10 +1,12 @@
 ---
 title: Core Configuration Files
-description: Configure global middleware in core/api/use.ts and extend Koa context and state types in core/api/env.d.ts for consistent TypeScript typing across all API endpoints.
+description: Configure global middleware in core/api/use.ts and extend Koa context
+    and state types in core/api/env.d.ts for consistent TypeScript typing across all API endpoints.
 head:
   - - meta
     - name: keywords
-      content: global middleware, koa configuration, typescript declarations, DefaultContext, DefaultState, body parser, cors middleware, request logging
+      content: global middleware, koa configuration, typescript declarations,
+        DefaultContext, DefaultState, body parser, cors middleware, request logging
 ---
 
 `KosmoJS` uses several core configuration files that affect all API endpoints.
@@ -95,4 +97,3 @@ and `TypeScript` will properly type-check your usage of it.
 
 This approach - declaring types once in a central location -
 keeps your codebase DRY and ensures consistency across all your endpoints.
-

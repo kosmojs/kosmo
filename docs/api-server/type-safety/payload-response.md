@@ -1,10 +1,12 @@
 ---
 title: Type Safety - Payload and Response
-description: Type request payloads and response bodies in KosmoJS API handlers with automatic runtime validation. Ensure handlers receive expected data and return properly structured responses.
+description: Type request payloads and response bodies in KosmoJS API handlers with automatic runtime validation.
+    Ensure handlers receive expected data and return properly structured responses.
 head:
   - - meta
     - name: keywords
-      content: request validation, response typing, payload validation, ctx.body typing, api contract, runtime validation, typescript validation, type-safe api
+      content: request validation, response typing, payload validation, ctx.body typing,
+        api contract, runtime validation, typescript validation, type-safe api
 ---
 
 Beyond route parameters and context properties,
@@ -19,8 +21,8 @@ The first types the payload - what comes in with the request.
 The second types the response - what your handler should set as `ctx.body`.
 
 ```ts [api/example/index.ts]
-import { defineRoute } from "@front/{api}/users";
-import type { User } from "@front/types";
+import { defineRoute } from "_/front/api/users";
+import type { User } from "@/front/types";
 
 export default defineRoute(({ POST }) => [
   POST<
@@ -49,4 +51,3 @@ and validates the outgoing response as well.
 ([Details ➜ ](/validation/payload)).
 
 If validation fails, `KosmoJS` handles the error appropriately without your handler code running.
-

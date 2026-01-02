@@ -1,13 +1,15 @@
 ---
 title: Writing Custom Generators
-description: Create custom KosmoJS generators to produce code based on route structure and types. Learn generator architecture, worker threads, and the GeneratorConstructor structure.
+description: Create custom KosmoJS generators to produce code based on route structure and types.
+    Learn generator architecture, worker threads, and the GeneratorConstructor structure.
 head:
   - - meta
     - name: keywords
-      content: custom generators, vite plugin development, generator api, worker threads, code generation, plugin architecture, GeneratorConstructor, devlib
+      content: custom generators, vite plugin development, generator api, worker threads,
+        code generation, plugin architecture, GeneratorConstructor
 ---
 
-Generators are plugins that produce code based on your route structure and types.
+Generators aimed at producing code based on your route structure and types.
 
 While `KosmoJS` provides built-in generators for common needs,
 you can create custom generators tailored to your specific requirements.
@@ -27,7 +29,7 @@ A generator is a module that exports a default function
 returning a `GeneratorConstructor` object:
 
 ```ts
-import type { GeneratorConstructor } from "@kosmojs/devlib";
+import type { GeneratorConstructor } from "@kosmojs/dev";
 import { factory } from "./factory";
 
 export default (): GeneratorConstructor => {
@@ -59,4 +61,3 @@ This receives plugin options and returns a watch handler.
 - `resolveTypes?: boolean` - When `true`, `KosmoJS` resolves all type references
   to their flattened representations before calling your generator,
   providing complete type information for validation or documentation.
-

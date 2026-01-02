@@ -5,7 +5,8 @@ description: KosmoJS automatically generates boilerplate code for new routes wit
 head:
   - - meta
     - name: keywords
-      content: code generation, route templates, defineRoute, auto-generated routes, boilerplate code, koa context, page components
+      content: code generation, route templates, defineRoute, auto-generated routes,
+        boilerplate code, koa context, page components
 ---
 
 When you create a new route file, `KosmoJS` detects it and instantly generates appropriate boilerplate code.
@@ -29,8 +30,8 @@ others may require you to briefly unfocus and refocus the editor to load the new
 
 When you create a file like `api/users/[id]/index.ts`, `KosmoJS` generates this content:
 
-```ts [api/users/[id]/index.ts][dark]
-import { defineRoute } from "@front/{api}/users/[id]";
+```ts [api/users/[id]/index.ts]
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {
@@ -42,22 +43,21 @@ export default defineRoute(({ GET }) => [
 Let's break down what's happening here.
 
 The import statement brings in a `defineRoute` helper function from a generated module.
+Notice the import path uses the `_/` prefix - this accesses generated code from the `lib/src/` directory.
 
-Notice the import path: `@front/{api}/users/[id]`.
+Breaking down `_/front/api/users/[id]`:
+- `_/` - Generated code prefix (maps to `lib/src/`)
+- `front` - Your source folder name (from `src/front/`)
+- `api/users/[id]` - Mirrors your route file's location
 
-The `@front` part is your source folder (as configured in your `TypeScript` path mappings),
-and the `{api}/users/[id]` part corresponds to the generated route's location.
+So this import resolves to `lib/src/front/api/users/[id].ts` -
+a file `KosmoJS` generated automatically that mirrors your route structure.
 
 This generated module includes `TypeScript` type information about your route's parameters.
-
 In this case, it knows that this route has an `id` parameter,
-and that information flows through to your handler's context object.
+and that information flows through to your handler's context object, enabling type-safe access via `ctx.typedParams.id`.
 
-**Import Path Convention:**
-- `@front/api/` ➜ Your hand-written route files
-- `@front/{api}/` ➜ Auto-generated type definitions and utilities
-
-The `defineRoute` function accepts a callback that receives HTTP method helpers.<br>
+The `defineRoute` function accepts a callback that receives HTTP method helpers.
 In this example, you see `GET`, but you also have access to `POST`, `PUT`, `DELETE`, `PATCH`, and other HTTP methods.
 
 You can define handlers for multiple methods in the same route by adding more method calls to the array.
@@ -98,4 +98,3 @@ and you add your framework-specific logic for routing, data fetching, and render
 
 Because the route parameters are part of the URL structure that `KosmoJS` manages,
 your framework's router integration can access them naturally.
-

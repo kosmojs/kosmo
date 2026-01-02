@@ -23,9 +23,9 @@ the generator creates a route configuration like this:
 ```ts
 {
   path: "/users/:id",
-  component: lazy(() => import("@front/pages/users/[id]")),
+  component: lazy(() => import("@/front/pages/users/[id]")),
   preload: () =>
-    import("@front/pages/users/[id]").then(
+    import("@/front/pages/users/[id]").then(
       (mdl) => (mdl as ComponentModule).preload?.()
     ),
 }
@@ -47,4 +47,3 @@ when the component first loads, when users hover over links to that route, or wh
 
 This preloading improves perceived performance
 by fetching data before the component actually renders.
-

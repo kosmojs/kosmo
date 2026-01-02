@@ -5,7 +5,8 @@ description: Handle dynamic URL segments with required [id], optional [[id]], an
 head:
   - - meta
     - name: keywords
-      content: route parameters, dynamic routes, url parameters, required parameters, optional parameters, rest parameters, bracket notation, path segments
+      content: route parameters, dynamic routes, url parameters, required parameters,
+        optional parameters, rest parameters, bracket notation, path segments
 ---
 
 Real applications need to handle dynamic segments in URLs - user IDs, post slugs, category names, and so on.
@@ -398,4 +399,3 @@ export default defineRoute(({ GET }) => [
 
 This approach keeps the folder structure simple and predictable while giving you full control over validation in your handler code.
 The `[productId]` folder captures anything in that position, and your handler decides whether it's valid.
-

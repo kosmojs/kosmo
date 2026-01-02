@@ -8,11 +8,10 @@ hero:
         <span class="headline">Structured Vite Template.</span>
         <span>Build type-safe full-stack apps.</span>
         <span>Multiple source folders.</span>
-        <span>Directory-based routing.</span>
-        <span>Nested layouts.</span>
-        <span>Runtime validation.</span>
-        <span>Generated fetch clients.</span>
-        <span>Multiple frameworks.</span>
+        <span>Directory-based nested routing.</span>
+        <span>Runtime end-to-end validation.</span>
+        <span>Generated fetch clients, OpenAPI spec.</span>
+        <span>Multiple frameworks (SolidJS, React, Vue).</span>
     </span>
   image:
     src: /KosmoJS.svg
@@ -31,7 +30,7 @@ features:
     link: /features
 
   - icon: 🛣️
-    title: Directory-Based Routing
+    title: Directory-Based Nested Routing
     details: Your folder structure defines your routes. Works identically for both API endpoints and client pages.
     link: /routing/intro
 
@@ -166,4 +165,3 @@ You choose your frontend framework, state management, styling approach, database
 The structure scales; your choices remain free.
 
 📘 [About KosmoJS](/about) · [Features](/features)
-

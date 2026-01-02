@@ -1,10 +1,12 @@
 ---
 title: SolidJS - Custom Page Templates
-description: Override default page templates for specific routes using glob patterns. Create specialized templates for landing pages, marketing content, and admin interfaces.
+description: Override default page templates for specific routes using glob patterns.
+    Create specialized templates for landing pages, marketing content, and admin interfaces.
 head:
   - - meta
     - name: keywords
-      content: custom templates, page templates, glob patterns, route templates, template matching, landing pages, solidjs templates
+      content: custom templates, page templates, glob patterns, route templates,
+        template matching, landing pages, solidjs templates
 ---
 
 The `SolidJS` generator allows you to override the default page template
@@ -20,9 +22,14 @@ Pass custom templates through the generator options in your `vite.config.ts`:
 ```ts [vite.config.ts]
 import solidPlugin from "vite-plugin-solid";
 import devPlugin from "@kosmojs/dev";
-import solidGenerator from "@kosmojs/solid-generator";
+import {
+  // ...
+  solidGenerator,
+} from "@kosmojs/generators";
+
 import defineConfig from "../vite.base";
 
+// [!code ++:9]
 const landingTemplate = `
 export default function Page() {
   return (
@@ -31,8 +38,7 @@ export default function Page() {
       <p>This uses a custom template!</p>
     </div>
   );
-}
-`;
+}`;
 
 export default defineConfig(import.meta.dirname, {
   // ...
@@ -40,13 +46,13 @@ export default defineConfig(import.meta.dirname, {
     solidPlugin(),
     devPlugin(apiurl, {
       generators: [
+        // ...
         solidGenerator({
-          templates: {
+          templates: { // [!code ++:4]
             "landing/*": landingTemplate,
             "marketing/**/*": landingTemplate,
           },
         }),
-        // other generators ...
       ],
     }),
   ],
@@ -244,19 +250,18 @@ This overrides the generator's default template for all routes.
 
 ## 💡 Best Practices
 
-**Keep templates focused**<br>
+- **Keep templates focused**<br>
 Use custom templates for routes that need specific structure,
 not for minor variations.
 
-**Use layouts**<br>
+- **Use layouts**<br>
 Instead of duplicating structure across templates,
 import shared layouts within templates.
 
-**Consider maintenance**<br>
+- **Consider maintenance**<br>
 Remember that templates are strings in your config file.
 For complex templates, consider generating them from separate files.
 
-**Test thoroughly**<br>
+- **Test thoroughly**<br>
 Custom templates bypass the default generator behavior,
 so ensure they work with your routing and parameter handling.
-

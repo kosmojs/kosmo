@@ -92,7 +92,7 @@ yarn +folder
 :::
 
 You'll configure:
-- **Folder name** - e.g., `@front` (the `@` is just convention, not required)
+- **Folder name** - e.g., `front`
 - **Base URL** - Where this app serves from (default: `/`)
 - **Dev server port** - Port for development (default: `4000`)
 - **Frontend framework** - SolidJS, React, Vue, or none for API-only folders
@@ -104,15 +104,15 @@ For CI/CD or scripting, skip the prompts by providing options directly:
 
 ::: code-group
 ```sh [pnpm]
-pnpm +folder --name @front --base / --port 4000 --framework solid --ssr
+pnpm +folder --name front --base / --port 4000 --framework solid --ssr
 ```
 
 ```sh [npm]
-npm run +folder -- --name @front --base / --port 4000 --framework solid --ssr
+npm run +folder -- --name front --base / --port 4000 --framework solid --ssr
 ```
 
 ```sh [yarn]
-yarn +folder --name @front --base / --port 4000 --framework solid --ssr
+yarn +folder --name front --base / --port 4000 --framework solid --ssr
 ```
 :::
 
@@ -176,12 +176,62 @@ This works identically for both API routes and client pages, so you learn the pa
 
 [Learn more about routing patterns →](/routing/intro)
 
+## 💡 Essential Path Mappings
+
+Your project starts with a minimal `tsconfig.json`:
+
+```json [tsconfig.json]
+{
+  "extends": "@kosmojs/config/tsconfig.vite.json"
+}
+```
+
+The extended `tsconfig.vite.json` contains essential path mappings that enable your application to work properly.
+
+You can add additional paths, but these prefixes are reserved and must not be overridden:
+
+- `~/*` - Root-level imports
+- `@/*` - Source folder imports
+- `_/*` - Generated code imports
+
+Overriding these prefixes will break your application.
+
+Each prefix maps to a specific part of your project:
+
+**`~/*` - Root-level imports**
+
+Access files at your project root:
+```ts
+import globalMiddleware from "~/core/api/use";
+```
+
+**`@/*` - Source folder imports**
+
+Import from your `src/` directory without the `src/` prefix.
+The `src/` directory contains your source folders (`src/admin/`, `src/front/`, `src/app/`, etc.):
+
+```ts
+import LoginForm from "@/front/components/LoginForm";
+import config from "@/admin/config";
+```
+
+**`_/*` - Generated code imports**
+
+Access generated files from `lib/src/`, which mirrors your `src/` directory structure:
+```ts
+import fetchMap from "_/front/fetch";            // All fetch clients
+import { GET } from "_/front/fetch/users/[id]";  // Specific fetch client
+```
+
+All generated files - api routes, validators, fetch clients -
+live in `lib/src/` and are accessible via the `_/` prefix.
+
 ## ⚙️ Create Your First API Route
 
 In your source folder, create `api/users/[id]/index.ts` file:
 
 ```txt
-@front/
+src/front/
 └── api/
     └── users/
         └── [id]/
@@ -195,7 +245,7 @@ In your source folder, create `api/users/[id]/index.ts` file:
 You'll see this structure appear:
 
 ```ts [api/users/[id]/index.ts]
-import { defineRoute } from "@front/{api}/users/[id]";
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {
@@ -207,7 +257,7 @@ export default defineRoute(({ GET }) => [
 Let's make it actually useful. Replace the generated code with:
 
 ```ts [api/users/[id]/index.ts]
-import { defineRoute } from "@front/{api}/users/[id]";
+import { defineRoute } from "_/front/api/users/[id]";
 
 type User = {
   id: number;
@@ -253,63 +303,31 @@ The route works, but there's no validation yet. Let's fix that.
 
 [More details: API Routes →](/api-server/endpoints)
 
-## 🛡️ Add Runtime Validation
+## 🛡️ Add Runtype Validation
 
 Here's where it gets interesting - `KosmoJS` automatically converts your `TypeScript` types
 into high-performance runtime validators.
+
 It uses the state-of-the-art [TypeBox](https://github.com/sinclairzx81/typebox)
-library to convert types into JSON Schema validators - no magic, just solid tooling.
-
-Install the `TypeBox` generator:
-
-::: code-group
-```sh [pnpm]
-pnpm install -D @kosmojs/typebox-generator
-pnpm install typebox
-```
-
-```sh [npm]
-npm install -D @kosmojs/typebox-generator
-npm install typebox
-```
-
-```sh [yarn]
-yarn add -D @kosmojs/typebox-generator
-yarn add typebox
-```
-:::
-
-Add it to your `vite.config.ts`:
-
-```ts [@front/vite.config.ts]
-import devPlugin from "@kosmojs/dev";
-import typeboxGenerator from "@kosmojs/typebox-generator"; // [!code ++]
-
-export default {
-  plugins: [
-    devPlugin(apiurl, {
-      generators: [
-        typeboxGenerator(), // [!code ++]
-        // other generators...
-      ],
-    }),
-  ],
-}
-```
-
-> The dev server should restart automatically, but after adding new generators
-it's recommended to manually stop and restart it with `pnpm dev`
-
-Once configured, you can add validation to your routes through type arguments.
-Let's explore each type of validation step by step.
+library to convert your types into JSON Schema validators - no magic, just solid tooling.
 
 ### Parameter Validation
 
-Route parameters come from the URL path itself (like the `[id]` in `/api/users/123`).
-By default, they are strings. Let's validate that `id` is actually a number:
+Route parameters come from URL paths.
+For example, the URL `/api/users/123` is matched by the `api/users/[id]` route, where `[id]` captures `123`.
+Since URLs are text, parameters arrive as strings.
+
+`KosmoJS` validates and converts them in two steps:
+
+- Validates against your schema
+- Casts numbers automatically - `number` types get converted via `Number()`
+
+Access validated parameters via `ctx.typedParams` instead of `ctx.params`.
+
+Here's an example validating id as a number:
 
 ```ts [api/users/[id]/index.ts]
-import { defineRoute } from "@front/{api}/users/[id]";
+import { defineRoute } from "_/front/api/users/[id]";
 
 type User = {
   id: number;
@@ -317,9 +335,11 @@ type User = {
   email: string;
 }
 
-export default defineRoute<[number]>(({ GET }) => [ // [!code hl]
+export default defineRoute<[
+  number // validate id as number // [!code hl]
+]>(({ GET }) => [
   GET(async (ctx) => {
-    const { id } = ctx.typedParams; // Now a validated number! // [!code hl]
+    const { id } = ctx.typedParams; // id is a validated number! // [!code hl]
 
     const user: User = {
       id, // No conversion needed - already a number // [!code hl]
@@ -335,9 +355,10 @@ export default defineRoute<[number]>(({ GET }) => [ // [!code hl]
 The `<[number]>` type argument to `defineRoute` validates parameters as a tuple.
 Each position corresponds to a route parameter in order.
 
-The validated parameter is available through `ctx.typedParams.id` (not `ctx.params.id`).
+The validated params are available through `ctx.typedParams`.
+While `ctx.params` still exists, it is not typed and all params are strings.
 
-You can refine parameters further by using `TRefine`(globally available, no need to import):
+You can refine parameters further by using `TRefine` (globally available, no need to import):
 
 ```ts
 defineRoute<[
@@ -345,7 +366,7 @@ defineRoute<[
 ]>(...)
 ```
 
-This ensures the ID is not only a number, but a positive integer.
+This ensures the `id` is not only a number, but a positive integer.
 
 If someone requests `/api/users/abc`, validation fails before your handler runs.
 
@@ -358,7 +379,7 @@ Request payloads need validation too. Here's the key concept:
 Let's add a POST endpoint that creates users:
 
 ```ts [api/users/index.ts]
-import { defineRoute } from "@front/{api}/users";
+import { defineRoute } from "_/front/api/users";
 
 type CreateUserPayload = {
   name: string;
@@ -374,7 +395,9 @@ type User = {
 }
 
 export default defineRoute(({ POST }) => [
-  POST<CreateUserPayload>(async (ctx) => { // [!code hl]
+  POST<
+    CreateUserPayload // payload schema // [!code hl]
+  >(async (ctx) => {
     // ctx.payload is the validated request body
     const { name, email, age } = ctx.payload;
 
@@ -394,7 +417,7 @@ The first type argument to `POST` validates the payload.
 For POST/PUT/PATCH, this validates the request body.
 For GET, this would validate query parameters.
 
-If the request body doesn't match `CreateUserPayload`,
+If the payload doesn't match `CreateUserPayload`,
 validation fails with a detailed error before your handler runs.
 
 ### Response Validation
@@ -405,8 +428,8 @@ This catches bugs where you accidentally return incomplete or malformed data:
 ```ts [api/users/index.ts]
 export default defineRoute(({ POST }) => [
   POST<
-    CreateUserPayload,
-    User // [!code hl]
+    CreateUserPayload, // payload schema
+    User // response schema // [!code hl]
   >(async (ctx) => {
     const { name, email, age } = ctx.payload;
 
@@ -431,8 +454,8 @@ For our GET endpoint:
 ```ts [api/users/[id]/index.ts]
 export default defineRoute<[number]>(({ GET }) => [
   GET< // [!code focus:4]
-    never,
-    User
+    never, // skip payload validation
+    User // response schema
   >(async (ctx) => {
     const { id } = ctx.typedParams;
 
@@ -468,9 +491,8 @@ Import the generated fetch client for type-safe API calls with built-in validati
 ::: code-group
 
 ```tsx [SolidJS]
-import { useParams } from "@solidjs/router";
-import { createAsync } from "@solidjs/router";
-import { GET } from "@front/{api}/users/[id]/fetch"; // [!code hl]
+import { useParams, createAsync } from "@solidjs/router";
+import { GET } from "_/front/fetch/users/[id]"; // [!code hl]
 
 export default function UserPage() {
   const params = useParams();
@@ -482,7 +504,7 @@ export default function UserPage() {
 ```tsx [React]
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { GET } from "@front/{api}/users/[id]/fetch"; // [!code hl]
+import { GET } from "_/front/fetch/users/[id]"; // [!code hl]
 
 export default function UserPage() {
   const params = useParams();
@@ -500,7 +522,7 @@ export default function UserPage() {
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { GET } from "@front/{api}/users/[id]/fetch"; // [!code hl]
+import { GET } from "_/front/fetch/users/[id]"; // [!code hl]
 
 const route = useRoute();
 const user = ref(null);
@@ -522,7 +544,7 @@ onMounted(async () => {
 **Method 2: Via fetch map** (useful for dynamic routing)
 
 ```tsx
-import fetchMap from "@front/{fetch}";
+import fetchMap from "_/front/fetch";
 
 // Access routes through the centralized map
 const userFetch = fetchMap["users/[id]"];
@@ -545,47 +567,37 @@ Invalid requests never reach your server, saving bandwidth and giving instant fe
 
 ## 📋 Automatic OpenAPI Documentation
 
-OpenAPI (formerly Swagger) is the industry standard for documenting REST APIs.
+`OpenAPI` (formerly Swagger) is the industry standard for documenting REST APIs.
 It provides machine-readable API specifications that power interactive documentation,
 client code generators, and testing tools.
 
-`KosmoJS` can automatically generate complete OpenAPI 3.1 specifications for your API.
+`KosmoJS` can automatically generate complete `OpenAPI 3.1` specifications for your API.
 
-Install the OpenAPI generator:
+Enable `OpenAPI` generator in your `vite.config.ts`:
 
-::: code-group
-```sh [pnpm]
-pnpm install -D @kosmojs/openapi-generator
-```
-
-```sh [npm]
-npm install -D @kosmojs/openapi-generator
-```
-
-```sh [yarn]
-yarn add -D @kosmojs/openapi-generator
-```
-:::
-
-Add it to your `vite.config.ts`:
-
-```ts [@front/vite.config.ts]
+```ts [src/front/vite.config.ts]
 import devPlugin from "@kosmojs/dev";
-import typeboxGenerator from "@kosmojs/typebox-generator";
-import openapiGenerator from "@kosmojs/openapi-generator"; // [!code ++]
+import {
+  apiGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+  openapiGenerator, // [!code ++]
+} from "@kosmojs/generators";
 
 export default {
   plugins: [
     devPlugin(apiurl, {
       generators: [
+        apiGenerator(),
+        fetchGenerator(),
         typeboxGenerator(),
-        openapiGenerator({ // [!code ++]
-          outfile: "openapi.json", // [!code ++]
-          info: { // [!code ++]
-            title: "My API", // [!code ++]
-            version: "1.0.0", // [!code ++]
-          }, // [!code ++]
-        }), // [!code ++]
+        openapiGenerator({ // [!code ++:7]
+          outfile: "openapi.json",
+          info: {
+            title: "My API",
+            version: "1.0.0",
+          },
+        }),
       ],
     }),
   ],
@@ -622,8 +634,8 @@ Skip `next()` to stop the chain early (useful for rejecting unauthorized request
 The straightforward approach is to import and wire middleware manually:
 
 ```ts [api/users/[id]/index.ts]
-import { defineRoute } from "@front/{api}/users/[id]";
 import { logRequest } from "@/middleware/logging";
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute(({ GET, use }) => [
   use(logRequest), // Wire it manually
@@ -645,7 +657,7 @@ Authentication across 20 routes? That's 20 files to maintain.
 Create `api/users/use.ts`:
 
 ```txt
-@front/
+src/front/
 └── api/
     └── users/
         ├── use.ts          🢀 Wraps all routes under /users
@@ -692,7 +704,7 @@ Parent folders wrap child routes automatically.
 
 [More details: Middleware →](/api-server/use-middleware/intro)
 
-## 🎨 Build Client Pages
+## 🎨 Create Client Pages
 
 Now let's create the frontend.
 Pages live in the `pages/` folder and follow the same directory-based routing as API routes.
@@ -711,7 +723,7 @@ your API server stays lean and focused.
 Create users page - `pages/users/index.tsx` (or `.vue`):
 
 ```txt
-@front/
+src/front/
 └── pages/
     └── users/
         └── index.tsx
@@ -743,7 +755,7 @@ Now that you have pages, let's organize them with layouts.
 Create `pages/users/layout.tsx`:
 
 ```txt
-@front/
+src/front/
 └── pages/
     └── users/
         ├── layout.tsx      🢀 Wraps all pages under /users
@@ -763,38 +775,25 @@ Want SEO, faster initial page loads, and critical CSS optimization? Enable SSR.
 **Note:** You can enable SSR when creating a source folder with the `--ssr` flag
 (or by selecting it in the interactive mode).
 
-If you didn't enable it initially, you can add it manually:
+If you didn't enable it initially, enable it in your `vite.config.ts`:
 
-Install the SSR generator:
-
-::: code-group
-```sh [pnpm]
-pnpm install -D @kosmojs/ssr-generator
-```
-
-```sh [npm]
-npm install -D @kosmojs/ssr-generator
-```
-
-```sh [yarn]
-yarn add -D @kosmojs/ssr-generator
-```
-:::
-
-Update your `vite.config.ts`:
-
-```ts [@front/vite.config.ts]
-import solidPlugin from "vite-plugin-solid";
+```ts [src/front/vite.config.ts]
 import devPlugin from "@kosmojs/dev";
-import ssrGenerator from "@kosmojs/ssr-generator"; // [!code ++]
+import {
+  apiGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+  ssrGenerator, // [!code ++]
+} from "@kosmojs/generators";
 
 export default {
   plugins: [
-    solidPlugin({ ssr: true }), // [!code ++]
     devPlugin(apiurl, {
       generators: [
+        apiGenerator(),
+        fetchGenerator(),
+        typeboxGenerator(),
         ssrGenerator(), // [!code ++]
-        // other generators...
       ],
     }),
   ],
@@ -814,88 +813,51 @@ where the browser receives and displays content progressively as it's rendered.
 
 ::: code-group
 ```ts [SolidJS]
-import { renderToString, generateHydrationScript } from "solid-js/web";
-
-import { routeStackBuilder } from "@src/{solid}/server";
-import App from "../App";
-import createRouter from "../router";
-
-const routes = routeStackBuilder({ withPreload: false });
-
-export default {
-  async factory(url) {
-    const router = createRouter(App, routes, { url });
-    const hydrationScript = generateHydrationScript();
-    return {
-      async renderToString({ criticalCss }) {
-        const head = criticalCss.reduce(
-          (head, { text }) => `${head}\n<style>${text}</style>`,
-          hydrationScript,
-        );
-
-        const html = renderToString(() => router);
-
-        return { head, html };
-      },
-    };
-  },
-} satisfies import("@kosmojs/dev").SSRSetup;
+export default renderFactory(() => {
+  const hydrationScript = generateHydrationScript();
+  return {
+    async renderToString(url, { criticalCss }) {
+      const router = await createRouter(App, routes, { url });
+      const head = criticalCss.reduce(
+        (head, { text }) => `${head}\n<style>${text}</style>`,
+        hydrationScript,
+      );
+      const html = renderToString(() => router);
+      return { head, html };
+    },
+  };
+});
 ```
 
 ```ts [React]
-import { renderToString } from "react-dom/server";
-
-import { routeStackBuilder } from "@src/{react}/server";
-import App from "../App";
-import createRouter from "../router";
-
-const routes = routeStackBuilder({ withPreload: false });
-
-export default {
-  async factory(url) {
-    const router = await createRouter(App, routes, { url });
-    return {
-      async renderToString({ criticalCss }) {
-        const head = criticalCss
-          .map(({ text }) => `<style>${text}</style>`)
-          .join("\n");
-
-        const html = renderToString(router);
-
-        return { head, html };
-      },
-    };
-  },
-} satisfies import("@kosmojs/dev").SSRSetup;
+export default renderFactory(() => {
+  return {
+    async renderToString(url, { criticalCss }) {
+      const router = await createRouter(App, routes, { url });
+      const head = criticalCss
+        .map(({ text }) => `<style>${text}</style>`)
+        .join("\n");
+      const html = renderToString(router);
+      return { head, html };
+    },
+  };
+});
 ```
 
 ```ts [Vue]
-import { createSSRApp } from "vue";
-import { renderToString } from "vue/server-renderer";
-
-import { routeStackBuilder } from "@src/{vue}/server";
-import App from "../App.vue";
-import createRouter from "../router";
-
-const routes = routeStackBuilder();
-
-export default {
-  async factory(url) {
-    const app = createSSRApp(App);
-    await createRouter(app, routes, { url });
-    return {
-      async renderToString({ criticalCss }) {
-        const head = criticalCss
-          .map(({ text }) => `<style>${text}</style>`)
-          .join("\n");
-
-        const html = await renderToString(app);
-
-        return { head, html };
-      },
-    };
-  },
-} satisfies import("@kosmojs/dev").SSRSetup;
+export default renderFactory(() => {
+  return {
+    async renderToString(url, { criticalCss }) {
+      const app = createSSRApp(App);
+      await createRouter(app, routes, { url });
+      const head = criticalCss
+        .map(({ text }) => `<style>${text}</style>`)
+        .join("\n");
+      const html = await renderToString(app);
+      return { head, html };
+    },
+  };
+});
 ```
 :::
 
@@ -911,7 +873,7 @@ Your pages render instantly with styled content - no flash of unstyled content, 
 
 ```sh
 pnpm build
-node dist/@src/ssr/server.js -p 4001
+node dist/front/ssr/server.js -p 4001
 ```
 
 Your app is now server-rendered with optimized CSS delivery.
@@ -940,14 +902,14 @@ Add `admin` source folder - `Vue` framework, no SSR:
 ::: code-group
 ```sh [Interactive]
 pnpm +folder
-# name: @admin
+# name: admin
 # baseurl: /admin
 # port: 4001
 # framework: vue
 ```
 
 ```sh [Non-interactive]
-pnpm +folder --name @admin --base /admin --port 4001 --framework vue
+pnpm +folder --name admin --base /admin --port 4002 --framework vue
 ```
 :::
 
@@ -956,7 +918,7 @@ Add `marketing` source folder - `SolidJS` framework, with SSR:
 ::: code-group
 ```sh [Interactive]
 pnpm +folder
-# name: @marketing
+# name: marketing
 # baseurl: /
 # port: 4002
 # framework: solid
@@ -964,7 +926,7 @@ pnpm +folder
 ```
 
 ```sh [Non-interactive]
-pnpm +folder --name @marketing --base / --port 4002 --framework solid --ssr
+pnpm +folder --name marketing --base / --port 4002 --framework solid --ssr
 ```
 :::
 

@@ -1,14 +1,15 @@
 ---
 title: Client-Side Validation
-description: Automatic client-side validation with TypeBox schemas before network requests. Use check, errors, errorMessage methods for form validation with performance optimization patterns.
+description: Automatic client-side validation with TypeBox schemas before network requests.
+    Use check, errors, errorMessage methods for form validation with performance optimization patterns.
 head:
   - - meta
     - name: keywords
-      content: client validation, form validation, typebox, validation schemas, check method, validation errors, nested field validation, performance optimization, real-time validation
+      content: client validation, form validation, typebox, validation schemas, check method,
+        validation errors, nested field validation, performance optimization, real-time validation
 ---
 
-When you enable validation by adding a generator like the TypeBox generator,
-the fetch client performs validation before making network requests.
+Generated fetch clients performs validation before making network requests (unless you disabled validation generator).
 
 This validation uses exactly the same schemas that validate on the server,
 ensuring perfect consistency between what the client considers valid and what the server accepts.
@@ -55,7 +56,7 @@ These schemas are organized by HTTP method,
 so you can validate the exact structure that a specific endpoint expects:
 
 ```ts [pages/example/index.tsx]
-import useFetch from "@front/{api}/users/fetch";
+import useFetch from "_/front/fetch/users";
 
 // Access validation schemas
 useFetch.validationSchemas.params;        // Parameter validation

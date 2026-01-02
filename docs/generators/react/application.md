@@ -33,26 +33,29 @@ or other application-wide concerns.
 
 ## 🛣️ Router Integration
 
-The `router.tsx` file bridges `KosmoJS`'s generated routes with `React` Router:
+The `router.tsx` file bridges `KosmoJS`'s generated routes with `React` Router using the `routerFactory` function.
+
+`routerFactory` takes a callback that receives two arguments:
+- `App` - Your root App component
+- `routes` - Generated route definitions from `KosmoJS`
+
+The callback must return an object with two functions:
+- `clientRouter()` - Creates a browser router for client-side navigation
+- `serverRouter({ url })` - Creates a static router for server-side rendering
 
 ```tsx [router.tsx]
-import type { ComponentType, PropsWithChildren } from "react";
 import {
   createBrowserRouter,
   createStaticHandler,
   createStaticRouter,
-  type RouteObject,
   RouterProvider,
   StaticRouterProvider,
 } from "react-router";
 
-import { baseurl } from "./config";
+import { routerFactory } from "_/front/router";
+import { baseurl } from "@/front/config";
 
-export default async (
-  App: ComponentType<PropsWithChildren>,
-  routes: Array<RouteObject>,
-  ssrProps?: { url?: URL },
-) => {
+export default routerFactory((App, routes) => {
   const routeStack = [
     {
       path: "/",
@@ -61,65 +64,91 @@ export default async (
     },
   ];
 
-  if (ssrProps?.url) {
-    const handler = createStaticHandler(routeStack, { basename: baseurl });
+  return {
+    clientRouter() {
+      const router = createBrowserRouter(routeStack, { basename: baseurl });
+      return <RouterProvider router={router} />;
+    },
+    async serverRouter({ url }) {
+      const handler = createStaticHandler(routeStack, { basename: baseurl });
 
-    const result = await handler.query(new Request(ssrProps.url.href));
+      const result = await handler.query(new Request(url.href));
 
-    if (result instanceof Response) {
-      // handled by SSR server
-      throw result;
-    }
+      if (result instanceof Response) {
+        // handled by SSR server
+        throw result;
+      }
 
-    const router = createStaticRouter(routeStack, result);
+      const router = createStaticRouter(routeStack, result);
 
-    return <StaticRouterProvider router={router} context={result} />;
-  }
-
-  const router = createBrowserRouter(routeStack, { basename: baseurl });
-  return <RouterProvider router={router} />;
-};
+      return <StaticRouterProvider router={router} context={result} />;
+    },
+  };
+});
 ```
 
-This configuration utilizes your source folder's `baseurl` from configuration
-files, ensuring correct path-based route serving.
+**Key points:**
 
-The `routes` import originates from generated code within your `lib`
-directory, explored in subsequent sections.
+- `clientRouter()` uses `createBrowserRouter` for in-browser navigation with full interactivity
+- `serverRouter({ url })` uses `createStaticHandler` and `createStaticRouter` to render pages on the server during SSR
+- Both use your source folder's `baseurl` configuration for correct path-based routing
+- The `routeStack` wraps generated routes inside your `App` component, establishing the layout hierarchy
+
+This pattern separates client and server routing concerns while sharing the same route definitions and App wrapper.
 
 ## 🎯 Application Entry
 
-The `entry/client.tsx` file serves as your application's DOM rendering entry
-point:
+The `entry/client.tsx` file serves as your application's DOM rendering entry point.
+It uses `renderFactory` function that orchestrates client-side rendering with SSR hydration support.
+
+It takes a callback that must return an object with two functions:
+- `clientRender()` - Renders the app from scratch in the browser (no SSR)
+- `serverRender()` - Hydrates server-rendered HTML to make it interactive
 
 ```tsx [entry/client.tsx]
 import { hydrateRoot, createRoot } from "react-dom/client";
 
-import { routes, shouldHydrate } from "@src/{react}/client";
-import App from "../App";
-import createRouter from "../router";
+import { renderFactory, createRoutes } from "_/front/entry/client";
+import App from "@/front/App";
+import createRouter from "@/front/router";
 
 const root = document.getElementById("app");
 
 if (root) {
-  const router = await createRouter(App, routes);
-  if (shouldHydrate) {
-    hydrateRoot(root, router);
-  } else {
-    createRoot(root).render(router);
-  }
+  const routes = createRoutes({ withPreload: true });
+  renderFactory(async () => {
+    const router = await createRouter(App, routes);
+    return {
+      clientRender() {
+        createRoot(root).render(router);
+      },
+      serverRender() {
+        hydrateRoot(root, router);
+      },
+    }
+  });
 } else {
   console.error("Root element not found!");
 }
 ```
 
-Your `index.html` file references this entry point, created during source
-folder initialization:
+**How it works:**
+
+During SSR builds, the generator embeds an `ssrMode` flag directly into your client bundle.
+This bundled flag provides definitive runtime detection - your client code has explicit knowledge of its rendering context.
+At page load, `renderFactory` reads this embedded flag for mode selection:
+
+- `ssrMode` set to true (SSR bundle) - `serverRender()` engages for hydrating pre-rendered markup
+- `ssrMode` set to false (client bundle) - `clientRender()` performs a fresh mount
+
+Both functions exist in your code; `renderFactory` chooses between them using the compile-time flag.
+
+Your `index.html` file references this entry point, created during source folder initialization:
 
 ```html
 <script type="module" src="./entry/client.tsx"></script>
 ```
 
-The `index.html` file serves as Vite's processing entry point. `Vite` begins
-from this HTML file, follows the script import to `entry/client.tsx`, and
-constructs your complete application graph from there.
+The `index.html` file serves as Vite's processing entry point.
+`Vite` begins from this HTML file, follows the script import to `entry/client.tsx`,
+and constructs your complete application graph from there.

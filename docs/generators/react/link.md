@@ -11,7 +11,7 @@ head:
         navigation, react routing safety
 ---
 
-The generator produces a `Link` component wrapping `React Router`'s native
+The generator produces a `Link` component wrapping React Router's native
 `Link` with compile-time route validation. This wrapper understands your
 complete route structure and parameters, delivering autocomplete and type
 checking throughout navigation code.
@@ -19,13 +19,16 @@ checking throughout navigation code.
 Access this component at `components/Link.tsx` within your source folder:
 
 ```tsx [components/Link.tsx]
-import { Link as RouterLink, type LinkProps as RouterLinkProps, useLocation } from "react-router";
+import {
+  type LinkProps as RouterLinkProps,
+  Link as RouterLink,
+  useLocation,
+} from "react-router";
 import type { ReactNode } from "react";
+import { stringify } from "@kosmojs/fetch";
 
-import { stringify } from "@admin/{fetch}/lib";
-import pageMap from "@admin/{pages}";
-import type { LinkProps } from "@admin/{react}/router";
-import { baseurl } from "@admin/config";
+import { type LinkProps, pageMap } from "_/front/router";
+import { baseurl } from "@/front/config";
 
 export default function Link(
   props: Omit<RouterLinkProps, "to"> & {
@@ -37,7 +40,7 @@ export default function Link(
   const { to, query, children, ...restProps } = props;
   const location = useLocation();
 
-  const href = (() => {
+  const href = () => {
     if (to) {
       const [key, ...params] = to;
       return pageMap[key]?.base(params as never, query);
@@ -47,10 +50,10 @@ export default function Link(
       "/",
     );
     return query ? [path, stringify(query)].join("?") : path;
-  })();
+  };
 
   return (
-    <RouterLink {...restProps} to={href}>
+    <RouterLink {...restProps} to={href()}>
       {children}
     </RouterLink>
   );
@@ -60,7 +63,7 @@ export default function Link(
 Implement type-safe navigation throughout your components:
 
 ```tsx [components/menu.tsx]
-import Link from "@front/components/Link";
+import Link from "@/front/components/Link";
 
 export default function Menu() {
   return (

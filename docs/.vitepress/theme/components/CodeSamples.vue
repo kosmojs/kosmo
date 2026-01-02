@@ -1,3 +1,11 @@
+<script setup>
+import ParamsValidation001 from './ParamsValidation001.md'
+import ParamsValidation002 from './ParamsValidation002.md'
+import PayloadValidation from './PayloadValidation.md'
+import ResponseValidation from './ResponseValidation.md'
+import GlobalMiddleware from './GlobalMiddleware.md'
+import OverrideMiddleware from './OverrideMiddleware.md'
+</script>
 <template>
   <div class="hero-sections">
     <div class="hero-block">
@@ -10,18 +18,16 @@
         </div>
         <a href="/validation/params" class="details-button">Details ➜</a>
       </div>
-      <div class="hero-image" @click="openLightbox('/ParamsValidation001.png', 'Simple params validation')">
-        <img src="/ParamsValidation001.png" alt="Simple params validation" loading="lazy" />
-        <div class="zoom-hint">🔍 Click to zoom</div>
+      <div>
+        <ParamsValidation001 />
       </div>
     </div>
 
     <div class="divider" />
 
     <div class="hero-block">
-      <div class="hero-image" @click="openLightbox('/ParamsValidation002.png', 'Refined params validation')">
-        <img src="/ParamsValidation002.png" alt="Refined params validation" loading="lazy" />
-        <div class="zoom-hint">🔍 Click to zoom</div>
+      <div>
+        <ParamsValidation002 />
       </div>
       <div class="hero-content">
         <div class="hero-text">
@@ -48,18 +54,16 @@
         </div>
         <a href="/validation/payload" class="details-button">Details ➜</a>
       </div>
-      <div class="hero-image" @click="openLightbox('/PayloadValidation.png', 'Payload validation')">
-        <img src="/PayloadValidation.png" alt="Payload validation" loading="lazy" />
-        <div class="zoom-hint">🔍 Click to zoom</div>
+      <div>
+        <PayloadValidation />
       </div>
     </div>
 
     <div class="divider" />
 
     <div class="hero-block">
-      <div class="hero-image" @click="openLightbox('/ResponseValidation.png', 'Response validation')">
-        <img src="/ResponseValidation.png" alt="Response validation" loading="lazy" />
-        <div class="zoom-hint">🔍 Click to zoom</div>
+      <div>
+        <ResponseValidation />
       </div>
       <div class="hero-content">
         <div class="hero-text">
@@ -90,18 +94,16 @@
         </div>
         <a href="/api-server/use-middleware/slot-composition" class="details-button">Details ➜</a>
       </div>
-      <div class="hero-image" @click="openLightbox('/GlobalMiddleware.png', 'Global Middleware')">
-        <img src="/GlobalMiddleware.png" alt="Global Middleware" loading="lazy" />
-        <div class="zoom-hint">🔍 Click to zoom</div>
+      <div>
+        <GlobalMiddleware />
       </div>
     </div>
 
     <div class="divider" />
 
     <div class="hero-block">
-      <div class="hero-image" @click="openLightbox('/OverrideGlobalMiddleware.png', 'Override Middleware')">
-        <img src="/OverrideGlobalMiddleware.png" alt="Override Middleware" loading="lazy" />
-        <div class="zoom-hint">🔍 Click to zoom</div>
+      <div>
+        <OverrideMiddleware />
       </div>
       <div class="hero-content">
         <div class="hero-text">
@@ -110,60 +112,15 @@
             Use the <code>slot</code> option in routes to override global middleware with the same slot name.
             Eg., for file upload routes, use a form body parser instead of the default JSON parser.
             <div class="text-hint">
-              Feel free to use any <code>Koa</code>-compatible middleware — not just those provided by <code>KosmoJS</code>.
+              Feel free to use any Koa middleware, not just those provided by <code>KosmoJS</code>.
             </div>
           </div>
         </div>
         <a href="/api-server/use-middleware/slot-composition" class="details-button">Details ➜</a>
       </div>
     </div>
-
-
-    <!-- Lightbox backdrop -->
-    <Transition name="fade">
-      <div v-if="lightboxOpen" class="lightbox-backdrop" @click="closeLightbox">
-        <div class="lightbox-content" @click="closeLightbox">
-          <img :src="lightboxImage" :alt="lightboxAlt" />
-          <div class="close-hint">⨯ Click to close</div>
-        </div>
-      </div>
-    </Transition>
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted, onUnmounted } from "vue"
-
-const lightboxOpen = ref(false)
-const lightboxImage = ref("")
-const lightboxAlt = ref("")
-
-const openLightbox = (imageSrc, altText) => {
-  lightboxImage.value = imageSrc
-  lightboxAlt.value = altText
-  lightboxOpen.value = true
-  document.body.style.overflow = "hidden"
-}
-
-const closeLightbox = () => {
-  lightboxOpen.value = false
-  document.body.style.overflow = ""
-}
-
-const handleEscape = (event) => {
-  if (event.key === "Escape" && lightboxOpen.value) {
-    closeLightbox()
-  }
-}
-
-onMounted(() => {
-  document.addEventListener("keydown", handleEscape)
-})
-
-onUnmounted(() => {
-  document.removeEventListener("keydown", handleEscape)
-})
-</script>
 
 <style scoped>
 .hero-sections {
@@ -233,16 +190,6 @@ onUnmounted(() => {
   background-color: var(--vp-button-brand-hover-bg);
 }
 
-.hero-image {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-}
 
 .text-hint {
   margin-top: 0.5rem;
@@ -256,16 +203,6 @@ onUnmounted(() => {
   color: var(--vp-c-text-3, #a0a0a0);
   opacity: 0.7;
   transition: opacity 0.2s ease;
-}
-
-.hero-image:hover .zoom-hint {
-  opacity: 1;
-  color: var(--vp-c-brand-1, #3451b2);
-}
-
-.hero-image img {
-  max-width: 100%;
-  height: auto;
 }
 
 .divider {

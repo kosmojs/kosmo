@@ -10,7 +10,7 @@ head:
 
 ### 💡 Vue Best Practices
 
-As you develop with `Vue` 3 and `KosmoJS`,
+As you develop with `Vue` and `KosmoJS`,
 these patterns help keep your project scalable and maintainable.
 
 ---
@@ -89,12 +89,7 @@ add **nested Suspense boundaries** inside the route component:
 #### 🌐 Understand Hydration Behavior with SSR
 
 During SSR, HTML is already rendered on the server.
-The client entry hydrates that markup using:
-
-```ts
-createSSRApp(App).mount("#app", true);
-```
+The client entry hydrates that markup using `createSSRApp`.
 
 Avoid directly manipulating the DOM before hydration completes -
 `Vue` must first attach event listeners without modifying the HTML structure.
-

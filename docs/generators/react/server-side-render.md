@@ -11,74 +11,27 @@ head:
         stream rendering react
 ---
 
-`React` source folders default to client-side rendering with
-Vite's development server and hot module replacement.
+`React` source folders default to client-side rendering with Vite's dev server and HMR.
 
-Adding the SSR generator introduces production-ready server rendering while preserving your familiar
-development experience.
-
-## 🎯 Client-Side Rendering by Default
-
-Source folder initialization creates an `entry/client.tsx` file that manages
-client-side rendering:
-
-```tsx [entry/client.tsx]
-import { hydrateRoot, createRoot } from "react-dom/client";
-
-import { routeStackBuilder, shouldHydrate } from "@src/{react}/client";
-import App from "../App";
-import createRouter from "../router";
-
-const root = document.getElementById("app");
-
-if (root) {
-  const routes = routeStackBuilder({ withPreload: true });
-  const router = await createRouter(App, routes);
-  if (shouldHydrate()) {
-    hydrateRoot(root, router);
-  } else {
-    createRoot(root).render(router);
-  }
-} else {
-  console.error("Root element not found!");
-}
-```
-
-The `shouldHydrate` flag determines the rendering approach. During
-development, it's `false` and the application renders with `createRoot`. In
-production SSR builds, it becomes `true` and `hydrateRoot` attaches
-interactivity to server-generated markup.
-
-This default configuration integrates seamlessly with Vite's development
-server, delivering instant hot module replacement and the complete modern
-development experience.
+Enabling the SSR generator introduces production-ready server rendering
+while preserving your familiar development experience.
 
 ## 🛠️ Adding SSR Support
 
-Install the SSR generator package:
+SSR is automatically enabled if you selected it during source folder creation.
 
-::: code-group
+If you didn't enable SSR initially (or want to add it to an existing folder),
+you can enable it manually by registering the generator in your source folder's `vite.config.ts`:
 
-```sh [pnpm]
-pnpm install -D @kosmojs/ssr-generator
-```
-
-```sh [npm]
-npm install -D @kosmojs/ssr-generator
-```
-
-```sh [yarn]
-yarn add -D @kosmojs/ssr-generator
-```
-:::
-
-Register the generator in your source folder's `vite.config.ts`:
 
 ```ts [vite.config.ts]
 import reactPlugin from "@vitejs/plugin-react";
 import devPlugin from "@kosmojs/dev";
-import reactGenerator from "@kosmojs/react-generator";
-import ssrGenerator from "@kosmojs/ssr-generator";
+import {
+  reactGenerator,
+  ssrGenerator, // [!code ++]
+} from "@kosmojs/generators";
+
 import defineConfig from "../vite.base";
 
 export default defineConfig(import.meta.dirname, {
@@ -86,9 +39,9 @@ export default defineConfig(import.meta.dirname, {
     reactPlugin(),
     devPlugin(apiurl, {
       generators: [
+        // ...
         reactGenerator(),
-        ssrGenerator(), // Add SSR generator
-        // other generators...
+        ssrGenerator(), // [!code ++]
       ],
     }),
   ],
@@ -97,62 +50,58 @@ export default defineConfig(import.meta.dirname, {
 
 ## 📄 Server Entry Implementation
 
-The SSR generator creates `entry/server.ts` with a default server rendering implementation:
+The SSR generator creates `entry/server.ts` with a default server rendering implementation.
+
+The `renderFactory` function on the server side takes a callback that returns an object with rendering methods:
+- `renderToString(url, { criticalCss })` - Default implementation that renders the entire page before sending it
+- `renderToStream(url, { criticalCss })` - Optional advanced implementation for streaming SSR with progressive rendering
+
+**Important:** Only `renderToString` is provided by default. If you need streaming SSR, you must implement `renderToStream` yourself. When both are provided, `renderToStream` takes precedence.
 
 ```ts [entry/server.ts]
 import { renderToString } from "react-dom/server";
 
-import { routeStackBuilder } from "@src/{react}/server";
-import App from "../App";
-import createRouter from "../router";
+import { renderFactory, createRoutes } from "_/front/entry/server";
+import App from "@/front/App";
+import createRouter from "@/front/router";
 
-const routes = routeStackBuilder({ withPreload: false });
+const routes = createRoutes({ withPreload: false });
 
-export default {
-  async factory(url) {
-    const router = await createRouter(App, routes, { url });
-    return {
-      async renderToString({ criticalCss }) {
-        const head = criticalCss
-          .map(({ text }) => `<style>${text}</style>`)
-          .join("\n");
-
-        const html = renderToString(router);
-
-        return { head, html };
-      },
-    };
-  },
-} satisfies import("@kosmojs/dev").SSRSetup;
+export default renderFactory(() => {
+  return {
+    async renderToString(url, { criticalCss }) {
+      const router = await createRouter(App, routes, { url });
+      const head = criticalCss
+        .map(({ text }) => `<style>${text}</style>`)
+        .join("\n");
+      const html = renderToString(router);
+      return { head, html };
+    },
+  };
+});
 ```
 
-The `factory` function receives the requested URL and returns an object
-with `renderToString`, `renderToStream`, or both.
+**How it works:**
 
-When both are present, `renderToStream` takes precedence.
+`renderToString` function receives:
+- `url` - The URL being requested for server rendering
+- `criticalCss` - Array of critical CSS extracted from your components
 
-### Static Asset Handling
+It must return:
+- `head` - HTML to inject into `<head>` (typically critical CSS)
+- `html` - The rendered application markup
 
-By default, the SSR server loads client assets into memory at startup and serves them on request.
+The default `renderToString` implementation renders the entire page synchronously
+and returns it as a complete HTML string.
 
-You can also export `serveStaticAssets` to control this behavior:
-
-```ts [entry/server.ts]
-export default {
-  serveStaticAssets: false,
-  async factory(url) {
-    // ...
-  },
-} satisfies import("@kosmojs/dev").SSRSetup;
-```
-
-When set to `false`, static assets won't be loaded and requests for them will return `404 Not Found`.
-
-This is recommended when running behind a reverse proxy (like Nginx) that handles static file serving.
+For more advanced scenarios like faster time-to-first-byte or handling large pages,
+you can implement `renderToStream` to send content progressively (more on that later).
 
 ## 🎛️ Render Factory Arguments
 
-Both `renderToString` and `renderToStream` receive the same argument object:
+Both `renderToString` and `renderToStream` receive the same arguments:
+  - the current request URL
+  - the `SSROptions` object
 
 ```ts
 type SSROptions = {
@@ -202,10 +151,10 @@ This allows renderers to choose between high-level HTML return (`renderToString`
 The `renderToString` approach offers simplicity and works well for most SSR scenarios:
 
 ```ts
-renderToString(SSROptions): SSRStringReturn
+renderToString(url, SSROptions): SSRStringReturn
 ```
 
-It receives `SSROptions` as first argument and returns a `SSRStringReturn` object:
+It takes URL and `SSROptions` as arguments and returns a `SSRStringReturn` object:
 
 ```ts
 type SSRStringReturn = {
@@ -224,56 +173,57 @@ then uses React's `renderToString` to generate the complete HTML in a single pas
 
 For advanced use cases requiring progressive HTML delivery, implement the `renderToStream` method.
 
-It receives `SSROptions` as well and supposed to implement app-specific streaming strategy.
+It also takes the URL and `SSROptions` as arguments and supposed to implement app-specific streaming strategy.
 
 A typical streaming pattern divides the template and progressively writes chunks:
 
 ```ts [entry/server.ts]
 import { renderToPipeableStream } from "react-dom/server";
 
-import { routes } from "@src/{react}/server";
-import App from "../App";
-import createRouter from "../router";
+import { renderFactory, createRoutes } from "_/front/entry/server";
+import App from "@/front/App";
+import createRouter from "@/front/router";
 
-export default {
-  async factory(url) {
-    const router = await createRouter(App, routes, { url });
-    return {
-      renderToStream({ response, template, criticalCss }) {
-        const head = criticalCss
-          .map(({ text }) => `<style>${text}</style>`)
-          .join("\n");
+const routes = createRoutes({ withPreload: false });
 
-        // Divide template at application insertion point
-        const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
+export default renderFactory(() => {
+  return {
+    async renderToStream(url, { response, template, criticalCss }) {
+      const router = await createRouter(App, routes, { url });
 
-        // Send initial HTML with head content
-        response.write(htmlStart.replace("<!--app-head-->", head));
+      const head = criticalCss
+        .map(({ text }) => `<style>${text}</style>`)
+        .join("\n");
 
-        // Create pipeable stream
-        const { pipe } = renderToPipeableStream(
-          router,
-          {
-            onShellReady() {
-              // Stream application HTML
-              pipe(response);
-            },
-            onShellError(error) {
-              console.error("Shell error:", error);
-              response.statusCode = 500;
-              response.end();
-            },
-            onAllReady() {
-              // Append closing HTML
-              response.write(htmlEnd);
-              response.end(); // Essential: Close the response
-            },
-          }
-        );
-      },
-    };
-  },
-} satisfies import("@kosmojs/dev").SSRSetup;
+      // Divide template at application insertion point
+      const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
+
+      // Send initial HTML with head content
+      response.write(htmlStart.replace("<!--app-head-->", head));
+
+      // Create pipeable stream
+      const { pipe } = renderToPipeableStream(
+        router,
+        {
+          onShellReady() {
+            // Stream application HTML
+            pipe(response);
+          },
+          onShellError(error) {
+            console.error("Shell error:", error);
+            response.statusCode = 500;
+            response.end();
+          },
+          onAllReady() {
+            // Append closing HTML
+            response.write(htmlEnd);
+            response.end(); // Essential: Close the response
+          },
+        }
+      );
+    },
+  };
+});
 ```
 
 **Essential:** Always invoke `response.end()` after streaming completes.
@@ -282,6 +232,24 @@ Omitting this call leaves clients waiting indefinitely for additional data.
 React's `renderToPipeableStream` provides sophisticated streaming with
 suspense boundary support, but implementation details remain your choice
 based on application requirements.
+
+## 📦 Static Asset Handling
+
+By default, the SSR server loads client assets into memory at startup and serves them on request.
+
+You can control this behavior via `serveStaticAssets` option:
+
+```ts [entry/server.ts]
+export default renderFactory(() => {
+  return {
+    serveStaticAssets: false, // [!code ++]
+    // ...
+  };
+});
+```
+
+When set to `false`, static assets won't be loaded and requests for them will return `404 Not Found`.
+This is recommended when running behind a reverse proxy (like Nginx) that handles static file serving.
 
 ## 🏗️ Production Build Process
 
@@ -302,28 +270,27 @@ yarn build
 ```
 :::
 
-This produces an SSR-ready bundle at `dist/SOURCE_FOLDER/ssr/` containing
-`index.js` for production execution.
+This produces an SSR-ready bundle at `dist/SOURCE_FOLDER/ssr/` containing `server.js` for production execution.
 
 ## 🧪 Local Testing Before Deployment
 
-Test your SSR bundle locally before production deployment. The server
-accepts port or socket configuration:
+Test your SSR bundle locally before production deployment.
+The server accepts port or socket configuration:
 
 **Port-based execution:**
 
 ```sh
-node dist/@front/ssr -p 4000
+node dist/front/ssr -p 4000
 # or
-node dist/@front/ssr --port 4000
+node dist/front/ssr --port 4000
 ```
 
 **Socket-based execution:**
 
 ```sh
-node dist/@front/ssr -s /tmp/app.sock
+node dist/front/ssr -s /tmp/app.sock
 # or
-node dist/@front/ssr --sock /tmp/app.sock
+node dist/front/ssr --sock /tmp/app.sock
 ```
 
 Navigate to `http://localhost:4000` to verify proper server-side rendering.
@@ -416,4 +383,3 @@ optimization crucial.
 require proper serialization for hydration. `React` handles standard cases
 automatically, but custom state management or non-serializable data needs
 special handling.
-

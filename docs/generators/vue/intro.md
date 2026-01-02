@@ -22,41 +22,29 @@ naturally into how modern `Vue` applications are built today.
 
 ## 🛠 Installation and Setup
 
-Add the `Vue` generator as a development dependency - it only runs during local
-development and build-time code generation:
+When creating a source folder, select `Vue` as framework in interactive mode,
+or use <code style="white-space: nowrap;">--framework=vue</code> in command-line mode.
 
-::: code-group
-
-```sh [pnpm]
-pnpm install -D @kosmojs/vue-generator
-```
-
-```sh [npm]
-npm install -D @kosmojs/vue-generator
-```
-
-```sh [yarn]
-yarn add -D @kosmojs/vue-generator
-```
-
-:::
-
-Next, enable the generator inside your source folder's `vite.config.ts`.
+For folders created without a framework, you can enable `Vue` within your `vite.config.ts`.
 
 ```ts [vite.config.ts]
-import vue from "@vitejs/plugin-vue";
+import vuePlugin from "@vitejs/plugin-vue";
 import devPlugin from "@kosmojs/dev";
-import vueGenerator from "@kosmojs/vue-generator";
+import {
+  //...
+  vueGenerator, // [!code ++]
+} from "@kosmojs/generators";
+
 import defineConfig from "../vite.base";
 
 export default defineConfig(import.meta.dirname, {
   // ...other settings
   plugins: [
-    vue(),
+    vuePlugin(),
     devPlugin(apiurl, {
       generators: [
-        vueGenerator(),
-        // other generators ...
+        // ...
+        vueGenerator(), // [!code ++]
       ],
     }),
   ],
@@ -89,3 +77,35 @@ shared conventions across the entire monorepo.
 In short: every source folder is a cohesive `Vue` app - aligned to the same
 structural principles, but independent where it matters most.
 
+## 💡 TypeScript Configuration
+
+While Vue developers don't always use JSX, Vue fully supports JSX/TSX
+for developers who prefer it or need it for specific use cases.
+
+`KosmoJS` provides a Vue-specific TypeScript configuration even when you're not using JSX.
+When mixing frameworks, each folder needs isolated TypeScript configuration:
+
+**Vue with JSX:**
+```json
+"compilerOptions": { "jsxImportSource": "vue" }
+```
+
+> React requires `"jsxImportSource": "react"` and SolidJS requires `"jsxImportSource": "solid-js"`.
+
+All frameworks share `jsx: "preserve"` (Vite handles JSX transformation),
+but differing `jsxImportSource` values create type conflicts when multiple frameworks coexist.
+
+**The Solution:** Every source folder receives its own TypeScript configuration:
+
+```json [src/admin/tsconfig.json]
+{
+  "extends": "@kosmojs/config/tsconfig.vue.json"
+}
+```
+
+Framework-specific config sets proper `jsxImportSource` as well as path mappings
+and any core settings provided by `tsconfig.vite.json` at the root of your app.
+
+> <i>**Important:** The framework configs don't inherit from your root config!</i><br />
+If you add custom TypeScript settings to your project's root `tsconfig.json`
+and need them in specific source folders, you'll need to manually add those settings to the folder.

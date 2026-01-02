@@ -1,10 +1,12 @@
 ---
 title: Validation Performance
-description: Understand KosmoJS validation performance with TypeScript compiler analysis, worker thread generation, intelligent caching, and background processing that doesn't impact development workflow.
+description: Understand KosmoJS validation performance with TypeScript compiler analysis,
+    worker thread generation, intelligent caching, and background processing that doesn't impact development workflow.
 head:
   - - meta
     - name: keywords
-      content: validation performance, type analysis, worker threads, caching, generation time, typescript compiler, background processing, ts-morph, tfusion
+      content: validation performance, type analysis, worker threads, caching, generation time,
+        typescript compiler, background processing, ts-morph, tfusion
 ---
 
 `KosmoJS`'s type-to-schema conversion uses `TypeScript`'s compiler API
@@ -100,9 +102,8 @@ machine time is cheaper and more reliable than human time.
 As the `TypeScript` ecosystem continues evolving,
 particularly with developments around native `TypeScript` implementations
 that tools like [ts-morph](https://ts-morph.com/)
-and [tfusion](https://github.com/sleewoo/tfusion) might leverage,
+and [TFusion](https://github.com/sleewoo/tfusion) might leverage,
 generation performance may improve further.
 
 The current performance characteristics already support productive development,
 and future improvements would be welcomed bonuses rather than necessary fixes.
-

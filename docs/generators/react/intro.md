@@ -12,7 +12,7 @@ head:
 ---
 
 `React` generator establishes a bridge between directory-based routing
-and `React Router`, transforming your page components into navigable routes
+and React Router, transforming your page components into navigable routes
 automatically. This integration delivers type safety across navigation points
 while implementing efficient code-splitting strategies.
 
@@ -20,32 +20,23 @@ The generator handles route configuration behind the scenes, produces
 navigation utilities with compile-time type checking, and provides helpers
 designed around React's Suspense mechanism and modern data loading approaches.
 
-## 🛠️ Package Installation
+## 🛠️ Enable React Generator
 
-Add the `React` generator to your project's development dependencies.
-The `-D` flag ensures this tooling stays out of production bundles:
+The `React` generator is automatically enabled when you create a source folder and select `React` as your framework.
 
-::: code-group
+If you created your source folder without `React` (or want to add it to an existing folder),
+you can enable it manually by importing it and adding it to the generators list
+in your source folder's `vite.config.ts`:
 
-```sh [pnpm]
-pnpm install -D @kosmojs/react-generator
-```
-
-```sh [npm]
-npm install -D @kosmojs/react-generator
-```
-
-```sh [yarn]
-yarn add -D @kosmojs/react-generator
-```
-:::
-
-Configure the generator within your source folder's `vite.config.ts`:
 
 ```ts [vite.config.ts]
 import reactPlugin from "@vitejs/plugin-react";
 import devPlugin from "@kosmojs/dev";
-import reactGenerator from "@kosmojs/react-generator";
+import {
+  // ...
+  reactGenerator, // [!code ++]
+} from "@kosmojs/generators";
+
 import defineConfig from "../vite.base";
 
 export default defineConfig(import.meta.dirname, {
@@ -54,8 +45,8 @@ export default defineConfig(import.meta.dirname, {
     reactPlugin(),
     devPlugin(apiurl, {
       generators: [
-        reactGenerator(),
-        // other generators ...
+        // ...
+        reactGenerator(), // [!code ++]
       ],
     }),
   ],
@@ -83,3 +74,37 @@ navigation types, preserving architectural boundaries.
 
 Despite operating in separate namespaces, all applications share `KosmoJS`'s
 foundational organizational patterns, ensuring consistency where it matters.
+
+## 💡 TypeScript Configuration
+
+Mixing frameworks across source folders is powerful, but requires careful TypeScript configuration.
+Reason - different frameworks have different JSX type requirements:
+
+**React requires:**
+```json
+"compilerOptions": { "jsxImportSource": "react" }
+```
+
+> SolidJS requires `"jsxImportSource": "solid-js"` and Vue requires `"jsxImportSource": "vue"`, if using JSX.
+
+All frameworks use `jsx: "preserve"`
+(`KosmoJS` doesn't use TypeScript to transform JSX - that's handled by Vite),
+but the `jsxImportSource` setting varies, causing JSX component type conflicts.
+
+**The Solution:** Each source folder uses the appropriate framework config:
+
+```json [src/admin/tsconfig.json]
+{
+  "extends": "@kosmojs/config/tsconfig.react.json"
+}
+```
+
+Framework configs supply the correct `jsxImportSource` as well as path mappings
+and any core settings provided by `tsconfig.vite.json` at the root of your app.
+
+> <i>**Important:** The framework configs don't inherit from your root config!</i><br />
+If you add custom TypeScript settings to your project's root `tsconfig.json`
+and need them in specific source folders, you'll need to manually add those settings to the folder.
+
+Per-folder TypeScript configuration guarantees correct JSX typing for each framework.
+This keeps frameworks isolated - no type conflicts, no cross-contamination.

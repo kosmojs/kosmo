@@ -5,7 +5,8 @@ description: Override default generated Vue page components using flexible patte
 head:
   - - meta
     - name: keywords
-      content: vue custom templates, scaffold vue pages, route patterns, page templates, kosmojs vue scaffolding, index.vue template
+      content: vue custom templates, scaffold vue pages, route patterns,
+        page templates, kosmojs vue scaffolding, index.vue template
 ---
 
 The `Vue` generator allows you to override its default page template for specific
@@ -21,9 +22,13 @@ any part of the app requiring a consistent structure from the start.
 Pass custom templates into the generator via `vite.config.ts`:
 
 ```ts [vite.config.ts]
-import vue from "@vitejs/plugin-vue";
+import vuePlugin from "@vitejs/plugin-vue";
 import devPlugin from "@kosmojs/dev";
-import vueGenerator from "@kosmojs/vue-generator";
+import {
+  // ...
+  vueGenerator,
+} from "@kosmojs/generators";
+
 import defineConfig from "../vite.base";
 
 const landingTemplate = `
@@ -41,11 +46,12 @@ const landingTemplate = `
 
 export default defineConfig(import.meta.dirname, {
   plugins: [
-    vue(),
+    vuePlugin(),
     devPlugin(apiurl, {
       generators: [
+        // ...
         vueGenerator({
-          templates: {
+          templates: { // [!code hl:4]
             "landing/*": landingTemplate,
             "marketing/**/*": landingTemplate,
           },
@@ -56,8 +62,7 @@ export default defineConfig(import.meta.dirname, {
 });
 ```
 
-The keys in `templates` are simply **glob patterns** - not a special syntax
-tied to `Vue Router`.
+The keys in `templates` are simply **glob patterns**.
 
 ## 🎯 Pattern Matching
 
@@ -250,4 +255,3 @@ content.
 
 Custom templates let you embed branding, layouts, and editorial style early -
 so every new page begins with a strong foundation tailored to your application.
-

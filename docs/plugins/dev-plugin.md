@@ -1,13 +1,15 @@
 ---
 title: Dev Plugin
-description: DevPlugin coordinates code generation with configurable generators for API routes, fetch clients, validation, and framework integration, plus formatters for code style consistency.
+description: DevPlugin coordinates code generation with configurable generators for API routes,
+    fetch clients, validation, and framework integration, plus formatters for code style consistency.
 head:
   - - meta
     - name: keywords
-      content: dev plugin, code generators, api generator, fetch generator, typebox generator, biome formatter, code formatting, vite generators
+      content: dev plugin, code generators, api generator, fetch generator,
+        typebox generator, biome formatter, code formatting, vite generators
 ---
 
-### ⚙️ The DevPlugin
+### The DevPlugin
 
 The DevPlugin is the default export from `@kosmojs/dev` and accepts two arguments:
 
@@ -29,28 +31,30 @@ Common generators include:
 - `apiGenerator()` - Generates route helpers and type definitions for API endpoints
 - `fetchGenerator()` - Generates typed fetch clients for consuming your API
 - `typeboxGenerator()` - Generates runtime validation schemas from `TypeScript` types
-- `solidGenerator()` - Generates SolidJS routing and component scaffolding
 
-You configure generators by adding them to the array:
+You configure generators by adding them to the `generators` array:
 
 ```ts [vite.config.ts]
-import devPlugin, {
+import devPlugin from "@kosmojs/dev";
+import {
   apiGenerator,
-  fetchGenerator
-} from "@kosmojs/dev";
-import typeboxGenerator from "@kosmojs/typebox-generator";
-import solidGenerator from "@kosmojs/solid-generator";
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/generators";
 
-plugins: [
-  devPlugin(apiurl, {
-    generators: [
-      apiGenerator(),
-      fetchGenerator(),
-      typeboxGenerator(),
-      solidGenerator(),
-    ],
-  }),
-]
+import defineConfig from "../../vite.base";
+
+export default defineConfig(import.meta.dirname, {
+  plugins: [
+    devPlugin(apiurl, {
+      generators: [
+        apiGenerator(),
+        fetchGenerator(),
+        typeboxGenerator(),
+      ],
+    }),
+  ],
+});
 ```
 
 The order doesn't typically matter -
@@ -81,7 +85,7 @@ export default defineConfig(import.meta.dirname, {
     devPlugin(apiurl, {
       generators: [apiGenerator(), fetchGenerator()],
       formatters: [
-        // add your formatter(s) here
+        // add your formatter(s) here // [!code hl:2]
         biomeFormatter(biomeConfig),
       ],
     }),
@@ -95,4 +99,3 @@ and applies it to all generated code before writing files.
 You can use other formatters like Prettier by implementing the formatter interface.
 Formatters are optional - if you don't provide any,
 code is generated with default formatting.
-

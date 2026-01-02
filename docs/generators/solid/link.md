@@ -20,14 +20,14 @@ The component is available at `components/Link.tsx` in your source folder:
 ```tsx [components/Link.tsx]
 import { A, type AnchorProps, useLocation } from "@solidjs/router";
 import { type JSXElement, splitProps } from "solid-js";
+import { stringify } from "@kosmojs/fetch";
 
-import { stringify, unwrap } from "@front/{fetch}/lib";
-import pageMap from "@front/{pages}";
-import type { LinkProps } from "@front/{solid}/router";
-import { baseurl } from "@front/config";
+import { unwrap } from "_/front/unwrap";
+import { type LinkProps, pageMap } from "_/front/router";
+import { baseurl } from "@/front/config";
 
 export default function Link(
-  props: AnchorProps & {
+  props: Omit<AnchorProps, "href"> & {
     to?: LinkProps;
     query?: Record<string | number, unknown>;
     children: JSXElement;
@@ -62,7 +62,7 @@ export default function Link(
 Using Link in your components provides type-safe navigation:
 
 ```tsx [components/menu.tsx]
-import Link from "@front/components/Link";
+import Link from "@/front/components/Link";
 
 export default function Menu() {
   return (
@@ -124,4 +124,3 @@ excluding `to` which is replaced with the typed version.
 
 This means you can use `activeClass`, `end`,
 and other router-specific props alongside your type-safe navigation.
-

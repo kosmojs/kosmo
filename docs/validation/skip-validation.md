@@ -1,10 +1,12 @@
 ---
 title: Skip Runtime Validation
-description: Use @skip-validation JSDoc comment to keep TypeScript type checking without runtime validation for gradual adoption, performance optimization, or trusted internal endpoints.
+description: Use @skip-validation JSDoc comment to keep TypeScript type checking
+    without runtime validation for gradual adoption, performance optimization, or trusted internal endpoints.
 head:
   - - meta
     - name: keywords
-      content: skip validation, opt-out validation, jsdoc comments, gradual adoption, performance optimization, type checking only
+      content: skip validation, opt-out validation, jsdoc comments,
+        gradual adoption, performance optimization, type checking only
 ---
 
 Sometimes you might want `TypeScript` type checking without runtime validation.
@@ -21,13 +23,13 @@ When you add this comment to a type parameter,
 ```ts [api/example/index.ts]
 export default defineRoute(({ POST }) => [
   POST<
-    /** @skip-validation */
-    Payload<User>,
-    User
+    /** @skip-validation */ // [!code hl]
+    Payload<User>, // payload won't be validated at runtime
+    User // still, response validation remains active
   >(async (ctx) => {
     // ctx.payload has the Payload<User> type for TypeScript
-    // but no runtime validation occurs on the incoming payload
-    // ctx.body is still validated as User at runtime
+    // but no runtime validation occurs on the incoming payload.
+    // ctx.body is still validated as User at runtime! // [!code hl]
   }),
 ]);
 ```
@@ -47,4 +49,3 @@ Skipping their validation would create ambiguity about which routes should handl
 Use the skip comment judiciously. Runtime validation is a powerful tool
 for ensuring data correctness and catching bugs early.
 Skipping validation means giving up these benefits, so you should have a clear reason for doing so.
-

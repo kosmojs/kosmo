@@ -5,7 +5,8 @@ description: Understanding why directory-based routing scales better than file-b
 head:
   - - meta
     - name: keywords
-      content: directory routing benefits, file-based routing, routing comparison, scalability, code organization, folder structure, routing patterns
+      content: directory routing benefits, file-based routing, routing comparison,
+        scalability, code organization, folder structure, routing patterns
 ---
 
 At first glance, directory-based routing might seem more verbose compared to file-based routing systems.
@@ -80,7 +81,7 @@ Yes, directory-based routing is slightly more verbose upfront.
 You create a folder even when you only have one file inside it.
 But this small initial cost pays enormous dividends:
 
-- Six months later, you can navigate the codebase instantly
+- N months later, you can navigate the codebase instantly
 - New team members understand the structure immediately
 - Refactoring is safer because related code is physically grouped
 - The file system structure serves as living documentation
@@ -88,4 +89,3 @@ But this small initial cost pays enormous dividends:
 It's one of those "trust the process" patterns where the benefit isn't obvious until your application grows.
 But once you've experienced trying to maintain a large file-based routing system,
 you'll appreciate why directory-based routing enforces this structure from the start.
-

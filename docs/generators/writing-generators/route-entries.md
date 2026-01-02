@@ -1,10 +1,12 @@
 ---
 title: Route Entry Structure
-description: Understand RouteResolverEntry types including ApiRoute and PageRoute properties, PathToken structure, parameter metadata, and type information for generator development.
+description: Understand RouteResolverEntry types including ApiRoute and PageRoute properties,
+    PathToken structure, parameter metadata, and type information for generator development.
 head:
   - - meta
     - name: keywords
-      content: route entries, ApiRoute, PageRoute, PathToken, route parameters, type metadata, route structure, parameter schema
+      content: route entries, ApiRoute, PageRoute, PathToken, route parameters,
+        type metadata, route structure, parameter schema
 ---
 
 ### RouteResolverEntry
@@ -23,7 +25,9 @@ Check the `kind` property to determine which type you're dealing with.
 
 Both `ApiRoute` and `PageRoute` extend `RouteEntry` with these properties:
 
-**name** - Route identifier (e.g., "users/[id]")
+**id** - Unique identifier (e.g., "users_id_67567456")
+
+**name** - Route name (e.g., "users/[id]")
 
 **folder** - Either "api" or "pages", indicating which directory the route is in
 
@@ -32,10 +36,6 @@ Both `ApiRoute` and `PageRoute` extend `RouteEntry` with these properties:
 **fileFullpath** - Absolute path to the route file
 
 **pathTokens** - Array of path segments with parameter information
-
-**importName** - Generated identifier for importing this route
-
-**importFile** - Path used in import statements
 
 ### PathToken Structure
 
@@ -89,5 +89,3 @@ Page routes have simpler parameter information:
 
 **params** - Route parameter schema:
 - `schema` - Array of parameter tokens (subset of `PathToken` containing only dynamic segments)
-
-

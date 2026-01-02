@@ -6,7 +6,8 @@ description: Explore KosmoJS features including multiple source folders,
 head:
   - - meta
     - name: keywords
-      content: typescript validation, vite multi-app, type-safe routing, fetch client generator, openapi 3.1, solidjs vite, react vite, koa middleware, runtime type checking, typescript api
+      content: typescript validation, vite multi-app, type-safe routing, fetch client generator,
+        openapi 3.1, solidjs vite, react vite, koa middleware, runtime type checking, typescript api
 ---
 
 `KosmoJS` brings type-safe structure to full-stack development -
@@ -107,7 +108,7 @@ Define your types once in `TypeScript` and `KosmoJS` generates runtime validator
 // Define types once
 export default defineRoute(({ POST }) => [
   POST<{
-    email: TRefine<string, { format: "email" }>;
+    email: TRefine<string, { format: "email" }>; // [!code hl:3]
     age: TRefine<number, { minimum: 18, maximum: 120 }>;
     name: TRefine<string, { minLength: 1, maxLength: 100 }>;
   }>(async (ctx) => {
@@ -122,6 +123,12 @@ Responses can be validated as well before sending to clients,
 catching bugs where handlers return incomplete or malformed data:
 
 ```ts
+type Payload = {
+  email: TRefine<string, { format: "email" }>;
+  age: TRefine<number, { minimum: 18, maximum: 120 }>;
+  name: TRefine<string, { minLength: 1, maxLength: 100 }>;
+}
+
 type User = {
   id: number;
   email: string;
@@ -129,7 +136,10 @@ type User = {
 };
 
 export default defineRoute(({ GET }) => [
-  GET<never, User>(async (ctx) => {
+  GET<
+    Payload, // payload schema // [!code hl:2]
+    User // response schema
+  >(async (ctx) => {
     const user = await fetchUserFromDatabase();
     // ctx.body is validated as User before sending
     ctx.body = user;
@@ -139,12 +149,14 @@ export default defineRoute(({ GET }) => [
 ]);
 ```
 
-Also route parameters like `/users/[id]` are validated according to their refined types:
+Also route parameters like `/users/[id]` are validated according to their types:
 
 ```ts
-defineRoute<[TRefine<number, { minimum: 1 }>]>(({ GET }) => [
+defineRoute<[
+  number // validate id as number // [!code hl]
+]>(({ GET }) => [
   GET(async (ctx) => {
-    // ctx.typedParams.id is guaranteed to be a positive number
+    // ctx.typedParams.id is guaranteed to be a number
   }),
 ]);
 ```
@@ -179,7 +191,7 @@ For every API route you define, `KosmoJS` generates:
 **1. Typed fetch clients:**
 
 ```ts
-import useFetch from "@front/{api}/users/[id]/fetch";
+import useFetch from "_/front/fetch/users/[id]";
 
 // Fully typed, validates before making request
 const user = await useFetch.GET([123]);
@@ -296,4 +308,3 @@ You're not learning "the `KosmoJS` way" - you're learning industry-standard tool
 <div class="text-center">
   <LinkButton href="/start">Get Started</LinkButton>
 </div>
-

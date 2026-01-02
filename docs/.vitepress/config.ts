@@ -9,6 +9,13 @@ const icons = {
   gear: "\u2699\uFE0F",
 };
 
+const redirects = [
+  [
+    "api-server/use-middleware/route-level-middleware.md",
+    "api-server/use-middleware/middlewrappers.html",
+  ],
+];
+
 export default defineConfig({
   lang: "en-US",
   title: "KosmoJS",
@@ -18,14 +25,29 @@ export default defineConfig({
   // Force .html on all URLs
   cleanUrls: false,
 
-  // mark .html URLs as canonical
   transformPageData(pageData) {
-    const canonicalUrl = `https://kosmojs.dev/${pageData.relativePath.replace(/\.md$/, ".html")}`;
     pageData.frontmatter.head ??= [];
+
+    // mark .html URLs as canonical
     pageData.frontmatter.head.push([
       "link",
-      { rel: "canonical", href: canonicalUrl },
+      {
+        rel: "canonical",
+        href: `https://kosmojs.dev/${pageData.relativePath.replace(/\.md$/, ".html")}`,
+      },
     ]);
+
+    const redirect = redirects.find(([old]) => old === pageData.relativePath);
+
+    if (redirect) {
+      pageData.frontmatter.head.push(
+        [
+          "meta",
+          { "http-equiv": "refresh", content: `0; url=/${redirect[1]}` },
+        ],
+        ["meta", { name: "robots", content: "noindex" }],
+      );
+    }
   },
 
   head: [
@@ -285,10 +307,6 @@ export default defineConfig({
               link: "/generators/writing-generators/factory",
             },
             {
-              text: "👀 Watch Handler",
-              link: "/generators/writing-generators/watch-handler",
-            },
-            {
               text: "🔄 Incremental Updates",
               link: "/generators/writing-generators/incremental-updates",
             },
@@ -297,16 +315,8 @@ export default defineConfig({
               link: "/generators/writing-generators/route-entries",
             },
             {
-              text: "📝 Formatters",
-              link: "/generators/writing-generators/formatters",
-            },
-            {
               text: "🧭 Path Resolver",
               link: "/generators/writing-generators/path-resolver",
-            },
-            {
-              text: "📦 Example",
-              link: "/generators/writing-generators/example",
             },
             {
               text: "💡 Best Practices",
@@ -456,8 +466,8 @@ export default defineConfig({
                   link: "/api-server/use-middleware/slot-composition",
                 },
                 {
-                  text: "🔹 Route Level Middleware",
-                  docFooterText: "🔹 Route Level Middleware",
+                  text: "🔹 Middlewrappers",
+                  docFooterText: "🔹 Middlewrappers",
                   link: "/api-server/use-middleware/route-level-middleware",
                 },
               ],

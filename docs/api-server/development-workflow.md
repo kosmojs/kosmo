@@ -37,10 +37,10 @@ pnpm dev
 Run the dev server for a specific source folder:
 
 ```sh
-pnpm dev @front
+pnpm dev front
 ```
 
-Replace `@front` with your source folder name (`@admin`, `@marketing`, etc.).
+Replace `front` with your source folder name (`admin`, `app`, etc.).
 
 The dev server starts on the port configured in your source folder's `vite.config.ts` (default: 4000).
 
@@ -149,11 +149,11 @@ This pattern prevents database connection exhaustion during active development w
 During development, you may want to inspect which routes are being registered,
 what middleware applies to them, and which handlers they use.
 
-`KosmoJS` provides debugging information for every route through the `routeStackBuilder`.
+`KosmoJS` provides debugging information for every route through the `createRoutes`.
 
 ### Debug Information
 
-Each route returned by `routeStackBuilder` includes a `debug` property with formatted output:
+Each route returned by `createRoutes` includes a `debug` property with formatted output:
 
 ```ts
 export type RouterRoute = {
@@ -174,36 +174,34 @@ export type RouterRoute = {
 
 ### Inspecting Routes
 
-The `routeStackBuilder` is lightweight and can be called anywhere without adding overhead -
+The `createRoutes` is lightweight and can be called anywhere without adding overhead -
 import it wherever you need route information.
 
-**The easiest way** - modify the default `@src/api/router.ts` by adding debugging.
+**The easiest way** - modify the default `api/router.ts` by adding debugging.
 
 You can add it directly and remember to remove it before production builds,
 or read `process.env.DEBUG` to display only when needed:
 
 ```ts [api/router.ts]
-import { routeStackBuilder } from "@src/{api}";
-import createRouter from "@/core/api/router";
-
-const router = createRouter();
+import { createRoutes, routerFactory } from "_/front/api";
 
 const DEBUG = // [!code ++:3]
   process.env.DEBUG?.match(/(?<=\bapi(?:\+[^+]+)*\+)[^+]+/g) ||
   /\bapi\b/i.test(process.env.DEBUG ?? "");
 
-for (const { name, path, methods, middleware, debug } of routeStackBuilder()) {
-  if (DEBUG === true) { // [!code ++:7]
-    // Debug all routes when DEBUG=api
-    console.log(debug.full);
-  } else if (Array.isArray(DEBUG) && DEBUG.some((e) => name.includes(e))) {
-    // Debug specific route when DEBUG=api+a+b+c
-    console.log(debug.full);
+export default routerFactory((router) => {
+  for (const { name, path, methods, middleware, debug } of createRoutes()) {
+    if (DEBUG === true) { // [!code ++:7]
+      // Debug all routes when DEBUG=api
+      console.log(debug.full);
+    } else if (Array.isArray(DEBUG) && DEBUG.some((e) => name.includes(e))) {
+      // Debug specific route when DEBUG=api+a+b+c
+      console.log(debug.full);
+    }
+    router.register(path, methods, middleware, { name });
   }
-  router.register(path, methods, middleware, { name });
-}
-
-export default router;
+  return router;
+});
 ```
 
 This way you can run:
@@ -214,10 +212,10 @@ This way you can run:
 Or call it from anywhere else in your codebase - a debugging script, test file, or development utility:
 
 ```ts
-import { routeStackBuilder } from "@src/{api}";
+import { createRoutes } from "_/front/api";
 
 // Inspect routes from anywhere
-const routes = routeStackBuilder();
+const routes = createRoutes();
 routes.forEach(route => {
   console.log(route.debug.headline);
 });

@@ -1,10 +1,12 @@
 ---
 title: Validation Naming Conventions
-description: Avoid TypeScript built-in type names like Event, Response, Request, Error when defining types for validation. Use suffix T or prefix T conventions to prevent runtime validation failures.
+description: Avoid TypeScript built-in type names when defining types for validation.
+    Use suffix T or prefix T conventions to prevent runtime validation failures.
 head:
   - - meta
     - name: keywords
-      content: naming conventions, type naming, built-in types, naming conflicts, EventT, ResponseT, validation types, typescript conventions
+      content: naming conventions, type naming, built-in types, naming conflicts,
+        EventT, ResponseT, validation types, typescript conventions
 ---
 
 When defining types that will be used for runtime validation,
@@ -103,24 +105,23 @@ Choose one and use it consistently throughout your project.
 ## 🔍 Complete Reference
 
 For a comprehensive list of all built-in types to avoid,
-check the [tfusion library](https://github.com/sleewoo/tfusion/blob/main/src/builtins.ts)
+check the [TFusion library](https://github.com/sleewoo/tfusion/blob/main/src/builtins.ts)
 that `KosmoJS` uses for type flattening.
 
 ## 💡 Best Practices
 
-**Establish a naming convention early** in your project and document it.
+- **Establish a naming convention early** in your project and document it.
 Whether you choose `TypeT` or `TType`, consistency matters more than the specific pattern.
 
-**Use descriptive names** that indicate the type's purpose.
+- **Use descriptive names** that indicate the type's purpose.
 `UserEventT` is better than `EventT` if it's specific to user events.
 
-**Consider domain prefixes** for complex projects.
+- **Consider domain prefixes** for complex projects.
 `ApiResponseT`, `DbRecordT`, `UiComponentT` clearly indicate context.
 
-**Review existing types** when adding validation to an established codebase.
+- **Review existing types** when adding validation to an established codebase.
 Look for conflicts with built-in names that need renaming.
 
-**Test your validation** after defining types.
+- **Test your validation** after defining types.
 If validation fails unexpectedly despite correct type definitions,
 check for built-in name conflicts.
-

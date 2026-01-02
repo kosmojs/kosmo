@@ -1,10 +1,12 @@
 ---
 title: Path Utilities
-description: Build URLs with path and href utility functions that handle route parameters, query strings, and base URL configuration for navigation and external references.
+description: Build URLs with path and href utility functions that handle route parameters,
+    query strings, and base URL configuration for navigation and external references.
 head:
   - - meta
     - name: keywords
-      content: url construction, path utilities, query parameters, route parameters, href builder, url builder, api urls, navigation links
+      content: url construction, path utilities, query parameters, route parameters,
+        href builder, url builder, api urls, navigation links
 ---
 
 The fetch client exports utility functions for constructing URLs that respect your route's parameter structure.
@@ -15,7 +17,7 @@ or external references without making actual fetch requests.
 The `path` function constructs a relative path including your route's base URL and API URL configuration:
 
 ```ts [pages/example/index.tsx]
-import useFetch from "@front/{api}/users/[id]/fetch";
+import useFetch from "_/front/fetch/users/[id]";
 
 // For a route with a numeric ID parameter
 const url = useFetch.path([123]);

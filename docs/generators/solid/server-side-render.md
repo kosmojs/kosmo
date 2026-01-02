@@ -14,76 +14,32 @@ By default, source folders use client-side rendering with Vite's stellar dev ser
 When you need SSR for production deployments, the SSR generator adds the necessary infrastructure
 while keeping your development workflow unchanged.
 
-## 🎯 Default Client-Side Rendering
+## 🛠️ Adding SSR Support
 
-When you create a source folder, `KosmoJS` generates an `entry/client.tsx` file that handles client-side rendering:
-
-```tsx [entry/client.tsx]
-import { hydrate, render } from "solid-js/web";
-
-import { routeStackBuilder, shouldHydrate } from "@src/{solid}/client";
-import App from "../App";
-import createRouter from "../router";
-
-const root = document.getElementById("app");
-
-if (root) {
-  const routes = routeStackBuilder({ withPreload: true });
-  const router = createRouter(App, routes);
-  if (shouldHydrate()) {
-    hydrate(() => router, root)
-  } else {
-    render(() => router, root);
-  }
-} else {
-  console.error("Root element not found!");
-}
-```
-
-The `shouldHydrate` flag ensures hydration only happens when the page was server-rendered.
-During development with client-side rendering, this flag is `false` and the app uses standard `render`.
-
-In production SSR builds, it's `true` and the app uses `hydrate` to attach event listeners to the server-rendered HTML.
-
-This is the default rendering mode and works perfectly with Vite's dev server,
-providing instant HMR and all the developer experience benefits you expect from modern tooling.
-
-## 🛠️ Enabling SSR
-
-To enable SSR, install the SSR generator:
-
-::: code-group
-
-```sh [pnpm]
-pnpm install -D @kosmojs/ssr-generator
-```
-
-```sh [npm]
-npm install -D @kosmojs/ssr-generator
-```
-
-```sh [yarn]
-yarn add -D @kosmojs/ssr-generator
-```
-:::
-
-Add the generator to your source folder's `vite.config.ts` and enable SSR in the Solid plugin:
+Selecting SSR during source folder creation enables it automatically.
+For folders created without SSR, enable it manually in your `vite.config.ts`:
 
 ```ts [vite.config.ts]
 import solidPlugin from "vite-plugin-solid";
 import devPlugin from "@kosmojs/dev";
-import solidGenerator from "@kosmojs/solid-generator";
-import ssrGenerator from "@kosmojs/ssr-generator";
+import {
+  // ...
+  solidGenerator,
+  ssrGenerator, // [!code ++]
+} from "@kosmojs/generators";
+
 import defineConfig from "../vite.base";
 
 export default defineConfig(import.meta.dirname, {
   plugins: [
-    solidPlugin({ ssr: true }), // Enable SSR in Solid plugin
+    solidPlugin({
+     ssr: true // Enable SSR in Solid plugin // [!code ++]
+    }),
     devPlugin(apiurl, {
       generators: [
+        // ...
         solidGenerator(),
-        ssrGenerator(), // Add SSR generator
-        // other generators...
+        ssrGenerator(), // [!code ++]
       ],
     }),
   ],
@@ -92,69 +48,59 @@ export default defineConfig(import.meta.dirname, {
 
 ## 📄 Server Entry Point
 
-Once the SSR generator is added, it creates an `entry/server.ts` file with the default implementation:
+Enabling the SSR generator produces an `entry/server.ts` file containing the baseline server rendering setup.
+
+Server-side `renderFactory` accepts a callback returning an object with rendering methods:
+- `renderToString(url, { criticalCss })` - Baseline implementation rendering complete pages before transmission
+- `renderToStream(url, { criticalCss })` - Advanced optional implementation enabling progressive streaming SSR
 
 ```ts [entry/server.ts]
 import { renderToString, generateHydrationScript } from "solid-js/web";
 
-import { routeStackBuilder } from "@src/{solid}/server";
-import App from "../App";
-import createRouter from "../router";
+import { renderFactory, createRoutes } from "_/front/entry/server";
+import App from "@/front/App";
+import createRouter from "@/front/router";
 
-const routes = routeStackBuilder({ withPreload: false });
+const routes = createRoutes({ withPreload: false });
 
-export default {
-  async factory(url) {
-    const router = createRouter(App, routes, { url });
-    const hydrationScript = generateHydrationScript();
-    return {
-      async renderToString({ criticalCss }) {
-        const head = criticalCss.reduce(
-          (head, { text }) => `${head}\n<style>${text}</style>`,
-          hydrationScript,
-        );
-
-        const html = renderToString(() => router);
-
-        return { head, html };
-      },
-    };
-  },
-} satisfies import("@kosmojs/dev").SSRSetup;
+export default renderFactory(() => {
+  const hydrationScript = generateHydrationScript();
+  return {
+    async renderToString(url, { criticalCss }) {
+      const router = await createRouter(App, routes, { url });
+      const head = criticalCss.reduce(
+        (head, { text }) => `${head}\n<style>${text}</style>`,
+        hydrationScript,
+      );
+      const html = renderToString(() => router);
+      return { head, html };
+    },
+  };
+});
 ```
 
-This file must default export an object containing `factory` function that:
+**Important:** The default setup provides only `renderToString`.
+Streaming SSR requires manual `renderToStream` implementation.
+When both exist, `renderToStream` takes priority.
 
-1. Accepts a URL instance
-2. Returns an object with either `renderToString` or `renderToStream` methods (or both)
+**How it works:**
 
-If both methods are provided, `renderToStream` takes priority.
+The `renderToString` function receives:
+- `url` - Requested URL requiring server rendering
+- `criticalCss` - Extracted critical CSS array from your components
 
-### Static Asset Handling
+Return requirements:
+- `head` - HTML for `<head>` injection (typically critical CSS)
+- `html` - Rendered application markup
 
-Client assets are loaded into memory when the SSR server starts
-and served automatically for incoming requests.
+The baseline `renderToString` approach renders pages synchronously in full, returning complete HTML strings.
 
-To disable this behavior, set `serveStaticAssets` to `false`:
-
-```ts [entry/server.ts]
-export default {
-  serveStaticAssets: false,
-  async factory(url) {
-    // ...
-  },
-} satisfies import("@kosmojs/dev").SSRSetup;
-```
-
-With this option disabled, the server skips asset loading entirely
-and responds with `404 Not Found` for static file requests.
-
-This configuration is ideal for deployments where a reverse proxy
-such as `Nginx` handles static file delivery.
+Advanced scenarios - faster time-to-first-byte, large page handling -
+benefit from implementing `renderToStream` for progressive content delivery (detailed coverage follows later).
 
 ## 🎛️ Render Factory Arguments
 
-A single argument object is passed to both `renderToString` and `renderToStream`:
+Both `renderToString` and `renderToStream` takes same arguments - the current request URL and `SSROptions`:
 
 ```ts
 type SSROptions = {
@@ -205,10 +151,10 @@ or take full control over the response stream (`renderToStream`).
 The `renderToString` method is the simpler approach, suitable for most SSR use cases:
 
 ```ts
-renderToString(SSROptions): SSRStringReturn
+renderToString(url, SSROptions): SSRStringReturn
 ```
 
-It takes `SSROptions` argument and returns an object containing:
+It takes URL and `SSROptions` arguments and returns an `SSRStringReturn` object:
 
 ```ts
 type SSRStringReturn = {
@@ -227,64 +173,85 @@ Also critical CSS appended to the head to avoid render-blocking stylesheets and 
 For more advanced scenarios where you want to stream HTML to the client as it's generated,
 implement the `renderToStream` method.
 
-It also takes `SSROptions` as first argument and should implement app-specific rendering strategy.
+It also takes URL and `SSROptions` as arguments and should implement app-specific rendering strategy.
 
 A common pattern is to split the template and stream in chunks:
 
 ```ts [entry/server.ts]
 import { renderToStream, generateHydrationScript } from "solid-js/web";
 
-import { routeStackBuilder } from "@src/{solid}/server";
-import App from "../App";
-import createRouter from "../router";
+import { renderFactory, createRoutes } from "_/front/entry/server";
+import App from "@/front/App";
+import createRouter from "@/front/router";
 
-const routes = routeStackBuilder({ withPreload: false });
+const routes = createRoutes({ withPreload: false });
 
-export default {
-  async factory(url) {
-    const router = createRouter(App, routes, { url });
-    const hydrationScript = generateHydrationScript();
-    return {
-      async renderToStream({ response, template, criticalCss }) {
-        const head = criticalCss.reduce(
-          (head, { text }) => `${head}\n<style>${text}</style>`,
-          hydrationScript,
-        );
+export default renderFactory(() => {
+  const hydrationScript = generateHydrationScript();
+  return {
+    async renderToString(url, { criticalCss }) {
+      const router = await createRouter(App, routes, { url });
 
-        // Split template at the app HTML insertion point
-        const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
+      const head = criticalCss.reduce(
+        (head, { text }) => `${head}\n<style>${text}</style>`,
+        hydrationScript,
+      );
 
-        // Send the start of HTML with head content
-        response.write(htmlStart.replace("<!--app-head-->", head));
+      // Split template at the app HTML insertion point
+      const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
 
-        // Create the Solid stream from the router
-        const { pipe } = renderToStream(() => router);
+      // Send the start of HTML with head content
+      response.write(htmlStart.replace("<!--app-head-->", head));
 
-        // Pipe the stream to the response
-        pipe(response, {
-          onCompleteShell() {
-            // Shell is ready—streaming begins
-          },
-          onCompleteAll() {
-            // All Suspense boundaries resolved - finalize response
-            response.write(htmlEnd);
-            response.end();
-          },
-        });
+      // Create the Solid stream from the router
+      const { pipe } = renderToStream(() => router);
 
-        // Critical: Always call response.end() after all chunks added
-        response.end();
-      },
-    };
-  },
-} satisfies import("@kosmojs/dev").SSRSetup;
+      // Pipe the stream to the response
+      pipe(response, {
+        onCompleteShell() {
+          // Shell is ready—streaming begins
+        },
+        onCompleteAll() {
+          // All Suspense boundaries resolved - finalize response
+          response.write(htmlEnd);
+          response.end();
+        },
+      });
+
+      // Essential: Always call response.end() after all chunks added
+      response.end();
+    },
+  };
+});
 ```
 
-**Critical:** You must call `response.end()` when streaming is complete.
+**Essential:** You must call `response.end()` when streaming is complete.
 Without it, the client will wait indefinitely for more data.
 
 Modern frameworks like `SolidJS` provide pipeable streams that make streaming straightforward,
 but the implementation details are yours to choose based on your application's needs.
+
+## 📦 Static Asset Handling
+
+Client assets are loaded into memory when the SSR server starts
+and served automatically for incoming requests.
+
+To disable this behavior, set `serveStaticAssets` to `false`:
+
+```ts [entry/server.ts]
+export default renderFactory(() => {
+  return {
+    serveStaticAssets: false, // [!code ++]
+    // ...
+  };
+});
+```
+
+With this option disabled, the server skips asset loading entirely
+and responds with `404 Not Found` for static file requests.
+
+This configuration is ideal for deployments where a reverse proxy
+such as `Nginx` handles static file delivery.
 
 ## 🏗️ Building for Production
 
@@ -305,7 +272,8 @@ yarn build
 ```
 :::
 
-This creates an SSR bundle in `dist/SOURCE_FOLDER/ssr/` containing an `index.js` file ready to run in production.
+This creates an SSR bundle in `dist/SOURCE_FOLDER/ssr/`
+containing an `server.js` file ready to run in production.
 
 ## 🧪 Testing the SSR Build Locally
 
@@ -315,17 +283,17 @@ The SSR server accepts either a port or socket argument:
 **Using a port:**
 
 ```sh
-node dist/@front/ssr -p 4000
+node dist/front/ssr -p 4000
 # or
-node dist/@front/ssr --port 4000
+node dist/front/ssr --port 4000
 ```
 
 **Using a Unix socket:**
 
 ```sh
-node dist/@front/ssr -s /tmp/app.sock
+node dist/front/ssr -s /tmp/app.sock
 # or
-node dist/@front/ssr --sock /tmp/app.sock
+node dist/front/ssr --sock /tmp/app.sock
 ```
 
 Visit `http://localhost:4000` to verify your application renders correctly on the server.
@@ -365,7 +333,7 @@ The SSR generator doesn't change your development workflow. During development:
 SSR only activates in production builds, giving you the best of both worlds:
 fast development iteration and production-ready server rendering.
 
-## 💡 Best Practices
+## 💡 Production Guidelines
 
 **Test SSR locally before deployment.** Always run your built SSR bundle locally
 and verify it renders correctly before deploying to production servers.
@@ -407,4 +375,3 @@ However, the hydration bundle still downloads to clients, so optimization remain
 **State serialization requires planning.** If your application has complex state,
 ensure it serializes correctly for hydration. SolidJS handles most cases automatically,
 but custom stores or non-serializable data need special attention.
-

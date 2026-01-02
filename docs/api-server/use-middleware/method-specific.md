@@ -1,10 +1,12 @@
 ---
 title: Method-Specific Middleware
-description: Configure middleware to run only for specific HTTP methods using the on option. Apply authentication to POST/PUT/DELETE while keeping GET requests public.
+description: Configure middleware to run only for specific HTTP methods using the on option.
+    Apply authentication to POST/PUT/DELETE while keeping GET requests public.
 head:
   - - meta
     - name: keywords
-      content: method-specific middleware, http methods, conditional middleware, authentication middleware, koa middleware options, targeted middleware
+      content: method-specific middleware, http methods, conditional middleware,
+        authentication middleware, koa middleware options, targeted middleware
 ---
 
 Often you want middleware to run only for specific HTTP methods.
@@ -21,7 +23,7 @@ export default defineRoute(({ GET, POST, PUT, DELETE, use }) => [
     ctx.state.user = await verifyToken(token);
     return next();
   }, {
-    on: ["POST", "PUT", "DELETE"], // run only on these methods
+    on: ["POST", "PUT", "DELETE"], // run only on these methods // [!code hl]
   }),
 
   GET(async (ctx) => {
@@ -46,4 +48,3 @@ The `on` option accepts an array of HTTP method names.
 The middleware only executes when the incoming request matches one of those methods.
 
 This targeted approach keeps your middleware efficient and your intentions clear.
-

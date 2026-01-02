@@ -1,225 +1,144 @@
 ---
 title: Path Resolver Utility
-description: Use pathResolver for consistent path construction across KosmoJS directory structure including source folders, lib directories, and root locations with type-safe directory names.
+description: Use pathResolver for consistent path construction across KosmoJS directory structure
+    including source folders, lib directories, and root locations with type-safe directory names.
 head:
   - - meta
     - name: keywords
-      content: path resolver, directory structure, apiLibDir, pagesLibDir, fetchLibDir, path construction, file paths, typescript paths
+      content: path resolver, directory structure, path construction, file paths, typescript paths
 ---
 
-The `pathResolver` utility provides consistent path construction
-across `KosmoJS`'s directory structure.
+The `pathResolver` utility provides consistent path generation across KosmoJS's codebase.
 
-It handles the complexity of different directory types -
-some relative to the project root, some to the source folder,
-and some nested within the `lib` directory.
+### Purpose
 
-## Basic Usage
+`pathResolver` solves two related path problems:
+- **Filesystem paths** - Where files actually live on disk
+- **Import paths** - How TypeScript imports reference those files (with `~`, `@`, `_` prefixes)
 
-```ts [factory.ts]
-import { pathResolver } from "@kosmojs/devlib";
+### Usage
 
-export const factory: GeneratorFactory = async ({
+```ts
+import { pathResolver } from "@kosmojs/core";
+
+const { createPath, createImport } = pathResolver({
+  appRoot: "/path/to/project",  // Optional: absolute project root
+  sourceFolder: "front",         // Required: source folder name
+});
+```
+
+### Creating Filesystem Paths
+
+Use `createPath` methods to generate filesystem paths:
+
+```ts
+// Core API files
+createPath.coreApi("use.ts")           // → "core/api/use.ts"
+
+// Source folder files
+createPath.src("config.ts")            // → "src/front/config.ts"
+createPath.api("users", "index.ts")    // → "src/front/api/users/index.ts"
+createPath.pages("dashboard.tsx")      // → "src/front/pages/dashboard.tsx"
+
+// Generated files (lib directory)
+createPath.lib("types.ts")             // → "lib/src/front/types.ts"
+createPath.libApi("routes.ts")         // → "lib/src/front/api/routes.ts"
+createPath.fetch("users.ts")           // → "lib/src/front/fetch/users.ts"
+```
+
+### Creating Import Paths
+
+Use `createImport` methods to generate TypeScript import paths with proper prefixes:
+
+```ts
+// Core API imports (~/ prefix)
+createImport.coreApi("use")            // → "~/core/api/use"
+
+// Source folder imports (@/ prefix)
+createImport.src("config")             // → "@/front/config"
+createImport.api("users/[id]")     // → "@/front/api/users/[id]"
+createImport.pages("dashboard")        // → "@/front/pages/dashboard"
+
+// Generated code imports (_/ prefix)
+createImport.lib("types")              // → "_/front/types"
+createImport.libApi("routes")          // → "_/front/api/routes"
+createImport.fetch("users")            // → "_/front/fetch/users"
+```
+
+### Available Methods
+
+**createPath methods:**
+- `coreApi(...paths)` - Core API directory files
+- `src(...paths)` - Source folder files
+- `api(...paths)` - API route files
+- `pages(...paths)` - Page component files
+- `config(...paths)` - Configuration files
+- `entry(...paths)` - Entry point files
+- `lib(...paths)` - Generated files root
+- `libApi(...paths)` - Generated API files
+- `libEntry(...paths)` - Generated entry files
+- `libPages(...paths)` - Generated page files
+- `fetch(...paths)` - Generated fetch client files
+
+**createImport methods:**
+- `coreApi(...paths)` - Core API imports with `~/` prefix
+- `src(...paths)` - Source imports with `@/` prefix
+- `config(...paths)` - Config imports with `@/` prefix
+- `api(...paths)` - API imports with `@/` prefix
+- `pages(...paths)` - Page imports with `@/` prefix
+- `lib(...paths)` - Generated imports with `_/` prefix
+- `libApi(...paths)` - Generated API imports with `_/` prefix
+- `libEntry(...paths)` - Generated entry imports with `_/` prefix
+- `fetch(...paths)` - Fetch client imports with `_/` prefix
+
+The resolver ensures your generator uses the same path conventions as `KosmoJS` built-in generators,
+maintaining consistency across the codebase.
+
+### Handlebars Integration
+
+The `createImportHelper` method provides a Handlebars-ready helper for template generation.
+Register it through `renderFactory`:
+
+```ts
+import { pathResolver, renderFactory } from "@kosmojs/dev";
+
+const { createPath, createImportHelper } = pathResolver({
   appRoot,
   sourceFolder,
+});
+
+const { render, renderToFile } = renderFactory({
   formatters,
-}) => {
-  const { resolve } = pathResolver({ appRoot, sourceFolder });
-
-  // Resolve paths to various locations
-  const apiPath = resolve("apiDir", "users/[id]/index.ts");
-  const libPath = resolve("apiLibDir", "users/[id]/types.ts");
-  const corePath = resolve("coreDir", "middleware.ts");
-
-  return { watchHandler };
-};
+  helpers: {
+    createImport: createImportHelper,  // Register as "createImport" helper
+  },
+});
 ```
 
-## Directory Types
+Now you can use it in Handlebars templates:
 
-The resolver understands different directory categories
-and constructs paths accordingly:
+```handlebars
+{{!-- Generate import paths in templates --}}
+import { defineRoute } from "{{createImport "libApi" "users/[id]"}}";
+import config from "{{createImport "config"}}";
+import { GET } from "{{createImport "fetch" "posts"}}";
+```
 
-### Source Folder Shortcut
-
-**`@`** - Resolves directly to the source folder root
+Which compiles to:
 
 ```ts
-resolve("@", "config/index.ts")
-// ➜ @front/config/index.ts
+import { defineRoute } from "_/front/api/users/[id]";
+import config from "@/front/config";
+import { GET } from "_/front/fetch/posts";
 ```
 
-### Root-Level Directories
+The helper automatically handles Handlebars' argument passing
+(Handlebars appends an options object as the last argument,
+which `createImportHelper` strips off before delegating to `createImport`).
 
-**`coreDir`** and **`libDir`** - Resolve to project root locations
-
-```ts
-resolve("coreDir", "api/middleware.ts")
-// ➜ core/api/middleware.ts
-
-resolve("libDir", "types.ts")
-// ➜ lib/types.ts
+**Usage in templates:**
+```handlebars
+{{createImport method ...paths}}
 ```
 
-These directories exist at the project root, not within source folders.
-
-### Source-Relative Directories
-
-Directories like **`apiDir`**, **`pagesDir`**, **`configDir`**
-resolve relative to the current source folder:
-
-```ts
-resolve("apiDir", "users/index.ts")
-// ➜ @front/api/users/index.ts
-
-resolve("pagesDir", "dashboard/index.tsx")
-// ➜ @front/pages/dashboard/index.tsx
-
-resolve("configDir", "index.ts")
-// ➜ @front/config/index.ts
-```
-
-### Lib Directories
-
-Directories ending in **`LibDir`** (like `apiLibDir`, `pagesLibDir`, `fetchLibDir`)
-combine the global `lib` directory with the source folder and the specific lib subdirectory:
-
-```ts
-resolve("apiLibDir", "users/[id]/types.ts")
-// ➜ lib/@front/{api}/users/[id]/types.ts
-
-resolve("fetchLibDir", "index.ts")
-// ➜ lib/@front/{fetch}/index.ts
-
-resolve("pagesLibDir", "dashboard/route.ts")
-// ➜ lib/@front/{pages}/dashboard/route.ts
-```
-
-This structure keeps generated files organized by source folder
-while maintaining a global `lib` directory for all generated code.
-
-## Implementation Details
-
-The resolver applies these rules:
-
-1. **`@` shortcut** ➜ Source folder directly
-2. **`coreDir` or `libDir`** ➜ Project root location
-3. **Directories ending in `LibDir`** ➜ `lib/{sourceFolder}/{specificLibDir}`
-4. **All other directories** ➜ `{sourceFolder}/{specificDir}`
-
-The `appRoot` parameter, when provided, prefixes all resolved paths
-to create absolute file paths suitable for file system operations.
-
-## Available Directories
-
-The resolver works with all directory constants from `KosmoJS`'s defaults.
-Common directories include:
-
-**Source directories:**
-- `apiDir` - API routes directory
-- `pagesDir` - Page components directory
-- `configDir` - Configuration directory
-
-**Lib directories:**
-- `apiLibDir` - Generated API helpers
-- `pagesLibDir` - Generated page helpers
-- `fetchLibDir` - Generated fetch clients
-
-**Root directories:**
-- `coreDir` - Core application code
-- `libDir` - Generated code root
-
-## Type Safety
-
-The `Dir` type ensures you only reference valid directory names:
-
-```ts
-type Dir =
-  | keyof {
-      [K in keyof typeof defaults as K extends `${string}Dir`
-        ? K
-        : never]: unknown;
-    }
-  | "@";
-```
-
-This extracts all keys from defaults that end with `"Dir"`,
-plus the `"@"` shortcut, providing autocomplete and compile-time validation.
-
-If you attempt to use an invalid directory name,
-`TypeScript` will catch it during development.
-
-## Practical Examples
-
-### Generating API Files
-
-```ts
-const { resolve } = pathResolver({ appRoot, sourceFolder });
-
-// Generate route helper
-await renderToFile(
-  resolve("apiLibDir", dirname(route.file), "helpers.ts"),
-  helperTemplate,
-  { route },
-  { formatters }
-);
-
-// Generate route types
-await renderToFile(
-  resolve("apiLibDir", dirname(route.file), "types.ts"),
-  typesTemplate,
-  { route },
-  { formatters }
-);
-```
-
-### Generating Framework Files
-
-```ts
-const { resolve } = pathResolver({ appRoot, sourceFolder });
-
-// Generate router configuration
-await renderToFile(
-  resolve("pagesLibDir", "router.ts"),
-  routerTemplate,
-  { routes },
-  { formatters }
-);
-
-// Write to source folder directly
-await renderToFile(
-  resolve("@", "App.tsx"),
-  appTemplate,
-  {},
-  { formatters }
-);
-```
-
-### Reading Core Files
-
-```ts
-const { resolve } = pathResolver({ appRoot, sourceFolder });
-
-// Read core middleware
-const middlewarePath = resolve("coreDir", "api/middleware.ts");
-const middlewareContent = await fs.readFile(middlewarePath, "utf8");
-```
-
-## Best Practices
-
-**Always use the resolver** rather than manually constructing paths.
-The resolver ensures consistency and handles the complexity
-of different directory nesting patterns.
-
-**Import from `@kosmojs/devlib`** to access the resolver and other utilities
-rather than implementing your own path logic.
-
-**Leverage type safety** by letting `TypeScript` guide you to valid directory names through autocomplete.
-
-**Use the `@` shortcut** when you need to write directly to the source folder,
-such as for framework setup files that users might customize.
-
-**Prefer lib directories** for generated code that users shouldn't edit manually.
-This keeps the source folder clean and makes it clear
-what's user code versus generated artifacts.
-
+Where `method` is any `createImport` method name: `"coreApi"`, `"src"`, `"api"`, `"pages"`, `"lib"`, `"libApi"`, `"fetch"`, etc.

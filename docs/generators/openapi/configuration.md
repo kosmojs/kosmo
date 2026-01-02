@@ -1,13 +1,16 @@
 ---
 title: OpenAPI Configuration
-description: Configure OpenAPI generator with required options including outfile, version, API info metadata, server definitions, contact information, and license details for comprehensive API documentation.
+description: Configure OpenAPI generator with required options including outfile,
+    version, API info metadata, server definitions, contact information,
+    and license details for comprehensive API documentation.
 head:
   - - meta
     - name: keywords
-      content: openapi config, api metadata, server configuration, api info, contact info, license info, semantic versioning, openapi options
+      content: openapi config, api metadata, server configuration, api info,
+        contact info, license info, semantic versioning, openapi options
 ---
 
-OpenAPI generator accepts the following configuration options:
+`OpenAPI` generator accepts the following configuration options:
 
 ### Required Options
 
@@ -46,59 +49,70 @@ The `info` object accepts additional optional properties for richer documentatio
 ### Complete Example
 
 ```typescript
+import { join } from "node:path";
 import devPlugin from "@kosmojs/dev";
-import openapiGenerator from "@kosmojs/openapi-generator";
+import {
+  apiGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+  openapiGenerator, // [!code ++]
+} from "@kosmojs/generators";
 
-export default {
+import defineConfig from "../../vite.base";
+import { apiurl, baseurl } from "./config";
+
+const openapiConfig = { // [!code ++:37]
+  outfile: "openapi.json",
+  openapi: "3.1.0",
+  info: {
+    title: "My SaaS API",
+    version: "2.1.0",
+    summary: "RESTful API for My SaaS Platform",
+    description: `
+# API Documentation
+This API provides access to all platform features including
+user management, billing, and analytics.`,
+    termsOfService: "https://myapp.com/terms",
+    contact: {
+      name: "API Support",
+      url: "https://myapp.com/support",
+      email: "api@myapp.com",
+    },
+    license: {
+      name: "Apache 2.0",
+      url: "https://www.apache.org/licenses/LICENSE-2.0.html",
+    },
+  },
+  servers: [
+    {
+      url: "http://localhost:4000",
+      description: "Development server",
+    },
+    {
+      url: "https://staging-api.myapp.com",
+      description: "Staging environment",
+    },
+    {
+      url: "https://api.myapp.com",
+      description: "Production server",
+    },
+  ],
+};
+
+export default defineConfig(import.meta.dirname, {
+  base: join(baseurl, "/"),
+  server: {
+    port: 4000,
+  },
   plugins: [
     devPlugin(apiurl, {
       generators: [
-        openapiGenerator({
-          outfile: "openapi.json",
-          openapi: "3.1.0",
-          info: {
-            title: "My SaaS API",
-            version: "2.1.0",
-            summary: "RESTful API for My SaaS Platform",
-            description: `
-# API Documentation
-
-This API provides access to all platform features including
-user management, billing, and analytics.
-
-## Authentication
-
-All endpoints require a valid API key passed in the \`Authorization\` header.
-            `,
-            termsOfService: "https://myapp.com/terms",
-            contact: {
-              name: "API Support",
-              url: "https://myapp.com/support",
-              email: "api@myapp.com"
-            },
-            license: {
-              name: "Apache 2.0",
-              url: "https://www.apache.org/licenses/LICENSE-2.0.html"
-            }
-          },
-          servers: [
-            {
-              url: "http://localhost:4000",
-              description: "Development server"
-            },
-            {
-              url: "https://staging-api.myapp.com",
-              description: "Staging environment"
-            },
-            {
-              url: "https://api.myapp.com",
-              description: "Production server"
-            }
-          ],
-        }),
+        apiGenerator(),
+        fetchGenerator(),
+        typeboxGenerator(),
+        openapiGenerator(openapiConfig), // [!code ++]
       ],
     }),
   ],
-}
+});
 ```
-

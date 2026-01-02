@@ -1,21 +1,23 @@
 ---
 title: SolidJS - Preload Pattern
-description: Preload route data with SolidJS Router integration. Export preload functions that work with createAsync for efficient data fetching before component rendering.
+description: Preload route data with SolidJS Router integration.
+    Export preload functions that work with createAsync
+    for efficient data fetching before component rendering.
 head:
   - - meta
     - name: keywords
-      content: solidjs preload, data fetching, createAsync, route data, prefetching, solidjs router data, async data loading
+      content: solidjs preload, data fetching, createAsync, route data,
+        prefetching, solidjs router data, async data loading
 ---
 
-The preload pattern integrates beautifully with `KosmoJS`'s generated fetch clients.
-You define what data a route needs,
-and the router ensures that data is ready when the component renders.
+The preload pattern integrates beautifully with generated fetch clients.
+You define what data a route needs, and the router ensures that data is ready when the component renders.
 
 First, create an API endpoint that provides the data.
 Suppose you have `api/users/data/index.ts`:
 
 ```ts [api/users/data/index.ts]
-import { defineRoute } from "@front/{api}/users/data";
+import { defineRoute } from "_/front/api/users/data";
 
 export default defineRoute(({ GET }) => [
   GET<never, Data>(async (ctx) => {
@@ -30,12 +32,12 @@ and use it both for preloading and for accessing the data in your component:
 
 ```tsx [pages/users/index.tsx]
 import { createAsync } from "@solidjs/router";
-import { GET as fetchData } from "@front/{api}/users/data/fetch";
+import { GET } from "_/front/fetch/users/data";
 
 export default function Page() {
   // createAsync recognizes that fetchData is the same function from preload
   // and reuses the fetched data instead of fetching again
-  const data = createAsync(fetchData);
+  const data = createAsync(GET);
 
   return (
     <div>
@@ -45,7 +47,7 @@ export default function Page() {
 }
 
 // Export the fetch function as preload
-export const preload = fetchData;
+export { GET as preload };
 ```
 
 This pattern is elegant in its simplicity.
@@ -63,4 +65,3 @@ The fetch client's GET method is typed based on your API endpoint's response typ
 `createAsync` infers its type from the function you pass it.
 Your component knows exactly what shape of data to expect,
 all derived from your API definition.
-

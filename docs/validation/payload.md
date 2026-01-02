@@ -1,10 +1,12 @@
 ---
 title: Payload Validation
-description: Validate request payloads with inline TypeScript types or imported type definitions. Support for nested structures, conditional validation, generics, and complex domain models with TRefine constraints.
+description: Validate request payloads with inline TypeScript types or imported type definitions.
+    Support for nested structures, conditional validation, generics, and complex domain models with TRefine constraints.
 head:
   - - meta
     - name: keywords
-      content: payload validation, request validation, nested types, conditional validation, union types, generic types, json validation, form validation, TRefine
+      content: payload validation, request validation, nested types, conditional validation,
+        union types, generic types, json validation, form validation, TRefine
 ---
 
 Request payloads are the data your API receives from clients -
@@ -28,7 +30,7 @@ You can use literal type definitions written inline, or you can reference types 
 The simplest approach is to define the payload type inline as the first type argument to your method handler:
 
 ```ts [api/posts/index.ts]
-import { defineRoute } from "@front/{api}/posts";
+import { defineRoute } from "_/front/api/posts";
 
 export default defineRoute(({ POST }) => [
   POST<{
@@ -207,12 +209,12 @@ export type Post = {
 Now you can use these types in any route by importing them:
 
 ```ts [api/users/index.ts]
-import { defineRoute } from "@front/{api}/users";
-import type { User, Payload } from "@front/types/api-payload";
+import type { User, Payload } from "@/front/types/api-payload";
+import { defineRoute } from "_/front/api/users";
 
 export default defineRoute(({ POST }) => [
   POST<
-    Payload<User>
+    Payload<User> // [!code hl]
   >(async (ctx) => {
     // ctx.payload is fully validated as Payload<User>
     // This includes the generic type parameter resolution
@@ -236,12 +238,12 @@ Changes to these type definitions automatically update the validation behavior e
 Different routes can use the same generic type with different parameters:
 
 ```ts [api/posts/index.ts]
-import { defineRoute } from "@front/{api}/posts";
-import type { Post, Payload } from "@front/types/api-payload";
+import type { Post, Payload } from "@/front/types/api-payload";
+import { defineRoute } from "_/front/api/posts";
 
 export default defineRoute(({ POST }) => [
   POST<
-    Payload<Post>
+    Payload<Post> // [!code hl]
   >(async (ctx) => {
     // ctx.payload is fully validated as Payload<Post>
     const post = ctx.payload.data;
@@ -253,4 +255,3 @@ Both routes benefit from the same payload wrapper structure with its metadata an
 but validate different data types within that structure.
 
 This composability makes your validation logic both DRY and maintainable.
-

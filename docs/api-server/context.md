@@ -1,10 +1,12 @@
 ---
 title: Enhanced Context Object
-description: Learn about KosmoJS's enhanced Koa context with ctx.payload for normalized request data and ctx.typedParams for type-safe route parameters with full TypeScript inference.
+description: Learn about KosmoJS's enhanced Koa context with ctx.payload
+    for normalized request data and ctx.typedParams for type-safe route parameters with full TypeScript inference.
 head:
   - - meta
     - name: keywords
-      content: koa context, ctx.payload, ctx.typedParams, typed parameters, request body parsing, query parameters, koa middleware, typescript context
+      content: koa context, ctx.payload, ctx.typedParams, typed parameters,
+        request body parsing, query parameters, koa middleware, typescript context
 ---
 
 ### 🔧 The Enhanced Context Object
@@ -41,4 +43,3 @@ export default defineRoute(({ GET, POST }) => [
   }),
 ]);
 ```
-

@@ -1,10 +1,12 @@
 ---
 title: TRefine for Type Refinement
-description: Express sophisticated validation constraints with TRefine using JSON Schema keywords. Validate string formats, numeric ranges, array constraints, and custom patterns directly in TypeScript types.
+description: Express sophisticated validation constraints with TRefine using JSON Schema keywords.
+    Validate string formats, numeric ranges, array constraints, and custom patterns directly in TypeScript types.
 head:
   - - meta
     - name: keywords
-      content: TRefine, type refinement, json schema constraints, validation rules, string validation, numeric validation, pattern matching, format validation
+      content: TRefine, type refinement, json schema constraints, validation rules,
+        string validation, numeric validation, pattern matching, format validation
 ---
 
 Often you need more sophisticated validation than just presence of a string or a number.
@@ -65,4 +67,3 @@ The type is the schema, and the schema is the type.
 
 The `TRefine` type is globally available throughout your `KosmoJS` project,
 so you don't need to import it. This makes it convenient to use wherever you need refined types.
-

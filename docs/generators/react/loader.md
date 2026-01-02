@@ -18,7 +18,7 @@ First, create an API endpoint that provides the data,
 eg.: `api/users/data/index.ts`:
 
 ```ts [api/users/data/index.ts]
-import { defineRoute } from "@src/{api}/users/data";
+import { defineRoute } from "_/front/api/users/data";
 
 export default defineRoute(({ GET }) => [
   GET<never, Data>(async (ctx) => {
@@ -33,9 +33,9 @@ and use it both for the loader export and for accessing the data in your compone
 
 ```tsx [pages/users/index.tsx]
 import { useLoaderData } from "react-router";
-import { GET as loader, type ResponseT } from "@front/{api}/users/data/fetch";
+import { GET, type ResponseT } from "_/front/fetch/users/data";
 
-export { loader };
+export { GET as loader };
 
 export default function Page() {
   const data = useLoaderData<ResponseT["GET"]>();
@@ -64,4 +64,5 @@ The fetch client's GET method is typed based on your API endpoint's response typ
 Your component knows exactly what shape of data to expect,
 all derived from your API definition.
 
-For more details on React Router's loader pattern, see the [React Router documentation](https://reactrouter.com/start/data/data-loading).
+For more details on React Router's loader pattern,
+see the [React Router documentation](https://reactrouter.com/start/data/data-loading).

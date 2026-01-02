@@ -1,10 +1,12 @@
 ---
 title: Response Validation
-description: Validate API responses before sending to clients. Catch bugs where handlers return incomplete objects, wrong types, or unexpected structures with automatic runtime checking.
+description: Validate API responses before sending to clients. Catch bugs where handlers return incomplete objects,
+    wrong types, or unexpected structures with automatic runtime checking.
 head:
   - - meta
     - name: keywords
-      content: response validation, output validation, api contract, response typing, data integrity, runtime response check, ValidationError
+      content: response validation, output validation, api contract, response typing,
+        data integrity, runtime response check, ValidationError
 ---
 
 Just as you validate incoming request data, you can validate outgoing response data.
@@ -18,17 +20,17 @@ Response validation works similarly to payload validation,
 using the second type argument to your method handler:
 
 ```ts [api/users/index.ts]
-import { defineRoute } from "@front/{api}/users";
-import type { User } from "@front/types/api-payload";
+import type { User } from "@/front/types/api-payload";
+import { defineRoute } from "_/front/api/users";
 
 export default defineRoute(({ GET }) => [
   GET<
-    never, // or add a type to validate payload
+    never, // or add a type to validate payload // [!code hl:2]
     User
   >(async (ctx) => {
     const user = await fetchUserFromDatabase(ctx.params.id);
 
-    // ctx.body must be a valid User
+    // ctx.body must be a valid User // [!code hl:2]
     // If it doesn't match the User type, KosmoJS throws a ValidationError
     ctx.body = user;
   }),
@@ -55,13 +57,13 @@ For routes that both receive and return validated data:
 ```ts [api/example/index.ts]
 export default defineRoute(({ POST }) => [
   POST<
-    CreateUserPayload,
+    CreateUserPayload, // [!code hl:2]
     User
   >(async (ctx) => {
-    // ctx.payload is validated as CreateUserPayload
+    // ctx.payload is validated as CreateUserPayload // [!code hl]
     const newUser = await createUser(ctx.payload);
 
-    // ctx.body must be a valid User
+    // ctx.body must be a valid User // [!code hl]
     ctx.body = newUser;
   }),
 ]);
@@ -70,4 +72,3 @@ export default defineRoute(({ POST }) => [
 Both the incoming request payload and the outgoing response body are validated automatically.
 
 This end-to-end validation gives you confidence that data flows through your API correctly.
-
