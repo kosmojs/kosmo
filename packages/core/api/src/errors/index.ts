@@ -1,9 +1,8 @@
 import type {
-  ParameterizedMiddleware,
   ValidationErrorData,
   ValidationErrorEntry,
   ValidationErrorScope,
-} from "./types";
+} from "@/types";
 
 /**
  * Standardized error wrapper used by validation generators.
@@ -11,7 +10,7 @@ import type {
  * Instances of this class are thrown whenever validation fails,
  * carrying both the error scope (e.g. `"params"`, `"payload"`)
  * and the list of validation error details.
- */
+ * */
 export class ValidationError extends Error {
   public scope: ValidationErrorScope;
   public errors: Array<ValidationErrorEntry> = [];
@@ -30,5 +29,3 @@ export class ValidationError extends Error {
     this.errorSummary = errorSummary;
   }
 }
-
-export const createErrorHandler = (handler: ParameterizedMiddleware) => handler;

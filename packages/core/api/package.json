@@ -22,10 +22,14 @@
     "./queryparser": {
       "types": "./pkg/src/queryparser/index.d.ts",
       "default": "./pkg/queryparser/index.js"
+    },
+    "./errors": {
+      "types": "./pkg/src/errors/index.d.ts",
+      "default": "./pkg/errors/index.js"
     }
   },
   "scripts": {
-    "build": "esbuilder src/index.ts src/bodyparser/index.ts src/queryparser/index.ts",
+    "build": "esbuilder src/index.ts src/bodyparser/index.ts src/queryparser/index.ts src/errors/index.ts",
     "test": "vitest --root ../../.. --project core/api"
   },
   "dependencies": {
