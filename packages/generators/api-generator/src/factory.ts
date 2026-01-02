@@ -12,22 +12,36 @@ import {
   pathResolver,
   pathTokensFactory,
   type ResolvedEntry,
-  renderToFile,
+  renderFactory,
   sortRoutes,
-} from "@kosmojs/devlib";
+} from "@kosmojs/dev";
 
 import type { Options } from "./types";
 
 import libIndexTpl from "./templates/lib/index.hbs";
 import libRouteTpl from "./templates/lib/route.hbs";
-import routeTpl from "./templates/route.hbs";
-import useTpl from "./templates/use.hbs";
+import srcAppTpl from "./templates/src/app.hbs";
+import srcRouteIndexTpl from "./templates/src/route/index.hbs";
+import srcRouteUseTpl from "./templates/src/route/use.hbs";
+import srcRouterTpl from "./templates/src/router.hbs";
+import srcServerTpl from "./templates/src/server.hbs";
+import srcUseTpl from "./templates/src/use.hbs";
 
 export const factory: GeneratorFactory<Options> = async (
-  { appRoot, sourceFolder, outDir, formatters, command },
+  { appRoot, sourceFolder, outDir, formatters },
   { alias, templates, meta },
 ) => {
-  const { resolve } = pathResolver({ appRoot, sourceFolder });
+  const { createPath, createImportHelper } = pathResolver({
+    appRoot,
+    sourceFolder,
+  });
+
+  const { renderToFile } = renderFactory({
+    formatters,
+    helpers: {
+      createImport: createImportHelper,
+    },
+  });
 
   const customTemplates: Array<[Matcher, string]> = Object.entries(
     templates || {},
@@ -44,32 +58,34 @@ export const factory: GeneratorFactory<Options> = async (
       : undefined;
   };
 
-  const generatePublicFiles = async (entries: Array<ResolvedEntry>) => {
+  // by default, write only to blank files
+  const overwrite = (content: string) => content?.trim().length === 0;
+
+  for (const [file, template] of [
+    ["router.ts", srcRouterTpl],
+    ["app.ts", srcAppTpl],
+    ["server.ts", srcServerTpl],
+    ["use.ts", srcUseTpl],
+  ]) {
+    await renderToFile(createPath.api(file), template, {}, { overwrite });
+  }
+
+  const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
     for (const { kind, entry } of entries) {
       if (kind === "apiRoute") {
         const customTemplate = customTemplates.find(([isMatch]) => {
           return isMatch(entry.name);
         });
-
         await renderToFile(
-          resolve("apiDir", entry.file),
-          customTemplate?.[1] || routeTpl,
-          {
-            route: entry,
-            importPathmap: {
-              lib: join(sourceFolder, defaults.apiLibDir, entry.importFile),
-            },
-          },
-          {
-            // write only to blank files
-            overwrite: (content) => content?.trim().length === 0,
-            formatters,
-          },
+          createPath.api(entry.file),
+          customTemplate?.[1] || srcRouteIndexTpl,
+          { route: entry },
+          { overwrite },
         );
       } else if (kind === "apiUse") {
         await renderToFile(
-          resolve("apiDir", entry.file),
-          useTpl,
+          createPath.api(entry.file),
+          srcRouteUseTpl,
           {
             funcName: [
               "use",
@@ -79,43 +95,17 @@ export const factory: GeneratorFactory<Options> = async (
                 .replace(/^(\w)/, (m) => m.toUpperCase()),
             ].join(""),
           },
-          {
-            // write only to blank files
-            overwrite: (content) => content?.trim().length === 0,
-            formatters,
-          },
+          { overwrite },
         );
       }
     }
   };
 
-  const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
-    for (const { kind, entry } of entries) {
-      if (kind !== "apiRoute") {
-        continue;
-      }
-
-      const context = {
-        route: entry,
-        params: entry.params.schema,
-      };
-
-      for (const [file, template] of [
-        //
-        ["index.ts", libRouteTpl],
-      ]) {
-        await renderToFile(
-          resolve("apiLibDir", dirname(entry.file), file),
-          template,
-          context,
-          { formatters },
-        );
-      }
-    }
-  };
-
-  const generateIndexFiles = async (entries: Array<ResolvedEntry>) => {
-    const routes = entries
+  const generateLibFiles = async (
+    entries: Array<ResolvedEntry>,
+    updatedEntries: Array<ResolvedEntry>,
+  ) => {
+    const routesWithAliases = entries
       .flatMap(({ kind, entry }) => {
         if (kind !== "apiRoute") {
           return [];
@@ -142,15 +132,6 @@ export const factory: GeneratorFactory<Options> = async (
           path: pathFactory(entry.pathTokens),
           meta: resolveMeta(entry),
           useWrappers,
-          importPathmap: {
-            api: join(sourceFolder, defaults.apiDir, entry.importFile),
-            schemas: join(
-              sourceFolder,
-              defaults.apiLibDir,
-              dirname(entry.file),
-              "schemas",
-            ),
-          },
         };
 
         const aliases = Object.entries(alias || {}).flatMap(
@@ -161,7 +142,7 @@ export const factory: GeneratorFactory<Options> = async (
                   {
                     ...baseRoute,
                     name: url,
-                    importName: `${baseRoute.importName}_${crc(url)}`,
+                    id: `${baseRoute.id}_${crc(url)}`,
                     fullpath: pathFactory(pathTokens),
                     pathTokens,
                   },
@@ -175,71 +156,86 @@ export const factory: GeneratorFactory<Options> = async (
       .sort(sortRoutes);
 
     const useWrappers = entries.flatMap(({ kind, entry }) => {
-      return kind === "apiUse"
-        ? [
-            {
-              ...entry,
-              importPath: join(sourceFolder, defaults.apiDir, entry.importFile),
-            },
-          ]
-        : [];
+      return kind === "apiUse" ? [entry] : [];
     });
 
-    await renderToFile(
-      resolve("apiLibDir", "index.ts"),
-      libIndexTpl,
-      {
-        routes,
+    for (const [file, template] of [
+      [`${createPath.libApi()}.ts`, libIndexTpl],
+    ]) {
+      await renderToFile(file, template, {
+        routes: routesWithAliases,
         useWrappers,
-        importPathmap: {
-          config: join(sourceFolder, defaults.configDir),
-          coreMiddleware: join(sourceFolder, defaults.apiDir, "use"),
-        },
-      },
-      { formatters },
-    );
+      });
+    }
+
+    for (const { kind, entry } of updatedEntries) {
+      if (kind === "apiRoute") {
+        await renderToFile(
+          createPath.libApi(dirname(entry.file), "index.ts"),
+          libRouteTpl,
+          {
+            route: entry,
+            params: entry.params.schema,
+          },
+        );
+      }
+    }
   };
 
-  if (command === "build") {
-    const esbuildOptions: BuildOptions = await import(
-      join(appRoot, "esbuild.json"),
-      { with: { type: "json" } }
-    ).then((e) => e.default);
-    await esbuild({
-      ...esbuildOptions,
-      bundle: true,
-      entryPoints: [
-        // Build both app factory and server bundle for deployment flexibility.
-        // The app exports a function returning a Koa instance (Node/Deno/Bun compatible).
-        // For custom deployment, use the app factory directly and discard the built server.
-        resolve("apiDir", "app.ts"),
-        resolve("apiDir", "server.ts"),
-      ],
-      outdir: join(outDir, defaults.apiDir),
-    });
-  }
-
   return {
-    async watchHandler(entries, event) {
-      if (event) {
-        const relatedEntries = entries.filter(({ kind, entry }) => {
-          return kind === "apiRoute" || kind === "apiUse" //
-            ? entry.fileFullpath === event.file
-            : false;
-        });
-        if (event.kind === "create") {
-          await generatePublicFiles(relatedEntries);
-          await generateLibFiles(relatedEntries);
-        } else if (event.kind === "update") {
-          await generateLibFiles(relatedEntries);
-        }
-      } else {
-        // no event means initial call
-        await generatePublicFiles(entries);
-        await generateLibFiles(entries);
+    async watch(entries, event) {
+      // fill empty src files with proper content.
+      // handle 2 cases:
+      // - event is undefined (means initial call): process all routes
+      // - `create` event given: process newly added route
+      if (!event || event.kind === "create") {
+        // always generateSrcFiles before generateLibFiles
+        await generateSrcFiles(entries);
       }
 
-      await generateIndexFiles(entries);
+      await generateLibFiles(
+        entries,
+        // create/overwrite lib files with proper content.
+        // handle 2 cases:
+        // - event is undefined (means initial call): process all routes
+        // - `update` event given: process updated route
+        event
+          ? entries.filter(({ kind, entry }) => {
+              return event.kind === "update"
+                ? kind === "apiRoute"
+                  ? entry.fileFullpath === event.file
+                  : false
+                : false;
+            })
+          : entries,
+      );
+
+      // TODO: handle `delete` event, cleanup lib files
+    },
+
+    async build(entries) {
+      // always generateSrcFiles before generateLibFiles
+      await generateSrcFiles(entries);
+      await generateLibFiles(entries, entries);
+
+      const esbuildOptions: BuildOptions = await import(
+        join(appRoot, "esbuild.json"),
+        { with: { type: "json" } }
+      ).then((e) => e.default);
+
+      // run esbuild only after all files generated
+      await esbuild({
+        ...esbuildOptions,
+        bundle: true,
+        entryPoints: [
+          // Build both app factory and server bundle for deployment flexibility.
+          // The app exports a function returning a Koa instance (Node/Deno/Bun compatible).
+          // For custom deployment, use the app factory directly and discard the built server.
+          createPath.api("app.ts"),
+          createPath.api("server.ts"),
+        ],
+        outdir: join(outDir, defaults.apiDir),
+      });
     },
   };
 };

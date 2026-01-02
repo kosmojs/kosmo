@@ -1,0 +1,32 @@
+import { appFactory } from "{{ createImport "libApi" }}";
+
+import createRouter from "{{ createImport "api" "router" }}";
+
+export default appFactory(async (app) => {
+  const router = await createRouter();
+
+  // NOTE: Routes should be added last, after any middleware
+  app.use(router.routes());
+
+  return app;
+});
+
+/**
+ * In dev mode, determines whether to pass the request to API handler or to Vite.
+export const devMiddlewareFactory: import("@kosmojs/api").DevMiddlewareFactory = (
+  app,
+) => {
+  return (req, res, next) => {
+    return req.url?.startsWith("...")
+      ? app?.callback()(req, res) // send request to api handler
+      : next(); // send request to vite dev server
+  };
+};
+ * */
+
+/**
+ * In dev mode, used to cleanup before reloading api handler.
+export const teardownHandler: import("@kosmojs/api").TeardownHandler = () => {
+  // close db connections, server sockets etc.
+};
+ * */

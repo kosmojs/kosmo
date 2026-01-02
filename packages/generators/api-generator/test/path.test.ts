@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { pathTokensFactory } from "@kosmojs/devlib";
+import { pathTokensFactory } from "@kosmojs/dev";
 
 import { pathFactory } from "@/factory";
 
@@ -41,7 +41,7 @@ describe("pathFactory", () => {
     ).toEqual("some/:required/with{/:optional}/and{/*rest}");
   });
 
-  test("index prefix replaced with /", () => {
+  test("index", () => {
     expect(pathFactory(pathTokensFactory("index"))).toEqual("");
     expect(pathFactory(pathTokensFactory("index/[id]"))).toEqual(":id");
   });

@@ -41,11 +41,11 @@
     "string-width": "^8.1.0"
   },
   "devDependencies": {
-    "@kosmojs/config": "workspace:^",
-    "@kosmojs/devlib": "workspace:^",
     "@types/formidable": "^3.4.6",
     "@types/koa": "^3.0.1",
+    "@types/koa-compose": "^3.2.9",
     "@types/picomatch": "^4.0.2",
-    "@types/qs": "^6.14.0"
+    "@types/qs": "^6.14.0",
+    "koa-compose": "^4.1.0"
   }
 }

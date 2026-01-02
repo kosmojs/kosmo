@@ -1,9 +1,9 @@
 import Koa from "koa";
 
-import withQueryparser from "@kosmojs/api/queryparser";
+import withQueryparser from "@/queryparser";
 
-import type { CreateApp } from "./types";
+import type { AppOptions } from "./types";
 
-export const createApp: CreateApp = (options) => {
+export const createApp = (options?: AppOptions) => {
   return withQueryparser(new Koa(options));
 };

@@ -5,7 +5,7 @@ import { use } from "@/use";
 
 import { middlewareStackBuilder } from "..";
 
-describe("routerRoutesFactory", () => {
+describe("createRouterRoutes", () => {
   async function paramsHandler() {}
   async function validateParams() {}
   async function payloadHandler() {}

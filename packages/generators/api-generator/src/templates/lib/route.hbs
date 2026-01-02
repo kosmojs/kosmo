@@ -9,8 +9,8 @@ type ParamsTuple = [{{#each params}}unknown?,{{/each}}];
 type ParamsMapper<T extends ParamsTuple> = {
   {{#each params}}
   "{{name}}"{{#unless isRequired}}?{{/unless}}: T[{{@index}}] extends undefined
-      ? string
-      : T[{{@index}}];
+    ? string
+    : T[{{@index}}];
   {{/each}}
 };
 

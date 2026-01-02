@@ -1,17 +1,25 @@
 import { join } from "node:path";
 
-import { routerRoutesFactory } from "@kosmojs/api";
+import {
+  type App,
+  type AppOptions,
+  type Router,
+  type RouterOptions,
+  createApp,
+  createRouter,
+  createRouterRoutes,
+} from "@kosmojs/api";
 
-import { baseurl, apiurl } from "{{importPathmap.config}}";
-import coreMiddleware from "{{importPathmap.coreMiddleware}}";
+import { baseurl, apiurl } from "{{ createImport "config" }}";
+import coreMiddleware from "{{ createImport "api" "use" }}";
 
 {{#each routes}}
-import {{importName}} from "{{importPathmap.api}}";
-import { validationSchemas as {{importName}}_schemas } from "{{importPathmap.schemas}}";
+import {{id}} from "{{ createImport "api" file }}";
+import { validationSchemas as {{id}}_schemas } from "{{ createImport "libApi" name "schemas" }}";
 {{/each}}
 
 {{#each useWrappers}}
-import {{importName}} from "{{importPath}}";
+import {{id}} from "{{ createImport "api" file }}";
 {{/each}}
 
 export type RouteName ={{#unless routes.length}} never{{/unless}}
@@ -19,8 +27,8 @@ export type RouteName ={{#unless routes.length}} never{{/unless}}
 | "{{name}}"
 {{/each}};
 
-export const routeStackBuilder = () => {
-  return routerRoutesFactory(
+export const createRoutes = () => {
+  return createRouterRoutes(
     [
       {{#each routes}}
       {
@@ -31,11 +39,11 @@ export const routeStackBuilder = () => {
         path: join(baseurl, apiurl, "{{path}}"),
         {{/if}}
         file: "{{file}}",
-        useWrappers: [{{#each useWrappers}}{{importName}}, {{/each}}],
-        definitionItems: {{importName}},
+        useWrappers: [{{#each useWrappers}}...{{id}}, {{/each}}],
+        definitionItems: {{id}},
         params: [ {{#each params.schema}}[ "{{name}}", {{isRest}} ], {{/each}}],
         numericParams: [ {{#each numericParams}}"{{.}}", {{/each}}],
-        validationSchemas: {{importName}}_schemas,
+        validationSchemas: {{id}}_schemas,
         {{#if meta}}meta: {{meta}},
         {{/if}}
       },
@@ -46,3 +54,26 @@ export const routeStackBuilder = () => {
     }
   );
 }
+
+export { createApp, createRouter };
+
+export const appFactory: (
+  factory: (app: App, options: AppOptions | undefined) => App | Promise<App>,
+) => (options?: AppOptions) => App | Promise<App> = (factory) => {
+  return (options) => {
+    const app = options ? createApp(options) : createApp();
+    return factory(app, options);
+  };
+};
+
+export const routerFactory: (
+  factory: (
+    router: Router,
+    options: RouterOptions | undefined,
+  ) => Router | Promise<Router>,
+) => (options?: RouterOptions) => Router | Promise<Router> = (factory) => {
+  return (options) => {
+    const router = options ? createRouter(options) : createRouter();
+    return factory(router, options);
+  };
+};

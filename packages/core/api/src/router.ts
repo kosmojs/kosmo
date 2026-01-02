@@ -2,20 +2,16 @@ import Router, { type RouterMiddleware } from "@koa/router";
 
 import debugRouteEntry from "./debug";
 import type {
-  CreateRouter,
   DefineRoute,
   HandlerDefinition,
   MiddlewareDefinition,
+  RouterOptions,
   RouterRoute,
   RouterRouteSource,
   UseSlots,
   ValidationSchemas,
 } from "./types";
 import { use } from "./use";
-
-export const createRouter: CreateRouter = (options) => {
-  return new Router(options);
-};
 
 export const defineRoute: DefineRoute = (factory) => {
   return factory({
@@ -78,7 +74,11 @@ export const defineRoute: DefineRoute = (factory) => {
   });
 };
 
-export const routerRoutesFactory = (
+export const createRouter = (options?: RouterOptions) => {
+  return new Router(options);
+};
+
+export const createRouterRoutes = (
   routeSources: Array<RouterRouteSource>,
   {
     // Global middleware applied to every route (e.g., logging)
@@ -87,15 +87,15 @@ export const routerRoutesFactory = (
     coreMiddleware: Array<MiddlewareDefinition>;
   },
 ): Array<RouterRoute> => {
-  // WARN:: prioritized middleware must run in this exact order!
+  // NOTE:: prioritized middleware must run in this exact order!
   const prioritizedSlots: Array<keyof UseSlots> = [
     "errorHandler",
-    "params", // Path params processing
-    "validateParams", // Path params validation
-    "bodyparser", // Raw request body parsing
-    "payload", // Set ctx.payload
-    "validatePayload", // Payload validation
-    "validateResponse", // Response validation
+    "params",
+    "validateParams",
+    "bodyparser",
+    "payload",
+    "validatePayload",
+    "validateResponse",
   ];
 
   const stack: Array<RouterRoute> = [];
@@ -112,17 +112,16 @@ export const routerRoutesFactory = (
       (e) => e.kind === "middleware",
     );
 
-    // WARN: the order is critical!
-    // the last defined middleware will take precedence.
     const middlewareStack: Array<MiddlewareDefinition> = [
-      ...paramsMiddlewareFactory(rest.params, rest.numericParams),
-      ...validationMiddlewareFactory(rest.validationSchemas),
+      ...createParamsMiddleware(rest.params, rest.numericParams),
+      ...createValidationMiddleware(rest.validationSchemas),
       // core middleware overrides builtin middleware (of same slot)
       ...coreMiddleware,
       // route middleware overrides core middleware (of same slot)
       ...routeMiddleware,
     ];
 
+    // NOTE: later defined middleware should override previous middleware of same slot
     const routeStack: Array<MiddlewareDefinition | HandlerDefinition> = [
       ...prioritizedSlots.flatMap((slot) => {
         const middleware = middlewareStack.findLast(
@@ -208,7 +207,7 @@ export const routerRoutesFactory = (
   return stack;
 };
 
-const paramsMiddlewareFactory = (
+const createParamsMiddleware = (
   params: RouterRouteSource["params"],
   numericParams: RouterRouteSource["numericParams"],
 ) => [
@@ -238,7 +237,7 @@ const paramsMiddlewareFactory = (
   ),
 ];
 
-const validationMiddlewareFactory = (validationSchemas: ValidationSchemas) => [
+const createValidationMiddleware = (validationSchemas: ValidationSchemas) => [
   use(
     function useValidateParams(ctx, next) {
       validationSchemas.params?.validate(ctx.typedParams);

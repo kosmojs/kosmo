@@ -1,8 +1,4 @@
-import type {
-  RouterContext,
-  RouterMiddleware,
-  RouterOptions,
-} from "@koa/router";
+import type { RouterContext, RouterMiddleware } from "@koa/router";
 import type { Next } from "koa";
 
 declare module "koa" {
@@ -173,12 +169,9 @@ export type RouterRoute = {
 import type Koa from "koa";
 export type App = Koa<DefaultState, DefaultContext>;
 export type AppOptions = ConstructorParameters<typeof import("koa")>[0];
-export type CreateApp = (options?: AppOptions) => App;
 
-import type KoaRouter from "@koa/router";
-export type Router = KoaRouter<DefaultState, DefaultContext>;
-export type { RouterOptions };
-export type CreateRouter = (options?: RouterOptions) => Router;
+export type Router = import("@koa/router").Router<DefaultState, DefaultContext>;
+export type RouterOptions = import("@koa/router").RouterOptions;
 
 export type DevMiddlewareFactory = (
   app: App,

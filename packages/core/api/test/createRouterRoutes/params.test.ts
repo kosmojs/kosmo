@@ -1,10 +1,8 @@
 import { describe, expect, test } from "vitest";
 
-import { runMiddleware } from "@kosmojs/devlib/test";
+import { middlewareStackBuilder, runMiddleware } from "..";
 
-import { middlewareStackBuilder } from "..";
-
-describe("routerRoutesFactory", () => {
+describe("createRouterRoutes", () => {
   describe("params", () => {
     test("rest params", async () => {
       const stack = middlewareStackBuilder(

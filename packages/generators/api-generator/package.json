@@ -21,13 +21,12 @@
     "test": "vitest --root ../../.. --project generators/api-generator"
   },
   "dependencies": {
-    "@kosmojs/devlib": "workspace:^",
+    "@kosmojs/dev": "workspace:^",
     "crc": "^4.3.2",
     "esbuild": "^0.27.2",
     "picomatch": "^4.0.3"
   },
   "devDependencies": {
-    "@kosmojs/config": "workspace:^",
     "@types/picomatch": "^4.0.2"
   }
 }

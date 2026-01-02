@@ -1,4 +1,4 @@
-import { defineRoute } from "{{importPathmap.lib}}";
+import { defineRoute } from "{{ createImport "libApi" route.name }}";
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {

@@ -5,7 +5,7 @@ import { use } from "@/use";
 
 import { middlewareStackBuilder } from "..";
 
-describe("routerRoutesFactory", () => {
+describe("createRouterRoutes", () => {
   describe("route middleware", () => {
     test("route middleware inserted after prioritized middleware", () => {
       function preMiddleware() {}
