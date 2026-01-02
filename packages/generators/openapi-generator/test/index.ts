@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 
 import formatter from "@kosmojs/biome-formatter";
-import type { PluginOptionsResolved } from "@kosmojs/devlib";
+import type { PluginOptionsResolved } from "@kosmojs/dev";
 
 export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 
@@ -22,7 +22,7 @@ export const resolvedOptions: PluginOptionsResolved = {
       moduleConfig: {},
       moduleImport: "",
       async factory() {
-        return { async watchHandler() {} };
+        return { async watch() {}, async build() {} };
       },
       options: { resolveTypes: true },
     },
@@ -40,7 +40,7 @@ export const resolvedOptions: PluginOptionsResolved = {
   baseurl: "",
   apiurl: "",
   appRoot,
-  sourceFolder: "@src",
+  sourceFolder: "test",
   outDir: "_dist",
   command: "build",
 };

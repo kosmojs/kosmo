@@ -2,8 +2,7 @@ import { Spectral } from "@stoplight/spectral-core";
 import { oas } from "@stoplight/spectral-rulesets";
 import { describe, expect, test } from "vitest";
 
-import routesFactory from "@kosmojs/dev/routes";
-import type { ApiRoute } from "@kosmojs/devlib";
+import { type ApiRoute, routesFactory } from "@kosmojs/dev";
 
 import openapiFactory from "@/openapi";
 
@@ -51,7 +50,7 @@ describe("openapi", async () => {
   for (const route of apiRoutes) {
     test(route.name, async ({ expect }) => {
       await expect(generateOpenAPISchema([route])).toMatchFileSnapshot(
-        `snapshots/${route.name}/openapi.txt`,
+        `@snapshots/${route.name}/openapi.txt`,
       );
     });
   }

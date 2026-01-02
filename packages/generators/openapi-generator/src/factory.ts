@@ -5,7 +5,7 @@ import {
   pathResolver,
   type ResolvedEntry,
   renderToFile,
-} from "@kosmojs/devlib";
+} from "@kosmojs/dev";
 
 import openapiFactory from "./openapi";
 import type { Options } from "./types";
@@ -17,7 +17,7 @@ export const factory: GeneratorFactory<Options> = async (
   const { appRoot, sourceFolder } = pluginOptions;
   const { outfile, ...baseSpec } = openapiOptions;
 
-  const { resolve } = pathResolver({ appRoot, sourceFolder });
+  const { createPath } = pathResolver({ appRoot, sourceFolder });
 
   const { generateOpenAPISchema } = openapiFactory(pluginOptions);
 
@@ -40,11 +40,14 @@ export const factory: GeneratorFactory<Options> = async (
       ? YAML.stringify(spec)
       : JSON.stringify(spec, null, 2);
 
-    await renderToFile(resolve("@", outfile), output, {});
+    await renderToFile(createPath.src(outfile), output, {});
   };
 
   return {
-    async watchHandler(entries) {
+    async watch(entries) {
+      await generateSchemas(entries);
+    },
+    async build(entries) {
       await generateSchemas(entries);
     },
   };

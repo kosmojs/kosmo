@@ -8,7 +8,7 @@ import {
   type PluginOptionsResolved,
   type ResponseType,
   typeboxLiteralText,
-} from "@kosmojs/devlib";
+} from "@kosmojs/dev";
 
 import type {
   JsonSchema,
@@ -33,9 +33,9 @@ export default (pluginOptions: PluginOptionsResolved) => {
     propName?: string,
   ): string => {
     const suffix = propName
-      ? `_${propName.replace(/[^\w.-]/g, "_")}${crc(propName)}`
-      : "";
-    return `${route.importName}_${type.id + suffix}`;
+      ? `${type.id}_${propName.replace(/[^\w.-]/g, "_")}${crc(propName)}`
+      : type.id;
+    return `${route.id}_${suffix}`;
   };
 
   // Generate unique component Path
