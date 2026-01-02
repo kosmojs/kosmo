@@ -4,6 +4,7 @@ import defaults from "./defaults";
 import type {
   FetchMapper,
   FetchMethod,
+  HostOpt,
   HTTPError,
   HTTPMethod,
   Options,
@@ -179,4 +180,36 @@ export const stringify = (data: Record<string, unknown>) => {
     indices: false,
     encodeValuesOnly: true,
   });
+};
+
+export const join = (...args: Array<unknown>): string => {
+  for (const a of args) {
+    if (typeof a === "string" || typeof a === "number") {
+      continue;
+    }
+    throw new Error(
+      `The "path" argument must be of type string or number. Received type ${typeof a} (${JSON.stringify(a)})`,
+    );
+  }
+  return args.join("/").replace(/\/+/g, "/");
+};
+
+export const createHost = (host: HostOpt): string => {
+  if (typeof host === "string") {
+    return host;
+  }
+
+  if (typeof host === "object") {
+    return [
+      host.secure ? "https://" : "http://",
+      host.hostname,
+      host.port ? `:${host.port}` : "",
+    ]
+      .join("")
+      .replace(/\/+$/, "");
+  }
+
+  throw new Error(
+    "Expected host to be a string or an object like { hostname: string; port?: number; secure?: boolean }",
+  );
 };

@@ -39,3 +39,7 @@ export interface HTTPError<T extends object = object> extends Error {
   body: T;
   response: Response;
 }
+
+export type HostOpt =
+  | string
+  | { hostname: string; port?: number; secure?: boolean };
