@@ -1,0 +1,32 @@
+{
+  "type": "module",
+  "name": "@kosmojs/generators",
+  "version": "0.0.11",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "pkg/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./pkg/src/index.d.ts",
+      "default": "./pkg/index.js"
+    }
+  },
+  "scripts": {
+    "build": "esbuilder src/index.ts"
+  },
+  "dependencies": {
+    "@kosmojs/api-generator": "workspace:^",
+    "@kosmojs/fetch-generator": "workspace:^",
+    "@kosmojs/typebox-generator": "workspace:^",
+    "@kosmojs/openapi-generator": "workspace:^",
+    "@kosmojs/solid-generator": "workspace:^",
+    "@kosmojs/react-generator": "workspace:^",
+    "@kosmojs/vue-generator": "workspace:^",
+    "@kosmojs/ssr-generator": "workspace:^"
+  }
+}
