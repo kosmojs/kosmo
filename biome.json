@@ -8,6 +8,7 @@
       "docs/**/*.ts",
       "test/**/*.ts",
       "packages/*/*/{src,test}/**/*.ts",
+      "packages/**/*.js",
       "!packages/*/*/test/**/@fixtures/**/lib/*"
     ]
   },
@@ -59,10 +60,17 @@
 
   "overrides": [
     {
-      "includes": [
-        "test/**/*.ts",
-        "./packages/core/dev/src/cli/templates/core/api/errors.ts"
-      ],
+      "includes": ["packages/core/config/index.js"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noTemplateCurlyInString": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/test/**/*.ts", "./packages/**/src/templates/**/*.ts"],
       "linter": {
         "rules": {
           "suspicious": {
@@ -73,11 +81,11 @@
     },
     {
       "includes": [
-        "esbuilder/esbuilder.js",
-        "./test/**/*.ts",
+        "**/test/**/*.ts",
+        "./esbuilder/esbuilder.js",
         "./packages/build/esbuilder/src/index.ts",
         "./packages/core/dev/src/base-plugin/api-handler.ts",
-        "./packages/core/dev/src/cli/**/*.ts",
+        "./packages/core/cli/src/**/*.ts",
         "./packages/core/kosmojs/src/*.ts"
       ],
       "linter": {
@@ -99,18 +107,12 @@
             "groups": [
               [":NODE:", ":BUN:"],
               ":BLANK_LINE:",
-              [
-                ":PACKAGE:",
-                ":PACKAGE_WITH_PROTOCOL:",
-                "!@test/**",
-                "!@kosmojs/**"
-              ],
+              [":PACKAGE:", ":PACKAGE_WITH_PROTOCOL:", "!@kosmojs/**"],
               ":BLANK_LINE:",
 
               [
                 ":PACKAGE:",
                 ":PACKAGE_WITH_PROTOCOL:",
-                "!@test/**",
                 "@kosmojs/**",
                 "!@kosmojs/**/*-generator"
               ],
@@ -121,9 +123,6 @@
                 ":PACKAGE_WITH_PROTOCOL:",
                 "@kosmojs/**/*-generator"
               ],
-              ":BLANK_LINE:",
-
-              [":PACKAGE:", "@test/**"],
               ":BLANK_LINE:",
 
               [":URL:"],
