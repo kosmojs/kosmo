@@ -20,7 +20,7 @@
     "build": "esbuilder src/index.ts"
   },
   "dependencies": {
-    "@kosmojs/api-generator": "workspace:^",
+    "@kosmojs/koa-generator": "workspace:^",
     "@kosmojs/fetch-generator": "workspace:^",
     "@kosmojs/typebox-generator": "workspace:^",
     "@kosmojs/openapi-generator": "workspace:^",

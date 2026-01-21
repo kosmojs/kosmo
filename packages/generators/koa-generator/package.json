@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "@kosmojs/api-generator",
+  "name": "@kosmojs/koa-generator",
   "version": "0.0.20",
   "author": "Slee Woo",
   "license": "MIT",
@@ -18,7 +18,7 @@
   },
   "scripts": {
     "build": "esbuilder src/index.ts",
-    "test": "vitest --root ../../.. --project generators/api-generator"
+    "test": "vitest --root ../../.. --project generators/koa-generator"
   },
   "dependencies": {
     "@kosmojs/dev": "workspace:^",
