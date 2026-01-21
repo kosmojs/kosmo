@@ -9,7 +9,7 @@ import {
 import errorHandlerTpl from "./error-handler.ts?as=text";
 import type { Options } from "./types";
 
-import libTpl from "./templates/lib.hbs";
+import indexTpl from "./templates/index.hbs";
 import schemasTpl from "./templates/schemas.hbs";
 
 export const factory: GeneratorFactory<Options> = async (
@@ -32,7 +32,7 @@ export const factory: GeneratorFactory<Options> = async (
   });
 
   for (const [file, template] of [
-    ["index.ts", libTpl],
+    ["index.ts", indexTpl],
     ["error-handler.ts", errorHandlerTpl],
   ]) {
     await renderToFile(createPath.lib("@typebox", file), template, {
