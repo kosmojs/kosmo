@@ -165,12 +165,6 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
         const fetchGenerator = generators.find((e) => e.kind === "fetch");
         const ssrGenerator = generators.find((e) => e.kind === "ssr");
 
-        if (!apiGenerator || !fetchGenerator) {
-          throw new Error(
-            "Some of required generators missing, make sure both `api` and `fetch` generators configured properly",
-          );
-        }
-
         store.resolvedOptions = {
           ...pluginOptions,
           command: store.config.command,
@@ -179,9 +173,9 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
             // 1. stub generator should run first
             stubGenerator(),
             // 2. then api generator
-            apiGenerator,
-            // 3. then fetch generator
-            fetchGenerator,
+            ...(apiGenerator ? [apiGenerator] : []),
+            // 3. then fetch generator, only if api generator also enabled
+            ...(fetchGenerator && apiGenerator ? [fetchGenerator] : []),
             // 4. user generators in the order they were added
             ...generators.filter((e) => {
               return e.kind //
@@ -234,6 +228,10 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
 
     async configureServer(server) {
       if (store.config.command !== "serve") {
+        return;
+      }
+
+      if (!store.resolvedOptions.generators.find((e) => e.kind === "api")) {
         return;
       }
 
