@@ -2,6 +2,8 @@
 
 import { parseArgs, styleText } from "node:util";
 
+import prompts, { type PromptObject } from "prompts";
+
 import {
   assertNoError,
   createProject,
@@ -16,8 +18,11 @@ const usage = [
   "",
   styleText("bold", "BASIC USAGE"),
   "",
-  `  ${styleText("blue", "npx kosmojs")} ${styleText("dim", "<name>")}`,
-  "  Create a new Project with given name",
+  `  ${styleText("blue", "npm create kosmo")}`,
+  "  Create a new Project - interactive mode",
+  "",
+  `  ${styleText("blue", "npm create kosmo")} ${styleText("dim", "--name <name>")}`,
+  "  Create a new Project - non-interactive mode",
   "",
   `  ${styleText("magenta", "-q, --quiet")}`,
   "  Suppress all output (errors still shown)",
@@ -33,12 +38,12 @@ const printUsage = () => {
   }
 };
 
-const { values, positionals } = parseArgs({
+const { values } = parseArgs({
   options: {
+    name: { type: "string", short: "n" },
     help: { type: "boolean", short: "h" },
     quiet: { type: "boolean", short: "q" },
   },
-  allowPositionals: true,
   strict: true,
 });
 
@@ -49,9 +54,48 @@ if (values.help) {
 
 const cwd = process.cwd();
 
-const [name] = positionals;
-
 const messages = messageFactory(values.quiet ? () => {} : console.log);
+
+let { name } = values;
+
+if (!name) {
+  console.log();
+  console.log(
+    styleText(
+      ["bold", "green"],
+      "🚀 Great! Let's create a new KosmoJS project",
+    ),
+  );
+  console.log();
+
+  const onState: PromptObject["onState"] = (state) => {
+    if (state.aborted) {
+      process.nextTick(() => process.exit(1));
+    }
+  };
+
+  const validateName = (name: string | undefined) => {
+    if (!name) {
+      return "Invalid name provided";
+    }
+    if (/[^\w.@$+-]/.test(name)) {
+      return "May contain only alphanumerics, hyphens, periods or any of @ $ +";
+    }
+    return undefined;
+  };
+
+  const input = await prompts<"name">([
+    {
+      type: "text",
+      name: "name",
+      message: "Project Name",
+      onState,
+      validate: (name) => validateName(name) || true,
+    },
+  ]);
+
+  name = input.name;
+}
 
 try {
   assertNoError(() => validateName(name));

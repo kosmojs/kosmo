@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "kosmojs",
+  "name": "create-kosmo",
   "version": "0.0.20",
   "author": "Slee Woo",
   "license": "MIT",
@@ -16,6 +16,10 @@
     "postbuild": "chmod +x pkg/cli.js"
   },
   "dependencies": {
-    "@kosmojs/cli": "workspace:^"
+    "@kosmojs/cli": "workspace:^",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/prompts": "^2.4.9"
   }
 }

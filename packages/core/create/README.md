@@ -1,4 +1,4 @@
-# kosmojs
+# create-kosmo
 
 TODO: Add package description
 
