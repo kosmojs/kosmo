@@ -49,9 +49,6 @@
       "import reactPlugin from \"@vitejs/plugin-react\";",
       "import devPlugin from \"@kosmojs/dev\";",
       "import {",
-      "  apiGenerator,",
-      "  fetchGenerator,",
-      "  typeboxGenerator,",
       "  reactGenerator,",
       "} from \"@kosmojs/generators\";",
       "",
@@ -66,7 +63,7 @@
       "  plugins: [",
       "    reactPlugin(),",
       "    devPlugin(apiurl, {",
-      "      generators: [ apiGenerator(), fetchGenerator(), typeboxGenerator(), reactGenerator(), ],",
+      "      generators: [ reactGenerator(), ],",
       "    }),",
       "  ],",
       "});"

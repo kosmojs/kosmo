@@ -61,6 +61,7 @@ describe("Create API", () => {
       { name: "with-react-ssr", framework: "react", ssr: true },
       { name: "with-vue", framework: "vue" },
       { name: "with-vue-ssr", framework: "vue", ssr: true },
+      { name: "with-koa-backend", backend: "koa" },
     ] satisfies Array<SourceFolder>) {
       const snapshot = await createSourceFolder(folder);
       await expect(snapshot).toMatchFileSnapshot(

@@ -28,9 +28,6 @@
       "",
       "import devPlugin from \"@kosmojs/dev\";",
       "import {",
-      "  apiGenerator,",
-      "  fetchGenerator,",
-      "  typeboxGenerator,",
       "} from \"@kosmojs/generators\";",
       "",
       "import defineConfig from \"../../vite.base\";",
@@ -43,7 +40,7 @@
       "  },",
       "  plugins: [",
       "        devPlugin(apiurl, {",
-      "      generators: [ apiGenerator(), fetchGenerator(), typeboxGenerator(), ],",
+      "      generators: [ ],",
       "    }),",
       "  ],",
       "});"

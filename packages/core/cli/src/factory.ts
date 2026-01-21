@@ -147,10 +147,7 @@ export const createSourceFolder = async (
 
   const plugins: Array<Plugin> = [];
 
-  const generators: Array<Generator> = [
-    { name: "fetchGenerator", options: "" },
-    { name: "typeboxGenerator", options: "" },
-  ];
+  const generators: Array<Generator> = [];
 
   const dependencies: Record<string, string> = {};
   const devDependencies: Record<string, string> = {};
@@ -249,7 +246,13 @@ export const createSourceFolder = async (
       "@koa/router": self.devDependencies["@koa/router"],
     });
 
-    generators.push({ name: "koaGenerator", options: "" });
+    generators.push(
+      ...[
+        { name: "koaGenerator", options: "" },
+        { name: "fetchGenerator", options: "" },
+        { name: "typeboxGenerator", options: "" },
+      ],
+    );
   }
 
   if (folder.ssr) {

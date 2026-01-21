@@ -11,9 +11,10 @@ import { build, createServer } from "vite";
 import { inject } from "vitest";
 
 import {
+  type BACKEND_FRAMEWORKS,
   createProject,
   createSourceFolder,
-  type FRAMEWORK_OPTIONS,
+  type FRAMEWORKS,
 } from "@kosmojs/cli";
 import { defaults, pathResolver, pathTokensFactory } from "@kosmojs/dev";
 
@@ -49,11 +50,12 @@ export const sourceFolder = "test";
 export * from "./routes";
 
 export const setupTestProject = async (opt?: {
-  framework?: Exclude<(typeof FRAMEWORK_OPTIONS)[number], "none">;
+  framework?: keyof typeof FRAMEWORKS;
   frameworkOptions?: Record<string, unknown>;
+  backend?: keyof typeof BACKEND_FRAMEWORKS;
   skip?: (a: { ssr: boolean; csr: boolean; api: boolean }) => boolean;
 }) => {
-  const { framework, frameworkOptions } = { ...opt };
+  const { framework, frameworkOptions, backend = "koa" } = { ...opt };
 
   const skip = opt?.skip //
     ? opt.skip({ csr, ssr, api })
@@ -242,6 +244,7 @@ export const setupTestProject = async (opt?: {
       {
         name: sourceFolder,
         port,
+        backend,
         ...(framework ? { framework } : {}),
         ...(ssr ? { ssr: true } : {}),
       },

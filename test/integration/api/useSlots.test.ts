@@ -14,7 +14,7 @@ const {
   withApiResponse,
   startServer,
   teardown,
-} = await setupTestProject();
+} = await setupTestProject({ backend: "koa" });
 
 const coreSlots = [
   "params",

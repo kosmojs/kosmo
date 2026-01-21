@@ -11,7 +11,7 @@ const {
   withApiResponse,
   startServer,
   teardown,
-} = await setupTestProject();
+} = await setupTestProject({ backend: "koa" });
 
 const { createImport } = pathResolver({ sourceFolder });
 

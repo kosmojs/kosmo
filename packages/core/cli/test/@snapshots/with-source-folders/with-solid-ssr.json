@@ -49,9 +49,6 @@
       "import solidPlugin from \"vite-plugin-solid\";",
       "import devPlugin from \"@kosmojs/dev\";",
       "import {",
-      "  apiGenerator,",
-      "  fetchGenerator,",
-      "  typeboxGenerator,",
       "  solidGenerator,",
       "  ssrGenerator,",
       "} from \"@kosmojs/generators\";",
@@ -67,7 +64,7 @@
       "  plugins: [",
       "    solidPlugin({ ssr: true }),",
       "    devPlugin(apiurl, {",
-      "      generators: [ apiGenerator(), fetchGenerator(), typeboxGenerator(), solidGenerator(), ssrGenerator(), ],",
+      "      generators: [ solidGenerator(), ssrGenerator(), ],",
       "    }),",
       "  ],",
       "});"

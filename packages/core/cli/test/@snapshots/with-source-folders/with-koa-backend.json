@@ -1,25 +1,19 @@
 [
   [
-    "with-source-folders/src/with-solid/api/index/index.ts",
+    "with-source-folders/src/with-koa-backend/api/index/index.ts",
     [
       ""
     ]
   ],
   [
-    "with-source-folders/src/with-solid/config/index.ts",
+    "with-source-folders/src/with-koa-backend/config/index.ts",
     [
       "export const baseurl = \"/\";",
       "export const apiurl = \"/api\"; // relative to baseurl"
     ]
   ],
   [
-    "with-source-folders/src/with-solid/entry/client.tsx",
-    [
-      ""
-    ]
-  ],
-  [
-    "with-source-folders/src/with-solid/index.html",
+    "with-source-folders/src/with-koa-backend/index.html",
     [
       "<!--",
       "Do not remove! Build process requires this file for framework-less source folders.",
@@ -28,28 +22,15 @@
     ]
   ],
   [
-    "with-source-folders/src/with-solid/pages/index/index.tsx",
-    [
-      ""
-    ]
-  ],
-  [
-    "with-source-folders/src/with-solid/tsconfig.json",
-    [
-      "{",
-      "  \"extends\": \"@kosmojs/config/tsconfig.solid.json\"",
-      "}"
-    ]
-  ],
-  [
-    "with-source-folders/src/with-solid/vite.config.ts",
+    "with-source-folders/src/with-koa-backend/vite.config.ts",
     [
       "import { join } from \"node:path\";",
       "",
-      "import solidPlugin from \"vite-plugin-solid\";",
       "import devPlugin from \"@kosmojs/dev\";",
       "import {",
-      "  solidGenerator,",
+      "  koaGenerator,",
+      "  fetchGenerator,",
+      "  typeboxGenerator,",
       "} from \"@kosmojs/generators\";",
       "",
       "import defineConfig from \"../../vite.base\";",
@@ -61,9 +42,8 @@
       "    port: 4000,",
       "  },",
       "  plugins: [",
-      "    solidPlugin(),",
-      "    devPlugin(apiurl, {",
-      "      generators: [ solidGenerator(), ],",
+      "        devPlugin(apiurl, {",
+      "      generators: [ koaGenerator(), fetchGenerator(), typeboxGenerator(), ],",
       "    }),",
       "  ],",
       "});"
