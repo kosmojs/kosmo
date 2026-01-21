@@ -9,9 +9,10 @@ import { glob } from "tinyglobby";
 
 import {
   assertNoError,
+  BACKEND_FRAMEWORKS,
   DEFAULT_BASE,
   DEFAULT_PORT,
-  FRAMEWORK_OPTIONS,
+  FRAMEWORKS,
   messageFactory,
   pathExists,
   type SourceFolder,
@@ -46,7 +47,14 @@ const usage = [
   `  Development server port`,
   "",
   `  ${styleText("cyan", "--framework")} ${styleText("dim", "<framework>")}`,
-  `  Frontend framework: ${FRAMEWORK_OPTIONS.map((e) => styleText("yellow", e)).join(", ")}`,
+  `  Framework: ${Object.keys(FRAMEWORKS)
+    .map((e) => styleText("yellow", e))
+    .join(", ")} ${styleText("dim", "(omit for API-only folders)")}`,
+  "",
+  `  ${styleText("cyan", "--backend")} ${styleText("dim", "<framework>")}`,
+  `  Backend framework: ${Object.keys(BACKEND_FRAMEWORKS)
+    .map((e) => styleText("yellow", e))
+    .join(", ")} ${styleText("dim", "(omit for client-only folders)")}`,
   "",
   `  ${styleText("cyan", "--ssr")}`,
   `  Enable server-side rendering (SSR)`,
@@ -57,10 +65,10 @@ const usage = [
   `  ${styleText("blue", "kosmo dev")}`,
   `  Start dev server for all source folders`,
   "",
-  `  ${styleText("blue", "kosmo dev")} ${styleText("magenta", "@admin")}`,
+  `  ${styleText("blue", "kosmo dev")} ${styleText("magenta", "admin")}`,
   `  Start dev server for single source folder`,
   "",
-  `  ${styleText("blue", "kosmo dev")} ${styleText("magenta", "@admin @front")}`,
+  `  ${styleText("blue", "kosmo dev")} ${styleText("magenta", "admin front")}`,
   `  Start dev server for multiple source folders`,
   "",
 
@@ -69,10 +77,10 @@ const usage = [
   `  ${styleText("blue", "kosmo build")}`,
   `  Build all source folders`,
   "",
-  `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "@admin")}`,
+  `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "admin")}`,
   `  Build single source folder`,
   "",
-  `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "@admin @front")}`,
+  `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "admin front")}`,
   `  Build multiple source folders`,
   "",
 
@@ -95,6 +103,7 @@ const printUsage = () => {
 const options = parseArgs({
   options: {
     name: { type: "string" },
+    backend: { type: "string" },
     framework: { type: "string" },
     ssr: { type: "boolean" },
     base: { type: "string" },
@@ -140,11 +149,18 @@ const handlers: Record<
 
       assertNoError(() => validatePort(options.values.port));
 
-      assertNoError(() => {
-        return FRAMEWORK_OPTIONS.includes(options.values.framework as never)
-          ? undefined
-          : `Invalid framework, use one of: ${FRAMEWORK_OPTIONS.join(", ")}`;
-      });
+      for (const [key, values] of [
+        ["framework", FRAMEWORKS],
+        ["backend", BACKEND_FRAMEWORKS],
+      ] as const) {
+        if (options.values[key]) {
+          assertNoError(() => {
+            return Object.keys(values).includes(options.values[key] as never)
+              ? undefined
+              : `Invalid ${key}, use one of: ${Object.keys(values).join(", ")}`;
+          });
+        }
+      }
 
       const folder = options.values as SourceFolder;
 
@@ -170,9 +186,7 @@ const handlers: Record<
       ),
     );
 
-    const folder = await prompts<
-      "name" | "base" | "port" | "framework" | "ssr"
-    >([
+    const folder = await prompts<keyof SourceFolder>([
       {
         type: "text",
         name: "name",
@@ -201,16 +215,33 @@ const handlers: Record<
 
       {
         type: "select",
-        name: "framework",
-        message: "Frontend Framework",
+        name: "backend",
+        message: "Backend Framework",
         onState,
-        choices: FRAMEWORK_OPTIONS.map((name) => {
-          return { title: name, value: name };
-        }),
+        choices: [
+          ...Object.entries(BACKEND_FRAMEWORKS).map(([value, title]) => {
+            return { value, title };
+          }),
+          { value: "none", title: "None (client-only folder)" },
+        ],
       },
 
       {
-        type: (prev: (typeof FRAMEWORK_OPTIONS)[number]) => {
+        type: "select",
+        name: "framework",
+        message: "Framework",
+        onState,
+        choices: [
+          ...Object.entries(FRAMEWORKS).map(([value, title]) => {
+            return { value, title };
+          }),
+          { value: "none", title: "None (API-only folder)" },
+        ],
+      },
+
+      {
+        // NOTE: this should follow framework prompt!
+        type: (prev: SourceFolder["framework"]) => {
           return prev === "none" // skip if no framework
             ? undefined
             : "toggle";

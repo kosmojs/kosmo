@@ -3,8 +3,7 @@ import { resolve } from "node:path";
 
 /**
  * Import from published package to ensure correct version at runtime.
- * Local import would be bundled with pre-bump version; this external
- * import resolves to the actual published package.json.
+ * Local import would be bundled with pre-bump version.
  * INFO: For best compatibility, all packages should share the same version.
  * When bumping the version (even a patch) for a single package, bump it for all packages
  * to keep versions fully synchronized across the project.
@@ -14,6 +13,7 @@ import { defaults, renderToFile } from "@kosmojs/dev";
 
 import {
   copyFiles,
+  DEFAULT_BACKEND,
   DEFAULT_BASE,
   DEFAULT_DIST,
   DEFAULT_FRAMEWORK,
@@ -148,7 +148,6 @@ export const createSourceFolder = async (
   const plugins: Array<Plugin> = [];
 
   const generators: Array<Generator> = [
-    { name: "apiGenerator", options: "" },
     { name: "fetchGenerator", options: "" },
     { name: "typeboxGenerator", options: "" },
   ];
@@ -157,6 +156,7 @@ export const createSourceFolder = async (
   const devDependencies: Record<string, string> = {};
 
   const framework = folder.framework || DEFAULT_FRAMEWORK;
+  const backendFramework = folder.backend || DEFAULT_BACKEND;
 
   let tsconfig: Record<string, unknown> | undefined;
 
@@ -243,6 +243,15 @@ export const createSourceFolder = async (
     };
   }
 
+  if (backendFramework === "koa") {
+    Object.assign(dependencies, {
+      koa: self.devDependencies.koa,
+      "@koa/router": self.devDependencies["@koa/router"],
+    });
+
+    generators.push({ name: "koaGenerator", options: "" });
+  }
+
   if (folder.ssr) {
     generators.push({
       name: "ssrGenerator",
@@ -267,13 +276,13 @@ export const createSourceFolder = async (
     // stub files for initial build to pass;
     // generators will fill them with appropriate content.
     [`${defaults.apiDir}/index/index.ts`, ""],
-    ...(["solid", "react"].includes(framework)
+    ...(["solid", "react"].includes(framework as never)
       ? [
           [`${defaults.pagesDir}/index/index.tsx`, ""],
           [`${defaults.entryDir}/client.tsx`, ""],
         ]
       : []),
-    ...(["vue"].includes(framework)
+    ...(["vue"].includes(framework as never)
       ? [
           [`${defaults.pagesDir}/index/index.vue`, ""],
           [`${defaults.entryDir}/client.ts`, ""],

@@ -6,21 +6,30 @@ export type Project = { name: string; distDir?: string };
 
 export type SourceFolder = {
   name: string;
-  framework?: (typeof FRAMEWORK_OPTIONS)[number];
-  ssr?: boolean;
   base?: string;
   port?: number | string;
+  framework?: keyof typeof FRAMEWORKS | "none";
+  backend?: keyof typeof BACKEND_FRAMEWORKS | "none";
+  ssr?: boolean;
 };
 
+export enum FRAMEWORKS {
+  react = "React",
+  solid = "SolidJS",
+  vue = "Vue",
+}
+
+export enum BACKEND_FRAMEWORKS {
+  koa = "Koa",
+}
+
 export const CREATE_OPTIONS = ["project", "folder"] as const;
-
-export const FRAMEWORK_OPTIONS = ["none", "solid", "react", "vue"] as const;
-
 export const NODE_VERSION = "22";
 export const DEFAULT_DIST = "dist";
 export const DEFAULT_BASE = "/";
 export const DEFAULT_PORT = "4000";
-export const DEFAULT_FRAMEWORK = "none" as const;
+export const DEFAULT_FRAMEWORK: SourceFolder["framework"] = "none";
+export const DEFAULT_BACKEND: SourceFolder["backend"] = "none";
 
 export const copyFiles = async (
   src: string,

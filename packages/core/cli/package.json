@@ -32,6 +32,7 @@
     "tinyglobby": "^0.2.15"
   },
   "devDependencies": {
+    "@koa/router": "^15.0.0",
     "@kosmojs/api": "workspace:^",
     "@solidjs/router": "^0.15.4",
     "@types/koa": "^3.0.1",
@@ -43,6 +44,7 @@
     "@vitejs/plugin-react": "^5.1.2",
     "@vitejs/plugin-vue": "^6.0.3",
     "esbuild": "^0.27.2",
+    "koa": "^3.1.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-router": "^7.10.1",
