@@ -29,7 +29,7 @@
     }
   },
   "scripts": {
-    "build": "esbuilder src/index.ts src/bodyparser/index.ts src/queryparser/index.ts src/errors/index.ts",
+    "build": "esbuilder src/index.ts src/errors/index.ts",
     "test": "vitest --root ../../.. --project core/api"
   },
   "dependencies": {
@@ -41,9 +41,11 @@
     "string-width": "^8.1.0"
   },
   "devDependencies": {
+    "@types/bun": "^1.3.6",
     "@types/formidable": "^3.4.6",
     "@types/koa": "^3.0.1",
     "@types/koa-compose": "^3.2.9",
+    "@types/node": "^25.0.3",
     "@types/picomatch": "^4.0.2",
     "@types/qs": "^6.14.0",
     "koa-compose": "^4.1.0"

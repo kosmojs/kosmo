@@ -1,92 +1,30 @@
-import Router, { type RouterMiddleware } from "@koa/router";
-
-import debugRouteEntry from "./debug";
+import { debugRouteEntry } from "./debug";
 import type {
-  DefineRoute,
   HandlerDefinition,
   MiddlewareDefinition,
-  RouterOptions,
   RouterRoute,
   RouterRouteSource,
   UseSlots,
   ValidationSchemas,
 } from "./types";
-import { use } from "./use";
 
-export const defineRoute: DefineRoute = (factory) => {
-  return factory({
-    use(middleware, options) {
-      return {
-        kind: "middleware",
-        middleware: [middleware as never].flat(),
-        options,
-      };
-    },
-    HEAD(middleware) {
-      return {
-        kind: "handler",
-        middleware: [middleware as never].flat(),
-        method: "HEAD",
-      };
-    },
-    OPTIONS(middleware) {
-      return {
-        kind: "handler",
-        middleware: [middleware as never].flat(),
-        method: "OPTIONS",
-      };
-    },
-    GET(middleware) {
-      return {
-        kind: "handler",
-        middleware: [middleware as never].flat(),
-        method: "GET",
-      };
-    },
-    POST(middleware) {
-      return {
-        kind: "handler",
-        middleware: [middleware as never].flat(),
-        method: "POST",
-      };
-    },
-    PUT(middleware) {
-      return {
-        kind: "handler",
-        middleware: [middleware as never].flat(),
-        method: "PUT",
-      };
-    },
-    PATCH(middleware) {
-      return {
-        kind: "handler",
-        middleware: [middleware as never].flat(),
-        method: "PATCH",
-      };
-    },
-    DELETE(middleware) {
-      return {
-        kind: "handler",
-        middleware: [middleware as never].flat(),
-        method: "DELETE",
-      };
-    },
-  });
-};
-
-export const createRouter = (options?: RouterOptions) => {
-  return new Router(options);
-};
-
-export const createRouterRoutes = (
-  routeSources: Array<RouterRouteSource>,
+export const createRouterRoutes = <MiddlewareT, MiddlewareR>(
+  routeSources: Array<RouterRouteSource<MiddlewareT>>,
+  // Global middleware applied to every route (e.g., logging)
+  globalMiddleware: Array<MiddlewareDefinition<MiddlewareT>>,
   {
-    // Global middleware applied to every route (e.g., logging)
-    coreMiddleware,
+    createParamsMiddleware,
+    createValidationMiddleware,
   }: {
-    coreMiddleware: Array<MiddlewareDefinition>;
+    createParamsMiddleware: (
+      params: RouterRouteSource<MiddlewareT>["params"],
+      numericParams: RouterRouteSource<MiddlewareT>["numericParams"],
+    ) => Array<MiddlewareDefinition<MiddlewareT>>;
+    createValidationMiddleware: (
+      validationSchemas: ValidationSchemas,
+    ) => Array<MiddlewareDefinition<MiddlewareT>>;
   },
-): Array<RouterRoute> => {
+): Array<RouterRoute<MiddlewareR>> => {
   // NOTE:: prioritized middleware must run in this exact order!
   const prioritizedSlots: Array<keyof UseSlots> = [
     "errorHandler",
@@ -98,7 +36,7 @@ export const createRouterRoutes = (
     "validateResponse",
   ];
 
-  const stack: Array<RouterRoute> = [];
+  const stack: Array<RouterRoute<MiddlewareR>> = [];
 
   // Iterate over each route definition
   for (const { name, path, file, ...rest } of routeSources) {
@@ -108,21 +46,21 @@ export const createRouterRoutes = (
       ...rest.definitionItems,
     ].flat();
 
-    const routeMiddleware: Array<MiddlewareDefinition> = definitionItems.filter(
-      (e) => e.kind === "middleware",
-    );
+    const routeMiddleware: Array<MiddlewareDefinition<MiddlewareT>> =
+      definitionItems.filter((e) => e.kind === "middleware");
 
-    const middlewareStack: Array<MiddlewareDefinition> = [
+    const middlewareStack: Array<MiddlewareDefinition<MiddlewareT>> = [
       ...createParamsMiddleware(rest.params, rest.numericParams),
       ...createValidationMiddleware(rest.validationSchemas),
-      // core middleware overrides builtin middleware (of same slot)
-      ...coreMiddleware,
-      // route middleware overrides core middleware (of same slot)
+      ...globalMiddleware,
+      // route middleware overrides global middleware (of same slot)
       ...routeMiddleware,
     ];
 
     // NOTE: later defined middleware should override previous middleware of same slot
-    const routeStack: Array<MiddlewareDefinition | HandlerDefinition> = [
+    const routeStack: Array<
+      MiddlewareDefinition<MiddlewareT> | HandlerDefinition<MiddlewareT>
+    > = [
       ...prioritizedSlots.flatMap((slot) => {
         const middleware = middlewareStack.findLast(
           // Using findLast to pick the latest entry,
@@ -134,7 +72,7 @@ export const createRouterRoutes = (
           : [];
       }),
 
-      ...coreMiddleware.flatMap((entry) => {
+      ...globalMiddleware.flatMap((entry) => {
         if (!entry.options?.slot) {
           // no slot, including regardless
           return [entry];
@@ -162,7 +100,7 @@ export const createRouterRoutes = (
             // already picked when inserted prioritized middleware, excluding
             return [];
           }
-          if (coreMiddleware.some((e) => e.options?.slot === slot)) {
+          if (globalMiddleware.some((e) => e.options?.slot === slot)) {
             // already picked when inserted core middleware, excluding
             return [];
           }
@@ -190,8 +128,8 @@ export const createRouterRoutes = (
           middleware: [
             ...middleware.flatMap((e) => e.middleware),
             ...entry.middleware,
-          ] as unknown as Array<RouterMiddleware>,
-          debug: debugRouteEntry({
+          ] as Array<never>,
+          debug: debugRouteEntry<MiddlewareT>({
             name,
             path,
             file,
@@ -206,69 +144,3 @@ export const createRouterRoutes = (
 
   return stack;
 };
-
-const createParamsMiddleware = (
-  params: RouterRouteSource["params"],
-  numericParams: RouterRouteSource["numericParams"],
-) => [
-  use(
-    function useParams(ctx, next) {
-      ctx.typedParams = params.reduce(
-        (map: Record<string, unknown>, [name, isRest]) => {
-          const value = ctx.params[name];
-          if (value) {
-            if (isRest) {
-              map[name] = numericParams.includes(name)
-                ? value.split("/").map(Number)
-                : value.split("/");
-            } else {
-              map[name] = numericParams.includes(name) ? Number(value) : value;
-            }
-          } else {
-            map[name] = value;
-          }
-          return map;
-        },
-        {},
-      ) as never;
-      return next();
-    },
-    { slot: "params" },
-  ),
-];
-
-const createValidationMiddleware = (validationSchemas: ValidationSchemas) => [
-  use(
-    function useValidateParams(ctx, next) {
-      validationSchemas.params?.validate(ctx.typedParams);
-      return next();
-    },
-    { slot: "validateParams" },
-  ),
-
-  use(
-    function useValidatePayload(ctx, next) {
-      validationSchemas.payload?.[ctx.method]?.validate(ctx.payload);
-      return next();
-    },
-    {
-      slot: "validatePayload",
-      on: Object.keys(validationSchemas.payload || {}) as never,
-    },
-  ),
-
-  use(
-    async function useValidateResponse(ctx, next) {
-      if (validationSchemas.response?.[ctx.method]) {
-        await next();
-        validationSchemas.response?.[ctx.method]?.validate(ctx.body);
-      } else {
-        return next();
-      }
-    },
-    {
-      slot: "validateResponse",
-      on: Object.keys(validationSchemas.response || {}) as never,
-    },
-  ),
-];

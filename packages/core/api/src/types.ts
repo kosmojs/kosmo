@@ -1,15 +1,4 @@
-import type { RouterContext, RouterMiddleware } from "@koa/router";
-import type { Next } from "koa";
-
-declare module "koa" {
-  interface Request {
-    body?: unknown;
-    rawBody: string;
-  }
-}
-
-export interface DefaultState {}
-export interface DefaultContext {}
+/// <reference types="@types/bun" />
 
 export enum HTTPMethods {
   HEAD = "HEAD",
@@ -23,96 +12,21 @@ export enum HTTPMethods {
 
 export type HTTPMethod = keyof typeof HTTPMethods;
 
-export type ParameterizedContext<
-  ParamsT,
-  StateT,
-  ContextT,
-  PayloadT = unknown,
-  ResponseT = unknown,
-> = RouterContext<
-  DefaultState & StateT,
-  DefaultContext &
-    ContextT & {
-      typedParams: ParamsT;
-      payload: PayloadT;
-    },
-  ResponseT
->;
-
-export type ParameterizedMiddleware<
-  ParamsT = {},
-  StateT = {},
-  ContextT = {},
-> = (
-  ctx: ParameterizedContext<ParamsT, StateT, ContextT>,
-  next: Next,
-) => Promise<void> | void;
-
-export type RouteHandler<
-  ParamsT,
-  StateT,
-  ContextT,
-  PayloadT = unknown,
-  ResponseT = unknown,
-> = (
-  ctx: ParameterizedContext<ParamsT, StateT, ContextT, PayloadT, ResponseT>,
-  next: Next,
-) => Promise<void> | void;
-
-export type MiddlewareDefinition = {
+export type MiddlewareDefinition<MiddlewareT> = {
   kind: "middleware";
-  middleware: Array<ParameterizedMiddleware>;
+  middleware: Array<MiddlewareT>;
   options?: UseOptions | undefined;
 };
 
-export type HandlerDefinition = {
+export type HandlerDefinition<MiddlewareT> = {
   kind: "handler";
-  middleware: Array<ParameterizedMiddleware>;
+  middleware: Array<MiddlewareT>;
   method: HTTPMethod;
 };
 
-export type RouteDefinitionItem = MiddlewareDefinition | HandlerDefinition;
-
-export type DefineRouteHelpers<
-  ParamsT,
-  StateT,
-  ContextT,
-  OptionalHandlers = undefined,
-> = {
-  // INFO: The `use` helper intentionally does not accept type parameters.
-  // PayloadT and ResponseT are only relevant to route handlers,
-  // as different request methods receive different payloads and return different responses.
-  // Allowing these type parameters on `use` would be misleading,
-  // since middleware operates across multiple request methods with varying types.
-  use: (
-    middleware:
-      | ParameterizedMiddleware<ParamsT, StateT, ContextT>
-      | Array<ParameterizedMiddleware<ParamsT, StateT, ContextT>>,
-    options?: UseOptions,
-  ) => RouteDefinitionItem;
-} & {
-  [M in HTTPMethod]: M extends OptionalHandlers
-    ? <PayloadT = unknown, ResponseT = unknown>(
-        handler?:
-          | RouteHandler<ParamsT, StateT, ContextT, PayloadT, ResponseT>
-          | Array<RouteHandler<ParamsT, StateT, ContextT, PayloadT, ResponseT>>,
-      ) => RouteDefinitionItem
-    : <PayloadT = unknown, ResponseT = unknown>(
-        handler:
-          | RouteHandler<ParamsT, StateT, ContextT, PayloadT, ResponseT>
-          | Array<RouteHandler<ParamsT, StateT, ContextT, PayloadT, ResponseT>>,
-      ) => RouteDefinitionItem;
-};
-
-export type DefineRoute = <
-  ParamsT = Record<string, string>,
-  StateT = object,
-  ContextT = object,
->(
-  factory: (
-    helpers: DefineRouteHelpers<ParamsT, StateT, ContextT>,
-  ) => Array<RouteDefinitionItem>,
-) => Array<RouteDefinitionItem>;
+export type RouteDefinitionItem<MiddlewareT> =
+  | MiddlewareDefinition<MiddlewareT>
+  | HandlerDefinition<MiddlewareT>;
 
 export interface UseSlots {
   errorHandler: string;
@@ -130,33 +44,26 @@ export type UseOptions = {
   debug?: string | undefined;
 };
 
-export type Use = <StateT = DefaultState, ContextT = DefaultContext>(
-  middleware:
-    | ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
-    | Array<ParameterizedMiddleware<Record<string, string>, StateT, ContextT>>,
-  options?: UseOptions,
-) => MiddlewareDefinition;
-
-export type RouterRouteSource = {
+export type RouterRouteSource<MiddlewareT> = {
   name: string;
   path: string;
   file: string;
   // useWrappers is same as defining middleware inside route definition,
   // just automatically imported from use.ts files
-  useWrappers: [...a: Array<MiddlewareDefinition>];
-  definitionItems: Array<RouteDefinitionItem>;
+  useWrappers: [...a: Array<MiddlewareDefinition<MiddlewareT>>];
+  definitionItems: Array<RouteDefinitionItem<MiddlewareT>>;
   params: Array<[name: string, isRest?: boolean]>;
   numericParams: Array<string>;
   validationSchemas: ValidationSchemas;
   meta?: Record<string, unknown>;
 };
 
-export type RouterRoute = {
+export type RouterRoute<MiddlewareT> = {
   name: string;
   path: string;
   file: string;
   methods: Array<string>;
-  middleware: Array<RouterMiddleware>;
+  middleware: Array<MiddlewareT>;
   debug: {
     headline: string;
     methods: string;
@@ -166,21 +73,84 @@ export type RouterRoute = {
   };
 };
 
-import type Koa from "koa";
-export type App = Koa<DefaultState, DefaultContext>;
-export type AppOptions = ConstructorParameters<typeof import("koa")>[0];
+export type DevSetup = {
+  /**
+   * API request handler for development mode.
+   *
+   * In dev mode, incoming requests are routed based on URL:
+   * - Requests matching apiurl routed to this handler (your API)
+   * - All other requests routed to Vite dev server (pages/assets)
+   *
+   * Returns a function that processes API requests.
+   * */
+  requestHandler: () => (
+    req: import("node:http").IncomingMessage,
+    res: import("node:http").ServerResponse,
+  ) => Promise<void>;
 
-export type Router = import("@koa/router").Router<DefaultState, DefaultContext>;
-export type RouterOptions = import("@koa/router").RouterOptions;
+  /**
+   * Custom function to determine if a request should be handled by the API.
+   *
+   * By default, requests are routed to the API handler if their URL starts with `apiurl`.
+   * Use this to implement custom heuristics for detecting API requests.
+   * */
+  requestMatcher?: (req: import("node:http").IncomingMessage) => boolean;
 
-export type DevMiddlewareFactory = (
+  /**
+   * In dev mode, perform cleanup operations before reloading the API handler.
+   * */
+  teardownHandler?: () => void | Promise<void>;
+};
+
+type NodeServer = import("node:http").Server;
+
+type NodeListen = {
+  (
+    port?: number,
+    hostname?: string,
+    backlog?: number,
+    callback?: () => void,
+  ): NodeServer;
+  (port: number, hostname?: string, callback?: () => void): NodeServer;
+  (port: number, backlog?: number, callback?: () => void): NodeServer;
+  (port: number, callback?: () => void): NodeServer;
+  (path: string, backlog?: number, callback?: () => void): NodeServer;
+  (path: string, callback?: () => void): NodeServer;
+  (options: import("net").ListenOptions, callback?: () => void): NodeServer;
+  (handle: unknown, backlog?: number, callback?: () => void): NodeServer;
+  (handle: unknown, callback?: () => void): NodeServer;
+};
+
+export type AppFactory<
+  App extends {
+    // All apps must support Node.js via .listen() interface.
+    // Express/Koa have this natively.
+    // Hono requires @hono/node-server adapter to provide .listen().
+    listen: NodeListen;
+
+    // Optional: native fetch handler for edge runtimes (Bun/Deno/Cloudflare).
+    // Hono provides this natively; Express/Koa do not.
+    fetch?: (request: Request) => Response | Promise<Response>;
+  },
+  AppOptions = unknown,
+> = (factory: (a: { createApp: (o?: AppOptions) => App }) => App) => App;
+
+export type RouterFactory<Router, RouterOptions = unknown> = (
+  factory: (a: { createRouter: (o?: RouterOptions) => Router }) => Router,
+) => Router;
+
+export type CreateServer<App, Server> = (
   app: App,
-) => (
-  req: import("node:http").IncomingMessage,
-  res: import("node:http").ServerResponse,
-  next: () => Promise<void>,
-) => Promise<void>;
-export type TeardownHandler = (app: App) => void | Promise<void>;
+  opt?: {
+    port?: number;
+    sock?: string;
+    callback?: () => void | Promise<void>;
+  },
+) => Promise<Server>;
+
+export type ServerFactory<App, Server> = (
+  factory: (a: { createServer: CreateServer<App, Server> }) => void,
+) => void;
 
 export type ValidationSchema = {
   check: (data: unknown) => boolean;

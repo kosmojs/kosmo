@@ -2,11 +2,7 @@ import { styleText } from "node:util";
 
 import stringWidth from "string-width";
 
-import type {
-  HandlerDefinition,
-  MiddlewareDefinition,
-  RouterRoute,
-} from "./types";
+import type { HTTPMethod, RouterRoute, UseOptions } from "./types";
 
 const colorizeMethod = (method: string): string => {
   const color = (
@@ -22,14 +18,21 @@ const colorizeMethod = (method: string): string => {
   return color ? styleText(color, method) : method;
 };
 
-export default (entry: {
+export const debugRouteEntry = <MiddlewareT>(entry: {
   name: string;
   path: string;
   file: string;
   methods: Array<string>;
-  middleware: Array<MiddlewareDefinition>;
-  handler: HandlerDefinition;
-}): RouterRoute["debug"] => {
+  middleware: Array<{
+    middleware: Array<MiddlewareT>;
+    options?: UseOptions | undefined;
+  }>;
+  handler: {
+    kind: "handler";
+    middleware: Array<MiddlewareT>;
+    method: HTTPMethod;
+  };
+}): RouterRoute<MiddlewareT>["debug"] => {
   const { path, file } = entry;
 
   const methodLines = entry.methods.flatMap((method) => {
@@ -50,7 +53,7 @@ export default (entry: {
       }
 
       const funcNames = middleware.map((fn) => {
-        return styleText("magenta", funcName(fn));
+        return styleText("magenta", funcName(fn as Function));
       });
 
       lines.push(`${styleText("dim", "exec:")} ${funcNames.join("; ")}`);
@@ -60,7 +63,7 @@ export default (entry: {
     .join(`\n${Array(12).fill(" ").join("")}`);
 
   const handlerLines = entry.handler.middleware.map((fn) => {
-    return styleText("yellow", funcName(fn));
+    return styleText("yellow", funcName(fn as Function));
   });
 
   const headline = `${styleText("bgBlue", styleText("black", ` ${path} `))} ${styleText("gray", `[ ${file} ]`)}`;
@@ -97,7 +100,7 @@ export default (entry: {
       map[key] = line.split("\n").map(lineMapper).join("\n");
       return map;
     },
-    {} as RouterRoute["debug"],
+    {} as RouterRoute<MiddlewareT>["debug"],
   );
 
   return {
