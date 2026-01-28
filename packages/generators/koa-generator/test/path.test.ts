@@ -9,7 +9,7 @@ describe("pathFactory", () => {
     expect(pathFactory(pathTokensFactory("some/page"))).toEqual("some/page");
   });
 
-  test("no params with extension", () => {
+  test("no params, with extension", () => {
     expect(pathFactory(pathTokensFactory("some/page.html"))).toEqual(
       "some/page.html",
     );

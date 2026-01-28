@@ -22,7 +22,7 @@ beforeAll(async () => {
     return () => {
       if (file === "use") {
         return `
-          import { use } from "@kosmojs/api";
+          import { use } from "${createImport.libApi()}";
           export default [
             use((ctx, next) => {
               if (!ctx.state.stack) {

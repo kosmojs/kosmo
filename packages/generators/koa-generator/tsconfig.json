@@ -1,3 +1,4 @@
 {
-  "extends": "@kosmojs/config/tsconfig.kosmo.json"
+  "extends": "@kosmojs/config/tsconfig.kosmo.json",
+  "exclude": ["./src/templates/lib/api:router.ts"]
 }

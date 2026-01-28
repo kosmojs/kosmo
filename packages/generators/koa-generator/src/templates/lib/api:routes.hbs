@@ -1,0 +1,33 @@
+import { join } from "node:path";
+
+import { baseurl, apiurl } from "{{ createImport "config" }}";
+
+{{#each routes}}
+import {{id}} from "{{ createImport "api" file }}";
+import { validationSchemas as {{id}}_schemas } from "{{ createImport "libApi" name "schemas" }}";
+{{/each}}
+
+{{#each useWrappers}}
+import {{id}} from "{{ createImport "api" file }}";
+{{/each}}
+
+export const routeSources = [
+  {{#each routes}}
+  {
+    name: "{{name}}",
+    {{#if fullpath}}
+    path: "{{fullpath}}",
+    {{else}}
+    path: join(baseurl, apiurl, "{{path}}"),
+    {{/if}}
+    file: "{{file}}",
+    useWrappers: [{{#each useWrappers}}...{{id}}, {{/each}}],
+    definitionItems: {{id}} as never,
+    params: [ {{#each params.schema}}[ "{{name}}", {{isRest}} ], {{/each}}],
+    numericParams: [ {{#each numericParams}}"{{.}}", {{/each}}],
+    validationSchemas: {{id}}_schemas,
+    {{#if meta}}meta: {{meta}},
+    {{/if}}
+  },
+  {{/each}}
+] as const;

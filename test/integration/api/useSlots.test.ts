@@ -42,9 +42,9 @@ beforeAll(async () => {
   };
 
   await writeFile(
-    createPath.coreApi("use.ts"),
+    createPath.api("use.ts"),
     `
-      import { use } from "@kosmojs/api";
+      import { use } from "${createImport.libApi()}";
       export default [
         use(
           async (ctx, next) => {

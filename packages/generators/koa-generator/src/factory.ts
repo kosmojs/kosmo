@@ -18,17 +18,25 @@ import {
 
 import type { Options } from "./types";
 
-import libIndexTpl from "./templates/lib/index.hbs";
+import libApiAppTpl from "./templates/lib/api:app.ts?as=text";
+import libApiDevTpl from "./templates/lib/api:dev.ts?as=text";
+import libApiRouteTpl from "./templates/lib/api:route.ts?as=text";
+import libApiRouterTpl from "./templates/lib/api:router.ts?as=text";
+import libApiRoutesTpl from "./templates/lib/api:routes.hbs";
+import libApiServerTpl from "./templates/lib/api:server.ts?as=text";
+import libApiTpl from "./templates/lib/api.ts?as=text";
 import libRouteTpl from "./templates/lib/route.hbs";
-import srcAppTpl from "./templates/src/app.hbs";
+import srcAppTpl from "./templates/src/app.ts?as=text";
+import srcDevTpl from "./templates/src/dev.ts?as=text";
+import srcEnvTpl from "./templates/src/env.hbs";
 import srcRouteIndexTpl from "./templates/src/route/index.hbs";
 import srcRouteUseTpl from "./templates/src/route/use.hbs";
-import srcRouterTpl from "./templates/src/router.hbs";
-import srcServerTpl from "./templates/src/server.hbs";
-import srcUseTpl from "./templates/src/use.hbs";
+import srcRouterTpl from "./templates/src/router.ts?as=text";
+import srcServerTpl from "./templates/src/server.ts?as=text";
+import srcUseTpl from "./templates/src/use.ts?as=text";
 
 export const factory: GeneratorFactory<Options> = async (
-  { appRoot, sourceFolder, outDir, formatters },
+  { appRoot, sourceFolder, outDir },
   { alias, templates, meta },
 ) => {
   const { createPath, createImportHelper } = pathResolver({
@@ -37,9 +45,11 @@ export const factory: GeneratorFactory<Options> = async (
   });
 
   const { renderToFile } = renderFactory({
-    formatters,
     helpers: {
       createImport: createImportHelper,
+    },
+    partials: {
+      libApiTpl,
     },
   });
 
@@ -62,8 +72,10 @@ export const factory: GeneratorFactory<Options> = async (
   const overwrite = (content: string) => content?.trim().length === 0;
 
   for (const [file, template] of [
-    ["router.ts", srcRouterTpl],
+    ["env.d.ts", srcEnvTpl],
     ["app.ts", srcAppTpl],
+    ["dev.ts", srcDevTpl],
+    ["router.ts", srcRouterTpl],
     ["server.ts", srcServerTpl],
     ["use.ts", srcUseTpl],
   ]) {
@@ -160,7 +172,13 @@ export const factory: GeneratorFactory<Options> = async (
     });
 
     for (const [file, template] of [
-      [`${createPath.libApi()}.ts`, libIndexTpl],
+      [createPath.lib("api.ts"), libApiTpl],
+      [createPath.lib("api:app.ts"), libApiAppTpl],
+      [createPath.lib("api:dev.ts"), libApiDevTpl],
+      [createPath.lib("api:route.ts"), libApiRouteTpl],
+      [createPath.lib("api:routes.ts"), libApiRoutesTpl],
+      [createPath.lib("api:router.ts"), libApiRouterTpl],
+      [createPath.lib("api:server.ts"), libApiServerTpl],
     ]) {
       await renderToFile(file, template, {
         routes: routesWithAliases,

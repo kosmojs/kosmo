@@ -14,7 +14,8 @@
     ".": {
       "types": "./pkg/src/index.d.ts",
       "default": "./pkg/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "esbuilder src/index.ts",
@@ -27,6 +28,16 @@
     "picomatch": "^4.0.3"
   },
   "devDependencies": {
-    "@types/picomatch": "^4.0.2"
+    "@koa/bodyparser": "^6.0.0",
+    "@koa/router": "^15.2.0",
+    "@kosmojs/api": "workspace:^",
+    "@types/koa": "^3.0.1",
+    "@types/koa-compose": "^3.2.9",
+    "@types/picomatch": "^4.0.2",
+    "@types/qs": "^6.14.0",
+    "koa": "^3.1.1",
+    "koa-compose": "^4.1.0",
+    "qs": "^6.14.0",
+    "typebox": "^1.0.64"
   }
 }

@@ -1,8 +1,0 @@
-import { createRoutes, routerFactory } from "{{ createImport "libApi" }}";
-
-export default routerFactory((router) => {
-  for (const { name, path, methods, middleware } of createRoutes()) {
-    router.register(path, methods, middleware, { name });
-  }
-  return router;
-});

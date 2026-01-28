@@ -4,7 +4,7 @@ import { styleText } from "node:util";
 
 import { type BuildOptions, context, type Plugin } from "esbuild";
 
-import type { App } from "@kosmojs/api";
+import type { DevSetup } from "@kosmojs/api";
 
 import { defaults } from "@/defaults";
 import { pathResolver } from "@/paths";
@@ -21,23 +21,20 @@ export default async (options: PluginOptionsResolved) => {
     { with: { type: "json" } }
   ).then((e) => e.default);
 
-  let app: App;
-  let devMiddlewareFactory: Function | undefined;
-  let teardownHandler: Function | undefined;
+  let devSetup: DevSetup | undefined;
 
   const watcher = async () => {
     const rebuildPlugin: Plugin = {
       name: "rebuild",
       setup(build) {
         build.onEnd(async () => {
-          if (app) {
-            await teardownHandler?.(app);
+          if (devSetup) {
+            await devSetup.teardownHandler?.();
           }
           try {
-            const exports = await import(`${outDir}/app.js?${Date.now()}`);
-            devMiddlewareFactory = exports.devMiddlewareFactory;
-            teardownHandler = exports.teardownHandler;
-            app = await exports.default();
+            await import(`${outDir}/dev.js?${Date.now()}`).then((e) => {
+              devSetup = e.default;
+            });
             console.debug(`${styleText("green", "➜")} Api handler ready`);
           } catch (error) {
             console.error(`${styleText("red", "✗")} Api handler error`);
@@ -51,7 +48,7 @@ export default async (options: PluginOptionsResolved) => {
       ...esbuildOptions,
       logLevel: "error",
       bundle: true,
-      entryPoints: [createPath.api("app.ts")],
+      entryPoints: [createPath.api("dev.ts")],
       plugins: [rebuildPlugin],
       outdir: outDir,
     });
@@ -72,19 +69,23 @@ export default async (options: PluginOptionsResolved) => {
   const devMiddleware = async (
     req: IncomingMessage,
     res: ServerResponse,
-    viteHandler: () => void,
+    next: () => void | Promise<void>,
   ) => {
-    const next = () => {
-      return viteHandler();
-    };
-    if (devMiddlewareFactory) {
-      const handler = devMiddlewareFactory(app);
-      await handler(req, res, next);
-    } else {
-      !req?.url || !new RegExp(`^${join(baseurl, apiurl)}($|/)`).test(req.url)
-        ? next() // do not await here
-        : await app?.callback()(req, res);
+    const {
+      requestMatcher = () => {
+        return new RegExp(`^${join(baseurl, apiurl)}($|/)`).test(
+          req.url as string,
+        );
+      },
+      requestHandler,
+    } = { ...devSetup };
+
+    if (!requestMatcher(req)) {
+      return next();
     }
+
+    const handler = requestHandler?.();
+    return handler ? handler(req, res) : next();
   };
 
   return {
