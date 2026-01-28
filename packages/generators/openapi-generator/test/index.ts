@@ -1,7 +1,13 @@
 import { resolve } from "node:path";
 
-import formatter from "@kosmojs/biome-formatter";
+import type { RouteDefinitionItem } from "@kosmojs/api";
 import type { PluginOptionsResolved } from "@kosmojs/dev";
+
+import {
+  type DefineRouteFactory,
+  defineRouteFactory,
+  type ParameterizedMiddleware,
+} from "@kosmojs/koa-generator";
 
 export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 
@@ -27,14 +33,6 @@ export const resolvedOptions: PluginOptionsResolved = {
       options: { resolveTypes: true },
     },
   ],
-  formatters: [
-    formatter({
-      formatter: {
-        indentStyle: "space",
-        indentWidth: 2,
-      },
-    }).formatter,
-  ],
   refineTypeName: "TRefine",
   watcher: { delay: 0 },
   baseurl: "",
@@ -44,3 +42,21 @@ export const resolvedOptions: PluginOptionsResolved = {
   outDir: "_dist",
   command: "build",
 };
+
+type ParamsTuple = Array<unknown>;
+
+type ParamsMapper<T extends ParamsTuple> = {
+  jobId: T[0] extends undefined ? string : T[0];
+};
+
+export const defineRoute: <
+  ParamsT extends ParamsTuple = [],
+  StateT extends object = object,
+  ContextT extends object = object,
+>(
+  factory: DefineRouteFactory<ParamsMapper<ParamsT>, StateT, ContextT>,
+) => Array<
+  RouteDefinitionItem<
+    ParameterizedMiddleware<ParamsMapper<ParamsT>, StateT, ContextT>
+  >
+> = (factory) => defineRouteFactory(factory);

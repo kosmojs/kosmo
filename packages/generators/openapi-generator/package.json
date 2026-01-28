@@ -27,6 +27,7 @@
     "yaml": "^2.8.2"
   },
   "devDependencies": {
+    "@kosmojs/koa-generator": "workspace:^",
     "@kosmojs/api": "workspace:^",
     "@stoplight/spectral-core": "^1.20.0",
     "@stoplight/spectral-rulesets": "^1.22.0"

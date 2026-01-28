@@ -4,8 +4,7 @@ import { describe, expect, test } from "vitest";
 
 import { type ApiRoute, routesFactory } from "@kosmojs/dev";
 
-import openapiFactory from "@/openapi";
-
+import openapiFactory from "../src/openapi";
 import { openapiOptions, resolvedOptions } from ".";
 
 describe("openapi", async () => {

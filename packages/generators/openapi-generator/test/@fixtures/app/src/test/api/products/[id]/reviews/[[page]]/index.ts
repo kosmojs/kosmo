@@ -1,4 +1,4 @@
-import { defineRoute } from "@kosmojs/api";
+import { defineRoute } from "@test/index";
 
 type CreateReviewPayload = {
   rating: TRefine<number, { minimum: 1; maximum: 5 }>;

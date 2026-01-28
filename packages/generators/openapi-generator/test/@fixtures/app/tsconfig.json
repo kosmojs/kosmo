@@ -3,7 +3,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["../../@fixtures/app/*", "../../@fixtures/app/lib/*"],
-      "@src/*": ["../../@fixtures/app/@src/*", "../../@fixtures/app/lib/@src/*"]
+      "@src/*": ["../../@fixtures/app/@src/*", "../../@fixtures/app/lib/@src/*"],
+      "@test/*": ["../../*"]
     }
   }
 }

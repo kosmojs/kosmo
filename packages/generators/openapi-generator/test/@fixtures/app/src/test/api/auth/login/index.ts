@@ -1,4 +1,4 @@
-import { defineRoute } from "@kosmojs/api";
+import { defineRoute } from "@test/index";
 
 type LoginPayload = {
   email: TRefine<string, { format: "email" }>;

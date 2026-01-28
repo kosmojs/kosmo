@@ -1,4 +1,4 @@
-import { defineRoute } from "@kosmojs/api";
+import { defineRoute } from "@test/index";
 
 type SearchPayload = {
   query: TRefine<string, { minLength: 1; maxLength: 100 }>;
