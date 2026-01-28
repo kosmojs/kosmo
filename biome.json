@@ -38,13 +38,7 @@
         }
       },
       "style": {
-        "useFilenamingConvention": {
-          "level": "error",
-          "options": {
-            "strictCase": true,
-            "requireAscii": true
-          }
-        }
+        "useFilenamingConvention": "off"
       },
       "suspicious": {
         "noEmptyInterface": "off",
@@ -83,10 +77,11 @@
       "includes": [
         "**/test/**/*.ts",
         "./esbuilder/esbuilder.js",
+        "./packages/*/*/src/templates/**/*.ts",
         "./packages/build/esbuilder/src/index.ts",
         "./packages/core/dev/src/base-plugin/api-handler.ts",
         "./packages/core/cli/src/**/*.ts",
-        "./packages/core/kosmojs/src/*.ts"
+        "./packages/core/create/**/*.ts"
       ],
       "linter": {
         "rules": {
