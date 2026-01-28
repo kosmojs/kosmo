@@ -32,7 +32,7 @@
     "dotenv": "^17.2.3",
     "esbuild": "^0.27.2",
     "handlebars": "^4.7.8",
-    "ora": "^9.0.0",
+    "ora": "^9.1.0",
     "picomatch": "^4.0.3",
     "tfusion": "^0.0.23",
     "tinyglobby": "^0.2.15",
@@ -40,7 +40,7 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@types/picomatch": "^4.0.2",
-    "@kosmojs/api": "workspace:^"
+    "@kosmojs/api": "workspace:^",
+    "@types/picomatch": "^4.0.2"
   }
 }

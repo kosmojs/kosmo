@@ -23,12 +23,12 @@
   "dependencies": {
     "@kosmojs/dev": "workspace:^",
     "crc": "^4.3.2",
-    "typebox": "^1.0.64",
+    "typebox": "^1.0.80",
     "yaml": "^2.8.2"
   },
   "devDependencies": {
-    "@kosmojs/koa-generator": "workspace:^",
     "@kosmojs/api": "workspace:^",
+    "@kosmojs/koa-generator": "workspace:^",
     "@stoplight/spectral-core": "^1.20.0",
     "@stoplight/spectral-rulesets": "^1.22.0"
   }
