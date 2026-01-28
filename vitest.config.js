@@ -35,7 +35,7 @@ export default defineConfig({
         globals: true,
       }),
 
-      setupFactory("generators/api-generator"),
+      setupFactory("generators/koa-generator"),
 
       setupFactory("generators/openapi-generator", {
         globalSetup: [
