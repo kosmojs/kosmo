@@ -25,9 +25,7 @@
     "@kosmojs/dev": "workspace:^"
   },
   "devDependencies": {
-    "@kosmojs/api": "workspace:^"
-  },
-  "peerDependencies": {
+    "@kosmojs/api": "workspace:^",
     "typebox": "^1.0.37"
   }
 }

@@ -25,7 +25,13 @@
     "picomatch": "^4.0.3"
   },
   "devDependencies": {
-    "@types/picomatch": "^4.0.2"
+    "@types/picomatch": "^4.0.2",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-router": "^7.10.1"
   },
   "peerDependencies": {
     "react": "^19.2.0",

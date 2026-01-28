@@ -186,7 +186,7 @@ export const setupTestProject = async (opt?: {
       // INFO: wait for files to persist
       await new Promise((resolve) => setTimeout(resolve, 1_000));
 
-      const createApp = await import(
+      const app = await import(
         join(
           projectRoot,
           project.distDir,
@@ -196,7 +196,6 @@ export const setupTestProject = async (opt?: {
         )
       ).then((e) => e.default);
 
-      const app = await createApp();
       const server = await app.listen(port);
 
       return async () => {
@@ -227,10 +226,6 @@ export const setupTestProject = async (opt?: {
     await cleanup();
 
     await createProject(tempDir, project, {
-      dependencies: {
-        "@kosmojs/api": resolve(pkgsDir, "core/api"),
-        "@kosmojs/fetch": resolve(pkgsDir, "core/fetch"),
-      },
       devDependencies: {
         "@kosmojs/config": resolve(pkgsDir, "core/config"),
         "@kosmojs/cli": resolve(pkgsDir, "core/cli"),
@@ -250,6 +245,12 @@ export const setupTestProject = async (opt?: {
       },
       {
         ...(frameworkOptions ? { frameworkOptions } : {}),
+        dependencies: {
+          "@kosmojs/api": resolve(pkgsDir, "core/api"),
+        },
+        devDependencies: {
+          "@kosmojs/fetch": resolve(pkgsDir, "core/fetch"),
+        },
       },
     );
 

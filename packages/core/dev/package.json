@@ -40,9 +40,7 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@types/picomatch": "^4.0.2"
-  },
-  "peerDependencies": {
+    "@types/picomatch": "^4.0.2",
     "@kosmojs/api": "workspace:^"
   }
 }

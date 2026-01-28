@@ -189,6 +189,13 @@ export type GeneratorConstructor = {
 
   factory: GeneratorFactory;
 
+  /**
+   * Package dependencies required by this generator.
+   * The dev plugin checks installation status before running.
+   * */
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+
   options?: {
     /**
      * Enables type resolution for generators that require fully resolved type information.

@@ -9,7 +9,20 @@ import { resolve } from "node:path";
  * to keep versions fully synchronized across the project.
  * */
 import self from "@kosmojs/cli/package.json" with { type: "json" };
-import { defaults, renderToFile } from "@kosmojs/dev";
+import {
+  defaults,
+  type GeneratorConstructor,
+  renderToFile,
+} from "@kosmojs/dev";
+import {
+  fetchGenerator,
+  koaGenerator,
+  reactGenerator,
+  solidGenerator,
+  ssrGenerator,
+  typeboxGenerator,
+  vueGenerator,
+} from "@kosmojs/generators";
 
 import {
   copyFiles,
@@ -39,6 +52,7 @@ type Plugin = {
 type Generator = {
   name: string;
   options: string;
+  instance: GeneratorConstructor;
 };
 
 const tsconfigJson = {
@@ -65,9 +79,6 @@ export const createProject = async (
       "+folder": "kosmo folder",
     },
     dependencies: {
-      "@kosmojs/api": SELF_VERSION,
-      "@kosmojs/fetch": SELF_VERSION,
-      typebox: self.devDependencies.typebox,
       ...assets?.dependencies,
     },
     devDependencies: {
@@ -139,9 +150,9 @@ export const createSourceFolder = async (
     exclude: [/.+\.hbs/],
   });
 
-  const packageFile = resolve(projectRoot, "package.json");
+  const packageJsonFile = resolve(projectRoot, "package.json");
 
-  const packageImport = await import(packageFile, {
+  const packageJson = await import(packageJsonFile, {
     with: { type: "json" },
   }).then((e) => e.default);
 
@@ -149,24 +160,12 @@ export const createSourceFolder = async (
 
   const generators: Array<Generator> = [];
 
-  const dependencies: Record<string, string> = {};
-  const devDependencies: Record<string, string> = {};
-
   const framework = folder.framework || DEFAULT_FRAMEWORK;
   const backendFramework = folder.backend || DEFAULT_BACKEND;
 
   let tsconfig: Record<string, unknown> | undefined;
 
   if (framework === "solid") {
-    Object.assign(dependencies, {
-      "@solidjs/router": self.devDependencies["@solidjs/router"],
-      "solid-js": self.devDependencies["solid-js"],
-    });
-
-    Object.assign(devDependencies, {
-      "vite-plugin-solid": self.devDependencies["vite-plugin-solid"],
-    });
-
     plugins.push({
       importDeclaration: `import solidPlugin from "vite-plugin-solid";`,
       importName: "solidPlugin",
@@ -178,24 +177,13 @@ export const createSourceFolder = async (
       options: opt?.frameworkOptions
         ? JSON.stringify(opt.frameworkOptions, null, 2)
         : "",
+      instance: solidGenerator(),
     });
 
     tsconfig = {
       extends: `@kosmojs/config/tsconfig.${framework}.json`,
     };
   } else if (framework === "react") {
-    Object.assign(dependencies, {
-      react: self.devDependencies.react,
-      "react-router": self.devDependencies["react-router"],
-    });
-
-    Object.assign(devDependencies, {
-      "@vitejs/plugin-react": self.devDependencies["@vitejs/plugin-react"],
-      "@types/react": self.devDependencies["@types/react"],
-      "@types/react-dom": self.devDependencies["@types/react-dom"],
-      "react-dom": self.devDependencies["react-dom"],
-    });
-
     plugins.push({
       importDeclaration: `import reactPlugin from "@vitejs/plugin-react";`,
       importName: "reactPlugin",
@@ -207,21 +195,13 @@ export const createSourceFolder = async (
       options: opt?.frameworkOptions
         ? JSON.stringify(opt.frameworkOptions, null, 2)
         : "",
+      instance: reactGenerator(),
     });
 
     tsconfig = {
       extends: `@kosmojs/config/tsconfig.${framework}.json`,
     };
   } else if (framework === "vue") {
-    Object.assign(dependencies, {
-      "vue-router": self.devDependencies["vue-router"],
-      vue: self.devDependencies.vue,
-    });
-
-    Object.assign(devDependencies, {
-      "@vitejs/plugin-vue": self.devDependencies["@vitejs/plugin-vue"],
-    });
-
     plugins.push({
       importDeclaration: `import vuePlugin from "@vitejs/plugin-vue";`,
       importName: "vuePlugin",
@@ -233,6 +213,7 @@ export const createSourceFolder = async (
       options: opt?.frameworkOptions
         ? JSON.stringify(opt.frameworkOptions, null, 2)
         : "",
+      instance: vueGenerator(),
     });
 
     tsconfig = {
@@ -241,25 +222,28 @@ export const createSourceFolder = async (
   }
 
   if (backendFramework === "koa") {
-    Object.assign(dependencies, {
-      koa: self.devDependencies.koa,
-      "@koa/router": self.devDependencies["@koa/router"],
+    generators.push({
+      name: "koaGenerator",
+      options: "",
+      instance: koaGenerator(),
     });
-
-    generators.push(
-      ...[
-        { name: "koaGenerator", options: "" },
-        { name: "fetchGenerator", options: "" },
-        { name: "typeboxGenerator", options: "" },
-      ],
-    );
   }
 
   if (folder.ssr) {
     generators.push({
       name: "ssrGenerator",
       options: "",
+      instance: ssrGenerator(),
     });
+  }
+
+  if (generators.some((e) => e.instance.slot === "api")) {
+    generators.push(
+      ...[
+        { name: "fetchGenerator", options: "", instance: fetchGenerator() },
+        { name: "typeboxGenerator", options: "", instance: typeboxGenerator() },
+      ],
+    );
   }
 
   const context = {
@@ -303,19 +287,15 @@ export const createSourceFolder = async (
     );
   }
 
-  const packageUpdated = {
-    ...packageImport,
-    dependencies: {
-      ...packageImport.dependencies,
-      ...dependencies,
-      ...opt?.dependencies,
-    },
-    devDependencies: {
-      ...packageImport.devDependencies,
-      ...devDependencies,
-      ...opt?.devDependencies,
-    },
-  };
+  for (const { instance } of generators) {
+    for (const key of ["dependencies", "devDependencies"] as const) {
+      packageJson[key] = { ...packageJson[key], ...instance[key] };
+    }
+  }
 
-  await writeFile(packageFile, JSON.stringify(packageUpdated, null, 2));
+  for (const key of ["dependencies", "devDependencies"] as const) {
+    packageJson[key] = { ...packageJson[key], ...opt?.[key] };
+  }
+
+  await writeFile(packageJsonFile, JSON.stringify(packageJson, null, 2));
 };

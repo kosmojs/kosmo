@@ -1,3 +1,4 @@
+import { writeFile } from "node:fs/promises";
 import { basename, join, resolve } from "node:path";
 import { styleText } from "node:util";
 import { Worker } from "node:worker_threads";
@@ -180,6 +181,65 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
           sourceFolder,
           outDir,
         };
+      }
+
+      const packageJsonFile = resolve(appRoot, "package.json");
+
+      const packageJson = await import(packageJsonFile, {
+        with: { type: "json" },
+      }).then((e) => e.default);
+
+      const newDependencies: Array<
+        ["dependencies" | "devDependencies", string, string]
+      > = [];
+
+      for (const generator of store.resolvedOptions.generators) {
+        for (const key of ["dependencies", "devDependencies"] as const) {
+          for (const [pkg, ver] of Object.entries(generator[key] || {})) {
+            if (!packageJson[key]?.[pkg]) {
+              newDependencies.push([key, pkg, ver]);
+            }
+          }
+        }
+      }
+
+      if (newDependencies.length) {
+        console.warn();
+        console.warn(
+          [
+            "💡 ",
+            styleText(["bold", "italic", "red"], "New dependencies added: "),
+            styleText("dim", newDependencies.map(([, pkg]) => pkg).join(", ")),
+          ].join(""),
+        );
+        console.warn(
+          "📦",
+          [
+            styleText(
+              ["bold", "blueBright"],
+              store.config.command === "build"
+                ? "Install them and run a new build: "
+                : "Install them and restart dev server: ",
+            ),
+            styleText(
+              "dim",
+              ["npm", "pnpm", "yarn"]
+                .map((e) => `\`${e} install\``)
+                .join(" / "),
+            ),
+          ].join(""),
+        );
+        console.warn();
+
+        for (const [key, pkg, ver] of newDependencies) {
+          packageJson[key] = { ...packageJson[key], [pkg]: ver };
+        }
+
+        await writeFile(
+          packageJsonFile,
+          JSON.stringify(packageJson, null, 2),
+          "utf8",
+        );
       }
 
       if (store.config.command === "build") {
