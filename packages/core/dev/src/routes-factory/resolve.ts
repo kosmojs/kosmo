@@ -214,7 +214,6 @@ export const apiRouteResolverFactory: ResolverFactory = (pluginOptions) => {
     appRoot,
     sourceFolder,
     generators = [],
-    formatters = [],
     refineTypeName,
   } = pluginOptions;
 
@@ -325,7 +324,6 @@ export const apiRouteResolverFactory: ResolverFactory = (pluginOptions) => {
                 { [refineTypeName]: refineTypeName },
               ),
               withProperties: [params.id, ...payloadTypes.map((e) => e.id)],
-              formatters,
             })
           : undefined;
 

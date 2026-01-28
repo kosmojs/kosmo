@@ -20,7 +20,6 @@ export const factory: GeneratorFactory = async ({
   appRoot,
   sourceFolder,
   outDir,
-  formatters,
 }) => {
   const pathToRegexp = await readFile(
     resolve(import.meta.dirname, "path-to-regexp.js"),
@@ -34,7 +33,6 @@ export const factory: GeneratorFactory = async ({
     });
 
     const { renderToFile } = renderFactory({
-      formatters,
       helpers: {
         createImport: createImportHelper,
       },

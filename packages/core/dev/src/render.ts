@@ -20,10 +20,7 @@ export type FactoryOptions = RenderOptions & {
    * - function: custom logic to decide whether to overwrite, based on current file content
    */
   overwrite?: boolean | ((fileContent: string) => boolean);
-  formatters?: Array<Formatter>;
 };
-
-type Formatter = (content: string, file: string) => string;
 
 export const render = <Context = object>(
   template: string,
@@ -34,26 +31,13 @@ export const render = <Context = object>(
   return renderer.compile(template, { noEscape })(context);
 };
 
-export const renderAsFile = <Context = object>(
-  file: string,
-  template: string,
-  context: Context,
-  options?: Omit<FactoryOptions, "overwrite">,
-): string => {
-  const { formatters, ...renderOpts } = { ...options };
-  const content = render(template, context, renderOpts);
-  return Array.isArray(formatters)
-    ? formatters.reduce((c, f) => f(c, file), content)
-    : content;
-};
-
 export const renderToFile = async <Context = object>(
   file: string,
   template: string,
   context: Context,
   options?: FactoryOptions,
 ): Promise<void> => {
-  const content = renderAsFile(file, template, context, options);
+  const content = render(template, context, options);
 
   /**
    * Two fs calls (exists + read) are worth it to avoid touching the file

@@ -36,7 +36,7 @@ import srcPageSamplesWelcomeTpl from "./templates/src/pageSamples/welcome.hbs";
 import srcRouterTpl from "./templates/src/router.hbs";
 
 export const factory: GeneratorFactory<Options> = async (
-  { appRoot, sourceFolder, formatters, generators, command },
+  { appRoot, sourceFolder, generators, command },
   options,
 ) => {
   const { createPath, createImportHelper } = pathResolver({

@@ -35,7 +35,7 @@ import srcPageSamplesWelcomeTpl from "./templates/src/pageSamples/welcome.hbs";
 import srcRouterTpl from "./templates/src/router.hbs";
 
 export const factory: GeneratorFactory<Options> = async (
-  { appRoot, sourceFolder, formatters, generators, command },
+  { appRoot, sourceFolder, generators, command },
   options,
 ) => {
   const { createPath, createImportHelper } = pathResolver({
@@ -44,7 +44,6 @@ export const factory: GeneratorFactory<Options> = async (
   });
 
   const { render, renderToFile } = renderFactory({
-    formatters,
     helpers: {
       createImport: createImportHelper,
     },
@@ -89,7 +88,6 @@ export const factory: GeneratorFactory<Options> = async (
           file === "index.html"
             ? (c) => !c?.trim().length || !c?.includes("<!--app-html-->")
             : (c) => !c?.trim().length,
-        formatters,
       },
     );
   }

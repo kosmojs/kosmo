@@ -7,7 +7,6 @@ import { pathResolver } from "@/paths";
 import { routesFactory } from "@/routes-factory";
 import { isRouteFile, type ResolverSignature } from "@/routes-factory/resolve";
 import type {
-  Formatter,
   GeneratorConstructor,
   PluginOptionsResolved,
   ResolvedEntry,
@@ -17,12 +16,8 @@ import type {
 
 import type { SpinnerFactory } from "./spinner";
 
-export type WorkerData = Omit<
-  PluginOptionsResolved,
-  "generators" | "formatters"
-> & {
+export type WorkerData = Omit<PluginOptionsResolved, "generators"> & {
   generatorModules: Array<[string, unknown]>;
-  formatterModules: Array<[string, unknown]>;
 };
 
 export type WorkerSpinner = {
@@ -38,28 +33,17 @@ export type WorkerError = {
   stack?: string;
 };
 
-const {
-  //
-  generatorModules,
-  formatterModules,
-  ...restOptions
-} = workerData as WorkerData;
+const { generatorModules, ...restOptions } = workerData as WorkerData;
 
 const generators: Array<GeneratorConstructor> = [];
-const formatters: Array<Formatter> = [];
 
 for (const [path, opts] of generatorModules) {
   generators.push(await import(path).then((m) => m.default(opts)));
 }
 
-for (const [path, opts] of formatterModules) {
-  formatters.push(await import(path).then((m) => m.default(opts).formatter));
-}
-
 const resolvedOptions: PluginOptionsResolved = {
   ...restOptions,
   generators,
-  formatters,
 };
 
 const { appRoot, sourceFolder } = resolvedOptions;

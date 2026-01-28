@@ -23,26 +23,16 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
 
   const createWorker = () => {
     // Destructuring to separate common options from function-based ones.
-    // Functions (e.g. generators, formatters) can't be passed to worker threads.
-    const {
-      generators = [],
-      formatters = [],
-      ...restOptions
-    } = store.resolvedOptions;
+    // Functions (e.g. generators) can't be passed to worker threads.
+    const { generators = [], ...restOptions } = store.resolvedOptions;
 
     const generatorModules: WorkerData["generatorModules"] = generators.map(
       (e) => [e.moduleImport, e.moduleConfig],
     );
 
-    const formatterModules: WorkerData["formatterModules"] =
-      pluginOptions?.formatters
-        ? pluginOptions.formatters.map((e) => [e.moduleImport, e.moduleConfig])
-        : [];
-
     const workerData: WorkerData = {
       ...restOptions,
       generatorModules,
-      formatterModules,
     };
 
     return new Worker(resolve(import.meta.dirname, "base-plugin/worker.js"), {
@@ -155,11 +145,9 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
       };
 
       {
-        const {
-          generators = [],
-          formatters = [],
-          refineTypeName = "TRefine",
-        } = { ...pluginOptions };
+        const { generators = [], refineTypeName = "TRefine" } = {
+          ...pluginOptions,
+        };
 
         const apiGenerator = generators.find((e) => e.kind === "api");
         const fetchGenerator = generators.find((e) => e.kind === "fetch");
@@ -185,7 +173,6 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
             // 5. ssr generator should run last
             ...(ssrGenerator ? [ssrGenerator] : []),
           ],
-          formatters: formatters.map((e) => e.formatter),
           refineTypeName,
           baseurl: store.config.base,
           apiurl,

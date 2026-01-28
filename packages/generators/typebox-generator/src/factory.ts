@@ -16,7 +16,7 @@ export const factory: GeneratorFactory<Options> = async (
   pluginoptions,
   options,
 ) => {
-  const { appRoot, sourceFolder, formatters } = pluginoptions;
+  const { appRoot, sourceFolder } = pluginoptions;
   const { validationMessages = {}, importCustomTypes } = { ...options };
 
   const { createPath, createImportHelper } = pathResolver({
@@ -25,7 +25,6 @@ export const factory: GeneratorFactory<Options> = async (
   });
 
   const { renderToFile } = renderFactory({
-    formatters,
     helpers: {
       createImport: createImportHelper,
     },

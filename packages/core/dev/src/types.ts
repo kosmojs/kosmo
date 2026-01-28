@@ -5,7 +5,6 @@ import type { ResolvedConfig } from "vite";
 
 export type PluginOptions = {
   generators?: Array<GeneratorConstructor>;
-  formatters?: Array<FormatterConstructor>;
 
   /**
    * Name to use for custom runtime validation refinements.
@@ -22,7 +21,6 @@ export type PluginOptionsResolved = {
   outDir: string;
   command: ResolvedConfig["command"];
   generators: Array<GeneratorConstructor>;
-  formatters: Array<Formatter>;
   refineTypeName: string;
   watcher: {
     // waits this many milliseconds before reacting after a change is detected
@@ -30,7 +28,7 @@ export type PluginOptionsResolved = {
     // copying watch options from vite config and passing down to workers
     options?: import("vite").WatchOptions;
   };
-} & Omit<PluginOptions, "generators" | "formatters" | "refineTypeName">;
+} & Omit<PluginOptions, "generators" | "refineTypeName">;
 
 export type PathToken = {
   orig: string;
@@ -200,16 +198,6 @@ export type GeneratorConstructor = {
      * */
     resolveTypes?: boolean;
   };
-};
-
-export type Formatter = (text: string, filePath: string) => string;
-
-export type FormatterConstructor<
-  ModuleConfig extends object | undefined = undefined,
-> = {
-  moduleImport: string;
-  moduleConfig: ModuleConfig;
-  formatter: Formatter;
 };
 
 type RouterSetup<R> = {

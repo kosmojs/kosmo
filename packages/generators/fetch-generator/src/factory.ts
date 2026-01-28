@@ -10,18 +10,13 @@ import fetchTpl from "./templates/fetch.hbs";
 import routeTpl from "./templates/route.hbs";
 import unwrapTpl from "./templates/unwrap.hbs";
 
-export const factory: GeneratorFactory = async ({
-  appRoot,
-  sourceFolder,
-  formatters,
-}) => {
+export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
   const { createPath, createImportHelper } = pathResolver({
     appRoot,
     sourceFolder,
   });
 
   const { renderToFile } = renderFactory({
-    formatters,
     helpers: {
       createImport: createImportHelper,
     },

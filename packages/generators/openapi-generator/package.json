@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "@kosmojs/api": "workspace:^",
-    "@kosmojs/biome-formatter": "workspace:^",
     "@stoplight/spectral-core": "^1.20.0",
     "@stoplight/spectral-rulesets": "^1.22.0"
   }

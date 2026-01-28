@@ -13,7 +13,6 @@ export const resolvedOptions: PluginOptionsResolved = {
       importCustomTypes: "~/core/typebox",
     }),
   ],
-  formatters: [],
   refineTypeName: "TRefine",
   watcher: { delay: 0 },
   baseurl: "",

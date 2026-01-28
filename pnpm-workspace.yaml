@@ -5,4 +5,3 @@ minimumReleaseAgeExclude:
 packages:
   - "packages/core/*"
   - "packages/generators/*"
-  - "packages/formatters/*"
