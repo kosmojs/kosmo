@@ -1,11 +1,11 @@
-# @kosmojs/api-generator
+# @kosmojs/koa-generator
 
 TODO: Add package description
 
 ## Installation
 
 ```sh
-npm install -D @kosmojs/api-generator
+npm install -D @kosmojs/koa-generator
 ```
 
 ## Documentation
