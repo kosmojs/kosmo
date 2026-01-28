@@ -6,7 +6,7 @@ import type { Options } from "./types";
 export default (options?: Options): GeneratorConstructor => {
   return {
     name: "Api",
-    kind: "api",
+    slot: "api",
     moduleImport: import.meta.filename,
     moduleConfig: options,
     factory: (...args) => factory(...args, { ...options }),

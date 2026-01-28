@@ -173,7 +173,7 @@ export type GeneratorConstructor = {
    * api/fetch generators always run first, ssr always run last.
    * User generators run in the order they were added.
    * */
-  kind?: "api" | "fetch" | "ssr";
+  slot?: "api" | "fetch" | "ssr";
 
   name: string;
 

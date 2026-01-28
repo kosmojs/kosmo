@@ -149,9 +149,9 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
           ...pluginOptions,
         };
 
-        const apiGenerator = generators.find((e) => e.kind === "api");
-        const fetchGenerator = generators.find((e) => e.kind === "fetch");
-        const ssrGenerator = generators.find((e) => e.kind === "ssr");
+        const apiGenerator = generators.find((e) => e.slot === "api");
+        const fetchGenerator = generators.find((e) => e.slot === "fetch");
+        const ssrGenerator = generators.find((e) => e.slot === "ssr");
 
         store.resolvedOptions = {
           ...pluginOptions,
@@ -166,8 +166,8 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
             ...(fetchGenerator && apiGenerator ? [fetchGenerator] : []),
             // 4. user generators in the order they were added
             ...generators.filter((e) => {
-              return e.kind //
-                ? !["api", "fetch", "ssr"].includes(e.kind)
+              return e.slot //
+                ? !["api", "fetch", "ssr"].includes(e.slot)
                 : true;
             }),
             // 5. ssr generator should run last
@@ -218,7 +218,7 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
         return;
       }
 
-      if (!store.resolvedOptions.generators.find((e) => e.kind === "api")) {
+      if (!store.resolvedOptions.generators.find((e) => e.slot === "api")) {
         return;
       }
 

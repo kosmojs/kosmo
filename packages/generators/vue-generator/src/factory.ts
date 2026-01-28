@@ -56,7 +56,7 @@ export const factory: GeneratorFactory<Options> = async (
     ...options.templates,
   }).map(([pattern, template]) => [picomatch(pattern), template]);
 
-  const ssrGenerator = generators.some((e) => e.kind === "ssr");
+  const ssrGenerator = generators.some((e) => e.slot === "ssr");
 
   const entriesTraverser = traverseFactory(options);
 
