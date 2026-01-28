@@ -17,7 +17,7 @@
     }
   },
   "scripts": {
-    "build": "esbuilder --external-exclude path-to-regexp src/index.ts src/path-to-regexp.ts",
+    "build": "esbuilder src/index.ts",
     "test": "vitest --root ../../.. --project generators/ssr-generator"
   },
   "dependencies": {

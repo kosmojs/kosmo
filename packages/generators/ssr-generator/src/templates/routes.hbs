@@ -1,0 +1,27 @@
+import { match } from "path-to-regexp";
+
+/**
+ * Pre-computed route matchers for efficient URL-to-asset resolution.
+ * */
+export const routeMap: Array<{
+  // path-to-regexp matcher function that tests if a URL matches this route
+  match: ReturnType<typeof match>;
+
+  // Route file path used to search within cssAssets.use entries.
+  // Each CSS asset has a `use` property - a set of route files that import it.
+  // This enables identifying CSS assets used by the current route for critical CSS.
+  file: string;
+
+  // Layout chain - ordered array of layouts wrapping this route.
+  // Used to identify CSS assets imported by each layout.
+  // This enables adding layout CSS to critical CSS for the current route.
+  layouts: Array<string>;
+}> = [
+  {{#each routeMap}}
+  {
+    match: match("{{path}}"),
+    file: "{{file}}",
+    layouts: [ {{#each layouts}}"{{.}}", {{/each}}],
+  },
+  {{/each}}
+];

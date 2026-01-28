@@ -1,5 +1,4 @@
-import { readFile, writeFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 
 import { type BuildOptions, build as esbuild } from "esbuild";
 import { build, loadConfigFromFile, type Plugin } from "vite";
@@ -14,18 +13,14 @@ import {
   sortRoutes,
 } from "@kosmojs/dev";
 
-import serverTpl from "./templates/server.hbs";
+import routesTpl from "./templates/routes.hbs";
+import serverTpl from "./templates/server.ts?as=text";
 
 export const factory: GeneratorFactory = async ({
   appRoot,
   sourceFolder,
   outDir,
 }) => {
-  const pathToRegexp = await readFile(
-    resolve(import.meta.dirname, "path-to-regexp.js"),
-    "utf8",
-  );
-
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
     const { createPath, createImportHelper } = pathResolver({
       appRoot,
@@ -83,10 +78,6 @@ export const factory: GeneratorFactory = async ({
       },
     });
 
-    const ssrLibFile = createPath.lib("ssr.ts");
-
-    await writeFile(createPath.lib("path-to-regexp.ts"), pathToRegexp, "utf8");
-
     const routeMap: Array<{
       path: string;
       file: string;
@@ -103,15 +94,19 @@ export const factory: GeneratorFactory = async ({
       };
     }, {});
 
-    await renderToFile(ssrLibFile, serverTpl, { routeMap });
+    for (const [file, template] of [
+      ["ssr.ts", serverTpl],
+      ["ssr:routes.ts", routesTpl],
+    ]) {
+      await renderToFile(createPath.lib(file), template, { routeMap });
+    }
 
     // Build default server for SSR. It is using node:http server.
     // For custom deployment, use the app factory directly and discard the built server.
     await esbuild({
       ...esbuildOptions,
       bundle: true,
-      legalComments: "inline",
-      entryPoints: [ssrLibFile],
+      entryPoints: [createPath.lib("ssr.ts")],
       outfile: join(outDir, "ssr", "server.js"),
     });
   };

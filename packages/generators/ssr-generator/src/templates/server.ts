@@ -3,10 +3,10 @@ import http, { type IncomingMessage, type ServerResponse } from "node:http";
 import { extname, join, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
 
-import type { SSRSetup, SSRManifestEntry } from "@kosmojs/dev";
+import type { SSRManifestEntry, SSRSetup } from "@kosmojs/dev";
 
-import { baseurl } from "{{ createImport "config" }}";
-import { match } from "./path-to-regexp";
+import { baseurl } from "{{ createImport 'config' }}";
+import { routeMap } from "{{ createImport 'lib' 'ssr:routes' }}";
 
 /**
  * Root directory where Vite client assets are emitted.
@@ -15,11 +15,16 @@ import { match } from "./path-to-regexp";
 const STATIC_DIR = resolve(import.meta.dirname, "../client");
 
 const REDIRECT_CODES = [
-  301, // Moved Permanently
-  302, // Found (temporary)
-  303, // See Other (redirect after POST)
-  307, // Temporary Redirect (preserves method)
-  308, // Permanent Redirect (preserves method)
+  // Moved Permanently
+  301,
+  // Found (temporary)
+  302,
+  // See Other (redirect after POST)
+  303,
+  // Temporary Redirect (preserves method)
+  307,
+  // Permanent Redirect (preserves method)
+  308,
 ];
 
 type AssetInfo = {
@@ -30,7 +35,7 @@ type AssetInfo = {
   contentType: string;
   // Cached size to set Content-Length without re-measuring the buffer.
   size: number;
-}
+};
 
 type Manifest = Record<string, SSRManifestEntry>;
 
@@ -40,32 +45,6 @@ type ResolvedAsset = {
   // All manifest paths that uses this asset
   use: Set<string>;
 };
-
-/**
- * Pre-computed route matchers for efficient URL-to-asset resolution.
- * */
-const routeMap: Array<{
-  // path-to-regexp matcher function that tests if a URL matches this route
-  match: (path: string) => boolean;
-
-  // Route file path used to search within cssAssets.use entries.
-  // Each CSS asset has a `use` property - a set of route files that import it.
-  // This enables identifying CSS assets used by the current route for critical CSS.
-  file: string;
-
-  // Layout chain - ordered array of layouts wrapping this route.
-  // Used to identify CSS assets imported by each layout.
-  // This enables adding layout CSS to critical CSS for the current route.
-  layouts: Array<string>;
-}> = [
-  {{#each routeMap}}
-  {
-    match: match("{{path}}"),
-    file: "{{file}}",
-    layouts: [ {{#each layouts}}"{{.}}", {{/each}}],
-  },
-  {{/each}}
-];
 
 const criticalCssOrder: Record<"global" | "layout" | "index", number> = {
   global: 1,
@@ -91,10 +70,7 @@ export const requestHandlerFactory = ({
   // raw Vite manifest.json for advanced SSR uses
   manifest: Manifest;
 }) => {
-  return async (
-    request: IncomingMessage,
-    response: ServerResponse,
-  ) => {
+  return async (request: IncomingMessage, response: ServerResponse) => {
     // If Node's IncomingMessage somehow lacks URL, treat as a server error.
     if (request.url === undefined) {
       response.writeHead(500, { "Content-Type": "text/html" });
@@ -266,18 +242,15 @@ const resolveAssets = (manifest: Manifest): Array<ResolvedAsset> => {
     // Start with a copy of resolvedAssets
     const resolvedAssets = { ...data.resolvedAssets };
 
-    const use = new Set([ ...data.use, key ]);
+    const use = new Set([...data.use, key]);
 
     const createAsset = (path: string, kind: ResolvedAsset["kind"]) => {
       return {
         kind,
         path,
         // Each step extends the list of manifest paths that "use" this entry
-        use: new Set([
-          ...(resolvedAssets[path]?.use || []),
-          ...use,
-        ]),
-      }
+        use: new Set([...(resolvedAssets[path]?.use || []), ...use]),
+      };
     };
 
     // Register JS assets produced by this manifest entry.
@@ -438,7 +411,6 @@ export const loadAssets = async (
  * Export the server factory so tests or higher-level tools can use it if needed.
  * */
 export const createServer = async () => {
-
   // Read the client index.html that includes <!--app-head--> and <!--app-html-->
   // placeholders used for SSR injection.
   const template = await readFile(resolve(STATIC_DIR, "index.html"), "utf8");
@@ -490,7 +462,9 @@ export const createServer = async () => {
  * Parse CLI arguments so this file can be used both as a module
  * and a standalone executable
  * */
-const { values: { port, sock } } = parseArgs({
+const {
+  values: { port, sock },
+} = parseArgs({
   options: {
     port: {
       type: "string",
