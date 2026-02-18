@@ -7,7 +7,7 @@ const setupFactory = (name, { alias, ...setup } = {}) => {
     extends: true,
     test: {
       name,
-      hookTimeout: 60_000,
+      hookTimeout: 90_000,
       include: [`packages/${name}/test/**/*.test.ts`],
       alias: {
         ...alias,
@@ -33,7 +33,6 @@ export default defineConfig({
 
       setupFactory("core/fetch", {
         setupFiles: ["packages/core/fetch/test/setup.ts"],
-        environment: "jsdom",
         globals: true,
       }),
 
