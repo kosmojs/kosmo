@@ -48,15 +48,13 @@ export const debugRouteEntry = <MiddlewareT>(entry: {
 
       if (options?.slot) {
         lines.push(
-          `${styleText("dim", "slot:")} ${styleText("blue", options.slot)};`,
+          `${styleText("dim", "slot:")} ${styleText("blue", options.slot)}`,
         );
       }
 
-      const funcNames = middleware.map((fn) => {
-        return styleText("magenta", funcName(fn as Function));
-      });
-
-      lines.push(`${styleText("dim", "exec:")} ${funcNames.join("; ")}`);
+      lines.push(
+        styleText("dim", middleware.map(funcName as never).join("; ")),
+      );
 
       return lines.join(" ");
     })
