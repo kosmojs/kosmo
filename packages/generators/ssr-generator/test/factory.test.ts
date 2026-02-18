@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { createRouteEntry, pathResolver } from "@kosmojs/dev";
 
-import { generatePathPattern } from "@/factory";
+import { generatePathPattern } from "@src/factory";
 
 const routes = [
   "about",

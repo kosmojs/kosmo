@@ -1,6 +1,6 @@
 import crc from "crc/crc32";
 
-import type { PathToken, RouteEntry } from "@/types";
+import type { PathToken, RouteEntry } from "../types";
 
 export const pathTokensFactory = (path: string): Array<PathToken> => {
   const requiredParamRegex = /^\[([^\]]+)\]$/;

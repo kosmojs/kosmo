@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { pathTokensFactory } from "@/routes-factory/base";
+import { pathTokensFactory } from "@src/routes-factory/base";
 
 describe("pathTokensFactory", () => {
   test("no params", () => {

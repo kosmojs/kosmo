@@ -1,8 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import fetchWrapper, { type HTTPMethod } from "../src";
-
-const httpMethods = ["GET", "DELETE", "POST", "PUT", "PATCH"] as const;
+import fetchWrapper, { type HTTPMethod } from "@src/index";
 
 describe("fetch", () => {
   const fetch = fetchWrapper("http://json");

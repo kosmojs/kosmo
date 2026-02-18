@@ -1,11 +1,11 @@
 import { describe, expect, test } from "vitest";
 
-import { defaults } from "@/defaults";
-import { nestedRoutesFactory } from "@/routes-factory/nesting";
-import { createRouteEntry, scanRoutes } from "@/routes-factory/resolve";
-import type { NestedRouteEntry } from "@/types";
-
 import { pluginOptions } from ".";
+
+import { defaults } from "@src/defaults";
+import { nestedRoutesFactory } from "@src/routes-factory/nesting";
+import { createRouteEntry, scanRoutes } from "@src/routes-factory/resolve";
+import type { NestedRouteEntry } from "@src/types";
 
 describe("Nested Routes", async () => {
   const routeFiles = await scanRoutes(pluginOptions);

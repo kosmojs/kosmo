@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { pathTokensFactory } from "@kosmojs/dev";
 
-import { pathFactory } from "@/factory";
+import { pathFactory } from "@src/factory";
 
 describe("pathFactory", () => {
   test("no params", () => {

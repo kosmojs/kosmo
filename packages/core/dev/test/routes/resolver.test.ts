@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
 
-import { sortRoutes } from "@/routes-factory/base";
-import { createRouteEntry, scanRoutes } from "@/routes-factory/resolve";
-
 import { pluginOptions } from ".";
+
+import { sortRoutes } from "@src/routes-factory/base";
+import { createRouteEntry, scanRoutes } from "@src/routes-factory/resolve";
 
 describe("Routes Resolver", async () => {
   const routeFiles = await scanRoutes(pluginOptions);

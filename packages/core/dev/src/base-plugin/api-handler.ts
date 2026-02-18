@@ -6,9 +6,9 @@ import { type BuildOptions, context, type Plugin } from "esbuild";
 
 import type { DevSetup } from "@kosmojs/api";
 
-import { defaults } from "@/defaults";
-import { pathResolver } from "@/paths";
-import type { PluginOptionsResolved } from "@/types";
+import { defaults } from "../defaults";
+import { pathResolver } from "../paths";
+import type { PluginOptionsResolved } from "../types";
 
 export default async (options: PluginOptionsResolved) => {
   const { appRoot, sourceFolder, baseurl, apiurl } = options;

@@ -1,10 +1,10 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["${configDir}/src", "${configDir}/test"],
+  "include": ["${configDir}"],
   "compilerOptions": {
     "rootDir": "${configDir}",
-    "outDir": "${configDir}/pkg",
-    "paths": { "@/*": ["${configDir}/src/*"] },
+    "outDir": "${configDir}/../pkg",
+    "paths": {},
     "declaration": true,
     "emitDeclarationOnly": true
   }

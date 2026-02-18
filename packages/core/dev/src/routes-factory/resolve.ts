@@ -4,9 +4,11 @@ import crc from "crc/crc32";
 import picomatch from "picomatch";
 import { glob } from "tinyglobby";
 
-import { defaults } from "@/defaults";
-import { pathResolver } from "@/paths";
-import { render, renderToFile } from "@/render";
+import { resolveRouteSignature, typeResolverFactory } from "../ast";
+import { cacheFactory } from "../cache";
+import { defaults } from "../defaults";
+import { pathResolver } from "../paths";
+import { render, renderToFile } from "../render";
 import type {
   ApiRoute,
   PageRoute,

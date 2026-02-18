@@ -13,12 +13,8 @@
   ],
   "exports": {
     ".": {
-      "types": "./pkg/src/index.d.ts",
+      "types": "./pkg/index.d.ts",
       "default": "./pkg/index.js"
-    },
-    "./stub-generator": {
-      "types": "./pkg/src/stub-generator/index.d.ts",
-      "default": "./pkg/stub-generator/index.js"
     },
     "./package.json": "./package.json"
   },

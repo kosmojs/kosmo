@@ -1,8 +1,8 @@
 import { dirname } from "node:path";
 
-import { pathResolver } from "@/paths";
-import { renderToFile } from "@/render";
-import type { GeneratorConstructor, ResolvedEntry } from "@/types";
+import { pathResolver } from "../paths";
+import { renderToFile } from "../render";
+import type { GeneratorConstructor, ResolvedEntry } from "../types";
 
 import envTpl from "./templates/env.d.ts?as=text";
 import gitignoreTpl from "./templates/gitignore.hbs";

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { use } from "@/templates/lib/api";
-import { defineRouteFactory } from "@/templates/lib/api:route";
-
 import { middlewareStackBuilder } from "..";
+
+import { use } from "@src/templates/lib/api";
+import { defineRouteFactory } from "@src/templates/lib/api:route";
 
 describe("createRouterRoutes", () => {
   async function paramsHandler() {}

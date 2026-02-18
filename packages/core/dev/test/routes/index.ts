@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 
-import type { PluginOptionsResolved } from "@/types";
+import type { PluginOptionsResolved } from "@src/types";
 
 export const appRoot = resolve(import.meta.dirname, "../@fixtures/app");
 export const sourceFolder = "test";

@@ -13,6 +13,7 @@
   "exports": {
     "./tsconfig.base.json": "./tsconfig.base.json",
     "./tsconfig.kosmo.json": "./tsconfig.kosmo.json",
+    "./tsconfig.kosmo-test.json": "./tsconfig.kosmo-test.json",
     "./tsconfig.vite.json": "./tsconfig.vite.json",
     "./tsconfig.solid.json": "./tsconfig.solid.json",
     "./tsconfig.react.json": "./tsconfig.react.json",

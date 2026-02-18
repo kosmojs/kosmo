@@ -1,6 +1,0 @@
-{
-  "extends": "@kosmojs/config/tsconfig.kosmo.json",
-  "exclude": [
-    "./test/@fixtures/*"
-  ]
-}

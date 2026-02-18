@@ -2,7 +2,7 @@ import { resolve } from "node:path";
 
 import { defineConfig } from "vitest/config";
 
-const setupFactory = (name, setup) => {
+const setupFactory = (name, { alias, ...setup } = {}) => {
   return {
     extends: true,
     test: {
@@ -10,7 +10,9 @@ const setupFactory = (name, setup) => {
       hookTimeout: 60_000,
       include: [`packages/${name}/test/**/*.test.ts`],
       alias: {
-        "@": resolve(import.meta.dirname, `packages/${name}/src`),
+        ...alias,
+        "@src": resolve(import.meta.dirname, `packages/${name}/src`),
+        "@test": resolve(import.meta.dirname, `packages/${name}/test`),
       },
       ...setup,
     },

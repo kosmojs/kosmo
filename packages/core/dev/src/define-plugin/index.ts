@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { parse as dotenv } from "dotenv";
 import type { Plugin } from "vite";
 
-import { pathExists } from "@/fs";
+import { pathExists } from "../fs";
 
 type Entry = {
   keys: Array<string>;

@@ -12,19 +12,11 @@
   ],
   "exports": {
     ".": {
-      "types": "./pkg/src/index.d.ts",
+      "types": "./pkg/index.d.ts",
       "default": "./pkg/index.js"
     },
-    "./bodyparser": {
-      "types": "./pkg/src/bodyparser/index.d.ts",
-      "default": "./pkg/bodyparser/index.js"
-    },
-    "./queryparser": {
-      "types": "./pkg/src/queryparser/index.d.ts",
-      "default": "./pkg/queryparser/index.js"
-    },
     "./errors": {
-      "types": "./pkg/src/errors/index.d.ts",
+      "types": "./pkg/errors/index.d.ts",
       "default": "./pkg/errors/index.js"
     }
   },

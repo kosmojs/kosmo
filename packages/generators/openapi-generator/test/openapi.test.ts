@@ -4,8 +4,9 @@ import { describe, expect, test } from "vitest";
 
 import { type ApiRoute, routesFactory } from "@kosmojs/dev";
 
-import openapiFactory from "../src/openapi";
 import { openapiOptions, resolvedOptions } from ".";
+
+import openapiFactory from "@src/openapi";
 
 describe("openapi", async () => {
   const { resolvers } = await routesFactory(resolvedOptions);

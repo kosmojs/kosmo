@@ -1,10 +1,12 @@
-import { describe, expect, test } from "vitest";
+import { describe, test } from "vitest";
+
+import type { RequestBodyTarget } from "@kosmojs/api";
 
 import {
   createProject,
   extractDefaultExport,
   extractRouteMethods,
-} from "@/ast";
+} from "@src/ast";
 
 describe("extractRouteMethods", () => {
   const project = createProject();

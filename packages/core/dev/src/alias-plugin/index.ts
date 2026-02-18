@@ -1,7 +1,7 @@
 import { glob } from "tinyglobby";
 import type { Alias, Plugin } from "vite";
 
-import { createTsconfigPaths } from "@/paths";
+import { createTsconfigPaths } from "../paths";
 
 export default (
   appRoot: string,

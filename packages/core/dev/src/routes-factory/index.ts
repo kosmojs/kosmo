@@ -1,6 +1,5 @@
-import { defaults } from "@/defaults";
-import type { PluginOptionsResolved, RouteEntry } from "@/types";
-
+import { defaults } from "../defaults";
+import type { PluginOptionsResolved, RouteEntry } from "../types";
 import {
   apiRouteResolverFactory,
   apiUseResolverFactory,

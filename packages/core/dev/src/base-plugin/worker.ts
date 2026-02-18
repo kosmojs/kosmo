@@ -3,17 +3,16 @@ import { parentPort, workerData } from "node:worker_threads";
 import chokidar from "chokidar";
 import crc from "crc/crc32";
 
-import { pathResolver } from "@/paths";
-import { routesFactory } from "@/routes-factory";
-import { isRouteFile, type ResolverSignature } from "@/routes-factory/resolve";
+import { pathResolver } from "../paths";
+import { routesFactory } from "../routes-factory";
+import { isRouteFile, type ResolverSignature } from "../routes-factory/resolve";
 import type {
   GeneratorConstructor,
   PluginOptionsResolved,
   ResolvedEntry,
   WatcherEvent,
   WatchHandler,
-} from "@/types";
-
+} from "../types";
 import type { SpinnerFactory } from "./spinner";
 
 export type WorkerData = Omit<PluginOptionsResolved, "generators"> & {

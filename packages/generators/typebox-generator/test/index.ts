@@ -3,8 +3,8 @@ import { resolve } from "node:path";
 import type { ValidationSchemas } from "@kosmojs/api";
 import { type PluginOptionsResolved, pathResolver } from "@kosmojs/dev";
 
-import typeboxGenerator from "../src";
 
+import typeboxGenerator from "@src/index";
 export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 
 export const resolvedOptions: PluginOptionsResolved = {
