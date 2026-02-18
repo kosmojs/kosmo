@@ -14,8 +14,8 @@ export type SourceFolder = {
 };
 
 export enum FRAMEWORKS {
-  react = "React",
   solid = "SolidJS",
+  react = "React",
   vue = "Vue",
 }
 
