@@ -26,7 +26,7 @@ export const pathFactory = (pathTokens: Array<PathToken>) => {
       if (param) {
         return [`:${param.name}`];
       }
-      return path === "/" ? [] : [path];
+      return path === "/" ? [] : [path.replace(/:/g, "\\\\:")];
     })
     .join("/")
     .replace(/\+/g, "\\\\+");
