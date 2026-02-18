@@ -26,6 +26,6 @@
   },
   "devDependencies": {
     "@kosmojs/api": "workspace:^",
-    "typebox": "^1.0.80"
+    "typebox": "^1.0.81"
   }
 }
