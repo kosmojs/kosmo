@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.2/schema.json",
 
   "files": {
     "includes": [
@@ -9,7 +9,7 @@
       "test/**/*.ts",
       "packages/*/*/{src,test}/**/*.ts",
       "packages/**/*.js",
-      "!packages/*/*/test/**/@fixtures/**/lib/*"
+      "!packages/*/*/test/**/@fixtures/**/*"
     ]
   },
 
@@ -102,21 +102,31 @@
             "groups": [
               [":NODE:", ":BUN:"],
               ":BLANK_LINE:",
-              [":PACKAGE:", ":PACKAGE_WITH_PROTOCOL:", "!@kosmojs/**"],
-              ":BLANK_LINE:",
-
               [
                 ":PACKAGE:",
                 ":PACKAGE_WITH_PROTOCOL:",
-                "@kosmojs/**",
-                "!@kosmojs/**/*-generator"
+                "!@kosmojs/**",
+                "!@src/**",
+                "!@test/**"
               ],
               ":BLANK_LINE:",
 
               [
                 ":PACKAGE:",
                 ":PACKAGE_WITH_PROTOCOL:",
-                "@kosmojs/**/*-generator"
+                "@kosmojs/**",
+                "!@kosmojs/**/*-generator",
+                "!@src/**",
+                "!@test/**"
+              ],
+              ":BLANK_LINE:",
+
+              [
+                ":PACKAGE:",
+                ":PACKAGE_WITH_PROTOCOL:",
+                "@kosmojs/**/*-generator",
+                "!@src/**",
+                "!@test/**"
               ],
               ":BLANK_LINE:",
 
