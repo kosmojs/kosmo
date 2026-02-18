@@ -22,19 +22,24 @@ type DocumentQuery = {
 
 export default defineRoute<[TRefine<string, { format: "uuid" }>]>(
   ({ GET, PUT, DELETE }) => [
-    GET<DocumentQuery, DocumentResponse>(async (ctx) => {
-      ctx.body = {
-        id: ctx.params.uuid,
-        title: "Sample Document",
-        content: "This is the document content",
-        ownerId: 123,
-        createdAt: "2024-01-01T00:00:00Z",
-        updatedAt: "2024-01-01T00:00:00Z",
-      };
-    }),
+    GET<{ json: DocumentQuery; response: [200, "json", DocumentResponse] }>(
+      async (ctx) => {
+        ctx.body = {
+          id: ctx.params.uuid,
+          title: "Sample Document",
+          content: "This is the document content",
+          ownerId: 123,
+          createdAt: "2024-01-01T00:00:00Z",
+          updatedAt: "2024-01-01T00:00:00Z",
+        };
+      },
+    ),
 
-    PUT<UpdateDocumentPayload, DocumentResponse>(async (ctx) => {
-      const { title, content } = ctx.payload;
+    PUT<{
+      json: UpdateDocumentPayload;
+      response: [200, "json", DocumentResponse];
+    }>(async (ctx) => {
+      const { title, content } = ctx.validated.json;
       ctx.body = {
         id: ctx.params.uuid,
         title: title || "Updated Document",
@@ -45,8 +50,10 @@ export default defineRoute<[TRefine<string, { format: "uuid" }>]>(
       };
     }),
 
-    DELETE<never, { success: boolean; message: string }>(async (ctx) => {
-      ctx.body = { success: true, message: "Document deleted" };
-    }),
+    DELETE<{ response: [200, "json", { success: boolean; message: string }] }>(
+      async (ctx) => {
+        ctx.body = { success: true, message: "Document deleted" };
+      },
+    ),
   ],
 );

@@ -70,8 +70,8 @@ export default defineRoute(({ POST }) => [
     age: TRefine<number, { minimum: 18, maximum: 120 }>;
     name: TRefine<string, { minLength: 1, maxLength: 100 }>;
   }>(async (ctx) => {
-    // ctx.payload is validated before reaching here
-    const { email, age, name } = ctx.payload;
+    // ctx.validated is validated before reaching here
+    const { email, age, name } = ctx.validated;
   }),
 ]);
 ```
@@ -93,8 +93,10 @@ import useFetch from "@front/{api}/users/fetch";
 
 // Validates before making request
 const response = await useFetch.POST([123], {
-  email: "invalid",  // Throws ValidationError immediately
-  age: 15,           // Below minimum
+  json: {
+    email: "invalid",  // Throws ValidationError immediately
+    age: 15,           // Below minimum
+  }
 });
 ```
 
@@ -105,10 +107,10 @@ Access validation schemas directly for form validation:
 ```ts
 import useFetch from "@front/{api}/users/fetch";
 
-const isValid = useFetch.validationSchemas.payload.POST.check(formData);
+const isValid = useFetch.validationSchemas.json.POST.check(formData);
 
 if (!isValid) {
-  const errors = useFetch.validationSchemas.payload.POST.errors(formData);
+  const errors = useFetch.validationSchemas.json.POST.errors(formData);
   // Display errors in UI
 }
 ```
@@ -120,4 +122,3 @@ if (!isValid) {
 ## License
 
 MIT
-

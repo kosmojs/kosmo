@@ -1,133 +1,78 @@
-import qs from "qs";
-
-import defaults from "./defaults";
+import { defaults } from "./defaults";
 import type {
   FetchMapper,
   FetchMethod,
-  HostOpt,
   HTTPError,
   HTTPMethod,
   Options,
 } from "./types";
 
-export { defaults };
-
+export * from "./defaults";
 export * from "./types";
-
-// Supported data types for request body
-type Data = Record<string, unknown> | FormData | ArrayBuffer | Blob | string;
-
-// Path can be a string, number, or array of these
-type PathEntry = string | number;
+export * from "./utils";
 
 // HTTP methods that typically don't include a request body
 const bodylessMethods = ["GET", "DELETE"];
 
 // Main factory function that creates a configured fetch client instance
-export default (base: string | URL, opts?: Options): FetchMapper => {
-  // Merge provided options with defaults, extracting specific properties
-  const {
-    headers: _headers,
-    responseMode,
-    stringify,
-    errorHandler,
-    ...fetchOpts // Remaining options passed directly to fetch
-  } = {
-    ...defaults,
-    ...opts,
-  };
-
-  // Normalize headers to Headers instance for consistent API
-  const headers = new Headers({
-    ...(_headers instanceof Headers
-      ? Object.fromEntries(_headers.entries()) // Convert Headers to plain object
-      : _headers), // Use as-is if already a plain object
-  });
-
+export default (base: string | URL, baseOpts?: Options): FetchMapper => {
   // Factory function that creates HTTP method implementations
-  function wrapper(method: HTTPMethod): FetchMethod {
-    // Function overloads for TypeScript type checking
-    // No path, no data
-    function _wrapper<T>(): Promise<T>;
-    // Path without data
-    function _wrapper<T>(path: PathEntry | Array<PathEntry>): Promise<T>;
-    // Path with data
-    function _wrapper<T>(
-      path: PathEntry | Array<PathEntry>,
-      data: Data,
-    ): Promise<T>;
+  function factory(method: HTTPMethod): FetchMethod {
+    return async (...args: Partial<Parameters<FetchMethod>>) => {
+      const [path, data, opts] = args;
 
-    // Main implementation function
-    function _wrapper<T>(
-      path?: PathEntry | Array<PathEntry>,
-      data?: Data,
-    ): Promise<T> {
+      const {
+        responseMode,
+        stringify,
+        errorHandler,
+        ...fetchOpts // Remaining options passed directly to fetch
+      } = {
+        ...defaults,
+        ...baseOpts,
+        ...opts,
+      };
+
       // Construct URL from base and path segments
       const url = [
         String(base),
         ...(Array.isArray(path)
-          ? path // Use array as-is
+          ? path.flat()
           : ["string", "number"].includes(typeof path)
             ? [path] // Wrap single value in array
             : []), // No path provided
       ].join("/");
 
-      // Check if content-type was explicitly set in options
-      const optedContentType =
-        opts?.headers instanceof Headers
-          ? opts.headers.get("Content-Type")
-          : opts?.headers?.["Content-Type"];
+      // Normalize headers to Headers instance for consistent API
+      const headers = new Headers({
+        ...(data?.headers instanceof Headers
+          ? Object.fromEntries(data.headers.entries()) // Convert Headers to plain object
+          : data?.headers), // Use as-is if already a plain object
+      });
 
-      // Auto-set Content-Type header based on response mode if not explicitly set
-      if (responseMode !== defaults.responseMode && !optedContentType) {
-        const contentType = {
-          text: "text/plain",
-          blob: data instanceof Blob ? data.type : undefined,
-          formData: null, // Let browser set multipart boundary
-          arrayBuffer: null, // No content-type needed
-          raw: undefined, // Don't modify
-        }[responseMode];
-
-        if (contentType === null) {
-          headers.delete("Content-Type");
-        } else if (contentType) {
-          headers.set("Content-Type", contentType);
-        }
-      }
-
-      let searchParams = "";
-
-      // Default empty body
-      let body: string | FormData | ArrayBuffer | Blob = JSON.stringify({});
+      let contentType: string | undefined;
+      let body: unknown;
 
       // Handle different data types for request body
-      if (
-        data instanceof Blob ||
-        data instanceof FormData ||
-        Object.prototype.toString.call(data) === "[object ArrayBuffer]"
-      ) {
-        // Use binary data as-is
-        body = data as typeof body;
-      } else if (typeof data === "string") {
-        if (bodylessMethods.includes(method)) {
-          // For GET/DELETE, add string data as query params
-          searchParams = data;
-        } else {
-          // For other methods, use as body
-          body = data;
-        }
-      } else if (typeof data === "object") {
-        if (bodylessMethods.includes(method)) {
-          // For GET/DELETE, serialize object to query string
-          searchParams = stringify(data as Record<string, string>);
-        } else {
-          // For other methods, serialize as JSON
-          body = JSON.stringify({ ...data });
-        }
+      if (data?.json) {
+        contentType = "application/json";
+        body = JSON.stringify(data.json);
+      } else if (data?.form) {
+        contentType = "application/x-www-form-urlencoded";
+        body = stringify(data.form as never);
+      } else if (data?.multipart) {
+        // let fetch set Content-Type, with boundary etc.
+        body = data.multipart;
+      } else if (data?.raw) {
+        // no Content-Type needed
+        body = data.raw;
+      }
+
+      if (contentType && !headers.get("Content-Type")) {
+        headers.set("Content-Type", contentType);
       }
 
       // Prepare fetch configuration
-      const config: Options & { method: HTTPMethod; body?: typeof body } = {
+      const config = {
         ...fetchOpts,
         method,
         headers,
@@ -135,20 +80,23 @@ export default (base: string | URL, opts?: Options): FetchMapper => {
         ...(bodylessMethods.includes(method) ? {} : { body }),
       };
 
-      // Execute fetch request and process response
-      return fetch([url, searchParams].join("?"), config)
+      const searchParams = data?.query
+        ? `?${stringify(data.query as never)}`
+        : "";
+
+      return fetch(url + searchParams, config as never)
         .then((response) => {
           // Return both response and parsed data based on responseMode
           return Promise.all([
             response,
             responseMode === "raw"
               ? response // Return full response object
-              : response[responseMode]().catch(() => null), // Parse response body
+              : response[responseMode]().catch((e) => e), // Parse response body
           ]);
         })
         .then(([response, data]) => {
           if (response.ok) {
-            return data; // Return parsed data for successful responses
+            return data instanceof Error ? undefined : data;
           }
           // Create enhanced error object for HTTP errors
           const error = new Error(
@@ -156,60 +104,19 @@ export default (base: string | URL, opts?: Options): FetchMapper => {
           ) as HTTPError;
           error.response = response;
           error.body = data;
-          errorHandler?.(error); // Call custom error handler if provided
+          if (errorHandler) {
+            return errorHandler(error);
+          }
           throw error;
         });
-    }
-
-    return _wrapper;
+    };
   }
 
-  // Return object with HTTP method functions
   return {
-    GET: wrapper("GET"),
-    POST: wrapper("POST"),
-    PUT: wrapper("PUT"),
-    PATCH: wrapper("PATCH"),
-    DELETE: wrapper("DELETE"),
+    GET: factory("GET"),
+    POST: factory("POST"),
+    PUT: factory("PUT"),
+    PATCH: factory("PATCH"),
+    DELETE: factory("DELETE"),
   };
-};
-
-export const stringify = (data: Record<string, unknown>) => {
-  return qs.stringify(data, {
-    arrayFormat: "brackets",
-    indices: false,
-    encodeValuesOnly: true,
-  });
-};
-
-export const join = (...args: Array<unknown>): string => {
-  for (const a of args) {
-    if (typeof a === "string" || typeof a === "number") {
-      continue;
-    }
-    throw new Error(
-      `The "path" argument must be of type string or number. Received type ${typeof a} (${JSON.stringify(a)})`,
-    );
-  }
-  return args.join("/").replace(/\/+/g, "/");
-};
-
-export const createHost = (host: HostOpt): string => {
-  if (typeof host === "string") {
-    return host;
-  }
-
-  if (typeof host === "object") {
-    return [
-      host.secure ? "https://" : "http://",
-      host.hostname,
-      host.port ? `:${host.port}` : "",
-    ]
-      .join("")
-      .replace(/\/+$/, "");
-  }
-
-  throw new Error(
-    "Expected host to be a string or an object like { hostname: string; port?: number; secure?: boolean }",
-  );
 };

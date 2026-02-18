@@ -12,30 +12,35 @@
       },
     },
     "schemas": {
-      "hex_color_index_ts_1952586627_PayloadT722658517_format3736761055": {
-        "anyOf": [
-          {
-            "const": "hex",
-            "type": "string",
+      "hex_color_index_ts_1952586627_JsonTGET4104925239": {
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "const": "hex",
+                "type": "string",
+              },
+              {
+                "const": "rgb",
+                "type": "string",
+              },
+              {
+                "const": "hsl",
+                "type": "string",
+              },
+              {
+                "const": "all",
+                "type": "string",
+              },
+            ],
           },
-          {
-            "const": "rgb",
-            "type": "string",
+          "includeName": {
+            "type": "boolean",
           },
-          {
-            "const": "hsl",
-            "type": "string",
-          },
-          {
-            "const": "all",
-            "type": "string",
-          },
-        ],
+        },
+        "type": "object",
       },
-      "hex_color_index_ts_1952586627_PayloadT722658517_includeName3458752990": {
-        "type": "boolean",
-      },
-      "hex_color_index_ts_1952586627_ResponseT722658517": {
+      "hex_color_index_ts_1952586627_ResponseTGET207105012": {
         "properties": {
           "hex": {
             "type": "string",
@@ -98,29 +103,23 @@
           {
             "$ref": "#/components/parameters/hex_color_index_ts_1952586627_ParamsT1393281580_color1716930793",
           },
-          {
-            "in": "query",
-            "name": "format",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/hex_color_index_ts_1952586627_PayloadT722658517_format3736761055",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeName",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/hex_color_index_ts_1952586627_PayloadT722658517_includeName3458752990",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/hex_color_index_ts_1952586627_JsonTGET4104925239",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/hex_color_index_ts_1952586627_ResponseT722658517",
+                  "$ref": "#/components/schemas/hex_color_index_ts_1952586627_ResponseTGET207105012",
                 },
               },
             },

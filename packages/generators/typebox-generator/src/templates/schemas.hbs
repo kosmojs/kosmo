@@ -8,29 +8,54 @@ const schemas = {
 }
 
 export const validationSchemas: ValidationSchemas = {
-  params: validationSchemaFactory(schemas.{{route.params.id}}, {
-    scope: "params",
-  }),
-  payload: {
-    {{#each routeMethods}}
-    {{#if payloadType}}
-    {{#unless payloadType.skipValidation}}
-    {{method}}: validationSchemaFactory(schemas.{{payloadType.id}}, {
-      scope: "payload",
-    }),
-    {{/unless}}
-    {{/if}}
+  params: validationSchemaFactory(
+    schemas.{{route.params.id}},
+    { route: "{{route.name}}", target: "params" },
+  ),
+
+  {{#each requestSchemas}}
+  {{target}}: {
+    {{#each methods}}
+    {{method}}: {
+      schema: validationSchemaFactory(
+        schemas.{{schema.id}},
+        { route: "{{route}}", target: "{{target}}" },
+      ),
+      {{#if runtimeValidation}}
+      runtimeValidation: {{runtimeValidation}},
+      {{/if}}
+      {{#if customErrors}}
+      customErrors: {{customErrors}},
+      {{/if}}
+    },
     {{/each}}
   },
+  {{/each}}
+
   response: {
-    {{#each routeMethods}}
-    {{#if responseType}}
-    {{#unless responseType.skipValidation}}
-    {{method}}: validationSchemaFactory(schemas.{{responseType.id}}, {
-      scope: "response",
-    }),
-    {{/unless}}
-    {{/if}}
-    {{/each}}
+  {{#each responseSchemas}}
+    {{method}}: [
+      {{#each variants}}
+      {
+        status: {{status}},
+        {{#if contentType}}
+        contentType: "{{contentType}}",
+        {{/if}}
+        {{#if resolvedType}}
+        schema: validationSchemaFactory(
+          schemas.{{id}},
+          { route: "{{route}}", target: "{{target}}" },
+        ),
+        {{/if}}
+        {{#if runtimeValidation}}
+        runtimeValidation: {{runtimeValidation}},
+        {{/if}}
+        {{#if customErrors}}
+        customErrors: {{customErrors}},
+        {{/if}}
+      },
+      {{/each}}
+    ],
+  {{/each}}
   },
 };

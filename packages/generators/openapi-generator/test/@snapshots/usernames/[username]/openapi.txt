@@ -14,16 +14,21 @@
       },
     },
     "schemas": {
-      "usernames_username_index_ts_3531210388_PayloadT3508795421_includeBadges3156181363": {
-        "type": "boolean",
+      "usernames_username_index_ts_3531210388_JsonTGET1556332463": {
+        "properties": {
+          "includeBadges": {
+            "type": "boolean",
+          },
+          "includeRecent": {
+            "type": "boolean",
+          },
+          "includeStats": {
+            "type": "boolean",
+          },
+        },
+        "type": "object",
       },
-      "usernames_username_index_ts_3531210388_PayloadT3508795421_includeRecent2844427671": {
-        "type": "boolean",
-      },
-      "usernames_username_index_ts_3531210388_PayloadT3508795421_includeStats3755947603": {
-        "type": "boolean",
-      },
-      "usernames_username_index_ts_3531210388_ResponseT3508795421": {
+      "usernames_username_index_ts_3531210388_ResponseTGET1698061595": {
         "properties": {
           "displayName": {
             "type": "string",
@@ -71,37 +76,23 @@
           {
             "$ref": "#/components/parameters/usernames_username_index_ts_3531210388_ParamsT2706213495_username4166911607",
           },
-          {
-            "in": "query",
-            "name": "includeStats",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/usernames_username_index_ts_3531210388_PayloadT3508795421_includeStats3755947603",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeRecent",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/usernames_username_index_ts_3531210388_PayloadT3508795421_includeRecent2844427671",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeBadges",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/usernames_username_index_ts_3531210388_PayloadT3508795421_includeBadges3156181363",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/usernames_username_index_ts_3531210388_JsonTGET1556332463",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/usernames_username_index_ts_3531210388_ResponseT3508795421",
+                  "$ref": "#/components/schemas/usernames_username_index_ts_3531210388_ResponseTGET1698061595",
                 },
               },
             },

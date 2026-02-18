@@ -24,7 +24,27 @@
       },
     },
     "schemas": {
-      "settings_section_index_ts_4127127767_PayloadT2105474209": {
+      "settings_section_index_ts_4127127767_JsonTGET1310749499": {
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "const": "full",
+                "type": "string",
+              },
+              {
+                "const": "minimal",
+                "type": "string",
+              },
+            ],
+          },
+          "includeDefaults": {
+            "type": "boolean",
+          },
+        },
+        "type": "object",
+      },
+      "settings_section_index_ts_4127127767_JsonTPATCH1310749499": {
         "properties": {
           "language": {
             "type": "string",
@@ -103,22 +123,7 @@
         },
         "type": "object",
       },
-      "settings_section_index_ts_4127127767_PayloadT2790158804_format3736761055": {
-        "anyOf": [
-          {
-            "const": "full",
-            "type": "string",
-          },
-          {
-            "const": "minimal",
-            "type": "string",
-          },
-        ],
-      },
-      "settings_section_index_ts_4127127767_PayloadT2790158804_includeDefaults3940573690": {
-        "type": "boolean",
-      },
-      "settings_section_index_ts_4127127767_ResponseT2105474209": {
+      "settings_section_index_ts_4127127767_ResponseTGET3909966707": {
         "properties": {
           "language": {
             "type": "string",
@@ -208,7 +213,7 @@
         ],
         "type": "object",
       },
-      "settings_section_index_ts_4127127767_ResponseT2790158804": {
+      "settings_section_index_ts_4127127767_ResponseTPATCH3909966707": {
         "properties": {
           "language": {
             "type": "string",
@@ -303,30 +308,22 @@
   "paths": {
     "/settings": {
       "get": {
-        "parameters": [
-          {
-            "in": "query",
-            "name": "format",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/settings_section_index_ts_4127127767_PayloadT2790158804_format3736761055",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/settings_section_index_ts_4127127767_JsonTGET1310749499",
+              },
             },
           },
-          {
-            "in": "query",
-            "name": "includeDefaults",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/settings_section_index_ts_4127127767_PayloadT2790158804_includeDefaults3940573690",
-            },
-          },
-        ],
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseT2790158804",
+                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseTGET3909966707",
                 },
               },
             },
@@ -339,18 +336,18 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/settings_section_index_ts_4127127767_PayloadT2105474209",
+                "$ref": "#/components/schemas/settings_section_index_ts_4127127767_JsonTPATCH1310749499",
               },
             },
           },
-          "required": false,
+          "required": true,
         },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseT2105474209",
+                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseTPATCH3909966707",
                 },
               },
             },
@@ -365,29 +362,23 @@
           {
             "$ref": "#/components/parameters/settings_section_index_ts_4127127767_ParamsT4001032770_section762542831",
           },
-          {
-            "in": "query",
-            "name": "format",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/settings_section_index_ts_4127127767_PayloadT2790158804_format3736761055",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeDefaults",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/settings_section_index_ts_4127127767_PayloadT2790158804_includeDefaults3940573690",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/settings_section_index_ts_4127127767_JsonTGET1310749499",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseT2790158804",
+                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseTGET3909966707",
                 },
               },
             },
@@ -405,18 +396,18 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/settings_section_index_ts_4127127767_PayloadT2105474209",
+                "$ref": "#/components/schemas/settings_section_index_ts_4127127767_JsonTPATCH1310749499",
               },
             },
           },
-          "required": false,
+          "required": true,
         },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseT2105474209",
+                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseTPATCH3909966707",
                 },
               },
             },

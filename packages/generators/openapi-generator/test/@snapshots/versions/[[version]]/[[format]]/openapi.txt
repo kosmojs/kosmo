@@ -45,19 +45,24 @@
       },
     },
     "schemas": {
-      "versions_version_format_index_ts_2757599858_PayloadT2270307049_fields2128995208": {
-        "items": {
-          "type": "string",
+      "versions_version_format_index_ts_2757599858_JsonTGET2855736995": {
+        "properties": {
+          "fields": {
+            "items": {
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "includeDeprecated": {
+            "type": "boolean",
+          },
+          "includeExperimental": {
+            "type": "boolean",
+          },
         },
-        "type": "array",
+        "type": "object",
       },
-      "versions_version_format_index_ts_2757599858_PayloadT2270307049_includeDeprecated3364225240": {
-        "type": "boolean",
-      },
-      "versions_version_format_index_ts_2757599858_PayloadT2270307049_includeExperimental903296420": {
-        "type": "boolean",
-      },
-      "versions_version_format_index_ts_2757599858_ResponseT2270307049": {
+      "versions_version_format_index_ts_2757599858_ResponseTGET765212983": {
         "properties": {
           "data": {
             "properties": {
@@ -100,38 +105,22 @@
   "paths": {
     "/versions": {
       "get": {
-        "parameters": [
-          {
-            "in": "query",
-            "name": "includeDeprecated",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_includeDeprecated3364225240",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_JsonTGET2855736995",
+              },
             },
           },
-          {
-            "in": "query",
-            "name": "includeExperimental",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_includeExperimental903296420",
-            },
-          },
-          {
-            "in": "query",
-            "name": "fields",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_fields2128995208",
-            },
-          },
-        ],
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_ResponseT2270307049",
+                  "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_ResponseTGET765212983",
                 },
               },
             },
@@ -146,37 +135,23 @@
           {
             "$ref": "#/components/parameters/versions_version_format_index_ts_2757599858_ParamsT282620935_version3206337475",
           },
-          {
-            "in": "query",
-            "name": "includeDeprecated",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_includeDeprecated3364225240",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeExperimental",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_includeExperimental903296420",
-            },
-          },
-          {
-            "in": "query",
-            "name": "fields",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_fields2128995208",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_JsonTGET2855736995",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_ResponseT2270307049",
+                  "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_ResponseTGET765212983",
                 },
               },
             },
@@ -194,37 +169,23 @@
           {
             "$ref": "#/components/parameters/versions_version_format_index_ts_2757599858_ParamsT282620935_format3736761055",
           },
-          {
-            "in": "query",
-            "name": "includeDeprecated",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_includeDeprecated3364225240",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeExperimental",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_includeExperimental903296420",
-            },
-          },
-          {
-            "in": "query",
-            "name": "fields",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_PayloadT2270307049_fields2128995208",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_JsonTGET2855736995",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_ResponseT2270307049",
+                  "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_ResponseTGET765212983",
                 },
               },
             },

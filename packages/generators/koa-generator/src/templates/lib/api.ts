@@ -1,7 +1,16 @@
 import type { RouterContext } from "@koa/router";
 import type { Next } from "koa";
 
-import type { MiddlewareDefinition, UseOptions } from "@kosmojs/api";
+import type {
+  ExtendContext,
+  MiddlewareDefinition,
+  UseOptions,
+  ValidatedResponseBodies,
+  ValidationDefmap,
+  ValidationOptmap,
+} from "@kosmojs/api";
+
+import type { BodyparserOptions } from "./api:bodyparser";
 
 export interface DefaultState {}
 
@@ -11,22 +20,20 @@ export type ParameterizedContext<
   ParamsT,
   StateT,
   ContextT,
-  PayloadT = unknown,
-  ResponseT = unknown,
+  VDefs extends ValidationDefmap = {},
+  VOpts extends ValidationOptmap = {},
 > = RouterContext<
   DefaultState & StateT,
   DefaultContext &
-    ContextT & {
-      typedParams: ParamsT;
-      payload: PayloadT;
-    },
-  ResponseT
+    ContextT &
+    ExtendContext<ParamsT, VDefs, VOpts, BodyparserOptions>,
+  ValidatedResponseBodies<VDefs>
 >;
 
 export type ParameterizedMiddleware<
-  ParamsT = {},
-  StateT = {},
-  ContextT = {},
+  ParamsT = Record<string, string>,
+  StateT = Record<string, unknown>,
+  ContextT = Record<string, unknown>,
 > = (
   ctx: ParameterizedContext<ParamsT, StateT, ContextT>,
   next: Next,
@@ -37,7 +44,9 @@ export type Use = <StateT = DefaultState, ContextT = DefaultContext>(
     | ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
     | Array<ParameterizedMiddleware<Record<string, string>, StateT, ContextT>>,
   options?: UseOptions,
-) => MiddlewareDefinition<ParameterizedMiddleware<{}, StateT, ContextT>>;
+) => MiddlewareDefinition<
+  ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
+>;
 
 export const use: Use = (middleware, options) => {
   return {

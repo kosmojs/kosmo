@@ -1,0 +1,5071 @@
+{
+  "paths": {
+    "/shop/{storeId}/products/{productId}/reviews": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ResponseTGET266903956"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_storeId796101202"
+          },
+          {
+            "$ref": "#/components/parameters/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_productId913937925"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_JsonTGET3942154974"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shop/{storeId}/products/{productId}/reviews/{page}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ResponseTGET266903956"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_storeId796101202"
+          },
+          {
+            "$ref": "#/components/parameters/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_productId913937925"
+          },
+          {
+            "$ref": "#/components/parameters/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_page336246304"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_JsonTGET3942154974"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{category}/products": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_ResponseTGET3686652804"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/categories_category_products_sort_index_ts_1023966673_ParamsT2817762847_category105650625"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_JsonTGET2855111603"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{category}/products/{sort}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_ResponseTGET3686652804"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/categories_category_products_sort_index_ts_1023966673_ParamsT2817762847_category105650625"
+          },
+          {
+            "$ref": "#/components/parameters/categories_category_products_sort_index_ts_1023966673_ParamsT2817762847_sort1361375778"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_JsonTGET2855111603"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{id}/reviews": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_ResponseTGET776547123"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/products_id_reviews_page_index_ts_842423561_ParamsT1717435837_id3208210256"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_JsonTGET3121975519"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_ResponseTPOST2567264723"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/products_id_reviews_page_index_ts_842423561_ParamsT1717435837_id3208210256"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_JsonTPOST3121975519"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{id}/reviews/{page}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_ResponseTGET776547123"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/products_id_reviews_page_index_ts_842423561_ParamsT1717435837_id3208210256"
+          },
+          {
+            "$ref": "#/components/parameters/products_id_reviews_page_index_ts_842423561_ParamsT1717435837_page336246304"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_JsonTGET3121975519"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_ResponseTPOST2567264723"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/products_id_reviews_page_index_ts_842423561_ParamsT1717435837_id3208210256"
+          },
+          {
+            "$ref": "#/components/parameters/products_id_reviews_page_index_ts_842423561_ParamsT1717435837_page336246304"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_JsonTPOST3121975519"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}/posts": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_ResponseTGET3176486578"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/users_id_posts_page_index_ts_2287299866_ParamsT1806413811_id3208210256"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_JsonTGET1798716838"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}/posts/{page}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_ResponseTGET3176486578"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/users_id_posts_page_index_ts_2287299866_ParamsT1806413811_id3208210256"
+          },
+          {
+            "$ref": "#/components/parameters/users_id_posts_page_index_ts_2287299866_ParamsT1806413811_page336246304"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_JsonTGET1798716838"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/coordinates/{x}/{y}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/coordinates_x_y_index_ts_3681158950_ResponseTGET1226070337"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/coordinates_x_y_index_ts_3681158950_ParamsT2786993400_x2363233923"
+          },
+          {
+            "$ref": "#/components/parameters/coordinates_x_y_index_ts_3681158950_ParamsT2786993400_y4225443349"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/coordinates_x_y_index_ts_3681158950_JsonTGET2579524225"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_ResponseTGET103358384"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_JsonTGET790617385"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data/{page}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_ResponseTGET103358384"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/data_page_limit_index_ts_1093419814_ParamsT668522618_page336246304"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_JsonTGET790617385"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data/{page}/{limit}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_ResponseTGET103358384"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/data_page_limit_index_ts_1093419814_ParamsT668522618_page336246304"
+          },
+          {
+            "$ref": "#/components/parameters/data_page_limit_index_ts_1093419814_ParamsT668522618_limit2140596320"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_JsonTGET790617385"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{status}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseTGET1792766675"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_status2063623452"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_JsonTGET315919604"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseTPOST4047461533"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_status2063623452"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_JsonTPOST315919604"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{status}/{date}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseTGET1792766675"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_status2063623452"
+          },
+          {
+            "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_date2862495610"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_JsonTGET315919604"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseTPOST4047461533"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_status2063623452"
+          },
+          {
+            "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_date2862495610"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_JsonTPOST315919604"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/metrics/{name}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseTGET906579486"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_name1579384326"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_JsonTGET1521668760"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseTPOST153958135"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_name1579384326"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_JsonTPOST1521668760"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/metrics/{name}/{period}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseTGET906579486"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_name1579384326"
+          },
+          {
+            "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_period3317178062"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_JsonTGET1521668760"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseTPOST153958135"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_name1579384326"
+          },
+          {
+            "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_period3317178062"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_JsonTPOST1521668760"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/search_type_index_ts_3588343646_ResponseTPOST2410448055"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/search_type_index_ts_3588343646_JsonTPOST3628501882"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search/{type}": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/search_type_index_ts_3588343646_ResponseTPOST2410448055"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/search_type_index_ts_3588343646_ParamsT4157968314_type2363381545"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/search_type_index_ts_3588343646_JsonTPOST3628501882"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search/{type}/{page}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_ResponseTGET3535027638"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/search_type_page_index_ts_2448809791_ParamsT1773160490_type2363381545"
+          },
+          {
+            "$ref": "#/components/parameters/search_type_page_index_ts_2448809791_ParamsT1773160490_page336246304"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_JsonTGET3143369611"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/versions": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_ResponseTGET765212983"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_JsonTGET2855736995"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/versions/{version}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_ResponseTGET765212983"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/versions_version_format_index_ts_2757599858_ParamsT282620935_version3206337475"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_JsonTGET2855736995"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/versions/{version}/{format}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_ResponseTGET765212983"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/versions_version_format_index_ts_2757599858_ParamsT282620935_version3206337475"
+          },
+          {
+            "$ref": "#/components/parameters/versions_version_format_index_ts_2757599858_ParamsT282620935_format3736761055"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/versions_version_format_index_ts_2757599858_JsonTGET2855736995"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/analytics": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_ResponseTPOST749756960"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_JsonTPOST3313331327"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/analytics/{period}": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_ResponseTPOST749756960"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/analytics_period_index_ts_1204912692_ParamsT766317247_period3317178062"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_JsonTPOST3313331327"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/articles/{id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/articles_id_index_ts_1137349588_ResponseTGET1293661373"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/articles_id_index_ts_1137349588_ParamsT3442148210_id3208210256"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/articles_id_index_ts_1137349588_JsonTGET989795582"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/auth_login_index_ts_1750344579_ResponseTPOST1842364566"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/auth_login_index_ts_1750344579_JsonTPOST2274346999"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/codes/{code}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/codes_code_index_ts_2134676674_ResponseTGET2078876680"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/codes_code_index_ts_2134676674_ParamsT2885117477_code1997877400"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/codes_code_index_ts_2134676674_JsonTGET2696646777"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documentation": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_ResponseTGET2341831262"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_JsonTGET3711636155"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documentation/{path*}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_ResponseTGET2341831262"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentation_path_index_ts_2693537996_ParamsT958675478_path190089999"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_JsonTGET3711636155"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{uuid}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_ResponseTGET1568275703"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documents_uuid_index_ts_3120880389_ParamsT4143510446_uuid3514781862"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_JsonTGET198498908"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_ResponseTPUT1568275703"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documents_uuid_index_ts_3120880389_ParamsT4143510446_uuid3514781862"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_JsonTPUT198498908"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_ResponseTDELETE781589100"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documents_uuid_index_ts_3120880389_ParamsT4143510446_uuid3514781862"
+          }
+        ]
+      }
+    },
+    "/emails/{address}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/emails_address_index_ts_840171668_ResponseTGET55899805"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/emails_address_index_ts_840171668_ParamsT3047612475_address223244161"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/emails_address_index_ts_840171668_JsonTGET337020419"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{date}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/events_date_index_ts_558639515_ResponseTGET1447899011"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/events_date_index_ts_558639515_ParamsT1490977605_date2862495610"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/events_date_index_ts_558639515_JsonTGET276963179"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hex/{color}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/hex_color_index_ts_1952586627_ResponseTGET207105012"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/hex_color_index_ts_1952586627_ParamsT1393281580_color1716930793"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/hex_color_index_ts_1952586627_JsonTGET4104925239"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/static/nested": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/static_nested_index_ts_3607084481_ResponseTGET2451562508"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/static_nested_index_ts_3607084481_JsonTGET3829860480"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseTGET3909966707"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/settings_section_index_ts_4127127767_JsonTGET1310749499"
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseTPATCH3909966707"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/settings_section_index_ts_4127127767_JsonTPATCH1310749499"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/{section}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseTGET3909966707"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/settings_section_index_ts_4127127767_ParamsT4001032770_section762542831"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/settings_section_index_ts_4127127767_JsonTGET1310749499"
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/settings_section_index_ts_4127127767_ResponseTPATCH3909966707"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/settings_section_index_ts_4127127767_ParamsT4001032770_section762542831"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/settings_section_index_ts_4127127767_JsonTPATCH1310749499"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usernames/{username}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/usernames_username_index_ts_3531210388_ResponseTGET1698061595"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/usernames_username_index_ts_3531210388_ParamsT2706213495_username4166911607"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/usernames_username_index_ts_3531210388_JsonTGET1556332463"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users_id_index_ts_2390016005_ResponseTGET1698717845"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/users_id_index_ts_2390016005_ParamsT1482590779_id3208210256"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/users_id_index_ts_2390016005_JsonTGET253193823"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users_id_index_ts_2390016005_ResponseTPUT1698717845"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/users_id_index_ts_2390016005_ParamsT1482590779_id3208210256"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/users_id_index_ts_2390016005_JsonTPUT253193823"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users_id_index_ts_2390016005_ResponseTDELETE2606313607"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/users_id_index_ts_2390016005_ParamsT1482590779_id3208210256"
+          }
+        ]
+      }
+    },
+    "/webhooks/stripe": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/webhooks_stripe_index_ts_2600860173_ResponseTPOST395818918"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/webhooks_stripe_index_ts_2600860173_JsonTPOST3039697861"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/health_index_ts_3040421798_ResponseTGET2600161721"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/index_index_ts_2109308135_ResponseTGET2109545860"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/index_index_ts_2109308135_JsonTGET953914569"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mixed": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/mixed_index_ts_770061503_ResponseTGET685275611"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/mixed_index_ts_770061503_JsonTGET2675962266"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/mixed_index_ts_770061503_ResponseTPOST2565859270"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/mixed_index_ts_770061503_JsonTPOST2675962266"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/mixed_index_ts_770061503_ResponseTPUT685275611"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/mixed_index_ts_770061503_JsonTPUT2675962266"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/posts_index_ts_2278785729_ResponseTGET2322209272"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/posts_index_ts_2278785729_JsonTGET1728467143"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/posts_index_ts_2278785729_ResponseTPOST4000969321"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/posts_index_ts_2278785729_JsonTPOST1728467143"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/upload": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/upload_index_ts_443261549_ResponseTPOST1713834205"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "image/png": {
+              "schema": {
+                "$ref": "#/components/schemas/upload_index_ts_443261549_RawTPOST2589871015"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_storeId796101202": {
+        "name": "storeId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_productId913937925": {
+        "name": "productId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_page336246304": {
+        "name": "page",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "categories_category_products_sort_index_ts_1023966673_ParamsT2817762847_category105650625": {
+        "name": "category",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "electronics"
+            },
+            {
+              "type": "string",
+              "const": "clothing"
+            },
+            {
+              "type": "string",
+              "const": "books"
+            },
+            {
+              "type": "string",
+              "const": "home"
+            }
+          ]
+        }
+      },
+      "categories_category_products_sort_index_ts_1023966673_ParamsT2817762847_sort1361375778": {
+        "name": "sort",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "price"
+            },
+            {
+              "type": "string",
+              "const": "rating"
+            },
+            {
+              "type": "string",
+              "const": "name"
+            },
+            {
+              "type": "string",
+              "const": "date"
+            }
+          ]
+        }
+      },
+      "products_id_reviews_page_index_ts_842423561_ParamsT1717435837_id3208210256": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "products_id_reviews_page_index_ts_842423561_ParamsT1717435837_page336246304": {
+        "name": "page",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "users_id_posts_page_index_ts_2287299866_ParamsT1806413811_id3208210256": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "users_id_posts_page_index_ts_2287299866_ParamsT1806413811_page336246304": {
+        "name": "page",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "coordinates_x_y_index_ts_3681158950_ParamsT2786993400_x2363233923": {
+        "name": "x",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180,
+          "multipleOf": 0.000001
+        }
+      },
+      "coordinates_x_y_index_ts_3681158950_ParamsT2786993400_y4225443349": {
+        "name": "y",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90,
+          "multipleOf": 0.000001
+        }
+      },
+      "data_page_limit_index_ts_1093419814_ParamsT668522618_page336246304": {
+        "name": "page",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1000
+        }
+      },
+      "data_page_limit_index_ts_1093419814_ParamsT668522618_limit2140596320": {
+        "name": "limit",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100,
+          "multipleOf": 1
+        }
+      },
+      "orders_status_date_index_ts_368469196_ParamsT2095219978_status2063623452": {
+        "name": "status",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "pending"
+            },
+            {
+              "type": "string",
+              "const": "processing"
+            },
+            {
+              "type": "string",
+              "const": "shipped"
+            },
+            {
+              "type": "string",
+              "const": "delivered"
+            },
+            {
+              "type": "string",
+              "const": "cancelled"
+            }
+          ]
+        }
+      },
+      "orders_status_date_index_ts_368469196_ParamsT2095219978_date2862495610": {
+        "name": "date",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        }
+      },
+      "metrics_name_period_index_ts_697537035_ParamsT3905147277_name1579384326": {
+        "name": "name",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "metrics_name_period_index_ts_697537035_ParamsT3905147277_period3317178062": {
+        "name": "period",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "hour"
+            },
+            {
+              "type": "string",
+              "const": "day"
+            },
+            {
+              "type": "string",
+              "const": "week"
+            },
+            {
+              "type": "string",
+              "const": "month"
+            },
+            {
+              "type": "string",
+              "const": "year"
+            }
+          ]
+        }
+      },
+      "search_type_page_index_ts_2448809791_ParamsT1773160490_type2363381545": {
+        "name": "type",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "posts"
+            },
+            {
+              "type": "string",
+              "const": "users"
+            },
+            {
+              "type": "string",
+              "const": "all"
+            }
+          ]
+        }
+      },
+      "search_type_page_index_ts_2448809791_ParamsT1773160490_page336246304": {
+        "name": "page",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "versions_version_format_index_ts_2757599858_ParamsT282620935_version3206337475": {
+        "name": "version",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "v1"
+            },
+            {
+              "type": "string",
+              "const": "v2"
+            },
+            {
+              "type": "string",
+              "const": "v3"
+            }
+          ]
+        }
+      },
+      "versions_version_format_index_ts_2757599858_ParamsT282620935_format3736761055": {
+        "name": "format",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "json"
+            },
+            {
+              "type": "string",
+              "const": "xml"
+            },
+            {
+              "type": "string",
+              "const": "yaml"
+            }
+          ]
+        }
+      },
+      "analytics_period_index_ts_1204912692_ParamsT766317247_period3317178062": {
+        "name": "period",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "day"
+            },
+            {
+              "type": "string",
+              "const": "week"
+            },
+            {
+              "type": "string",
+              "const": "month"
+            },
+            {
+              "type": "string",
+              "const": "year"
+            }
+          ]
+        }
+      },
+      "articles_id_index_ts_1137349588_ParamsT3442148210_id3208210256": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "codes_code_index_ts_2134676674_ParamsT2885117477_code1997877400": {
+        "name": "code",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Z0-9]{3,10}$"
+        }
+      },
+      "documentation_path_index_ts_2693537996_ParamsT958675478_path190089999": {
+        "name": "path",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 10
+          }
+        }
+      },
+      "documents_uuid_index_ts_3120880389_ParamsT4143510446_uuid3514781862": {
+        "name": "uuid",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "emails_address_index_ts_840171668_ParamsT3047612475_address223244161": {
+        "name": "address",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "email"
+        }
+      },
+      "events_date_index_ts_558639515_ParamsT1490977605_date2862495610": {
+        "name": "date",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "hex_color_index_ts_1952586627_ParamsT1393281580_color1716930793": {
+        "name": "color",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        }
+      },
+      "search_type_index_ts_3588343646_ParamsT4157968314_type2363381545": {
+        "name": "type",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "posts"
+            },
+            {
+              "type": "string",
+              "const": "users"
+            },
+            {
+              "type": "string",
+              "const": "all"
+            }
+          ]
+        }
+      },
+      "settings_section_index_ts_4127127767_ParamsT4001032770_section762542831": {
+        "name": "section",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "notifications"
+            },
+            {
+              "type": "string",
+              "const": "privacy"
+            },
+            {
+              "type": "string",
+              "const": "general"
+            }
+          ]
+        }
+      },
+      "usernames_username_index_ts_3531210388_ParamsT2706213495_username4166911607": {
+        "name": "username",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_]{3,20}$",
+          "minLength": 3,
+          "maxLength": 20
+        }
+      },
+      "users_id_index_ts_2390016005_ParamsT1482590779_id3208210256": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1
+        }
+      }
+    },
+    "schemas": {
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_JsonTGET3942154974": {
+        "type": "object",
+        "properties": {
+          "minRating": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "verifiedOnly": {
+            "type": "boolean"
+          },
+          "includeReplies": {
+            "type": "boolean"
+          }
+        }
+      },
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_ResponseTGET266903956": {
+        "type": "object",
+        "required": [
+          "storeId",
+          "productId",
+          "page",
+          "reviews",
+          "averageRating",
+          "pagination"
+        ],
+        "properties": {
+          "storeId": {
+            "type": "number"
+          },
+          "productId": {
+            "type": "number"
+          },
+          "page": {
+            "type": "number"
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "productId",
+                "storeId",
+                "rating",
+                "comment",
+                "reviewer",
+                "createdAt"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "productId": {
+                  "type": "number"
+                },
+                "storeId": {
+                  "type": "number"
+                },
+                "rating": {
+                  "type": "number"
+                },
+                "comment": {
+                  "type": "string"
+                },
+                "reviewer": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "averageRating": {
+            "type": "number"
+          },
+          "pagination": {
+            "type": "object",
+            "required": [
+              "total",
+              "hasMore"
+            ],
+            "properties": {
+              "total": {
+                "type": "number"
+              },
+              "hasMore": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "categories_category_products_sort_index_ts_1023966673_JsonTGET2855111603": {
+        "type": "object",
+        "properties": {
+          "minPrice": {
+            "type": "number"
+          },
+          "maxPrice": {
+            "type": "number"
+          },
+          "minRating": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "inStock": {
+            "type": "boolean"
+          }
+        }
+      },
+      "categories_category_products_sort_index_ts_1023966673_ResponseTGET3686652804": {
+        "type": "object",
+        "required": [
+          "category",
+          "sort",
+          "products",
+          "total"
+        ],
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "sort": {
+            "type": "string"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "price",
+                "category",
+                "rating"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "rating": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "number"
+          }
+        }
+      },
+      "products_id_reviews_page_index_ts_842423561_JsonTGET3121975519": {
+        "type": "object",
+        "properties": {
+          "sort": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "newest"
+              },
+              {
+                "type": "string",
+                "const": "oldest"
+              },
+              {
+                "type": "string",
+                "const": "highest"
+              },
+              {
+                "type": "string",
+                "const": "lowest"
+              }
+            ]
+          },
+          "minRating": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "verifiedOnly": {
+            "type": "boolean"
+          }
+        }
+      },
+      "products_id_reviews_page_index_ts_842423561_ResponseTGET776547123": {
+        "type": "object",
+        "required": [
+          "reviews",
+          "averageRating",
+          "pagination"
+        ],
+        "properties": {
+          "reviews": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "rating",
+                "comment",
+                "author",
+                "createdAt"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "rating": {
+                  "type": "number"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "comment": {
+                  "type": "string"
+                },
+                "author": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "averageRating": {
+            "type": "number"
+          },
+          "pagination": {
+            "type": "object",
+            "required": [
+              "page",
+              "limit",
+              "total",
+              "hasMore"
+            ],
+            "properties": {
+              "page": {
+                "type": "number"
+              },
+              "limit": {
+                "type": "number"
+              },
+              "total": {
+                "type": "number"
+              },
+              "hasMore": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "products_id_reviews_page_index_ts_842423561_JsonTPOST3121975519": {
+        "type": "object",
+        "required": [
+          "rating",
+          "title",
+          "comment"
+        ],
+        "properties": {
+          "rating": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "comment": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "isAnonymous": {
+            "type": "boolean"
+          }
+        }
+      },
+      "products_id_reviews_page_index_ts_842423561_ResponseTPOST2567264723": {
+        "type": "object",
+        "required": [
+          "id",
+          "rating",
+          "comment",
+          "author",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "author": {
+            "type": "object",
+            "required": [
+              "id",
+              "name"
+            ],
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "users_id_posts_page_index_ts_2287299866_JsonTGET1798716838": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "published"
+              },
+              {
+                "type": "string",
+                "const": "draft"
+              },
+              {
+                "type": "string",
+                "const": "all"
+              }
+            ]
+          },
+          "sort": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "newest"
+              },
+              {
+                "type": "string",
+                "const": "oldest"
+              }
+            ]
+          },
+          "includeContent": {
+            "type": "boolean"
+          }
+        }
+      },
+      "users_id_posts_page_index_ts_2287299866_ResponseTGET3176486578": {
+        "type": "object",
+        "required": [
+          "userId",
+          "page",
+          "posts",
+          "total"
+        ],
+        "properties": {
+          "userId": {
+            "type": "number"
+          },
+          "page": {
+            "type": "number"
+          },
+          "posts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "title",
+                "createdAt"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "number"
+          }
+        }
+      },
+      "coordinates_x_y_index_ts_3681158950_JsonTGET2579524225": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "decimal"
+              },
+              {
+                "type": "string",
+                "const": "dms"
+              }
+            ]
+          },
+          "includeTimezone": {
+            "type": "boolean"
+          },
+          "includeElevation": {
+            "type": "boolean"
+          }
+        }
+      },
+      "coordinates_x_y_index_ts_3681158950_ResponseTGET1226070337": {
+        "type": "object",
+        "required": [
+          "x",
+          "y",
+          "location"
+        ],
+        "properties": {
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          },
+          "location": {
+            "type": "string"
+          },
+          "elevation": {
+            "type": "number"
+          },
+          "timezone": {
+            "type": "string"
+          }
+        }
+      },
+      "data_page_limit_index_ts_1093419814_JsonTGET790617385": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "minValue": {
+            "type": "number"
+          },
+          "maxValue": {
+            "type": "number"
+          },
+          "sortBy": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "name"
+              },
+              {
+                "type": "string",
+                "const": "value"
+              },
+              {
+                "type": "string",
+                "const": "id"
+              }
+            ]
+          },
+          "sortOrder": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "asc"
+              },
+              {
+                "type": "string",
+                "const": "desc"
+              }
+            ]
+          }
+        }
+      },
+      "data_page_limit_index_ts_1093419814_ResponseTGET103358384": {
+        "type": "object",
+        "required": [
+          "data",
+          "pagination"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "value",
+                "category"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "category": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "required": [
+              "page",
+              "limit",
+              "total",
+              "hasMore"
+            ],
+            "properties": {
+              "page": {
+                "type": "number"
+              },
+              "limit": {
+                "type": "number"
+              },
+              "total": {
+                "type": "number"
+              },
+              "hasMore": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "orders_status_date_index_ts_368469196_JsonTGET315919604": {
+        "type": "object",
+        "properties": {
+          "includeItems": {
+            "type": "boolean"
+          },
+          "includeCustomer": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "orders_status_date_index_ts_368469196_ResponseTGET1792766675": {
+        "type": "object",
+        "required": [
+          "status",
+          "orders"
+        ],
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "orders": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "items",
+                "total"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "quantity",
+                      "price"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "number"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "quantity": {
+                        "type": "number"
+                      },
+                      "price": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "total": {
+                  "type": "number"
+                },
+                "customer": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "orders_status_date_index_ts_368469196_JsonTPOST315919604": {
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "quantity"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "quantity": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "orders_status_date_index_ts_368469196_ResponseTPOST4047461533": {
+        "type": "object",
+        "required": [
+          "orderId",
+          "status",
+          "total"
+        ],
+        "properties": {
+          "orderId": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number"
+          }
+        }
+      },
+      "metrics_name_period_index_ts_697537035_JsonTGET1521668760": {
+        "type": "object",
+        "properties": {
+          "resolution": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "hour"
+              },
+              {
+                "type": "string",
+                "const": "day"
+              },
+              {
+                "type": "string",
+                "const": "week"
+              }
+            ]
+          },
+          "includeRaw": {
+            "type": "boolean"
+          },
+          "transform": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "none"
+              },
+              {
+                "type": "string",
+                "const": "movingAverage"
+              },
+              {
+                "type": "string",
+                "const": "cumulative"
+              }
+            ]
+          }
+        }
+      },
+      "metrics_name_period_index_ts_697537035_ResponseTGET906579486": {
+        "type": "object",
+        "required": [
+          "metric",
+          "period",
+          "data",
+          "summary"
+        ],
+        "properties": {
+          "metric": {
+            "type": "string"
+          },
+          "period": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "timestamp",
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "timestamp": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "summary": {
+            "type": "object",
+            "required": [
+              "average",
+              "min",
+              "max",
+              "count"
+            ],
+            "properties": {
+              "average": {
+                "type": "number"
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "count": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "metrics_name_period_index_ts_697537035_JsonTPOST1521668760": {
+        "type": "object",
+        "required": [
+          "value",
+          "timestamp"
+        ],
+        "properties": {
+          "value": {
+            "type": "number"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
+      "metrics_name_period_index_ts_697537035_ResponseTPOST153958135": {
+        "type": "object",
+        "required": [
+          "recorded",
+          "metric",
+          "id"
+        ],
+        "properties": {
+          "recorded": {
+            "type": "boolean"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          }
+        }
+      },
+      "search_type_page_index_ts_2448809791_JsonTGET3143369611": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "all"
+              },
+              {
+                "type": "string",
+                "const": "posts"
+              },
+              {
+                "type": "string",
+                "const": "users"
+              }
+            ]
+          },
+          "boostRecent": {
+            "type": "boolean"
+          }
+        }
+      },
+      "search_type_page_index_ts_2448809791_ResponseTGET3535027638": {
+        "type": "object",
+        "required": [
+          "page",
+          "results",
+          "total"
+        ],
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "page": {
+            "type": "number"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "title",
+                "type",
+                "score"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "score": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "number"
+          }
+        }
+      },
+      "versions_version_format_index_ts_2757599858_JsonTGET2855736995": {
+        "type": "object",
+        "properties": {
+          "includeDeprecated": {
+            "type": "boolean"
+          },
+          "includeExperimental": {
+            "type": "boolean"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "versions_version_format_index_ts_2757599858_ResponseTGET765212983": {
+        "type": "object",
+        "required": [
+          "version",
+          "format",
+          "data"
+        ],
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "message",
+              "endpoints",
+              "documentation"
+            ],
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "endpoints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "documentation": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "analytics_period_index_ts_1204912692_JsonTPOST3313331327": {
+        "type": "object",
+        "required": [
+          "metrics"
+        ],
+        "properties": {
+          "metrics": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "views"
+                },
+                {
+                  "type": "string",
+                  "const": "clicks"
+                },
+                {
+                  "type": "string",
+                  "const": "conversions"
+                },
+                {
+                  "type": "string",
+                  "const": "revenue"
+                }
+              ]
+            }
+          },
+          "breakdown": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "day"
+              },
+              {
+                "type": "string",
+                "const": "week"
+              },
+              {
+                "type": "string",
+                "const": "month"
+              }
+            ]
+          },
+          "compareToPrevious": {
+            "type": "boolean"
+          }
+        }
+      },
+      "analytics_period_index_ts_1204912692_ResponseTPOST749756960": {
+        "type": "object",
+        "required": [
+          "period",
+          "metrics",
+          "summary"
+        ],
+        "properties": {
+          "period": {
+            "type": "string"
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "date",
+                "views",
+                "clicks",
+                "conversions",
+                "revenue"
+              ],
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "views": {
+                  "type": "number"
+                },
+                "clicks": {
+                  "type": "number"
+                },
+                "conversions": {
+                  "type": "number"
+                },
+                "revenue": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "summary": {
+            "type": "object",
+            "required": [
+              "totalViews",
+              "totalClicks",
+              "totalConversions",
+              "totalRevenue"
+            ],
+            "properties": {
+              "totalViews": {
+                "type": "number"
+              },
+              "totalClicks": {
+                "type": "number"
+              },
+              "totalConversions": {
+                "type": "number"
+              },
+              "totalRevenue": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "articles_id_index_ts_1137349588_JsonTGET989795582": {
+        "type": "object",
+        "properties": {
+          "includeComments": {
+            "type": "boolean"
+          },
+          "includeAuthor": {
+            "type": "boolean"
+          },
+          "format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "full"
+              },
+              {
+                "type": "string",
+                "const": "summary"
+              }
+            ]
+          }
+        }
+      },
+      "articles_id_index_ts_1137349588_ResponseTGET1293661373": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "content",
+          "author",
+          "publishedAt",
+          "tags"
+        ],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "auth_login_index_ts_1750344579_JsonTPOST2274346999": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8
+          },
+          "rememberMe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "auth_login_index_ts_1750344579_ResponseTPOST1842364566": {
+        "type": "object",
+        "required": [
+          "token",
+          "user",
+          "expiresIn"
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "email",
+              "role"
+            ],
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              }
+            }
+          },
+          "expiresIn": {
+            "type": "number"
+          }
+        }
+      },
+      "codes_code_index_ts_2134676674_JsonTGET2696646777": {
+        "type": "object",
+        "properties": {
+          "validateOnly": {
+            "type": "boolean"
+          },
+          "includeUsage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "codes_code_index_ts_2134676674_ResponseTGET2078876680": {
+        "type": "object",
+        "required": [
+          "code",
+          "valid",
+          "details"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "valid": {
+            "type": "boolean"
+          },
+          "details": {
+            "type": "object",
+            "required": [
+              "type",
+              "discount",
+              "validUntil",
+              "usageLimit"
+            ],
+            "properties": {
+              "type": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "promo"
+                  },
+                  {
+                    "type": "string",
+                    "const": "discount"
+                  },
+                  {
+                    "type": "string",
+                    "const": "referral"
+                  }
+                ]
+              },
+              "discount": {
+                "type": "number"
+              },
+              "validUntil": {
+                "type": "string"
+              },
+              "usageLimit": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "documentation_path_index_ts_2693537996_JsonTGET3711636155": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "v1"
+              },
+              {
+                "type": "string",
+                "const": "v2"
+              },
+              {
+                "type": "string",
+                "const": "latest"
+              }
+            ]
+          },
+          "format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "html"
+              },
+              {
+                "type": "string",
+                "const": "markdown"
+              },
+              {
+                "type": "string",
+                "const": "raw"
+              }
+            ]
+          },
+          "includeExamples": {
+            "type": "boolean"
+          }
+        }
+      },
+      "documentation_path_index_ts_2693537996_ResponseTGET2341831262": {
+        "type": "object",
+        "required": [
+          "path",
+          "content",
+          "title",
+          "sections"
+        ],
+        "properties": {
+          "path": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "content": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "title",
+                "content"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "documents_uuid_index_ts_3120880389_JsonTGET198498908": {
+        "type": "object",
+        "properties": {
+          "includeVersions": {
+            "type": "boolean"
+          },
+          "includeMetadata": {
+            "type": "boolean"
+          },
+          "format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "full"
+              },
+              {
+                "type": "string",
+                "const": "minimal"
+              }
+            ]
+          }
+        }
+      },
+      "documents_uuid_index_ts_3120880389_ResponseTGET1568275703": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "content",
+          "ownerId",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "documents_uuid_index_ts_3120880389_JsonTPUT198498908": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "documents_uuid_index_ts_3120880389_ResponseTPUT1568275703": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "content",
+          "ownerId",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "documents_uuid_index_ts_3120880389_ResponseTDELETE781589100": {
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "emails_address_index_ts_840171668_JsonTGET337020419": {
+        "type": "object",
+        "properties": {
+          "includeUser": {
+            "type": "boolean"
+          },
+          "includeStats": {
+            "type": "boolean"
+          }
+        }
+      },
+      "emails_address_index_ts_840171668_ResponseTGET55899805": {
+        "type": "object",
+        "required": [
+          "email",
+          "verified",
+          "primary",
+          "userId"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "primary": {
+            "type": "boolean"
+          },
+          "userId": {
+            "type": "number"
+          }
+        }
+      },
+      "events_date_index_ts_558639515_JsonTGET276963179": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "conference"
+              },
+              {
+                "type": "string",
+                "const": "meetup"
+              },
+              {
+                "type": "string",
+                "const": "workshop"
+              }
+            ]
+          },
+          "location": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "events_date_index_ts_558639515_ResponseTGET1447899011": {
+        "type": "object",
+        "required": [
+          "date",
+          "events"
+        ],
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "title",
+                "date",
+                "location",
+                "description"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "date": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "hex_color_index_ts_1952586627_JsonTGET4104925239": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "hex"
+              },
+              {
+                "type": "string",
+                "const": "rgb"
+              },
+              {
+                "type": "string",
+                "const": "hsl"
+              },
+              {
+                "type": "string",
+                "const": "all"
+              }
+            ]
+          },
+          "includeName": {
+            "type": "boolean"
+          }
+        }
+      },
+      "hex_color_index_ts_1952586627_ResponseTGET207105012": {
+        "type": "object",
+        "required": [
+          "hex",
+          "rgb",
+          "hsl"
+        ],
+        "properties": {
+          "hex": {
+            "type": "string"
+          },
+          "rgb": {
+            "type": "object",
+            "required": [
+              "r",
+              "g",
+              "b"
+            ],
+            "properties": {
+              "r": {
+                "type": "number"
+              },
+              "g": {
+                "type": "number"
+              },
+              "b": {
+                "type": "number"
+              }
+            }
+          },
+          "hsl": {
+            "type": "object",
+            "required": [
+              "h",
+              "s",
+              "l"
+            ],
+            "properties": {
+              "h": {
+                "type": "number"
+              },
+              "s": {
+                "type": "number"
+              },
+              "l": {
+                "type": "number"
+              }
+            }
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "search_type_index_ts_3588343646_JsonTPOST3628501882": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "tech"
+                  },
+                  {
+                    "type": "string",
+                    "const": "science"
+                  },
+                  {
+                    "type": "string",
+                    "const": "arts"
+                  }
+                ]
+              },
+              "dateRange": {
+                "type": "object",
+                "required": [
+                  "from",
+                  "to"
+                ],
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "to": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 5
+              }
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "number",
+                "minimum": 1
+              },
+              "limit": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 100
+              }
+            }
+          }
+        }
+      },
+      "search_type_index_ts_3588343646_ResponseTPOST2410448055": {
+        "type": "object",
+        "required": [
+          "results",
+          "total",
+          "page",
+          "limit",
+          "hasMore"
+        ],
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "title",
+                "type",
+                "relevance"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "type": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "post"
+                    },
+                    {
+                      "type": "string",
+                      "const": "user"
+                    },
+                    {
+                      "type": "string",
+                      "const": "comment"
+                    }
+                  ]
+                },
+                "relevance": {
+                  "type": "number"
+                },
+                "excerpt": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "number"
+          },
+          "page": {
+            "type": "number"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "static_nested_index_ts_3607084481_JsonTGET3829860480": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "full"
+              },
+              {
+                "type": "string",
+                "const": "minimal"
+              }
+            ]
+          },
+          "includeMetadata": {
+            "type": "boolean"
+          }
+        }
+      },
+      "static_nested_index_ts_3607084481_ResponseTGET2451562508": {
+        "type": "object",
+        "required": [
+          "message",
+          "level",
+          "data"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "level": {
+            "type": "number"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "items",
+              "count"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "count": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "settings_section_index_ts_4127127767_JsonTGET1310749499": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "full"
+              },
+              {
+                "type": "string",
+                "const": "minimal"
+              }
+            ]
+          },
+          "includeDefaults": {
+            "type": "boolean"
+          }
+        }
+      },
+      "settings_section_index_ts_4127127767_ResponseTGET3909966707": {
+        "type": "object",
+        "required": [
+          "notifications",
+          "privacy",
+          "language",
+          "timezone",
+          "updatedAt"
+        ],
+        "properties": {
+          "notifications": {
+            "type": "object",
+            "required": [
+              "email",
+              "push",
+              "sms",
+              "frequency"
+            ],
+            "properties": {
+              "email": {
+                "type": "boolean"
+              },
+              "push": {
+                "type": "boolean"
+              },
+              "sms": {
+                "type": "boolean"
+              },
+              "frequency": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "instant"
+                  },
+                  {
+                    "type": "string",
+                    "const": "daily"
+                  },
+                  {
+                    "type": "string",
+                    "const": "weekly"
+                  }
+                ]
+              }
+            }
+          },
+          "privacy": {
+            "type": "object",
+            "required": [
+              "profileVisibility",
+              "dataSharing",
+              "searchEngineIndexing"
+            ],
+            "properties": {
+              "profileVisibility": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "public"
+                  },
+                  {
+                    "type": "string",
+                    "const": "private"
+                  },
+                  {
+                    "type": "string",
+                    "const": "friends"
+                  }
+                ]
+              },
+              "dataSharing": {
+                "type": "boolean"
+              },
+              "searchEngineIndexing": {
+                "type": "boolean"
+              }
+            }
+          },
+          "language": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "settings_section_index_ts_4127127767_JsonTPATCH1310749499": {
+        "type": "object",
+        "properties": {
+          "notifications": {
+            "type": "object",
+            "required": [
+              "email",
+              "push",
+              "sms",
+              "frequency"
+            ],
+            "properties": {
+              "email": {
+                "type": "boolean"
+              },
+              "push": {
+                "type": "boolean"
+              },
+              "sms": {
+                "type": "boolean"
+              },
+              "frequency": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "instant"
+                  },
+                  {
+                    "type": "string",
+                    "const": "daily"
+                  },
+                  {
+                    "type": "string",
+                    "const": "weekly"
+                  }
+                ]
+              }
+            }
+          },
+          "privacy": {
+            "type": "object",
+            "required": [
+              "profileVisibility",
+              "dataSharing",
+              "searchEngineIndexing"
+            ],
+            "properties": {
+              "profileVisibility": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "public"
+                  },
+                  {
+                    "type": "string",
+                    "const": "private"
+                  },
+                  {
+                    "type": "string",
+                    "const": "friends"
+                  }
+                ]
+              },
+              "dataSharing": {
+                "type": "boolean"
+              },
+              "searchEngineIndexing": {
+                "type": "boolean"
+              }
+            }
+          },
+          "language": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          }
+        }
+      },
+      "settings_section_index_ts_4127127767_ResponseTPATCH3909966707": {
+        "type": "object",
+        "required": [
+          "notifications",
+          "privacy",
+          "language",
+          "timezone",
+          "updatedAt"
+        ],
+        "properties": {
+          "notifications": {
+            "type": "object",
+            "required": [
+              "email",
+              "push",
+              "sms",
+              "frequency"
+            ],
+            "properties": {
+              "email": {
+                "type": "boolean"
+              },
+              "push": {
+                "type": "boolean"
+              },
+              "sms": {
+                "type": "boolean"
+              },
+              "frequency": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "instant"
+                  },
+                  {
+                    "type": "string",
+                    "const": "daily"
+                  },
+                  {
+                    "type": "string",
+                    "const": "weekly"
+                  }
+                ]
+              }
+            }
+          },
+          "privacy": {
+            "type": "object",
+            "required": [
+              "profileVisibility",
+              "dataSharing",
+              "searchEngineIndexing"
+            ],
+            "properties": {
+              "profileVisibility": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "public"
+                  },
+                  {
+                    "type": "string",
+                    "const": "private"
+                  },
+                  {
+                    "type": "string",
+                    "const": "friends"
+                  }
+                ]
+              },
+              "dataSharing": {
+                "type": "boolean"
+              },
+              "searchEngineIndexing": {
+                "type": "boolean"
+              }
+            }
+          },
+          "language": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "usernames_username_index_ts_3531210388_JsonTGET1556332463": {
+        "type": "object",
+        "properties": {
+          "includeStats": {
+            "type": "boolean"
+          },
+          "includeRecent": {
+            "type": "boolean"
+          },
+          "includeBadges": {
+            "type": "boolean"
+          }
+        }
+      },
+      "usernames_username_index_ts_3531210388_ResponseTGET1698061595": {
+        "type": "object",
+        "required": [
+          "username",
+          "displayName",
+          "joinedAt"
+        ],
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "joinedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stats": {
+            "type": "object",
+            "required": [
+              "posts",
+              "followers",
+              "following"
+            ],
+            "properties": {
+              "posts": {
+                "type": "number"
+              },
+              "followers": {
+                "type": "number"
+              },
+              "following": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "users_id_index_ts_2390016005_JsonTGET253193823": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "profile"
+              },
+              {
+                "type": "string",
+                "const": "posts"
+              },
+              {
+                "type": "string",
+                "const": "all"
+              }
+            ]
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "expand": {
+            "type": "boolean"
+          }
+        }
+      },
+      "users_id_index_ts_2390016005_ResponseTGET1698717845": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "role",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "admin"
+              },
+              {
+                "type": "string",
+                "const": "user"
+              },
+              {
+                "type": "string",
+                "const": "moderator"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "users_id_index_ts_2390016005_JsonTPUT253193823": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "admin"
+              },
+              {
+                "type": "string",
+                "const": "user"
+              },
+              {
+                "type": "string",
+                "const": "moderator"
+              }
+            ]
+          }
+        }
+      },
+      "users_id_index_ts_2390016005_ResponseTPUT1698717845": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "role",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "admin"
+              },
+              {
+                "type": "string",
+                "const": "user"
+              },
+              {
+                "type": "string",
+                "const": "moderator"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "users_id_index_ts_2390016005_ResponseTDELETE2606313607": {
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "webhooks_stripe_index_ts_2600860173_JsonTPOST3039697861": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "data",
+          "created"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "object"
+            ],
+            "properties": {
+              "object": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "amount",
+                  "currency"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "amount": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "created": {
+            "type": "number"
+          }
+        }
+      },
+      "webhooks_stripe_index_ts_2600860173_ResponseTPOST395818918": {
+        "type": "object",
+        "required": [
+          "received",
+          "processed",
+          "timestamp"
+        ],
+        "properties": {
+          "received": {
+            "type": "boolean"
+          },
+          "processed": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
+      "health_index_ts_3040421798_ResponseTGET2600161721": {
+        "type": "object",
+        "required": [
+          "status",
+          "timestamp",
+          "uptime",
+          "memory"
+        ],
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "healthy"
+              },
+              {
+                "type": "string",
+                "const": "degraded"
+              },
+              {
+                "type": "string",
+                "const": "unhealthy"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "uptime": {
+            "type": "number"
+          },
+          "memory": {
+            "type": "object",
+            "required": [
+              "rss",
+              "heapTotal",
+              "heapUsed",
+              "external",
+              "arrayBuffers"
+            ],
+            "properties": {
+              "rss": {
+                "type": "number"
+              },
+              "heapTotal": {
+                "type": "number"
+              },
+              "heapUsed": {
+                "type": "number"
+              },
+              "external": {
+                "type": "number"
+              },
+              "arrayBuffers": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "index_index_ts_2109308135_JsonTGET953914569": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "full"
+              },
+              {
+                "type": "string",
+                "const": "minimal"
+              }
+            ]
+          },
+          "includeEndpoints": {
+            "type": "boolean"
+          }
+        }
+      },
+      "index_index_ts_2109308135_ResponseTGET2109545860": {
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "endpoints",
+          "documentation"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "documentation": {
+            "type": "string"
+          }
+        }
+      },
+      "mixed_index_ts_770061503_JsonTGET2675962266": {
+        "type": "object",
+        "properties": {
+          "debug": {
+            "type": "boolean"
+          },
+          "includeMetadata": {
+            "type": "boolean"
+          },
+          "format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "full"
+              },
+              {
+                "type": "string",
+                "const": "minimal"
+              }
+            ]
+          }
+        }
+      },
+      "mixed_index_ts_770061503_ResponseTGET685275611": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "id",
+              "processed"
+            ],
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "processed": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "mixed_index_ts_770061503_JsonTPOST2675962266": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email"
+        ],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        }
+      },
+      "mixed_index_ts_770061503_ResponseTPOST2565859270": {
+        "type": "object",
+        "required": [
+          "received",
+          "custom",
+          "metadata"
+        ],
+        "properties": {
+          "received": {
+            "type": "boolean"
+          },
+          "custom": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "timestamp"
+            ],
+            "properties": {
+              "timestamp": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "mixed_index_ts_770061503_JsonTPUT2675962266": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "key",
+              "value"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "mixed_index_ts_770061503_ResponseTPUT685275611": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "id",
+              "processed"
+            ],
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "processed": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "posts_index_ts_2278785729_JsonTGET1728467143": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number",
+            "minimum": 1
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "sort": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "newest"
+              },
+              {
+                "type": "string",
+                "const": "oldest"
+              },
+              {
+                "type": "string",
+                "const": "popular"
+              }
+            ]
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authorId": {
+            "type": "number"
+          }
+        }
+      },
+      "posts_index_ts_2278785729_ResponseTGET2322209272": {
+        "type": "object",
+        "required": [
+          "posts",
+          "pagination"
+        ],
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "title",
+                "content",
+                "tags",
+                "isPublished",
+                "authorId",
+                "createdAt"
+              ],
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "isPublished": {
+                  "type": "boolean"
+                },
+                "authorId": {
+                  "type": "number"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "publishedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "required": [
+              "page",
+              "limit",
+              "total",
+              "hasMore"
+            ],
+            "properties": {
+              "page": {
+                "type": "number"
+              },
+              "limit": {
+                "type": "number"
+              },
+              "total": {
+                "type": "number"
+              },
+              "hasMore": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "posts_index_ts_2278785729_JsonTPOST1728467143": {
+        "type": "object",
+        "required": [
+          "title",
+          "content",
+          "tags",
+          "isPublished"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "content": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10
+          },
+          "isPublished": {
+            "type": "boolean"
+          },
+          "scheduledPublishAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "posts_index_ts_2278785729_ResponseTPOST4000969321": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "content",
+          "tags",
+          "isPublished",
+          "authorId",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isPublished": {
+            "type": "boolean"
+          },
+          "authorId": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "upload_index_ts_443261549_RawTPOST2589871015": {
+        "type": "string",
+        "format": "binary"
+      },
+      "upload_index_ts_443261549_ResponseTPOST1713834205": {
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

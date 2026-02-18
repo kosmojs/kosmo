@@ -23,7 +23,10 @@ type UserPostsQuery = {
 export default defineRoute<
   [TRefine<number, { minimum: 1 }>, TRefine<number, { minimum: 1 }>]
 >(({ GET }) => [
-  GET<UserPostsQuery, UserPostsResponse>(async (ctx) => {
+  GET<{
+    json: UserPostsQuery,
+    response: [200, "json", UserPostsResponse]
+  }>(async (ctx) => {
     ctx.body = {
       userId: Number(ctx.params.id),
       page: Number(ctx.params.page) || 1,

@@ -17,9 +17,21 @@
     }
   },
   "scripts": {
-    "build": "esbuilder src/index.ts"
+    "build": "esbuilder src/index.ts",
+    "test": "vitest --root ../../.. --project generators/fetch-generator"
   },
   "dependencies": {
     "@kosmojs/dev": "workspace:^"
+  },
+  "devDependencies": {
+    "@kosmojs/api": "workspace:^",
+    "@kosmojs/fetch": "workspace:^",
+    "@kosmojs/koa-generator": "workspace:^",
+    "@kosmojs/typebox-generator": "workspace:^",
+    "@types/mime-types": "^3.0.1",
+    "@types/qs": "^6.14.0",
+    "mime-types": "^3.0.2",
+    "qs": "^6.15.0",
+    "typebox": "^1.0.81"
   }
 }

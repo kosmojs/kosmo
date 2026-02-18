@@ -12,25 +12,30 @@
       },
     },
     "schemas": {
-      "articles_id_index_ts_1137349588_PayloadT2019094101_format3736761055": {
-        "anyOf": [
-          {
-            "const": "full",
-            "type": "string",
+      "articles_id_index_ts_1137349588_JsonTGET989795582": {
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "const": "full",
+                "type": "string",
+              },
+              {
+                "const": "summary",
+                "type": "string",
+              },
+            ],
           },
-          {
-            "const": "summary",
-            "type": "string",
+          "includeAuthor": {
+            "type": "boolean",
           },
-        ],
+          "includeComments": {
+            "type": "boolean",
+          },
+        },
+        "type": "object",
       },
-      "articles_id_index_ts_1137349588_PayloadT2019094101_includeAuthor2034633249": {
-        "type": "boolean",
-      },
-      "articles_id_index_ts_1137349588_PayloadT2019094101_includeComments3103762846": {
-        "type": "boolean",
-      },
-      "articles_id_index_ts_1137349588_ResponseT2019094101": {
+      "articles_id_index_ts_1137349588_ResponseTGET1293661373": {
         "properties": {
           "author": {
             "type": "string",
@@ -74,37 +79,23 @@
           {
             "$ref": "#/components/parameters/articles_id_index_ts_1137349588_ParamsT3442148210_id3208210256",
           },
-          {
-            "in": "query",
-            "name": "includeComments",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/articles_id_index_ts_1137349588_PayloadT2019094101_includeComments3103762846",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeAuthor",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/articles_id_index_ts_1137349588_PayloadT2019094101_includeAuthor2034633249",
-            },
-          },
-          {
-            "in": "query",
-            "name": "format",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/articles_id_index_ts_1137349588_PayloadT2019094101_format3736761055",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/articles_id_index_ts_1137349588_JsonTGET989795582",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/articles_id_index_ts_1137349588_ResponseT2019094101",
+                  "$ref": "#/components/schemas/articles_id_index_ts_1137349588_ResponseTGET1293661373",
                 },
               },
             },

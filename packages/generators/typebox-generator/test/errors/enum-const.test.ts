@@ -1,10 +1,9 @@
 import { describe, expect, test } from "vitest";
 
-import { MESSAGE_CODES } from "../../src/error-handler";
-import { importSchema } from "..";
+import { importSchema, MESSAGE_CODES } from "..";
 
 describe("errors/enum-const", async () => {
-  const schema = await importSchema("errors/enum-const", "payload.POST");
+  const schema = await importSchema("errors/enum-const", "json.POST");
 
   const validPayload = {
     status: "active",

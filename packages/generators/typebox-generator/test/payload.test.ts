@@ -1,14 +1,10 @@
 import { describe, expect, test } from "vitest";
 
-import { MESSAGE_CODES } from "../src/error-handler";
-import { importSchema } from ".";
+import { importSchema, MESSAGE_CODES } from ".";
 
 describe("payload", () => {
   describe("UserRegistration", async () => {
-    const schema = await importSchema(
-      "payload/UserRegistration",
-      "payload.POST",
-    );
+    const schema = await importSchema("payload/UserRegistration", "json.POST");
 
     const validPayload = {
       email: "john.doe@example.com",
@@ -46,7 +42,7 @@ describe("payload", () => {
   });
 
   describe("CreateOrder", async () => {
-    const schema = await importSchema("payload/CreateOrder", "payload.POST");
+    const schema = await importSchema("payload/CreateOrder", "json.POST");
     const validPayload = {
       userId: "user-123",
       items: [
@@ -139,7 +135,7 @@ describe("payload", () => {
   });
 
   describe("CreateBlogPost", async () => {
-    const schema = await importSchema("payload/CreateBlogPost", "payload.POST");
+    const schema = await importSchema("payload/CreateBlogPost", "json.POST");
 
     const validPayload = {
       title: "My First Blog Post",
@@ -171,10 +167,7 @@ describe("payload", () => {
   });
 
   describe("FileUploadRequest", async () => {
-    const schema = await importSchema(
-      "payload/FileUploadRequest",
-      "payload.POST",
-    );
+    const schema = await importSchema("payload/FileUploadRequest", "json.POST");
 
     const validPayload = {
       fileName: "document.pdf",
@@ -211,7 +204,7 @@ describe("payload", () => {
   });
 
   describe("PaymentRequest", async () => {
-    const schema = await importSchema("payload/PaymentRequest", "payload.POST");
+    const schema = await importSchema("payload/PaymentRequest", "json.POST");
 
     const validPayload = {
       orderId: "order-789",
@@ -326,10 +319,7 @@ describe("payload", () => {
   });
 
   describe("UpdateUserProfile", async () => {
-    const schema = await importSchema(
-      "payload/UpdateUserProfile",
-      "payload.POST",
-    );
+    const schema = await importSchema("payload/UpdateUserProfile", "json.POST");
     const validPayload = {
       firstName: "Jane",
       phoneNumber: "+1234567890",
@@ -401,7 +391,7 @@ describe("payload", () => {
   });
 
   describe("CreateApiKey", async () => {
-    const schema = await importSchema("payload/CreateApiKey", "payload.POST");
+    const schema = await importSchema("payload/CreateApiKey", "json.POST");
     const validPayload = {
       name: "Production API Key",
       permissions: ["read", "write"],
@@ -429,7 +419,7 @@ describe("payload", () => {
   });
 
   describe("SearchQuery", async () => {
-    const schema = await importSchema("payload/SearchQuery", "payload.POST");
+    const schema = await importSchema("payload/SearchQuery", "json.POST");
     const validPayload = {
       query: "laptop",
       filters: {
@@ -481,7 +471,7 @@ describe("payload", () => {
   describe("NotificationSubscription", async () => {
     const schema = await importSchema(
       "payload/NotificationSubscription",
-      "payload.POST",
+      "json.POST",
     );
 
     const validPayload = {
@@ -531,7 +521,7 @@ describe("payload", () => {
   });
 
   describe("MfaSetup", async () => {
-    const schema = await importSchema("payload/MfaSetup", "payload.POST");
+    const schema = await importSchema("payload/MfaSetup", "json.POST");
 
     const validPayload = {
       userId: "user-123",

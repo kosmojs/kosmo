@@ -1,0 +1,17 @@
+[
+  {
+    "method": "POST",
+    "validationDefinitions": [
+      {
+        "contentType": "json",
+        "customErrors": {},
+        "method": "POST",
+        "target": "multipart",
+        "schema": {
+          "id": "MultipartTPOST1165983353",
+          "text": "{ id?: number }"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "method": "POST",
+    "validationDefinitions": [
+      {
+        "runtimeValidation": true,
+        "customErrors": {},
+        "method": "POST",
+        "target": "form",
+        "schema": {
+          "id": "FormTPOST1165983353",
+          "text": "{ id?: number }"
+        }
+      }
+    ]
+  }
+]

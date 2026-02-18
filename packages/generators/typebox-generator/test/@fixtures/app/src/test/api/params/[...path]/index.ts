@@ -1,4 +1,4 @@
-import { defineRoute } from "@kosmojs/api";
+import { defineRoute } from "@test/index";
 
 export default defineRoute<["a" | "b" | "c"]>(({ GET }) => [
   GET(async (ctx) => {

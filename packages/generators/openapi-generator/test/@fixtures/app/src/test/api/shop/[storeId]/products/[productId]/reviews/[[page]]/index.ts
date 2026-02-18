@@ -38,7 +38,10 @@ export default defineRoute<
     TRefine<number, { minimum: 1 }>,
   ]
 >(({ GET }) => [
-  GET<StoreReviewsQuery, StoreReviewsResponse>(async (ctx) => {
+  GET<{
+    json: StoreReviewsQuery,
+    response:[200, "json", StoreReviewsResponse]
+  }>(async (ctx) => {
     ctx.body = {
       storeId: Number(ctx.params.storeId),
       productId: Number(ctx.params.productId),

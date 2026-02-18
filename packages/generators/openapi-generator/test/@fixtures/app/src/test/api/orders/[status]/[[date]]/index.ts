@@ -30,32 +30,34 @@ export default defineRoute<
     TRefine<string, { pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" }>,
   ]
 >(({ GET, POST }) => [
-  GET<OrderQuery, OrderResponse>(async (ctx) => {
-    const { includeItems, includeCustomer } = ctx.payload;
-    ctx.body = {
-      status: ctx.params.status,
-      date: ctx.params.date,
-      orders: [
-        {
-          id: 123,
-          items: includeItems
-            ? [
-                { id: 1, name: "Product A", quantity: 2, price: 25 },
-                { id: 2, name: "Product B", quantity: 1, price: 50 },
-              ]
-            : [],
-          total: 100,
-          ...(includeCustomer ? { customer: "John Doe" } : {}),
-        },
-      ],
-    };
-  }),
+  GET<{ json: OrderQuery; response: [200, "json", OrderResponse] }>(
+    async (ctx) => {
+      const { includeItems, includeCustomer } = ctx.validated.json;
+      ctx.body = {
+        status: ctx.params.status,
+        date: ctx.params.date,
+        orders: [
+          {
+            id: 123,
+            items: includeItems
+              ? [
+                  { id: 1, name: "Product A", quantity: 2, price: 25 },
+                  { id: 2, name: "Product B", quantity: 1, price: 50 },
+                ]
+              : [],
+            total: 100,
+            ...(includeCustomer ? { customer: "John Doe" } : {}),
+          },
+        ],
+      };
+    },
+  ),
 
-  POST<
-    { items: Array<{ id: number; quantity: number }> },
-    { orderId: number; status: string; total: number }
-  >(async (ctx) => {
-    const { items } = ctx.payload;
+  POST<{
+    json: { items: Array<{ id: number; quantity: number }> };
+    response: [200, "json", { orderId: number; status: string; total: number }];
+  }>(async (ctx) => {
+    const { items } = ctx.validated.json;
     ctx.body = {
       orderId: 12345,
       status: ctx.params.status,

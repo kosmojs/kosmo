@@ -2,6 +2,7 @@ import { writeFile } from "node:fs/promises";
 
 import { afterAll, beforeAll, describe, it } from "vitest";
 
+import type { UseSlots } from "@kosmojs/api";
 import { pathResolver } from "@kosmojs/dev";
 
 import { setupTestProject } from "../setup";
@@ -16,13 +17,11 @@ const {
   teardown,
 } = await setupTestProject({ backend: "koa" });
 
-const coreSlots = [
-  "params",
-  "validateParams",
+const coreSlots: Array<keyof UseSlots> = [
   "bodyparser",
-  "payload",
-  "validatePayload",
-  "validateResponse",
+  "validate:params",
+  "validate:json",
+  "validate:response",
 ];
 
 const { createPath, createImport } = pathResolver({
@@ -52,7 +51,7 @@ beforeAll(async () => {
               await next();
             } catch (error) {
               ctx.status = 400;
-              ctx.body = error.message;
+              ctx.body = error.message || error;
             }
           },
           { slot: "errorHandler" },
@@ -89,7 +88,7 @@ beforeAll(async () => {
           export default defineRoute(({ use, GET }) => [
             ${coreSlots.flatMap(coreSlotsMapper).join(",\n")},
             GET(() => {
-              throw "should never reach here";
+              throw "should never reach ${slot}";
             }),
           ]);
         `;

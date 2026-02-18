@@ -20,7 +20,7 @@ describe("createRouterRoutes", () => {
       );
 
       expect(ctx.params.path).toEqual("a/b/c");
-      expect(ctx.typedParams.path).toEqual(["a", "b", "c"]);
+      expect(ctx.validated.params.path).toEqual(["a", "b", "c"]);
     });
 
     test("numeric params", async () => {
@@ -43,10 +43,10 @@ describe("createRouterRoutes", () => {
       );
 
       expect(ctx.params.id).toEqual("0");
-      expect(ctx.typedParams.id).toEqual(0);
+      expect(ctx.validated.params.id).toEqual(0);
 
       expect(ctx.params.name).toEqual("test");
-      expect(ctx.typedParams.name).toEqual("test");
+      expect(ctx.validated.params.name).toEqual("test");
     });
 
     test("rest numeric params", async () => {
@@ -66,7 +66,7 @@ describe("createRouterRoutes", () => {
       );
 
       expect(ctx.params.ids).toEqual("1/2/3");
-      expect(ctx.typedParams.ids).toEqual([1, 2, 3]);
+      expect(ctx.validated.params.ids).toEqual([1, 2, 3]);
     });
   });
 });

@@ -1,0 +1,27 @@
+[
+  {
+    "method": "POST",
+    "validationDefinitions": [
+      {
+        "method": "POST",
+        "target": "multipart",
+        "schema": {
+          "id": "MultipartTPOST1165983353",
+          "text": "{ id?: number }"
+        }
+      },
+      {
+        "method": "POST",
+        "target": "response",
+        "variants": [
+          {
+            "id": "ResponseTPOST924740473",
+            "status": 200,
+            "contentType": "json",
+            "body": "{ id: number }"
+          }
+        ]
+      }
+    ]
+  }
+]

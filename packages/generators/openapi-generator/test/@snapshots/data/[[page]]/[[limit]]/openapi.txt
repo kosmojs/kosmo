@@ -24,44 +24,49 @@
       },
     },
     "schemas": {
-      "data_page_limit_index_ts_1093419814_PayloadT2481775363_category105650625": {
-        "type": "string",
-      },
-      "data_page_limit_index_ts_1093419814_PayloadT2481775363_maxValue4276626131": {
-        "type": "number",
-      },
-      "data_page_limit_index_ts_1093419814_PayloadT2481775363_minValue411602226": {
-        "type": "number",
-      },
-      "data_page_limit_index_ts_1093419814_PayloadT2481775363_sortBy1582199508": {
-        "anyOf": [
-          {
-            "const": "name",
+      "data_page_limit_index_ts_1093419814_JsonTGET790617385": {
+        "properties": {
+          "category": {
             "type": "string",
           },
-          {
-            "const": "value",
-            "type": "string",
+          "maxValue": {
+            "type": "number",
           },
-          {
-            "const": "id",
-            "type": "string",
+          "minValue": {
+            "type": "number",
           },
-        ],
+          "sortBy": {
+            "anyOf": [
+              {
+                "const": "name",
+                "type": "string",
+              },
+              {
+                "const": "value",
+                "type": "string",
+              },
+              {
+                "const": "id",
+                "type": "string",
+              },
+            ],
+          },
+          "sortOrder": {
+            "anyOf": [
+              {
+                "const": "asc",
+                "type": "string",
+              },
+              {
+                "const": "desc",
+                "type": "string",
+              },
+            ],
+          },
+        },
+        "type": "object",
       },
-      "data_page_limit_index_ts_1093419814_PayloadT2481775363_sortOrder1063427325": {
-        "anyOf": [
-          {
-            "const": "asc",
-            "type": "string",
-          },
-          {
-            "const": "desc",
-            "type": "string",
-          },
-        ],
-      },
-      "data_page_limit_index_ts_1093419814_ResponseT2481775363": {
+      "data_page_limit_index_ts_1093419814_ResponseTGET103358384": {
         "properties": {
           "data": {
             "items": {
@@ -124,54 +129,22 @@
   "paths": {
     "/data": {
       "get": {
-        "parameters": [
-          {
-            "in": "query",
-            "name": "category",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_category105650625",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_JsonTGET790617385",
+              },
             },
           },
-          {
-            "in": "query",
-            "name": "minValue",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_minValue411602226",
-            },
-          },
-          {
-            "in": "query",
-            "name": "maxValue",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_maxValue4276626131",
-            },
-          },
-          {
-            "in": "query",
-            "name": "sortBy",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_sortBy1582199508",
-            },
-          },
-          {
-            "in": "query",
-            "name": "sortOrder",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_sortOrder1063427325",
-            },
-          },
-        ],
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_ResponseT2481775363",
+                  "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_ResponseTGET103358384",
                 },
               },
             },
@@ -186,53 +159,23 @@
           {
             "$ref": "#/components/parameters/data_page_limit_index_ts_1093419814_ParamsT668522618_page336246304",
           },
-          {
-            "in": "query",
-            "name": "category",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_category105650625",
-            },
-          },
-          {
-            "in": "query",
-            "name": "minValue",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_minValue411602226",
-            },
-          },
-          {
-            "in": "query",
-            "name": "maxValue",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_maxValue4276626131",
-            },
-          },
-          {
-            "in": "query",
-            "name": "sortBy",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_sortBy1582199508",
-            },
-          },
-          {
-            "in": "query",
-            "name": "sortOrder",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_sortOrder1063427325",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_JsonTGET790617385",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_ResponseT2481775363",
+                  "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_ResponseTGET103358384",
                 },
               },
             },
@@ -250,53 +193,23 @@
           {
             "$ref": "#/components/parameters/data_page_limit_index_ts_1093419814_ParamsT668522618_limit2140596320",
           },
-          {
-            "in": "query",
-            "name": "category",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_category105650625",
-            },
-          },
-          {
-            "in": "query",
-            "name": "minValue",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_minValue411602226",
-            },
-          },
-          {
-            "in": "query",
-            "name": "maxValue",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_maxValue4276626131",
-            },
-          },
-          {
-            "in": "query",
-            "name": "sortBy",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_sortBy1582199508",
-            },
-          },
-          {
-            "in": "query",
-            "name": "sortOrder",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_PayloadT2481775363_sortOrder1063427325",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_JsonTGET790617385",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_ResponseT2481775363",
+                  "$ref": "#/components/schemas/data_page_limit_index_ts_1093419814_ResponseTGET103358384",
                 },
               },
             },

@@ -2,31 +2,28 @@ import Type from "typebox";
 import { Compile } from "typebox/compile";
 import Value from "typebox/value";
 
-import type { ValidationErrorScope, ValidationSchema } from "@kosmojs/api";
+import type { ValidationSchema, ValidationTarget } from "@kosmojs/api";
 import { ValidationError } from "@kosmojs/api/errors";
 
 import errorHandlerFactory from "./error-handler";
 
-{{#if importCustomTypes}}
-import customTypes from "{{importCustomTypes}}";
-{{else}}
-const customTypes = {} as const;
-{{/if}}
+import {
+  customTypes,
+  validationMessages,
+} from "{{ createImport 'lib' '@typebox/setup' }}";
 
 const {
   formatValidationErrors,
   formatValidationErrorMessage,
   getErrorSummary,
-} = errorHandlerFactory({{validationMessages}});
+} = errorHandlerFactory(validationMessages);
 
 export const validationSchemaFactory = (
   schemaText: string,
-  { scope }: {
-    scope: ValidationErrorScope;
-  },
+  { target, route }: { target: ValidationTarget | "params"; route: string },
 ): ValidationSchema => {
-  const schema = Type.Script(schemaText);
-  const compiledSchema = Compile(customTypes, schema);
+  const schema = Type.Script(customTypes, schemaText);
+  const compiledSchema = Compile(schema);
   const getSchemaErrors = (data: unknown) => Value.Errors(schema, data);
   return {
     check(data) {
@@ -43,11 +40,15 @@ export const validationSchemaFactory = (
     },
     validate(data) {
       if (!this.check(data)) {
-        throw new ValidationError([scope, {
-          errors: this.errors(data),
-          errorMessage: this.errorMessage(data),
-          errorSummary: this.errorSummary(data),
-        }]);
+        throw new ValidationError([
+          target,
+          {
+            errors: this.errors(data),
+            errorMessage: this.errorMessage(data),
+            errorSummary: this.errorSummary(data),
+            route,
+          },
+        ]);
       }
     },
   };

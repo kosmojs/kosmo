@@ -1,10 +1,9 @@
 import { describe, expect, test } from "vitest";
 
-import { MESSAGE_CODES } from "../../../src/error-handler";
-import { importSchema } from "../..";
+import { importSchema, MESSAGE_CODES } from "../..";
 
 describe("array/prefix/mixed", async () => {
-  const schema = await importSchema("array/prefix/mixed", "payload.POST");
+  const schema = await importSchema("array/prefix/mixed", "json.POST");
 
   const validPayload = {
     simpleMixed: ["config", 5, true],

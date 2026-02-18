@@ -19,14 +19,17 @@ export default (options?: Options): GeneratorConstructor => {
       "@kosmojs/api": self.version,
       koa: self.devDependencies.koa,
       "@koa/router": self.devDependencies["@koa/router"],
-      "@koa/bodyparser": self.devDependencies["@koa/bodyparser"],
       typebox: self.devDependencies.typebox,
       qs: self.devDependencies.qs,
+      cookie: self.devDependencies.cookie,
+      formidable: self.devDependencies.formidable,
+      "raw-body": self.devDependencies["raw-body"],
     },
     devDependencies: {
       "@kosmojs/fetch": self.version,
       "@types/koa": self.devDependencies["@types/koa"],
       "@types/qs": self.devDependencies["@types/qs"],
+      "@types/formidable": self.devDependencies["@types/formidable"],
     },
   };
 };

@@ -18,17 +18,19 @@ type LoginResponse = {
 };
 
 export default defineRoute(({ POST }) => [
-  POST<LoginPayload, LoginResponse>(async (ctx) => {
-    const { email, rememberMe } = ctx.payload;
-    ctx.body = {
-      token: "jwt-token-here",
-      user: {
-        id: 1,
-        name: "John Doe",
-        email,
-        role: "user",
-      },
-      expiresIn: rememberMe ? 2592000 : 86400,
-    };
-  }),
+  POST<{ json: LoginPayload; response: [200, "json", LoginResponse] }>(
+    async (ctx) => {
+      const { email, rememberMe } = ctx.validated.json;
+      ctx.body = {
+        token: "jwt-token-here",
+        user: {
+          id: 1,
+          name: "John Doe",
+          email,
+          role: "user",
+        },
+        expiresIn: rememberMe ? 2592000 : 86400,
+      };
+    },
+  ),
 ]);

@@ -1,10 +1,9 @@
 import { describe, expect, test } from "vitest";
 
-import { MESSAGE_CODES } from "../src/error-handler";
-import { importSchema } from ".";
+import { importSchema, MESSAGE_CODES } from ".";
 
 describe("number", async () => {
-  const schema = await importSchema("number", "payload.POST");
+  const schema = await importSchema("number", "json.POST");
 
   const validPayload = {
     minMax: 50, // Between 0 and 100 inclusive

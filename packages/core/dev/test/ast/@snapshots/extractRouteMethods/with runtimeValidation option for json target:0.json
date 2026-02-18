@@ -1,0 +1,17 @@
+[
+  {
+    "method": "POST",
+    "validationDefinitions": [
+      {
+        "runtimeValidation": true,
+        "customErrors": {},
+        "method": "POST",
+        "target": "json",
+        "schema": {
+          "id": "JsonTPOST1165983353",
+          "text": "{ id?: number }"
+        }
+      }
+    ]
+  }
+]

@@ -1,12 +1,12 @@
 import crc from "crc/crc32";
 import Type from "typebox";
 
+import { type RequestBodyTarget, RequestBodyTargets } from "@kosmojs/api";
 import {
   type ApiRoute,
   type PathToken,
-  type PayloadType,
   type PluginOptionsResolved,
-  type ResponseType,
+  type ResponseValidationDefinition,
   typeboxLiteralText,
 } from "@kosmojs/dev";
 
@@ -15,12 +15,24 @@ import type {
   OpenAPIOperation,
   OpenAPIParameter,
   OpenAPIPaths,
-  OpenAPIRequestBody,
   OpenAPIResponse,
 } from "./types";
 
+const requestBodyMap: Record<RequestBodyTarget, string | undefined> = {
+  json: "application/json",
+  form: "application/x-www-form-urlencoded",
+  multipart: "multipart/form-data",
+  raw: undefined,
+};
+
 export default (pluginOptions: PluginOptionsResolved) => {
-  const jsonSchemaBuilder = (text: string) => {
+  const jsonSchemaBuilder = (text: string): JsonSchema => {
+    if (["Buffer", "ArrayBuffer", "Blob"].includes(text)) {
+      return {
+        type: "string",
+        format: "binary",
+      };
+    }
     return Type.Script(
       typeboxLiteralText(text, pluginOptions),
     ) as unknown as JsonSchema;
@@ -29,12 +41,12 @@ export default (pluginOptions: PluginOptionsResolved) => {
   // Generate unique component ID
   const generateComponentId = (
     route: ApiRoute,
-    type: ApiRoute["params"] | PayloadType | ResponseType,
+    typeId: string,
     propName?: string,
   ): string => {
     const suffix = propName
-      ? `${type.id}_${propName.replace(/[^\w.-]/g, "_")}${crc(propName)}`
-      : type.id;
+      ? `${typeId}_${propName.replace(/[^\w.-]/g, "_")}${crc(propName)}`
+      : typeId;
     return `${route.id}_${suffix}`;
   };
 
@@ -42,14 +54,14 @@ export default (pluginOptions: PluginOptionsResolved) => {
   const generateComponentPath = (
     section: "parameters" | "schemas",
     route: ApiRoute,
-    type: ApiRoute["params"] | PayloadType | ResponseType,
+    typeId: string,
     propName?: string,
   ): string => {
     return [
       "#",
       "components",
       section,
-      generateComponentId(route, type, propName),
+      generateComponentId(route, typeId, propName),
     ].join("/");
   };
 
@@ -143,7 +155,7 @@ export default (pluginOptions: PluginOptionsResolved) => {
                 $ref: generateComponentPath(
                   "parameters",
                   route,
-                  route.params,
+                  route.params.id,
                   name,
                 ),
               },
@@ -156,52 +168,57 @@ export default (pluginOptions: PluginOptionsResolved) => {
       : undefined;
   };
 
-  // Generate request body
-  const generateRequestBody = (
-    route: ApiRoute,
-    method: string,
-  ): OpenAPIRequestBody | undefined => {
-    const payloadType = route.payloadTypes.find((p) => p.method === method);
-
-    if (!payloadType?.resolvedType) {
-      return undefined;
-    }
-
-    return {
-      required: !payloadType.isOptional,
-      content: {
-        "application/json": {
-          schema: {
-            $ref: generateComponentPath("schemas", route, payloadType),
-          },
-        },
-      },
-    };
-  };
-
   // Generate responses
   const generateResponses = (
     route: ApiRoute,
     method: string,
   ): Record<string, OpenAPIResponse> => {
-    const responseType = route.responseTypes.find((r) => r.method === method);
+    const responseType = route.validationDefinitions.find((e) => {
+      return e.method === method ? e.target === "response" : false;
+    }) as ResponseValidationDefinition;
 
-    if (!responseType?.resolvedType) {
-      return { "200": { description: "Success" } };
-    }
-
-    return {
-      "200": {
-        description: "Success",
-        content: {
-          "application/json": {
-            schema: {
-              $ref: generateComponentPath("schemas", route, responseType),
+    if (!Array.isArray(responseType?.variants)) {
+      return {
+        "200": {
+          description: "Success - TODO: Add response schema",
+          content: {
+            "text/plain": {
+              schema: {
+                type: "string",
+              },
             },
           },
         },
+      };
+    }
+
+    return responseType.variants.reduce<Record<string, OpenAPIResponse>>(
+      (map, { id, status, contentType }) => {
+        const redirect = redirectSchema(
+          status,
+          // when status is a redirect code, contentType is the destination URI
+          contentType,
+        );
+
+        if (redirect) {
+          map[status] = redirect;
+        } else {
+          map[status] = {
+            description: "Success",
+            content: {
+              [contentType || "application/json"]: {
+                schema: {
+                  $ref: generateComponentPath("schemas", route, id),
+                },
+              },
+            },
+          };
+        }
+
+        return map;
       },
-    };
+      {},
+    );
   };
 
   // Generate component schemas for a route
@@ -220,41 +237,40 @@ export default (pluginOptions: PluginOptionsResolved) => {
       schemas: {},
     };
 
+    for (const def of route.validationDefinitions) {
+      if (def.target === "response") {
+        for (const { id, resolvedType } of def.variants) {
+          if (resolvedType) {
+            schemas[generateComponentId(route, id)] = jsonSchemaBuilder(
+              resolvedType.text,
+            );
+          }
+        }
+      } else if (def.target === "query") {
+        const { id, resolvedType } = def.schema;
+        for (const prop of resolvedType?.properties || []) {
+          // generating a schema for every property
+          const key = generateComponentId(route, id, prop.name);
+          schemas[key] = jsonSchemaBuilder(prop.text);
+        }
+      } else {
+        const { id, resolvedType } = def.schema;
+        if (resolvedType) {
+          schemas[generateComponentId(route, id)] = jsonSchemaBuilder(
+            resolvedType.text,
+          );
+        }
+      }
+    }
+
     if (route.params.resolvedType) {
       for (const { name, text } of route.params.resolvedType.properties || []) {
-        parameters[generateComponentId(route, route.params, name)] = {
+        parameters[generateComponentId(route, route.params.id, name)] = {
           name,
           in: "path",
           required: true,
           schema: jsonSchemaBuilder(text),
         };
-      }
-    }
-
-    for (const type of route.payloadTypes) {
-      if (["GET", "DELETE"].includes(type.method)) {
-        for (const prop of type.resolvedType?.properties || []) {
-          schemas[
-            generateComponentId(
-              // generating a schema for every property
-              route,
-              type,
-              prop.name,
-            )
-          ] = jsonSchemaBuilder(prop.text);
-        }
-      } else if (type.resolvedType) {
-        schemas[generateComponentId(route, type)] = jsonSchemaBuilder(
-          type.resolvedType.text,
-        );
-      }
-    }
-
-    for (const type of route.responseTypes) {
-      if (type.resolvedType) {
-        schemas[generateComponentId(route, type)] = jsonSchemaBuilder(
-          type.resolvedType.text,
-        );
       }
     }
 
@@ -264,6 +280,14 @@ export default (pluginOptions: PluginOptionsResolved) => {
   // Generate paths for a route
   const generateRoutePaths = (route: ApiRoute): OpenAPIPaths => {
     const paths: OpenAPIPaths = {};
+
+    const validationTypes = route.validationDefinitions.flatMap((def) => {
+      return def.target === "response"
+        ? []
+        : def.schema.resolvedType
+          ? [def]
+          : [];
+    });
 
     for (const path of generatePathVariations(route)) {
       for (const method of route.methods) {
@@ -277,34 +301,63 @@ export default (pluginOptions: PluginOptionsResolved) => {
           operation.parameters = parameters;
         }
 
-        if (["GET", "DELETE"].includes(method)) {
-          for (const payloadType of route.payloadTypes.filter(
-            (e) => e.method === method,
-          )) {
-            for (const prop of payloadType.resolvedType?.properties || []) {
-              if (!operation.parameters) {
-                operation.parameters = [];
-              }
-              operation.parameters.push({
-                name: prop.name,
-                in: "query",
-                required: !prop.optional,
-                schema: {
-                  $ref: generateComponentPath(
-                    "schemas",
-                    route,
-                    payloadType,
-                    prop.name,
-                  ),
-                },
-              });
+        const queryType = validationTypes.find((e) => {
+          return e.method === method ? e.target === "query" : false;
+        });
+
+        if (queryType?.schema) {
+          for (const prop of queryType.schema.resolvedType?.properties || []) {
+            if (!operation.parameters) {
+              operation.parameters = [];
             }
+            operation.parameters.push({
+              name: prop.name,
+              in: "query",
+              required: !prop.optional,
+              schema: {
+                $ref: generateComponentPath(
+                  "schemas",
+                  route,
+                  queryType.schema.id,
+                  prop.name,
+                ),
+              },
+            });
           }
-        } else {
-          const requestBody = generateRequestBody(route, method);
-          if (requestBody) {
-            operation.requestBody = requestBody;
-          }
+        }
+
+        const bodyTypes = validationTypes.filter((e) => {
+          return e.method === method
+            ? Object.keys(RequestBodyTargets).includes(e.target)
+            : false;
+        });
+
+        if (bodyTypes.length) {
+          operation.requestBody = {
+            required: true,
+            content: bodyTypes.reduce<
+              Record<string, { schema: { $ref: string } }>
+            >(
+              (
+                map,
+                {
+                  target,
+                  schema,
+                  contentType = requestBodyMap[target as never],
+                },
+              ) => {
+                if (contentType) {
+                  map[contentType] = {
+                    schema: {
+                      $ref: generateComponentPath("schemas", route, schema.id),
+                    },
+                  };
+                }
+                return map;
+              },
+              {},
+            ),
+          };
         }
 
         if (!paths[path]) {
@@ -360,4 +413,59 @@ export default (pluginOptions: PluginOptionsResolved) => {
     generatePathVariations,
     generateOpenAPISchema,
   };
+};
+
+const redirectSchema = (statusCode: number, url?: string) => {
+  const schema = {
+    type: "string",
+    format: "uri",
+    ...(url ? { enum: [url] } : {}),
+  };
+  return {
+    301: {
+      description: "Moved Permanently",
+      headers: {
+        Location: {
+          description: "New permanent location",
+          schema,
+        },
+      },
+    },
+    302: {
+      description: "Found",
+      headers: {
+        Location: {
+          description: "Temporary location",
+          schema,
+        },
+      },
+    },
+    303: {
+      description: "See Other",
+      headers: {
+        Location: {
+          description: "Location to GET after POST/PUT/DELETE",
+          schema,
+        },
+      },
+    },
+    307: {
+      description: "Temporary Redirect",
+      headers: {
+        Location: {
+          description: "Temporary location (preserves request method)",
+          schema,
+        },
+      },
+    },
+    308: {
+      description: "Permanent Redirect",
+      headers: {
+        Location: {
+          description: "New permanent location (preserves request method)",
+          schema,
+        },
+      },
+    },
+  }[statusCode];
 };

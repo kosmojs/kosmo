@@ -4,10 +4,7 @@ import { importSchema } from "..";
 
 describe("string/pattern", () => {
   describe("hex-color", async () => {
-    const schema = await importSchema(
-      "string/pattern/hex-color",
-      "payload.POST",
-    );
+    const schema = await importSchema("string/pattern/hex-color", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -45,10 +42,7 @@ describe("string/pattern", () => {
   });
 
   describe("mime-type", async () => {
-    const schema = await importSchema(
-      "string/pattern/mime-type",
-      "payload.POST",
-    );
+    const schema = await importSchema("string/pattern/mime-type", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -88,7 +82,7 @@ describe("string/pattern", () => {
   describe("credit-card", async () => {
     const schema = await importSchema(
       "string/pattern/credit-card",
-      "payload.POST",
+      "json.POST",
     );
 
     test("valid payload", () => {
@@ -123,7 +117,7 @@ describe("string/pattern", () => {
   describe("phone-number", async () => {
     const schema = await importSchema(
       "string/pattern/phone-number",
-      "payload.POST",
+      "json.POST",
     );
 
     test("valid payload", () => {
@@ -156,10 +150,7 @@ describe("string/pattern", () => {
   });
 
   describe("password", async () => {
-    const schema = await importSchema(
-      "string/pattern/password",
-      "payload.POST",
-    );
+    const schema = await importSchema("string/pattern/password", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -193,7 +184,7 @@ describe("string/pattern", () => {
   });
 
   describe("slug", async () => {
-    const schema = await importSchema("string/pattern/slug", "payload.POST");
+    const schema = await importSchema("string/pattern/slug", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -227,10 +218,7 @@ describe("string/pattern", () => {
   });
 
   describe("username", async () => {
-    const schema = await importSchema(
-      "string/pattern/username",
-      "payload.POST",
-    );
+    const schema = await importSchema("string/pattern/username", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -265,7 +253,7 @@ describe("string/pattern", () => {
   describe("semantic-version", async () => {
     const schema = await importSchema(
       "string/pattern/semantic-version",
-      "payload.POST",
+      "json.POST",
     );
 
     test("valid payload", () => {
@@ -303,7 +291,7 @@ describe("string/pattern", () => {
   describe("currency-code", async () => {
     const schema = await importSchema(
       "string/pattern/currency-code",
-      "payload.POST",
+      "json.POST",
     );
 
     test("valid payload", () => {
@@ -343,7 +331,7 @@ describe("string/pattern", () => {
   describe("country-code", async () => {
     const schema = await importSchema(
       "string/pattern/country-code",
-      "payload.POST",
+      "json.POST",
     );
 
     test("valid payload", () => {

@@ -4,10 +4,7 @@ import { importSchema } from "..";
 
 describe("string/format", () => {
   describe("date-time", async () => {
-    const schema = await importSchema(
-      "string/format/date-time",
-      "payload.POST",
-    );
+    const schema = await importSchema("string/format/date-time", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -34,7 +31,7 @@ describe("string/format", () => {
   });
 
   describe("time", async () => {
-    const schema = await importSchema("string/format/time", "payload.POST");
+    const schema = await importSchema("string/format/time", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -81,7 +78,7 @@ describe("string/format", () => {
   });
 
   describe("date", async () => {
-    const schema = await importSchema("string/format/date", "payload.POST");
+    const schema = await importSchema("string/format/date", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -108,7 +105,7 @@ describe("string/format", () => {
   });
 
   describe("email", async () => {
-    const schema = await importSchema("string/format/email", "payload.POST");
+    const schema = await importSchema("string/format/email", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -138,10 +135,7 @@ describe("string/format", () => {
   });
 
   describe("idn-email", async () => {
-    const schema = await importSchema(
-      "string/format/idn-email",
-      "payload.POST",
-    );
+    const schema = await importSchema("string/format/idn-email", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -179,7 +173,7 @@ describe("string/format", () => {
   });
 
   describe("hostname", async () => {
-    const schema = await importSchema("string/format/hostname", "payload.POST");
+    const schema = await importSchema("string/format/hostname", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -209,7 +203,7 @@ describe("string/format", () => {
   describe("idn-hostname", async () => {
     const schema = await importSchema(
       "string/format/idn-hostname",
-      "payload.POST",
+      "json.POST",
     );
 
     test("valid payload", () => {
@@ -247,7 +241,7 @@ describe("string/format", () => {
   });
 
   describe("ipv4", async () => {
-    const schema = await importSchema("string/format/ipv4", "payload.POST");
+    const schema = await importSchema("string/format/ipv4", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -276,7 +270,7 @@ describe("string/format", () => {
   });
 
   describe("ipv6", async () => {
-    const schema = await importSchema("string/format/ipv6", "payload.POST");
+    const schema = await importSchema("string/format/ipv6", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -303,7 +297,7 @@ describe("string/format", () => {
   });
 
   describe("url", async () => {
-    const schema = await importSchema("string/format/url", "payload.POST");
+    const schema = await importSchema("string/format/url", "json.POST");
 
     test("valid payload", () => {
       for (const value of [
@@ -331,7 +325,7 @@ describe("string/format", () => {
   });
 
   describe("uuid", async () => {
-    const schema = await importSchema("string/format/uuid", "payload.POST");
+    const schema = await importSchema("string/format/uuid", "json.POST");
 
     test("valid payload", () => {
       for (const value of [

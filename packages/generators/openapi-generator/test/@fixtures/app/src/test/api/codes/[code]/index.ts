@@ -20,17 +20,19 @@ type CodeQuery = {
 
 export default defineRoute<[TRefine<string, { pattern: "^[A-Z0-9]{3,10}$" }>]>(
   ({ GET }) => [
-    GET<CodeQuery, CodeResponse>(async (ctx) => {
-      ctx.body = {
-        code: ctx.params.code,
-        valid: true,
-        details: {
-          type: "promo",
-          discount: 10,
-          validUntil: "2024-12-31T23:59:59Z",
-          usageLimit: 100,
-        },
-      };
-    }),
+    GET<{ json: CodeQuery; response: [200, "json", CodeResponse] }>(
+      async (ctx) => {
+        ctx.body = {
+          code: ctx.params.code,
+          valid: true,
+          details: {
+            type: "promo",
+            discount: 10,
+            validUntil: "2024-12-31T23:59:59Z",
+            usageLimit: 100,
+          },
+        };
+      },
+    ),
   ],
 );

@@ -1,10 +1,9 @@
 import { describe, expect, test } from "vitest";
 
-import { MESSAGE_CODES } from "../../src/error-handler";
-import { importSchema } from "..";
+import { importSchema, MESSAGE_CODES } from "..";
 
 describe("errors/tuple", async () => {
-  const schema = await importSchema("errors/tuple", "payload.POST");
+  const schema = await importSchema("errors/tuple", "json.POST");
 
   const validPayload = {
     stringNumberTuple: ["hello", 42],

@@ -21,7 +21,40 @@
       },
     },
     "schemas": {
-      "products_id_reviews_page_index_ts_842423561_PayloadT1681644654": {
+      "products_id_reviews_page_index_ts_842423561_JsonTGET3121975519": {
+        "properties": {
+          "minRating": {
+            "maximum": 5,
+            "minimum": 1,
+            "type": "number",
+          },
+          "sort": {
+            "anyOf": [
+              {
+                "const": "newest",
+                "type": "string",
+              },
+              {
+                "const": "oldest",
+                "type": "string",
+              },
+              {
+                "const": "highest",
+                "type": "string",
+              },
+              {
+                "const": "lowest",
+                "type": "string",
+              },
+            ],
+          },
+          "verifiedOnly": {
+            "type": "boolean",
+          },
+        },
+        "type": "object",
+      },
+      "products_id_reviews_page_index_ts_842423561_JsonTPOST3121975519": {
         "properties": {
           "comment": {
             "maxLength": 1000,
@@ -47,78 +80,7 @@
         ],
         "type": "object",
       },
-      "products_id_reviews_page_index_ts_842423561_PayloadT586946231_minRating837778626": {
-        "maximum": 5,
-        "minimum": 1,
-        "type": "number",
-      },
-      "products_id_reviews_page_index_ts_842423561_PayloadT586946231_sort1361375778": {
-        "anyOf": [
-          {
-            "const": "newest",
-            "type": "string",
-          },
-          {
-            "const": "oldest",
-            "type": "string",
-          },
-          {
-            "const": "highest",
-            "type": "string",
-          },
-          {
-            "const": "lowest",
-            "type": "string",
-          },
-        ],
-      },
-      "products_id_reviews_page_index_ts_842423561_PayloadT586946231_verifiedOnly3469940295": {
-        "type": "boolean",
-      },
-      "products_id_reviews_page_index_ts_842423561_ResponseT1681644654": {
-        "properties": {
-          "author": {
-            "properties": {
-              "id": {
-                "type": "number",
-              },
-              "name": {
-                "type": "string",
-              },
-            },
-            "required": [
-              "id",
-              "name",
-            ],
-            "type": "object",
-          },
-          "comment": {
-            "type": "string",
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-          },
-          "id": {
-            "type": "number",
-          },
-          "rating": {
-            "type": "number",
-          },
-          "title": {
-            "type": "string",
-          },
-        },
-        "required": [
-          "id",
-          "rating",
-          "comment",
-          "author",
-          "createdAt",
-        ],
-        "type": "object",
-      },
-      "products_id_reviews_page_index_ts_842423561_ResponseT586946231": {
+      "products_id_reviews_page_index_ts_842423561_ResponseTGET776547123": {
         "properties": {
           "averageRating": {
             "type": "number",
@@ -200,6 +162,49 @@
         ],
         "type": "object",
       },
+      "products_id_reviews_page_index_ts_842423561_ResponseTPOST2567264723": {
+        "properties": {
+          "author": {
+            "properties": {
+              "id": {
+                "type": "number",
+              },
+              "name": {
+                "type": "string",
+              },
+            },
+            "required": [
+              "id",
+              "name",
+            ],
+            "type": "object",
+          },
+          "comment": {
+            "type": "string",
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+          },
+          "id": {
+            "type": "number",
+          },
+          "rating": {
+            "type": "number",
+          },
+          "title": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "rating",
+          "comment",
+          "author",
+          "createdAt",
+        ],
+        "type": "object",
+      },
     },
   },
   "paths": {
@@ -209,37 +214,23 @@
           {
             "$ref": "#/components/parameters/products_id_reviews_page_index_ts_842423561_ParamsT1717435837_id3208210256",
           },
-          {
-            "in": "query",
-            "name": "sort",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_PayloadT586946231_sort1361375778",
-            },
-          },
-          {
-            "in": "query",
-            "name": "minRating",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_PayloadT586946231_minRating837778626",
-            },
-          },
-          {
-            "in": "query",
-            "name": "verifiedOnly",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_PayloadT586946231_verifiedOnly3469940295",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_JsonTGET3121975519",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_ResponseT586946231",
+                  "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_ResponseTGET776547123",
                 },
               },
             },
@@ -257,7 +248,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_PayloadT1681644654",
+                "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_JsonTPOST3121975519",
               },
             },
           },
@@ -268,7 +259,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_ResponseT1681644654",
+                  "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_ResponseTPOST2567264723",
                 },
               },
             },
@@ -286,37 +277,23 @@
           {
             "$ref": "#/components/parameters/products_id_reviews_page_index_ts_842423561_ParamsT1717435837_page336246304",
           },
-          {
-            "in": "query",
-            "name": "sort",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_PayloadT586946231_sort1361375778",
-            },
-          },
-          {
-            "in": "query",
-            "name": "minRating",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_PayloadT586946231_minRating837778626",
-            },
-          },
-          {
-            "in": "query",
-            "name": "verifiedOnly",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_PayloadT586946231_verifiedOnly3469940295",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_JsonTGET3121975519",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_ResponseT586946231",
+                  "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_ResponseTGET776547123",
                 },
               },
             },
@@ -337,7 +314,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_PayloadT1681644654",
+                "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_JsonTPOST3121975519",
               },
             },
           },
@@ -348,7 +325,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_ResponseT1681644654",
+                  "$ref": "#/components/schemas/products_id_reviews_page_index_ts_842423561_ResponseTPOST2567264723",
                 },
               },
             },

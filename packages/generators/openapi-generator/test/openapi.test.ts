@@ -1,3 +1,6 @@
+import { writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+
 import { Spectral } from "@stoplight/spectral-core";
 import { oas } from "@stoplight/spectral-rulesets";
 import { describe, expect, test } from "vitest";
@@ -22,6 +25,14 @@ describe("openapi", async () => {
     }
   }
 
+  for (const route of apiRoutes) {
+    test(route.name, async ({ expect }) => {
+      await expect(generateOpenAPISchema([route])).toMatchFileSnapshot(
+        `@snapshots/${route.name}/openapi.txt`,
+      );
+    });
+  }
+
   test("lint", async () => {
     const spectral = new Spectral();
 
@@ -38,6 +49,12 @@ describe("openapi", async () => {
 
     const { paths, components } = generateOpenAPISchema(apiRoutes);
 
+    await writeFile(
+      resolve(import.meta.dirname, "@snapshots/openapi.json"),
+      JSON.stringify({ paths, components }, null, 2),
+      "utf8",
+    );
+
     const diagnostics = await spectral.run({
       ...openapiOptions,
       paths,
@@ -46,12 +63,4 @@ describe("openapi", async () => {
 
     expect(diagnostics.length, JSON.stringify(diagnostics, null, 2)).toEqual(0);
   });
-
-  for (const route of apiRoutes) {
-    test(route.name, async ({ expect }) => {
-      await expect(generateOpenAPISchema([route])).toMatchFileSnapshot(
-        `@snapshots/${route.name}/openapi.txt`,
-      );
-    });
-  }
 });

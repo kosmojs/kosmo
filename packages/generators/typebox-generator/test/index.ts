@@ -1,18 +1,26 @@
 import { resolve } from "node:path";
 
-import type { ValidationSchemas } from "@kosmojs/api";
+import type {
+  RouteDefinitionItem,
+  ValidationSchema,
+  ValidationSchemas,
+  ValidationTarget,
+} from "@kosmojs/api";
 import { type PluginOptionsResolved, pathResolver } from "@kosmojs/dev";
 
+import {
+  type DefineRouteFactory,
+  defineRouteFactory,
+  type ParameterizedMiddleware,
+} from "@kosmojs/koa-generator";
 
 import typeboxGenerator from "@src/index";
+
+export { MESSAGE_CODES } from "@src/templates/error-handler";
 export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 
 export const resolvedOptions: PluginOptionsResolved = {
-  generators: [
-    typeboxGenerator({
-      importCustomTypes: "~/core/typebox",
-    }),
-  ],
+  generators: [typeboxGenerator()],
   refineTypeName: "TRefine",
   watcher: { delay: 0 },
   baseurl: "",
@@ -25,7 +33,7 @@ export const resolvedOptions: PluginOptionsResolved = {
 
 export const importSchema = async (
   route: string,
-  schemaPath: "params" | `${"payload" | "response"}.${"GET" | "POST"}`,
+  schemaPath: "params" | `${ValidationTarget}.${"GET" | "POST"}`,
 ) => {
   const { createPath } = pathResolver(resolvedOptions);
 
@@ -37,12 +45,21 @@ export const importSchema = async (
     return schemas.validationSchemas.params;
   }
 
-  const [scope, method] = schemaPath.split(".") as [
-    "payload" | "response",
+  const [target, method] = schemaPath.split(".") as [
+    ValidationTarget,
     "GET" | "POST",
   ];
 
-  return schemas.validationSchemas[scope]?.[method];
+  if (target === "response") {
+    return schemas.validationSchemas.response?.[method][0]?.schema;
+  }
+
+  return (
+    schemas.validationSchemas[target] as Record<
+      string,
+      { schema: ValidationSchema }
+    >
+  )?.[method]?.schema;
 };
 
 /**
@@ -91,3 +108,19 @@ export const generatePathCombinations = (
       return a.join("/").localeCompare(b.join("/"));
     });
 };
+
+type ParamsTuple = Array<unknown>;
+
+type ParamsMapper<_T extends ParamsTuple> = {};
+
+export const defineRoute: <
+  ParamsT extends ParamsTuple = [],
+  StateT extends object = object,
+  ContextT extends object = object,
+>(
+  factory: DefineRouteFactory<ParamsMapper<ParamsT>, StateT, ContextT>,
+) => Array<
+  RouteDefinitionItem<
+    ParameterizedMiddleware<ParamsMapper<ParamsT>, StateT, ContextT>
+  >
+> = (factory) => defineRouteFactory(factory);

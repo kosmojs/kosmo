@@ -28,20 +28,22 @@ export default defineRoute<
     "price" | "rating" | "name" | "date",
   ]
 >(({ GET }) => [
-  GET<ProductsQuery, ProductsResponse>(async (ctx) => {
-    ctx.body = {
-      category: ctx.params.category,
-      sort: ctx.params.sort || "name",
-      products: [
-        {
-          id: 1,
-          name: "Sample Product",
-          price: 99.99,
-          category: ctx.params.category,
-          rating: 4.5,
-        },
-      ],
-      total: 1,
-    };
-  }),
+  GET<{ json: ProductsQuery; response: [200, "json", ProductsResponse] }>(
+    async (ctx) => {
+      ctx.body = {
+        category: ctx.params.category,
+        sort: ctx.params.sort || "name",
+        products: [
+          {
+            id: 1,
+            name: "Sample Product",
+            price: 99.99,
+            category: ctx.params.category,
+            rating: 4.5,
+          },
+        ],
+        total: 1,
+      };
+    },
+  ),
 ]);

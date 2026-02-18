@@ -1,39 +1,39 @@
 import { debugRouteEntry } from "./debug";
 import type {
+  CreateRouteMiddleware,
   HandlerDefinition,
   MiddlewareDefinition,
   RouterRoute,
   RouterRouteSource,
   UseSlots,
-  ValidationSchemas,
 } from "./types";
 
 export const createRouterRoutes = <MiddlewareT, MiddlewareR>(
   routeSources: Array<RouterRouteSource<MiddlewareT>>,
-  // Global middleware applied to every route (e.g., logging)
-  globalMiddleware: Array<MiddlewareDefinition<MiddlewareT>>,
   {
-    createParamsMiddleware,
-    createValidationMiddleware,
+    globalMiddleware,
+    createRouteMiddleware,
   }: {
-    createParamsMiddleware: (
-      params: RouterRouteSource<MiddlewareT>["params"],
-      numericParams: RouterRouteSource<MiddlewareT>["numericParams"],
-    ) => Array<MiddlewareDefinition<MiddlewareT>>;
-    createValidationMiddleware: (
-      validationSchemas: ValidationSchemas,
-    ) => Array<MiddlewareDefinition<MiddlewareT>>;
+    // Global middleware applied to every route (e.g., logging)
+    globalMiddleware: Array<MiddlewareDefinition<MiddlewareT>>;
+    // route-specific middlware
+    createRouteMiddleware: CreateRouteMiddleware<MiddlewareT>;
   },
 ): Array<RouterRoute<MiddlewareR>> => {
   // NOTE:: prioritized middleware must run in this exact order!
   const prioritizedSlots: Array<keyof UseSlots> = [
     "errorHandler",
-    "params",
-    "validateParams",
+    "extendContext",
     "bodyparser",
-    "payload",
-    "validatePayload",
-    "validateResponse",
+    "validate:params",
+    "validate:query",
+    "validate:headers",
+    "validate:cookies",
+    "validate:json",
+    "validate:form",
+    "validate:multipart",
+    "validate:raw",
+    "validate:response",
   ];
 
   const stack: Array<RouterRoute<MiddlewareR>> = [];
@@ -49,11 +49,10 @@ export const createRouterRoutes = <MiddlewareT, MiddlewareR>(
     const routeMiddleware: Array<MiddlewareDefinition<MiddlewareT>> =
       definitionItems.filter((e) => e.kind === "middleware");
 
+    // NOTE: should be built in exactly this order
     const middlewareStack: Array<MiddlewareDefinition<MiddlewareT>> = [
-      ...createParamsMiddleware(rest.params, rest.numericParams),
-      ...createValidationMiddleware(rest.validationSchemas),
+      ...createRouteMiddleware({ ...rest, route: name }),
       ...globalMiddleware,
-      // route middleware overrides global middleware (of same slot)
       ...routeMiddleware,
     ];
 

@@ -13,7 +13,7 @@ describe("createRouterRoutes", () => {
       function get() {}
       function post() {}
 
-      const stack = middlewareStackBuilder(
+      const [getStack, postStack] = middlewareStackBuilder(
         [
           {
             definitionItems: defineRouteFactory(({ use, GET, POST }) => [
@@ -27,28 +27,22 @@ describe("createRouterRoutes", () => {
         {},
       );
 
-      expect(stack[0].methods).toEqual(["GET"]);
-      expect(stack[0].middleware[0].name).toEqual("useParams");
-      expect(stack[0].middleware[1].name).toEqual("useValidateParams");
-      expect(stack[0].middleware[2]).toEqual(preMiddleware);
-      expect(stack[0].middleware[3]).toEqual(postMiddleware);
-      expect(stack[0].middleware[4]).toEqual(get);
-      expect(stack[0].middleware.length).toEqual(5);
+      expect(getStack.methods).toEqual(["GET"]);
+      expect(getStack.middleware[2]).toEqual(preMiddleware);
+      expect(getStack.middleware[3]).toEqual(postMiddleware);
+      expect(getStack.middleware[4]).toEqual(get);
+      expect(getStack.middleware.length).toEqual(5);
 
-      expect(stack[1].methods).toEqual(["POST"]);
-      expect(stack[0].middleware[0].name).toEqual("useParams");
-      expect(stack[0].middleware[1].name).toEqual("useValidateParams");
-      expect(stack[1].middleware[2]).toEqual(preMiddleware);
-      expect(stack[1].middleware[3]).toEqual(postMiddleware);
-      expect(stack[1].middleware[4]).toEqual(post);
-      expect(stack[1].middleware.length).toEqual(5);
+      expect(postStack.methods).toEqual(["POST"]);
+      expect(postStack.middleware[2]).toEqual(preMiddleware);
+      expect(postStack.middleware[3]).toEqual(postMiddleware);
+      expect(postStack.middleware[4]).toEqual(post);
+      expect(postStack.middleware.length).toEqual(5);
     });
 
     it("overrides prioritized slots", () => {
-      async function paramsHandler() {}
       async function validateParams() {}
-      async function payloadHandler() {}
-      async function validatePayload() {}
+      async function validateBody() {}
       async function validateResponse() {}
       async function get() {}
 
@@ -56,34 +50,28 @@ describe("createRouterRoutes", () => {
         [
           {
             definitionItems: defineRouteFactory(({ use, GET }) => [
-              use(validatePayload, { slot: "validatePayload" }),
-              use(payloadHandler, { slot: "payload" }),
-              use(validateParams, { slot: "validateParams" }),
-              use(validateResponse, { slot: "validateResponse" }),
-              use(paramsHandler, { slot: "params" }),
+              use(validateBody, { slot: "validate:json" }),
+              use(validateParams, { slot: "validate:params" }),
+              use(validateResponse, { slot: "validate:response" }),
               GET(get),
             ]),
           },
         ],
         {
           globalMiddleware: [
-            use(async () => {}, { slot: "validatePayload" }),
-            use(async () => {}, { slot: "payload" }),
-            use(async () => {}, { slot: "validateParams" }),
-            use(async () => {}, { slot: "validateResponse" }),
-            use(async () => {}, { slot: "params" }),
+            use(async () => {}, { slot: "validate:json" }),
+            use(async () => {}, { slot: "validate:params" }),
+            use(async () => {}, { slot: "validate:response" }),
           ],
         },
       );
 
-      expect(stack.middleware[0]).toEqual(paramsHandler);
       expect(stack.middleware[1]).toEqual(validateParams);
-      expect(stack.middleware[2]).toEqual(payloadHandler);
-      expect(stack.middleware[3]).toEqual(validatePayload);
-      expect(stack.middleware[4]).toEqual(validateResponse);
-      expect(stack.middleware[5]).toEqual(get);
+      expect(stack.middleware[2]).toEqual(validateBody);
+      expect(stack.middleware[3]).toEqual(validateResponse);
+      expect(stack.middleware[4]).toEqual(get);
 
-      expect(stack.middleware.length).toEqual(6);
+      expect(stack.middleware.length).toEqual(5);
     });
   });
 });

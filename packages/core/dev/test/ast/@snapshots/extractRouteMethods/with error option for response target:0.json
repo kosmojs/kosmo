@@ -1,0 +1,22 @@
+[
+  {
+    "method": "POST",
+    "validationDefinitions": [
+      {
+        "customErrors": {
+          "error": "generic error",
+          "error.id": "ID must be a number"
+        },
+        "method": "POST",
+        "target": "response",
+        "variants": [
+          {
+            "id": "ResponseTPOST1932682814",
+            "status": 200,
+            "contentType": "json"
+          }
+        ]
+      }
+    ]
+  }
+]

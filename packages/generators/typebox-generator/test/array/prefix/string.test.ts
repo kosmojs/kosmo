@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 import { importSchema } from "../..";
 
 describe("array/prefix/string", async () => {
-  const schema = await importSchema("array/prefix/string", "payload.POST");
+  const schema = await importSchema("array/prefix/string", "json.POST");
 
   const validPayload = {
     constTuple: ["start", "end"],

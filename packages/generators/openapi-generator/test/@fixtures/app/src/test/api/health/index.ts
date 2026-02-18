@@ -17,9 +17,12 @@ type HealthStatus = {
 
 export default defineRoute(({ GET }) => [
   GET<
-    never,
-    /** @skip-validation */
-    HealthStatus
+    { response: [200, "json", HealthStatus] },
+    {
+      response: {
+        runtimeValidation: false;
+      };
+    }
   >(async (ctx) => {
     const memory = process.memoryUsage();
     ctx.body = {

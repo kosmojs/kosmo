@@ -33,29 +33,34 @@
       },
     },
     "schemas": {
-      "search_type_page_index_ts_2448809791_PayloadT984037968_boostRecent570170941": {
-        "type": "boolean",
-      },
-      "search_type_page_index_ts_2448809791_PayloadT984037968_q4110462503": {
-        "type": "string",
-      },
-      "search_type_page_index_ts_2448809791_PayloadT984037968_type2363381545": {
-        "anyOf": [
-          {
-            "const": "all",
+      "search_type_page_index_ts_2448809791_JsonTGET3143369611": {
+        "properties": {
+          "boostRecent": {
+            "type": "boolean",
+          },
+          "q": {
             "type": "string",
           },
-          {
-            "const": "posts",
-            "type": "string",
+          "type": {
+            "anyOf": [
+              {
+                "const": "all",
+                "type": "string",
+              },
+              {
+                "const": "posts",
+                "type": "string",
+              },
+              {
+                "const": "users",
+                "type": "string",
+              },
+            ],
           },
-          {
-            "const": "users",
-            "type": "string",
-          },
-        ],
+        },
+        "type": "object",
       },
-      "search_type_page_index_ts_2448809791_ResponseT984037968": {
+      "search_type_page_index_ts_2448809791_ResponseTGET3535027638": {
         "properties": {
           "page": {
             "type": "number",
@@ -105,38 +110,22 @@
   "paths": {
     "/search": {
       "get": {
-        "parameters": [
-          {
-            "in": "query",
-            "name": "q",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_q4110462503",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_JsonTGET3143369611",
+              },
             },
           },
-          {
-            "in": "query",
-            "name": "type",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_type2363381545",
-            },
-          },
-          {
-            "in": "query",
-            "name": "boostRecent",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_boostRecent570170941",
-            },
-          },
-        ],
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_ResponseT984037968",
+                  "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_ResponseTGET3535027638",
                 },
               },
             },
@@ -151,37 +140,23 @@
           {
             "$ref": "#/components/parameters/search_type_page_index_ts_2448809791_ParamsT1773160490_type2363381545",
           },
-          {
-            "in": "query",
-            "name": "q",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_q4110462503",
-            },
-          },
-          {
-            "in": "query",
-            "name": "type",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_type2363381545",
-            },
-          },
-          {
-            "in": "query",
-            "name": "boostRecent",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_boostRecent570170941",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_JsonTGET3143369611",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_ResponseT984037968",
+                  "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_ResponseTGET3535027638",
                 },
               },
             },
@@ -199,37 +174,23 @@
           {
             "$ref": "#/components/parameters/search_type_page_index_ts_2448809791_ParamsT1773160490_page336246304",
           },
-          {
-            "in": "query",
-            "name": "q",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_q4110462503",
-            },
-          },
-          {
-            "in": "query",
-            "name": "type",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_type2363381545",
-            },
-          },
-          {
-            "in": "query",
-            "name": "boostRecent",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_PayloadT984037968_boostRecent570170941",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_JsonTGET3143369611",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_ResponseT984037968",
+                  "$ref": "#/components/schemas/search_type_page_index_ts_2448809791_ResponseTGET3535027638",
                 },
               },
             },

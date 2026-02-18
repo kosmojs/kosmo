@@ -30,18 +30,23 @@
       },
     },
     "schemas": {
-      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_includeReplies2031277092": {
-        "type": "boolean",
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_JsonTGET3942154974": {
+        "properties": {
+          "includeReplies": {
+            "type": "boolean",
+          },
+          "minRating": {
+            "maximum": 5,
+            "minimum": 1,
+            "type": "number",
+          },
+          "verifiedOnly": {
+            "type": "boolean",
+          },
+        },
+        "type": "object",
       },
-      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_minRating837778626": {
-        "maximum": 5,
-        "minimum": 1,
-        "type": "number",
-      },
-      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_verifiedOnly3469940295": {
-        "type": "boolean",
-      },
-      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_ResponseT635982599": {
+      "shop_storeId_products_productId_reviews_page_index_ts_2244946136_ResponseTGET266903956": {
         "properties": {
           "averageRating": {
             "type": "number",
@@ -144,37 +149,23 @@
           {
             "$ref": "#/components/parameters/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_productId913937925",
           },
-          {
-            "in": "query",
-            "name": "minRating",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_minRating837778626",
-            },
-          },
-          {
-            "in": "query",
-            "name": "verifiedOnly",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_verifiedOnly3469940295",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeReplies",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_includeReplies2031277092",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_JsonTGET3942154974",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ResponseT635982599",
+                  "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ResponseTGET266903956",
                 },
               },
             },
@@ -195,37 +186,23 @@
           {
             "$ref": "#/components/parameters/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ParamsT4285257638_page336246304",
           },
-          {
-            "in": "query",
-            "name": "minRating",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_minRating837778626",
-            },
-          },
-          {
-            "in": "query",
-            "name": "verifiedOnly",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_verifiedOnly3469940295",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeReplies",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_PayloadT635982599_includeReplies2031277092",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_JsonTGET3942154974",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ResponseT635982599",
+                  "$ref": "#/components/schemas/shop_storeId_products_productId_reviews_page_index_ts_2244946136_ResponseTGET266903956",
                 },
               },
             },

@@ -1,10 +1,9 @@
 import { describe, expect, test } from "vitest";
 
-import { MESSAGE_CODES } from "../../src/error-handler";
-import { importSchema } from "..";
+import { importSchema, MESSAGE_CODES } from "..";
 
 describe("errors/type", async () => {
-  const schema = await importSchema("errors/type", "payload.POST");
+  const schema = await importSchema("errors/type", "json.POST");
 
   const validPayload = {
     stringType: "hello",

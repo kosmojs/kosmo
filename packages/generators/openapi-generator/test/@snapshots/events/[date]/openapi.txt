@@ -12,31 +12,36 @@
       },
     },
     "schemas": {
-      "events_date_index_ts_558639515_PayloadT2100867105_category105650625": {
-        "anyOf": [
-          {
-            "const": "conference",
+      "events_date_index_ts_558639515_JsonTGET276963179": {
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "const": "conference",
+                "type": "string",
+              },
+              {
+                "const": "meetup",
+                "type": "string",
+              },
+              {
+                "const": "workshop",
+                "type": "string",
+              },
+            ],
+          },
+          "limit": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "number",
+          },
+          "location": {
             "type": "string",
           },
-          {
-            "const": "meetup",
-            "type": "string",
-          },
-          {
-            "const": "workshop",
-            "type": "string",
-          },
-        ],
+        },
+        "type": "object",
       },
-      "events_date_index_ts_558639515_PayloadT2100867105_limit2140596320": {
-        "maximum": 100,
-        "minimum": 1,
-        "type": "number",
-      },
-      "events_date_index_ts_558639515_PayloadT2100867105_location1587448267": {
-        "type": "string",
-      },
-      "events_date_index_ts_558639515_ResponseT2100867105": {
+      "events_date_index_ts_558639515_ResponseTGET1447899011": {
         "properties": {
           "date": {
             "type": "string",
@@ -87,37 +92,23 @@
           {
             "$ref": "#/components/parameters/events_date_index_ts_558639515_ParamsT1490977605_date2862495610",
           },
-          {
-            "in": "query",
-            "name": "category",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/events_date_index_ts_558639515_PayloadT2100867105_category105650625",
-            },
-          },
-          {
-            "in": "query",
-            "name": "location",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/events_date_index_ts_558639515_PayloadT2100867105_location1587448267",
-            },
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/events_date_index_ts_558639515_PayloadT2100867105_limit2140596320",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/events_date_index_ts_558639515_JsonTGET276963179",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/events_date_index_ts_558639515_ResponseT2100867105",
+                  "$ref": "#/components/schemas/events_date_index_ts_558639515_ResponseTGET1447899011",
                 },
               },
             },

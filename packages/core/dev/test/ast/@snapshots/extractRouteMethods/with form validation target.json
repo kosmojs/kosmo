@@ -1,0 +1,15 @@
+[
+  {
+    "method": "POST",
+    "validationDefinitions": [
+      {
+        "method": "POST",
+        "target": "form",
+        "schema": {
+          "id": "FormTPOST1165983353",
+          "text": "{ id?: number }"
+        }
+      }
+    ]
+  }
+]

@@ -28,7 +28,7 @@
       },
     },
     "schemas": {
-      "analytics_period_index_ts_1204912692_PayloadT3425271542": {
+      "analytics_period_index_ts_1204912692_JsonTPOST3313331327": {
         "properties": {
           "breakdown": {
             "anyOf": [
@@ -78,7 +78,7 @@
         ],
         "type": "object",
       },
-      "analytics_period_index_ts_1204912692_ResponseT3425271542": {
+      "analytics_period_index_ts_1204912692_ResponseTPOST749756960": {
         "properties": {
           "metrics": {
             "items": {
@@ -154,18 +154,18 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_PayloadT3425271542",
+                "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_JsonTPOST3313331327",
               },
             },
           },
-          "required": false,
+          "required": true,
         },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_ResponseT3425271542",
+                  "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_ResponseTPOST749756960",
                 },
               },
             },
@@ -185,18 +185,18 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_PayloadT3425271542",
+                "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_JsonTPOST3313331327",
               },
             },
           },
-          "required": false,
+          "required": true,
         },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_ResponseT3425271542",
+                  "$ref": "#/components/schemas/analytics_period_index_ts_1204912692_ResponseTPOST749756960",
                 },
               },
             },

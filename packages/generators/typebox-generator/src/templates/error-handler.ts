@@ -391,6 +391,23 @@ export default (
     };
 
     switch (keyword) {
+      case "~guard": {
+        const p = params as { errors: Array<{ message: string }> };
+        const messages = Array.isArray(p?.errors)
+          ? p.errors.flatMap((e) => {
+              return e.message ? [e.message] : [];
+            })
+          : [];
+        return {
+          code: MESSAGE_CODES.TYPE_INVALID,
+          message: messages.length
+            ? messages.join("; ")
+            : p.errors
+              ? JSON.stringify(p.errors)
+              : defaultMessage,
+        };
+      }
+
       // Type validation
       case "type": {
         const p = params as { type: string };

@@ -1,3 +1,4 @@
+import type { ValidationTarget } from "@kosmojs/api";
 import {
   type GeneratorFactory,
   pathResolver,
@@ -39,29 +40,104 @@ export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
 
     for (const { kind, entry } of updatedEntries) {
       if (kind === "apiRoute") {
+        let runtimeValidation = false;
+
+        const validationTypes: Array<{
+          id: string;
+          target: ValidationTarget;
+          method: string;
+          resolvedType: unknown;
+        }> = [];
+
+        for (const def of entry.validationDefinitions) {
+          if (def.target === "response") {
+            for (const { id, body, resolvedType } of def.variants) {
+              if (body) {
+                validationTypes.push({
+                  id,
+                  target: def.target,
+                  method: def.method,
+                  resolvedType,
+                });
+              }
+              if (resolvedType) {
+                runtimeValidation = true;
+              }
+            }
+          } else {
+            const { id, resolvedType } = def.schema;
+            validationTypes.push({
+              id,
+              target: def.target,
+              method: def.method,
+              resolvedType,
+            });
+            if (resolvedType) {
+              runtimeValidation = true;
+            }
+          }
+        }
+
         const routeMethods = entry.methods.map((method) => {
-          const payloadType = entry.payloadTypes.find(
-            (e) => e.method === method,
-          );
-          const responseType = entry.responseTypes.find(
-            (e) => e.method === method,
-          );
           return {
             method,
-            payloadType,
-            responseType,
+            responseType: validationTypes.find((e) => {
+              return e.target === "response" ? e.method === method : false;
+            }),
           };
         });
 
-        const paramsMapper = entry.params.schema.map(({ name }, idx) => ({
-          name,
-          idx,
-        }));
+        const paramsMapper = entry.params.schema.map(
+          ({ name, isOptional, isRest }, idx) => ({
+            name,
+            isOptional,
+            isRest,
+            idx,
+          }),
+        );
+
+        const payloadTypes = Object.entries(
+          validationTypes.reduce<
+            Record<string, Array<(typeof validationTypes)[number]>>
+          >((map, { id, target, method, resolvedType }) => {
+            if (target !== "response") {
+              const key = `${target.replace(/^./, (c) => c.toUpperCase())}T`;
+              if (!map[key]) {
+                map[key] = [];
+              }
+              map[key].push({ id, target, method, resolvedType });
+            }
+            return map;
+          }, {}),
+        ).map(([name, types]) => {
+          return { name, types, target: types[0].target };
+        });
+
+        const responseTypes = Object.values(
+          validationTypes.reduce<
+            Record<
+              string,
+              { method: string; types: Array<(typeof validationTypes)[number]> }
+            >
+          >((map, { id, target, method, resolvedType }) => {
+            if (target === "response") {
+              if (!map[method]) {
+                map[method] = { method, types: [] };
+              }
+              map[method].types.push({ id, target, method, resolvedType });
+            }
+            return map;
+          }, {}),
+        );
 
         await renderToFile(createPath.fetch(entry.file), routeTpl, {
           route: entry,
+          validationTypes,
           routeMethods,
           paramsMapper,
+          payloadTypes,
+          responseTypes,
+          runtimeValidation,
         });
       }
     }

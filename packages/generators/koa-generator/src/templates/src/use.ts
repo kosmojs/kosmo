@@ -1,5 +1,3 @@
-import { bodyParser } from "@koa/bodyparser";
-
 import { ValidationError } from "@kosmojs/api";
 
 import { use } from "{{ createImport 'libApi' }}";
@@ -15,9 +13,9 @@ export default [
         await next();
       } catch (error: any) {
         if (error instanceof ValidationError) {
-          const { scope, errorMessage } = error;
+          const { target, errorMessage } = error;
           ctx.status = 400;
-          ctx.body = { error: `ValidationError: ${scope} - ${errorMessage}` };
+          ctx.body = { error: `ValidationError: ${target} - ${errorMessage}` };
         } else {
           ctx.status = error.statusCode || error.status || 500;
           ctx.body = { error: error.message };
@@ -25,20 +23,5 @@ export default [
       }
     },
     { slot: "errorHandler" },
-  ),
-
-  use(bodyParser(), {
-    on: ["POST", "PUT", "PATCH"],
-    slot: "bodyparser",
-  }),
-
-  use(
-    function usePayload(ctx, next) {
-      ctx.payload = ["POST", "PUT", "PATCH"].includes(ctx.method)
-        ? ctx.request.body
-        : ctx.query;
-      return next();
-    },
-    { slot: "payload" },
   ),
 ];

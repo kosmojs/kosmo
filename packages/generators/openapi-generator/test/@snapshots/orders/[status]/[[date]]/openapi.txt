@@ -41,7 +41,23 @@
       },
     },
     "schemas": {
-      "orders_status_date_index_ts_368469196_PayloadT1115160198": {
+      "orders_status_date_index_ts_368469196_JsonTGET315919604": {
+        "properties": {
+          "includeCustomer": {
+            "type": "boolean",
+          },
+          "includeItems": {
+            "type": "boolean",
+          },
+          "limit": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "type": "object",
+      },
+      "orders_status_date_index_ts_368469196_JsonTPOST315919604": {
         "properties": {
           "items": {
             "items": {
@@ -67,37 +83,7 @@
         ],
         "type": "object",
       },
-      "orders_status_date_index_ts_368469196_PayloadT3085849223_includeCustomer1717088701": {
-        "type": "boolean",
-      },
-      "orders_status_date_index_ts_368469196_PayloadT3085849223_includeItems1770436788": {
-        "type": "boolean",
-      },
-      "orders_status_date_index_ts_368469196_PayloadT3085849223_limit2140596320": {
-        "maximum": 100,
-        "minimum": 1,
-        "type": "number",
-      },
-      "orders_status_date_index_ts_368469196_ResponseT1115160198": {
-        "properties": {
-          "orderId": {
-            "type": "number",
-          },
-          "status": {
-            "type": "string",
-          },
-          "total": {
-            "type": "number",
-          },
-        },
-        "required": [
-          "orderId",
-          "status",
-          "total",
-        ],
-        "type": "object",
-      },
-      "orders_status_date_index_ts_368469196_ResponseT3085849223": {
+      "orders_status_date_index_ts_368469196_ResponseTGET1792766675": {
         "properties": {
           "date": {
             "type": "string",
@@ -160,6 +146,25 @@
         ],
         "type": "object",
       },
+      "orders_status_date_index_ts_368469196_ResponseTPOST4047461533": {
+        "properties": {
+          "orderId": {
+            "type": "number",
+          },
+          "status": {
+            "type": "string",
+          },
+          "total": {
+            "type": "number",
+          },
+        },
+        "required": [
+          "orderId",
+          "status",
+          "total",
+        ],
+        "type": "object",
+      },
     },
   },
   "paths": {
@@ -169,37 +174,23 @@
           {
             "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_status2063623452",
           },
-          {
-            "in": "query",
-            "name": "includeItems",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT3085849223_includeItems1770436788",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeCustomer",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT3085849223_includeCustomer1717088701",
-            },
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT3085849223_limit2140596320",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_JsonTGET315919604",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseT3085849223",
+                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseTGET1792766675",
                 },
               },
             },
@@ -217,7 +208,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT1115160198",
+                "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_JsonTPOST315919604",
               },
             },
           },
@@ -228,7 +219,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseT1115160198",
+                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseTPOST4047461533",
                 },
               },
             },
@@ -246,37 +237,23 @@
           {
             "$ref": "#/components/parameters/orders_status_date_index_ts_368469196_ParamsT2095219978_date2862495610",
           },
-          {
-            "in": "query",
-            "name": "includeItems",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT3085849223_includeItems1770436788",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeCustomer",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT3085849223_includeCustomer1717088701",
-            },
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT3085849223_limit2140596320",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_JsonTGET315919604",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseT3085849223",
+                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseTGET1792766675",
                 },
               },
             },
@@ -297,7 +274,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_PayloadT1115160198",
+                "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_JsonTPOST315919604",
               },
             },
           },
@@ -308,7 +285,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseT1115160198",
+                  "$ref": "#/components/schemas/orders_status_date_index_ts_368469196_ResponseTPOST4047461533",
                 },
               },
             },

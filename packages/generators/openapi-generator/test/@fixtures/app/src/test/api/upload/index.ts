@@ -2,15 +2,16 @@ import { defineRoute } from "@test/index";
 
 type UploadResponse = {
   success: boolean;
-  files: string[];
   message: string;
 };
 
 export default defineRoute(({ POST }) => [
-  POST<never, UploadResponse>(async (ctx) => {
+  POST<{
+    raw: Buffer,
+    response: [200, "json", UploadResponse]
+  }, { raw: { contentType: "png" } }>(async (ctx) => {
     ctx.body = {
       success: true,
-      files: ["file1.jpg", "file2.pdf"],
       message: "Files uploaded without payload validation",
     };
   }),

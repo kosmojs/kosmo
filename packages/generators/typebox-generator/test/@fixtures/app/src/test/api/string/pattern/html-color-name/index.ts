@@ -1,12 +1,14 @@
-import { defineRoute } from "@kosmojs/api";
+import { defineRoute } from "@test/index";
 
 export default defineRoute(({ POST }) => [
   POST<{
-    value: TRefine<
-      string,
-      {
-        pattern: "^(red|green|blue|yellow|purple|orange|pink|black|white|gray|grey|brown|cyan|magenta|silver|maroon|olive|lime|teal|navy)$";
-      }
-    >;
+    json: {
+      value: TRefine<
+        string,
+        {
+          pattern: "^(red|green|blue|yellow|purple|orange|pink|black|white|gray|grey|brown|cyan|magenta|silver|maroon|olive|lime|teal|navy)$";
+        }
+      >;
+    };
   }>(async () => {}),
 ]);

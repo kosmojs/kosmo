@@ -18,7 +18,10 @@ type DocumentationQuery = {
 
 export default defineRoute<[TRefine<string[], { minItems: 1; maxItems: 10 }>]>(
   ({ GET }) => [
-    GET<DocumentationQuery, DocumentationResponse>(async (ctx) => {
+    GET<{
+      json: DocumentationQuery;
+      response: [200, "json", DocumentationResponse];
+    }>(async (ctx) => {
       ctx.body = {
         path: ctx.params.path.split("/"),
         content: "Documentation content here",

@@ -27,10 +27,18 @@ type AnalyticsResponse = {
 
 export default defineRoute<["day" | "week" | "month" | "year"]>(({ POST }) => [
   POST<
-    /** @skip-validation */
-    AnalyticsQuery,
-    /** @skip-validation */
-    AnalyticsResponse
+    {
+      json: AnalyticsQuery;
+      response: [200, "json", AnalyticsResponse];
+    },
+    {
+      json: {
+        runtimeValidation: false;
+      };
+      response: {
+        runtimeValidation: false;
+      };
+    }
   >(async (ctx) => {
     const period = ctx.params.period || "week";
     ctx.body = {

@@ -20,18 +20,20 @@ type EventsQuery = {
 };
 
 export default defineRoute<[TRefine<string, { format: "date" }>]>(({ GET }) => [
-  GET<EventsQuery, EventsResponse>(async (ctx) => {
-    ctx.body = {
-      date: ctx.params.date,
-      events: [
-        {
-          id: 1,
-          title: "Sample Event",
-          date: ctx.params.date,
-          location: "Conference Room",
-          description: "This is a sample event",
-        },
-      ],
-    };
-  }),
+  GET<{ json: EventsQuery; response: [200, "json", EventsResponse] }>(
+    async (ctx) => {
+      ctx.body = {
+        date: ctx.params.date,
+        events: [
+          {
+            id: 1,
+            title: "Sample Event",
+            date: ctx.params.date,
+            location: "Conference Room",
+            description: "This is a sample event",
+          },
+        ],
+      };
+    },
+  ),
 ]);

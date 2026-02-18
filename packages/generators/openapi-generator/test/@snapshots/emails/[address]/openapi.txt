@@ -12,13 +12,18 @@
       },
     },
     "schemas": {
-      "emails_address_index_ts_840171668_PayloadT620861446_includeStats3755947603": {
-        "type": "boolean",
+      "emails_address_index_ts_840171668_JsonTGET337020419": {
+        "properties": {
+          "includeStats": {
+            "type": "boolean",
+          },
+          "includeUser": {
+            "type": "boolean",
+          },
+        },
+        "type": "object",
       },
-      "emails_address_index_ts_840171668_PayloadT620861446_includeUser496552337": {
-        "type": "boolean",
-      },
-      "emails_address_index_ts_840171668_ResponseT620861446": {
+      "emails_address_index_ts_840171668_ResponseTGET55899805": {
         "properties": {
           "email": {
             "type": "string",
@@ -50,29 +55,23 @@
           {
             "$ref": "#/components/parameters/emails_address_index_ts_840171668_ParamsT3047612475_address223244161",
           },
-          {
-            "in": "query",
-            "name": "includeUser",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/emails_address_index_ts_840171668_PayloadT620861446_includeUser496552337",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeStats",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/emails_address_index_ts_840171668_PayloadT620861446_includeStats3755947603",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/emails_address_index_ts_840171668_JsonTGET337020419",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/emails_address_index_ts_840171668_ResponseT620861446",
+                  "$ref": "#/components/schemas/emails_address_index_ts_840171668_ResponseTGET55899805",
                 },
               },
             },

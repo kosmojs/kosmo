@@ -2,22 +2,27 @@
   "components": {
     "parameters": {},
     "schemas": {
-      "static_nested_index_ts_3607084481_PayloadT3081794906_format3736761055": {
-        "anyOf": [
-          {
-            "const": "full",
-            "type": "string",
+      "static_nested_index_ts_3607084481_JsonTGET3829860480": {
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "const": "full",
+                "type": "string",
+              },
+              {
+                "const": "minimal",
+                "type": "string",
+              },
+            ],
           },
-          {
-            "const": "minimal",
-            "type": "string",
+          "includeMetadata": {
+            "type": "boolean",
           },
-        ],
+        },
+        "type": "object",
       },
-      "static_nested_index_ts_3607084481_PayloadT3081794906_includeMetadata2826242976": {
-        "type": "boolean",
-      },
-      "static_nested_index_ts_3607084481_ResponseT3081794906": {
+      "static_nested_index_ts_3607084481_ResponseTGET2451562508": {
         "properties": {
           "data": {
             "properties": {
@@ -56,30 +61,22 @@
   "paths": {
     "/static/nested": {
       "get": {
-        "parameters": [
-          {
-            "in": "query",
-            "name": "format",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/static_nested_index_ts_3607084481_PayloadT3081794906_format3736761055",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/static_nested_index_ts_3607084481_JsonTGET3829860480",
+              },
             },
           },
-          {
-            "in": "query",
-            "name": "includeMetadata",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/static_nested_index_ts_3607084481_PayloadT3081794906_includeMetadata2826242976",
-            },
-          },
-        ],
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/static_nested_index_ts_3607084481_ResponseT3081794906",
+                  "$ref": "#/components/schemas/static_nested_index_ts_3607084481_ResponseTGET2451562508",
                 },
               },
             },

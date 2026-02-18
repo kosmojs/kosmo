@@ -1,0 +1,22 @@
+[
+  {
+    "method": "GET",
+    "validationDefinitions": []
+  },
+  {
+    "method": "POST",
+    "validationDefinitions": []
+  },
+  {
+    "method": "PUT",
+    "validationDefinitions": []
+  },
+  {
+    "method": "PATCH",
+    "validationDefinitions": []
+  },
+  {
+    "method": "DELETE",
+    "validationDefinitions": []
+  }
+]

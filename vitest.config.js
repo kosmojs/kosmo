@@ -36,6 +36,28 @@ export default defineConfig({
         globals: true,
       }),
 
+      setupFactory("generators/fetch-generator", {
+        alias: {
+          "~": resolve(
+            import.meta.dirname,
+            "packages/generators/fetch-generator/test/@fixtures/app",
+          ),
+          "@": resolve(
+            import.meta.dirname,
+            "packages/generators/fetch-generator/test/@fixtures/app/src",
+          ),
+          _: resolve(
+            import.meta.dirname,
+            "packages/generators/fetch-generator/test/@fixtures/app/lib/src",
+          ),
+        },
+        globalSetup: [
+          "packages/generators/fetch-generator/test/setup.global.ts",
+        ],
+        setupFiles: ["packages/generators/fetch-generator/test/setup.ts"],
+        globals: true,
+      }),
+
       setupFactory("generators/koa-generator"),
 
       setupFactory("generators/openapi-generator", {

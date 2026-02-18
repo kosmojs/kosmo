@@ -45,9 +45,7 @@ export const resolvedOptions: PluginOptionsResolved = {
 
 type ParamsTuple = Array<unknown>;
 
-type ParamsMapper<T extends ParamsTuple> = {
-  jobId: T[0] extends undefined ? string : T[0];
-};
+type ParamsMapper<_T extends ParamsTuple> = {};
 
 export const defineRoute: <
   ParamsT extends ParamsTuple = [],

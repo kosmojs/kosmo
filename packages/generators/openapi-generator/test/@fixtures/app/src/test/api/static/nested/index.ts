@@ -15,7 +15,10 @@ type StaticQuery = {
 };
 
 export default defineRoute<[]>(({ GET }) => [
-  GET<StaticQuery, StaticResponse>(async (ctx) => {
+  GET<{
+    json: StaticQuery,
+    response: [200, "json", StaticResponse]
+  }>(async (ctx) => {
     ctx.body = {
       message: "Nested static route",
       level: 2,

@@ -21,11 +21,17 @@ type WebhookResponse = {
 
 export default defineRoute(({ POST }) => [
   POST<
-    StripeEvent,
-    /** @skip-validation */
-    WebhookResponse
+    {
+      json: StripeEvent,
+      response: [200, "json", WebhookResponse]
+    },
+    {
+      response: {
+        runtimeValidation: false
+      }
+    }
   >(async (ctx) => {
-    const event = ctx.payload;
+    const event = ctx.validated.json;
     switch (event.type) {
       case "payment_intent.succeeded":
         break;

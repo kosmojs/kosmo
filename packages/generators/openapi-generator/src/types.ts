@@ -52,21 +52,33 @@ export type OpenAPIParameter =
 
 export type OpenAPIRequestBody = {
   required: boolean;
-  content: {
-    "application/json": {
-      schema: JsonSchema;
-    };
-  };
+  content: Partial<
+    Record<
+      | "application/json"
+      | "application/x-www-form-urlencoded"
+      | "multipart/form-data"
+      | "application/octet-stream",
+      { schema: JsonSchema }
+    >
+  >;
 };
 
-export type OpenAPIResponse = {
-  description: string;
-  content?: {
-    "application/json": {
-      schema: JsonSchema;
+export type OpenAPIResponse =
+  | {
+      description: string;
+      content: Partial<
+        Record<"application/json" | "text/plain", { schema: JsonSchema }>
+      >;
+    }
+  | {
+      description: string;
+      headers: {
+        Location: {
+          description: string;
+          schema: JsonSchema;
+        };
+      };
     };
-  };
-};
 
 export type OpenAPIOperation = {
   parameters?: Array<OpenAPIParameter>;

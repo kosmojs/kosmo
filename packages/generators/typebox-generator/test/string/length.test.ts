@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 import { importSchema } from "..";
 
 describe("string/length", async () => {
-  const schema = await importSchema("string/length", "payload.POST");
+  const schema = await importSchema("string/length", "json.POST");
 
   const validPayload = {
     minLength: "", // Empty string (minLength: 0 allows empty)

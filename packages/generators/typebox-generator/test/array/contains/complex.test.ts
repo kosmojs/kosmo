@@ -1,10 +1,9 @@
 import { describe, expect, test } from "vitest";
 
-import { MESSAGE_CODES } from "../../../src/error-handler";
-import { importSchema } from "../..";
+import { importSchema, MESSAGE_CODES } from "../..";
 
 describe("array/contains/complex", async () => {
-  const schema = await importSchema("array/contains/complex", "payload.POST");
+  const schema = await importSchema("array/contains/complex", "json.POST");
 
   const validPayload = {
     nestedArray: [

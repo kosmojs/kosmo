@@ -1,8 +1,8 @@
 import type {
   ValidationErrorData,
   ValidationErrorEntry,
-  ValidationErrorScope,
-} from "@/types";
+  ValidationTarget,
+} from "../types";
 
 /**
  * Standardized error wrapper used by validation generators.
@@ -12,20 +12,22 @@ import type {
  * and the list of validation error details.
  * */
 export class ValidationError extends Error {
-  public scope: ValidationErrorScope;
+  public target: ValidationTarget;
   public errors: Array<ValidationErrorEntry> = [];
   public errorMessage: string;
   public errorSummary: string;
+  public route: string;
 
-  constructor([scope, { errors, errorMessage, errorSummary }]: [
-    ValidationErrorScope,
+  constructor([target, { errors, errorMessage, errorSummary, route }]: [
+    ValidationTarget,
     ValidationErrorData,
   ]) {
     super(JSON.stringify(errors, null, 2));
-    this.name = `${scope}ValidationError`;
-    this.scope = scope;
+    this.name = `${target}ValidationError`;
+    this.target = target;
     this.errors = errors;
     this.errorMessage = errorMessage;
     this.errorSummary = errorSummary;
+    this.route = route;
   }
 }

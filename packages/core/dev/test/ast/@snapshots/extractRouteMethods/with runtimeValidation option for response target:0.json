@@ -1,0 +1,20 @@
+[
+  {
+    "method": "POST",
+    "validationDefinitions": [
+      {
+        "runtimeValidation": true,
+        "customErrors": {},
+        "method": "POST",
+        "target": "response",
+        "variants": [
+          {
+            "id": "ResponseTPOST1932682814",
+            "status": 200,
+            "contentType": "json"
+          }
+        ]
+      }
+    ]
+  }
+]

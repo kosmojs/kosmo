@@ -6,6 +6,8 @@ import type {
   MiddlewareDefinition,
   RouteDefinitionItem,
   UseOptions,
+  ValidationDefmap,
+  ValidationOptmap,
 } from "@kosmojs/api";
 
 import {
@@ -18,18 +20,16 @@ export type RouteHandler<
   ParamsT,
   StateT,
   ContextT,
-  PayloadT = unknown,
-  ResponseT = unknown,
+  VDefs extends ValidationDefmap,
+  VOpts extends ValidationOptmap = {},
 > = (
-  ctx: ParameterizedContext<ParamsT, StateT, ContextT, PayloadT, ResponseT>,
+  ctx: ParameterizedContext<ParamsT, StateT, ContextT, VDefs, VOpts>,
   next: Next,
 ) => Promise<void> | void;
 
 export type DefineRouteFactory<ParamsT, StateT, ContextT> = (
   a: {
-    // INFO: The `use` helper intentionally does not accept type parameters.
-    // PayloadT and ResponseT are only relevant to route handlers,
-    // as different request methods receive different payloads and return different responses.
+    // INFO: The `use` helper intentionally does not accept validation types.
     // Allowing these type parameters on `use` would be misleading,
     // since middleware operates across multiple request methods with varying types.
     use: (
@@ -41,10 +41,13 @@ export type DefineRouteFactory<ParamsT, StateT, ContextT> = (
       ParameterizedMiddleware<ParamsT, StateT, ContextT>
     >;
   } & {
-    [M in HTTPMethod]: <PayloadT = unknown, ResponseT = unknown>(
+    [M in HTTPMethod]: <
+      VDefs extends ValidationDefmap,
+      VOpts extends ValidationOptmap = {},
+    >(
       handler:
-        | RouteHandler<ParamsT, StateT, ContextT, PayloadT, ResponseT>
-        | Array<RouteHandler<ParamsT, StateT, ContextT, PayloadT, ResponseT>>,
+        | RouteHandler<ParamsT, StateT, ContextT, VDefs, VOpts>
+        | Array<RouteHandler<ParamsT, StateT, ContextT, VDefs, VOpts>>,
     ) => HandlerDefinition<ParameterizedMiddleware<ParamsT, StateT, ContextT>>;
   },
 ) => Array<
@@ -52,9 +55,9 @@ export type DefineRouteFactory<ParamsT, StateT, ContextT> = (
 >;
 
 export const defineRouteFactory: <
-  ParamsT = object,
-  StateT = object,
-  ContextT = object,
+  ParamsT = Record<string, string>,
+  StateT = Record<string, unknown>,
+  ContextT = Record<string, unknown>,
 >(
   factory: DefineRouteFactory<ParamsT, StateT, ContextT>,
 ) => Array<

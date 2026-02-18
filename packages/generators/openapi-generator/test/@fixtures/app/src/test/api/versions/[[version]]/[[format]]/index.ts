@@ -18,7 +18,10 @@ type VersionQuery = {
 
 export default defineRoute<["v1" | "v2" | "v3", "json" | "xml" | "yaml"]>(
   ({ GET }) => [
-    GET<VersionQuery, ApiInfo>(async (ctx) => {
+    GET<{
+      json: VersionQuery,
+      response: [200, "json", ApiInfo]
+    }>(async (ctx) => {
       ctx.body = {
         version: ctx.params.version || "v1",
         format: ctx.params.format || "json",

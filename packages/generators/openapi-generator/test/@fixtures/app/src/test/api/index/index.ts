@@ -13,8 +13,8 @@ type ApiQuery = {
 };
 
 export default defineRoute<[]>(({ GET }) => [
-  GET<ApiQuery, ApiInfo>(async (ctx) => {
-    const { includeEndpoints } = ctx.payload;
+  GET<{ json: ApiQuery; response: [200, "json", ApiInfo] }>(async (ctx) => {
+    const { includeEndpoints } = ctx.validated.json;
     ctx.body = {
       name: "Test API",
       version: "1.0.0",

@@ -25,8 +25,11 @@ export default defineRoute<
     >,
   ]
 >(({ GET }) => [
-  GET<ProfileQuery, UserProfile>(async (ctx) => {
-    const { includeStats } = ctx.payload;
+  GET<{
+    json: ProfileQuery,
+    response: [200, "json", UserProfile]
+  }>(async (ctx) => {
+    const { includeStats } = await ctx.bodyparser.json()
     ctx.body = {
       username: ctx.params.username,
       displayName: "User Display Name",

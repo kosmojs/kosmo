@@ -12,25 +12,30 @@
       },
     },
     "schemas": {
-      "documents_uuid_index_ts_3120880389_PayloadT1986972308_format3736761055": {
-        "anyOf": [
-          {
-            "const": "full",
-            "type": "string",
+      "documents_uuid_index_ts_3120880389_JsonTGET198498908": {
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "const": "full",
+                "type": "string",
+              },
+              {
+                "const": "minimal",
+                "type": "string",
+              },
+            ],
           },
-          {
-            "const": "minimal",
-            "type": "string",
+          "includeMetadata": {
+            "type": "boolean",
           },
-        ],
+          "includeVersions": {
+            "type": "boolean",
+          },
+        },
+        "type": "object",
       },
-      "documents_uuid_index_ts_3120880389_PayloadT1986972308_includeMetadata2826242976": {
-        "type": "boolean",
-      },
-      "documents_uuid_index_ts_3120880389_PayloadT1986972308_includeVersions4273831782": {
-        "type": "boolean",
-      },
-      "documents_uuid_index_ts_3120880389_PayloadT633695536": {
+      "documents_uuid_index_ts_3120880389_JsonTPUT198498908": {
         "properties": {
           "content": {
             "type": "string",
@@ -43,7 +48,22 @@
         },
         "type": "object",
       },
-      "documents_uuid_index_ts_3120880389_ResponseT1986972308": {
+      "documents_uuid_index_ts_3120880389_ResponseTDELETE781589100": {
+        "properties": {
+          "message": {
+            "type": "string",
+          },
+          "success": {
+            "type": "boolean",
+          },
+        },
+        "required": [
+          "success",
+          "message",
+        ],
+        "type": "object",
+      },
+      "documents_uuid_index_ts_3120880389_ResponseTGET1568275703": {
         "properties": {
           "content": {
             "type": "string",
@@ -76,22 +96,7 @@
         ],
         "type": "object",
       },
-      "documents_uuid_index_ts_3120880389_ResponseT592303465": {
-        "properties": {
-          "message": {
-            "type": "string",
-          },
-          "success": {
-            "type": "boolean",
-          },
-        },
-        "required": [
-          "success",
-          "message",
-        ],
-        "type": "object",
-      },
-      "documents_uuid_index_ts_3120880389_ResponseT633695536": {
+      "documents_uuid_index_ts_3120880389_ResponseTPUT1568275703": {
         "properties": {
           "content": {
             "type": "string",
@@ -139,7 +144,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_ResponseT592303465",
+                  "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_ResponseTDELETE781589100",
                 },
               },
             },
@@ -152,37 +157,23 @@
           {
             "$ref": "#/components/parameters/documents_uuid_index_ts_3120880389_ParamsT4143510446_uuid3514781862",
           },
-          {
-            "in": "query",
-            "name": "includeVersions",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_PayloadT1986972308_includeVersions4273831782",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeMetadata",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_PayloadT1986972308_includeMetadata2826242976",
-            },
-          },
-          {
-            "in": "query",
-            "name": "format",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_PayloadT1986972308_format3736761055",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_JsonTGET198498908",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_ResponseT1986972308",
+                  "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_ResponseTGET1568275703",
                 },
               },
             },
@@ -200,7 +191,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_PayloadT633695536",
+                "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_JsonTPUT198498908",
               },
             },
           },
@@ -211,7 +202,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_ResponseT633695536",
+                  "$ref": "#/components/schemas/documents_uuid_index_ts_3120880389_ResponseTPUT1568275703",
                 },
               },
             },

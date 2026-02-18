@@ -3,6 +3,8 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { ResolvedType } from "tfusion";
 import type { ResolvedConfig } from "vite";
 
+import type { HTTPMethod, ValidationTarget } from "@kosmojs/api";
+
 export type PluginOptions = {
   generators?: Array<GeneratorConstructor>;
 
@@ -75,8 +77,7 @@ export type ApiRoute = RouteEntry & {
   optionalParams: boolean;
   methods: Array<string>;
   typeDeclarations: Array<TypeDeclaration>;
-  payloadTypes: Array<PayloadType>;
-  responseTypes: Array<ResponseType>;
+  validationDefinitions: Array<ValidationDefinition>;
   // absolute path to referenced files
   referencedFiles: Array<string>;
 };
@@ -97,22 +98,41 @@ export type ResolvedEntry =
   | { kind: "pageRoute"; entry: PageRoute }
   | { kind: "pageLayout"; entry: PageLayout };
 
-export type PayloadType = {
-  id: string;
-  // needed to make connection between PayloadType and ResponseType
-  responseTypeId?: string | undefined;
-  method: string;
-  skipValidation: boolean;
-  isOptional: boolean;
-  resolvedType: ResolvedType | undefined;
-};
+export type ValidationDefinition = {
+  method: HTTPMethod;
+  runtimeValidation?: boolean | undefined;
+  customErrors?: Record<string, string> | undefined;
+} & (
+  | {
+      target: "response";
+      variants: Array<{
+        id: string;
+        status: number;
+        contentType: string | undefined;
+        body: string | undefined;
+        resolvedType?: ResolvedType | undefined;
+      }>;
+    }
+  | {
+      target: Exclude<ValidationTarget, "response">;
+      contentType?: string | undefined;
+      schema: {
+        id: string;
+        text: string;
+        resolvedType?: ResolvedType | undefined;
+      };
+    }
+);
 
-export type ResponseType = {
-  id: string;
-  method: string;
-  skipValidation: boolean;
-  resolvedType: ResolvedType | undefined;
-};
+export type RequestValidationDefinition = Exclude<
+  ValidationDefinition,
+  { target: "response" }
+>;
+
+export type ResponseValidationDefinition = Extract<
+  ValidationDefinition,
+  { target: "response" }
+>;
 
 export type TypeDeclaration = {
   text: string;

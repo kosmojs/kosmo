@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@kosmojs/api": "workspace:^",
+    "@kosmojs/koa-generator": "workspace:^",
     "typebox": "^1.0.81"
   }
 }

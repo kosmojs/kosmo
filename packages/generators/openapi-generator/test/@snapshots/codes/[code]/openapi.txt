@@ -12,13 +12,18 @@
       },
     },
     "schemas": {
-      "codes_code_index_ts_2134676674_PayloadT4061120622_includeUsage1483935625": {
-        "type": "boolean",
+      "codes_code_index_ts_2134676674_JsonTGET2696646777": {
+        "properties": {
+          "includeUsage": {
+            "type": "boolean",
+          },
+          "validateOnly": {
+            "type": "boolean",
+          },
+        },
+        "type": "object",
       },
-      "codes_code_index_ts_2134676674_PayloadT4061120622_validateOnly3276629258": {
-        "type": "boolean",
-      },
-      "codes_code_index_ts_2134676674_ResponseT4061120622": {
+      "codes_code_index_ts_2134676674_ResponseTGET2078876680": {
         "properties": {
           "code": {
             "type": "string",
@@ -79,29 +84,23 @@
           {
             "$ref": "#/components/parameters/codes_code_index_ts_2134676674_ParamsT2885117477_code1997877400",
           },
-          {
-            "in": "query",
-            "name": "validateOnly",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/codes_code_index_ts_2134676674_PayloadT4061120622_validateOnly3276629258",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeUsage",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/codes_code_index_ts_2134676674_PayloadT4061120622_includeUsage1483935625",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/codes_code_index_ts_2134676674_JsonTGET2696646777",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/codes_code_index_ts_2134676674_ResponseT4061120622",
+                  "$ref": "#/components/schemas/codes_code_index_ts_2134676674_ResponseTGET2078876680",
                 },
               },
             },

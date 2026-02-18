@@ -1,7 +1,9 @@
-import { defineRoute } from "@kosmojs/api";
+import { defineRoute } from "@test/index";
 
 export default defineRoute(({ POST }) => [
   POST<{
-    value: TRefine<string, { format: "ipv6" }>;
+    json: {
+      value: TRefine<string, { format: "ipv6" }>;
+    };
   }>(async () => {}),
 ]);

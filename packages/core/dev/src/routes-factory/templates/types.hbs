@@ -9,10 +9,5 @@ export type {{params.id}} = {
   {{/each}}
 };
 
-{{#each payloadTypes}}
-export type {{id}} = {{text}};
-{{/each}}
-
-{{#each responseTypes}}
-export type {{id}} = {{text}};
+{{#each validationTypes}}export type {{id}} = {{text}};
 {{/each}}

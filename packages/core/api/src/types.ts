@@ -30,12 +30,17 @@ export type RouteDefinitionItem<MiddlewareT> =
 
 export interface UseSlots {
   errorHandler: string;
-  params: string;
-  validateParams: string;
+  extendContext: string;
   bodyparser: string;
-  payload: string;
-  validatePayload: string;
-  validateResponse: string;
+  "validate:params": string;
+  "validate:query": string;
+  "validate:headers": string;
+  "validate:cookies": string;
+  "validate:json": string;
+  "validate:form": string;
+  "validate:multipart": string;
+  "validate:raw": string;
+  "validate:response": string;
 }
 
 export type UseOptions = {
@@ -139,6 +144,13 @@ export type RouterFactory<Router, RouterOptions = unknown> = (
   factory: (a: { createRouter: (o?: RouterOptions) => Router }) => Router,
 ) => Router;
 
+export type CreateRouteMiddleware<MiddlewareT> = (data: {
+  route: string;
+  validationSchemas: ValidationSchemas;
+  params: RouterRouteSource<MiddlewareT>["params"];
+  numericParams: RouterRouteSource<MiddlewareT>["numericParams"];
+}) => Array<MiddlewareDefinition<MiddlewareT>>;
+
 export type CreateServer<App, Server> = (
   app: App,
   opt?: {
@@ -152,6 +164,141 @@ export type ServerFactory<App, Server> = (
   factory: (a: { createServer: CreateServer<App, Server> }) => void,
 ) => void;
 
+/**
+ * Request metadata validation targets.
+ * */
+export const RequestMetadataTargets = {
+  query: "URL query parameters",
+  headers: "HTTP request headers",
+  cookies: "HTTP cookies",
+} as const;
+
+/**
+ * Request body validation targets.
+ *
+ * Body formats are mutually exclusive - only one should be specified per handler.
+ *
+ * **Development behavior:**
+ * - If multiple formats are defined, the builder displays a warning and
+ *   disables validation schemas for the affected handler.
+ * - If an unsuitable target is defined (e.g., `json`, `form`, `multipart`
+ *   for a method without a body like GET, HEAD), a warning is displayed and
+ *   validation schemas are disabled for that handler.
+ *
+ * This ensures misconfigurations are detected during development
+ * for runtime to execute without false positive validation failures.
+ *
+ * Always define exactly one target that is suitable for current handler.
+ * */
+export const RequestBodyTargets = {
+  json: "JSON request body",
+  form: "URL-encoded form data",
+  multipart: "Multipart form data",
+  raw: "Raw body format (string/Buffer/Blob/ArrayBuffer)",
+} as const;
+
+export const RequestValidationTargets = {
+  ...RequestMetadataTargets,
+  ...RequestBodyTargets,
+} as const;
+
+export type RequestMetadataTarget = keyof typeof RequestMetadataTargets;
+export type RequestBodyTarget = keyof typeof RequestBodyTargets;
+export type RequestValidationTarget = keyof typeof RequestValidationTargets;
+
+export type ValidationTarget = RequestValidationTarget | "params" | "response";
+
+export type ValidationDefmap = Partial<{
+  /**
+   * Request metadata targets.
+   * */
+  query: Record<string, unknown>;
+  headers: Record<string, string>;
+  cookies: Record<string, unknown>;
+
+  /**
+   * Request body targets.
+   * One target per handler.
+   * */
+  json: unknown;
+  form: Record<string, unknown>;
+  multipart: Record<string, unknown>;
+  raw: string | Buffer | ArrayBuffer | Blob;
+
+  /**
+   * Response variants.
+   * Multiple variants can be specified via unions.
+   *
+   * POST<
+   *   response:
+   *     | [200, "json", User]
+   *     | [201, "json"]
+   *     | [301]
+   * >((ctx) => {})
+   * */
+  response: [
+    /**
+     * HTTP status code to send with the response.
+     * Common values: 200 (OK), 400 (Bad Request), 404 (Not Found), 500 (Internal Server Error)
+     * */
+    status: number,
+    /**
+     * Content-Type header for the response. Supports shorthand notation that gets
+     * resolved via mime-types lookup (e.g., "json" becomes "application/json",
+     * "html" becomes "text/html", "png" becomes "image/png")
+     * */
+    contentType?: string | undefined,
+    /** The response body schema */
+    body?: unknown,
+  ];
+}>;
+
+export type ValidationCustomErrors = {
+  error?: string;
+} & {
+  [E in `error.${string}`]?: string;
+};
+
+export type ValidationOptions = {
+  runtimeValidation?: boolean | undefined;
+} & ValidationCustomErrors;
+
+export type ValidationOptmap = {
+  [K in ValidationTarget]?: ValidationOptions;
+};
+
+export const StateKey: unique symbol = Symbol("kosmo.state");
+
+export type ExtendContext<
+  ParamsT,
+  VDefs extends ValidationDefmap,
+  VOpts extends ValidationOptmap,
+  BodyparserOptions extends Record<RequestBodyTarget, unknown>,
+> = {
+  [StateKey]: Map<ValidationTarget, unknown>;
+  bodyparser: {
+    [T in RequestBodyTarget]: <R = Record<string, unknown>>(
+      opts?: BodyparserOptions[T],
+    ) => Promise<R>;
+  };
+  validated: {
+    // Only iterate over defined keys
+    [K in keyof VDefs as K extends RequestValidationTarget
+      ? VOpts[K] extends { runtimeValidation: false }
+        ? never
+        : K
+      : never]: VDefs[K];
+  } & { params: ParamsT };
+};
+
+type ExtractBodies<R> = R extends [number, string, infer Body] ? Body : never;
+
+export type ValidatedResponseBodies<VDefs extends ValidationDefmap> = [
+  ExtractBodies<VDefs["response"]>,
+] extends [never]
+  ? unknown // No bodies extracted at all - fallback to unknown
+  : ExtractBodies<VDefs["response"]>;
+
 export type ValidationSchema = {
   check: (data: unknown) => boolean;
   errors: (data: unknown) => Array<ValidationErrorEntry>;
@@ -161,12 +308,29 @@ export type ValidationSchema = {
 };
 
 export type ValidationSchemas<Extend = object> = {
+  [T in RequestValidationTarget]?: Record<
+    // http method
+    string,
+    {
+      schema: ValidationSchema & Extend;
+      runtimeValidation?: boolean;
+      customErrors?: ValidationCustomErrors;
+    }
+  >;
+} & {
   params?: ValidationSchema & Extend;
-  payload?: Record<string, ValidationSchema & Extend>;
-  response?: Record<string, ValidationSchema & Extend>;
+  response?: Record<
+    // http method
+    string,
+    Array<{
+      status: number;
+      contentType?: string;
+      schema?: ValidationSchema & Extend;
+      runtimeValidation?: boolean;
+      customErrors?: ValidationCustomErrors;
+    }>
+  >;
 };
-
-export type ValidationErrorScope = "params" | "payload" | "response";
 
 /**
  * Shape of individual validation errors emitted by generators.
@@ -189,11 +353,12 @@ export type ValidationErrorData = {
   /**
    * Formats errors into a single human-readable message.
    * @example: Validation failed: user: missing required properties: "email", "name"; password: must be at least 8 characters long
-   */
+   * */
   errorMessage: string;
   /**
    * Gets a simple error summary for quick feedback.
    * @example: 2 validation errors found across 2 fields
-   */
+   * */
   errorSummary: string;
+  route: string;
 };

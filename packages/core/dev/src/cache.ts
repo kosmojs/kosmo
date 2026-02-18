@@ -21,10 +21,9 @@ export type Cache = {
   ApiRoute,
   | "params"
   | "methods"
-  | "typeDeclarations"
   | "numericParams"
-  | "payloadTypes"
-  | "responseTypes"
+  | "typeDeclarations"
+  | "validationDefinitions"
 >;
 
 type ExtraContext = Record<string | number, unknown>;

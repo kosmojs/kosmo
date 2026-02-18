@@ -1,7 +1,9 @@
-import { defineRoute } from "@kosmojs/api";
+import { defineRoute } from "@test/index";
 
 export default defineRoute(({ POST }) => [
   POST<{
-    value: TRefine<string, { pattern: "^[0-9]{13,19}$" }>;
+    json: {
+      value: TRefine<string, { pattern: "^[0-9]{13,19}$" }>;
+    };
   }>(async () => {}),
 ]);

@@ -1,11 +1,8 @@
-export default {
+import type { Defaults } from "./types";
+import { stringify } from "./utils";
+
+export const defaults = {
   responseMode: "json",
-  get headers() {
-    return {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    };
-  },
-  stringify: (o) => new URLSearchParams(o as never).toString(),
+  stringify,
   errorHandler: console.error,
-} satisfies import("./types").Defaults;
+} satisfies Defaults;

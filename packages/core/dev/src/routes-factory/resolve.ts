@@ -1,6 +1,8 @@
 import { dirname, join, resolve } from "node:path";
+import { styleText } from "node:util";
 
 import crc from "crc/crc32";
+import mimeTypes from "mime-types";
 import picomatch from "picomatch";
 import { glob } from "tinyglobby";
 
@@ -15,10 +17,8 @@ import type {
   PluginOptionsResolved,
   ResolvedEntry,
   RouteEntry,
-} from "@/types";
-
-import { resolveRouteSignature, typeResolverFactory } from "../ast";
-import { cacheFactory } from "../cache";
+  ValidationDefinition,
+} from "../types";
 import { pathTokensFactory } from "./base";
 
 import resolvedTypesTpl from "./templates/resolved-types.hbs";
@@ -219,13 +219,7 @@ export const apiRouteResolverFactory: ResolverFactory = (pluginOptions) => {
     refineTypeName,
   } = pluginOptions;
 
-  let resolveTypes = false;
-
-  for (const { options } of generators) {
-    if (options?.resolveTypes) {
-      resolveTypes = true;
-    }
-  }
+  const resolveTypes = generators.some((e) => e.options?.resolveTypes);
 
   const {
     //
@@ -234,9 +228,7 @@ export const apiRouteResolverFactory: ResolverFactory = (pluginOptions) => {
     refreshSourceFile,
   } = typeResolverFactory(pluginOptions);
 
-  return (entry) => {
-    const { id, name, file, folder, fileFullpath, pathTokens } = entry;
-
+  return ({ id, name, file, folder, fileFullpath, pathTokens }) => {
     const handler: ResolverSignature["handler"] = async (updatedFile) => {
       const paramsSchema = pathTokens.flatMap((e) => {
         return e.param ? [e.param] : [];
@@ -266,11 +258,10 @@ export const apiRouteResolverFactory: ResolverFactory = (pluginOptions) => {
           typeDeclarations,
           paramsRefinements,
           methods,
-          payloadTypes,
-          responseTypes,
+          validationDefinitions,
           referencedFiles = [],
         } = await resolveRouteSignature(
-          { id, fileFullpath, optionalParams },
+          { id, name, fileFullpath, optionalParams },
           {
             withReferencedFiles: true,
             sourceFile: getSourceFile(fileFullpath),
@@ -279,6 +270,17 @@ export const apiRouteResolverFactory: ResolverFactory = (pluginOptions) => {
             },
           },
         );
+
+        const validationTypes = validationDefinitions.flatMap<{
+          id: string;
+          text: string;
+        }>((def) => {
+          return def.target === "response"
+            ? def.variants.flatMap(({ id, body }) => {
+                return body ? [{ id, text: body }] : [];
+              })
+            : [def.schema];
+        });
 
         const numericParams = paramsRefinements
           ? paramsRefinements.flatMap(({ text, index }) => {
@@ -310,22 +312,17 @@ export const apiRouteResolverFactory: ResolverFactory = (pluginOptions) => {
             };
           }),
           typeDeclarations,
-          payloadTypes,
-          responseTypes,
+          validationTypes,
         });
 
         const resolvedTypes = resolveTypes
           ? literalTypesResolver(typesFileContent, {
-              overrides: [...payloadTypes, ...responseTypes].reduce(
-                (map: Record<string, string>, { id, skipValidation }) => {
-                  if (skipValidation) {
-                    map[id] = "never";
-                  }
-                  return map;
-                },
-                { [refineTypeName]: refineTypeName },
-              ),
-              withProperties: [params.id, ...payloadTypes.map((e) => e.id)],
+              stripComments: true,
+              overrides: { [refineTypeName]: refineTypeName },
+              withProperties: [
+                params.id,
+                ...validationTypes.flatMap(({ id }) => id),
+              ],
             })
           : undefined;
 
@@ -347,22 +344,98 @@ export const apiRouteResolverFactory: ResolverFactory = (pluginOptions) => {
           methods,
           typeDeclarations,
           numericParams,
-          // text was needed at writing types.ts file, dropping from cache
-          payloadTypes: payloadTypes.map(({ text, ...rest }) => {
-            return {
-              ...rest,
-              resolvedType: resolvedTypes?.find((e) => e.name === rest.id),
-            };
-          }),
-          responseTypes: responseTypes.map(({ text, ...rest }) => {
-            return {
-              ...rest,
-              resolvedType: resolvedTypes?.find((e) => e.name === rest.id),
-            };
-          }),
           referencedFiles,
+          validationDefinitions: validationDefinitions.map((def) => {
+            return {
+              ...def,
+              ...(def.target === "response"
+                ? {
+                    variants: def.variants.map((variant) => {
+                      return {
+                        ...variant,
+                        resolvedType: resolvedTypes?.find(
+                          (e) => e.name === variant.id,
+                        ),
+                      };
+                    }),
+                  }
+                : {
+                    schema: {
+                      ...def.schema,
+                      resolvedType: resolvedTypes?.find(
+                        (e) => e.name === def.schema.id,
+                      ),
+                    },
+                  }),
+            };
+          }),
         });
       }
+
+      const validationDefinitions = cache.validationDefinitions.flatMap(
+        (def) => {
+          let augmentedDef: ValidationDefinition | undefined = def;
+
+          if (def.target === "response") {
+            augmentedDef = {
+              ...def,
+              variants: def.variants.flatMap((variant, i) => {
+                if (typeof variant.contentType !== "string") {
+                  return [variant];
+                }
+
+                if (variant.contentType.includes("/")) {
+                  return [variant];
+                }
+
+                const contentType = mimeTypes.lookup(variant.contentType);
+
+                if (contentType === false) {
+                  console.warn(
+                    styleText(
+                      ["bold", "red"],
+                      "✗ Failed resolving Response Content Type",
+                    ),
+                  );
+                  console.warn(
+                    `  Invalid value provided for mime-types lookup - ${variant.contentType}`,
+                  );
+                  console.warn(
+                    styleText(
+                      ["cyan"],
+                      `  Response variant #${i} excluded from route schemas`,
+                    ),
+                  );
+                  console.warn(`  Route: ${name}; Method: ${def.method}`);
+                  console.warn();
+                  return [];
+                }
+
+                return [{ ...variant, contentType }];
+              }),
+            };
+          } else if (def.contentType && !def.contentType.includes("/")) {
+            const contentType = mimeTypes.lookup(def.contentType);
+            if (contentType === false) {
+              console.warn(
+                styleText(
+                  ["bold", "red"],
+                  "✗ Failed resolving Response Content Type",
+                ),
+              );
+              console.warn(
+                `  Invalid value provided for mime-types lookup - ${def.contentType}`,
+              );
+              console.warn(`  Route: ${name}; Method: ${def.method}`);
+              console.warn();
+            } else {
+              augmentedDef = { ...def, contentType };
+            }
+          }
+
+          return augmentedDef ? [augmentedDef] : [];
+        },
+      );
 
       const entry: ApiRoute = {
         id,
@@ -376,8 +449,7 @@ export const apiRouteResolverFactory: ResolverFactory = (pluginOptions) => {
         fileFullpath,
         methods: cache.methods,
         typeDeclarations: cache.typeDeclarations,
-        payloadTypes: cache.payloadTypes,
-        responseTypes: cache.responseTypes,
+        validationDefinitions,
         referencedFiles: Object.keys(cache.referencedFiles).map(
           // expand referenced files path,
           // they are stored as relative in cache

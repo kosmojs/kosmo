@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 import { createProject, extractTypeDeclarations } from "@src/ast";
 
-describe("extractTypeDeclarations", () => {
+describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
   const project = createProject();
 
   describe("imports", () => {

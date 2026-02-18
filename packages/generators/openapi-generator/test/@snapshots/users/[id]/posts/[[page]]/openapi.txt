@@ -21,38 +21,43 @@
       },
     },
     "schemas": {
-      "users_id_posts_page_index_ts_2287299866_PayloadT2097397712_includeContent668435367": {
-        "type": "boolean",
+      "users_id_posts_page_index_ts_2287299866_JsonTGET1798716838": {
+        "properties": {
+          "includeContent": {
+            "type": "boolean",
+          },
+          "sort": {
+            "anyOf": [
+              {
+                "const": "newest",
+                "type": "string",
+              },
+              {
+                "const": "oldest",
+                "type": "string",
+              },
+            ],
+          },
+          "status": {
+            "anyOf": [
+              {
+                "const": "published",
+                "type": "string",
+              },
+              {
+                "const": "draft",
+                "type": "string",
+              },
+              {
+                "const": "all",
+                "type": "string",
+              },
+            ],
+          },
+        },
+        "type": "object",
       },
-      "users_id_posts_page_index_ts_2287299866_PayloadT2097397712_sort1361375778": {
-        "anyOf": [
-          {
-            "const": "newest",
-            "type": "string",
-          },
-          {
-            "const": "oldest",
-            "type": "string",
-          },
-        ],
-      },
-      "users_id_posts_page_index_ts_2287299866_PayloadT2097397712_status2063623452": {
-        "anyOf": [
-          {
-            "const": "published",
-            "type": "string",
-          },
-          {
-            "const": "draft",
-            "type": "string",
-          },
-          {
-            "const": "all",
-            "type": "string",
-          },
-        ],
-      },
-      "users_id_posts_page_index_ts_2287299866_ResponseT2097397712": {
+      "users_id_posts_page_index_ts_2287299866_ResponseTGET3176486578": {
         "properties": {
           "page": {
             "type": "number",
@@ -107,37 +112,23 @@
           {
             "$ref": "#/components/parameters/users_id_posts_page_index_ts_2287299866_ParamsT1806413811_id3208210256",
           },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_PayloadT2097397712_status2063623452",
-            },
-          },
-          {
-            "in": "query",
-            "name": "sort",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_PayloadT2097397712_sort1361375778",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeContent",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_PayloadT2097397712_includeContent668435367",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_JsonTGET1798716838",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_ResponseT2097397712",
+                  "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_ResponseTGET3176486578",
                 },
               },
             },
@@ -155,37 +146,23 @@
           {
             "$ref": "#/components/parameters/users_id_posts_page_index_ts_2287299866_ParamsT1806413811_page336246304",
           },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_PayloadT2097397712_status2063623452",
-            },
-          },
-          {
-            "in": "query",
-            "name": "sort",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_PayloadT2097397712_sort1361375778",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeContent",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_PayloadT2097397712_includeContent668435367",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_JsonTGET1798716838",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_ResponseT2097397712",
+                  "$ref": "#/components/schemas/users_id_posts_page_index_ts_2287299866_ResponseTGET3176486578",
                 },
               },
             },

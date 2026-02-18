@@ -19,6 +19,7 @@ import {
 import type { Options } from "./types";
 
 import libApiAppTpl from "./templates/lib/api:app.ts?as=text";
+import libApiBodyparserTpl from "./templates/lib/api:bodyparser.ts?as=text";
 import libApiDevTpl from "./templates/lib/api:dev.ts?as=text";
 import libApiRouteTpl from "./templates/lib/api:route.ts?as=text";
 import libApiRouterTpl from "./templates/lib/api:router.ts?as=text";
@@ -174,6 +175,7 @@ export const factory: GeneratorFactory<Options> = async (
     for (const [file, template] of [
       [createPath.lib("api.ts"), libApiTpl],
       [createPath.lib("api:app.ts"), libApiAppTpl],
+      [createPath.lib("api:bodyparser.ts"), libApiBodyparserTpl],
       [createPath.lib("api:dev.ts"), libApiDevTpl],
       [createPath.lib("api:route.ts"), libApiRouteTpl],
       [createPath.lib("api:routes.ts"), libApiRoutesTpl],

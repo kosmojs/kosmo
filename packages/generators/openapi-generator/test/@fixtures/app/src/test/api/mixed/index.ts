@@ -36,14 +36,19 @@ type MixedQuery = {
 };
 
 export default defineRoute(({ GET, POST, PUT }) => [
-  GET<MixedQuery, StrictResponse>(async (ctx) => {
-    ctx.body = { success: true, data: { id: 1, processed: true } };
-  }),
+  GET<{ json: MixedQuery; response: [200, "json", StrictResponse] }>(
+    async (ctx) => {
+      ctx.body = { success: true, data: { id: 1, processed: true } };
+    },
+  ),
 
   POST<
-    StrictPayload,
-    /** @skip-validation */
-    LooseResponse
+    { json: StrictPayload; response: [200, "json", LooseResponse] },
+    {
+      response: {
+        runtimeValidation: false;
+      };
+    }
   >(async (ctx) => {
     ctx.body = {
       received: true,
@@ -53,9 +58,15 @@ export default defineRoute(({ GET, POST, PUT }) => [
   }),
 
   PUT<
-    /** @skip-validation */
-    LoosePayload,
-    StrictResponse
+    {
+      json: LoosePayload;
+      response: [200, "json", StrictResponse];
+    },
+    {
+      json: {
+        runtimeValidation: false;
+      };
+    }
   >(async (ctx) => {
     ctx.body = { success: true, data: { id: 1, processed: true } };
   }),

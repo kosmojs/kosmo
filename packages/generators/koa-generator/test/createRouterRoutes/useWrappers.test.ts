@@ -6,10 +6,8 @@ import { use } from "@src/templates/lib/api";
 import { defineRouteFactory } from "@src/templates/lib/api:route";
 
 describe("createRouterRoutes", () => {
-  async function paramsHandler() {}
   async function validateParams() {}
-  async function payloadHandler() {}
-  async function validatePayload() {}
+  async function validateBody() {}
   async function validateResponse() {}
 
   describe("useWrappers", () => {
@@ -18,24 +16,20 @@ describe("createRouterRoutes", () => {
         [
           {
             useWrappers: [
-              use(validatePayload, { slot: "validatePayload" }),
-              use(payloadHandler, { slot: "payload" }),
-              use(validateParams, { slot: "validateParams" }),
-              use(validateResponse, { slot: "validateResponse" }),
-              use(paramsHandler, { slot: "params" }),
+              use(validateBody, { slot: "validate:json" }),
+              use(validateParams, { slot: "validate:params" }),
+              use(validateResponse, { slot: "validate:response" }),
             ],
           },
         ],
         {},
       );
 
-      expect(stack.middleware[0]).toEqual(paramsHandler);
       expect(stack.middleware[1]).toEqual(validateParams);
-      expect(stack.middleware[2]).toEqual(payloadHandler);
-      expect(stack.middleware[3]).toEqual(validatePayload);
-      expect(stack.middleware[4]).toEqual(validateResponse);
+      expect(stack.middleware[2]).toEqual(validateBody);
+      expect(stack.middleware[3]).toEqual(validateResponse);
 
-      expect(stack.middleware.length).toEqual(6);
+      expect(stack.middleware.length).toEqual(5);
     });
 
     it("is overridden by route middleware", () => {
@@ -43,33 +37,27 @@ describe("createRouterRoutes", () => {
         [
           {
             definitionItems: defineRouteFactory(({ use, GET }) => [
-              use(validatePayload, { slot: "validatePayload" }),
-              use(payloadHandler, { slot: "payload" }),
-              use(validateParams, { slot: "validateParams" }),
-              use(validateResponse, { slot: "validateResponse" }),
-              use(paramsHandler, { slot: "params" }),
+              use(validateBody, { slot: "validate:json" }),
+              use(validateParams, { slot: "validate:params" }),
+              use(validateResponse, { slot: "validate:response" }),
               GET(async function get() {}),
             ]),
           },
         ],
         {
           globalMiddleware: [
-            use(() => {}, { slot: "validatePayload" }),
-            use(() => {}, { slot: "payload" }),
-            use(() => {}, { slot: "validateParams" }),
-            use(() => {}, { slot: "validateResponse" }),
-            use(() => {}, { slot: "params" }),
+            use(() => {}, { slot: "validate:json" }),
+            use(() => {}, { slot: "validate:params" }),
+            use(() => {}, { slot: "validate:response" }),
           ],
         },
       );
 
-      expect(stack.middleware[0]).toEqual(paramsHandler);
       expect(stack.middleware[1]).toEqual(validateParams);
-      expect(stack.middleware[2]).toEqual(payloadHandler);
-      expect(stack.middleware[3]).toEqual(validatePayload);
-      expect(stack.middleware[4]).toEqual(validateResponse);
+      expect(stack.middleware[2]).toEqual(validateBody);
+      expect(stack.middleware[3]).toEqual(validateResponse);
 
-      expect(stack.middleware.length).toEqual(6);
+      expect(stack.middleware.length).toEqual(5);
     });
   });
 });

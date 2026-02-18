@@ -1,33 +1,38 @@
 import { resolve } from "node:path";
+import { styleText } from "node:util";
 
 import crc from "crc/crc32";
 import { flattener } from "tfusion";
 import {
   type CallExpression,
   type Identifier,
-  type Node,
   Project,
   type ProjectOptions,
   type SourceFile,
   SyntaxKind,
+  type TypeNode,
 } from "ts-morph";
 
-import { type HTTPMethod, HTTPMethods } from "@kosmojs/api";
+import {
+  type HTTPMethod,
+  HTTPMethods,
+  RequestValidationTargets,
+  type ValidationTarget,
+} from "@kosmojs/api";
 
 import type {
   ApiRoute,
-  PayloadType,
   PluginOptionsResolved,
-  ResponseType,
   TypeDeclaration,
-} from "@/types";
+  ValidationDefinition,
+} from "./types";
 
 type PathResolver = (path: string) => string;
 
 export const createProject = (opts?: ProjectOptions) => new Project(opts);
 
 export const resolveRouteSignature = async (
-  route: Pick<ApiRoute, "id" | "fileFullpath" | "optionalParams">,
+  route: Pick<ApiRoute, "id" | "name" | "fileFullpath" | "optionalParams">,
   opts?: {
     relpathResolver?: PathResolver;
     sourceFile?: SourceFile;
@@ -50,23 +55,14 @@ export const resolveRouteSignature = async (
     : undefined;
 
   const methods = defaultExport
-    ? extractRouteMethods(defaultExport, route)
+    ? extractRouteMethods(route, defaultExport)
     : [];
-
-  const payloadTypes = methods.flatMap((e) => {
-    return e.payloadType ? [e.payloadType] : [];
-  });
-
-  const responseTypes = methods.flatMap((e) => {
-    return e.responseType ? [e.responseType] : [];
-  });
 
   return {
     typeDeclarations,
     paramsRefinements,
     methods: methods.map((e) => e.method),
-    payloadTypes,
-    responseTypes,
+    validationDefinitions: methods.flatMap((e) => e.validationDefinitions),
     referencedFiles,
   };
 };
@@ -90,25 +86,14 @@ export const extractDefaultExport = (
 
 export const extractParamsRefinements = (
   callExpression: CallExpression,
-):
-  | Array<{
-      index: number;
-      text: string;
-    }>
-  | undefined => {
-  const [firstGeneric] = extractGenerics(callExpression);
+): Array<{ index: number; text: string }> | undefined => {
+  const [paramsGeneric] = extractGenerics(callExpression);
 
-  if (!firstGeneric?.node.isKind(SyntaxKind.TupleType)) {
+  if (!paramsGeneric?.isKind(SyntaxKind.TupleType)) {
     return;
   }
 
-  const tupleElements = firstGeneric.node.getElements();
-
-  if (!tupleElements?.length) {
-    return;
-  }
-
-  return tupleElements.map((node, index) => {
+  return paramsGeneric.getElements().map((node, index) => {
     return {
       index,
       text: node.getText(),
@@ -117,12 +102,11 @@ export const extractParamsRefinements = (
 };
 
 export const extractRouteMethods = (
+  route: Pick<ApiRoute, "id" | "name">,
   callExpression: CallExpression,
-  route: Pick<ApiRoute, "id" | "optionalParams">,
 ): Array<{
   method: HTTPMethod;
-  payloadType: (PayloadType & { text: string }) | undefined;
-  responseType: (ResponseType & { text: string }) | undefined;
+  validationDefinitions: Array<ValidationDefinition>;
 }> => {
   const funcDeclaration =
     callExpression.getFirstChildByKind(SyntaxKind.ArrowFunction) ||
@@ -153,57 +137,242 @@ export const extractRouteMethods = (
 
   const methods: ReturnType<typeof extractRouteMethods> = [];
 
-  const skipValidationFilter = (e: string) => /@skip-validation/.test(e);
-
   for (const [callExpression, method] of callExpressions) {
-    const [payloadGeneric, responseGeneric] = extractGenerics(callExpression);
-
-    const payloadText = payloadGeneric?.node
-      ? payloadGeneric.node.getChildren().length === 0
-        ? "{}"
-        : payloadGeneric.node.getFullText()
-      : undefined;
-
-    const responseText = responseGeneric?.node.getText();
-
-    const responseType = responseText
-      ? {
-          id: ["ResponseT", crc(route.id + method)].join(""),
-          method,
-          skipValidation: responseGeneric?.comments
-            ? responseGeneric.comments.some(skipValidationFilter)
-            : false,
-          text: ["never", "object"].includes(responseText)
-            ? "{}"
-            : responseText,
-          resolvedType: undefined,
-        }
-      : undefined;
-
-    const payloadType = payloadText
-      ? {
-          id: ["PayloadT", crc(route.id + method)].join(""),
-          responseTypeId: responseType?.id,
-          method,
-          skipValidation: payloadGeneric?.comments
-            ? payloadGeneric.comments.some(skipValidationFilter)
-            : false,
-          isOptional: payloadText
-            ? payloadText === "{}" || route.optionalParams
-            : true,
-          text: payloadText,
-          resolvedType: undefined,
-        }
-      : undefined;
-
+    const [vDefs, vOpts] = extractGenerics(callExpression);
     methods.push({
       method,
-      payloadType,
-      responseType,
+      validationDefinitions: extractValidationDefinitions(
+        route,
+        method,
+        vDefs,
+        vOpts,
+      ),
     });
   }
 
   return methods;
+};
+
+/** Parse a boolean literal type node */
+const parseRuntimeValidation = (typeNode: TypeNode) => {
+  if (typeNode.isKind(SyntaxKind.LiteralType)) {
+    const literal = typeNode.getFirstChild();
+    if (literal?.isKind(SyntaxKind.TrueKeyword)) {
+      return true;
+    } else if (literal?.isKind(SyntaxKind.FalseKeyword)) {
+      return false;
+    }
+  }
+  return undefined;
+};
+
+const extractResponseVariant = (
+  typeNode: TypeNode,
+):
+  | {
+      status: number;
+      contentType?: string | undefined;
+      body?: string | undefined;
+    }
+  | undefined => {
+  if (!typeNode.isKind(SyntaxKind.TupleType)) {
+    return;
+  }
+
+  let status = 200; // default
+  let contentType: string | undefined;
+  let body: string | undefined;
+
+  const [statusNode, contentTypeNode, bodyNode] = typeNode.getElements();
+
+  // Status (index 0) - should be a LiteralType with NumericLiteral
+  if (statusNode?.isKind(SyntaxKind.LiteralType)) {
+    const literal = statusNode.getFirstChildByKind(SyntaxKind.NumericLiteral);
+    if (literal) {
+      status = Number(literal.getText());
+    }
+  }
+
+  // ContentType (index 1) - should be a LiteralType with StringLiteral
+  if (contentTypeNode) {
+    contentType = extractStringLiteral(contentTypeNode);
+  }
+
+  // Response type text (index 2)
+  if (bodyNode) {
+    body = bodyNode.getText();
+    if (["object"].includes(body)) {
+      body = "{}";
+    }
+  }
+
+  return { status, contentType, body };
+};
+
+/** Parse opts TypeLiteral into a map keyed by target */
+const parseValidationOptions = (typeNode: TypeNode | undefined) => {
+  const opts: Partial<
+    Record<
+      ValidationTarget,
+      {
+        contentType: string | undefined;
+        runtimeValidation: boolean | undefined;
+        customErrors: Record<string, string> | undefined;
+      }
+    >
+  > = {};
+
+  if (!typeNode?.isKind(SyntaxKind.TypeLiteral)) {
+    return opts;
+  }
+
+  for (const prop of typeNode.getMembers()) {
+    if (!prop.isKind(SyntaxKind.PropertySignature)) {
+      continue;
+    }
+
+    const target = prop.getName() as ValidationTarget;
+    const typeNode = prop.getTypeNodeOrThrow();
+
+    if (!typeNode.isKind(SyntaxKind.TypeLiteral)) {
+      continue;
+    }
+
+    let contentType: string | undefined;
+    let runtimeValidation: boolean | undefined;
+    const customErrors: Record<string, string> = {};
+
+    for (const member of typeNode.getMembers()) {
+      if (!member.isKind(SyntaxKind.PropertySignature)) {
+        continue;
+      }
+
+      const nameNode = member.getNameNode();
+      const valueNode = member.getTypeNodeOrThrow();
+
+      const name = nameNode.isKind(SyntaxKind.StringLiteral)
+        ? nameNode.getLiteralText() // No quotes
+        : nameNode.getText(); // Regular identifier
+
+      if (name === "contentType") {
+        contentType = extractStringLiteral(valueNode);
+      } else if (name === "runtimeValidation") {
+        runtimeValidation = parseRuntimeValidation(valueNode);
+      } else if (name.startsWith("error")) {
+        const literal = extractStringLiteral(valueNode);
+        if (literal) {
+          customErrors[name] = literal;
+        }
+      }
+    }
+
+    opts[target] = {
+      contentType,
+      runtimeValidation,
+      customErrors,
+    };
+  }
+
+  return opts;
+};
+
+const extractStringLiteral = (typeNode: TypeNode) => {
+  const literal = typeNode.isKind(SyntaxKind.LiteralType)
+    ? typeNode.getFirstChildByKind(SyntaxKind.StringLiteral)
+    : undefined;
+  return literal ? literal.getLiteralText() : undefined;
+};
+
+/**
+ * Extract validation definitions from route handler generics.
+ * Merges defs (schemas) and opts (validation options) into a flat array.
+ * */
+export const extractValidationDefinitions = (
+  route: Pick<ApiRoute, "id" | "name">,
+  method: HTTPMethod,
+  defsNode: TypeNode,
+  optsNode: TypeNode | undefined,
+) => {
+  const definitions: Array<ValidationDefinition> = [];
+
+  if (!defsNode?.isKind(SyntaxKind.TypeLiteral)) {
+    return definitions;
+  }
+
+  const optsMap = parseValidationOptions(optsNode);
+
+  const createId = (target: string, hash?: string) => {
+    return [
+      target.replace(/^./, (c) => c.toUpperCase()),
+      "T",
+      method,
+      crc(route.id + hash),
+    ].join("");
+  };
+
+  for (const prop of defsNode.getMembers()) {
+    if (!prop.isKind(SyntaxKind.PropertySignature)) {
+      continue;
+    }
+
+    const target = prop.getName() as ValidationTarget;
+    const typeNode = prop.getTypeNodeOrThrow();
+
+    if (target === "response") {
+      const variants = typeNode.isKind(SyntaxKind.UnionType)
+        ? typeNode.getChildrenOfKind(SyntaxKind.TupleType)
+        : [typeNode];
+      definitions.push({
+        ...optsMap[target],
+        method,
+        target,
+        variants: variants.flatMap((e, i) => {
+          const { status, contentType, body } = extractResponseVariant(e) || {};
+
+          if (!status) {
+            return [];
+          }
+
+          if (contentType && typeof contentType !== "string") {
+            console.warn(
+              styleText(
+                ["bold", "red"],
+                `✗ The second element of a response variant should specify the Response Content Type`,
+              ),
+            );
+            console.warn(
+              styleText(["blue"], `  Example: [200, "json", Schema]`),
+            );
+            console.warn(
+              `  Route: ${route.name}; Method: ${method}; Response Variant: #${i}`,
+            );
+            console.warn();
+          }
+
+          return [
+            {
+              id: createId(target, JSON.stringify([status, contentType, body])),
+              status,
+              contentType,
+              body,
+            },
+          ];
+        }),
+      });
+    } else if (Object.keys(RequestValidationTargets).includes(target)) {
+      definitions.push({
+        ...optsMap[target],
+        method,
+        target,
+        schema: {
+          id: createId(target),
+          text: typeNode.getText(),
+        },
+      });
+    }
+  }
+
+  return definitions;
 };
 
 export const extractTypeDeclarations = (
@@ -362,17 +531,8 @@ const getReferencedFiles = (importIdentifier: Identifier): Array<string> => {
   });
 };
 
-const extractGenerics = (
-  callExpression: CallExpression,
-): Array<{ node: Node; comments: Array<string> }> => {
-  return callExpression.getTypeArguments().map((node) => {
-    return {
-      node,
-      comments: node
-        .getLeadingCommentRanges()
-        .map((range) => range.getText().trim()),
-    };
-  });
+const extractGenerics = (callExpression: CallExpression) => {
+  return callExpression.getTypeArguments();
 };
 
 export const typeResolverFactory = ({ appRoot }: PluginOptionsResolved) => {

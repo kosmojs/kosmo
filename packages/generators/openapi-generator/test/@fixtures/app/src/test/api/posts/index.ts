@@ -38,30 +38,34 @@ type PostsQuery = {
 };
 
 export default defineRoute(({ GET, POST }) => [
-  GET<PostsQuery, PostsListResponse>(async (ctx) => {
-    const { page, limit } = ctx.payload;
-    ctx.body = {
-      posts: [],
-      pagination: {
-        page: page || 1,
-        limit: limit || 20,
-        total: 0,
-        hasMore: false,
-      },
-    };
-  }),
+  GET<{ json: PostsQuery; response: [200, "json", PostsListResponse] }>(
+    async (ctx) => {
+      const { page, limit } = ctx.validated.json;
+      ctx.body = {
+        posts: [],
+        pagination: {
+          page: page || 1,
+          limit: limit || 20,
+          total: 0,
+          hasMore: false,
+        },
+      };
+    },
+  ),
 
-  POST<CreatePostPayload, PostResponse>(async (ctx) => {
-    const { title, content, tags, isPublished } = ctx.payload;
-    ctx.body = {
-      id: 1,
-      title,
-      content,
-      tags,
-      isPublished,
-      authorId: 123,
-      createdAt: new Date().toISOString(),
-      ...(isPublished ? { publishedAt: new Date().toISOString() } : {}),
-    };
-  }),
+  POST<{ json: CreatePostPayload; response: [200, "json", PostResponse] }>(
+    async (ctx) => {
+      const { title, content, tags, isPublished } = ctx.validated.json;
+      ctx.body = {
+        id: 1,
+        title,
+        content,
+        tags,
+        isPublished,
+        authorId: 123,
+        createdAt: new Date().toISOString(),
+        ...(isPublished ? { publishedAt: new Date().toISOString() } : {}),
+      };
+    },
+  ),
 ]);

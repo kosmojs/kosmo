@@ -14,13 +14,15 @@ type EmailQuery = {
 
 export default defineRoute<[TRefine<string, { format: "email" }>]>(
   ({ GET }) => [
-    GET<EmailQuery, EmailResponse>(async (ctx) => {
-      ctx.body = {
-        email: ctx.params.address,
-        verified: true,
-        primary: true,
-        userId: 123,
-      };
-    }),
+    GET<{ json: EmailQuery; response: [200, "json", EmailResponse] }>(
+      async (ctx) => {
+        ctx.body = {
+          email: ctx.params.address,
+          verified: true,
+          primary: true,
+          userId: 123,
+        };
+      },
+    ),
   ],
 );

@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 import { importSchema } from "../..";
 
 describe("array/contains/string", async () => {
-  const schema = await importSchema("array/contains/string", "payload.POST");
+  const schema = await importSchema("array/contains/string", "json.POST");
 
   const validPayload = {
     constContains: ["user", "admin", "guest"],

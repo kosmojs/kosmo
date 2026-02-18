@@ -24,7 +24,7 @@
       },
     },
     "schemas": {
-      "search_type_index_ts_3588343646_PayloadT587329197": {
+      "search_type_index_ts_3588343646_JsonTPOST3628501882": {
         "properties": {
           "filters": {
             "properties": {
@@ -96,7 +96,7 @@
         ],
         "type": "object",
       },
-      "search_type_index_ts_3588343646_ResponseT587329197": {
+      "search_type_index_ts_3588343646_ResponseTPOST2410448055": {
         "properties": {
           "hasMore": {
             "type": "boolean",
@@ -171,18 +171,18 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/search_type_index_ts_3588343646_PayloadT587329197",
+                "$ref": "#/components/schemas/search_type_index_ts_3588343646_JsonTPOST3628501882",
               },
             },
           },
-          "required": false,
+          "required": true,
         },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/search_type_index_ts_3588343646_ResponseT587329197",
+                  "$ref": "#/components/schemas/search_type_index_ts_3588343646_ResponseTPOST2410448055",
                 },
               },
             },
@@ -202,18 +202,18 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/search_type_index_ts_3588343646_PayloadT587329197",
+                "$ref": "#/components/schemas/search_type_index_ts_3588343646_JsonTPOST3628501882",
               },
             },
           },
-          "required": false,
+          "required": true,
         },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/search_type_index_ts_3588343646_ResponseT587329197",
+                  "$ref": "#/components/schemas/search_type_index_ts_3588343646_ResponseTPOST2410448055",
                 },
               },
             },

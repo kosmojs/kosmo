@@ -34,11 +34,14 @@ type SearchResponse = {
 
 export default defineRoute<["posts" | "users" | "all"]>(({ POST }) => [
   POST<
-    /** @skip-validation */
-    SearchPayload,
-    SearchResponse
+    { json: SearchPayload; response: [200, "json", SearchResponse] },
+    {
+      json: {
+        runtimeValidation: false;
+      };
+    }
   >(async (ctx) => {
-    const { pagination } = ctx.payload;
+    const { pagination } = await ctx.bodyparser.json<SearchPayload>()
     ctx.body = {
       results: [],
       total: 0,

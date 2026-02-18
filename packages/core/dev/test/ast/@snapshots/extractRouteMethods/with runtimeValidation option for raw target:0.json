@@ -1,0 +1,17 @@
+[
+  {
+    "method": "POST",
+    "validationDefinitions": [
+      {
+        "runtimeValidation": true,
+        "customErrors": {},
+        "method": "POST",
+        "target": "raw",
+        "schema": {
+          "id": "RawTPOST1165983353",
+          "text": "string"
+        }
+      }
+    ]
+  }
+]

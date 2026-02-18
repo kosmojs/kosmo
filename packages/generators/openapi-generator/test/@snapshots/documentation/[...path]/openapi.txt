@@ -19,42 +19,47 @@
       },
     },
     "schemas": {
-      "documentation_path_index_ts_2693537996_PayloadT795656957_format3736761055": {
-        "anyOf": [
-          {
-            "const": "html",
-            "type": "string",
+      "documentation_path_index_ts_2693537996_JsonTGET3711636155": {
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "const": "html",
+                "type": "string",
+              },
+              {
+                "const": "markdown",
+                "type": "string",
+              },
+              {
+                "const": "raw",
+                "type": "string",
+              },
+            ],
           },
-          {
-            "const": "markdown",
-            "type": "string",
+          "includeExamples": {
+            "type": "boolean",
           },
-          {
-            "const": "raw",
-            "type": "string",
+          "version": {
+            "anyOf": [
+              {
+                "const": "v1",
+                "type": "string",
+              },
+              {
+                "const": "v2",
+                "type": "string",
+              },
+              {
+                "const": "latest",
+                "type": "string",
+              },
+            ],
           },
-        ],
+        },
+        "type": "object",
       },
-      "documentation_path_index_ts_2693537996_PayloadT795656957_includeExamples2628883185": {
-        "type": "boolean",
-      },
-      "documentation_path_index_ts_2693537996_PayloadT795656957_version3206337475": {
-        "anyOf": [
-          {
-            "const": "v1",
-            "type": "string",
-          },
-          {
-            "const": "v2",
-            "type": "string",
-          },
-          {
-            "const": "latest",
-            "type": "string",
-          },
-        ],
-      },
-      "documentation_path_index_ts_2693537996_ResponseT795656957": {
+      "documentation_path_index_ts_2693537996_ResponseTGET2341831262": {
         "properties": {
           "content": {
             "type": "string",
@@ -100,38 +105,22 @@
   "paths": {
     "/documentation": {
       "get": {
-        "parameters": [
-          {
-            "in": "query",
-            "name": "version",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_PayloadT795656957_version3206337475",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_JsonTGET3711636155",
+              },
             },
           },
-          {
-            "in": "query",
-            "name": "format",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_PayloadT795656957_format3736761055",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeExamples",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_PayloadT795656957_includeExamples2628883185",
-            },
-          },
-        ],
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_ResponseT795656957",
+                  "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_ResponseTGET2341831262",
                 },
               },
             },
@@ -146,37 +135,23 @@
           {
             "$ref": "#/components/parameters/documentation_path_index_ts_2693537996_ParamsT958675478_path190089999",
           },
-          {
-            "in": "query",
-            "name": "version",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_PayloadT795656957_version3206337475",
-            },
-          },
-          {
-            "in": "query",
-            "name": "format",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_PayloadT795656957_format3736761055",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeExamples",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_PayloadT795656957_includeExamples2628883185",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_JsonTGET3711636155",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_ResponseT795656957",
+                  "$ref": "#/components/schemas/documentation_path_index_ts_2693537996_ResponseTGET2341831262",
                 },
               },
             },

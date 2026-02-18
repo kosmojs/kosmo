@@ -40,7 +40,47 @@
       },
     },
     "schemas": {
-      "metrics_name_period_index_ts_697537035_PayloadT2813146979": {
+      "metrics_name_period_index_ts_697537035_JsonTGET1521668760": {
+        "properties": {
+          "includeRaw": {
+            "type": "boolean",
+          },
+          "resolution": {
+            "anyOf": [
+              {
+                "const": "hour",
+                "type": "string",
+              },
+              {
+                "const": "day",
+                "type": "string",
+              },
+              {
+                "const": "week",
+                "type": "string",
+              },
+            ],
+          },
+          "transform": {
+            "anyOf": [
+              {
+                "const": "none",
+                "type": "string",
+              },
+              {
+                "const": "movingAverage",
+                "type": "string",
+              },
+              {
+                "const": "cumulative",
+                "type": "string",
+              },
+            ],
+          },
+        },
+        "type": "object",
+      },
+      "metrics_name_period_index_ts_697537035_JsonTPOST1521668760": {
         "properties": {
           "timestamp": {
             "type": "string",
@@ -55,61 +95,7 @@
         ],
         "type": "object",
       },
-      "metrics_name_period_index_ts_697537035_PayloadT3097082442_includeRaw2930872922": {
-        "type": "boolean",
-      },
-      "metrics_name_period_index_ts_697537035_PayloadT3097082442_resolution4258467722": {
-        "anyOf": [
-          {
-            "const": "hour",
-            "type": "string",
-          },
-          {
-            "const": "day",
-            "type": "string",
-          },
-          {
-            "const": "week",
-            "type": "string",
-          },
-        ],
-      },
-      "metrics_name_period_index_ts_697537035_PayloadT3097082442_transform2008187309": {
-        "anyOf": [
-          {
-            "const": "none",
-            "type": "string",
-          },
-          {
-            "const": "movingAverage",
-            "type": "string",
-          },
-          {
-            "const": "cumulative",
-            "type": "string",
-          },
-        ],
-      },
-      "metrics_name_period_index_ts_697537035_ResponseT2813146979": {
-        "properties": {
-          "id": {
-            "type": "number",
-          },
-          "metric": {
-            "type": "string",
-          },
-          "recorded": {
-            "type": "boolean",
-          },
-        },
-        "required": [
-          "recorded",
-          "metric",
-          "id",
-        ],
-        "type": "object",
-      },
-      "metrics_name_period_index_ts_697537035_ResponseT3097082442": {
+      "metrics_name_period_index_ts_697537035_ResponseTGET906579486": {
         "properties": {
           "data": {
             "items": {
@@ -171,6 +157,25 @@
         ],
         "type": "object",
       },
+      "metrics_name_period_index_ts_697537035_ResponseTPOST153958135": {
+        "properties": {
+          "id": {
+            "type": "number",
+          },
+          "metric": {
+            "type": "string",
+          },
+          "recorded": {
+            "type": "boolean",
+          },
+        },
+        "required": [
+          "recorded",
+          "metric",
+          "id",
+        ],
+        "type": "object",
+      },
     },
   },
   "paths": {
@@ -180,37 +185,23 @@
           {
             "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_name1579384326",
           },
-          {
-            "in": "query",
-            "name": "resolution",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT3097082442_resolution4258467722",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeRaw",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT3097082442_includeRaw2930872922",
-            },
-          },
-          {
-            "in": "query",
-            "name": "transform",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT3097082442_transform2008187309",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_JsonTGET1521668760",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseT3097082442",
+                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseTGET906579486",
                 },
               },
             },
@@ -228,7 +219,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT2813146979",
+                "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_JsonTPOST1521668760",
               },
             },
           },
@@ -239,7 +230,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseT2813146979",
+                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseTPOST153958135",
                 },
               },
             },
@@ -257,37 +248,23 @@
           {
             "$ref": "#/components/parameters/metrics_name_period_index_ts_697537035_ParamsT3905147277_period3317178062",
           },
-          {
-            "in": "query",
-            "name": "resolution",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT3097082442_resolution4258467722",
-            },
-          },
-          {
-            "in": "query",
-            "name": "includeRaw",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT3097082442_includeRaw2930872922",
-            },
-          },
-          {
-            "in": "query",
-            "name": "transform",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT3097082442_transform2008187309",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_JsonTGET1521668760",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseT3097082442",
+                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseTGET906579486",
                 },
               },
             },
@@ -308,7 +285,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_PayloadT2813146979",
+                "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_JsonTPOST1521668760",
               },
             },
           },
@@ -319,7 +296,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseT2813146979",
+                  "$ref": "#/components/schemas/metrics_name_period_index_ts_697537035_ResponseTPOST153958135",
                 },
               },
             },

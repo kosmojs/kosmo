@@ -23,20 +23,22 @@ type SearchQuery = {
 export default defineRoute<
   ["posts" | "users" | "all", TRefine<number, { minimum: 1 }>]
 >(({ GET }) => [
-  GET<SearchQuery, SimpleSearchResponse>(async (ctx) => {
-    const { q } = ctx.payload;
-    ctx.body = {
-      ...(q ? { query: q } : {}),
-      page: Number(ctx.params.page) || 1,
-      results: [
-        {
-          id: 1,
-          title: "Sample Result",
-          type: "document",
-          score: 0.95,
-        },
-      ],
-      total: 1,
-    };
-  }),
+  GET<{ json: SearchQuery; response: [200, "json", SimpleSearchResponse] }>(
+    async (ctx) => {
+      const { q } = ctx.validated.json;
+      ctx.body = {
+        ...(q ? { query: q } : {}),
+        page: Number(ctx.params.page) || 1,
+        results: [
+          {
+            id: 1,
+            title: "Sample Result",
+            type: "document",
+            score: 0.95,
+          },
+        ],
+        total: 1,
+      };
+    },
+  ),
 ]);

@@ -3,17 +3,33 @@ import { setupServer } from "msw/node";
 
 const handlers = [
   http.all("http://json/:path*", async ({ request, params }) => {
+    const headers = Object.fromEntries(request.headers.entries());
+    return HttpResponse.json({
+      method: request.method,
+      url: request.url,
+      params,
+      headers,
+      searchParams: Object.fromEntries(new URL(request.url).searchParams),
+      ...(headers["content-type"] === "application/json"
+        ? { body: await request.json().catch(() => undefined) }
+        : {}),
+    });
+  }),
+
+  http.all("http://form/:path*", async ({ request, params }) => {
+    const formData = new URLSearchParams(await request.text());
     return HttpResponse.json({
       method: request.method,
       url: request.url,
       headers: Object.fromEntries(request.headers.entries()),
-      path: request.url.replace("http://fqdn", ""),
       params,
       searchParams: Object.fromEntries(new URL(request.url).searchParams),
-      ...(["POST", "PUT", "PATCH"].includes(request.method)
-        ? { body: await request.json() }
-        : {}),
+      body: Object.fromEntries(formData),
     });
+  }),
+
+  http.all("http://multipart/:path*", async ({ request }) => {
+    return HttpResponse.formData(await request.formData());
   }),
 
   http.all("http://text/:path*", async ({ request }) => {
@@ -30,10 +46,6 @@ const handlers = [
         "Content-Length": String(buf.byteLength),
       },
     });
-  }),
-
-  http.all("http://form/:path*", async ({ request }) => {
-    return HttpResponse.formData(await request.formData());
   }),
 
   http.all("http://buffer/:path*", async ({ request }) => {

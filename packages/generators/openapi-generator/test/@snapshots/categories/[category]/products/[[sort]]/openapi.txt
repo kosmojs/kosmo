@@ -53,21 +53,26 @@
       },
     },
     "schemas": {
-      "categories_category_products_sort_index_ts_1023966673_PayloadT4220507458_inStock4251530779": {
-        "type": "boolean",
+      "categories_category_products_sort_index_ts_1023966673_JsonTGET2855111603": {
+        "properties": {
+          "inStock": {
+            "type": "boolean",
+          },
+          "maxPrice": {
+            "type": "number",
+          },
+          "minPrice": {
+            "type": "number",
+          },
+          "minRating": {
+            "maximum": 5,
+            "minimum": 1,
+            "type": "number",
+          },
+        },
+        "type": "object",
       },
-      "categories_category_products_sort_index_ts_1023966673_PayloadT4220507458_maxPrice693590078": {
-        "type": "number",
-      },
-      "categories_category_products_sort_index_ts_1023966673_PayloadT4220507458_minPrice3476551647": {
-        "type": "number",
-      },
-      "categories_category_products_sort_index_ts_1023966673_PayloadT4220507458_minRating837778626": {
-        "maximum": 5,
-        "minimum": 1,
-        "type": "number",
-      },
-      "categories_category_products_sort_index_ts_1023966673_ResponseT4220507458": {
+      "categories_category_products_sort_index_ts_1023966673_ResponseTGET3686652804": {
         "properties": {
           "category": {
             "type": "string",
@@ -126,45 +131,23 @@
           {
             "$ref": "#/components/parameters/categories_category_products_sort_index_ts_1023966673_ParamsT2817762847_category105650625",
           },
-          {
-            "in": "query",
-            "name": "minPrice",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_PayloadT4220507458_minPrice3476551647",
-            },
-          },
-          {
-            "in": "query",
-            "name": "maxPrice",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_PayloadT4220507458_maxPrice693590078",
-            },
-          },
-          {
-            "in": "query",
-            "name": "minRating",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_PayloadT4220507458_minRating837778626",
-            },
-          },
-          {
-            "in": "query",
-            "name": "inStock",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_PayloadT4220507458_inStock4251530779",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_JsonTGET2855111603",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_ResponseT4220507458",
+                  "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_ResponseTGET3686652804",
                 },
               },
             },
@@ -182,45 +165,23 @@
           {
             "$ref": "#/components/parameters/categories_category_products_sort_index_ts_1023966673_ParamsT2817762847_sort1361375778",
           },
-          {
-            "in": "query",
-            "name": "minPrice",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_PayloadT4220507458_minPrice3476551647",
-            },
-          },
-          {
-            "in": "query",
-            "name": "maxPrice",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_PayloadT4220507458_maxPrice693590078",
-            },
-          },
-          {
-            "in": "query",
-            "name": "minRating",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_PayloadT4220507458_minRating837778626",
-            },
-          },
-          {
-            "in": "query",
-            "name": "inStock",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_PayloadT4220507458_inStock4251530779",
-            },
-          },
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_JsonTGET2855111603",
+              },
+            },
+          },
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_ResponseT4220507458",
+                  "$ref": "#/components/schemas/categories_category_products_sort_index_ts_1023966673_ResponseTGET3686652804",
                 },
               },
             },

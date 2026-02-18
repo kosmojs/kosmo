@@ -1,0 +1,19 @@
+[
+  {
+    "method": "POST",
+    "validationDefinitions": [
+      {
+        "customErrors": {
+          "error": "generic error",
+          "error.id": "ID must be a number"
+        },
+        "method": "POST",
+        "target": "json",
+        "schema": {
+          "id": "JsonTPOST1165983353",
+          "text": "{ id?: number }"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "method": "POST",
+    "validationDefinitions": [
+      {
+        "runtimeValidation": false,
+        "customErrors": {},
+        "method": "POST",
+        "target": "multipart",
+        "schema": {
+          "id": "MultipartTPOST1165983353",
+          "text": "{ id?: number }"
+        }
+      }
+    ]
+  }
+]

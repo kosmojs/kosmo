@@ -6,8 +6,8 @@ import {
   type MiddlewareDefinition,
 } from "@kosmojs/api";
 
-import type { ParameterizedMiddleware } from "@/templates/lib/api";
-import { defineRouteFactory } from "@/templates/lib/api:route";
+import type { ParameterizedMiddleware } from "@src/templates/lib/api";
+import { defineRouteFactory } from "@src/templates/lib/api:route";
 
 describe("defineRoute", () => {
   describe("use", () => {
@@ -37,9 +37,9 @@ describe("defineRoute", () => {
 
     test("accepts slot option", () => {
       const [stack] = defineRouteFactory(({ use }) => [
-        use(async () => {}, { slot: "payload" }),
+        use(async () => {}, { slot: "bodyparser" }),
       ]) as Array<MiddlewareDefinition<ParameterizedMiddleware>>;
-      expect(stack.options?.slot).toEqual("payload");
+      expect(stack.options?.slot).toEqual("bodyparser");
     });
 
     test("accepts `on` option", () => {

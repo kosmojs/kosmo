@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 import { importSchema } from "../..";
 
 describe("array/prefix/object", async () => {
-  const schema = await importSchema("array/prefix/object", "payload.POST");
+  const schema = await importSchema("array/prefix/object", "json.POST");
 
   const validPayload = {
     simpleObject: [{ name: "John", age: 25 }],

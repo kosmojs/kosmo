@@ -1,0 +1,27 @@
+[
+  {
+    "method": "POST",
+    "validationDefinitions": [
+      {
+        "method": "POST",
+        "target": "raw",
+        "schema": {
+          "id": "RawTPOST1165983353",
+          "text": "string"
+        }
+      },
+      {
+        "method": "POST",
+        "target": "response",
+        "variants": [
+          {
+            "id": "ResponseTPOST924740473",
+            "status": 200,
+            "contentType": "json",
+            "body": "{ id: number }"
+          }
+        ]
+      }
+    ]
+  }
+]

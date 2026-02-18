@@ -1,0 +1,19 @@
+import { Blob } from "node:buffer";
+
+import { afterAll, afterEach, beforeAll } from "vitest";
+
+import { server } from "./mocks";
+
+(globalThis as any).Blob = Blob;
+
+beforeAll(() => {
+  server.listen();
+});
+
+afterEach(() => {
+  server.resetHandlers();
+});
+
+afterAll(() => {
+  server.close();
+});

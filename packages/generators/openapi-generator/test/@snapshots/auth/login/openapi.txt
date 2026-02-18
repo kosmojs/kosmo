@@ -2,7 +2,7 @@
   "components": {
     "parameters": {},
     "schemas": {
-      "auth_login_index_ts_1750344579_PayloadT387827553": {
+      "auth_login_index_ts_1750344579_JsonTPOST2274346999": {
         "properties": {
           "email": {
             "format": "email",
@@ -22,7 +22,7 @@
         ],
         "type": "object",
       },
-      "auth_login_index_ts_1750344579_ResponseT387827553": {
+      "auth_login_index_ts_1750344579_ResponseTPOST1842364566": {
         "properties": {
           "expiresIn": {
             "type": "number",
@@ -70,18 +70,18 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/auth_login_index_ts_1750344579_PayloadT387827553",
+                "$ref": "#/components/schemas/auth_login_index_ts_1750344579_JsonTPOST2274346999",
               },
             },
           },
-          "required": false,
+          "required": true,
         },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/auth_login_index_ts_1750344579_ResponseT387827553",
+                  "$ref": "#/components/schemas/auth_login_index_ts_1750344579_ResponseTPOST1842364566",
                 },
               },
             },

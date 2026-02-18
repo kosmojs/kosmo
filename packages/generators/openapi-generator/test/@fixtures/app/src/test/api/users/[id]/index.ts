@@ -22,7 +22,10 @@ type UserQuery = {
 
 export default defineRoute<[TRefine<number, { minimum: 1 }>]>(
   ({ GET, PUT, DELETE }) => [
-    GET<UserQuery, UserResponse>(async (ctx) => {
+    GET<{
+      json: UserQuery,
+      response: [200, "json", UserResponse]
+    }>(async (ctx) => {
       ctx.body = {
         id: Number(ctx.params.id),
         name: "John Doe",
@@ -32,8 +35,11 @@ export default defineRoute<[TRefine<number, { minimum: 1 }>]>(
       };
     }),
 
-    PUT<UpdateUserPayload, UserResponse>(async (ctx) => {
-      const updates = ctx.payload;
+    PUT<{
+      json: UpdateUserPayload,
+      response: [200, "json", UserResponse]
+    }>(async (ctx) => {
+      const updates = ctx.validated.json
       ctx.body = {
         id: Number(ctx.params.id),
         name: updates.name || "John Doe",
@@ -43,7 +49,9 @@ export default defineRoute<[TRefine<number, { minimum: 1 }>]>(
       };
     }),
 
-    DELETE<never, { success: boolean; message: string }>(async (ctx) => {
+    DELETE<{
+      response: [200, "json", { success: boolean; message: string }]
+    }>(async (ctx) => {
       ctx.body = { success: true, message: "User deleted" };
     }),
   ],

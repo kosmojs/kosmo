@@ -2,22 +2,27 @@
   "components": {
     "parameters": {},
     "schemas": {
-      "index_index_ts_2109308135_PayloadT4108373014_format3736761055": {
-        "anyOf": [
-          {
-            "const": "full",
-            "type": "string",
+      "index_index_ts_2109308135_JsonTGET953914569": {
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "const": "full",
+                "type": "string",
+              },
+              {
+                "const": "minimal",
+                "type": "string",
+              },
+            ],
           },
-          {
-            "const": "minimal",
-            "type": "string",
+          "includeEndpoints": {
+            "type": "boolean",
           },
-        ],
+        },
+        "type": "object",
       },
-      "index_index_ts_2109308135_PayloadT4108373014_includeEndpoints284570394": {
-        "type": "boolean",
-      },
-      "index_index_ts_2109308135_ResponseT4108373014": {
+      "index_index_ts_2109308135_ResponseTGET2109545860": {
         "properties": {
           "documentation": {
             "type": "string",
@@ -48,30 +53,22 @@
   "paths": {
     "/": {
       "get": {
-        "parameters": [
-          {
-            "in": "query",
-            "name": "format",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/index_index_ts_2109308135_PayloadT4108373014_format3736761055",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/index_index_ts_2109308135_JsonTGET953914569",
+              },
             },
           },
-          {
-            "in": "query",
-            "name": "includeEndpoints",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/index_index_ts_2109308135_PayloadT4108373014_includeEndpoints284570394",
-            },
-          },
-        ],
+          "required": true,
+        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/index_index_ts_2109308135_ResponseT4108373014",
+                  "$ref": "#/components/schemas/index_index_ts_2109308135_ResponseTGET2109545860",
                 },
               },
             },
