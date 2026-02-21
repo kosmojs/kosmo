@@ -16,6 +16,10 @@
       "types": "./pkg/index.d.ts",
       "default": "./pkg/index.js"
     },
+    "./stub-generator": {
+      "types": "./pkg/stub-generator/index.d.ts",
+      "default": "./pkg/stub-generator/index.js"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {

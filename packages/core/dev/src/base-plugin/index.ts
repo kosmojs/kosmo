@@ -5,8 +5,10 @@ import { Worker } from "node:worker_threads";
 
 import type { Plugin, ResolvedConfig } from "vite";
 
+// NOTE: keep this as an external export for workers to be able to load it!
+import stubGenerator from "@kosmojs/dev/stub-generator";
+
 import { routesFactory } from "../routes-factory";
-import stubGenerator from "../stub-generator";
 import type { PluginOptions, PluginOptionsResolved } from "../types";
 import apiHandlerFactory from "./api-handler";
 import { type SpinnerFactory, spinnerFactory, withSpinner } from "./spinner";
