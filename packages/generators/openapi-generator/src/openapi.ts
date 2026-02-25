@@ -193,7 +193,7 @@ export default (pluginOptions: PluginOptionsResolved) => {
     }
 
     return responseType.variants.reduce<Record<string, OpenAPIResponse>>(
-      (map, { id, status, contentType }) => {
+      (map, { id, status, contentType, body }) => {
         const redirect = redirectSchema(
           status,
           // when status is a redirect code, contentType is the destination URI
@@ -207,9 +207,9 @@ export default (pluginOptions: PluginOptionsResolved) => {
             description: "Success",
             content: {
               [contentType || "application/json"]: {
-                schema: {
-                  $ref: generateComponentPath("schemas", route, id),
-                },
+                schema: body
+                  ? { $ref: generateComponentPath("schemas", route, id) }
+                  : { type: "object" },
               },
             },
           };
