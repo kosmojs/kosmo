@@ -7,6 +7,7 @@ import {
   type PathToken,
   type PluginOptionsResolved,
   type ResponseValidationDefinition,
+  sortRoutes,
   typeboxLiteralText,
 } from "@kosmojs/dev";
 
@@ -375,11 +376,34 @@ export default (pluginOptions: PluginOptionsResolved) => {
     const { components, paths } = routes
       .sort(
         /**
-         * Sorting routes by path sections length in reverse order,
-         * so ones with more sections - more specific - goes first.
+         * Sort routes by path depth (descending) so more specific routes
+         * are processed first.
          * */
-        (a, b) => b.name.split("/").length - a.name.split("/").length,
+        sortRoutes,
       )
+      .flatMap((route) => {
+        /**
+         * Drop routes that are subsumed by more specific ones.
+         *
+         * Given this file structure:
+         *
+         *   search/
+         *     {:type}/
+         *       {:page}/
+         *         index.ts
+         *       index.ts
+         *
+         * Two routes exist: search/{:type} and search/{:type}/{:page}.
+         * The shorter route is already covered by the longer one's
+         * generated variations, so including both would produce
+         * duplicate/phantom paths in the OpenAPI spec.
+         * */
+        const subsumed = routes.some((e) => {
+          return e.name === route.name ? false : e.name.startsWith(route.name);
+        });
+
+        return subsumed ? [] : [route];
+      })
       .reduce(
         (acc, route) => {
           const paths = generateRoutePaths(route);
