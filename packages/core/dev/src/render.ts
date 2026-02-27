@@ -5,6 +5,7 @@ import crc from "crc/crc32";
 import handlebars from "handlebars";
 
 import { pathExists } from "./fs";
+import type { PageRoute } from "./types";
 
 export type RenderOptions = {
   noEscape?: boolean;
@@ -69,12 +70,11 @@ export const renderFactory = (
   },
 ) => {
   const renderer = handlebars.create();
-  if (options?.partials) {
-    renderer.registerPartial(options.partials as never);
-  }
-  if (options?.helpers) {
-    renderer.registerHelper(options.helpers as never);
-  }
+
+  renderer.registerPartial({ ...options?.partials } as never);
+
+  renderer.registerHelper({ ...options?.helpers } as never);
+
   return {
     render<Context = object>(
       template: string,
@@ -101,4 +101,18 @@ export const renderFactory = (
       );
     },
   };
+};
+
+export const renderHelpers = {
+  createParamsLiteral: (params: PageRoute["params"]) => {
+    return params.schema
+      .map((p) => {
+        return p.kind === "splat"
+          ? `${p.const}?: Array<string | number >`
+          : p.kind === "optional"
+            ? `${p.const}?: string | number`
+            : `${p.const}: string | number`;
+      })
+      .join(", ");
+  },
 };

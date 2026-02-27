@@ -9,6 +9,7 @@ import {
   pathResolver,
   type ResolvedEntry,
   renderFactory,
+  renderHelpers,
   sortRoutes,
 } from "@kosmojs/dev";
 
@@ -47,6 +48,7 @@ export const factory: GeneratorFactory<Options> = async (
   const { render, renderToFile } = renderFactory({
     helpers: {
       createImport: createImportHelper,
+      createParamsLiteral: renderHelpers.createParamsLiteral,
     },
     partials: {
       routePartial: libEntryRoutePartialTpl,
