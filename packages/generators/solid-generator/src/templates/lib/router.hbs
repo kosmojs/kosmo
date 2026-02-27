@@ -2,11 +2,11 @@ import type { JSX, ParentComponent } from "solid-js";
 import type { RouteDefinition } from "@solidjs/router";
 import type { RouterFactory } from "@kosmojs/dev";
 
-import { pageFactory } from "./solid";
+import { pagePathFactory } from "./solid";
 
 export type LinkProps ={{#unless indexRoutes.length}} never{{/unless}}
   {{#each indexRoutes}}
-  | [ "{{name}}", {{paramsLiteral}} ]
+  | [ "{{name}}", {{createParamsLiteral params}} ]
   {{/each}};
 
 export type RouteName ={{#unless indexRoutes.length}} never{{/unless}}
@@ -16,14 +16,9 @@ export type RouteName ={{#unless indexRoutes.length}} never{{/unless}}
 
 export const pageMap = {
   {{#each indexRoutes}}
-  "{{name}}": pageFactory<[ {{paramsLiteral}} ]>([
-    {{#each pathTokens}}
-    [
-      "{{path}}",{{#if param}}
-      { isRest: {{#if param.isRest}}true{{else}}false{{/if}} }{{/if}}
-    ],
-    {{/each}}
-  ]),
+  "{{name}}": pagePathFactory<[ {{createParamsLiteral params}} ]>(
+    {{serializeRoute .}},
+  ),
   {{/each}}
 }
 

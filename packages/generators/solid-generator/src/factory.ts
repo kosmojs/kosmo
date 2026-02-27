@@ -6,6 +6,7 @@ import {
   defaults,
   type GeneratorFactory,
   nestedRoutesFactory,
+  type PageRoute,
   pathResolver,
   type ResolvedEntry,
   renderFactory,
@@ -23,9 +24,8 @@ import libPageSamplesPageTpl from "./templates/lib/pageSamples/page.hbs";
 import libPageSamplesStylesTpl from "./templates/lib/pageSamples/styles.css?as=text";
 import libPageSamplesWelcomeTpl from "./templates/lib/pageSamples/welcome.hbs";
 import libRouterTpl from "./templates/lib/router.hbs";
-import libSolidTpl from "./templates/lib/solid.hbs";
-import libUnwrapTpl from "./templates/lib/unwrap.hbs";
-import paramTpl from "./templates/param.hbs";
+import libSolidTpl from "./templates/lib/solid.ts?as=text";
+import libUnwrapTpl from "./templates/lib/unwrap.ts?as=text";
 import srcAppTpl from "./templates/src/App.hbs";
 import srcComponentsLinkTpl from "./templates/src/components/Link.hbs";
 import srcEntryClientTpl from "./templates/src/entry/client.hbs";
@@ -45,10 +45,13 @@ export const factory: GeneratorFactory<Options> = async (
     sourceFolder,
   });
 
-  const { render, renderToFile } = renderFactory({
+  const { renderToFile } = renderFactory({
     helpers: {
       createImport: createImportHelper,
       createParamsLiteral: renderHelpers.createParamsLiteral,
+      serializeRoute({ name, pathPattern, params }: PageRoute) {
+        return JSON.stringify({ name, pathPattern, params });
+      },
     },
     partials: {
       routePartial: libEntryRoutePartialTpl,
@@ -131,16 +134,7 @@ export const factory: GeneratorFactory<Options> = async (
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
     const indexRoutes = entries
       .flatMap(({ kind, entry }) => {
-        return kind === "pageRoute"
-          ? [
-              {
-                ...entry,
-                paramsLiteral: entry.params.schema
-                  .map((param) => render(paramTpl, { param }).trim())
-                  .join(", "),
-              },
-            ]
-          : [];
+        return kind === "pageRoute" ? [entry] : [];
       })
       .sort(sortRoutes);
 
@@ -149,28 +143,6 @@ export const factory: GeneratorFactory<Options> = async (
     });
 
     const nestedRoutes = entriesTraverser(nestedRoutesFactory(pageEntries));
-
-    /**
-     * Selecting api routes eligible for `useResource`.
-     * Only considering api routes that handle GET requests without params.
-     * */
-    const apiRoutes = entries
-      .flatMap(({ kind, entry }) => {
-        if (kind !== "apiRoute") {
-          return [];
-        }
-
-        if (!entry.methods.includes("GET")) {
-          return [];
-        }
-
-        if (!entry.optionalParams) {
-          return [];
-        }
-
-        return [entry];
-      })
-      .sort(sortRoutes);
 
     const ssrMode = JSON.stringify(ssrGenerator ? command === "build" : false);
 
@@ -190,7 +162,6 @@ export const factory: GeneratorFactory<Options> = async (
     ]) {
       await renderToFile(createPath.lib(file), template, {
         indexRoutes,
-        apiRoutes,
         ssrMode,
       });
     }

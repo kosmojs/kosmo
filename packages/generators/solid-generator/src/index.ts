@@ -13,6 +13,7 @@ export default (options?: Options): GeneratorConstructor => {
     dependencies: {
       "@solidjs/router": self.devDependencies["@solidjs/router"],
       "solid-js": self.devDependencies["solid-js"],
+      "path-to-regexp": self.devDependencies["path-to-regexp"],
     },
     devDependencies: {
       "vite-plugin-solid": self.devDependencies["vite-plugin-solid"],

@@ -7,3 +7,7 @@ declare module "*?as=text" {
   const content: string;
   export default content;
 }
+
+declare module "{{ createImport 'config' }}" {
+  export const baseurl: string;
+}

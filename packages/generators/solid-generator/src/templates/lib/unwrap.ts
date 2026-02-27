@@ -1,2 +1,3 @@
 export type MaybeWrapped<T> = import("solid-js/store").Store<T> | T;
+
 export { unwrap } from "solid-js/store";
