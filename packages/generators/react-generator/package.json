@@ -25,10 +25,12 @@
     "picomatch": "^4.0.3"
   },
   "devDependencies": {
+    "@kosmojs/fetch": "workspace:^",
     "@types/picomatch": "^4.0.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.4",
+    "path-to-regexp": "^8.3.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router": "^7.13.0"

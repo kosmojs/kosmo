@@ -6,6 +6,7 @@ import {
   defaults,
   type GeneratorFactory,
   nestedRoutesFactory,
+  type PageRoute,
   pathResolver,
   type ResolvedEntry,
   renderFactory,
@@ -22,9 +23,8 @@ import libEntryServerTpl from "./templates/lib/entry/server.hbs";
 import libPageSamplesPageTpl from "./templates/lib/pageSamples/page.hbs";
 import libPageSamplesStylesTpl from "./templates/lib/pageSamples/styles.css?as=text";
 import libPageSamplesWelcomeTpl from "./templates/lib/pageSamples/welcome.hbs";
-import libReactTpl from "./templates/lib/react.hbs";
+import libReactTpl from "./templates/lib/react.ts?as=text";
 import libRouterTpl from "./templates/lib/router.hbs";
-import paramTpl from "./templates/param.hbs";
 import srcAppTpl from "./templates/src/App.hbs";
 import srcComponentsLinkTpl from "./templates/src/components/Link.hbs";
 import srcEntryClientTpl from "./templates/src/entry/client.hbs";
@@ -44,10 +44,13 @@ export const factory: GeneratorFactory<Options> = async (
     sourceFolder,
   });
 
-  const { render, renderToFile } = renderFactory({
+  const { renderToFile } = renderFactory({
     helpers: {
       createImport: createImportHelper,
       createParamsLiteral: renderHelpers.createParamsLiteral,
+      serializeRoute({ name, pathPattern, params }: PageRoute) {
+        return JSON.stringify({ name, pathPattern, params });
+      },
     },
     partials: {
       routePartial: libEntryRoutePartialTpl,
@@ -128,16 +131,7 @@ export const factory: GeneratorFactory<Options> = async (
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
     const indexRoutes = entries
       .flatMap(({ kind, entry }) => {
-        return kind === "pageRoute"
-          ? [
-              {
-                ...entry,
-                paramsLiteral: entry.params.schema
-                  .map((param) => render(paramTpl, { param }).trim())
-                  .join(", "),
-              },
-            ]
-          : [];
+        return kind === "pageRoute" ? [entry] : [];
       })
       .sort(sortRoutes);
 
