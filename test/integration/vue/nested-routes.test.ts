@@ -14,7 +14,7 @@ const {
 beforeAll(async () => {
   await bootstrapProject();
 
-  await createPageRoutes(nestedRoutes, async ({ name, file }) => {
+  await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
     return () => {
       if (file === "index") {
         return `

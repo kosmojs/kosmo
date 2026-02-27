@@ -1,0 +1,3 @@
+[id="750273046"]{content:"profile/:username/layout"}
+[id="2518856285"]{content:"profile/:username/posts/:postId/layout"}
+[id="3720088866"]{content:"profile/:username/posts/:postId/comments/{...thread}/index"}

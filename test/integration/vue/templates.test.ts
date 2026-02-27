@@ -38,7 +38,7 @@ const {
 
 beforeAll(async () => {
   await bootstrapProject();
-  await createPageRoutes(routes);
+  await createPageRoutes([...routes]);
   await startServer();
 });
 
@@ -47,7 +47,7 @@ afterAll(teardown);
 describe("Vue - Custom Templates", async () => {
   describe("Pattern Matching", () => {
     it("should use custom template for matching route pattern", async () => {
-      await withPageContent("landing", [], ({ content }) => {
+      await withPageContent("landing", {}, ({ content }) => {
         expect(content).toMatch(landingContent);
         expect(content, content).toMatch(`data-testid="${landingContentID}"`);
         expect(content).not.toMatch(defaultContentPatternFor("landing"));
@@ -55,14 +55,14 @@ describe("Vue - Custom Templates", async () => {
     });
 
     it("should use custom template for nested matching route", async () => {
-      await withPageContent("landing/about", [], ({ content }) => {
+      await withPageContent("landing/about", {}, ({ content }) => {
         expect(content).toMatch(landingContent);
         expect(content).not.toMatch(defaultContentPatternFor("landing/about"));
       });
     });
 
     it("should use custom template for glob pattern match", async () => {
-      await withPageContent("marketing/campaigns/summer", [], ({ content }) => {
+      await withPageContent("marketing/campaigns/summer", {}, ({ content }) => {
         expect(content).toMatch(marketingContent);
         expect(content).not.toMatch(
           defaultContentPatternFor("marketing/campaigns/summer"),
@@ -73,7 +73,7 @@ describe("Vue - Custom Templates", async () => {
     it("should use default template for non-matching route", async () => {
       await withPageContent(
         "products/list",
-        [],
+        {},
         ({ content, defaultContentPattern }) => {
           expect(content).toMatch(defaultContentPattern);
           expect(content).not.toMatch(landingContent);
@@ -85,31 +85,35 @@ describe("Vue - Custom Templates", async () => {
 
   describe("Dynamic Routes with Custom Templates", () => {
     it("should apply custom template to dynamic routes", async () => {
-      await withPageContent("landing/[slug]", ["product-a"], ({ content }) => {
-        expect(content).toMatch(landingContent);
-      });
-    });
-
-    it("should apply custom template to routes with optional params", async () => {
-      // Without optional param
-      await withPageContent("landing/search/[[query]]", [], ({ content }) => {
-        expect(content).toMatch(landingContent);
-      });
-
-      // With optional param
       await withPageContent(
-        "landing/search/[[query]]",
-        ["shoes"],
+        "landing/:slug",
+        { slug: "product-a" },
         ({ content }) => {
           expect(content).toMatch(landingContent);
         },
       );
     });
 
-    it("should apply custom template to routes with rest params", async () => {
+    it("should apply custom template to routes with optional params", async () => {
+      // Without optional param
+      await withPageContent("landing/search/{:query}", {}, ({ content }) => {
+        expect(content).toMatch(landingContent);
+      });
+
+      // With optional param
       await withPageContent(
-        "landing/docs/[...path]",
-        ["guide", "getting-started"],
+        "landing/search/{:query}",
+        { query: "shoes" },
+        ({ content }) => {
+          expect(content).toMatch(landingContent);
+        },
+      );
+    });
+
+    it("should apply custom template to routes with splat params", async () => {
+      await withPageContent(
+        "landing/docs/{...path}",
+        { path: ["guide", "getting-started"] },
         ({ content }) => {
           expect(content).toMatch(landingContent);
         },

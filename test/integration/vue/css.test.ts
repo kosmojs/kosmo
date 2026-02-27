@@ -19,7 +19,7 @@ const {
 beforeAll(async () => {
   await bootstrapProject();
 
-  await createPageRoutes(nestedRoutes, async ({ name, file, cssFile }) => {
+  await createPageRoutes([...nestedRoutes], async ({ name, file, cssFile }) => {
     return () => {
       if (file === "layout") {
         return `

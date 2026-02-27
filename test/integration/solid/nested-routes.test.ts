@@ -14,12 +14,12 @@ const {
 beforeAll(async () => {
   await bootstrapProject();
 
-  await createPageRoutes(nestedRoutes, async ({ name, file }) => {
+  await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
     return () => {
       if (file === "index") {
         return `
           export default function Page() {
-            return <div>${name}</div>;
+            return <div>{"${name}"}</div>;
           };
         `;
       }

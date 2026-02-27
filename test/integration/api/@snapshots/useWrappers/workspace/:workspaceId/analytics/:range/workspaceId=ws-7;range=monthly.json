@@ -1,0 +1,1 @@
+["workspace/:workspaceId/analytics/use","workspace/:workspaceId/analytics/:range/use","workspace/:workspaceId/analytics/:range/index"]

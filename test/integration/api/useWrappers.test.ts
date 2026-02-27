@@ -2,7 +2,23 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 import { pathResolver } from "@kosmojs/dev";
 
-import { apiRoutes, setupTestProject, snapshotNameFor } from "../setup";
+import {
+  nestedRoutes,
+  type RouteName,
+  setupTestProject,
+  snapshotNameFor,
+} from "../setup";
+
+const apiRoutes: Array<{
+  name: RouteName;
+  file: "index" | "use";
+  params: Record<string, unknown>;
+}> = nestedRoutes.map(({ file = "index", ...route }) => {
+  return {
+    ...route,
+    file: file === "layout" ? "use" : file,
+  };
+});
 
 const {
   sourceFolder,

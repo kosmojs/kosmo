@@ -24,6 +24,8 @@ const coreSlots: Array<keyof UseSlots> = [
   "validate:response",
 ];
 
+const createRouteName = (slot: keyof UseSlots) => slot.replace(/\W/g, "_");
+
 const { createPath, createImport } = pathResolver({
   appRoot: projectRoot,
   sourceFolder,
@@ -63,7 +65,7 @@ beforeAll(async () => {
 
   for (const slot of coreSlots) {
     const route = {
-      name: `should-throw/${slot}`,
+      name: `should-throw/${createRouteName(slot)}`,
       file: "index",
     };
 
@@ -98,7 +100,7 @@ beforeAll(async () => {
 
   for (const slot of coreSlots) {
     const route = {
-      name: `should-override/${slot}`,
+      name: `should-override/${createRouteName(slot)}`,
       file: "index",
     };
 
@@ -137,7 +139,7 @@ describe("API - useSlots", async () => {
     for (const slot of coreSlots) {
       it(`should throw if not overridden: ${slot}`, async ({ expect }) => {
         try {
-          await withApiResponse(`should-throw/${slot}`, []);
+          await withApiResponse(`should-throw/${createRouteName(slot)}`);
         } catch (error: any) {
           expect(error.response.body).toMatch(
             new RegExp(`${slot} slot supposed to be overridden`),
@@ -148,7 +150,9 @@ describe("API - useSlots", async () => {
 
     for (const slot of coreSlots) {
       it(`should override slotted middleware: ${slot}`, async ({ expect }) => {
-        const response = await withApiResponse(`should-override/${slot}`, []);
+        const response = await withApiResponse(
+          `should-override/${createRouteName(slot)}`,
+        );
         expect(response.body).toEqual(slot);
       });
     }

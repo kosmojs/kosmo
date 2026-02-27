@@ -1,0 +1,1 @@
+["workspace/:workspaceId/team/use","workspace/:workspaceId/team/:memberId/permissions/{...permissionPath}/index"]

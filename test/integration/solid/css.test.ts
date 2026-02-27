@@ -19,14 +19,14 @@ const {
 beforeAll(async () => {
   await bootstrapProject();
 
-  await createPageRoutes(nestedRoutes, async ({ name, file, cssFile }) => {
+  await createPageRoutes([...nestedRoutes], async ({ name, file, cssFile }) => {
     return () => {
       if (file === "layout") {
         return `
           import type { ParentComponent } from "solid-js";
           import "${cssFile}";
           const Layout: ParentComponent = (props) => {
-            return <div>${name} layout {props.children}</div>;
+            return <div>{"${name}"} layout {props.children}</div>;
           }
           export default Layout;
         `;
@@ -34,7 +34,7 @@ beforeAll(async () => {
       return `
         import "${cssFile}";
         export default () => {
-          return <div>${name}</div>;
+          return <div>{"${name}"}</div>;
         }
       `;
     };

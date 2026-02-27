@@ -6,6 +6,7 @@ import { dirname, join, resolve } from "node:path";
 
 import crc from "crc/crc32";
 import got, { type Response } from "got";
+import { compile } from "path-to-regexp";
 import { chromium } from "playwright";
 import { build, createServer } from "vite";
 import { inject } from "vitest";
@@ -17,6 +18,8 @@ import {
   type FRAMEWORKS,
 } from "@kosmojs/cli";
 import { defaults, pathResolver, pathTokensFactory } from "@kosmojs/dev";
+
+import type { RouteName } from "./routes";
 
 const project = {
   name: "integration-test",
@@ -140,20 +143,11 @@ export const setupTestProject = async (opt?: {
 
   const createRoutePath = (
     routeName: string,
-    params: Array<string | number>,
+    params: Record<string, unknown> | undefined,
   ) => {
-    const paramsClone = structuredClone(params);
-    return pathTokensFactory(routeName)
-      .flatMap(({ path, param }) => {
-        if (param?.isRest) {
-          return paramsClone;
-        }
-        if (param) {
-          return paramsClone.splice(0, 1);
-        }
-        return path ? [path] : [];
-      })
-      .join("/");
+    const [, pathPattern] = pathTokensFactory(routeName);
+    const toPath = compile(pathPattern);
+    return toPath({ ...params } as never);
   };
 
   const createDevServer = async () => {
@@ -272,8 +266,8 @@ export const setupTestProject = async (opt?: {
   };
 
   const withPageContent = async (
-    routeName: string,
-    paramsOrPath: Record<string, unknown> | Array<string> | string,
+    routeName: RouteName,
+    paramsOrPath: Record<string, unknown> | string,
     callback?: (a: {
       path: string;
       content: string;
@@ -283,12 +277,7 @@ export const setupTestProject = async (opt?: {
     const path =
       typeof paramsOrPath === "string"
         ? paramsOrPath
-        : createRoutePath(
-            routeName,
-            Array.isArray(paramsOrPath)
-              ? paramsOrPath.flat()
-              : (Object.values(paramsOrPath).flat() as Array<string>),
-          );
+        : createRoutePath(routeName, paramsOrPath);
 
     const url =
       path === ""
@@ -333,16 +322,13 @@ export const setupTestProject = async (opt?: {
 
   const withApiResponse = async (
     routeName: string,
-    paramsOrPath: Record<string, unknown> | Array<string> | string,
+    params?: Record<string, unknown>,
     callback?: (a: {
       path: string;
       response: Response;
     }) => void | Promise<void>,
   ) => {
-    const path = createRoutePath(
-      routeName,
-      Object.values(paramsOrPath).flat() as Array<string>,
-    );
+    const path = createRoutePath(routeName, { ...params });
 
     const url = `${baseURL}/api/${path}`;
 
@@ -384,17 +370,17 @@ export const setupTestProject = async (opt?: {
       templateFactory?: PageTemplateFactory,
     ) {
       if (!skip) {
-        for (const { name, file } of routes) {
-          await createPageRoute(name, file || "index", templateFactory);
+        for (const { name, file = "index" } of routes) {
+          await createPageRoute(name, file, templateFactory);
         }
       }
     },
     async createApiRoutes(
-      routes: Array<{ name: string; file: string }>,
+      routes: Array<{ name: string; file?: string }>,
       templateFactory?: ApiTemplateFactory,
     ) {
       if (!skip) {
-        for (const { name, file } of routes) {
+        for (const { name, file = "index" } of routes) {
           await createApiRoute(name, file, templateFactory);
         }
       }

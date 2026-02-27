@@ -9,15 +9,19 @@ const { createImport } = pathResolver({ sourceFolder });
 
 // Generate template from test cases
 const navigationLinks = routes.map(({ id, name, params, label }) => {
-  const paramsArr = Object.values(params).flat();
-  const paramsStr = paramsArr.length
-    ? `, ${paramsArr.map((p) => `'${p}'`).join(", ")}`
-    : "";
+  const paramsStr = Object.values(params)
+    .map((val) => {
+      if (Array.isArray(val)) {
+        return `[ ${val.map((e) => (/[^\d]/.test(e) ? `'${e}'` : e)).join(", ")} ]`;
+      }
+      return /[^\d]/.test(val) ? `'${val}'` : val;
+    })
+    .join(", ");
   return `
-      <Link :to="['${name}'${paramsStr}]" data-testid="${id}">
-        ${label}
-      </Link>
-    `;
+    <Link :to="['${name}', ${paramsStr}]" data-testid="${id}">
+      ${label}
+    </Link>
+  `;
 });
 
 const navigationTemplate = `
@@ -51,7 +55,7 @@ const {
 
 beforeAll(async () => {
   await bootstrapProject();
-  await createPageRoutes(routes);
+  await createPageRoutes([...routes]);
   await startServer();
 });
 
@@ -71,20 +75,20 @@ describe("Vue - Link Component", async () => {
         const element = $(`a[data-testid="${link.id}"]`);
 
         // Verify link exists (Cheerio doesn't have visibility concept)
-        expect(element.length).toBe(1);
+        expect(element.length).toEqual(1);
 
         // Verify href attribute
         const href = element.attr("href");
-        expect(href).toBe(link.href);
+        expect(href).toEqual(link.href);
 
         // Verify text content
         const text = element.text().trim(); // trim() removes whitespace
-        expect(text).toBe(link.label);
+        expect(text).toEqual(link.label);
       }
 
       // Verify total link count
       const allLinks = $("a");
-      expect(allLinks.length).toBe(routes.length);
+      expect(allLinks.length).toEqual(routes.length);
     });
   });
 });

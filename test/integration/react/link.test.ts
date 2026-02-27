@@ -9,12 +9,11 @@ const { createImport } = pathResolver({ sourceFolder });
 
 // Generate template from test cases
 const navigationLinks = routes.map(({ id, name, params, label }) => {
-  const paramsArr = Object.values(params).flat();
-  const paramsStr = paramsArr.length
-    ? `, ${paramsArr.map((p) => JSON.stringify(p)).join(", ")}`
-    : "";
+  const paramsStr = Object.values(params)
+    .map((val) => JSON.stringify(val))
+    .join(", ");
   return `
-    <Link to={["${name}"${paramsStr}]} data-testid="${id}">
+    <Link to={["${name}", ${paramsStr}]} data-testid="${id}">
       ${label}
     </Link>
   `;
@@ -51,7 +50,7 @@ const {
 
 beforeAll(async () => {
   await bootstrapProject();
-  await createPageRoutes(routes);
+  await createPageRoutes([...routes]);
   await startServer();
 });
 

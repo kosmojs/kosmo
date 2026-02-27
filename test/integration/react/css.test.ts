@@ -19,14 +19,14 @@ const {
 beforeAll(async () => {
   await bootstrapProject();
 
-  await createPageRoutes(nestedRoutes, async ({ name, file, cssFile }) => {
+  await createPageRoutes([...nestedRoutes], async ({ name, file, cssFile }) => {
     return () => {
       if (file === "layout") {
         return `
           import { Outlet } from "react-router";
           import "${cssFile}";
           export default () => {
-            return <div>${name} layout <Outlet /></div>;
+            return <div>{"${name}"} layout <Outlet /></div>;
           }
         `;
       }
@@ -34,7 +34,7 @@ beforeAll(async () => {
       return `
         import "${cssFile}";
         export default () => {
-          return <div>${name}</div>;
+          return <div>{"${name}"}</div>;
         }
       `;
     };
