@@ -4,6 +4,7 @@ import {
   defaults,
   type GeneratorFactory,
   nestedRoutesFactory,
+  type PageRoute,
   pathResolver,
   type ResolvedEntry,
   renderFactory,
@@ -21,9 +22,8 @@ import libPageSamplesPageTpl from "./templates/lib/pageSamples/page.hbs";
 import libPageSamplesStylesTpl from "./templates/lib/pageSamples/styles.css?as=text";
 import libPageSamplesWelcomeTpl from "./templates/lib/pageSamples/welcome.hbs";
 import libRouterTpl from "./templates/lib/router.hbs";
-import libUnwrapTpl from "./templates/lib/unwrap.hbs";
-import libVueTpl from "./templates/lib/vue.hbs";
-import paramTpl from "./templates/param.hbs";
+import libUnwrapTpl from "./templates/lib/unwrap.ts?as=text";
+import libVueTpl from "./templates/lib/vue.ts?as=text";
 import srcAppTpl from "./templates/src/App.hbs";
 import srcComponentsLinkTpl from "./templates/src/components/Link.hbs";
 import srcEntryClientTpl from "./templates/src/entry/client.hbs";
@@ -44,10 +44,13 @@ export const factory: GeneratorFactory<Options> = async (
     sourceFolder,
   });
 
-  const { render, renderToFile } = renderFactory({
+  const { renderToFile } = renderFactory({
     helpers: {
       createImport: createImportHelper,
       createParamsLiteral: renderHelpers.createParamsLiteral,
+      serializeRoute({ name, pathPattern, params }: PageRoute) {
+        return JSON.stringify({ name, pathPattern, params });
+      },
     },
     partials: {
       routePartial: libEntryRoutePartialTpl,
@@ -131,16 +134,7 @@ export const factory: GeneratorFactory<Options> = async (
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
     const indexRoutes = entries
       .flatMap(({ kind, entry }) => {
-        return kind === "pageRoute"
-          ? [
-              {
-                ...entry,
-                paramsLiteral: entry.params.schema
-                  .map((param) => render(paramTpl, { param }).trim())
-                  .join(", "),
-              },
-            ]
-          : [];
+        return kind === "pageRoute" ? [entry] : [];
       })
       .sort(sortRoutes);
 

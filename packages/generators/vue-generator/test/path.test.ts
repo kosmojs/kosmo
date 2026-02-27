@@ -4,45 +4,39 @@ import { pathTokensFactory } from "@kosmojs/dev";
 
 import { pathFactory } from "../src/base";
 
+const createPathPattern = (path: string) => {
+  return pathFactory(pathTokensFactory(path)[0]);
+};
+
 describe("pathFactory", () => {
   test("no params", () => {
-    expect(pathFactory(pathTokensFactory("some/page"))).toEqual("some/page");
+    expect(createPathPattern("some/page")).toEqual("some/page");
   });
 
   test("no params with extension", () => {
-    expect(pathFactory(pathTokensFactory("some/page.html"))).toEqual(
-      "some/page.html",
-    );
+    expect(createPathPattern("some/page.html")).toEqual("some/page.html");
   });
 
   test("required params", () => {
-    expect(pathFactory(pathTokensFactory("some/[param]"))).toEqual(
-      "some/:param",
-    );
+    expect(createPathPattern("some/:param")).toEqual("some/:param");
   });
 
   test("optional params", () => {
-    expect(pathFactory(pathTokensFactory("some/[[param]]"))).toEqual(
-      "some/:param?",
-    );
+    expect(createPathPattern("some/{:param}")).toEqual("some/:param?");
   });
 
-  test("rest params", () => {
-    expect(pathFactory(pathTokensFactory("some/[...param]"))).toEqual(
-      "some/:param(.*)?",
-    );
+  test("splat params", () => {
+    expect(createPathPattern("some/{...param}")).toEqual("some/:param(.*)?");
   });
 
   test("combined params", () => {
-    expect(
-      pathFactory(
-        pathTokensFactory("some/[required]/with/[[optional]]/and/[...rest]"),
-      ),
-    ).toEqual("some/:required/with/:optional?/and/:rest(.*)?");
+    expect(createPathPattern("some/:required/with/{...rest}")).toEqual(
+      "some/:required/with/:rest(.*)?",
+    );
   });
 
   test("index prefix replaced with /", () => {
-    expect(pathFactory(pathTokensFactory("index"))).toEqual("");
-    expect(pathFactory(pathTokensFactory("index/[id]"))).toEqual(":id");
+    expect(createPathPattern("index")).toEqual("");
+    expect(createPathPattern("index/:id")).toEqual(":id");
   });
 });

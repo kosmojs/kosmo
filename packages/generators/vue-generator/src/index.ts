@@ -13,6 +13,7 @@ export default (options?: Options): GeneratorConstructor => {
     dependencies: {
       "vue-router": self.devDependencies["vue-router"],
       vue: self.devDependencies.vue,
+      "path-to-regexp": self.devDependencies["path-to-regexp"],
     },
     devDependencies: {
       "@vitejs/plugin-vue": self.devDependencies["@vitejs/plugin-vue"],

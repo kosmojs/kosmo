@@ -2,7 +2,14 @@ import { join } from "node:path";
 
 import picomatch, { type Matcher } from "picomatch";
 
-import type { NestedRouteEntry, PathToken, RouteEntry } from "@kosmojs/dev";
+import {
+  type NestedRouteEntry,
+  normalizeStaticValue,
+  type PathToken,
+  type PathTokenParamPart,
+  type PathTokenStaticPart,
+  type RouteEntry,
+} from "@kosmojs/dev";
 
 import type { Options } from "./types";
 
@@ -15,27 +22,55 @@ export type TransformedEntry = {
 };
 
 export const pathFactory = (pathTokens: Array<PathToken>) => {
+  const staticValue = ({ value }: PathTokenStaticPart) => {
+    return normalizeStaticValue(value);
+  };
+
+  const paramValue = (p: PathTokenParamPart) => {
+    if (p.kind === "splat") {
+      return `:${p.name}(.*)?`;
+    }
+    if (p.kind === "optional") {
+      return `:${p.name}?`;
+    }
+    return `:${p.name}`;
+  };
+
   return pathTokens
-    .flatMap(({ path, param }) => {
-      if (param?.isRest) {
-        return [`:${param.name}(.*)?`];
+    .flatMap((token) => {
+      if (token.kind === "static") {
+        return [staticValue(token.parts[0] as PathTokenStaticPart)];
       }
-      if (param?.isOptional) {
-        return [`:${param.name}?`];
+
+      if (token.kind === "param") {
+        return [paramValue(token.parts[0] as PathTokenParamPart)];
       }
-      if (param) {
-        return [`:${param.name}`];
-      }
-      return path === "/" ? [] : [path.replace(/:/g, "\\\\:")];
+
+      return [
+        token.parts
+          .map((part) => {
+            return part.type === "static"
+              ? staticValue(part)
+              : paramValue(part);
+          })
+          .join(""),
+      ];
     })
-    .join("/")
-    .replace(/\+/g, "\\\\+");
+    .join("/");
 };
 
 export const traverseFactory = (options: Options) => {
   const metaMatchers: Array<[Matcher, unknown]> = Object.entries({
     ...options.meta,
   }).map(([pattern, meta]) => [picomatch(pattern), meta]);
+
+  const hasSplatParam = (token: PathToken | undefined) => {
+    if (token?.kind === "param") {
+      const param = token.parts[0] as PathTokenParamPart;
+      return param?.kind === "splat";
+    }
+    return false;
+  };
 
   const traverseEntries = (
     entries: Array<NestedRouteEntry>,
@@ -58,7 +93,9 @@ export const traverseFactory = (options: Options) => {
       const metaMatch = metaMatchers.find(([isMatch]) => isMatch(name));
       const meta = metaMatch?.[1] ? JSON.stringify(metaMatch?.[1]) : undefined;
 
-      if (pathTokens.at(-1)?.param?.isRest) {
+      const lastToken = pathTokens.at(-1);
+
+      if (hasSplatParam(lastToken)) {
         if (index && layout) {
           return [
             {
