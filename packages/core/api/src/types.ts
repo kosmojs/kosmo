@@ -1,5 +1,7 @@
 /// <reference types="@types/bun" />
 
+import type { ValidationErrorEntry } from "./errors/types";
+
 export enum HTTPMethods {
   HEAD = "HEAD",
   OPTIONS = "OPTIONS",
@@ -57,7 +59,7 @@ export type RouterRouteSource<MiddlewareT> = {
   // just automatically imported from use.ts files
   useWrappers: [...a: Array<MiddlewareDefinition<MiddlewareT>>];
   definitionItems: Array<RouteDefinitionItem<MiddlewareT>>;
-  params: Array<[name: string, isRest?: boolean]>;
+  params: Array<[name: string, isSplat?: boolean]>;
   numericParams: Array<string>;
   validationSchemas: ValidationSchemas;
   meta?: Record<string, unknown>;
@@ -194,7 +196,7 @@ export const RequestBodyTargets = {
   json: "JSON request body",
   form: "URL-encoded form data",
   multipart: "Multipart form data",
-  raw: "Raw body format (string/Buffer/Blob/ArrayBuffer)",
+  raw: "Raw body format (string/Buffer/ArrayBuffer/Blob)",
 } as const;
 
 export const RequestValidationTargets = {
@@ -217,8 +219,12 @@ export type ValidationDefmap = Partial<{
   cookies: Record<string, unknown>;
 
   /**
-   * Request body targets.
-   * One target per handler.
+   * Request body targets. One target per handler.
+   *
+   * POST<
+   *   json: { id: number }
+   *   // or form/multipart/raw
+   * >((ctx) => {})
    * */
   json: unknown;
   form: Record<string, unknown>;
@@ -330,35 +336,4 @@ export type ValidationSchemas<Extend = object> = {
       customErrors?: ValidationCustomErrors;
     }>
   >;
-};
-
-/**
- * Shape of individual validation errors emitted by generators.
- */
-export type ValidationErrorEntry = {
-  /** JSON Schema keyword that triggered the error (e.g. `format`, `maxItems`, `maxLength`). */
-  keyword: string;
-  /** JSON Pointer–style path to the invalid field (matches JSON Schema `instancePath`). */
-  path: string;
-  /** Human-readable error message. */
-  message: string;
-  /** Constraint parameters (e.g. `{ limit: 5 }`, `{ format: "email" }`). */
-  params?: Record<string, unknown>;
-  /** Optional error code for i18n/l10n or custom handling. */
-  code?: string;
-};
-
-export type ValidationErrorData = {
-  errors: Array<ValidationErrorEntry>;
-  /**
-   * Formats errors into a single human-readable message.
-   * @example: Validation failed: user: missing required properties: "email", "name"; password: must be at least 8 characters long
-   * */
-  errorMessage: string;
-  /**
-   * Gets a simple error summary for quick feedback.
-   * @example: 2 validation errors found across 2 fields
-   * */
-  errorSummary: string;
-  route: string;
 };
