@@ -52,7 +52,7 @@ for (const [route, payloads] of typedEntries(payloadMap)) {
               },
             });
 
-            expect(paramsVariant).toEqual(Object.values(params).flat());
+            expect(paramsVariant).toEqual(Object.values(params));
 
             if (variant.headers) {
               for (const [key, val] of Object.entries(variant.headers)) {

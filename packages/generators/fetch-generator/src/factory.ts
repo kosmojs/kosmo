@@ -1,12 +1,15 @@
 import type { ValidationTarget } from "@kosmojs/api";
 import {
+  type ApiRoute,
   type GeneratorFactory,
   pathResolver,
   type ResolvedEntry,
   renderFactory,
+  renderHelpers,
   sortRoutes,
 } from "@kosmojs/dev";
 
+import fetchLibTpl from "./templates/fetch:lib.ts?as=text";
 import fetchTpl from "./templates/fetch.hbs";
 import routeTpl from "./templates/route.hbs";
 import unwrapTpl from "./templates/unwrap.hbs";
@@ -20,6 +23,18 @@ export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
   const { renderToFile } = renderFactory({
     helpers: {
       createImport: createImportHelper,
+      createParamsLiteral: renderHelpers.createParamsLiteral,
+      serializeRoute({ name, pathPattern, params }: ApiRoute) {
+        return `{
+          name: "${name}",
+          pathPattern: "${pathPattern}",
+          params: {
+            id: "${params.id}",
+            schema: ${JSON.stringify(params.schema)},
+            resolvedType: undefined,
+          },
+        }`;
+      },
     },
   });
 
@@ -36,7 +51,14 @@ export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
       .flatMap(({ kind, entry }) => (kind === "apiRoute" ? [entry] : []))
       .sort(sortRoutes);
 
-    await renderToFile(`${createPath.fetch()}.ts`, fetchTpl, { routes });
+    for (const [file, template] of [
+      ["fetch.ts", fetchTpl],
+      ["fetch:lib.ts", fetchLibTpl],
+    ]) {
+      await renderToFile(createPath.lib(file), template, {
+        routes,
+      });
+    }
 
     for (const { kind, entry } of updatedEntries) {
       if (kind === "apiRoute") {
@@ -87,15 +109,6 @@ export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
           };
         });
 
-        const paramsMapper = entry.params.schema.map(
-          ({ name, isOptional, isRest }, idx) => ({
-            name,
-            isOptional,
-            isRest,
-            idx,
-          }),
-        );
-
         const payloadTypes = Object.entries(
           validationTypes.reduce<
             Record<string, Array<(typeof validationTypes)[number]>>
@@ -134,7 +147,6 @@ export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
           route: entry,
           validationTypes,
           routeMethods,
-          paramsMapper,
           payloadTypes,
           responseTypes,
           runtimeValidation,

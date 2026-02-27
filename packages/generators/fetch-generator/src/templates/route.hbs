@@ -15,6 +15,8 @@ import {
   unwrap,
 } from "{{ createImport "lib" "unwrap" }}";
 
+import { fetchClientFactory } from "{{ createImport "lib" "fetch:lib" }}";
+
 import type {
   {{route.params.id}},
 {{#each validationTypes}}  {{id}},
@@ -24,13 +26,7 @@ import type {
 export { ValidationError } from "@kosmojs/api/errors";
 
 export type ParamsT = [
-  {{#each route.params.schema}}
-  {{#if isRest}}
-  ...{{const}}: Array<string | number>
-  {{else}}
-  {{const}}{{#unless isRequired}}?{{/unless}}: {{../route.params.id}}["{{name}}"],
-  {{/if}}
-  {{/each}}
+  {{createParamsLiteral route.params}}
 ];
 
 {{#each payloadTypes}}
@@ -46,43 +42,7 @@ export type ResponseT = {
   {{/each}}
 }
 
-const paramsMapper = (params: ParamsT) => {
-  return {
-    {{#each paramsMapper}}
-    {{#if isRest}}
-      "{{name}}": params.slice({{idx}}),
-    {{else if isOptional}}
-      ...params[{{idx}}] ? { "{{name}}": params[{{idx}}] } : {},
-    {{else}}
-      "{{name}}": params[{{idx}}],
-    {{/if}}
-    {{/each}}
-  }
-}
-
-const pathTokens: Array<[ path: string, param?: { isRest: boolean } ]> = [
-  {{#each route.pathTokens}}
-  [
-    "{{path}}",{{#if param}}
-    { isRest: {{#if param.isRest}}true{{else}}false{{/if}} }{{/if}}
-  ],
-  {{/each}}
-];
-
-const parametrize = (params: ParamsT) => {
-  const paramsClone = structuredClone(params);
-  return pathTokens
-    .flatMap(([ path, param ]) => {
-      if (param?.isRest) {
-        return paramsClone;
-      }
-      if (param) {
-        return paramsClone.splice(0, 1);
-      }
-      return [path];
-    })
-    .join("/");
-}
+const { paramsMapper, parametrize } = fetchClientFactory({{serializeRoute route}});
 
 const fetchApi = fetchFactory(join(baseurl, apiurl), { stringify });
 
@@ -103,10 +63,10 @@ export const {{method}} = (
   unknown
   {{/if}}
 > => {
-  const params = unwrap(_params || []);
+  const params = unwrap<ParamsT>(_params || []);
   {{#if ../runtimeValidation}}
   if (validationSchemas.params) {
-    validationSchemas.params.validate(paramsMapper(params as never));
+    validationSchemas.params.validate(paramsMapper(params));
   }
   {{#each payloadTypes}}
   if (validationSchemas.{{target}}?.{{../method}}) {
@@ -116,7 +76,7 @@ export const {{method}} = (
   }
   {{/each}}
   {{/if}}
-  return fetchApi.{{method}}(parametrize(params as never), _payload as never);
+  return fetchApi.{{method}}(parametrize(params), _payload as never);
 };
 {{/each}}
 

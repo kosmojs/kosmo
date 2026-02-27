@@ -4,11 +4,6 @@ import {{id}} from "{{ createImport "fetch" name }}";
 
 export { ValidationError } from "@kosmojs/api/errors";
 
-export type PayloadT = {
-{{#each routes}}  "{{name}}": import("{{ createImport "fetch" name }}").PayloadT;
-{{/each}}
-}
-
 export type ResponseT = {
 {{#each routes}}  "{{name}}": import("{{ createImport "fetch" name }}").ResponseT;
 {{/each}}
