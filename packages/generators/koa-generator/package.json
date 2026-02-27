@@ -30,7 +30,7 @@
   "devDependencies": {
     "@koa/router": "^15.3.0",
     "@kosmojs/api": "workspace:^",
-    "@types/formidable": "^3.4.6",
+    "@types/formidable": "^3.4.7",
     "@types/koa": "^3.0.1",
     "@types/koa-compose": "^3.2.9",
     "@types/picomatch": "^4.0.2",
@@ -38,11 +38,11 @@
     "cookie": "^1.1.1",
     "form-data": "^4.0.5",
     "formidable": "^3.5.4",
-    "koa": "^3.1.1",
+    "koa": "^3.1.2",
     "koa-compose": "^4.1.0",
     "light-my-request": "^6.6.0",
     "qs": "^6.15.0",
     "raw-body": "^3.0.2",
-    "typebox": "^1.0.81"
+    "typebox": "^1.1.5"
   }
 }

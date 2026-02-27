@@ -26,13 +26,13 @@
     "pub:tags": "git push --follow-tags"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.2",
+    "@biomejs/biome": "^2.4.4",
     "@changesets/cli": "^2.29.8",
     "@kosmojs/api": "workspace:^",
     "@kosmojs/cli": "workspace:^",
     "@kosmojs/config": "workspace:^",
     "@kosmojs/dev": "workspace:^",
-    "@types/node": "^25.2.3",
+    "@types/node": "^25.3.2",
     "cheerio": "^1.2.0",
     "crc": "^4.3.2",
     "esbuild": "^0.27.3",
@@ -40,6 +40,7 @@
     "got": "^14.6.6",
     "msw": "^2.12.10",
     "ora": "^9.3.0",
+    "path-to-regexp": "^8.3.0",
     "playwright": "^1.58.2",
     "resolve-tspaths": "^0.8.23",
     "rimraf": "^6.1.3",
