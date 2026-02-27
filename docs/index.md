@@ -1,20 +1,19 @@
 ---
 layout: home
-description: Structured Vite template for type-safe full-stack apps
+description: KosmoJS - a Vite-based full‑stack meta‑framework for type‑safe apps
 
 hero:
   name: KosmoJS
   tagline: <span class="tagline-container">
-        <span class="headline">Structured Vite Template.</span>
-        <span>Build type-safe full-stack apps.</span>
+        <span class="headline">A Vite-based full‑stack meta‑framework for type‑safe apps</span>
         <span>Multiple source folders.</span>
         <span>Directory-based nested routing.</span>
         <span>Runtime end-to-end validation.</span>
         <span>Generated fetch clients, OpenAPI spec.</span>
-        <span>Multiple frameworks (SolidJS, React, Vue).</span>
+        <span>Koa, Hono, SolidJS, React, Vue and more.</span>
     </span>
-  image:
-    src: /KosmoJS.svg
+  # image:
+  #   src: /KosmoJS.svg
   actions:
     - theme: brand
       text: Get Started
@@ -41,17 +40,17 @@ features:
 
   - icon: 🔗
     title: Generated Fetch Clients + OpenAPI spec
-    details: Fully-typed fetch clients with client-side validation. Invalid requests never reach your server.
+    details: Typed fetch clients with client-side validation. Invalid requests never reach your server.
     link: /fetch/intro
 
   - icon: 🎨
     title: Multiple Frameworks
-    details: Currently supports SolidJS, React, and Vue. Or none for API-only source folders.
+    details: Currently supports Koa / Hono for backend, SolidJS / React / Vue for frontend.
     link: /start
 
   - icon: 🔧
     title: Built on Proven Tools
-    details: Koa for APIs, Vite for frontend, TypeScript for safety. No proprietary abstractions.
+    details: No proprietary abstractions, just the tools you already know (or easy to learn).
     link: /api-server/intro
 
 ---
@@ -60,13 +59,14 @@ features:
 
 ## 🎯 The What
 
-`KosmoJS` is a **structured Vite template** that keeps your full-stack concerns aligned.
+`KosmoJS` is a **meta-framework** that keeps your full-stack concerns aligned.
 
 Rather than inventing yet another framework, `KosmoJS` integrates proven tools -
-`TypeScript`, `Vite`, `Koa`, and your frontend framework - into a clear organizational pattern.
+`TypeScript`, `Vite`, `Koa`/`Hono`, and your frontend framework - into a clear organizational pattern.
 Separation of concerns isn't something you have to remember - it's built into the structure.
 
-No proprietary abstractions. No new paradigms to learn. Just thoughtful structure around tools you already know.
+No proprietary abstractions. No new paradigms.
+Just thoughtful structure around tools you already know (or easy to learn).
 
 📘 [Learn more](/about)
 
@@ -80,37 +80,43 @@ No proprietary abstractions. No new paradigms to learn. Just thoughtful structur
 🔹 Customer application at `/app`<br>
 🔹 Admin dashboard at `/admin`<br>
 
-All in one monorepo-like project, each with independent routing and configuration, yet sharing types and validation logic.<br>
+All in one monorepo-like project, each with independent routing and configuration,
+yet sharing types and validation logic.<br>
 **API / Pages separation** keeps server and client code from mixing.
 Your directory structure enforces boundaries that code review can't.
 
-📘 [Getting started](/start) · [Directory-based routing](/routing/intro)
+📘 [Getting started](/start)
+· [Directory-based routing](/routing/intro)
 
 ---
 
 ## 📦 The How
 
-At its core, `KosmoJS` structures full-stack `Vite` development around a `Koa` application.
+Being a Vite-based meta‑framework, KosmoJS unifies your frontend framework
+(Solid/React/Vue) with your backend choice (Koa/Hono) in a type‑safe, organized structure.
 
 🔹 `Vite` handles your frontend builds and organizational structure.<br>
-🔹 `Koa` powers your API runtime with [runtype validation](/validation/intro) and middleware composition.<br>
+🔹 `Koa`/`Hono` powers your API runtime with [runtype validation](/validation/intro) and middleware composition.<br>
 🔹 `KosmoJS` is the structured template that brings them together.<br>
 
 ---
 
 ## 🛡️ Type Safety & Validation
 
-`KosmoJS` converts your types into runtime validation routines, ensuring type safety beyond compile time - no duplication, no drift.
+`KosmoJS` converts your types into runtime validation routines,
+ensuring type safety beyond compile time - no duplication, no drift.
 
-Define parameter types, payload structures, and response shapes once. `KosmoJS` generates:
+Based on your parameter types, payload structures, and response shapes, `KosmoJS` generates:
 - Runtime validators for your API
 - Typed fetch clients for your frontend
 - Client-side validation that catches errors before requests
 - As well as OpenAPI schema for your entire API
 
-Everything stays aligned because everything derives from the same source of truth.
+Everything stays aligned because everything derives from the same source of truth - your types.
 
-📘 [Type safety overview](/api-server/type-safety/params) · [Validation](/validation/intro) · [Payload validation](/validation/payload)
+📘 [Type safety overview](/api-server/type-safety/params)
+· [Validation](/validation/intro)
+· [Payload validation](/validation/payload)
 
 ---
 
@@ -120,9 +126,12 @@ Every API route gets a fully-typed fetch client with built-in validation.
 Your frontend knows exactly what parameters each endpoint expects,
 what payload structure it accepts, and what response shape it returns.
 
-Invalid data is caught client-side, before network requests. Your API never processes malformed requests.
+Invalid data is caught client-side, before network requests.
+Your API never processes malformed requests.
 
-📘 [Fetch clients intro](/fetch/intro) · [Getting started](/fetch/start) · [Client-side validation](/fetch/validation)
+📘 [Fetch clients intro](/fetch/intro)
+· [Getting started](/fetch/start)
+· [Client-side validation](/fetch/validation)
 
 ---
 
@@ -135,7 +144,8 @@ compose request handling precisely, maintain consistent patterns across routes.
 
 Development and production use the same structure - what you build locally is what deploys.
 
-📘 [Dev workflow](/api-server/development-workflow) · [Middleware patterns](/api-server/use-middleware/intro)
+📘 [Dev workflow](/api-server/development-workflow)
+· [Middleware patterns](/api-server/use-middleware/intro)
 
 ---
 
@@ -164,4 +174,10 @@ Separation of concerns built into the filesystem.
 You choose your frontend framework, state management, styling approach, database, and everything else.<br>
 The structure scales; your choices remain free.
 
-📘 [About KosmoJS](/about) · [Features](/features)
+📘 [About KosmoJS](/about)
+· [Features](/features)
+
+<hr />
+<div class="text-center">
+  <LinkButton href="/start">Get Started</LinkButton>
+</div>

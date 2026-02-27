@@ -16,18 +16,17 @@ Whenever you add a page, the generator inspects its location in the folder
 hierarchy and produces a matching route definition. Those generated routes are
 written into your `lib` directory and then consumed by your `router.ts` file.
 
-For example, if you create a page component at `pages/users/[id]/index.vue`,
+For example, if you create a page component at `pages/users/:id/index.vue`,
 the generator produces a route entry similar to:
 
 ```ts
 {
-  name: "users/[id]",
+  name: "users/:id",
   path: "/users/:id",
-  component: () => import("@/front/pages/users/[id]/index.vue"),
+  component: () => import("@/front/pages/users/:id/index.vue"),
 }
 ```
 
-The path uses `Vue` Router's parameter syntax (`:id` instead of `[id]`).
 The generator translates the directory-based convention that `KosmoJS` uses into
 the format `Vue` Router expects, so you can think in terms of folders while the
 router receives properly structured paths.

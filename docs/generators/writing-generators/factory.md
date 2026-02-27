@@ -6,7 +6,7 @@ head:
   - - meta
     - name: keywords
       content: generator factory, plugin options, watch handler, code generation,
-        formatters, generator initialization, route processing
+        generator initialization, route processing
 ---
 
 The factory function initializes your generator and returns `watch` and `build` handlers:
@@ -19,7 +19,7 @@ export const factory: GeneratorFactory<Options> = async (
   pluginOptions,
   generatorOptions
 ) => {
-  const { appRoot, sourceFolder, formatters } = pluginOptions;
+  const { appRoot, sourceFolder } = pluginOptions;
 
   // Perform initialization
   // Set up paths, prepare templates, etc.
@@ -46,7 +46,6 @@ shared across all generators:
 - `appRoot` - Absolute path to project root
 - `sourceFolder` - Name of the source folder being processed
 - `outDir` - Build output directory
-- `formatters` - Array of code formatters to apply
 - `refineTypeName` - Name used for type refinements (default: "TRefine")
 - `watcher` - File watcher configuration
 

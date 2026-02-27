@@ -44,7 +44,6 @@
   display:flex;
   flex-wrap:wrap;
   gap: .2rem;
-  justify-content: center;
 }
 
 .VPHero .tagline-container > .headline {
@@ -52,14 +51,4 @@
   font-style: italic;
   color:var(--vp-c-white);
   margin-bottom: 0.8rem;;
-}
-
-.VPHero .tagline-container > span {
-  white-space: nowrap;
-}
-
-@media (min-width: 960px) {
-  .VPHero .tagline-container {
-    justify-content: left;
-  }
 }

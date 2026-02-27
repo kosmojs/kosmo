@@ -28,7 +28,7 @@ but the runtime validator needs explicit type definitions it can analyze.
 
 ## 🚫 Problematic Naming
 
-```typescript
+```ts
 type Event = {
   id: number;
   name: string;
@@ -37,7 +37,7 @@ type Event = {
 
 // This compiles but fails runtime validation
 export default defineRoute(({ POST }) => [
-  POST<Event>(async (ctx) => {
+  POST<{ json: Event }>(async (ctx) => {
     // Validation will fail because Event is treated as built-in DOM Event
     // The validator doesn't see your custom definition
   }),
@@ -46,7 +46,7 @@ export default defineRoute(({ POST }) => [
 
 ## ✅ Recommended Naming
 
-```typescript
+```ts
 type EventT = {
   id: number;
   name: string;
@@ -62,7 +62,7 @@ type TEvent = {
 
 // Runtime validation works correctly
 export default defineRoute(({ POST }) => [
-  POST<EventT>(async (ctx) => {
+  POST<{ json: EventT }>(async (ctx) => {
     // Validation succeeds with your custom type
   }),
 ]);

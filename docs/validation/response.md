@@ -17,34 +17,23 @@ that you actually return the data structure your types promise.
 This catches bugs where handlers might return incomplete objects, wrong types, or unexpected structures.
 
 Response validation works similarly to payload validation,
-using the second type argument to your method handler:
+just use `response` property to provide response schema, status code, content type and body:
 
 ```ts [api/users/index.ts]
 import type { User } from "@/front/types/api-payload";
 import { defineRoute } from "_/front/api/users";
 
 export default defineRoute(({ GET }) => [
-  GET<
-    never, // or add a type to validate payload // [!code hl:2]
-    User
-  >(async (ctx) => {
-    const user = await fetchUserFromDatabase(ctx.params.id);
-
-    // ctx.body must be a valid User // [!code hl:2]
-    // If it doesn't match the User type, KosmoJS throws a ValidationError
-    ctx.body = user;
+  GET<{
+    response: [200, "json", User], // [!code hl]
+  }>(async (ctx) => {
+    // response must comply to defined schema
   }),
 ]);
 ```
 
-In this example, we use `never` as the payload type because request not supposed to have any payload.
-The second type argument specifies that the response should match the `User` type.
-
-Also `TRefine` can be used for fine-grained validation. ([Details ➜ ](/validation/refine))
-
 Before sending the response to the client,
-`KosmoJS` validates that `ctx.body` actually contains a properly structured User object
-with all required fields matching their expected types.
+`KosmoJS` validates that status, content type and body actually matches defined schema.
 
 If validation fails - perhaps because the database returned a user object that's missing the `preferences` field,
 or because the `profile.email` doesn't match email format constraints - `KosmoJS` throws a ValidationError
@@ -52,23 +41,6 @@ instead of sending invalid data to the client.
 
 This protects your API consumers from receiving malformed data and helps you catch bugs in your handler logic.
 
-For routes that both receive and return validated data:
-
-```ts [api/example/index.ts]
-export default defineRoute(({ POST }) => [
-  POST<
-    CreateUserPayload, // [!code hl:2]
-    User
-  >(async (ctx) => {
-    // ctx.payload is validated as CreateUserPayload // [!code hl]
-    const newUser = await createUser(ctx.payload);
-
-    // ctx.body must be a valid User // [!code hl]
-    ctx.body = newUser;
-  }),
-]);
-```
-
-Both the incoming request payload and the outgoing response body are validated automatically.
-
-This end-to-end validation gives you confidence that data flows through your API correctly.
+Another major benefit of defining response schemas is automatic `OpenAPI` schema generation.
+This gives you both type safety and API documentation in one step.
+([Details ➜ ](/generators/openapi/intro))

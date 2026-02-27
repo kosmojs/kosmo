@@ -35,7 +35,7 @@ from external sources like databases or third-party APIs.
 These sources might change their data shapes without warning,
 and response validation catches these changes before they reach your users.
 
-- Keep the `core/api/use.ts` file updated to match your application's error handling conventions.
+- Keep the `api/use.ts` file updated to match your application's error handling conventions.
 Validation errors are just one type of error your API might encounter.
 Handle them consistently with your other error types in terms of status codes, message formats, and logging.
 

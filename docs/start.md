@@ -6,7 +6,7 @@ head:
   - - meta
     - name: keywords
       content: vite setup, typescript project setup, create vite app, multi-folder vite,
-        koa api, solidjs setup, react setup, vue setup, vite dev server
+        hono api, koa api, solidjs setup, react setup, vue setup, vite dev server
 ---
 
 **Starting your KosmoJS journey is a breeze!** ✨
@@ -28,23 +28,26 @@ In just a few commands, you'll have a fully-configured `Vite` project with:
 ## 🚀 Create Your Project
 
 ::: code-group
-```sh [pnpm]
-pnpm dlx kosmojs my-app
+```sh [npm]
+npm create kosmo
+# non-interactive mode: npm create kosmo --name my-app
 ```
 
-```sh [npm]
-npx kosmojs my-app
+```sh [pnpm]
+pnpm create kosmo
+# non-interactive mode: pnpm create kosmo --name my-app
 ```
 
 ```sh [yarn]
-yarn dlx kosmojs my-app
+yarn create kosmo
+# non-interactive mode: yarn create kosmo --name my-app
 ```
 :::
 
 Navigate to your project:
 
 ```sh
-cd my-app
+cd ./my-app
 ```
 
 All subsequent commands run from here.
@@ -54,12 +57,12 @@ All subsequent commands run from here.
 This is absolutely necesarry to continue!
 
 ::: code-group
-```sh [pnpm]
-pnpm install
-```
-
 ```sh [npm]
 npm install
+```
+
+```sh [pnpm]
+pnpm install
 ```
 
 ```sh [yarn]
@@ -67,8 +70,7 @@ yarn install
 ```
 :::
 
-
-## 📁 Create Your First Source Folder
+## 📁 Create a Source Folder
 
 Unlike standard Vite templates, `KosmoJS` doesn't create a source folder automatically.
 
@@ -78,12 +80,12 @@ another for an admin panel, a third for a marketing site, and so on.
 Each source folder is completely independent with its own configuration, base URL, and dev server port.
 
 ::: code-group
-```sh [pnpm]
-pnpm +folder
-```
-
 ```sh [npm]
 npm run +folder
+```
+
+```sh [pnpm]
+pnpm +folder
 ```
 
 ```sh [yarn]
@@ -95,24 +97,41 @@ You'll configure:
 - **Folder name** - e.g., `front`
 - **Base URL** - Where this app serves from (default: `/`)
 - **Dev server port** - Port for development (default: `4000`)
-- **Frontend framework** - SolidJS, React, Vue, or none for API-only folders
+- **Framework** - SolidJS, React, Vue or none for API-only folders
+- **Backend** - Koa, Hono or none for client-only folders
 - **SSR** - Enable server-side rendering (more on this later)
 
-**Non-interactive mode:**
-
-For CI/CD or scripting, skip the prompts by providing options directly:
+For non-interactive mode, skip the prompts by providing options directly:
 
 ::: code-group
-```sh [pnpm]
-pnpm +folder --name front --base / --port 4000 --framework solid --ssr
+```sh [npm]
+npm run +folder -- \
+    --name front \
+    --base / \
+    --port 4000 \
+    --framework solid \
+    --backend koa \
+    --ssr
 ```
 
-```sh [npm]
-npm run +folder -- --name front --base / --port 4000 --framework solid --ssr
+```sh [pnpm]
+pnpm +folder \
+    --name front \
+    --base / \
+    --port 4000 \
+    --framework solid \
+    --backend koa \
+    --ssr
 ```
 
 ```sh [yarn]
-yarn +folder --name front --base / --port 4000 --framework solid --ssr
+yarn +folder \
+    --name front \
+    --base / \
+    --port 4000 \
+    --framework solid \
+    --backend koa \
+    --ssr
 ```
 :::
 
@@ -120,18 +139,19 @@ Available options:
 - `--name <name>` - Source folder name (required in non-interactive mode)
 - `--base <path>` - Base URL (default: `/`)
 - `--port <number>` - Development server port (default: `4000`)
-- `--framework <framework>` - Frontend framework: `none`, `solid`, `react`, `vue`
+- `--framework <framework>` - `solid`, `react`, `vue` <span class="text-nowrap">(omit for API-only folders)</span>
+- `--backend <framework>` - `koa`, `hono` <span class="text-nowrap">(omit for client-only folders)</span>
 - `--ssr` - Enable server-side rendering
 
 The source folder adds dependencies. Install them:
 
 ::: code-group
-```sh [pnpm]
-pnpm install
-```
-
 ```sh [npm]
 npm install
+```
+
+```sh [pnpm]
+pnpm install
 ```
 
 ```sh [yarn]
@@ -153,7 +173,7 @@ api/
     index.ts          ➜ /api
   users/
     index.ts          ➜ /api/users
-    [id]/
+    :id/
       index.ts        ➜ /api/users/:id
 
 pages/
@@ -161,7 +181,7 @@ pages/
     index.tsx         ➜ /
   users/
     index.tsx         ➜ /users
-    [id]/
+    :id/
       index.tsx       ➜ /users/:id
 ```
 
@@ -170,7 +190,7 @@ pages/
 - **No routing config files** - The file system IS the routing table
 - **API and pages mirror each other** - Easy to see how frontend and backend relate
 - **Colocalization** - Each route folder can contain helpers, types, tests
-- **Dynamic parameters** - Use `[id]` for required params, `[[id]]` for optional, `[...path]` for rest params
+- **Dynamic parameters** - Use `:id` for required params, `{:id}` for optional, `{...path}` for splat params
 
 This works identically for both API routes and client pages, so you learn the pattern once.
 
@@ -201,8 +221,9 @@ Each prefix maps to a specific part of your project:
 **`~/*` - Root-level imports**
 
 Access files at your project root:
+
 ```ts
-import globalMiddleware from "~/core/api/use";
+import { tzDate } from "~/helpers/datetime";
 ```
 
 **`@/*` - Source folder imports**
@@ -218,9 +239,10 @@ import config from "@/admin/config";
 **`_/*` - Generated code imports**
 
 Access generated files from `lib/src/`, which mirrors your `src/` directory structure:
+
 ```ts
 import fetchMap from "_/front/fetch";            // All fetch clients
-import { GET } from "_/front/fetch/users/[id]";  // Specific fetch client
+import { GET } from "_/front/fetch/users/:id";  // Specific fetch client
 ```
 
 All generated files - api routes, validators, fetch clients -
@@ -228,36 +250,49 @@ live in `lib/src/` and are accessible via the `_/` prefix.
 
 ## ⚙️ Create Your First API Route
 
-In your source folder, create `api/users/[id]/index.ts` file:
+In your source folder, create `api/users/:id/index.ts` file:
 
 ```txt
 src/front/
 └── api/
     └── users/
-        └── [id]/
+        └── :id/
             └── index.ts
 ```
 
 `KosmoJS` detects the new file and generates boilerplate automatically.
 
-> Some editors show it immediately; others need you to briefly refocus the file.
+> Some editors show it immediately; others need you to briefly refocus the editor.
 
 You'll see this structure appear:
 
-```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api/users/[id]";
+::: code-group
+```ts [Koa]
+import { defineRoute } from "_/front/api/users/:id";
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {
-    ctx.body = "Automatically generated route: [ users/[id] ]"
+    ctx.body = "Automatically generated route: [ users/:id ]"
   }),
 ]);
 ```
 
+```ts [Hono]
+import { defineRoute } from "_/front/api/users/:id";
+
+export default defineRoute(({ GET }) => [
+  GET(async (ctx) => {
+    ctx.text("Automatically generated route: [ users/:id ]");
+  }),
+]);
+```
+:::
+
 Let's make it actually useful. Replace the generated code with:
 
-```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api/users/[id]";
+::: code-group
+```ts [Koa]
+import { defineRoute } from "_/front/api/users/:id";
 
 type User = {
   id: number;
@@ -267,7 +302,7 @@ type User = {
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {
-    const { id } = ctx.params; // [!code focus:10]
+    const { id } = ctx.params;
 
     // In a real app, this would query your database
     const user: User = {
@@ -281,15 +316,41 @@ export default defineRoute(({ GET }) => [
 ]);
 ```
 
+```ts [Hono]
+import { defineRoute } from "_/front/api/users/:id";
+
+type User = {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export default defineRoute(({ GET }) => [
+  GET(async (ctx) => {
+    const { id } = ctx.req.param();
+
+    // In a real app, this would query your database
+    const user: User = {
+      id: Number(id),
+      name: "Jane Smith",
+      email: "jane@example.com",
+    };
+
+    ctx.json(user);
+  }),
+]);
+```
+:::
+
 Start the dev server:
 
 ::: code-group
-```sh [pnpm]
-pnpm dev
-```
-
 ```sh [npm]
 npm run dev
+```
+
+```sh [pnpm]
+pnpm dev
 ```
 
 ```sh [yarn]
@@ -309,25 +370,19 @@ Here's where it gets interesting - `KosmoJS` automatically converts your `TypeSc
 into high-performance runtime validators.
 
 It uses the state-of-the-art [TypeBox](https://github.com/sinclairzx81/typebox)
-library to convert your types into JSON Schema validators - no magic, just solid tooling.
+library to convert your types into high-performance JSON Schema validators.
 
 ### Parameter Validation
 
 Route parameters come from URL paths.
-For example, the URL `/api/users/123` is matched by the `api/users/[id]` route, where `[id]` captures `123`.
-Since URLs are text, parameters arrive as strings.
+For example, the URL `/api/users/123` is matched by the `api/users/:id` route,
+where `:id` captures `123`. Since URLs are text, parameters arrive as strings.
 
-`KosmoJS` validates and converts them in two steps:
+You can instruct `KosmoJS` to cast `:id` into a number at runtime:
 
-- Validates against your schema
-- Casts numbers automatically - `number` types get converted via `Number()`
-
-Access validated parameters via `ctx.typedParams` instead of `ctx.params`.
-
-Here's an example validating id as a number:
-
-```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api/users/[id]";
+::: code-group
+```ts [Koa]
+import { defineRoute } from "_/front/api/users/:id";
 
 type User = {
   id: number;
@@ -339,7 +394,7 @@ export default defineRoute<[
   number // validate id as number // [!code hl]
 ]>(({ GET }) => [
   GET(async (ctx) => {
-    const { id } = ctx.typedParams; // id is a validated number! // [!code hl]
+    const { id } = ctx.validated.params; // id is a validated number! // [!code hl]
 
     const user: User = {
       id, // No conversion needed - already a number // [!code hl]
@@ -352,11 +407,38 @@ export default defineRoute<[
 ]);
 ```
 
+```ts [Hono]
+import { defineRoute } from "_/front/api/users/:id";
+
+type User = {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export default defineRoute<[
+  number // validate id as number // [!code hl]
+]>(({ GET }) => [
+  GET(async (ctx) => {
+    const { id } = ctx.validated.params; // id is a validated number! // [!code hl]
+
+    const user: User = {
+      id, // No conversion needed - already a number // [!code hl]
+      name: "Jane Smith",
+      email: "jane@example.com",
+    };
+
+    ctx.json(user);
+  }),
+]);
+```
+:::
+
 The `<[number]>` type argument to `defineRoute` validates parameters as a tuple.
 Each position corresponds to a route parameter in order.
 
-The validated params are available through `ctx.typedParams`.
-While `ctx.params` still exists, it is not typed and all params are strings.
+The validated params are available through `ctx.validated.params`.
+While `ctx.params`/`ctx.req.param()` still exists, it is not typed and all params are strings.
 
 You can refine parameters further by using `TRefine` (globally available, no need to import):
 
@@ -372,13 +454,26 @@ If someone requests `/api/users/abc`, validation fails before your handler runs.
 
 ### Payload Validation
 
-Request payloads need validation too. Here's the key concept:
-- On GET requests, `ctx.payload` mirrors `ctx.query` (query parameters).
-- On POST/PUT/PATCH requests, `ctx.payload` contains the request body.
+`KosmoJS` uses explicit validation targets to define what data should be validated.
+
+**Request Metadata Targets** - Can be validated on any HTTP method:
+- `query`: URL query parameters
+- `headers`: HTTP request headers
+- `cookies`: HTTP cookies
+
+**Request Body Targets** - Mutually exclusive, choose one per handler:
+- `json`: JSON request body
+- `form`: URL-encoded form data
+- `multipart`: Multipart form data
+- `raw`: Raw body format (string/Buffer/ArrayBuffer/Blob)
+
+Body targets are only suitable for methods that accept request bodies (POST, PUT, PATCH, DELETE?).
+Using body targets with GET or HEAD will trigger a development warning and disable validation for that handler.
 
 Let's add a POST endpoint that creates users:
 
-```ts [api/users/index.ts]
+::: code-group
+```ts [Koa]
 import { defineRoute } from "_/front/api/users";
 
 type CreateUserPayload = {
@@ -395,11 +490,11 @@ type User = {
 }
 
 export default defineRoute(({ POST }) => [
-  POST<
-    CreateUserPayload // payload schema // [!code hl]
-  >(async (ctx) => {
-    // ctx.payload is the validated request body
-    const { name, email, age } = ctx.payload;
+  POST<{
+    json: CreateUserPayload // payload schema // [!code hl]
+  }>(async (ctx) => {
+    // ctx.validated.json is the validated request body
+    const { name, email, age } = ctx.validated.json;
 
     const newUser: User = {
       id: 1,
@@ -413,25 +508,28 @@ export default defineRoute(({ POST }) => [
 ]);
 ```
 
-The first type argument to `POST` validates the payload.
-For POST/PUT/PATCH, this validates the request body.
-For GET, this would validate query parameters.
+```ts [Hono]
+import { defineRoute } from "_/front/api/users";
 
-If the payload doesn't match `CreateUserPayload`,
-validation fails with a detailed error before your handler runs.
+type CreateUserPayload = {
+  name: string;
+  email: TRefine<string, { format: "email" }>;
+  age?: number;
+}
 
-### Response Validation
+type User = {
+  id: number;
+  name: string;
+  email: string;
+  age?: number;
+}
 
-You can also validate what your handlers return.
-This catches bugs where you accidentally return incomplete or malformed data:
-
-```ts [api/users/index.ts]
 export default defineRoute(({ POST }) => [
-  POST<
-    CreateUserPayload, // payload schema
-    User // response schema // [!code hl]
-  >(async (ctx) => {
-    const { name, email, age } = ctx.payload;
+  POST<{
+    json: CreateUserPayload // payload schema // [!code hl]
+  }>(async (ctx) => {
+    // ctx.validated.json is the validated request body
+    const { name, email, age } = ctx.validated.json;
 
     const newUser: User = {
       id: 1,
@@ -440,132 +538,138 @@ export default defineRoute(({ POST }) => [
       age,
     };
 
-    ctx.body = newUser; // Response validated before sending!
+    ctx.json(newUser);
   }),
 ]);
-```
-
-The second type argument validates `ctx.body` before sending the response.
-If your handler returns data that doesn't match `User`,
-validation throws an error instead of sending invalid data to clients.
-
-For our GET endpoint:
-
-```ts [api/users/[id]/index.ts]
-export default defineRoute<[number]>(({ GET }) => [
-  GET< // [!code focus:4]
-    never, // skip payload validation
-    User // response schema
-  >(async (ctx) => {
-    const { id } = ctx.typedParams;
-
-    const user: User = {
-      id,
-      name: "Jane Smith",
-      email: "jane@example.com",
-    };
-
-    ctx.body = user; // Validated!
-  }),
-]);
-```
-
-We use `never` for the first argument because here GET request don't have a payload we want to validate
-(though you could validate query parameters if needed).
-
-[More details: Runtype Validation →](/validation/intro)
-
-## ⇆ Generated Fetch Clients
-
-Here's the continuation of powerful validation pattern:
-`KosmoJS` generates fully-typed fetch clients
-that validate on the **client side** before sending requests.
-
-Fetch clients use the exact same high-performance validation schemas as your server.
-No shifts, no drifts - client-side validation produces identical results to server-side validation.
-
-Import the generated fetch client for type-safe API calls with built-in validation.
-
-**Method 1: Direct import** (recommended for most cases)
-
-::: code-group
-
-```tsx [SolidJS]
-import { useParams, createAsync } from "@solidjs/router";
-import { GET } from "_/front/fetch/users/[id]"; // [!code hl]
-
-export default function UserPage() {
-  const params = useParams();
-  const user = createAsync(() => GET([params.id])); // [!code hl]
-  // ...
-}
-```
-
-```tsx [React]
-import { useState, useEffect } from "react";
-import { useParams } from "react-router";
-import { GET } from "_/front/fetch/users/[id]"; // [!code hl]
-
-export default function UserPage() {
-  const params = useParams();
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    GET([params.id]).then(setUser); // [!code hl]
-  }, [params.id]);
-
-  // ...
-}
-```
-
-```vue [Vue]
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { GET } from "_/front/fetch/users/[id]"; // [!code hl]
-
-const route = useRoute();
-const user = ref(null);
-
-onMounted(async () => {
-  user.value = await GET([route.params.id]); // [!code hl]
-});
-</script>
-
-<template>
-  <div>
-    <h1>{{ user?.name }}</h1>
-    <p>{{ user?.email }}</p>
-  </div>
-</template>
 ```
 :::
 
-**Method 2: Via fetch map** (useful for dynamic routing)
+The first type argument to `POST` specifies validation targets.
+The `json` property instructs the runtime to:
+1. Parse the incoming request body as JSON
+2. Validate the parsed data against the `CreateUserPayload` schema
 
-```tsx
-import fetchMap from "_/front/fetch";
+If validation fails, a detailed error is returned before your handler executes.
 
-// Access routes through the centralized map
-const userFetch = fetchMap["users/[id]"];
-const response = await userFetch.GET([123]); // Tuple matches route params
+### Response Validation
+
+You can also validate what your handlers return.
+This catches bugs where you accidentally return incomplete or malformed data:
+
+::: code-group
+```ts [Koa]
+export default defineRoute(({ POST }) => [
+  POST<{
+    json: CreateUserPayload, // payload schema
+    response: [200, "json", User] // response schema // [!code hl]
+  }>(async (ctx) => {
+    const { name, email, age } = ctx.validated.json;
+
+    const newUser: User = {
+      id: 1,
+      name,
+      email,
+      age,
+    };
+
+    ctx.body = newUser; // Response validated before sending! // [!code hl]
+  }),
+]);
 ```
 
-The fetch map exports all your API routes in one place, which is handy when you need to:
-- Dynamically select which endpoint to call
-- Iterate over multiple routes
-- Build tools that work with your entire API surface
+```ts [Hono]
+export default defineRoute(({ POST }) => [
+  POST<{
+    json: CreateUserPayload, // payload schema
+    response: [200, "json", User] // response schema // [!code hl]
+  }>(async (ctx) => {
+    const { name, email, age } = ctx.validated.json;
 
-The fetch client:
-- Is fully typed - autocomplete shows exact parameters/payload structure
-- Validates data client-side before making requests
-- Automatically infers response types
+    const newUser: User = {
+      id: 1,
+      name,
+      email,
+      age,
+    };
 
-Invalid requests never reach your server, saving bandwidth and giving instant feedback.
+    ctx.json(newUser); // Response validated before sending! // [!code hl]
+  }),
+]);
+```
+:::
 
-[More details: Fetch Clients →](/fetch/intro)
+The `response` property instructs runtime to validate the status/type/body before sending the response.
+If your handler returns data that doesn't match `User`,
+validation throws an error instead of sending invalid data to clients.
 
-## 📋 Automatic OpenAPI Documentation
+[More details: Runtype Validation →](/validation/intro)
+
+## ⏩ Add Middleware
+
+Middleware are functions that execute before your route handlers,
+handling cross-cutting concerns like authentication, logging, error handling, etc.
+
+Both `Koa` and `Hono` middleware receives the request context and the `next` function.
+
+Call `next()` to pass control to the next middleware or handler in the chain.
+Skip `next()` to stop the chain early (useful for rejecting unauthorized requests).
+
+The straightforward approach is to import and wire middleware manually:
+
+```ts [Koa / Hono]
+import { logRequest } from "~/middleware/logging";
+import { defineRoute } from "_/front/api/users/:id";
+
+export default defineRoute(({ use, GET }) => [
+  use(logRequest), // Wire it manually
+
+  GET(async (ctx) => {
+    // Handler logic
+  }),
+]);
+```
+
+This works perfectly for simple APIs with a couple of endpoints.
+
+But as your API grows, this approach becomes tedious.
+Every new route needs the same imports.
+Every middleware change means updating multiple files.
+Authentication across 20 routes? That's 20 files to maintain.
+
+**Here's a better way for production-grade APIs:** Route-level middleware files.
+
+Create `api/users/use.ts`:
+
+```txt
+src/front/
+└── api/
+    └── users/
+        ├── use.ts          🢀 Wraps all routes under /users
+        └── :id/
+            └── index.ts
+```
+
+`KosmoJS` generates boilerplate:
+
+```ts [api/users/use.ts]
+import { use } from "_/front/api";
+
+export default [
+  use((ctx, next) => {
+    // Your middleware logic here
+    return next();
+  })
+];
+```
+
+Every route under `/api/users` will now run middleware defined in `api/users/use.ts` - no imports, no repetition.
+
+The `use.ts` file creates a middleware hierarchy that mirrors your route structure.
+Parent folders wrap child routes automatically.
+
+[More details: Middleware →](/api-server/use-middleware/intro)
+
+## 📋 OpenAPI Generator
 
 `OpenAPI` (formerly Swagger) is the industry standard for documenting REST APIs.
 It provides machine-readable API specifications that power interactive documentation,
@@ -578,7 +682,7 @@ Enable `OpenAPI` generator in your `vite.config.ts`:
 ```ts [src/front/vite.config.ts]
 import devPlugin from "@kosmojs/dev";
 import {
-  apiGenerator,
+  koaGenerator,
   fetchGenerator,
   typeboxGenerator,
   openapiGenerator, // [!code ++]
@@ -588,7 +692,7 @@ export default {
   plugins: [
     devPlugin(apiurl, {
       generators: [
-        apiGenerator(),
+        koaGenerator(),
         fetchGenerator(),
         typeboxGenerator(),
         openapiGenerator({ // [!code ++:7]
@@ -616,93 +720,99 @@ and validation schemas to produce a complete OpenAPI spec.
 - Request body schemas (from payload types)
 - Response schemas (from response types)
 
-You can use the generated `openapi.json` with tools like Swagger UI, Postman, or any OpenAPI-compatible client generator.
+You can use the generated `openapi.json` with tools like Swagger UI, Postman,
+or any OpenAPI-compatible client generator.
 
 [More details: OpenAPI Generator →](/generators/openapi/intro)
 
-## 🔐 Add Middleware
+## 📥 Fetch Clients
 
-`KosmoJS` uses `Koa` for its API layer, following Koa's middleware model.
+Here's the continuation of powerful validation pattern:
+`KosmoJS` generates fully-typed fetch clients
+that validate on the **client side** before sending requests.
 
-Middleware are functions that execute before your route handlers,
-handling cross-cutting concerns like authentication, logging, error handling, etc.
+Fetch clients use the exact same high-performance validation schemas as your server.
+No shifts, no drifts - client-side validation produces identical results to server-side validation.
 
-Each middleware receives the request context (`ctx`) and a `next` function.
-Call `next()` to pass control to the next middleware or handler in the chain.
-Skip `next()` to stop the chain early (useful for rejecting unauthorized requests).
+Import the generated fetch client for type-safe API calls with built-in validation.
 
-The straightforward approach is to import and wire middleware manually:
+**Method 1: Direct import** (recommended for most cases)
 
-```ts [api/users/[id]/index.ts]
-import { logRequest } from "@/middleware/logging";
-import { defineRoute } from "_/front/api/users/[id]";
+::: code-group
+```tsx [SolidJS]
+import { useParams, createAsync } from "@solidjs/router";
+import { GET } from "_/front/fetch/users/:id"; // [!code hl]
 
-export default defineRoute(({ GET, use }) => [
-  use(logRequest), // Wire it manually
-
-  GET(async (ctx) => {
-    // Handler logic
-  }),
-]);
+export default function UserPage() {
+  const params = useParams();
+  const user = createAsync(() => GET([params.id])); // [!code hl]
+  // ...
+}
 ```
 
-This works perfectly for simple APIs with a couple of endpoints.
+```tsx [React]
+import { useState, useEffect } from "react";
+import { useParams } from "react-router";
+import { GET } from "_/front/fetch/users/:id"; // [!code hl]
 
-But as your API grows, this approach becomes tedious. Every new route needs the same imports.
-Every middleware change means updating multiple files.
-Authentication across 20 routes? That's 20 files to maintain.
+export default function UserPage() {
+  const params = useParams();
+  const [user, setUser] = useState(null);
 
-**Here's a better way for larger APIs:** Route-level middleware files.
+  useEffect(() => {
+    GET([params.id]).then(setUser); // [!code hl]
+  }, [params.id]);
 
-Create `api/users/use.ts`:
-
-```txt
-src/front/
-└── api/
-    └── users/
-        ├── use.ts          🢀 Wraps all routes under /users
-        └── [id]/
-            └── index.ts
+  // ...
+}
 ```
 
-`KosmoJS` generates boilerplate:
+```vue [Vue]
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { GET } from "_/front/fetch/users/:id"; // [!code hl]
 
-```ts [api/users/use.ts]
-import { use } from "@kosmojs/api";
+const route = useRoute();
+const user = ref(null);
 
-export default use([
-  async (ctx, next) => {
-    // Your middleware logic here
-    return next();
-  },
-]);
+onMounted(async () => {
+  user.value = await GET([route.params.id]); // [!code hl]
+});
+</script>
+
+<template>
+  <div>
+    <h1>{{ user?.name }}</h1>
+    <p>{{ user?.email }}</p>
+  </div>
+</template>
+```
+:::
+
+**Method 2: Via fetch map** (useful for dynamic routing)
+
+```tsx
+import fetchMap from "_/front/fetch";
+
+// Access routes through the centralized map
+const userFetch = fetchMap["users/:id"];
+const response = await userFetch.GET([123]); // Tuple matches route params
 ```
 
-Add authentication:
+The fetch map exports all your API routes in one place, which is handy when you need to:
+- Dynamically select which endpoint to call
+- Iterate over multiple routes
+- Build tools that work with your entire API surface
 
-```ts [api/users/use.ts]
-import { use } from "@kosmojs/api";
+The fetch client:
+- Is fully typed - autocomplete shows exact parameters/payload structure
+- Validates data client-side before making requests
+- Automatically infers response types
 
-export default use([
-  async (ctx, next) => {
-    const token = ctx.headers.authorization?.replace("Bearer ", ""); // [!code focus:8]
-    ctx.assert(token, 401, "Authentication required");
+Invalid requests never reach your server, saving bandwidth and giving instant feedback.
 
-    const user = await verifyToken(token);
-    ctx.assert(user, 401, "Invalid token");
-
-    ctx.state.user = user; // Available in all child routes
-    return next();
-  },
-]);
-```
-
-Every route under `/api/users` now requires authentication. No imports, no repetition.
-
-The `use.ts` file creates a middleware hierarchy that mirrors your route structure.
-Parent folders wrap child routes automatically.
-
-[More details: Middleware →](/api-server/use-middleware/intro)
+[More details: Fetch Clients →](/fetch/intro)
 
 ## 🎨 Create Client Pages
 
@@ -780,7 +890,7 @@ If you didn't enable it initially, enable it in your `vite.config.ts`:
 ```ts [src/front/vite.config.ts]
 import devPlugin from "@kosmojs/dev";
 import {
-  apiGenerator,
+  koaGenerator,
   fetchGenerator,
   typeboxGenerator,
   ssrGenerator, // [!code ++]
@@ -790,7 +900,7 @@ export default {
   plugins: [
     devPlugin(apiurl, {
       generators: [
-        apiGenerator(),
+        koaGenerator(),
         fetchGenerator(),
         typeboxGenerator(),
         ssrGenerator(), // [!code ++]
@@ -896,39 +1006,6 @@ More details on SSR:
 ## 🌐 Scale with Multiple Source Folders
 
 As your app grows, add more source folders for different concerns:
-
-Add `admin` source folder - `Vue` framework, no SSR:
-
-::: code-group
-```sh [Interactive]
-pnpm +folder
-# name: admin
-# baseurl: /admin
-# port: 4001
-# framework: vue
-```
-
-```sh [Non-interactive]
-pnpm +folder --name admin --base /admin --port 4002 --framework vue
-```
-:::
-
-Add `marketing` source folder - `SolidJS` framework, with SSR:
-
-::: code-group
-```sh [Interactive]
-pnpm +folder
-# name: marketing
-# baseurl: /
-# port: 4002
-# framework: solid
-# SSR: enabled
-```
-
-```sh [Non-interactive]
-pnpm +folder --name marketing --base / --port 4002 --framework solid --ssr
-```
-:::
 
 Each source folder is completely independent:
 - Different framework if needed (SolidJS for marketing, Vue for admin)

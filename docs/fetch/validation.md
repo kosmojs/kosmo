@@ -9,7 +9,8 @@ head:
         validation errors, nested field validation, performance optimization, real-time validation
 ---
 
-Generated fetch clients performs validation before making network requests (unless you disabled validation generator).
+Generated fetch clients performs validation before making network requests
+(unless you disabled validation generator).
 
 This validation uses exactly the same schemas that validate on the server,
 ensuring perfect consistency between what the client considers valid and what the server accepts.
@@ -50,7 +51,8 @@ These schemas are particularly valuable for form validation,
 where you want to check individual fields as users type or blur inputs,
 providing immediate feedback without making server requests.
 
-Each fetch client exports a `validationSchemas` object containing schemas for parameters, payloads, and responses.
+Each fetch client exports a `validationSchemas` object containing schemas
+for parameters, payloads, and responses.
 
 These schemas are organized by HTTP method,
 so you can validate the exact structure that a specific endpoint expects:
@@ -102,15 +104,27 @@ Each error entry contains structured information about the validation failure:
 
 ```ts
 export type ValidationErrorEntry = {
-  /** JSON Schema keyword that triggered the error (e.g. `format`, `maxItems`, `maxLength`). */
+  /**
+   * JSON Schema keyword that triggered the error
+   * (e.g. `format`, `maxItems`, `maxLength`).
+   * */
   keyword: string;
-  /** JSON Pointer–style path to the invalid field (matches JSON Schema `instancePath`). */
+  /**
+   * JSON Pointer–style path to the invalid field
+   * (matches JSON Schema `instancePath`).
+   * */
   path: string;
-  /** Human-readable error message. */
+  /**
+   * Human-readable error message.
+   * */
   message: string;
-  /** Constraint parameters (e.g. `{ limit: 5 }`, `{ format: "email" }`). */
+  /**
+   * Constraint parameters (e.g. `{ limit: 5 }`, `{ format: "email" }`).
+   * */
   params?: Record<string, unknown>;
-  /** Optional error code for i18n/l10n or custom handling. */
+  /**
+   * Optional error code for i18n/l10n or custom handling.
+   * */
   code?: string;
 };
 ```

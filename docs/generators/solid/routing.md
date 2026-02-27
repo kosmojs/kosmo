@@ -17,22 +17,19 @@ and creates a corresponding route configuration.
 These route configurations are written to your `lib` directory
 and imported by your router.
 
-For a component at `pages/users/[id]/index.tsx`,
+For a component at `pages/users/:id/index.tsx`,
 the generator creates a route configuration like this:
 
 ```ts
 {
   path: "/users/:id",
-  component: lazy(() => import("@/front/pages/users/[id]")),
+  component: lazy(() => import("@/front/pages/users/:id")),
   preload: () =>
-    import("@/front/pages/users/[id]").then(
+    import("@/front/pages/users/:id").then(
       (mdl) => (mdl as ComponentModule).preload?.()
     ),
 }
 ```
-
-The path uses `SolidJS` Router's parameter syntax (`:id` instead of `[id]`),
-automatically converting `KosmoJS`'s directory naming to the router's expectations.
 
 The component is lazy-loaded, which means it's not included in your initial bundle-
 it loads on demand when the route is accessed.

@@ -27,7 +27,7 @@ Both `ApiRoute` and `PageRoute` extend `RouteEntry` with these properties:
 
 **id** - Unique identifier (e.g., "users_id_67567456")
 
-**name** - Route name (e.g., "users/[id]")
+**name** - Route name (e.g., "users/:id")
 
 **folder** - Either "api" or "pages", indicating which directory the route is in
 
@@ -37,23 +37,31 @@ Both `ApiRoute` and `PageRoute` extend `RouteEntry` with these properties:
 
 **pathTokens** - Array of path segments with parameter information
 
+**pathPattern** - path-to-regexp pattern
+
 ### PathToken Structure
 
 Each token in the route path has this structure:
 
 ```ts
-type PathToken = {
-  orig: string;      // Original token text
-  base: string;      // Base name without brackets
-  path: string;      // Full path segment
-  ext: string;       // File extension
-  param?: {
-    name: string;          // Parameter name
-    const: string;         // Safe parameter name
-    isRequired?: boolean;  // [id]
-    isOptional?: boolean;  // [[id]]
-    isRest?: boolean;      // [...path]
-  };
+export type PathToken = {
+  kind:
+    | "static"   // segment is purely static
+    | "param"   // segment is a single pure param (no static parts)
+    | "mixed"; // segment has both static and param parts
+
+  /** original segment string,
+   * eg. {:name} or {...path}
+   * */
+  orig: string;
+
+  /** path-to-regexp pattern obtained from original segment,
+   * eg. {/:name} or {/*path}
+   * */
+  pattern: string;
+
+  /** parsed parts of the segment */
+  parts: Array<PathTokenStaticPart | PathTokenParamPart>;
 };
 ```
 

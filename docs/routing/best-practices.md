@@ -18,7 +18,7 @@ For example, you might have an `api/auth/` folder containing `login`, `logout`, 
 This keeps authentication-related code together even though the routes might be at different URL levels.
 
 - Keep route-specific utilities in the same folder as the route.
-If your `api/users/[id]/index.ts` needs helper functions, create `api/users/[id]/utils.ts` in the same directory.
+If your `api/users/:id/index.ts` needs helper functions, create `api/users/:id/utils.ts` in the same directory.
 This colocalization makes it easy to find related code and understand the full scope of what a route does.
 
 - For complex routes that need multiple files (types, validators, utilities),

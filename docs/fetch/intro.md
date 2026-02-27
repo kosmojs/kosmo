@@ -74,7 +74,7 @@ Import the specific method you need, use the default export to access everything
 or destructure multiple capabilities at once:
 
 ```ts [pages/example/index.tsx]
-import useFetch, { path, validationSchemas } from "_/front/fetch/users/[id]";
+import useFetch, { path, validationSchemas } from "_/front/fetch/users/:id";
 
 // Use the fetch method
 const user = await useFetch.GET([123]);

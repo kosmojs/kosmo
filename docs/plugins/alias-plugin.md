@@ -1,7 +1,7 @@
 ---
 title: Alias Plugin
-description: AliasPlugin automatically resolves TypeScript path mappings from tsconfig.json to filesystem locations,
-    enabling imports like _/front/api and ~/core/api to work correctly.
+description: AliasPlugin automatically resolves TypeScript path mappings
+    from tsconfig.json to filesystem locations, enabling imports to work correctly.
 head:
   - - meta
     - name: keywords
@@ -30,7 +30,7 @@ in both source directories and the `lib` directory.
 It translates `TypeScript` path patterns (like `@/front/*`)
 into `Vite` alias configurations that point to the correct directories.
 
-This translation is what allows imports like `_/front/api/users/[id]`
+This translation is what allows imports like `_/front/api/users/:id`
 to resolve correctly during development and build,
 even though these paths don't exist in a traditional sense -
 they're virtual paths that map to actual files based on your project structure.

@@ -21,7 +21,7 @@ import { join } from "node:path";
 
 import devPlugin from "@kosmojs/dev";
 import {
-  apiGenerator,
+  koaGenerator,
   fetchGenerator,
   typeboxGenerator,
   openapiGenerator, // [!code ++]
@@ -42,7 +42,7 @@ export default defineConfig(import.meta.dirname, {
   plugins: [
     devPlugin(apiurl, {
       generators: [
-        apiGenerator(),
+        koaGenerator(),
         fetchGenerator(),
         typeboxGenerator(),
         openapiGenerator(openapiConfig), // [!code ++]

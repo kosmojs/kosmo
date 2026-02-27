@@ -1,20 +1,19 @@
 ---
 title: API Server Endpoints
-description: Learn how to build KosmoJS API endpoints using defineRoute with Koa middleware,
-    handle multiple HTTP methods (GET, POST, PUT, DELETE), and implement error handling with ctx.throw and ctx.assert.
+description: Learn how to build KosmoJS API endpoints using defineRoute with Koa and Hono
 head:
   - - meta
     - name: keywords
-      content: koa endpoints, defineRoute, http methods, koa context, ctx.throw,
-        ctx.assert, rest api, koa error handling, middleware composition
+      content: hono endpoints, koa endpoints, defineRoute, http methods,
+        koa context, hono context, rest api, middleware composition
 ---
 
 API endpoints in `KosmoJS` are built using the `defineRoute` function,
 which provides a structured way to handle HTTP methods, apply middleware,
 and maintain type safety throughout your request-response cycle.
 
-This system builds on Koa's middleware architecture
-while adding `KosmoJS`-specific enhancements for routing, validation, and type inference.
+This system supports both `Koa` and `Hono`, allowing you to choose the API framework
+that best fits your needs while maintaining the same routing architecture and type inference.
 
 ## ⇆ Basic Endpoint Structure
 
@@ -27,8 +26,8 @@ and the `use` function for custom middleware.
 
 You typically destructure this object to access only the methods you need for that particular endpoint.
 
-```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api/users/[id]";
+```ts [api/users/:id/index.ts]
+import { defineRoute } from "_/front/api/users/:id";
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {
@@ -38,7 +37,8 @@ export default defineRoute(({ GET }) => [
 ```
 
 This structure gives you a clear, declarative way to define which HTTP methods your endpoint supports.
-Each method handler receives the `Koa` context object,
+
+Both `Koa` and `Hono` handlers receives the context object as first argument,
 which `KosmoJS` enhances with additional properties to make common tasks easier.
 
 ## ⥃ Working with Multiple HTTP Methods
@@ -75,61 +75,3 @@ If a request comes in for a method you haven't defined,
 
 The available method builders are HEAD, OPTIONS, GET, POST, PUT, PATCH, and DELETE,
 covering all the standard HTTP methods you'll typically need in a REST API.
-
-### Using ctx.throw()
-
-The primary way to return errors is using Koa's `ctx.throw()` method,
-which throws an HTTP error with a specific status code and message:
-
-```ts [api/users/[id]/index.ts]
-export default defineRoute(({ GET, DELETE }) => [
-  GET(async (ctx) => {
-    const user = await fetchUser(ctx.params.id);
-
-    if (!user) {
-      ctx.throw(404, "User not found");
-    }
-
-    ctx.body = user;
-  }),
-
-  DELETE(async (ctx) => {
-    const hasPermission = await checkPermission(ctx);
-
-    if (!hasPermission) {
-      ctx.throw(403, "Forbidden");
-    }
-
-    await deleteUser(ctx.params.id);
-    ctx.status = 204;
-  }),
-]);
-```
-
-### Using ctx.assert()
-
-For cleaner validation logic, use `ctx.assert()` which throws an error when a condition is falsy.
-This is particularly useful for guard clauses and input validation:
-
-```ts [api/books/[bookId]/index.ts]
-export default defineRoute(({ GET }) => [
-  GET(async (ctx) => {
-    const { bookId } = ctx.params;
-
-    // Validate format - throws 400 if condition is false
-    const match = bookId.match(/^book-(\d+)$/);
-    ctx.assert(match, 400, "Invalid book ID format");
-
-    const id = match[1];
-    const book = await fetchBook(id);
-
-    // Throws 404 if book doesn't exist
-    ctx.assert(book, 404, "Book not found");
-
-    ctx.body = book;
-  }),
-]);
-```
-
-The `ctx.assert(condition, status, message)` pattern is especially useful for replacing verbose if-throw blocks
-with concise one-liners, making your validation logic easier to read.

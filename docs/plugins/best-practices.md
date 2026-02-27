@@ -1,12 +1,12 @@
 ---
 title: Plugin Best Practices
 description: Best practices for KosmoJS plugins including base configuration organization,
-    explicit environment variables, consistent formatters, and incremental generator adoption.
+    explicit environment variables, incremental generator adoption.
 head:
   - - meta
     - name: keywords
       content: plugin best practices, vite config, generator setup,
-        formatter consistency, environment security, incremental adoption
+        environment security, incremental adoption
 ---
 
 ### 💡 Best Practices
@@ -16,9 +16,6 @@ like build output structure, server settings, and shared plugins.
 
 - Source folder configurations should only contain
 folder-specific settings like port numbers, base URLs, and generators.
-
-- Use formatters consistently across all source folders
-to maintain code style uniformity in generated files.
 
 - Explicitly specify environment variables in DefinePlugin
 rather than relying on prefix-based exposure.

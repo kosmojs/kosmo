@@ -22,7 +22,8 @@ designed around React's Suspense mechanism and modern data loading approaches.
 
 ## 🛠️ Enable React Generator
 
-The `React` generator is automatically enabled when you create a source folder and select `React` as your framework.
+The `React` generator is automatically enabled when you create a source folder
+and select `React` as your framework.
 
 If you created your source folder without `React` (or want to add it to an existing folder),
 you can enable it manually by importing it and adding it to the generators list

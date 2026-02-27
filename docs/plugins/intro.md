@@ -19,8 +19,7 @@ environment variable management, and code generation.
 
 🔹 **AliasPlugin** reads the path mappings from your `tsconfig.json`,
 performs filesystem analysis, and provides alias information to Vite.
-This allows `Vite` to resolve imports like `_/front/api` and `~/core/api`
-to the correct locations.
+This allows `Vite` to resolve imports like `_/front/api` to the correct locations.
 ([Details ➜ ](/plugins/alias-plugin))
 
 🔹 **DefinePlugin** manages environment variables with fine-grained control.
@@ -31,7 +30,6 @@ both from `process.env` and from `.env` files.
 
 🔹 **DevPlugin** is the main plugin that coordinates code generation.
 It manages generators (for API routes, fetch clients, validation schemas, etc.)
-and formatters (for ensuring generated code matches your project's style conventions).
 ([Details ➜ ](/plugins/dev-plugin))
 
 ### 🎨 Customizing Plugin Behavior
@@ -49,8 +47,7 @@ For DefinePlugin, adjust which environment variables to expose
 by modifying the `keys` arrays in your base configuration.
 ([Details ➜ ](/plugins/define-plugin))
 
-For DevPlugin, add or remove generators and formatters
-in each source folder's configuration.
+For DevPlugin, add or remove generators in each source folder's configuration.
 Different source folders can use different generators -
 perhaps your main app uses SolidJS while your admin panel uses React.
 ([Details ➜ ](/plugins/dev-plugin))

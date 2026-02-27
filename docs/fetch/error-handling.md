@@ -20,7 +20,7 @@ You handle them the same way you'd handle any fetch-based API calls:
 
 ```ts [pages/example/index.tsx]
 import fetchMap, { ValidationError } from "_/front/fetch";
-const useFetch = fetchMap["users/[id]"];
+const useFetch = fetchMap["users/:id"];
 
 try {
   const response = await useFetch.POST([userId], payload);

@@ -19,10 +19,10 @@ that your handler calls. Your endpoint file orchestrates the request-response cy
 the heavy lifting of business logic should live in modules that your endpoint imports.
 
 - Use slots consistently. When you override global middleware,
-always use the same slot names that were established in `core/api/use.ts`.
+always use the same slot names that were established in `api/use.ts`.
 This consistency makes it easy to understand what behavior you're changing when you review a route file later.
 
-- Leverage the global type declarations in `core/api/env.d.ts` for properties that appear across multiple endpoints.
+- Leverage the global type declarations in `api/env.d.ts` for properties that appear across multiple endpoints.
 Only use route-specific type arguments when something is truly unique to that endpoint.
 This keeps your codebase DRY and makes refactoring easier.
 
@@ -34,4 +34,4 @@ a `use` middleware that runs for all of them is cleaner than duplicating the log
 - Consider the order of your middleware carefully.
 Authentication should typically run before authorization, which should run before business logic.
 Error handling middleware should be early in the chain so it can catch errors from subsequent middleware.
-These patterns apply to both global middleware in `core/api/use.ts` and route-specific middleware.
+These patterns apply to both global middleware in `api/use.ts` and route-specific middleware.

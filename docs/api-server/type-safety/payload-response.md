@@ -1,7 +1,8 @@
 ---
 title: Type Safety - Payload and Response
-description: Type request payloads and response bodies in KosmoJS API handlers with automatic runtime validation.
-    Ensure handlers receive expected data and return properly structured responses.
+description: Type request payloads and response bodies in KosmoJS API handlers
+    with automatic runtime validation. Ensure handlers receive expected data
+    and return properly structured responses.
 head:
   - - meta
     - name: keywords
@@ -14,36 +15,34 @@ you can also type the request payload and response body for each HTTP method han
 
 This ensures that your handlers receive the data they expect and return properly structured responses.
 
-Method handlers (GET, POST, PUT, etc.) are generic functions that accept two optional type arguments.
+Method handlers (GET, POST, PUT, etc.) are generic functions that accept optional type arguments.
 
-The first types the payload - what comes in with the request.
-
-The second types the response - what your handler should set as `ctx.body`.
+Use first type argument to define expected payload/response schemas.
 
 ```ts [api/example/index.ts]
 import { defineRoute } from "_/front/api/users";
 import type { User } from "@/front/types";
 
 export default defineRoute(({ POST }) => [
-  POST<
-    { name: string; email: string; status?: string },
-    User
-  >(async (ctx) => {
-    // ctx.payload is typed as { name: string; email: string; status?: string }
-    const { name, email, status } = ctx.payload;
+  POST<{
+    json: { name: string; email: string; status?: string },
+    response: [200, "json", User],
+  }>(async (ctx) => {
+    // ctx.validated.json is typed as { name: string; email: string; status?: string }
+    const { name, email, status } = ctx.validated.json;
 
     const user = await createUser({ name, email, status });
 
-    // ctx.body must be set to a User object
-    // TypeScript will show an error if you try to use something else for ctx.body
-    ctx.body = user;
+    // response body must be set to a User object
+    ctx.body = user; // for Koa
+    ctx.json(body) = user; // for Hono
   }),
 ]);
 ```
 
 When you provide these types, `TypeScript` enforces them throughout your handler.
-You get autocomplete on `ctx.payload` properties,
-and `TypeScript` verifies that whatever you assign to `ctx.body` matches the response type.
+You get autocomplete on `ctx.validated` properties,
+and `TypeScript` verifies that you assign correct response body.
 
 Like parameter refinement, these types aren't just compile-time checks.
 `KosmoJS` validates the incoming payload against your specified type at runtime

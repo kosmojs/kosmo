@@ -19,10 +19,6 @@ Component creation triggers analysis of its filesystem location, generating
 corresponding route configuration written to your `lib` directory for router
 import.
 
-The generator performs automatic parameter syntax transformation, converting
-filesystem bracket notation (`[id]`) into React Router's colon-prefix format
-(`:id`).
-
 Component implementation leverages lazy loading, excluding route code from
 initial JavaScript bundles. Each route's code fetches on-demand when users
 navigate to that specific path.

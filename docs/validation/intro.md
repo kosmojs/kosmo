@@ -14,7 +14,7 @@ One of `KosmoJS`'s most compelling features is its approach to validation.
 It's called "runtype" validation -
 your `TypeScript` types are automatically converted into JSON Schema and validated at runtime.
 
-Rather than forcing you to learn and maintain separate schema definition languages,<br>
+Rather than forcing you to learn and maintain separate schema definition languages,
 `KosmoJS` lets you express validation rules directly in `TypeScript`.
 
 You write standard `TypeScript` types with optional refinements,
@@ -25,7 +25,7 @@ serve as both compile-time type checking and runtime validation,
 all without duplicating your specifications.
 
 <div class="text-center">
-  <LinkButton href="/validation/params">Get Started</LinkButton>
+  <LinkButton href="/validation/payload">Get Started</LinkButton>
 </div>
 
 ## 🛡️ Understanding Runtype Validation
@@ -83,15 +83,15 @@ When you use this client, you get full `TypeScript` autocomplete for all these a
 making API consumption as type-safe as calling local functions.
 
 <div class="text-center">
-  <LinkButton href="/validation/params">Get Started</LinkButton>
+  <LinkButton href="/validation/payload">Get Started</LinkButton>
 </div>
 
 ## 🔍 Understanding the Generated Validation Code
 
-When you enable validation with the TypeBox generator,
+When you enable validation with the `TypeBox` generator,
 `KosmoJS` generates validation code in your `lib` directory alongside other generated artifacts.
 
-This code converts your `TypeScript` types into executable validation functions using the TypeBox library,
+This code converts your `TypeScript` types into executable validation functions using the `TypeBox` library,
 which in turn generates optimized validators based on JSON Schema.
 
 You don't need to understand the generated code to use validation -

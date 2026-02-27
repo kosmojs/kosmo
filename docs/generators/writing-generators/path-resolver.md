@@ -32,9 +32,6 @@ const { createPath, createImport } = pathResolver({
 Use `createPath` methods to generate filesystem paths:
 
 ```ts
-// Core API files
-createPath.coreApi("use.ts")           // → "core/api/use.ts"
-
 // Source folder files
 createPath.src("config.ts")            // → "src/front/config.ts"
 createPath.api("users", "index.ts")    // → "src/front/api/users/index.ts"
@@ -51,12 +48,9 @@ createPath.fetch("users.ts")           // → "lib/src/front/fetch/users.ts"
 Use `createImport` methods to generate TypeScript import paths with proper prefixes:
 
 ```ts
-// Core API imports (~/ prefix)
-createImport.coreApi("use")            // → "~/core/api/use"
-
 // Source folder imports (@/ prefix)
 createImport.src("config")             // → "@/front/config"
-createImport.api("users/[id]")     // → "@/front/api/users/[id]"
+createImport.api("users/:id")          // → "@/front/api/users/:id"
 createImport.pages("dashboard")        // → "@/front/pages/dashboard"
 
 // Generated code imports (_/ prefix)
@@ -108,7 +102,6 @@ const { createPath, createImportHelper } = pathResolver({
 });
 
 const { render, renderToFile } = renderFactory({
-  formatters,
   helpers: {
     createImport: createImportHelper,  // Register as "createImport" helper
   },
@@ -119,15 +112,15 @@ Now you can use it in Handlebars templates:
 
 ```handlebars
 {{!-- Generate import paths in templates --}}
-import { defineRoute } from "{{createImport "libApi" "users/[id]"}}";
-import config from "{{createImport "config"}}";
-import { GET } from "{{createImport "fetch" "posts"}}";
+import { defineRoute } from "{{createImport 'libApi' 'users/:id'}}";
+import config from "{{createImport 'config'}}";
+import { GET } from "{{createImport 'fetch' 'posts'}}";
 ```
 
 Which compiles to:
 
 ```ts
-import { defineRoute } from "_/front/api/users/[id]";
+import { defineRoute } from "_/front/api/users/:id";
 import config from "@/front/config";
 import { GET } from "_/front/fetch/posts";
 ```
@@ -141,4 +134,5 @@ which `createImportHelper` strips off before delegating to `createImport`).
 {{createImport method ...paths}}
 ```
 
-Where `method` is any `createImport` method name: `"coreApi"`, `"src"`, `"api"`, `"pages"`, `"lib"`, `"libApi"`, `"fetch"`, etc.
+Where `method` is any `createImport` method name:
+`"coreApi"`, `"src"`, `"api"`, `"pages"`, `"lib"`, `"libApi"`, `"fetch"`, etc.

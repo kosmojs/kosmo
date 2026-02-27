@@ -1,12 +1,12 @@
 ---
 title: Plugin Configuration
 description: Configure KosmoJS plugins through vite.base.ts for shared settings
-    and per-source-folder vite.config.ts for specific generators, formatters, ports, and base URLs.
+    and per-source-folder vite.config.ts for specific generators, ports, and base URLs.
 head:
   - - meta
     - name: keywords
       content: vite configuration, plugin config, vite.base.ts, source folder config,
-        generators config, formatters config, multi-folder setup
+        generators config, multi-folder setup
 ---
 
 When you bootstrap an `KosmoJS` project,
@@ -76,7 +76,7 @@ import { join } from "node:path";
 
 import devPlugin from "@kosmojs/dev";
 import {
-  apiGenerator,
+  koaGenerator,
   fetchGenerator,
   typeboxGenerator,
 } from "@kosmojs/generators";
@@ -92,7 +92,7 @@ export default defineConfig(import.meta.dirname, {
   plugins: [
     devPlugin(apiurl, {
       generators: [
-        apiGenerator(),
+        koaGenerator(),
         fetchGenerator(),
         typeboxGenerator(),
       ],
@@ -110,7 +110,7 @@ which include the array of generators to run for this source folder.
 ## 📂 Multiple Source Folders
 
 When working with multiple source folders,
-each folder's `vite.config.ts` can have its own generator and formatter configuration.
+each folder's `vite.config.ts` can have its own generator configuration.
 
 This allows you to use different frameworks or validation strategies
 in different parts of your application:
@@ -119,7 +119,7 @@ in different parts of your application:
 plugins: [
   devPlugin(apiurl, {
     generators: [
-      apiGenerator(),
+      koaGenerator(),
       fetchGenerator(),
       typeboxGenerator(),
       reactGenerator(), // React framework // [!code hl]
@@ -132,7 +132,7 @@ plugins: [
 plugins: [
   devPlugin(apiurl, {
     generators: [
-      apiGenerator(),
+      koaGenerator(),
       fetchGenerator(),
       typeboxGenerator(),
       solidGenerator(), // SolidJS framework // [!code hl:2]
@@ -142,7 +142,6 @@ plugins: [
 ]
 ```
 
-Each source folder runs its own DevPlugin instance
-with its own set of generators and formatters,
+Each source folder runs its own DevPlugin instance with its own set of generators,
 but they all share the base configuration from `vite.base.ts`
 and the AliasPlugin that understands all source folders globally.

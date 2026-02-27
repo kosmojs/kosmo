@@ -2,18 +2,18 @@
 title: Features
 description: Explore KosmoJS features including multiple source folders,
     directory-based routing, end-to-end type safety, generated fetch clients,
-    OpenAPI specs, and framework freedom for React, Solid, and Vue.
+    OpenAPI specs, and framework freedom - Koa, Hono, React, Solid, Vue.
 head:
   - - meta
     - name: keywords
       content: typescript validation, vite multi-app, type-safe routing, fetch client generator,
-        openapi 3.1, solidjs vite, react vite, koa middleware, runtime type checking, typescript api
+        openapi 3.1, solidjs vite, react vite, vue vite, koa middleware, hono middleware.
 ---
 
 `KosmoJS` brings type-safe structure to full-stack development -
 using `Vite` as the foundation for both frontend builds and API development,
 with multiple source folders, directory-based routing, runtime validation,
-and typed fetch clients - while keeping full framework freedom.
+and typed fetch clients - without locking you into a single framework!
 
 ## 🗂️ Multiple Source Folders
 
@@ -60,23 +60,24 @@ Directory-based routing eliminates this drift - your filesystem *is* your routin
 
 **How it works:**
 
-Create a folder, add an `index.ts` file, and you have a route. The folder name becomes the URL path segment:
+Create a folder, add an `index.ts` file, and you have a route.
+The folder name becomes the URL path segment:
 
 ```
 api/
   users/
-    [id]/
+    :id/
       index.ts       ➜ /api/users/:id
 pages/
   users/
-    [id]/
+    :id/
       index.tsx      ➜ /users/:id
 ```
 
 **Dynamic parameters:**
-- `[id]` - Required parameter
-- `[[id]]` - Optional parameter
-- `[...path]` - Rest parameter (catches remaining segments)
+- `:id` - Required parameter
+- `{:id}` - Optional parameter
+- `{...path}` - Splat parameter (catches remaining segments)
 
 **Benefits:**
 - No separate routing configuration to maintain
@@ -90,14 +91,16 @@ pages/
 
 ## 🛡️ End-to-End Type Safety
 
-Write `TypeScript` types once, get runtime validation automatically. No separate schemas to maintain.
+Write `TypeScript` types once, get runtime validation automatically.
+No separate schemas to maintain.
 
 **Why it matters:**
 
 `TypeScript` provides compile-time type checking,
 but can't protect you at runtime when HTTP requests arrive with unpredictable data.
 
-Traditional solutions require maintaining separate validation schemas (Zod, Yup, io-ts) alongside your `TypeScript` types -
+Traditional solutions require maintaining separate validation schemas
+(Zod, Yup, io-ts) alongside your `TypeScript` types -
 doubling your maintenance burden and creating opportunities for drift.
 
 **How it works:**
@@ -108,12 +111,14 @@ Define your types once in `TypeScript` and `KosmoJS` generates runtime validator
 // Define types once
 export default defineRoute(({ POST }) => [
   POST<{
-    email: TRefine<string, { format: "email" }>; // [!code hl:3]
-    age: TRefine<number, { minimum: 18, maximum: 120 }>;
-    name: TRefine<string, { minLength: 1, maxLength: 100 }>;
+    json: {
+      email: TRefine<string, { format: "email" }>; // [!code hl:3]
+      age: TRefine<number, { minimum: 18, maximum: 120 }>;
+      name: TRefine<string, { minLength: 1, maxLength: 100 }>;
+    }
   }>(async (ctx) => {
-    // ctx.payload is validated before reaching here
-    const { email, age, name } = ctx.payload;
+    // ctx.validated.json is validated before reaching here
+    const { email, age, name } = ctx.validated.json;
     // All fields guaranteed to match their constraints
   }),
 ]);
@@ -136,27 +141,27 @@ type User = {
 };
 
 export default defineRoute(({ GET }) => [
-  GET<
-    Payload, // payload schema // [!code hl:2]
-    User // response schema
-  >(async (ctx) => {
+  GET<{
+    json: Payload, // payload schema // [!code hl:2]
+    response: [200, "json", User] // response schema
+  }>(async (ctx) => {
     const user = await fetchUserFromDatabase();
-    // ctx.body is validated as User before sending
-    ctx.body = user;
-    // If user is missing required fields or has wrong types,
-    // validation error is thrown instead of sending bad data
+    // response is validated before sending
+    ctx.body = user // for Koa
+    ctx.json(user) // for Hono
   }),
 ]);
 ```
 
-Also route parameters like `/users/[id]` are validated according to their types:
+Also route parameters like `/users/:id` are validated according to their types:
 
 ```ts
 defineRoute<[
   number // validate id as number // [!code hl]
 ]>(({ GET }) => [
   GET(async (ctx) => {
-    // ctx.typedParams.id is guaranteed to be a number
+    // id is guaranteed to be a number
+    const { id } = ctx.validated.params
   }),
 ]);
 ```
@@ -191,7 +196,7 @@ For every API route you define, `KosmoJS` generates:
 **1. Typed fetch clients:**
 
 ```ts
-import useFetch from "_/front/fetch/users/[id]";
+import useFetch from "_/front/fetch/users/:id";
 
 // Fully typed, validates before making request
 const user = await useFetch.GET([123]);
@@ -220,7 +225,7 @@ Invalid data is caught immediately without server round trips:
 
 ```ts
 // This validates payload client-side
-await useFetch.POST([invalidId], invalidPayload);
+await useFetch.POST([invalidId], { json: invalidPayload });
 // Throws ValidationError before making network request
 ```
 
@@ -236,7 +241,7 @@ await useFetch.POST([invalidId], invalidPayload);
 
 ## 🎨 Multiple Frameworks
 
-Currently supports `SolidJS`, `React` and `Vue`.
+Currently supports `SolidJS` / `React` / `Vue` for frontend and `Koa` / `Hono` for backend.
 Additional frameworks may be added based on community interest.
 
 **Why it matters:**
@@ -247,9 +252,9 @@ Full-stack frameworks often lock you into specific frontend choices.
 - `Next` assumes `React`.
 - `Nuxt` assumes `Vue`.
 
-`KosmoJS` is a `Vite` template, not a framework - you choose your frontend stack.
+`KosmoJS` is a meta-framework - you choose your stack.
 
-When you add a source folder, you'll be prompted to select a framework.
+When you add a source folder, you'll be prompted to select your frontend and backend framework.
 Once selected, `KosmoJS` generates a ready-to-go folder with everything set up and aligned to your choice.
 
 **Benefits:**
@@ -264,23 +269,22 @@ Once selected, `KosmoJS` generates a ready-to-go folder with everything set up a
 
 ## 🔧 Built on Proven Tools
 
-`Koa` for APIs, `Vite` for frontend, `TypeScript` for safety. No proprietary abstractions.
+`Koa`/`Hono` for backend, `Vite` for frontend, `TypeScript` for safety. No proprietary abstractions.
 
 **Why it matters:**
 
 New frameworks introduce new abstractions, new APIs to learn, new mental models to internalize.
 When the framework fades, your knowledge doesn't transfer.
 
-`KosmoJS` uses tools you already know (or should know) - `Koa`, `Vite`, `TypeScript` -
-and just provides organizational structure.
+`KosmoJS` uses tools you already know (or easy to learn) and just provides organizational structure.
 
 **The stack:**
 
-**Koa for APIs:**
+**Koa/Hono for APIs:**
 - Minimal, composable middleware model
-- Well-understood patterns (10+ years mature)
+- Well-understood patterns
 - Rich ecosystem of middleware
-- Standard Node.js deployment
+- Deploy freedom - Node/Deno/Bun/edge
 
 **Vite for frontend:**
 - Fast dev server with HMR
@@ -299,9 +303,8 @@ and just provides organizational structure.
 - Deep ecosystem of tools and libraries
 - Skills transfer to other projects
 
-You're not learning "the `KosmoJS` way" - you're learning industry-standard tools with good organizational structure.
-
-[Read more: API Server](/api-server/intro)
+You're not learning "the `KosmoJS` way" - you're learning industry-standard tools
+with safe and performant organizational structure.
 
 ---
 

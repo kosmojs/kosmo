@@ -72,11 +72,11 @@ export default function Menu() {
         Home
       </Link>
 
-      <Link to={["users/[id]", 123]}>
+      <Link to={["users/:id", 123]}>
         User Profile
       </Link>
 
-      <Link to={["posts/[slug]", "hello-world"]} query={{ ref: "sidebar" }}>
+      <Link to={["posts/:slug", "hello-world"]} query={{ ref: "sidebar" }}>
         Blog Post
       </Link>
     </nav>
@@ -90,8 +90,8 @@ which is a union type generated based on your routes:
 ```ts
 export type LinkProps =
   | ["index"]
-  | ["users/[id]", id: string | number]
-  | ["posts/[slug]", slug: string]
+  | ["users/:id", id: string | number]
+  | ["posts/:slug", slug: string]
   // ... other routes
 ```
 

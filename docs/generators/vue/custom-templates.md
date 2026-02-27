@@ -79,7 +79,7 @@ Matches only one folder level deep:
 **Matches:**
 
 - `landing/home`
-- `landing/[slug]`
+- `landing/:slug`
 
 **Not matched:**
 
@@ -133,10 +133,10 @@ Dynamic segments work exactly the same - no difference in matching behavior:
 
 ```ts
 {
-  "users/[id]": userTemplate,
-  "products/[[category]]": productTemplate,
-  "docs/[...path]": docsTemplate,
-  "shop/[category]/[[sub]]": shopTemplate,
+  "users/:id": userTemplate,
+  "products/{:category}": productTemplate,
+  "docs/{...path}": docsTemplate,
+  "shop/:category/{:sub}": shopTemplate,
 }
 ```
 

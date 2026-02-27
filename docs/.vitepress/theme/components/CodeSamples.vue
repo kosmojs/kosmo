@@ -5,6 +5,7 @@ import PayloadValidation from './PayloadValidation.md'
 import ResponseValidation from './ResponseValidation.md'
 import GlobalMiddleware from './GlobalMiddleware.md'
 import OverrideMiddleware from './OverrideMiddleware.md'
+import LinkButton from './LinkButton.vue'
 </script>
 <template>
   <div class="hero-sections">
@@ -69,10 +70,13 @@ import OverrideMiddleware from './OverrideMiddleware.md'
         <div class="hero-text">
           <h1 class="hero-title">Response Validation</h1>
           <div class="hero-description">
-            Use the second type argument to define the response schema.
-            <code>ctx.body</code> should match defined schema for validation to pass.
+            Just as you validate incoming request data, you can validate outgoing response data
+            by providing a tuple with status code, content type and expected schema.
             <div class="text-hint">
-              If no payload validation is needed, use <code>never</code> for the first argument.
+              Also an union of tuples can be used to specify multiple response variants.
+            </div>
+            <div class="text-hint">
+              Enabled by default on dev, disabled in production.
             </div>
           </div>
         </div>
@@ -90,6 +94,9 @@ import OverrideMiddleware from './OverrideMiddleware.md'
             Define middleware to run on every route.
             Use the <code>slot</code> option to allow routes to override this middleware later.
             Use the <code>on</code> option to run middleware only for specific HTTP methods.
+            <div class="text-hint">
+              Custom slots like <code>auth</code> should be added to <code>api/env.d.ts</code> file.
+            </div>
           </div>
         </div>
         <a href="/api-server/use-middleware/slot-composition" class="details-button">Details ➜</a>
@@ -110,15 +117,15 @@ import OverrideMiddleware from './OverrideMiddleware.md'
           <h1 class="hero-title">Override Middleware</h1>
           <div class="hero-description">
             Use the <code>slot</code> option in routes to override global middleware with the same slot name.
-            Eg., for file upload routes, use a form body parser instead of the default JSON parser.
-            <div class="text-hint">
-              Feel free to use any Koa middleware, not just those provided by <code>KosmoJS</code>.
-            </div>
           </div>
         </div>
         <a href="/api-server/use-middleware/slot-composition" class="details-button">Details ➜</a>
       </div>
     </div>
+  </div>
+
+  <div class="text-center">
+    <LinkButton href="/start">Get Started</LinkButton>
   </div>
 </template>
 

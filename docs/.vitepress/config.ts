@@ -9,12 +9,7 @@ const icons = {
   gear: "\u2699\uFE0F",
 };
 
-const redirects = [
-  [
-    "api-server/use-middleware/route-level-middleware.md",
-    "api-server/use-middleware/middlewrappers.html",
-  ],
-];
+const redirects: Array<[string, string]> = [];
 
 export default defineConfig({
   lang: "en-US",
@@ -363,7 +358,7 @@ export default defineConfig({
           collapsed: false,
           items: [
             {
-              text: "💡 About KosmoJS",
+              text: "💡 About",
               link: "/about",
             },
             {
@@ -448,7 +443,7 @@ export default defineConfig({
               ],
             },
             {
-              text: "🔄 use Middleware",
+              text: "⏩ use Middleware",
               collapsed: false,
               items: [
                 {
@@ -466,8 +461,8 @@ export default defineConfig({
                   link: "/api-server/use-middleware/slot-composition",
                 },
                 {
-                  text: "🔹 Middlewrappers",
-                  docFooterText: "🔹 Middlewrappers",
+                  text: "🔹 Route-level Middleware",
+                  docFooterText: "🔹 Route-level Middleware",
                   link: "/api-server/use-middleware/route-level-middleware",
                 },
               ],

@@ -1,13 +1,15 @@
-```ts [core/api/use.ts]
-import { use } from "@kosmojs/api";
-import bodyparser from "@kosmojs/api/bodyparser";
+```ts [api/use.ts]
+import { use } from "_/admin/api";
 
 export default [
   use(
-    bodyparser.json(), // [!code hl]
+    (ctx, next) => { // [!code hl:4]
+      // authentication logic here
+      return next();
+    },
     {
-      slot: "bodyparser", // [!code hl]
-      on: ["POST", "PUT", "PATCH"],
+      slot: "auth", // [!code hl]
+      on: ["POST", "PUT", "PATCH", "DELETE"],
     },
   ),
 ];

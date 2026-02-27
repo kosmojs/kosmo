@@ -9,7 +9,8 @@ head:
         multiple ports, teardown handler, development middleware, file watching
 ---
 
-Each source folder in `KosmoJS` is a **standalone entity** with its own dev server, port, and configuration.
+Each source folder in `KosmoJS` is a **standalone entity**,
+with its own dev server, port, and configuration.
 
 **Why this model?**
 
@@ -24,7 +25,8 @@ Running them on separate ports with independent configurations means:
 - **Clear boundaries** - Port separation reinforces the organizational structure - no accidental cross-contamination
 
 The standalone model matches how these concerns will eventually deploy in production -
-separate services on different base URLs-making your development environment reflect reality rather than abstract it away.
+separate services on different base URLs-making your development environment
+reflect reality rather than abstract it away.
 
 ## 🚀 Starting the Dev Server
 
@@ -34,7 +36,7 @@ Run the dev server for all source folders:
 pnpm dev
 ```
 
-Run the dev server for a specific source folder:
+Or run the dev server for a specific source folder:
 
 ```sh
 pnpm dev front
@@ -82,64 +84,127 @@ and further improve the development experience.
 Until then, esbuild with full rebuilds provides a solid foundation
 that works smoothly for most projects.
 
-## ⚙️ Custom Development Middleware
+## ⚙️ Customizing Dev Experience
 
-Your `api/app.ts` file can export two optional functions that customize development behavior.
-Both are commented out by default - uncomment and adapt them as needed.
+The `api/dev.ts` file provides custom tweaks for development mode
+through a default exported `devSetup` configuration.
 
-### DevMiddlewareFactory
+### requestHandler
 
-This function lets you customize how requests are routed between your API handler and Vite's dev server:
+This function returns your API request handler.
+By default, it simply returns the Koa/Hono request handler:
 
-```ts
-/**
- * In dev mode, determines whether to pass the request to API handler or to Vite.
- */
-export const devMiddlewareFactory: import("@kosmojs/api").DevMiddlewareFactory = (
-  app,
-) => {
-  return (req, res, next) => {
-    return req.url?.startsWith("...")
-      ? app?.callback()(req, res) // send request to api handler
-      : next(); // send request to vite dev server
-  };
-};
+::: code-group
+```ts [Koa]
+import { devSetup } from "_/front/api:dev";
+import app from "./app";
+
+export default devSetup({
+  requestHandler() {
+    return app.callback();
+  },
+});
 ```
 
-By default, `KosmoJS` routes requests based on your `apiurl` configuration.
-If you need more sophisticated routing logic-perhaps certain paths should bypass the API entirely,
-or you want to handle WebSocket connections differently-you can implement custom logic here.
+```ts [Hono]
+import { getRequestListener } from "@hono/node-server";
+import { devSetup } from "_/front/api:dev";
+import app from "./app";
 
-### TeardownHandler
+export default devSetup({
+  requestHandler() {
+    return getRequestListener(app.fetch.bind(app));
+  },
+});
+```
+:::
+
+The returned handler processes all requests that match your API routes.
+In development, `KosmoJS` automatically routes requests between your API handler
+and `Vite` dev server based on your `apiurl` configuration.
+
+**Advanced usage:**
+
+If you need custom routing logic beyond simple URL matching, you can implement it here:
+
+```ts
+export default devSetup({
+  requestHandler() {
+    const handler = app.callback();
+
+    return (req, res) => {
+      // Custom routing logic
+      if (req.url?.startsWith('/ws')) {
+        // Handle WebSocket connections differently
+        handleWebSocket(req, res);
+      } else {
+        handler(req, res);
+      }
+    };
+  },
+});
+```
+
+### requestMatcher
+
+For more control over which requests go to your API vs. Vite dev server, use `requestMatcher`:
+
+```ts
+export default devSetup({
+  requestHandler() {
+    return app.callback();
+  },
+
+  requestMatcher(req) {
+    // Custom heuristic to detect API requests
+    return req.url?.startsWith("/api") ||
+           req.headers["x-api-request"] === "true";
+  },
+});
+```
+
+By default, requests are routed to the API handler if their URL starts with `apiurl`.
+Use `requestMatcher` to implement custom detection logic based on headers, methods, or other criteria.
+
+### teardownHandler
 
 This function runs before the API handler reloads during development:
 
 ```ts
-/**
- * In dev mode, used to cleanup before reloading api handler.
- */
-export const teardownHandler: import("@kosmojs/api").TeardownHandler = () => {
-  // close db connections, server sockets etc.
-};
+export default devSetup({
+  requestHandler() {
+    return app.callback();
+  },
+
+  teardownHandler() {
+    // Close db connections, server sockets, etc.
+  },
+});
 ```
 
 Use this to clean up resources that shouldn't persist across rebuilds - close database connections,
 shut down WebSocket servers, clear timers, or release any other resources that would otherwise leak.
 
-Without proper cleanup, repeated rebuilds during development can leave orphaned connections or processes that consume resources.
-The teardown handler ensures a clean slate before each reload.
+Without proper cleanup, repeated rebuilds during development can leave orphaned connections or processes
+that consume resources. The teardown handler ensures a clean slate before each reload.
 
 **Example usage:**
 
 ```ts
 let dbConnection;
 
-export const teardownHandler = async () => {
-  if (dbConnection) {
-    await dbConnection.close();
-    dbConnection = null;
-  }
-};
+export default devSetup({
+  requestHandler() {
+    return app.callback();
+  },
+
+  async teardownHandler() {
+    if (dbConnection) {
+      await dbConnection.close();
+      dbConnection = undefined;
+    }
+  },
+});
 ```
 
 This pattern prevents database connection exhaustion during active development with frequent rebuilds.
@@ -263,7 +328,8 @@ such as verifying middleware ordering or checking which methods a route supports
 
 ## 💡 Development Best Practices
 
-**Use the stability threshold** setting if you're experiencing unnecessary rebuilds from your editor's save behavior:
+**Use the stability threshold** setting if you're experiencing unnecessary rebuilds
+from your editor's save behavior:
 
 ```ts
 // vite.config.ts

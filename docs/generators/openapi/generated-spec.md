@@ -28,7 +28,7 @@ The generator produces a complete `OpenAPI 3.1` specification that includes:
 Routes with optional parameters generate multiple OpenAPI paths
 since OpenAPI requires all path parameters to be mandatory.
 
-For a route at `users/[id]/posts/[[postId]]/index.ts`,
+For a route at `users/:id/posts/{:postId}/index.ts`,
 the generator creates two paths:
 - `/users/{id}/posts/{postId}` - Full path with optional parameter
 - `/users/{id}/posts` - Path without optional parameter

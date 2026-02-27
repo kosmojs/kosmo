@@ -17,7 +17,7 @@ or external references without making actual fetch requests.
 The `path` function constructs a relative path including your route's base URL and API URL configuration:
 
 ```ts [pages/example/index.tsx]
-import useFetch from "_/front/fetch/users/[id]";
+import useFetch from "_/front/fetch/users/:id";
 
 // For a route with a numeric ID parameter
 const url = useFetch.path([123]);
@@ -48,7 +48,7 @@ These utilities understand your route's parameter structure and handle URL const
 For routes with multiple parameters, you pass them in order:
 
 ```ts [pages/example/index.tsx]
-// For route: posts/[userId]/comments/[commentId]
+// For route: posts/:userId/comments/:commentId
 const url = useFetch.path([456, 789]);
 // Returns: "/api/posts/456/comments/789"
 ```

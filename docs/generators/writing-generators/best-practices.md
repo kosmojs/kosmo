@@ -1,12 +1,12 @@
 ---
 title: Generator Best Practices
 description: Best practices for writing KosmoJS generators including handling incremental updates,
-    using path resolvers, applying formatters, and documenting generator behavior.
+    using path resolvers, documenting generator behavior.
 head:
   - - meta
     - name: keywords
       content: generator best practices, code generation patterns, path resolution,
-        formatters, incremental updates, template design, generator documentation
+        incremental updates, template design, generator documentation
 ---
 
 ### 💡 Writing Generators Best Practices
@@ -24,9 +24,6 @@ Most generators only care about API routes or page routes, not both.
 **Consider dependencies.**
 Use `referencedFiles` to determine when to regenerate routes
 that import from changed files.
-
-**Apply formatters consistently.**
-Generated code should match the project's code style conventions.
 
 **Keep templates simple.**
 Complex logic belongs in your factory, not in Handlebars templates.

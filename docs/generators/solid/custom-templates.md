@@ -76,7 +76,7 @@ Matches routes at a specific depth:
 **Matches:**
 - `landing/home`
 - `landing/about`
-- `landing/[slug]`
+- `landing/:slug`
 
 **Does not match:**
 - `landing/features/new` (too deep)
@@ -95,7 +95,7 @@ Matches routes at any depth:
 **Matches:**
 - `marketing/campaigns/summer`
 - `marketing/promo/2024/special`
-- `marketing/[id]/details`
+- `marketing/:id/details`
 
 ### Exact Match
 
@@ -135,16 +135,16 @@ Custom templates work with all parameter types:
 ```ts
 {
   // Required parameter
-  "users/[id]": userTemplate,
+  "users/:id": userTemplate,
 
   // Optional parameter
-  "products/[[category]]": productTemplate,
+  "products/{:category}": productTemplate,
 
-  // Rest parameter
-  "docs/[...path]": docsTemplate,
+  // Splat parameter
+  "docs/{...path}": docsTemplate,
 
   // Combined
-  "shop/[category]/[[subcategory]]": shopTemplate,
+  "shop/:category/{:subcategory}": shopTemplate,
 }
 ```
 

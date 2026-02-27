@@ -1,5 +1,5 @@
-```ts [api/blog/[...page]/index.ts]
-import { defineRoute } from "_/front/api/blog/[...page]";
+```ts [api/pages/:id/index.ts]
+import { defineRoute } from "_/admin/api/pages/:id";
 
 type Page = {
   id: TRefine<string, { format: "uuid" }>;
@@ -10,12 +10,10 @@ type Page = {
 }
 
 export default defineRoute(({ GET }) => [
-  GET<
-    never, // no payload validation // [!code hl:2]
-    Page  // validate response to be a valid Page
-  >(async (ctx) => {
-    // ctx.body should match the schema defined above, // [!code hl:2]
-    // otherwise validation fails and an error response is returned
+  GET<{
+    response: [200, "json", Page], // [!code hl]
+  }>(async (ctx) => {
+    // response should match defined schema
   })
 ]);
 ```

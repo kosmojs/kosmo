@@ -23,18 +23,18 @@ or perhaps it should fall within a certain range.
 `KosmoJS` lets you refine parameter types through a tuple passed as the first type argument to `defineRoute`.
 This tuple uses positional parameters that align with your route's parameter order.
 
-Consider a route at `api/users/[id]/index.ts` where you want to ensure the ID is a number.
+Consider a route at `api/users/:id/index.ts` where you want to ensure the ID is a number.
 You specify this by passing `[number]` as the first type argument `defineRoute`:
 
-```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api/users/[id]";
+```ts [api/users/:id/index.ts]
+import { defineRoute } from "_/front/api/users/:id";
 
 export default defineRoute<[
   number // validate id as number // [!code hl]
 ]>(({ GET }) => [
   GET(async (ctx) => {
-    // ctx.typedParams.id is typed as number and validated at runtime // [!code hl]
-    const userId = ctx.typedParams.id;
+    // id is a validated number // [!code hl]
+    const { id } = ctx.validated.params;
   }),
 ]);
 ```
@@ -45,16 +45,17 @@ If someone makes a request to `/api/users/abc`, where `abc` cannot be parsed as 
 `KosmoJS` rejects the request with a validation error before your handler runs.
 The client receives a 400 status code with information about what went wrong.
 
-Notice that you access the validated parameter through `ctx.typedParams` rather than the standard `ctx.params`.
-The typed version gives you the refined type (number in this case) rather than the original string type.
+Access validated parameters through `ctx.validated.params`.
 
-The standard `ctx.params` still exists if you need it for some reason,
-but `ctx.typedParams` is what you'll typically use when you've provided type refinements.
+This gives you the refined type (number in this case) rather than the original string type.
+
+The standard Koa's `ctx.params` or Hono's `ctx.req.param()` still exists if you need it,
+but `ctx.validated.params` is what you'll typically use when you've provided type refinements.
 
 You can refine parameters further by using `TRefine` (globally available, no need to import):
 
-```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api/users/[id]";
+```ts [api/users/:id/index.ts]
+import { defineRoute } from "_/front/api/users/:id";
 
 export default defineRoute<[
   // validate id as a positive integer // [!code hl]
@@ -75,10 +76,10 @@ the second argument refines the second parameter, and so on.
 
 All positions are optional, so you can refine just the parameters that need it.
 
-For a route at `api/users/[id]/[view]/index.ts`:
+For a route at `api/users/:id/:view/index.ts`:
 
-```ts [api/users/[id]/[view]/index.ts]
-import { defineRoute } from "_/front/api/users/[id]/[view]";
+```ts [api/users/:id/:view/index.ts]
+import { defineRoute } from "_/front/api/users/:id/:view";
 
 export default defineRoute<[
   // validate id as a positive integer // [!code hl]
@@ -88,10 +89,13 @@ export default defineRoute<[
 ]>(({ GET }) => [
   GET(async (ctx) => {
     // Both id and view are validated at this point // [!code hl]
-    const { id, view } = ctx.typedParams;
+    const { id, view } = ctx.validated.params;
   }),
 ]);
 ```
 
 If you only need to refine the first parameter, you can omit the second argument entirely.
-The flexibility of positional parameters gives you fine-grained control over which parameters get validated and how.
+
+Also, position-based validation is name-agnostic - params refinements doesn't depend on parameter names.
+If you refactor your route from `users/:id` to `users/:userId`,
+positional refinements still works without any changes.

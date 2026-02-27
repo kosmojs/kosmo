@@ -17,10 +17,11 @@ globally for your entire API, for route subtrees, or for individual endpoints.
 
 ## 📦 Default Error Handler
 
-When you create a new project, `KosmoJS` generates `core/api/use.ts` with a basic error handler middleware:
+When you create a source folder, `KosmoJS` generates `api/use.ts` with a basic error handler middleware:
 
-```ts [core/api/use.ts]
-import { use, ValidationError } from "@kosmojs/api";
+```ts [api/use.ts]
+import { ValidationError } from "@kosmojs/api/errors";
+import { use } from "_/front/api";
 
 export default [
   use(
@@ -29,9 +30,9 @@ export default [
         await next();
       } catch (error: any) {
         if (error instanceof ValidationError) {
-          const { scope, errorMessage } = error;
+          const { target, errorMessage } = error;
           ctx.status = 400;
-          ctx.body = { error: `ValidationError: ${scope} - ${errorMessage}` };
+          ctx.body = { error: `ValidationError: ${target} - ${errorMessage}` };
         } else {
           ctx.status = error.statusCode || error.status || 500;
           ctx.body = { error: error.message };
@@ -58,7 +59,7 @@ this error handler catches it and formats a consistent response.
 You can customize the default error handler to match your application's needs.
 For example, add error logging or emit events for monitoring:
 
-```ts [core/api/use.ts]
+```ts [api/use.ts]
 async function useErrorHandler(ctx, next) {
   try {
     await next();
@@ -74,7 +75,7 @@ async function useErrorHandler(ctx, next) {
 
 You can then add listeners to handle these events:
 
-```ts [core/api/app.ts]
+```ts [api/app.ts]
 import { type AppOptions, createApp } from "@kosmojs/api";
 
 export default (options?: AppOptions) => {
@@ -90,11 +91,11 @@ export default (options?: AppOptions) => {
 ```
 
 The error handler can return different response formats based on request headers or other context.
-Consult the [Koa error handling documentation](https://koajs.com/#error-handling) for more advanced patterns.
 
 ## 🎯 Route-Level Error Handlers
 
-For routes that need different error handling behavior, override the default handler using the `errorHandler` slot.
+For routes that need different error handling behavior,
+override the default handler using the `errorHandler` slot.
 
 **Inline override:**
 
@@ -169,7 +170,8 @@ GET(async (ctx) => {
 ```
 
 Use `ctx.throw()` and `ctx.assert()` to throw errors with specific status codes.
-The error handler middleware wraps your entire middleware chain, catching errors from any level and formatting them consistently.
+The error handler middleware wraps your entire middleware chain,
+catching errors from any level and formatting them consistently.
 
 This separation of concerns keeps your route handlers focused on business logic
 while error handling stays centralized and consistent across your API.

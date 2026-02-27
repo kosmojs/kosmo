@@ -11,7 +11,7 @@ head:
 
 `KosmoJS` generates `TypeScript` types for your route parameters based on your directory structure.
 
-When you have a route like `users/[id]/index.ts`, `KosmoJS` knows there's an `id` parameter.
+When you have a route like `users/:id/index.ts`, `KosmoJS` knows there's an `id` parameter.
 
 However, by default, route parameters are typed as strings since that's what URLs contain.
 
@@ -21,32 +21,36 @@ or perhaps you have an action parameter that should be constrained to a specific
 Refine your parameter types by passing a tuple to `defineRoute`'s first type argument.
 The tuple positions correspond directly to the order of parameters in your route.
 
-For a route at `users/[id]/index.ts` where the ID should be a number:
+For a route at `users/:id/index.ts` where the ID should be a number:
 
-```ts [api/users/[id]/index.ts]
+```ts [api/users/:id/index.ts]
+import { defineRoute } from "_/front/api/users/:id"
+
 export default defineRoute<[
-  number // validate id as number // [!code hl]
+  number // validate id as number // [!code ++]
 ]>(({ GET }) => [
   GET(async (ctx) => {
-    // ctx.typedParams.id is now typed as number
-    const userId = ctx.typedParams.id;
+    // id is typed and validated as number // [!code hl]
+    const { id } = ctx.validated.params
   }),
 ]);
 ```
 
-For a route with multiple parameters like `users/[id]/[action]/index.ts`:
+For a route with multiple parameters like `users/:id/:action/index.ts`:
 
-```ts [api/users/[id]/[action]/index.ts]
+```ts [api/users/:id/:action/index.ts]
+import { defineRoute } from "_/front/api/users/:id/:action"
+
 type UserAction = "retrieve" | "update" | "delete";
 
 export default defineRoute<[
-  number,
-  UserAction
+  number, // [!code ++]
+  UserAction, // [!code ++]
 ]>(({ GET, POST }) => [
   GET(async (ctx) => {
-    // ctx.typedParams.id is number // [!code hl:2]
-    // ctx.typedParams.action is one of "retrieve" | "update" | "delete"
-    const { id, action } = ctx.typedParams;
+    // id is number // [!code hl:2]
+    // action is one of "retrieve" | "update" | "delete"
+    const { id, action } = ctx.validated.params;
   }),
 ]);
 ```
@@ -54,8 +58,8 @@ export default defineRoute<[
 The position of the type argument corresponds to the position of the parameter in your route path.
 The first type refines the first parameter, the second type refines the second parameter, and so on.
 
-All positions are optional. But you can not skip positions.
-If you need to refine second param, you'll have to also provide a type for first one.
+All positions are optional, with a caveat - if you need to refine second param,
+you'll have to also provide a type for first one.
 
 ### 🎯 Type Literal Requirement
 
@@ -63,6 +67,7 @@ The refinement tuple must be declared **inline as a type literal**.
 While you can use type aliases for individual parameter types, you cannot reference a pre-defined tuple type.
 
 **✅ This works:**
+
 ```ts [api/example/index.ts]
 // Individual type aliases are fine
 type UserID = number;
@@ -73,13 +78,13 @@ defineRoute<[
   UserAction,
 ]>(({ GET }) => [
   GET(async (ctx) => {
-    // ctx.typedParams.id is number
-    // ctx.typedParams.action is "retrieve" | "update" | "delete"
+    // ...
   }),
 ]);
 ```
 
 **❌ This won't work:**
+
 ```ts [api/example/index.ts]
 // Pre-defined tuple types are not supported
 type Params = [number, UserAction];

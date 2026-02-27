@@ -15,7 +15,7 @@ or work with all your routes through a centralized map.
 For direct access to a specific route's client, import from the route's generated fetch file:
 
 ```ts [pages/example/index.tsx]
-import useFetch from "_/front/fetch/users/[id]";
+import useFetch from "_/front/fetch/users/:id";
 
 // Use the client directly
 const response = await useFetch.GET([123]);
@@ -27,7 +27,7 @@ For access to all routes through a centralized map, import from your source fold
 import fetchMap from "_/front/fetch";
 
 // Access a specific route through the map
-const useFetch = fetchMap["users/[id]"];
+const useFetch = fetchMap["users/:id"];
 const response = await useFetch.GET([123]);
 ```
 
@@ -52,9 +52,9 @@ Both arguments are typed according to your API definition, so `TypeScript` guide
 
 Consider an API route with a typed parameter and payload:
 
-```ts [api/users/[id]/index.ts]
+```ts [api/users/:id/index.ts]
 // API route definition
-import { defineRoute } from "_/front/api/users/[id]";
+import { defineRoute } from "_/front/api/users/:id";
 
 export default defineRoute<[number]>(({ GET }) => [
   GET<
@@ -69,7 +69,7 @@ export default defineRoute<[number]>(({ GET }) => [
 The generated fetch client for this route expects a number parameter and optional payload:
 
 ```ts [pages/example/index.tsx]
-import useFetch from "_/front/fetch/users/[id]";
+import useFetch from "_/front/fetch/users/:id";
 
 // Call with just parameters
 const response = await useFetch.GET([123]);

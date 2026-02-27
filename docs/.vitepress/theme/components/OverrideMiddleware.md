@@ -1,18 +1,19 @@
-```ts [api/files/upload/index.ts]
-import bodyparser from "@kosmojs/api/bodyparser";
-import { defineRoute } from "_/admin/api/files/upload";
+```ts [api/dashboard/index.ts]
+import { defineRoute } from "_/admin/api/dashboard";
 
 export default defineRoute(({ use, POST }) => [
   use(
-    bodyparser.form(), // use form bodyparser [!code hl]
+    (ctx, next) => { // [!code hl:4]
+      // no authentication for dashboard
+      return next();
+    },
     {
-      slot: "bodyparser", // [!code hl]
-      on: ["POST"],
+      slot: "auth", // [!code hl]
     },
   ),
 
   POST((ctx) => {
-    // ctx.payload now contains parsed form data // [!code hl]
+    // ...
   })
 ]);
 ```

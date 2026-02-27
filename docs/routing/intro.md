@@ -37,7 +37,7 @@ api/
     index.ts          ➜ /api
   users/
     index.ts          ➜ /api/users
-    [id]/
+    :id/
       index.ts        ➜ /api/users/:id
 
 pages/
@@ -45,7 +45,7 @@ pages/
     index.tsx          ➜ /
   users/
     index.tsx          ➜ /users
-    [id]/
+    :id/
       index.tsx        ➜ /users/:id
 ```
 
@@ -83,7 +83,7 @@ and prevents utility files from cluttering your route directories.
 
 The directory-based routing structure naturally supports nested routes.
 
-If you create `api/users/[id]/posts/index.ts`, you get an endpoint at `/api/users/:id/posts`.
+If you create `api/users/:id/posts/index.ts`, you get an endpoint at `/api/users/:id/posts`.
 This nesting can go as deep as your application needs.
 
 For client pages, nested routes often benefit from layout components

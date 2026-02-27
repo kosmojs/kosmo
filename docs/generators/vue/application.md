@@ -5,7 +5,8 @@ description: Core files generated for a Vue 3 application including App.vue stru
 head:
   - - meta
     - name: keywords
-      content: vue application structure, vue router, app.vue, entry point, client hydration, vite entry, kosmojs vue
+      content: vue application structure, vue router, app.vue, entry point,
+        client hydration, vite entry, kosmojs vue
 ---
 
 To establish a reliable foundation for each source folder, the `Vue` generator
