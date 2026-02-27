@@ -17,9 +17,9 @@ export const routeMap: Array<{
   // This enables adding layout CSS to critical CSS for the current route.
   layouts: Array<string>;
 }> = [
-  {{#each routeMap}}
+  {{#each sortedRoutes}}
   {
-    match: match("{{path}}"),
+    match: match("{{pathPattern}}"),
     file: "{{file}}",
     layouts: [ {{#each layouts}}"{{.}}", {{/each}}],
   },

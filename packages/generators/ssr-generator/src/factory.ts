@@ -6,9 +6,9 @@ import { build, loadConfigFromFile, type Plugin } from "vite";
 import {
   defaults,
   type GeneratorFactory,
+  type PageRoute,
   pathResolver,
   type ResolvedEntry,
-  type RouteEntry,
   renderFactory,
   sortRoutes,
 } from "@kosmojs/dev";
@@ -78,27 +78,27 @@ export const factory: GeneratorFactory = async ({
       },
     });
 
-    const routeMap: Array<{
-      path: string;
-      file: string;
-      layouts: Array<string>;
-    }> = [...routes].sort(sortRoutes).map((route) => {
-      return {
-        path: generatePathPattern(route),
-        file: join(defaults.pagesDir, route.file),
-        layouts: layouts.flatMap(({ name, file }) => {
-          return name === route.name || route.file.startsWith(`${name}/`)
-            ? [join(defaults.pagesDir, file)]
-            : [];
-        }),
-      };
-    }, {});
+    const sortedRoutes: Array<PageRoute & { layouts: Array<string> }> = routes
+      .map((route) => {
+        return {
+          ...route,
+          file: join(defaults.pagesDir, route.file),
+          layouts: layouts.flatMap(({ name, file }) => {
+            return name === route.name || route.file.startsWith(`${name}/`)
+              ? [join(defaults.pagesDir, file)]
+              : [];
+          }),
+        };
+      }, {})
+      .sort(sortRoutes);
 
     for (const [file, template] of [
       ["ssr.ts", serverTpl],
       ["ssr:routes.ts", routesTpl],
     ]) {
-      await renderToFile(createPath.lib(file), template, { routeMap });
+      await renderToFile(createPath.lib(file), template, {
+        sortedRoutes,
+      });
     }
 
     // Build default server for SSR. It is using node:http server.
@@ -117,23 +117,4 @@ export const factory: GeneratorFactory = async ({
       await generateLibFiles(entries);
     },
   };
-};
-
-export const generatePathPattern = ({ pathTokens }: RouteEntry): string => {
-  return pathTokens
-    .map(({ param, path }) => {
-      if (param?.isRest) {
-        return [`{/*${param.name}}`];
-      }
-      if (param?.isOptional) {
-        return [`{/:${param.name}}`];
-      }
-      if (param) {
-        return [`:${param.name}`];
-      }
-      return path === "/" ? [] : path;
-    })
-    .join("/")
-    .replace(/\/\{/g, "{")
-    .replace(/\+/g, "\\\\+");
 };
