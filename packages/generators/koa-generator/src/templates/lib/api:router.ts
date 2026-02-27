@@ -9,9 +9,11 @@ import {
   type RequestValidationTarget,
   type RouterFactory,
   StateKey,
+} from "@kosmojs/api";
+import {
   ValidationError,
   type ValidationErrorEntry,
-} from "@kosmojs/api";
+} from "@kosmojs/api/errors";
 
 import {
   type DefaultContext,
@@ -35,7 +37,7 @@ export type RouterOptions = import("@koa/router").RouterOptions;
 /**
  * Create route-level middleware stack that handles:
  * 1. Context extension - adds `ctx.bodyparser` (lazy, cached) and `ctx.validated` accessors
- * 2. Params validation - normalizes and validates URL params (including rest/numeric params)
+ * 2. Params validation - normalizes and validates URL params (including splat/numeric params)
  * 3. Request validation - validates query, headers, cookies, and body against schemas
  * 4. Response validation - validates outgoing response against defined variants
  *
@@ -99,9 +101,9 @@ export const createRouteMiddleware: CreateRouteMiddleware<
 
     /**
      * Normalize and validate URL params:
-     * - Rest params (e.g. `/files/:path+`) are split into arrays by "/"
-     * - Numeric params are cast to Number (or array of Numbers for rest params)
-     * - Non-rest, non-numeric params pass through as strings
+     * - Splat params (e.g. `/files{/*path}`) are split into arrays by "/"
+     * - Numeric params are cast to Number (or array of Numbers for splat params)
+     * - Non-splat, non-numeric params pass through as strings
      *
      * Validated params are stored in the cache so `ctx.validated.params`
      * reflects the normalized (and validated) values.
@@ -109,10 +111,10 @@ export const createRouteMiddleware: CreateRouteMiddleware<
     use(
       function useValidateParams(ctx, next) {
         const normalizedParams = params.reduce(
-          (map: Record<string, unknown>, [name, isRest]) => {
+          (map: Record<string, unknown>, [name, isSplat]) => {
             const value = ctx.params[name];
             if (value) {
-              if (isRest) {
+              if (isSplat) {
                 map[name] = numericParams.includes(name)
                   ? value.split("/").map(Number)
                   : value.split("/");
@@ -253,6 +255,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
             errorMessage: customErrors?.error || errorMessage,
             errorSummary,
             route,
+            data: { status: ctx.status, contentType: ctx.type, body: ctx.body },
           },
         ]);
       },

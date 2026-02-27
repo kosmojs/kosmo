@@ -1,4 +1,4 @@
-import { ValidationError } from "@kosmojs/api";
+import { ValidationError } from "@kosmojs/api/errors";
 
 import { use } from "{{ createImport 'libApi' }}";
 

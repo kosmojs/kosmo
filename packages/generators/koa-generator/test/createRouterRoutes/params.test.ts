@@ -4,7 +4,7 @@ import { middlewareStackBuilder, runMiddleware } from "..";
 
 describe("createRouterRoutes", () => {
   describe("params", () => {
-    test("rest params", async () => {
+    test("splat params", async () => {
       const stack = middlewareStackBuilder(
         [
           {
@@ -49,7 +49,7 @@ describe("createRouterRoutes", () => {
       expect(ctx.validated.params.name).toEqual("test");
     });
 
-    test("rest numeric params", async () => {
+    test("splat numeric params", async () => {
       const stack = middlewareStackBuilder(
         [
           {

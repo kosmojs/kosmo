@@ -9,10 +9,10 @@ import {
   defineRouteFactory,
 } from "{{ createImport "lib" "api:route" }}";
 
-type ParamsTuple = [{{#each params}}unknown?,{{/each}}];
+type ParamsTuple = [{{#each paramsSchema}}unknown?,{{/each}}];
 
 type ParamsMapper<T extends ParamsTuple> = {
-  {{#each params}}
+  {{#each paramsSchema}}
   "{{name}}"{{#unless isRequired}}?{{/unless}}: T[{{@index}}] extends undefined
     ? string
     : T[{{@index}}];
@@ -21,7 +21,7 @@ type ParamsMapper<T extends ParamsTuple> = {
 
 export const defineRoute: <
   ParamsT extends ParamsTuple = [
-    {{#each params}}string{{#unless isRequired}}?{{/unless}},
+    {{#each paramsSchema}}string{{#unless isRequired}}?{{/unless}},
     {{/each}}
   ],
   StateT extends object = object,

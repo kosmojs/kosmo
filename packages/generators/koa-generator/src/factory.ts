@@ -8,7 +8,6 @@ import {
   type ApiRoute,
   defaults,
   type GeneratorFactory,
-  type PathToken,
   pathResolver,
   pathTokensFactory,
   type ResolvedEntry,
@@ -48,6 +47,11 @@ export const factory: GeneratorFactory<Options> = async (
   const { renderToFile } = renderFactory({
     helpers: {
       createImport: createImportHelper,
+      createParamsLiteral(params: ApiRoute["params"]) {
+        return params.schema.map(({ name, kind }) => {
+          return JSON.stringify([name, kind === "splat"]);
+        });
+      },
     },
     partials: {
       libApiTpl,
@@ -142,27 +146,29 @@ export const factory: GeneratorFactory<Options> = async (
 
         const baseRoute = {
           ...entry,
-          path: pathFactory(entry.pathTokens),
+          path: entry.pathPattern,
           meta: resolveMeta(entry),
           useWrappers,
         };
 
-        const aliases = Object.entries(alias || {}).flatMap(
-          ([url, routeName]) => {
-            const pathTokens = pathTokensFactory(url);
-            return routeName === entry.name
-              ? [
-                  {
-                    ...baseRoute,
-                    name: url,
-                    id: `${baseRoute.id}_${crc(url)}`,
-                    fullpath: pathFactory(pathTokens),
-                    pathTokens,
-                  },
-                ]
-              : [];
-          },
-        );
+        const aliases: Array<
+          ApiRoute & {
+            fullpath: string;
+          }
+        > = Object.entries({ ...alias }).flatMap(([url, routeName]) => {
+          const [pathTokens, fullpath] = pathTokensFactory(url);
+          return routeName === entry.name
+            ? [
+                {
+                  ...baseRoute,
+                  name: url,
+                  id: `${baseRoute.id}_${crc(url)}`,
+                  fullpath,
+                  pathTokens,
+                },
+              ]
+            : [];
+        });
 
         return [baseRoute, ...aliases];
       })
@@ -195,7 +201,12 @@ export const factory: GeneratorFactory<Options> = async (
           libRouteTpl,
           {
             route: entry,
-            params: entry.params.schema,
+            paramsSchema: entry.params.schema.map((param) => {
+              return {
+                ...param,
+                isRequired: param.kind === "required",
+              };
+            }),
           },
         );
       }
@@ -258,23 +269,4 @@ export const factory: GeneratorFactory<Options> = async (
       });
     },
   };
-};
-
-export const pathFactory = (pathTokens: Array<PathToken>) => {
-  return pathTokens
-    .flatMap(({ path, param }) => {
-      if (param?.isRest) {
-        return [`{/*${param.name}}`];
-      }
-      if (param?.isOptional) {
-        return [`{/:${param.name}}`];
-      }
-      if (param) {
-        return [`:${param.name}`];
-      }
-      return path === "/" ? [] : [path.replace(/:/g, "\\\\:")];
-    })
-    .join("/")
-    .replace(/\/\{/g, "{")
-    .replace(/\+/g, "\\\\+");
 };
