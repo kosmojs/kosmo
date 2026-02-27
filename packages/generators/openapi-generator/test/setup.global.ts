@@ -2,7 +2,9 @@ import { rm } from "node:fs/promises";
 
 import { appRoot } from ".";
 
+const cleanup = () => rm(`${appRoot}/lib`, { force: true, recursive: true });
+
 export default async () => {
-  await rm(`${appRoot}/lib`, { force: true, recursive: true });
-  return async () => {};
+  await cleanup();
+  return cleanup;
 };

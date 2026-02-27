@@ -1,10 +1,12 @@
+import { join } from "node:path";
+
 import crc from "crc/crc32";
+import { parse, type Token } from "path-to-regexp";
 import Type from "typebox";
 
 import { type RequestBodyTarget, RequestBodyTargets } from "@kosmojs/api";
 import {
   type ApiRoute,
-  type PathToken,
   type PluginOptionsResolved,
   type ResponseValidationDefinition,
   sortRoutes,
@@ -72,26 +74,172 @@ export default (pluginOptions: PluginOptionsResolved) => {
   };
 
   /**
-   * Path Variation Generator
-   *   variations for a/b/c:
-   *   [ a/b/c ]
-   *   variations for a/b/[c]:
-   *   [ a/b/{c} ]
-   *   variations for a/b/[[c]]:
-   *   [ a/b/{c}, a/b ]
-   *   variations for a/[b]/[[c]]:
-   *   [ a/{b}/{c}, a/{b} ]
-   *   variations for a/[[b]]/[[c]]:
-   *   [ a/{b}/{c}, a/{b}, a ]
+   * Generate all valid OpenAPI path variations from a path-to-regexp pattern.
+   *
+   * Groups (optional segments) create branching points - each group can be
+   * included or excluded, producing different path variations.
+   *
+   * Nested groups enforce dependency chains:
+   *   files{/x-{*path{.:ext}}}
+   *   → ext only appears when path is present
+   *   → path only appears when outer group is present
+   *
+   * Orphaned variations (group text included but none of its params survived)
+   * are pruned at the source during recursion.
+   *
+   * Examples:
+   *
+   *   "files{/x-{*path}{.:ext}}"
+   *   → files
+   *   → files/x-.{ext}       (ext without path - valid, ext is independent)
+   *   → files/x-{path}*
+   *   → files/x-{path}*.{ext}
+   *
+   *   "files{/x-{*path{.:ext}}}"
+   *   → files
+   *   → files/x-{path}*       (ext nested inside path group)
+   *   → files/x-{path}*.{ext}
+   *
+   *   "app/:name{-v:version{-:pre}}"
+   *   → app/{name}
+   *   → app/{name}-v{version}
+   *   → app/{name}-v{version}-{pre}
    * */
-  const generatePathVariations = (route: ApiRoute) => {
-    return route.pathTokens
-      .flatMap((e, i) => {
-        const next = route.pathTokens[i + 1];
-        return !next || next.param?.isOptional || next.param?.isRest
-          ? [generateSinglePath([...route.pathTokens.slice(0, i), e])]
-          : [];
-      })
+  const generatePathVariations = (route: ApiRoute): Array<string> => {
+    if (route.name === "index") {
+      return ["/"];
+    }
+
+    const { tokens } = parse(route.pathPattern);
+
+    type Variation = {
+      /** OpenAPI path string */
+      path: string;
+      /** param names present in this variation */
+      params: Array<string>;
+    };
+
+    type State = { path: string; params: Array<string> };
+
+    /**
+     * Recursively collect all param/wildcard names from a token tree.
+     * Used to check whether a group's params survived in a variation.
+     * */
+    const extractParamNames = (tokens: Array<Token>): Array<string> => {
+      return tokens.flatMap((t) => {
+        switch (t.type) {
+          case "param":
+            return [t.name];
+          case "wildcard":
+            return [t.name];
+          case "group":
+            return extractParamNames(t.tokens);
+          default:
+            return [];
+        }
+      });
+    };
+
+    /**
+     * Recursively process tokens, building path variations.
+     *
+     * - text/param/wildcard tokens accumulate into current state
+     * - group tokens fork into two branches:
+     *     1. Exclude - skip the group entirely, process remaining tokens
+     *     2. Include - process group children + remaining tokens
+     *   Included variations are filtered to ensure at least one of the
+     *   group's params is present (prevents orphaned static text).
+     *
+     * State is immutable - each branch gets its own copy.
+     * Base case: no tokens left → emit current state as a variation.
+     * */
+    const traverse = (tokens: Array<Token>, state: State): Array<Variation> => {
+      if (!tokens.length) {
+        return [state];
+      }
+
+      const [token, ...rest] = tokens;
+
+      switch (token.type) {
+        case "text":
+          return traverse(rest, {
+            path: `${state.path}${token.value}`,
+            params: state.params,
+          });
+
+        case "param":
+          return traverse(rest, {
+            path: `${state.path}{${token.name}}`,
+            params: [...state.params, token.name],
+          });
+
+        case "wildcard":
+          return traverse(rest, {
+            path: `${state.path}{${token.name}*}`,
+            params: [...state.params, token.name],
+          });
+
+        case "group": {
+          // Branch 1: exclude this group entirely
+          const excluded = traverse(rest, state);
+
+          // Branch 2: include this group's tokens
+          const included = traverse([...token.tokens, ...rest], state);
+
+          // Prune orphaned variations - group's static text is present
+          // but none of the group's params survived (all nested groups excluded)
+          const groupParams = extractParamNames(token.tokens);
+
+          const valid = included.filter((v) => {
+            return groupParams.some((p) => v.params.includes(p));
+          });
+
+          return [...excluded, ...valid];
+        }
+      }
+    };
+
+    const raw = traverse(tokens, { path: "", params: [] });
+
+    /**
+     * Build a map to match original route params by index.
+     *
+     * Needed to strip phantom paths generated by routes where multiple
+     * optional params follow each other, e.g.: search/{:type}/{:page}
+     *
+     * For this route, the following paths are generated:
+     * - search                    ✓ valid
+     * - search/{:type}            ✓ valid
+     * - search/{:type}/{:page}    ✓ valid
+     * - search/{:page}            ✗ phantom path
+     *
+     * To prune phantom paths, each variation param compared against
+     * the original route's param order - every param must match its
+     * original positional index.
+     *
+     * Example: search/{:page} is pruned because the `page` param is at
+     * index 0, but paramByIndex[0] is `type`.
+     * */
+    const paramByIndex = route.params.schema.reduce<Record<number, string>>(
+      (map, { name }, i) => {
+        map[i] = name;
+        return map;
+      },
+      {},
+    );
+
+    return raw
+      .reduce<Array<string>>((paths, variant) => {
+        const path = join("/", variant.path);
+        if (paths.includes(path)) {
+          // deduplicate, just in case
+          return paths;
+        }
+        if (variant.params.every((p, i) => p === paramByIndex[i])) {
+          paths.push(path);
+        }
+        return paths;
+      }, [])
       .sort(
         /**
          * Sorting paths by sections length in reverse order,
@@ -120,27 +268,6 @@ export default (pluginOptions: PluginOptionsResolved) => {
          * */
         (a, b) => calculatePathSpecificity(b) - calculatePathSpecificity(a),
       );
-  };
-
-  const generateSinglePath = (tokens: PathToken[]): string => {
-    return tokens
-      .flatMap((token, i) => {
-        if (token.param) {
-          if (token.param.isRest) {
-            return [`{${token.param.name}*}`];
-          }
-          return [`{${token.param.name}}`];
-        }
-        if (i === 0) {
-          return token.base === "index" //
-            ? ["/"]
-            : ["", token.base];
-        }
-        return [token.base];
-      })
-      .join("/")
-      .replace(/\n+/g, "")
-      .replace(/\+/g, "\\\\+");
   };
 
   // Generate path parameters using component references
