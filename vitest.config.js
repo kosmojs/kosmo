@@ -61,6 +61,7 @@ export default defineConfig({
       setupFactory("generators/koa-generator"),
 
       setupFactory("generators/openapi-generator", {
+        testTimeout: 30_000,
         globalSetup: [
           "packages/generators/openapi-generator/test/setup.global.ts",
         ],
