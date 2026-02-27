@@ -1,6 +1,6 @@
 import type { TValidationError } from "typebox/error";
 
-import type { ValidationErrorEntry } from "@kosmojs/api";
+import type { ValidationErrorEntry } from "@kosmojs/api/errors";
 
 /**
  * Message codes for i18n/l10n support
@@ -205,7 +205,7 @@ const MESSAGE_MAP: Record<keyof ValidationMessages, string> = {
   [MESSAGE_CODES.FOUND_N_DUPLICATES]: " (found %d duplicate%s)",
 
   [MESSAGE_CODES.VALIDATION_PASSED]: "Validation Passed",
-  [MESSAGE_CODES.VALIDATION_FAILED_PREFIX]: "Validation Failed:",
+  [MESSAGE_CODES.VALIDATION_FAILED_PREFIX]: "",
 
   [MESSAGE_CODES.ERROR_SUMMARY]:
     "%d validation error%s found across %d field%s",
@@ -1117,7 +1117,7 @@ export default (
       return error.message;
     });
 
-    return `${prefix} ${messageList.join(separator)}`;
+    return `${prefix}${prefix ? " " : ""}${messageList.join(separator)}`;
   }
 
   /**

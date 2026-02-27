@@ -47,6 +47,7 @@ export const validationSchemaFactory = (
             errorMessage: this.errorMessage(data),
             errorSummary: this.errorSummary(data),
             route,
+            data,
           },
         ]);
       }

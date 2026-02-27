@@ -4,7 +4,7 @@ import { generatePathCombinations, importSchema } from ".";
 
 describe("params", () => {
   describe("string param", async () => {
-    const schema = await importSchema("params/[string]", "params");
+    const schema = await importSchema("params/:string", "params");
 
     test("accepts any string, even empty", () => {
       expect(schema?.check({ string: "test" })).toEqual(true);
@@ -32,7 +32,7 @@ describe("params", () => {
 
   describe("string param with refinements", async () => {
     const schema = await importSchema(
-      "params/[stringWithRefinements]",
+      "params/:stringWithRefinements",
       "params",
     );
 
@@ -56,7 +56,7 @@ describe("params", () => {
   });
 
   describe("number param", async () => {
-    const schema = await importSchema("params/[number]", "params");
+    const schema = await importSchema("params/:number", "params");
 
     test("accepts any number", () => {
       expect(schema?.check({ number: 4356345 })).toEqual(true);
@@ -78,7 +78,7 @@ describe("params", () => {
 
   describe("number param with refinements", async () => {
     const schema = await importSchema(
-      "params/[numberWithRefinements]",
+      "params/:numberWithRefinements",
       "params",
     );
 
@@ -102,7 +102,7 @@ describe("params", () => {
   });
 
   describe("intersection param", async () => {
-    const schema = await importSchema("params/[intersection]", "params");
+    const schema = await importSchema("params/:intersection", "params");
 
     test("accepts a valid value", () => {
       expect(schema?.check({ intersection: "R" })).toEqual(true);
@@ -118,14 +118,14 @@ describe("params", () => {
       expect(schema?.check({ intersection: {} })).toEqual(false);
     });
 
-    test("pass if no param provided", () => {
+    test("fail if no param provided", () => {
       expect(schema?.check({})).toEqual(false);
     });
   });
 
   describe("optional intersection param", async () => {
     const schema = await importSchema(
-      "params/[[optionalIntersection]]",
+      "params/{:optionalIntersection}",
       "params",
     );
 
@@ -149,7 +149,7 @@ describe("params", () => {
   });
 
   describe("optional param", async () => {
-    const schema = await importSchema("params/[[optional]]", "params");
+    const schema = await importSchema("params/{:optional}", "params");
 
     test("accepts any string, even empty", () => {
       expect(schema?.check({ optional: "test" })).toEqual(true);
@@ -170,7 +170,7 @@ describe("params", () => {
 
   describe("optional param with refinements", async () => {
     const schema = await importSchema(
-      "params/[[optionalWithRefinements]]",
+      "params/{:optionalWithRefinements}",
       "params",
     );
 
@@ -193,8 +193,8 @@ describe("params", () => {
     });
   });
 
-  describe("rest params", async () => {
-    const schema = await importSchema("params/[...path]", "params");
+  describe("splat params", async () => {
+    const schema = await importSchema("params/{...path}", "params");
 
     test("pass without tokens", () => {
       expect(schema?.check({ path: [] })).toBe(true);

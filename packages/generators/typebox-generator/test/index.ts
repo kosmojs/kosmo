@@ -19,6 +19,8 @@ import typeboxGenerator from "@src/index";
 export { MESSAGE_CODES } from "@src/templates/error-handler";
 export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 
+import type { RouteName } from "./@fixtures/routes";
+
 export const resolvedOptions: PluginOptionsResolved = {
   generators: [typeboxGenerator()],
   refineTypeName: "TRefine",
@@ -32,7 +34,7 @@ export const resolvedOptions: PluginOptionsResolved = {
 };
 
 export const importSchema = async (
-  route: string,
+  route: RouteName,
   schemaPath: "params" | `${ValidationTarget}.${"GET" | "POST"}`,
 ) => {
   const { createPath } = pathResolver(resolvedOptions);
@@ -66,7 +68,7 @@ export const importSchema = async (
  * Generates all possible path combinations from an array of elements
  * @param {Array<string>} elements - Array of path segments
  * @returns {Array<string[]>} Array of all possible path combinations
- */
+ * */
 export const generatePathCombinations = (
   elements: Array<string>,
 ): Array<string[]> => {
@@ -102,10 +104,11 @@ export const generatePathCombinations = (
 
   // Convert JSON strings back to arrays and sort by length, then lexicographically
   return Array.from(results)
-    .map((json) => JSON.parse(json) as string[])
+    .map((json) => JSON.parse(json) as Array<string>)
     .sort((a, b) => {
-      if (a.length !== b.length) return a.length - b.length;
-      return a.join("/").localeCompare(b.join("/"));
+      return a.length === b.length
+        ? a.join("/").localeCompare(b.join("/"))
+        : a.length - b.length;
     });
 };
 
