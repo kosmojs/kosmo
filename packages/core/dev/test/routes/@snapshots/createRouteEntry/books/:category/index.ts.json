@@ -1,0 +1,33 @@
+{
+  "id": "books_category_index_ts_935886457",
+  "name": "books/:category",
+  "folder": "api",
+  "file": "books/:category/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "books",
+      "pattern": "books",
+      "parts": [
+        {
+          "type": "static",
+          "value": "books"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":category",
+      "pattern": "/:category",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "books/:category"
+}

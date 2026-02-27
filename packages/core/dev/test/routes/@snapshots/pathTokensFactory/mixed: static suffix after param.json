@@ -1,0 +1,30 @@
+[
+  {
+    "kind": "static",
+    "orig": "api",
+    "pattern": "api",
+    "parts": [
+      {
+        "type": "static",
+        "value": "api"
+      }
+    ]
+  },
+  {
+    "kind": "mixed",
+    "orig": ":id-details",
+    "pattern": "/:id-details",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "id",
+        "const": "id"
+      },
+      {
+        "type": "static",
+        "value": "-details"
+      }
+    ]
+  }
+]

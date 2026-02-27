@@ -5,61 +5,70 @@
   "file": "courses/[courseId]/lessons/[[lessonId]]/assignments/[...assignmentPath]/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "courses",
-      "base": "courses",
-      "path": "courses",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "courses"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[courseId]",
-      "base": "[courseId]",
-      "path": "[courseId]",
-      "ext": "",
-      "param": {
-        "name": "courseId",
-        "const": "courseId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "courseId",
+          "const": "courseId"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "lessons",
-      "base": "lessons",
-      "path": "lessons",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "lessons"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[[lessonId]]",
-      "base": "[[lessonId]]",
-      "path": "[[lessonId]]",
-      "ext": "",
-      "param": {
-        "name": "lessonId",
-        "const": "lessonId",
-        "isRequired": false,
-        "isOptional": true,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "lessonId",
+          "const": "lessonId"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "assignments",
-      "base": "assignments",
-      "path": "assignments",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "assignments"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[...assignmentPath]",
-      "base": "[...assignmentPath]",
-      "path": "[...assignmentPath]",
-      "ext": "",
-      "param": {
-        "name": "assignmentPath",
-        "const": "assignmentPath",
-        "isRequired": false,
-        "isOptional": false,
-        "isRest": true
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "assignmentPath",
+          "const": "assignmentPath"
+        }
+      ]
     }
   ]
 }

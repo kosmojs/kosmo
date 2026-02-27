@@ -5,10 +5,16 @@
   "file": "portal/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "portal",
-      "base": "portal",
-      "path": "portal",
-      "ext": ""
+      "pattern": "portal",
+      "parts": [
+        {
+          "type": "static",
+          "value": "portal"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "portal"
 }

@@ -5,10 +5,16 @@
   "file": "projects/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "projects",
-      "base": "projects",
-      "path": "projects",
-      "ext": ""
+      "pattern": "projects",
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "projects"
 }

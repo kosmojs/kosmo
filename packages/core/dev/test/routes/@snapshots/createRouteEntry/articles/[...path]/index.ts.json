@@ -5,23 +5,26 @@
   "file": "articles/[...path]/index.ts",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "articles",
-      "base": "articles",
-      "path": "articles",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "articles"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[...path]",
-      "base": "[...path]",
-      "path": "[...path]",
-      "ext": "",
-      "param": {
-        "name": "path",
-        "const": "path",
-        "isRequired": false,
-        "isOptional": false,
-        "isRest": true
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "path",
+          "const": "path"
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,73 @@
+[
+  {
+    "kind": "static",
+    "orig": "api",
+    "pattern": "api",
+    "parts": [
+      {
+        "type": "static",
+        "value": "api"
+      }
+    ]
+  },
+  {
+    "kind": "static",
+    "orig": "v1",
+    "pattern": "/v1",
+    "parts": [
+      {
+        "type": "static",
+        "value": "v1"
+      }
+    ]
+  },
+  {
+    "kind": "static",
+    "orig": "products",
+    "pattern": "/products",
+    "parts": [
+      {
+        "type": "static",
+        "value": "products"
+      }
+    ]
+  },
+  {
+    "kind": "mixed",
+    "orig": "book-:id",
+    "pattern": "/book-:id",
+    "parts": [
+      {
+        "type": "static",
+        "value": "book-"
+      },
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "id",
+        "const": "id"
+      }
+    ]
+  },
+  {
+    "kind": "mixed",
+    "orig": "reviews{...path}.json",
+    "pattern": "/reviews{*path}.json",
+    "parts": [
+      {
+        "type": "static",
+        "value": "reviews"
+      },
+      {
+        "type": "param",
+        "kind": "splat",
+        "name": "path",
+        "const": "path"
+      },
+      {
+        "type": "static",
+        "value": ".json"
+      }
+    ]
+  }
+]

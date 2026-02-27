@@ -1,0 +1,20 @@
+{
+  "id": "_format_index_ts_754561491",
+  "name": "[format]",
+  "folder": "api",
+  "file": "[format]/index.ts",
+  "pathTokens": [
+    {
+      "kind": "param",
+      "orig": "[format]",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "format",
+          "const": "format"
+        }
+      ]
+    }
+  ]
+}

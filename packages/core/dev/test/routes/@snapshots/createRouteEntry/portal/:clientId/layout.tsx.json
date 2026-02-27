@@ -1,0 +1,33 @@
+{
+  "id": "portal_clientId_layout_tsx_3060437117",
+  "name": "portal/:clientId",
+  "folder": "pages",
+  "file": "portal/:clientId/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "portal",
+      "pattern": "portal",
+      "parts": [
+        {
+          "type": "static",
+          "value": "portal"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":clientId",
+      "pattern": "/:clientId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "clientId",
+          "const": "clientId"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "portal/:clientId"
+}

@@ -6,12 +6,18 @@
     "file": "blog/index.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "blog",
-        "base": "blog",
-        "path": "blog",
-        "ext": ""
+        "pattern": "blog",
+        "parts": [
+          {
+            "type": "static",
+            "value": "blog"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "blog"
   },
   "layout": {
     "id": "blog_layout_tsx_2871578117",
@@ -20,119 +26,139 @@
     "file": "blog/layout.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "blog",
-        "base": "blog",
-        "path": "blog",
-        "ext": ""
+        "pattern": "blog",
+        "parts": [
+          {
+            "type": "static",
+            "value": "blog"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "blog"
   },
   "children": [
     {
       "index": {
-        "id": "blog_post_slug_index_tsx_4265829785",
-        "name": "blog/post/[slug]",
+        "id": "blog_post_slug_index_tsx_2527218803",
+        "name": "blog/post/:slug",
         "folder": "pages",
-        "file": "blog/post/[slug]/index.tsx",
+        "file": "blog/post/:slug/index.tsx",
         "pathTokens": [
           {
+            "kind": "static",
             "orig": "post",
-            "base": "post",
-            "path": "post",
-            "ext": ""
+            "pattern": "/post",
+            "parts": [
+              {
+                "type": "static",
+                "value": "post"
+              }
+            ]
           },
           {
-            "orig": "[slug]",
-            "base": "[slug]",
-            "path": "[slug]",
-            "ext": "",
-            "param": {
-              "name": "slug",
-              "const": "slug",
-              "isRequired": true,
-              "isOptional": false,
-              "isRest": false
-            }
+            "kind": "param",
+            "orig": ":slug",
+            "pattern": "/:slug",
+            "parts": [
+              {
+                "type": "param",
+                "kind": "required",
+                "name": "slug",
+                "const": "slug"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "blog/post/:slug"
       },
       "layout": {
-        "id": "blog_post_slug_layout_tsx_4086949147",
-        "name": "blog/post/[slug]",
+        "id": "blog_post_slug_layout_tsx_3006140244",
+        "name": "blog/post/:slug",
         "folder": "pages",
-        "file": "blog/post/[slug]/layout.tsx",
+        "file": "blog/post/:slug/layout.tsx",
         "pathTokens": [
           {
+            "kind": "static",
             "orig": "post",
-            "base": "post",
-            "path": "post",
-            "ext": ""
+            "pattern": "/post",
+            "parts": [
+              {
+                "type": "static",
+                "value": "post"
+              }
+            ]
           },
           {
-            "orig": "[slug]",
-            "base": "[slug]",
-            "path": "[slug]",
-            "ext": "",
-            "param": {
-              "name": "slug",
-              "const": "slug",
-              "isRequired": true,
-              "isOptional": false,
-              "isRest": false
-            }
+            "kind": "param",
+            "orig": ":slug",
+            "pattern": "/:slug",
+            "parts": [
+              {
+                "type": "param",
+                "kind": "required",
+                "name": "slug",
+                "const": "slug"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "blog/post/:slug"
       },
       "parent": "blog",
       "children": []
     },
     {
       "index": {
-        "id": "blog_category_index_tsx_1003139220",
-        "name": "blog/[[category]]",
+        "id": "blog_category_index_tsx_96338068",
+        "name": "blog/{:category}",
         "folder": "pages",
-        "file": "blog/[[category]]/index.tsx",
+        "file": "blog/{:category}/index.tsx",
         "pathTokens": [
           {
-            "orig": "[[category]]",
-            "base": "[[category]]",
-            "path": "[[category]]",
-            "ext": "",
-            "param": {
-              "name": "category",
-              "const": "category",
-              "isRequired": false,
-              "isOptional": true,
-              "isRest": false
-            }
+            "kind": "param",
+            "orig": "{:category}",
+            "pattern": "{/:category}",
+            "parts": [
+              {
+                "type": "param",
+                "kind": "optional",
+                "name": "category",
+                "const": "category"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "blog{/:category}"
       },
       "parent": "blog",
       "children": [
         {
           "index": {
-            "id": "blog_category_tag_index_tsx_4100302857",
-            "name": "blog/[[category]]/[[tag]]",
+            "id": "blog_category_tag_index_tsx_655283647",
+            "name": "blog/{:category}/{:tag}",
             "folder": "pages",
-            "file": "blog/[[category]]/[[tag]]/index.tsx",
+            "file": "blog/{:category}/{:tag}/index.tsx",
             "pathTokens": [
               {
-                "orig": "[[tag]]",
-                "base": "[[tag]]",
-                "path": "[[tag]]",
-                "ext": "",
-                "param": {
-                  "name": "tag",
-                  "const": "tag",
-                  "isRequired": false,
-                  "isOptional": true,
-                  "isRest": false
-                }
+                "kind": "param",
+                "orig": "{:tag}",
+                "pattern": "{/:tag}",
+                "parts": [
+                  {
+                    "type": "param",
+                    "kind": "optional",
+                    "name": "tag",
+                    "const": "tag"
+                  }
+                ]
               }
-            ]
+            ],
+            "pathPattern": "blog{/:category}{/:tag}"
           },
-          "parent": "blog/[[category]]",
+          "parent": "blog/{:category}",
           "children": []
         }
       ]

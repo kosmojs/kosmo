@@ -5,36 +5,42 @@
   "file": "files/[[folder]]/[[id]].json/index.ts",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "files",
-      "base": "files",
-      "path": "files",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "files"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[[folder]]",
-      "base": "[[folder]]",
-      "path": "[[folder]]",
-      "ext": "",
-      "param": {
-        "name": "folder",
-        "const": "folder",
-        "isRequired": false,
-        "isOptional": true,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "folder",
+          "const": "folder"
+        }
+      ]
     },
     {
+      "kind": "mixed",
       "orig": "[[id]].json",
-      "base": "[[id]]",
-      "path": "[[id]].json",
-      "ext": ".json",
-      "param": {
-        "name": "id",
-        "const": "id",
-        "isRequired": false,
-        "isOptional": true,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "id",
+          "const": "id"
+        },
+        {
+          "type": "static",
+          "value": ".json"
+        }
+      ]
     }
   ]
 }

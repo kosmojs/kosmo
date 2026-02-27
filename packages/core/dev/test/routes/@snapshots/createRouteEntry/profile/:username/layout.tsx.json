@@ -1,0 +1,33 @@
+{
+  "id": "profile_username_layout_tsx_2952949892",
+  "name": "profile/:username",
+  "folder": "pages",
+  "file": "profile/:username/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "profile",
+      "pattern": "profile",
+      "parts": [
+        {
+          "type": "static",
+          "value": "profile"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":username",
+      "pattern": "/:username",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "username",
+          "const": "username"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "profile/:username"
+}

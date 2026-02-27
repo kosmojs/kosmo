@@ -6,12 +6,18 @@
     "file": "contact/index.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "contact",
-        "base": "contact",
-        "path": "contact",
-        "ext": ""
+        "pattern": "contact",
+        "parts": [
+          {
+            "type": "static",
+            "value": "contact"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "contact"
   },
   "layout": {
     "id": "contact_layout_tsx_2321003899",
@@ -20,12 +26,18 @@
     "file": "contact/layout.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "contact",
-        "base": "contact",
-        "path": "contact",
-        "ext": ""
+        "pattern": "contact",
+        "parts": [
+          {
+            "type": "static",
+            "value": "contact"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "contact"
   },
   "children": []
 }

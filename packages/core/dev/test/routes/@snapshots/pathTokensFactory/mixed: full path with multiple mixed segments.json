@@ -1,0 +1,59 @@
+[
+  {
+    "kind": "static",
+    "orig": "api",
+    "pattern": "api",
+    "parts": [
+      {
+        "type": "static",
+        "value": "api"
+      }
+    ]
+  },
+  {
+    "kind": "mixed",
+    "orig": ":name-v:version",
+    "pattern": "/:name-v:version",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "name",
+        "const": "name"
+      },
+      {
+        "type": "static",
+        "value": "-v"
+      },
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "version",
+        "const": "version"
+      }
+    ]
+  },
+  {
+    "kind": "mixed",
+    "orig": ":resource.:ext",
+    "pattern": "/:resource.:ext",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "resource",
+        "const": "resource"
+      },
+      {
+        "type": "static",
+        "value": "."
+      },
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "ext",
+        "const": "ext"
+      }
+    ]
+  }
+]

@@ -5,10 +5,16 @@
   "file": "about/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "about",
-      "base": "about",
-      "path": "about",
-      "ext": ""
+      "pattern": "about",
+      "parts": [
+        {
+          "type": "static",
+          "value": "about"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "about"
 }

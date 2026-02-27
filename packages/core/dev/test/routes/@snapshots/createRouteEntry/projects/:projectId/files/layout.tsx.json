@@ -1,0 +1,44 @@
+{
+  "id": "projects_projectId_files_layout_tsx_1349259006",
+  "name": "projects/:projectId/files",
+  "folder": "pages",
+  "file": "projects/:projectId/files/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "projects",
+      "pattern": "projects",
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":projectId",
+      "pattern": "/:projectId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "projectId",
+          "const": "projectId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "files",
+      "pattern": "/files",
+      "parts": [
+        {
+          "type": "static",
+          "value": "files"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "projects/:projectId/files"
+}

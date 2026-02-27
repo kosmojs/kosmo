@@ -1,0 +1,33 @@
+{
+  "id": "dashboard_view_index_tsx_2368687695",
+  "name": "dashboard/:view",
+  "folder": "pages",
+  "file": "dashboard/:view/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "dashboard",
+      "pattern": "dashboard",
+      "parts": [
+        {
+          "type": "static",
+          "value": "dashboard"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":view",
+      "pattern": "/:view",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "view",
+          "const": "view"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "dashboard/:view"
+}

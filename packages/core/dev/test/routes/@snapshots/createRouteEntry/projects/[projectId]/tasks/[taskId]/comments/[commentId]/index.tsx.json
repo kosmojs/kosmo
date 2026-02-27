@@ -5,61 +5,70 @@
   "file": "projects/[projectId]/tasks/[taskId]/comments/[commentId]/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "projects",
-      "base": "projects",
-      "path": "projects",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[projectId]",
-      "base": "[projectId]",
-      "path": "[projectId]",
-      "ext": "",
-      "param": {
-        "name": "projectId",
-        "const": "projectId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "projectId",
+          "const": "projectId"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "tasks",
-      "base": "tasks",
-      "path": "tasks",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "tasks"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[taskId]",
-      "base": "[taskId]",
-      "path": "[taskId]",
-      "ext": "",
-      "param": {
-        "name": "taskId",
-        "const": "taskId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "taskId",
+          "const": "taskId"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "comments",
-      "base": "comments",
-      "path": "comments",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "comments"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[commentId]",
-      "base": "[commentId]",
-      "path": "[commentId]",
-      "ext": "",
-      "param": {
-        "name": "commentId",
-        "const": "commentId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "commentId",
+          "const": "commentId"
+        }
+      ]
     }
   ]
 }

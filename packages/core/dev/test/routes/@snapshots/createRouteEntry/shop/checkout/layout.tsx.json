@@ -5,16 +5,27 @@
   "file": "shop/checkout/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "shop",
-      "base": "shop",
-      "path": "shop",
-      "ext": ""
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "checkout",
-      "base": "checkout",
-      "path": "checkout",
-      "ext": ""
+      "pattern": "/checkout",
+      "parts": [
+        {
+          "type": "static",
+          "value": "checkout"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "shop/checkout"
 }

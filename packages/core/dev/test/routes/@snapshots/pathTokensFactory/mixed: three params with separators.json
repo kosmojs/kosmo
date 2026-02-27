@@ -1,0 +1,46 @@
+[
+  {
+    "kind": "static",
+    "orig": "api",
+    "pattern": "api",
+    "parts": [
+      {
+        "type": "static",
+        "value": "api"
+      }
+    ]
+  },
+  {
+    "kind": "mixed",
+    "orig": ":year-:month-:day",
+    "pattern": "/:year-:month-:day",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "year",
+        "const": "year"
+      },
+      {
+        "type": "static",
+        "value": "-"
+      },
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "month",
+        "const": "month"
+      },
+      {
+        "type": "static",
+        "value": "-"
+      },
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "day",
+        "const": "day"
+      }
+    ]
+  }
+]

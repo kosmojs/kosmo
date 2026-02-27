@@ -5,29 +5,36 @@
   "file": "shop/product/[id]/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "shop",
-      "base": "shop",
-      "path": "shop",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "product",
-      "base": "product",
-      "path": "product",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "product"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[id]",
-      "base": "[id]",
-      "path": "[id]",
-      "ext": "",
-      "param": {
-        "name": "id",
-        "const": "id",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "id",
+          "const": "id"
+        }
+      ]
     }
   ]
 }

@@ -5,23 +5,26 @@
   "file": "dashboard/[view]/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "dashboard",
-      "base": "dashboard",
-      "path": "dashboard",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "dashboard"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[view]",
-      "base": "[view]",
-      "path": "[view]",
-      "ext": "",
-      "param": {
-        "name": "view",
-        "const": "view",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "view",
+          "const": "view"
+        }
+      ]
     }
   ]
 }

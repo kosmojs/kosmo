@@ -6,12 +6,18 @@
     "file": "signup/index.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "signup",
-        "base": "signup",
-        "path": "signup",
-        "ext": ""
+        "pattern": "signup",
+        "parts": [
+          {
+            "type": "static",
+            "value": "signup"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "signup"
   },
   "children": []
 }

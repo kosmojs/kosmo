@@ -5,10 +5,16 @@
   "file": "books/index.ts",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "books",
-      "base": "books",
-      "path": "books",
-      "ext": ""
+      "pattern": "books",
+      "parts": [
+        {
+          "type": "static",
+          "value": "books"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "books"
 }

@@ -6,12 +6,18 @@
     "file": "legal/layout.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "legal",
-        "base": "legal",
-        "path": "legal",
-        "ext": ""
+        "pattern": "legal",
+        "parts": [
+          {
+            "type": "static",
+            "value": "legal"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "legal"
   },
   "children": [
     {
@@ -22,12 +28,18 @@
         "file": "legal/privacy/index.tsx",
         "pathTokens": [
           {
+            "kind": "static",
             "orig": "privacy",
-            "base": "privacy",
-            "path": "privacy",
-            "ext": ""
+            "pattern": "/privacy",
+            "parts": [
+              {
+                "type": "static",
+                "value": "privacy"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "legal/privacy"
       },
       "parent": "legal",
       "children": []
@@ -40,12 +52,18 @@
         "file": "legal/terms/index.tsx",
         "pathTokens": [
           {
+            "kind": "static",
             "orig": "terms",
-            "base": "terms",
-            "path": "terms",
-            "ext": ""
+            "pattern": "/terms",
+            "parts": [
+              {
+                "type": "static",
+                "value": "terms"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "legal/terms"
       },
       "parent": "legal",
       "children": []

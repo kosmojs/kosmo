@@ -5,10 +5,16 @@
   "file": "blog/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "blog",
-      "base": "blog",
-      "path": "blog",
-      "ext": ""
+      "pattern": "blog",
+      "parts": [
+        {
+          "type": "static",
+          "value": "blog"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "blog"
 }

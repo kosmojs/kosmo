@@ -5,29 +5,36 @@
   "file": "shop/orders/[orderId]/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "shop",
-      "base": "shop",
-      "path": "shop",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "orders",
-      "base": "orders",
-      "path": "orders",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "orders"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[orderId]",
-      "base": "[orderId]",
-      "path": "[orderId]",
-      "ext": "",
-      "param": {
-        "name": "orderId",
-        "const": "orderId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "orderId",
+          "const": "orderId"
+        }
+      ]
     }
   ]
 }

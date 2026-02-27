@@ -5,10 +5,16 @@
   "file": "legal/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "legal",
-      "base": "legal",
-      "path": "legal",
-      "ext": ""
+      "pattern": "legal",
+      "parts": [
+        {
+          "type": "static",
+          "value": "legal"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "legal"
 }

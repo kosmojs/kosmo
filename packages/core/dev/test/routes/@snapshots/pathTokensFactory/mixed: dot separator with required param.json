@@ -1,0 +1,19 @@
+[
+  {
+    "kind": "mixed",
+    "orig": "results.:ext",
+    "pattern": "results.:ext",
+    "parts": [
+      {
+        "type": "static",
+        "value": "results."
+      },
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "ext",
+        "const": "ext"
+      }
+    ]
+  }
+]

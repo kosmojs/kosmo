@@ -1,0 +1,44 @@
+{
+  "id": "workspace_workspaceId_analytics_index_tsx_1697349742",
+  "name": "workspace/:workspaceId/analytics",
+  "folder": "pages",
+  "file": "workspace/:workspaceId/analytics/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "workspace",
+      "pattern": "workspace",
+      "parts": [
+        {
+          "type": "static",
+          "value": "workspace"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":workspaceId",
+      "pattern": "/:workspaceId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "workspaceId",
+          "const": "workspaceId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "analytics",
+      "pattern": "/analytics",
+      "parts": [
+        {
+          "type": "static",
+          "value": "analytics"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "workspace/:workspaceId/analytics"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "files_folder_index_ts_2967639848",
+  "name": "files/{:folder}",
+  "folder": "api",
+  "file": "files/{:folder}/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "files",
+      "pattern": "files",
+      "parts": [
+        {
+          "type": "static",
+          "value": "files"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{:folder}",
+      "pattern": "{/:folder}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "folder",
+          "const": "folder"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "files{/:folder}"
+}

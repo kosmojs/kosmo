@@ -1,0 +1,33 @@
+{
+  "id": "products_id_index_tsx_2425237269",
+  "name": "products/:id",
+  "folder": "pages",
+  "file": "products/:id/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "products",
+      "pattern": "products",
+      "parts": [
+        {
+          "type": "static",
+          "value": "products"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":id",
+      "pattern": "/:id",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "id",
+          "const": "id"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "products/:id"
+}

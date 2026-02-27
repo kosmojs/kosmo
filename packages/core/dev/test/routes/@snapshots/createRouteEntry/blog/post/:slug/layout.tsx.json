@@ -1,0 +1,44 @@
+{
+  "id": "blog_post_slug_layout_tsx_3006140244",
+  "name": "blog/post/:slug",
+  "folder": "pages",
+  "file": "blog/post/:slug/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "blog",
+      "pattern": "blog",
+      "parts": [
+        {
+          "type": "static",
+          "value": "blog"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "post",
+      "pattern": "/post",
+      "parts": [
+        {
+          "type": "static",
+          "value": "post"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":slug",
+      "pattern": "/:slug",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "slug",
+          "const": "slug"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "blog/post/:slug"
+}

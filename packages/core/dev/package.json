@@ -34,6 +34,7 @@
     "handlebars": "^4.7.8",
     "mime-types": "^3.0.2",
     "ora": "^9.3.0",
+    "path-to-regexp": "^8.3.0",
     "picomatch": "^4.0.3",
     "tfusion": "^0.0.23",
     "tinyglobby": "^0.2.15",

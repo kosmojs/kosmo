@@ -1,0 +1,81 @@
+{
+  "id": "portal_clientId_reports_reportType_data_dataView_layout_tsx_1916777869",
+  "name": "portal/:clientId/reports/:reportType/data/:dataView",
+  "folder": "pages",
+  "file": "portal/:clientId/reports/:reportType/data/:dataView/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "portal",
+      "pattern": "portal",
+      "parts": [
+        {
+          "type": "static",
+          "value": "portal"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":clientId",
+      "pattern": "/:clientId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "clientId",
+          "const": "clientId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "reports",
+      "pattern": "/reports",
+      "parts": [
+        {
+          "type": "static",
+          "value": "reports"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":reportType",
+      "pattern": "/:reportType",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "reportType",
+          "const": "reportType"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "data",
+      "pattern": "/data",
+      "parts": [
+        {
+          "type": "static",
+          "value": "data"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":dataView",
+      "pattern": "/:dataView",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "dataView",
+          "const": "dataView"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView"
+}

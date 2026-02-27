@@ -1,0 +1,36 @@
+[
+  {
+    "kind": "static",
+    "orig": "api",
+    "pattern": "api",
+    "parts": [
+      {
+        "type": "static",
+        "value": "api"
+      }
+    ]
+  },
+  {
+    "kind": "mixed",
+    "orig": ":name{-v:version}",
+    "pattern": "/:name{-v:version}",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "name",
+        "const": "name"
+      },
+      {
+        "type": "static",
+        "value": "-v"
+      },
+      {
+        "type": "param",
+        "kind": "optional",
+        "name": "version",
+        "const": "version"
+      }
+    ]
+  }
+]

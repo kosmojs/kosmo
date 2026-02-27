@@ -1,0 +1,44 @@
+{
+  "id": "users_username_posts_index_tsx_3371101303",
+  "name": "users/:username/posts",
+  "folder": "pages",
+  "file": "users/:username/posts/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "users",
+      "pattern": "users",
+      "parts": [
+        {
+          "type": "static",
+          "value": "users"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":username",
+      "pattern": "/:username",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "username",
+          "const": "username"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "posts",
+      "pattern": "/posts",
+      "parts": [
+        {
+          "type": "static",
+          "value": "posts"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "users/:username/posts"
+}

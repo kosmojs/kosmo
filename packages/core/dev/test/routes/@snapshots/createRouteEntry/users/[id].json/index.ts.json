@@ -5,23 +5,30 @@
   "file": "users/[id].json/index.ts",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "users",
-      "base": "users",
-      "path": "users",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "users"
+        }
+      ]
     },
     {
+      "kind": "mixed",
       "orig": "[id].json",
-      "base": "[id]",
-      "path": "[id].json",
-      "ext": ".json",
-      "param": {
-        "name": "id",
-        "const": "id",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "id",
+          "const": "id"
+        },
+        {
+          "type": "static",
+          "value": ".json"
+        }
+      ]
     }
   ]
 }

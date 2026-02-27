@@ -6,12 +6,18 @@
     "file": "about/index.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "about",
-        "base": "about",
-        "path": "about",
-        "ext": ""
+        "pattern": "about",
+        "parts": [
+          {
+            "type": "static",
+            "value": "about"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "about"
   },
   "layout": {
     "id": "about_layout_tsx_2396405898",
@@ -20,12 +26,18 @@
     "file": "about/layout.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "about",
-        "base": "about",
-        "path": "about",
-        "ext": ""
+        "pattern": "about",
+        "parts": [
+          {
+            "type": "static",
+            "value": "about"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "about"
   },
   "children": [
     {
@@ -36,36 +48,43 @@
         "file": "about/careers/layout.tsx",
         "pathTokens": [
           {
+            "kind": "static",
             "orig": "careers",
-            "base": "careers",
-            "path": "careers",
-            "ext": ""
+            "pattern": "/careers",
+            "parts": [
+              {
+                "type": "static",
+                "value": "careers"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "about/careers"
       },
       "parent": "about",
       "children": [
         {
           "index": {
-            "id": "about_careers_jobId_index_tsx_2940328380",
-            "name": "about/careers/[jobId]",
+            "id": "about_careers_jobId_index_tsx_2325497188",
+            "name": "about/careers/{:jobId}",
             "folder": "pages",
-            "file": "about/careers/[jobId]/index.tsx",
+            "file": "about/careers/{:jobId}/index.tsx",
             "pathTokens": [
               {
-                "orig": "[jobId]",
-                "base": "[jobId]",
-                "path": "[jobId]",
-                "ext": "",
-                "param": {
-                  "name": "jobId",
-                  "const": "jobId",
-                  "isRequired": true,
-                  "isOptional": false,
-                  "isRest": false
-                }
+                "kind": "param",
+                "orig": "{:jobId}",
+                "pattern": "{/:jobId}",
+                "parts": [
+                  {
+                    "type": "param",
+                    "kind": "optional",
+                    "name": "jobId",
+                    "const": "jobId"
+                  }
+                ]
               }
-            ]
+            ],
+            "pathPattern": "about/careers{/:jobId}"
           },
           "parent": "about/careers",
           "children": []
@@ -80,12 +99,18 @@
         "file": "about/team/index.tsx",
         "pathTokens": [
           {
+            "kind": "static",
             "orig": "team",
-            "base": "team",
-            "path": "team",
-            "ext": ""
+            "pattern": "/team",
+            "parts": [
+              {
+                "type": "static",
+                "value": "team"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "about/team"
       },
       "parent": "about",
       "children": []

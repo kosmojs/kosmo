@@ -5,10 +5,16 @@
   "file": "contact/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "contact",
-      "base": "contact",
-      "path": "contact",
-      "ext": ""
+      "pattern": "contact",
+      "parts": [
+        {
+          "type": "static",
+          "value": "contact"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "contact"
 }

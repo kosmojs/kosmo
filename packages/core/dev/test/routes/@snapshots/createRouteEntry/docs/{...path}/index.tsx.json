@@ -1,0 +1,33 @@
+{
+  "id": "docs_path_index_tsx_3119800738",
+  "name": "docs/{...path}",
+  "folder": "pages",
+  "file": "docs/{...path}/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "docs",
+      "pattern": "docs",
+      "parts": [
+        {
+          "type": "static",
+          "value": "docs"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{...path}",
+      "pattern": "{/*path}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "path",
+          "const": "path"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "docs{/*path}"
+}

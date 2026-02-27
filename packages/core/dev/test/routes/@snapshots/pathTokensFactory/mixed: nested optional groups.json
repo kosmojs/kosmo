@@ -1,0 +1,46 @@
+[
+  {
+    "kind": "static",
+    "orig": "app",
+    "pattern": "app",
+    "parts": [
+      {
+        "type": "static",
+        "value": "app"
+      }
+    ]
+  },
+  {
+    "kind": "mixed",
+    "orig": ":name{-v:version{-:pre}}",
+    "pattern": "/:name{-v:version{-:pre}}",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "name",
+        "const": "name"
+      },
+      {
+        "type": "static",
+        "value": "-v"
+      },
+      {
+        "type": "param",
+        "kind": "optional",
+        "name": "version",
+        "const": "version"
+      },
+      {
+        "type": "static",
+        "value": "-"
+      },
+      {
+        "type": "param",
+        "kind": "optional",
+        "name": "pre",
+        "const": "pre"
+      }
+    ]
+  }
+]

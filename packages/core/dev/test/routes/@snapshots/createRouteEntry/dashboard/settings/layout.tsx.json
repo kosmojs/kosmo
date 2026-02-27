@@ -5,16 +5,27 @@
   "file": "dashboard/settings/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "dashboard",
-      "base": "dashboard",
-      "path": "dashboard",
-      "ext": ""
+      "pattern": "dashboard",
+      "parts": [
+        {
+          "type": "static",
+          "value": "dashboard"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "settings",
-      "base": "settings",
-      "path": "settings",
-      "ext": ""
+      "pattern": "/settings",
+      "parts": [
+        {
+          "type": "static",
+          "value": "settings"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "dashboard/settings"
 }

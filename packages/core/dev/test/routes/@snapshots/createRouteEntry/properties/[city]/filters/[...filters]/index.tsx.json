@@ -1,0 +1,52 @@
+{
+  "id": "properties_city_filters_filters_index_tsx_1226398715",
+  "name": "properties/[city]/filters/[...filters]",
+  "folder": "pages",
+  "file": "properties/[city]/filters/[...filters]/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "properties",
+      "parts": [
+        {
+          "type": "static",
+          "value": "properties"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[city]",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "city",
+          "const": "city"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "filters",
+      "parts": [
+        {
+          "type": "static",
+          "value": "filters"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[...filters]",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "filters",
+          "const": "filters"
+        }
+      ]
+    }
+  ]
+}

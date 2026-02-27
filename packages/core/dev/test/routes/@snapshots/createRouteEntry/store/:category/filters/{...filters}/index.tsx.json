@@ -1,0 +1,57 @@
+{
+  "id": "store_category_filters_filters_index_tsx_462992166",
+  "name": "store/:category/filters/{...filters}",
+  "folder": "pages",
+  "file": "store/:category/filters/{...filters}/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "store",
+      "pattern": "store",
+      "parts": [
+        {
+          "type": "static",
+          "value": "store"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":category",
+      "pattern": "/:category",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "filters",
+      "pattern": "/filters",
+      "parts": [
+        {
+          "type": "static",
+          "value": "filters"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{...filters}",
+      "pattern": "{/*filters}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "filters",
+          "const": "filters"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "store/:category/filters{/*filters}"
+}

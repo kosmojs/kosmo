@@ -1,0 +1,37 @@
+{
+  "id": "pages_path_html_index_ts_1431473415",
+  "name": "pages/{...path}.html",
+  "folder": "api",
+  "file": "pages/{...path}.html/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "pages",
+      "pattern": "pages",
+      "parts": [
+        {
+          "type": "static",
+          "value": "pages"
+        }
+      ]
+    },
+    {
+      "kind": "mixed",
+      "orig": "{...path}.html",
+      "pattern": "{/*path}.html",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "path",
+          "const": "path"
+        },
+        {
+          "type": "static",
+          "value": ".html"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "pages{/*path}.html"
+}

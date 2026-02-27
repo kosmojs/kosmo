@@ -5,29 +5,36 @@
   "file": "workspace/[workspaceId]/team/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "workspace",
-      "base": "workspace",
-      "path": "workspace",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "workspace"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[workspaceId]",
-      "base": "[workspaceId]",
-      "path": "[workspaceId]",
-      "ext": "",
-      "param": {
-        "name": "workspaceId",
-        "const": "workspaceId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "workspaceId",
+          "const": "workspaceId"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "team",
-      "base": "team",
-      "path": "team",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "team"
+        }
+      ]
     }
   ]
 }

@@ -5,16 +5,27 @@
   "file": "about/team/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "about",
-      "base": "about",
-      "path": "about",
-      "ext": ""
+      "pattern": "about",
+      "parts": [
+        {
+          "type": "static",
+          "value": "about"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "team",
-      "base": "team",
-      "path": "team",
-      "ext": ""
+      "pattern": "/team",
+      "parts": [
+        {
+          "type": "static",
+          "value": "team"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "about/team"
 }

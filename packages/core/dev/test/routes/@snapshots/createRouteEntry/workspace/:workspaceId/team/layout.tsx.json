@@ -1,0 +1,44 @@
+{
+  "id": "workspace_workspaceId_team_layout_tsx_2326723662",
+  "name": "workspace/:workspaceId/team",
+  "folder": "pages",
+  "file": "workspace/:workspaceId/team/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "workspace",
+      "pattern": "workspace",
+      "parts": [
+        {
+          "type": "static",
+          "value": "workspace"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":workspaceId",
+      "pattern": "/:workspaceId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "workspaceId",
+          "const": "workspaceId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "team",
+      "pattern": "/team",
+      "parts": [
+        {
+          "type": "static",
+          "value": "team"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "workspace/:workspaceId/team"
+}

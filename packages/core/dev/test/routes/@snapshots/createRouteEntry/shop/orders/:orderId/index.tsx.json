@@ -1,0 +1,44 @@
+{
+  "id": "shop_orders_orderId_index_tsx_1949600696",
+  "name": "shop/orders/:orderId",
+  "folder": "pages",
+  "file": "shop/orders/:orderId/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "shop",
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "orders",
+      "pattern": "/orders",
+      "parts": [
+        {
+          "type": "static",
+          "value": "orders"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":orderId",
+      "pattern": "/:orderId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "orderId",
+          "const": "orderId"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "shop/orders/:orderId"
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "kind": "static",
+    "orig": "some",
+    "pattern": "some",
+    "parts": [
+      {
+        "type": "static",
+        "value": "some"
+      }
+    ]
+  },
+  {
+    "kind": "param",
+    "orig": ":param",
+    "pattern": "/:param",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "param",
+        "const": "param"
+      }
+    ]
+  }
+]

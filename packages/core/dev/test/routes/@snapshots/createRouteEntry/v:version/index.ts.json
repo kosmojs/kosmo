@@ -1,0 +1,26 @@
+{
+  "id": "v_version_index_ts_1988943371",
+  "name": "v:version",
+  "folder": "api",
+  "file": "v:version/index.ts",
+  "pathTokens": [
+    {
+      "kind": "mixed",
+      "orig": "v:version",
+      "pattern": "v:version",
+      "parts": [
+        {
+          "type": "static",
+          "value": "v"
+        },
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "version",
+          "const": "version"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "v:version"
+}

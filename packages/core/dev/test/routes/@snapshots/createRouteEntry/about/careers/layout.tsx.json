@@ -5,16 +5,27 @@
   "file": "about/careers/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "about",
-      "base": "about",
-      "path": "about",
-      "ext": ""
+      "pattern": "about",
+      "parts": [
+        {
+          "type": "static",
+          "value": "about"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "careers",
-      "base": "careers",
-      "path": "careers",
-      "ext": ""
+      "pattern": "/careers",
+      "parts": [
+        {
+          "type": "static",
+          "value": "careers"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "about/careers"
 }

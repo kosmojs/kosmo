@@ -1,0 +1,34 @@
+[
+  {
+    "kind": "static",
+    "orig": "api",
+    "pattern": "api",
+    "parts": [
+      {
+        "type": "static",
+        "value": "api"
+      }
+    ]
+  },
+  {
+    "kind": "mixed",
+    "orig": "v:version.json",
+    "pattern": "/v:version.json",
+    "parts": [
+      {
+        "type": "static",
+        "value": "v"
+      },
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "version",
+        "const": "version"
+      },
+      {
+        "type": "static",
+        "value": ".json"
+      }
+    ]
+  }
+]

@@ -1,0 +1,44 @@
+{
+  "id": "shop_products_category_index_tsx_1093741095",
+  "name": "shop/products/{:category}",
+  "folder": "pages",
+  "file": "shop/products/{:category}/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "shop",
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "products",
+      "pattern": "/products",
+      "parts": [
+        {
+          "type": "static",
+          "value": "products"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{:category}",
+      "pattern": "{/:category}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "category",
+          "const": "category"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "shop/products{/:category}"
+}

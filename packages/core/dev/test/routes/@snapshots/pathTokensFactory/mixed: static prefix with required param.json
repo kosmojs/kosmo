@@ -1,0 +1,19 @@
+[
+  {
+    "kind": "mixed",
+    "orig": "book-:id",
+    "pattern": "book-:id",
+    "parts": [
+      {
+        "type": "static",
+        "value": "book-"
+      },
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "id",
+        "const": "id"
+      }
+    ]
+  }
+]

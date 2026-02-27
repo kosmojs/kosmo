@@ -5,10 +5,16 @@
   "file": "docs/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "docs",
-      "base": "docs",
-      "path": "docs",
-      "ext": ""
+      "pattern": "docs",
+      "parts": [
+        {
+          "type": "static",
+          "value": "docs"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "docs"
 }

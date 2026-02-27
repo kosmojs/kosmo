@@ -1,0 +1,55 @@
+{
+  "id": "shop_product_id_reviews_index_tsx_1418764625",
+  "name": "shop/product/:id/reviews",
+  "folder": "pages",
+  "file": "shop/product/:id/reviews/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "shop",
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "product",
+      "pattern": "/product",
+      "parts": [
+        {
+          "type": "static",
+          "value": "product"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":id",
+      "pattern": "/:id",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "id",
+          "const": "id"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "reviews",
+      "pattern": "/reviews",
+      "parts": [
+        {
+          "type": "static",
+          "value": "reviews"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "shop/product/:id/reviews"
+}

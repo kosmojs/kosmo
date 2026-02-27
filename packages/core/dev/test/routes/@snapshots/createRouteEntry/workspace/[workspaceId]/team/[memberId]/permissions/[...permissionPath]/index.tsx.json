@@ -5,61 +5,70 @@
   "file": "workspace/[workspaceId]/team/[memberId]/permissions/[...permissionPath]/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "workspace",
-      "base": "workspace",
-      "path": "workspace",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "workspace"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[workspaceId]",
-      "base": "[workspaceId]",
-      "path": "[workspaceId]",
-      "ext": "",
-      "param": {
-        "name": "workspaceId",
-        "const": "workspaceId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "workspaceId",
+          "const": "workspaceId"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "team",
-      "base": "team",
-      "path": "team",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "team"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[memberId]",
-      "base": "[memberId]",
-      "path": "[memberId]",
-      "ext": "",
-      "param": {
-        "name": "memberId",
-        "const": "memberId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "memberId",
+          "const": "memberId"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "permissions",
-      "base": "permissions",
-      "path": "permissions",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "permissions"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[...permissionPath]",
-      "base": "[...permissionPath]",
-      "path": "[...permissionPath]",
-      "ext": "",
-      "param": {
-        "name": "permissionPath",
-        "const": "permissionPath",
-        "isRequired": false,
-        "isOptional": false,
-        "isRest": true
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "permissionPath",
+          "const": "permissionPath"
+        }
+      ]
     }
   ]
 }

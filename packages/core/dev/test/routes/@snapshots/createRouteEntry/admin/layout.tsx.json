@@ -5,10 +5,16 @@
   "file": "admin/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "admin",
-      "base": "admin",
-      "path": "admin",
-      "ext": ""
+      "pattern": "admin",
+      "parts": [
+        {
+          "type": "static",
+          "value": "admin"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "admin"
 }

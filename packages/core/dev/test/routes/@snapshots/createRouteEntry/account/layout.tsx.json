@@ -5,10 +5,16 @@
   "file": "account/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "account",
-      "base": "account",
-      "path": "account",
-      "ext": ""
+      "pattern": "account",
+      "parts": [
+        {
+          "type": "static",
+          "value": "account"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "account"
 }

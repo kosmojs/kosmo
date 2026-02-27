@@ -1,0 +1,33 @@
+{
+  "id": "admin_tenant_index_tsx_4274253536",
+  "name": "admin/:tenant",
+  "folder": "pages",
+  "file": "admin/:tenant/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "admin",
+      "pattern": "admin",
+      "parts": [
+        {
+          "type": "static",
+          "value": "admin"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":tenant",
+      "pattern": "/:tenant",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "tenant",
+          "const": "tenant"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "admin/:tenant"
+}

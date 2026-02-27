@@ -5,36 +5,38 @@
   "file": "books/[category]/[[author]]/index.ts",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "books",
-      "base": "books",
-      "path": "books",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "books"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[category]",
-      "base": "[category]",
-      "path": "[category]",
-      "ext": "",
-      "param": {
-        "name": "category",
-        "const": "category",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[[author]]",
-      "base": "[[author]]",
-      "path": "[[author]]",
-      "ext": "",
-      "param": {
-        "name": "author",
-        "const": "author",
-        "isRequired": false,
-        "isOptional": true,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "author",
+          "const": "author"
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,46 @@
+{
+  "id": "blog_category_tag_index_tsx_655283647",
+  "name": "blog/{:category}/{:tag}",
+  "folder": "pages",
+  "file": "blog/{:category}/{:tag}/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "blog",
+      "pattern": "blog",
+      "parts": [
+        {
+          "type": "static",
+          "value": "blog"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{:category}",
+      "pattern": "{/:category}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "category",
+          "const": "category"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{:tag}",
+      "pattern": "{/:tag}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "tag",
+          "const": "tag"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "blog{/:category}{/:tag}"
+}

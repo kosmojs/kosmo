@@ -5,10 +5,16 @@
   "file": "dashboard/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "dashboard",
-      "base": "dashboard",
-      "path": "dashboard",
-      "ext": ""
+      "pattern": "dashboard",
+      "parts": [
+        {
+          "type": "static",
+          "value": "dashboard"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "dashboard"
 }

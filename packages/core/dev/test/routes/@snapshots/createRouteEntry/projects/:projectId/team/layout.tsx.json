@@ -1,0 +1,44 @@
+{
+  "id": "projects_projectId_team_layout_tsx_1043828610",
+  "name": "projects/:projectId/team",
+  "folder": "pages",
+  "file": "projects/:projectId/team/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "projects",
+      "pattern": "projects",
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":projectId",
+      "pattern": "/:projectId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "projectId",
+          "const": "projectId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "team",
+      "pattern": "/team",
+      "parts": [
+        {
+          "type": "static",
+          "value": "team"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "projects/:projectId/team"
+}

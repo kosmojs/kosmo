@@ -5,29 +5,36 @@
   "file": "admin/[tenant]/settings/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "admin",
-      "base": "admin",
-      "path": "admin",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "admin"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[tenant]",
-      "base": "[tenant]",
-      "path": "[tenant]",
-      "ext": "",
-      "param": {
-        "name": "tenant",
-        "const": "tenant",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "tenant",
+          "const": "tenant"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "settings",
-      "base": "settings",
-      "path": "settings",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "settings"
+        }
+      ]
     }
   ]
 }

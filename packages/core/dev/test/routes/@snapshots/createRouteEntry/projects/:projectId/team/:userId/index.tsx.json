@@ -1,0 +1,57 @@
+{
+  "id": "projects_projectId_team_userId_index_tsx_2728172599",
+  "name": "projects/:projectId/team/:userId",
+  "folder": "pages",
+  "file": "projects/:projectId/team/:userId/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "projects",
+      "pattern": "projects",
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":projectId",
+      "pattern": "/:projectId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "projectId",
+          "const": "projectId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "team",
+      "pattern": "/team",
+      "parts": [
+        {
+          "type": "static",
+          "value": "team"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":userId",
+      "pattern": "/:userId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "userId",
+          "const": "userId"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "projects/:projectId/team/:userId"
+}

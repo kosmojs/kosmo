@@ -5,16 +5,27 @@
   "file": "shop/orders/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "shop",
-      "base": "shop",
-      "path": "shop",
-      "ext": ""
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "orders",
-      "base": "orders",
-      "path": "orders",
-      "ext": ""
+      "pattern": "/orders",
+      "parts": [
+        {
+          "type": "static",
+          "value": "orders"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "shop/orders"
 }

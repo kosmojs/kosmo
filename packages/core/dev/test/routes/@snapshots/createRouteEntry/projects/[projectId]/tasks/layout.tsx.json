@@ -5,29 +5,36 @@
   "file": "projects/[projectId]/tasks/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "projects",
-      "base": "projects",
-      "path": "projects",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[projectId]",
-      "base": "[projectId]",
-      "path": "[projectId]",
-      "ext": "",
-      "param": {
-        "name": "projectId",
-        "const": "projectId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "projectId",
+          "const": "projectId"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "tasks",
-      "base": "tasks",
-      "path": "tasks",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "tasks"
+        }
+      ]
     }
   ]
 }

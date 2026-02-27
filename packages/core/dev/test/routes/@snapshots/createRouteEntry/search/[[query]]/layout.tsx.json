@@ -5,23 +5,26 @@
   "file": "search/[[query]]/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "search",
-      "base": "search",
-      "path": "search",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "search"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[[query]]",
-      "base": "[[query]]",
-      "path": "[[query]]",
-      "ext": "",
-      "param": {
-        "name": "query",
-        "const": "query",
-        "isRequired": false,
-        "isOptional": true,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "query",
+          "const": "query"
+        }
+      ]
     }
   ]
 }

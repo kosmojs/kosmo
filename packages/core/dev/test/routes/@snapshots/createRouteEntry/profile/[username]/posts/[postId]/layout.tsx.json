@@ -5,42 +5,48 @@
   "file": "profile/[username]/posts/[postId]/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "profile",
-      "base": "profile",
-      "path": "profile",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "profile"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[username]",
-      "base": "[username]",
-      "path": "[username]",
-      "ext": "",
-      "param": {
-        "name": "username",
-        "const": "username",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "username",
+          "const": "username"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "posts",
-      "base": "posts",
-      "path": "posts",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "posts"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[postId]",
-      "base": "[postId]",
-      "path": "[postId]",
-      "ext": "",
-      "param": {
-        "name": "postId",
-        "const": "postId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "postId",
+          "const": "postId"
+        }
+      ]
     }
   ]
 }

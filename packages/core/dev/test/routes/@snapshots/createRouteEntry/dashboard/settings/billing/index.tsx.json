@@ -5,22 +5,38 @@
   "file": "dashboard/settings/billing/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "dashboard",
-      "base": "dashboard",
-      "path": "dashboard",
-      "ext": ""
+      "pattern": "dashboard",
+      "parts": [
+        {
+          "type": "static",
+          "value": "dashboard"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "settings",
-      "base": "settings",
-      "path": "settings",
-      "ext": ""
+      "pattern": "/settings",
+      "parts": [
+        {
+          "type": "static",
+          "value": "settings"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "billing",
-      "base": "billing",
-      "path": "billing",
-      "ext": ""
+      "pattern": "/billing",
+      "parts": [
+        {
+          "type": "static",
+          "value": "billing"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "dashboard/settings/billing"
 }

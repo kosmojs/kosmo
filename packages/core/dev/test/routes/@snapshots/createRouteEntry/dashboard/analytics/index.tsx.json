@@ -5,16 +5,27 @@
   "file": "dashboard/analytics/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "dashboard",
-      "base": "dashboard",
-      "path": "dashboard",
-      "ext": ""
+      "pattern": "dashboard",
+      "parts": [
+        {
+          "type": "static",
+          "value": "dashboard"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "analytics",
-      "base": "analytics",
-      "path": "analytics",
-      "ext": ""
+      "pattern": "/analytics",
+      "parts": [
+        {
+          "type": "static",
+          "value": "analytics"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "dashboard/analytics"
 }

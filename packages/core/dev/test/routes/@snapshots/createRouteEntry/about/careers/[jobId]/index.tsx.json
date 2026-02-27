@@ -5,29 +5,36 @@
   "file": "about/careers/[jobId]/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "about",
-      "base": "about",
-      "path": "about",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "about"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "careers",
-      "base": "careers",
-      "path": "careers",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "careers"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[jobId]",
-      "base": "[jobId]",
-      "path": "[jobId]",
-      "ext": "",
-      "param": {
-        "name": "jobId",
-        "const": "jobId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "jobId",
+          "const": "jobId"
+        }
+      ]
     }
   ]
 }

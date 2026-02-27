@@ -5,16 +5,27 @@
   "file": "legal/terms/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "legal",
-      "base": "legal",
-      "path": "legal",
-      "ext": ""
+      "pattern": "legal",
+      "parts": [
+        {
+          "type": "static",
+          "value": "legal"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "terms",
-      "base": "terms",
-      "path": "terms",
-      "ext": ""
+      "pattern": "/terms",
+      "parts": [
+        {
+          "type": "static",
+          "value": "terms"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "legal/terms"
 }

@@ -1,0 +1,33 @@
+{
+  "id": "files_filePath_layout_tsx_3517107166",
+  "name": "files/{...filePath}",
+  "folder": "pages",
+  "file": "files/{...filePath}/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "files",
+      "pattern": "files",
+      "parts": [
+        {
+          "type": "static",
+          "value": "files"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{...filePath}",
+      "pattern": "{/*filePath}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "filePath",
+          "const": "filePath"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "files{/*filePath}"
+}

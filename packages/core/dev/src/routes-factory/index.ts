@@ -14,6 +14,7 @@ import {
   scanRoutes,
 } from "./resolve";
 
+export * from "./base";
 export * from "./nesting";
 export * from "./resolve";
 

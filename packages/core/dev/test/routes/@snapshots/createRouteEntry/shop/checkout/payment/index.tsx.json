@@ -5,22 +5,38 @@
   "file": "shop/checkout/payment/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "shop",
-      "base": "shop",
-      "path": "shop",
-      "ext": ""
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "checkout",
-      "base": "checkout",
-      "path": "checkout",
-      "ext": ""
+      "pattern": "/checkout",
+      "parts": [
+        {
+          "type": "static",
+          "value": "checkout"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "payment",
-      "base": "payment",
-      "path": "payment",
-      "ext": ""
+      "pattern": "/payment",
+      "parts": [
+        {
+          "type": "static",
+          "value": "payment"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "shop/checkout/payment"
 }

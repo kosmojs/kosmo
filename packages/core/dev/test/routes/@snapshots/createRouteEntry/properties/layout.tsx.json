@@ -5,10 +5,16 @@
   "file": "properties/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "properties",
-      "base": "properties",
-      "path": "properties",
-      "ext": ""
+      "pattern": "properties",
+      "parts": [
+        {
+          "type": "static",
+          "value": "properties"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "properties"
 }

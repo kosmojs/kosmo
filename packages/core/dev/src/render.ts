@@ -108,7 +108,7 @@ export const renderHelpers = {
     return params.schema
       .map((p) => {
         return p.kind === "splat"
-          ? `${p.const}?: Array<string | number >`
+          ? `${p.const}?: Array<string | number>`
           : p.kind === "optional"
             ? `${p.const}?: string | number`
             : `${p.const}: string | number`;

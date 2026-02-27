@@ -5,23 +5,30 @@
   "file": "pages/[...path].html/index.ts",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "pages",
-      "base": "pages",
-      "path": "pages",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "pages"
+        }
+      ]
     },
     {
+      "kind": "mixed",
       "orig": "[...path].html",
-      "base": "[...path]",
-      "path": "[...path].html",
-      "ext": ".html",
-      "param": {
-        "name": "path",
-        "const": "path",
-        "isRequired": false,
-        "isOptional": false,
-        "isRest": true
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "path",
+          "const": "path"
+        },
+        {
+          "type": "static",
+          "value": ".html"
+        }
+      ]
     }
   ]
 }

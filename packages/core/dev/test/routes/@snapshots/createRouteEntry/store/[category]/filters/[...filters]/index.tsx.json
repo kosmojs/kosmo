@@ -5,42 +5,48 @@
   "file": "store/[category]/filters/[...filters]/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "store",
-      "base": "store",
-      "path": "store",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "store"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[category]",
-      "base": "[category]",
-      "path": "[category]",
-      "ext": "",
-      "param": {
-        "name": "category",
-        "const": "category",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "filters",
-      "base": "filters",
-      "path": "filters",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "filters"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[...filters]",
-      "base": "[...filters]",
-      "path": "[...filters]",
-      "ext": "",
-      "param": {
-        "name": "filters",
-        "const": "filters",
-        "isRequired": false,
-        "isOptional": false,
-        "isRest": true
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "filters",
+          "const": "filters"
+        }
+      ]
     }
   ]
 }

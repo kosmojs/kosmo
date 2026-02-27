@@ -5,16 +5,27 @@
   "file": "shop/products/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "shop",
-      "base": "shop",
-      "path": "shop",
-      "ext": ""
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "products",
-      "base": "products",
-      "path": "products",
-      "ext": ""
+      "pattern": "/products",
+      "parts": [
+        {
+          "type": "static",
+          "value": "products"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "shop/products"
 }

@@ -1,0 +1,33 @@
+{
+  "id": "users_username_index_tsx_3890776125",
+  "name": "users/:username",
+  "folder": "pages",
+  "file": "users/:username/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "users",
+      "pattern": "users",
+      "parts": [
+        {
+          "type": "static",
+          "value": "users"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":username",
+      "pattern": "/:username",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "username",
+          "const": "username"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "users/:username"
+}

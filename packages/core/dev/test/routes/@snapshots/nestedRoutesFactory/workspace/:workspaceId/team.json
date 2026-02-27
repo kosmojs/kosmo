@@ -1,0 +1,98 @@
+{
+  "layout": {
+    "id": "workspace_workspaceId_team_layout_tsx_2326723662",
+    "name": "workspace/:workspaceId/team",
+    "folder": "pages",
+    "file": "workspace/:workspaceId/team/layout.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "workspace",
+        "pattern": "workspace",
+        "parts": [
+          {
+            "type": "static",
+            "value": "workspace"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": ":workspaceId",
+        "pattern": "/:workspaceId",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "required",
+            "name": "workspaceId",
+            "const": "workspaceId"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "team",
+        "pattern": "/team",
+        "parts": [
+          {
+            "type": "static",
+            "value": "team"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "workspace/:workspaceId/team"
+  },
+  "children": [
+    {
+      "index": {
+        "id": "workspace_workspaceId_team_memberId_permissions_permissionPath_index_tsx_3608423697",
+        "name": "workspace/:workspaceId/team/:memberId/permissions/{...permissionPath}",
+        "folder": "pages",
+        "file": "workspace/:workspaceId/team/:memberId/permissions/{...permissionPath}/index.tsx",
+        "pathTokens": [
+          {
+            "kind": "param",
+            "orig": ":memberId",
+            "pattern": "/:memberId",
+            "parts": [
+              {
+                "type": "param",
+                "kind": "required",
+                "name": "memberId",
+                "const": "memberId"
+              }
+            ]
+          },
+          {
+            "kind": "static",
+            "orig": "permissions",
+            "pattern": "/permissions",
+            "parts": [
+              {
+                "type": "static",
+                "value": "permissions"
+              }
+            ]
+          },
+          {
+            "kind": "param",
+            "orig": "{...permissionPath}",
+            "pattern": "{/*permissionPath}",
+            "parts": [
+              {
+                "type": "param",
+                "kind": "splat",
+                "name": "permissionPath",
+                "const": "permissionPath"
+              }
+            ]
+          }
+        ],
+        "pathPattern": "workspace/:workspaceId/team/:memberId/permissions{/*permissionPath}"
+      },
+      "parent": "workspace/:workspaceId/team",
+      "children": []
+    }
+  ]
+}

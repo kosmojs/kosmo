@@ -3,9 +3,9 @@
 
 export type {{params.id}} = {
   {{#each paramsSchema}}
-  "{{name}}"{{#unless isRequired}}?{{/unless}}:{{#if isRest}} Array<{{/if}}
+  "{{name}}"{{#unless isRequired}}?{{/unless}}:{{#if isSplat}} Array<{{/if}}
     {{#if refinement}}{{refinement.text}}{{else}}string{{/if}}
-  {{#if isRest}}>{{/if}}
+  {{#if isSplat}}>{{/if}}
   {{/each}}
 };
 

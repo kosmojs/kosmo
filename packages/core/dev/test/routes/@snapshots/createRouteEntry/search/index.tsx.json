@@ -5,10 +5,16 @@
   "file": "search/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "search",
-      "base": "search",
-      "path": "search",
-      "ext": ""
+      "pattern": "search",
+      "parts": [
+        {
+          "type": "static",
+          "value": "search"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "search"
 }

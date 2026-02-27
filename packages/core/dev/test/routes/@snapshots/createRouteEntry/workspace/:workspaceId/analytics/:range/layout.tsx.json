@@ -1,0 +1,57 @@
+{
+  "id": "workspace_workspaceId_analytics_range_layout_tsx_3212965545",
+  "name": "workspace/:workspaceId/analytics/:range",
+  "folder": "pages",
+  "file": "workspace/:workspaceId/analytics/:range/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "workspace",
+      "pattern": "workspace",
+      "parts": [
+        {
+          "type": "static",
+          "value": "workspace"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":workspaceId",
+      "pattern": "/:workspaceId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "workspaceId",
+          "const": "workspaceId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "analytics",
+      "pattern": "/analytics",
+      "parts": [
+        {
+          "type": "static",
+          "value": "analytics"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":range",
+      "pattern": "/:range",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "range",
+          "const": "range"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "workspace/:workspaceId/analytics/:range"
+}

@@ -1,0 +1,98 @@
+{
+  "layout": {
+    "id": "courses_courseId_layout_tsx_2776976907",
+    "name": "courses/:courseId",
+    "folder": "pages",
+    "file": "courses/:courseId/layout.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "courses",
+        "pattern": "courses",
+        "parts": [
+          {
+            "type": "static",
+            "value": "courses"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": ":courseId",
+        "pattern": "/:courseId",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "required",
+            "name": "courseId",
+            "const": "courseId"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "courses/:courseId"
+  },
+  "children": [
+    {
+      "index": {
+        "id": "courses_courseId_lessons_lessonId_assignments_assignmentPath_index_tsx_2022521936",
+        "name": "courses/:courseId/lessons/:lessonId/assignments/{...assignmentPath}",
+        "folder": "pages",
+        "file": "courses/:courseId/lessons/:lessonId/assignments/{...assignmentPath}/index.tsx",
+        "pathTokens": [
+          {
+            "kind": "static",
+            "orig": "lessons",
+            "pattern": "/lessons",
+            "parts": [
+              {
+                "type": "static",
+                "value": "lessons"
+              }
+            ]
+          },
+          {
+            "kind": "param",
+            "orig": ":lessonId",
+            "pattern": "/:lessonId",
+            "parts": [
+              {
+                "type": "param",
+                "kind": "required",
+                "name": "lessonId",
+                "const": "lessonId"
+              }
+            ]
+          },
+          {
+            "kind": "static",
+            "orig": "assignments",
+            "pattern": "/assignments",
+            "parts": [
+              {
+                "type": "static",
+                "value": "assignments"
+              }
+            ]
+          },
+          {
+            "kind": "param",
+            "orig": "{...assignmentPath}",
+            "pattern": "{/*assignmentPath}",
+            "parts": [
+              {
+                "type": "param",
+                "kind": "splat",
+                "name": "assignmentPath",
+                "const": "assignmentPath"
+              }
+            ]
+          }
+        ],
+        "pathPattern": "courses/:courseId/lessons/:lessonId/assignments{/*assignmentPath}"
+      },
+      "parent": "courses/:courseId",
+      "children": []
+    }
+  ]
+}

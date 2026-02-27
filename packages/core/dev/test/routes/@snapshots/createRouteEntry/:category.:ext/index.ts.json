@@ -1,0 +1,32 @@
+{
+  "id": "_category_ext_index_ts_4055872454",
+  "name": ":category.:ext",
+  "folder": "api",
+  "file": ":category.:ext/index.ts",
+  "pathTokens": [
+    {
+      "kind": "mixed",
+      "orig": ":category.:ext",
+      "pattern": ":category.:ext",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        },
+        {
+          "type": "static",
+          "value": "."
+        },
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "ext",
+          "const": "ext"
+        }
+      ]
+    }
+  ],
+  "pathPattern": ":category.:ext"
+}

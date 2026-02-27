@@ -1,0 +1,74 @@
+{
+  "id": "courses_courseId_lessons_lessonId_assignments_assignmentPath_index_tsx_805732410",
+  "name": "courses/[courseId]/lessons/[lessonId]/assignments/[...assignmentPath]",
+  "folder": "pages",
+  "file": "courses/[courseId]/lessons/[lessonId]/assignments/[...assignmentPath]/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "courses",
+      "parts": [
+        {
+          "type": "static",
+          "value": "courses"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[courseId]",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "courseId",
+          "const": "courseId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "lessons",
+      "parts": [
+        {
+          "type": "static",
+          "value": "lessons"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[lessonId]",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "lessonId",
+          "const": "lessonId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "assignments",
+      "parts": [
+        {
+          "type": "static",
+          "value": "assignments"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[...assignmentPath]",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "assignmentPath",
+          "const": "assignmentPath"
+        }
+      ]
+    }
+  ]
+}

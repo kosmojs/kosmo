@@ -1,0 +1,46 @@
+{
+  "id": "books_category_author_index_ts_614005566",
+  "name": "books/:category/{:author}",
+  "folder": "api",
+  "file": "books/:category/{:author}/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "books",
+      "pattern": "books",
+      "parts": [
+        {
+          "type": "static",
+          "value": "books"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":category",
+      "pattern": "/:category",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{:author}",
+      "pattern": "{/:author}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "author",
+          "const": "author"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "books/:category{/:author}"
+}

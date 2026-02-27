@@ -1,0 +1,57 @@
+{
+  "id": "admin_tenant_users_userId_index_tsx_3588794698",
+  "name": "admin/:tenant/users/:userId",
+  "folder": "pages",
+  "file": "admin/:tenant/users/:userId/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "admin",
+      "pattern": "admin",
+      "parts": [
+        {
+          "type": "static",
+          "value": "admin"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":tenant",
+      "pattern": "/:tenant",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "tenant",
+          "const": "tenant"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "users",
+      "pattern": "/users",
+      "parts": [
+        {
+          "type": "static",
+          "value": "users"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":userId",
+      "pattern": "/:userId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "userId",
+          "const": "userId"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "admin/:tenant/users/:userId"
+}

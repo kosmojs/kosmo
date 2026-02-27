@@ -5,23 +5,26 @@
   "file": "courses/[courseId]/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "courses",
-      "base": "courses",
-      "path": "courses",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "courses"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[courseId]",
-      "base": "[courseId]",
-      "path": "[courseId]",
-      "ext": "",
-      "param": {
-        "name": "courseId",
-        "const": "courseId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "courseId",
+          "const": "courseId"
+        }
+      ]
     }
   ]
 }

@@ -5,16 +5,27 @@
   "file": "account/profile/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "account",
-      "base": "account",
-      "path": "account",
-      "ext": ""
+      "pattern": "account",
+      "parts": [
+        {
+          "type": "static",
+          "value": "account"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "profile",
-      "base": "profile",
-      "path": "profile",
-      "ext": ""
+      "pattern": "/profile",
+      "parts": [
+        {
+          "type": "static",
+          "value": "profile"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "account/profile"
 }

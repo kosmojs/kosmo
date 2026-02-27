@@ -5,23 +5,26 @@
   "file": "files/[[folder]]/index.ts",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "files",
-      "base": "files",
-      "path": "files",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "files"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[[folder]]",
-      "base": "[[folder]]",
-      "path": "[[folder]]",
-      "ext": "",
-      "param": {
-        "name": "folder",
-        "const": "folder",
-        "isRequired": false,
-        "isOptional": true,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "folder",
+          "const": "folder"
+        }
+      ]
     }
   ]
 }

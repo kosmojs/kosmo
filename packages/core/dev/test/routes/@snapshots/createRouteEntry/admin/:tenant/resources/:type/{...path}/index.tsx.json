@@ -1,0 +1,70 @@
+{
+  "id": "admin_tenant_resources_type_path_index_tsx_2421160976",
+  "name": "admin/:tenant/resources/:type/{...path}",
+  "folder": "pages",
+  "file": "admin/:tenant/resources/:type/{...path}/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "admin",
+      "pattern": "admin",
+      "parts": [
+        {
+          "type": "static",
+          "value": "admin"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":tenant",
+      "pattern": "/:tenant",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "tenant",
+          "const": "tenant"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "resources",
+      "pattern": "/resources",
+      "parts": [
+        {
+          "type": "static",
+          "value": "resources"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":type",
+      "pattern": "/:type",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "type",
+          "const": "type"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{...path}",
+      "pattern": "{/*path}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "path",
+          "const": "path"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "admin/:tenant/resources/:type{/*path}"
+}

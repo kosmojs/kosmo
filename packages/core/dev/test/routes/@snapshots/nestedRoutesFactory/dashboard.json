@@ -6,12 +6,18 @@
     "file": "dashboard/index.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "dashboard",
-        "base": "dashboard",
-        "path": "dashboard",
-        "ext": ""
+        "pattern": "dashboard",
+        "parts": [
+          {
+            "type": "static",
+            "value": "dashboard"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "dashboard"
   },
   "layout": {
     "id": "dashboard_layout_tsx_1762834450",
@@ -20,12 +26,18 @@
     "file": "dashboard/layout.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "dashboard",
-        "base": "dashboard",
-        "path": "dashboard",
-        "ext": ""
+        "pattern": "dashboard",
+        "parts": [
+          {
+            "type": "static",
+            "value": "dashboard"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "dashboard"
   },
   "children": [
     {
@@ -36,12 +48,18 @@
         "file": "dashboard/analytics/index.tsx",
         "pathTokens": [
           {
+            "kind": "static",
             "orig": "analytics",
-            "base": "analytics",
-            "path": "analytics",
-            "ext": ""
+            "pattern": "/analytics",
+            "parts": [
+              {
+                "type": "static",
+                "value": "analytics"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "dashboard/analytics"
       },
       "parent": "dashboard",
       "children": []
@@ -54,12 +72,18 @@
         "file": "dashboard/settings/index.tsx",
         "pathTokens": [
           {
+            "kind": "static",
             "orig": "settings",
-            "base": "settings",
-            "path": "settings",
-            "ext": ""
+            "pattern": "/settings",
+            "parts": [
+              {
+                "type": "static",
+                "value": "settings"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "dashboard/settings"
       },
       "layout": {
         "id": "dashboard_settings_layout_tsx_2001687227",
@@ -68,12 +92,18 @@
         "file": "dashboard/settings/layout.tsx",
         "pathTokens": [
           {
+            "kind": "static",
             "orig": "settings",
-            "base": "settings",
-            "path": "settings",
-            "ext": ""
+            "pattern": "/settings",
+            "parts": [
+              {
+                "type": "static",
+                "value": "settings"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "dashboard/settings"
       },
       "parent": "dashboard",
       "children": [
@@ -85,12 +115,18 @@
             "file": "dashboard/settings/billing/index.tsx",
             "pathTokens": [
               {
+                "kind": "static",
                 "orig": "billing",
-                "base": "billing",
-                "path": "billing",
-                "ext": ""
+                "pattern": "/billing",
+                "parts": [
+                  {
+                    "type": "static",
+                    "value": "billing"
+                  }
+                ]
               }
-            ]
+            ],
+            "pathPattern": "dashboard/settings/billing"
           },
           "parent": "dashboard/settings",
           "children": []
@@ -103,12 +139,18 @@
             "file": "dashboard/settings/notifications/index.tsx",
             "pathTokens": [
               {
+                "kind": "static",
                 "orig": "notifications",
-                "base": "notifications",
-                "path": "notifications",
-                "ext": ""
+                "pattern": "/notifications",
+                "parts": [
+                  {
+                    "type": "static",
+                    "value": "notifications"
+                  }
+                ]
               }
-            ]
+            ],
+            "pathPattern": "dashboard/settings/notifications"
           },
           "parent": "dashboard/settings",
           "children": []
@@ -121,12 +163,18 @@
             "file": "dashboard/settings/profile/index.tsx",
             "pathTokens": [
               {
+                "kind": "static",
                 "orig": "profile",
-                "base": "profile",
-                "path": "profile",
-                "ext": ""
+                "pattern": "/profile",
+                "parts": [
+                  {
+                    "type": "static",
+                    "value": "profile"
+                  }
+                ]
               }
-            ]
+            ],
+            "pathPattern": "dashboard/settings/profile"
           },
           "parent": "dashboard/settings",
           "children": []
@@ -139,12 +187,18 @@
             "file": "dashboard/settings/security/index.tsx",
             "pathTokens": [
               {
+                "kind": "static",
                 "orig": "security",
-                "base": "security",
-                "path": "security",
-                "ext": ""
+                "pattern": "/security",
+                "parts": [
+                  {
+                    "type": "static",
+                    "value": "security"
+                  }
+                ]
               }
-            ]
+            ],
+            "pathPattern": "dashboard/settings/security"
           },
           "layout": {
             "id": "dashboard_settings_security_layout_tsx_3549196698",
@@ -153,12 +207,18 @@
             "file": "dashboard/settings/security/layout.tsx",
             "pathTokens": [
               {
+                "kind": "static",
                 "orig": "security",
-                "base": "security",
-                "path": "security",
-                "ext": ""
+                "pattern": "/security",
+                "parts": [
+                  {
+                    "type": "static",
+                    "value": "security"
+                  }
+                ]
               }
-            ]
+            ],
+            "pathPattern": "dashboard/settings/security"
           },
           "parent": "dashboard/settings",
           "children": []
@@ -167,25 +227,26 @@
     },
     {
       "index": {
-        "id": "dashboard_view_index_tsx_3510080540",
-        "name": "dashboard/[view]",
+        "id": "dashboard_view_index_tsx_2368687695",
+        "name": "dashboard/:view",
         "folder": "pages",
-        "file": "dashboard/[view]/index.tsx",
+        "file": "dashboard/:view/index.tsx",
         "pathTokens": [
           {
-            "orig": "[view]",
-            "base": "[view]",
-            "path": "[view]",
-            "ext": "",
-            "param": {
-              "name": "view",
-              "const": "view",
-              "isRequired": true,
-              "isOptional": false,
-              "isRest": false
-            }
+            "kind": "param",
+            "orig": ":view",
+            "pattern": "/:view",
+            "parts": [
+              {
+                "type": "param",
+                "kind": "required",
+                "name": "view",
+                "const": "view"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "dashboard/:view"
       },
       "parent": "dashboard",
       "children": []

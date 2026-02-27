@@ -1,0 +1,44 @@
+{
+  "id": "admin_tenant_resources_index_tsx_3039477402",
+  "name": "admin/:tenant/resources",
+  "folder": "pages",
+  "file": "admin/:tenant/resources/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "admin",
+      "pattern": "admin",
+      "parts": [
+        {
+          "type": "static",
+          "value": "admin"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":tenant",
+      "pattern": "/:tenant",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "tenant",
+          "const": "tenant"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "resources",
+      "pattern": "/resources",
+      "parts": [
+        {
+          "type": "static",
+          "value": "resources"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "admin/:tenant/resources"
+}

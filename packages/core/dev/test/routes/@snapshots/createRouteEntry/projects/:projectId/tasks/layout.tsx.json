@@ -1,0 +1,44 @@
+{
+  "id": "projects_projectId_tasks_layout_tsx_883056046",
+  "name": "projects/:projectId/tasks",
+  "folder": "pages",
+  "file": "projects/:projectId/tasks/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "projects",
+      "pattern": "projects",
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":projectId",
+      "pattern": "/:projectId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "projectId",
+          "const": "projectId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "tasks",
+      "pattern": "/tasks",
+      "parts": [
+        {
+          "type": "static",
+          "value": "tasks"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "projects/:projectId/tasks"
+}

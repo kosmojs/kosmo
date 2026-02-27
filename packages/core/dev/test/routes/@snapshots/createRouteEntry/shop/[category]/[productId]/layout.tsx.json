@@ -5,36 +5,38 @@
   "file": "shop/[category]/[productId]/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "shop",
-      "base": "shop",
-      "path": "shop",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[category]",
-      "base": "[category]",
-      "path": "[category]",
-      "ext": "",
-      "param": {
-        "name": "category",
-        "const": "category",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[productId]",
-      "base": "[productId]",
-      "path": "[productId]",
-      "ext": "",
-      "param": {
-        "name": "productId",
-        "const": "productId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "productId",
+          "const": "productId"
+        }
+      ]
     }
   ]
 }

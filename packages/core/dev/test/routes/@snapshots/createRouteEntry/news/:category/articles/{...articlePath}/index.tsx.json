@@ -1,0 +1,57 @@
+{
+  "id": "news_category_articles_articlePath_index_tsx_3243845610",
+  "name": "news/:category/articles/{...articlePath}",
+  "folder": "pages",
+  "file": "news/:category/articles/{...articlePath}/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "news",
+      "pattern": "news",
+      "parts": [
+        {
+          "type": "static",
+          "value": "news"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":category",
+      "pattern": "/:category",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "articles",
+      "pattern": "/articles",
+      "parts": [
+        {
+          "type": "static",
+          "value": "articles"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{...articlePath}",
+      "pattern": "{/*articlePath}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "articlePath",
+          "const": "articlePath"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "news/:category/articles{/*articlePath}"
+}

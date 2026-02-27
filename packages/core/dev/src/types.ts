@@ -32,18 +32,37 @@ export type PluginOptionsResolved = {
   };
 } & Omit<PluginOptions, "generators" | "refineTypeName">;
 
+export type PathTokenStaticPart = {
+  type: "static";
+  value: string;
+};
+
+export type PathTokenParamPart = {
+  type: "param";
+  kind: "required" | "optional" | "splat";
+  name: string;
+  /** codegen-safe identifier: sanitized name + crc suffix when needed */
+  const: string;
+};
+
 export type PathToken = {
+  kind:
+    | "static" // segment is purely static
+    | "param" // segment is a single pure param (no static parts)
+    | "mixed"; // segment has both static and param parts
+
+  /** original segment string,
+   * eg. {:name} or {...path}
+   * */
   orig: string;
-  base: string;
-  path: string;
-  ext: string;
-  param?: {
-    name: string;
-    const: string;
-    isRequired?: boolean;
-    isOptional?: boolean;
-    isRest?: boolean;
-  };
+
+  /** path-to-regexp pattern obtained from original segment,
+   * eg. {/:name} or {/*path}
+   * */
+  pattern: string;
+
+  /** parsed parts of the segment */
+  parts: Array<PathTokenStaticPart | PathTokenParamPart>;
 };
 
 /**
@@ -58,6 +77,8 @@ export type RouteEntry = {
   file: string;
   fileFullpath: string;
   pathTokens: Array<PathToken>;
+  // path-to-regexp pattern
+  pathPattern: string;
 };
 
 export type NestedRouteEntry = {
@@ -70,7 +91,7 @@ export type NestedRouteEntry = {
 export type ApiRoute = RouteEntry & {
   params: {
     id: string;
-    schema: Array<Required<PathToken>["param"]>;
+    schema: Array<PathTokenParamPart>;
     resolvedType: ResolvedType | undefined;
   };
   numericParams: Array<string>;
@@ -86,7 +107,7 @@ export type ApiUse = RouteEntry;
 
 export type PageRoute = RouteEntry & {
   params: {
-    schema: Array<Required<PathToken>["param"]>;
+    schema: Array<PathTokenParamPart>;
   };
 };
 

@@ -14,6 +14,7 @@ import { render, renderToFile } from "../render";
 import type {
   ApiRoute,
   PageRoute,
+  PathTokenParamPart,
   PluginOptionsResolved,
   ResolvedEntry,
   RouteEntry,
@@ -138,16 +139,22 @@ export const createRouteEntry = (
 
   const [folder, file] = resolvedPaths;
 
-  const pathTokens = pathTokensFactory(dirname(file));
+  const id = `${file.replace(/\W+/g, "_")}_${crc(file)}`;
+  const name = dirname(file);
 
-  return {
-    id: `${file.replace(/\W+/g, "_")}_${crc(file)}`,
-    name: pathTokens.map((e) => e.orig).join("/"),
-    folder,
-    file,
-    fileFullpath,
-    pathTokens,
-  };
+  try {
+    const [pathTokens, pathPattern] = pathTokensFactory(dirname(file));
+    return { id, name, folder, file, fileFullpath, pathTokens, pathPattern };
+  } catch (
+    // biome-ignore lint: any
+    error: any
+  ) {
+    console.error(
+      `❗${styleText("red", "ERROR")}: Failed parsing path for "${styleText("cyan", file)}"`,
+    );
+    console.error(error);
+    return;
+  }
 };
 
 type ResolverFactory = (
@@ -171,15 +178,19 @@ export const pageLayoutResolverFactory: ResolverFactory = () => {
 
 export const pageRouteResolverFactory: ResolverFactory = () => {
   return (entry) => {
-    const { id, name, folder, file, fileFullpath, pathTokens } = entry;
+    const { id, name, folder, file, fileFullpath, pathTokens, pathPattern } =
+      entry;
 
     const handler: ResolverSignature["handler"] = async () => {
       const entry: PageRoute = {
         id,
         name,
         pathTokens,
+        pathPattern,
         params: {
-          schema: pathTokens.flatMap((e) => (e.param ? [e.param] : [])),
+          schema: pathTokens.flatMap((e) => {
+            return e.parts.filter((p) => p.type === "param");
+          }),
         },
         folder,
         file,
@@ -228,14 +239,26 @@ export const apiRouteResolverFactory: ResolverFactory = (pluginOptions) => {
     refreshSourceFile,
   } = typeResolverFactory(pluginOptions);
 
-  return ({ id, name, file, folder, fileFullpath, pathTokens }) => {
+  return ({
+    id,
+    name,
+    file,
+    folder,
+    fileFullpath,
+    pathTokens,
+    pathPattern,
+  }) => {
     const handler: ResolverSignature["handler"] = async (updatedFile) => {
-      const paramsSchema = pathTokens.flatMap((e) => {
-        return e.param ? [e.param] : [];
-      });
+      const paramsSchema: Array<PathTokenParamPart> = pathTokens.flatMap(
+        (e) => {
+          return e.parts.flatMap((p) => {
+            return p.type === "param" ? [p] : [];
+          });
+        },
+      );
 
       const optionalParams = paramsSchema.length
-        ? !paramsSchema.some((e) => e.isRequired)
+        ? paramsSchema.filter((e) => e.kind === "required").length === 0
         : true;
 
       const { getCache, persistCache } = cacheFactory(
@@ -308,6 +331,8 @@ export const apiRouteResolverFactory: ResolverFactory = (pluginOptions) => {
           paramsSchema: paramsSchema.map((param, index) => {
             return {
               ...param,
+              isRequired: param.kind === "required",
+              isSplat: param.kind === "splat",
               refinement: paramsRefinements?.at(index),
             };
           }),
@@ -441,6 +466,7 @@ export const apiRouteResolverFactory: ResolverFactory = (pluginOptions) => {
         id,
         name,
         pathTokens,
+        pathPattern,
         params: cache.params,
         numericParams: cache.numericParams,
         optionalParams,

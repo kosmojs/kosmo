@@ -1,0 +1,46 @@
+{
+  "id": "search_query_page_index_tsx_551762846",
+  "name": "search/{:query}/{:page}",
+  "folder": "pages",
+  "file": "search/{:query}/{:page}/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "search",
+      "pattern": "search",
+      "parts": [
+        {
+          "type": "static",
+          "value": "search"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{:query}",
+      "pattern": "{/:query}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "query",
+          "const": "query"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{:page}",
+      "pattern": "{/:page}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "page",
+          "const": "page"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "search{/:query}{/:page}"
+}

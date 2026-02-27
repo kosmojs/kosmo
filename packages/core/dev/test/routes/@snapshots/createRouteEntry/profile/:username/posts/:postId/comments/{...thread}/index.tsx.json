@@ -1,0 +1,81 @@
+{
+  "id": "profile_username_posts_postId_comments_thread_index_tsx_2296025889",
+  "name": "profile/:username/posts/:postId/comments/{...thread}",
+  "folder": "pages",
+  "file": "profile/:username/posts/:postId/comments/{...thread}/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "profile",
+      "pattern": "profile",
+      "parts": [
+        {
+          "type": "static",
+          "value": "profile"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":username",
+      "pattern": "/:username",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "username",
+          "const": "username"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "posts",
+      "pattern": "/posts",
+      "parts": [
+        {
+          "type": "static",
+          "value": "posts"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":postId",
+      "pattern": "/:postId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "postId",
+          "const": "postId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "comments",
+      "pattern": "/comments",
+      "parts": [
+        {
+          "type": "static",
+          "value": "comments"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{...thread}",
+      "pattern": "{/*thread}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "thread",
+          "const": "thread"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "profile/:username/posts/:postId/comments{/*thread}"
+}

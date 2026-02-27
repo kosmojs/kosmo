@@ -5,10 +5,16 @@
   "file": "users/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "users",
-      "base": "users",
-      "path": "users",
-      "ext": ""
+      "pattern": "users",
+      "parts": [
+        {
+          "type": "static",
+          "value": "users"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "users"
 }

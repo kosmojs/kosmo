@@ -1,0 +1,23 @@
+[
+  {
+    "kind": "mixed",
+    "orig": "blog{...path}.html",
+    "pattern": "blog{*path}.html",
+    "parts": [
+      {
+        "type": "static",
+        "value": "blog"
+      },
+      {
+        "type": "param",
+        "kind": "splat",
+        "name": "path",
+        "const": "path"
+      },
+      {
+        "type": "static",
+        "value": ".html"
+      }
+    ]
+  }
+]

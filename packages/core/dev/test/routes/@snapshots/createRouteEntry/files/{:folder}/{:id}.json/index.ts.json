@@ -1,0 +1,50 @@
+{
+  "id": "files_folder_id_json_index_ts_378441272",
+  "name": "files/{:folder}/{:id}.json",
+  "folder": "api",
+  "file": "files/{:folder}/{:id}.json/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "files",
+      "pattern": "files",
+      "parts": [
+        {
+          "type": "static",
+          "value": "files"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{:folder}",
+      "pattern": "{/:folder}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "folder",
+          "const": "folder"
+        }
+      ]
+    },
+    {
+      "kind": "mixed",
+      "orig": "{:id}.json",
+      "pattern": "{/:id}.json",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "id",
+          "const": "id"
+        },
+        {
+          "type": "static",
+          "value": ".json"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "files{/:folder}{/:id}.json"
+}

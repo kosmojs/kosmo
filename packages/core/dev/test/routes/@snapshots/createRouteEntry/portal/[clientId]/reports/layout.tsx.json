@@ -5,29 +5,36 @@
   "file": "portal/[clientId]/reports/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "portal",
-      "base": "portal",
-      "path": "portal",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "portal"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[clientId]",
-      "base": "[clientId]",
-      "path": "[clientId]",
-      "ext": "",
-      "param": {
-        "name": "clientId",
-        "const": "clientId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "clientId",
+          "const": "clientId"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "reports",
-      "base": "reports",
-      "path": "reports",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "reports"
+        }
+      ]
     }
   ]
 }

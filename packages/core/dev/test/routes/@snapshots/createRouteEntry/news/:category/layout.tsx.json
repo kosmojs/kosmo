@@ -1,0 +1,33 @@
+{
+  "id": "news_category_layout_tsx_4035248728",
+  "name": "news/:category",
+  "folder": "pages",
+  "file": "news/:category/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "news",
+      "pattern": "news",
+      "parts": [
+        {
+          "type": "static",
+          "value": "news"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":category",
+      "pattern": "/:category",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "news/:category"
+}

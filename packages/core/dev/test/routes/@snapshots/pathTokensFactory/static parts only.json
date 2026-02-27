@@ -1,0 +1,24 @@
+[
+  {
+    "kind": "static",
+    "orig": "some",
+    "pattern": "some",
+    "parts": [
+      {
+        "type": "static",
+        "value": "some"
+      }
+    ]
+  },
+  {
+    "kind": "static",
+    "orig": "page",
+    "pattern": "/page",
+    "parts": [
+      {
+        "type": "static",
+        "value": "page"
+      }
+    ]
+  }
+]

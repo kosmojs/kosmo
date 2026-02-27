@@ -1,0 +1,57 @@
+{
+  "id": "store_category_sort_sortBy_index_tsx_38398676",
+  "name": "store/:category/sort/:sortBy",
+  "folder": "pages",
+  "file": "store/:category/sort/:sortBy/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "store",
+      "pattern": "store",
+      "parts": [
+        {
+          "type": "static",
+          "value": "store"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":category",
+      "pattern": "/:category",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "sort",
+      "pattern": "/sort",
+      "parts": [
+        {
+          "type": "static",
+          "value": "sort"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":sortBy",
+      "pattern": "/:sortBy",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "sortBy",
+          "const": "sortBy"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "store/:category/sort/:sortBy"
+}

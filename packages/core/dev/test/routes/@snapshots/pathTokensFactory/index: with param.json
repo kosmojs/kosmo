@@ -1,0 +1,26 @@
+[
+  {
+    "kind": "static",
+    "orig": "with",
+    "pattern": "with",
+    "parts": [
+      {
+        "type": "static",
+        "value": "with"
+      }
+    ]
+  },
+  {
+    "kind": "param",
+    "orig": ":id",
+    "pattern": "/:id",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "id",
+        "const": "id"
+      }
+    ]
+  }
+]

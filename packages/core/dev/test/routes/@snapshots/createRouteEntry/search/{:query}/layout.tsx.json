@@ -1,0 +1,33 @@
+{
+  "id": "search_query_layout_tsx_1296829224",
+  "name": "search/{:query}",
+  "folder": "pages",
+  "file": "search/{:query}/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "search",
+      "pattern": "search",
+      "parts": [
+        {
+          "type": "static",
+          "value": "search"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{:query}",
+      "pattern": "{/:query}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "query",
+          "const": "query"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "search{/:query}"
+}

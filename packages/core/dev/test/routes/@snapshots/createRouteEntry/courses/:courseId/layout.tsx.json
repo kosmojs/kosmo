@@ -1,0 +1,33 @@
+{
+  "id": "courses_courseId_layout_tsx_2776976907",
+  "name": "courses/:courseId",
+  "folder": "pages",
+  "file": "courses/:courseId/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "courses",
+      "pattern": "courses",
+      "parts": [
+        {
+          "type": "static",
+          "value": "courses"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":courseId",
+      "pattern": "/:courseId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "courseId",
+          "const": "courseId"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "courses/:courseId"
+}

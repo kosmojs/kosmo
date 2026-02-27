@@ -1,0 +1,68 @@
+{
+  "id": "projects_projectId_tasks_taskId_comments_index_tsx_3779797664",
+  "name": "projects/:projectId/tasks/:taskId/comments",
+  "folder": "pages",
+  "file": "projects/:projectId/tasks/:taskId/comments/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "projects",
+      "pattern": "projects",
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":projectId",
+      "pattern": "/:projectId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "projectId",
+          "const": "projectId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "tasks",
+      "pattern": "/tasks",
+      "parts": [
+        {
+          "type": "static",
+          "value": "tasks"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":taskId",
+      "pattern": "/:taskId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "taskId",
+          "const": "taskId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "comments",
+      "pattern": "/comments",
+      "parts": [
+        {
+          "type": "static",
+          "value": "comments"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "projects/:projectId/tasks/:taskId/comments"
+}

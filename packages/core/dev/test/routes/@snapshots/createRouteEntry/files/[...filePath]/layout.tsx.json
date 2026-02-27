@@ -5,23 +5,26 @@
   "file": "files/[...filePath]/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "files",
-      "base": "files",
-      "path": "files",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "files"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[...filePath]",
-      "base": "[...filePath]",
-      "path": "[...filePath]",
-      "ext": "",
-      "param": {
-        "name": "filePath",
-        "const": "filePath",
-        "isRequired": false,
-        "isOptional": false,
-        "isRest": true
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "filePath",
+          "const": "filePath"
+        }
+      ]
     }
   ]
 }

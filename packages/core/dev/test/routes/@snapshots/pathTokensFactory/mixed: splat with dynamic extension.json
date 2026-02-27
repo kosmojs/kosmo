@@ -1,0 +1,29 @@
+[
+  {
+    "kind": "mixed",
+    "orig": "products{...path}.:ext",
+    "pattern": "products{*path}.:ext",
+    "parts": [
+      {
+        "type": "static",
+        "value": "products"
+      },
+      {
+        "type": "param",
+        "kind": "splat",
+        "name": "path",
+        "const": "path"
+      },
+      {
+        "type": "static",
+        "value": "."
+      },
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "ext",
+        "const": "ext"
+      }
+    ]
+  }
+]

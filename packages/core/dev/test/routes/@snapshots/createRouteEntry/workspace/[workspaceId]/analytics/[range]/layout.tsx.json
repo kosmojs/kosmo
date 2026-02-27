@@ -5,42 +5,48 @@
   "file": "workspace/[workspaceId]/analytics/[range]/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "workspace",
-      "base": "workspace",
-      "path": "workspace",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "workspace"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[workspaceId]",
-      "base": "[workspaceId]",
-      "path": "[workspaceId]",
-      "ext": "",
-      "param": {
-        "name": "workspaceId",
-        "const": "workspaceId",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "workspaceId",
+          "const": "workspaceId"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "analytics",
-      "base": "analytics",
-      "path": "analytics",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "analytics"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[range]",
-      "base": "[range]",
-      "path": "[range]",
-      "ext": "",
-      "param": {
-        "name": "range",
-        "const": "range",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "range",
+          "const": "range"
+        }
+      ]
     }
   ]
 }

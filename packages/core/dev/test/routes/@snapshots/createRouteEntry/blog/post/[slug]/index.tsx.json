@@ -5,29 +5,36 @@
   "file": "blog/post/[slug]/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "blog",
-      "base": "blog",
-      "path": "blog",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "blog"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "post",
-      "base": "post",
-      "path": "post",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "post"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[slug]",
-      "base": "[slug]",
-      "path": "[slug]",
-      "ext": "",
-      "param": {
-        "name": "slug",
-        "const": "slug",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "slug",
+          "const": "slug"
+        }
+      ]
     }
   ]
 }

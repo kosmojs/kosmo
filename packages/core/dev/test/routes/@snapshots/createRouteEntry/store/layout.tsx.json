@@ -5,10 +5,16 @@
   "file": "store/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "store",
-      "base": "store",
-      "path": "store",
-      "ext": ""
+      "pattern": "store",
+      "parts": [
+        {
+          "type": "static",
+          "value": "store"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "store"
 }

@@ -5,42 +5,48 @@
   "file": "store/[category]/sort/[sortBy]/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "store",
-      "base": "store",
-      "path": "store",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "store"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[category]",
-      "base": "[category]",
-      "path": "[category]",
-      "ext": "",
-      "param": {
-        "name": "category",
-        "const": "category",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "sort",
-      "base": "sort",
-      "path": "sort",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "sort"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[sortBy]",
-      "base": "[sortBy]",
-      "path": "[sortBy]",
-      "ext": "",
-      "param": {
-        "name": "sortBy",
-        "const": "sortBy",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "sortBy",
+          "const": "sortBy"
+        }
+      ]
     }
   ]
 }

@@ -6,12 +6,18 @@
     "file": "docs/index.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "docs",
-        "base": "docs",
-        "path": "docs",
-        "ext": ""
+        "pattern": "docs",
+        "parts": [
+          {
+            "type": "static",
+            "value": "docs"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "docs"
   },
   "layout": {
     "id": "docs_layout_tsx_1612140628",
@@ -20,35 +26,42 @@
     "file": "docs/layout.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "docs",
-        "base": "docs",
-        "path": "docs",
-        "ext": ""
+        "pattern": "docs",
+        "parts": [
+          {
+            "type": "static",
+            "value": "docs"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "docs"
   },
   "children": [
     {
       "index": {
-        "id": "docs_path_index_tsx_434935905",
-        "name": "docs/[...path]",
+        "id": "docs_path_index_tsx_3119800738",
+        "name": "docs/{...path}",
         "folder": "pages",
-        "file": "docs/[...path]/index.tsx",
+        "file": "docs/{...path}/index.tsx",
         "pathTokens": [
           {
-            "orig": "[...path]",
-            "base": "[...path]",
-            "path": "[...path]",
-            "ext": "",
-            "param": {
-              "name": "path",
-              "const": "path",
-              "isRequired": false,
-              "isOptional": false,
-              "isRest": true
-            }
+            "kind": "param",
+            "orig": "{...path}",
+            "pattern": "{/*path}",
+            "parts": [
+              {
+                "type": "param",
+                "kind": "splat",
+                "name": "path",
+                "const": "path"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "docs{/*path}"
       },
       "parent": "docs",
       "children": []

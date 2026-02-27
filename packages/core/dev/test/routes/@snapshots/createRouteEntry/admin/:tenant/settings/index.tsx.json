@@ -1,0 +1,44 @@
+{
+  "id": "admin_tenant_settings_index_tsx_4269692300",
+  "name": "admin/:tenant/settings",
+  "folder": "pages",
+  "file": "admin/:tenant/settings/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "admin",
+      "pattern": "admin",
+      "parts": [
+        {
+          "type": "static",
+          "value": "admin"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":tenant",
+      "pattern": "/:tenant",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "tenant",
+          "const": "tenant"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "settings",
+      "pattern": "/settings",
+      "parts": [
+        {
+          "type": "static",
+          "value": "settings"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "admin/:tenant/settings"
+}

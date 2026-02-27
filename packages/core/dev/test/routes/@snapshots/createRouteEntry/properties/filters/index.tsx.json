@@ -5,16 +5,27 @@
   "file": "properties/filters/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "properties",
-      "base": "properties",
-      "path": "properties",
-      "ext": ""
+      "pattern": "properties",
+      "parts": [
+        {
+          "type": "static",
+          "value": "properties"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "filters",
-      "base": "filters",
-      "path": "filters",
-      "ext": ""
+      "pattern": "/filters",
+      "parts": [
+        {
+          "type": "static",
+          "value": "filters"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "properties/filters"
 }

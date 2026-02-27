@@ -1,0 +1,39 @@
+[
+  {
+    "kind": "param",
+    "orig": ":required",
+    "pattern": ":required",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "required",
+        "name": "required",
+        "const": "required"
+      }
+    ]
+  },
+  {
+    "kind": "static",
+    "orig": "with",
+    "pattern": "/with",
+    "parts": [
+      {
+        "type": "static",
+        "value": "with"
+      }
+    ]
+  },
+  {
+    "kind": "param",
+    "orig": "{...splat}",
+    "pattern": "{/*splat}",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "splat",
+        "name": "splat",
+        "const": "splat"
+      }
+    ]
+  }
+]

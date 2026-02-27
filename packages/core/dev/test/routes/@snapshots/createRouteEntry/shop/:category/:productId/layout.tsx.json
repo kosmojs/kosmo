@@ -1,0 +1,46 @@
+{
+  "id": "shop_category_productId_layout_tsx_1375112420",
+  "name": "shop/:category/:productId",
+  "folder": "pages",
+  "file": "shop/:category/:productId/layout.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "shop",
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":category",
+      "pattern": "/:category",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":productId",
+      "pattern": "/:productId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "productId",
+          "const": "productId"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "shop/:category/:productId"
+}

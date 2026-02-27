@@ -6,35 +6,42 @@
     "file": "products/index.tsx",
     "pathTokens": [
       {
+        "kind": "static",
         "orig": "products",
-        "base": "products",
-        "path": "products",
-        "ext": ""
+        "pattern": "products",
+        "parts": [
+          {
+            "type": "static",
+            "value": "products"
+          }
+        ]
       }
-    ]
+    ],
+    "pathPattern": "products"
   },
   "children": [
     {
       "index": {
-        "id": "products_id_index_tsx_3698327518",
-        "name": "products/[id]",
+        "id": "products_id_index_tsx_2425237269",
+        "name": "products/:id",
         "folder": "pages",
-        "file": "products/[id]/index.tsx",
+        "file": "products/:id/index.tsx",
         "pathTokens": [
           {
-            "orig": "[id]",
-            "base": "[id]",
-            "path": "[id]",
-            "ext": "",
-            "param": {
-              "name": "id",
-              "const": "id",
-              "isRequired": true,
-              "isOptional": false,
-              "isRest": false
-            }
+            "kind": "param",
+            "orig": ":id",
+            "pattern": "/:id",
+            "parts": [
+              {
+                "type": "param",
+                "kind": "required",
+                "name": "id",
+                "const": "id"
+              }
+            ]
           }
-        ]
+        ],
+        "pathPattern": "products/:id"
       },
       "parent": "products",
       "children": []

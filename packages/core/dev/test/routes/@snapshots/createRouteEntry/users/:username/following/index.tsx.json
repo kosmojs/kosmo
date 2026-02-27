@@ -1,0 +1,44 @@
+{
+  "id": "users_username_following_index_tsx_2222911800",
+  "name": "users/:username/following",
+  "folder": "pages",
+  "file": "users/:username/following/index.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "users",
+      "pattern": "users",
+      "parts": [
+        {
+          "type": "static",
+          "value": "users"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": ":username",
+      "pattern": "/:username",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "username",
+          "const": "username"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "following",
+      "pattern": "/following",
+      "parts": [
+        {
+          "type": "static",
+          "value": "following"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "users/:username/following"
+}

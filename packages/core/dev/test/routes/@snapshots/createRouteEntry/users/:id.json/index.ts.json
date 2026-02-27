@@ -1,0 +1,37 @@
+{
+  "id": "users_id_json_index_ts_2044533573",
+  "name": "users/:id.json",
+  "folder": "api",
+  "file": "users/:id.json/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "users",
+      "pattern": "users",
+      "parts": [
+        {
+          "type": "static",
+          "value": "users"
+        }
+      ]
+    },
+    {
+      "kind": "mixed",
+      "orig": ":id.json",
+      "pattern": "/:id.json",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "id",
+          "const": "id"
+        },
+        {
+          "type": "static",
+          "value": ".json"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "users/:id.json"
+}

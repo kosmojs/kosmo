@@ -5,36 +5,38 @@
   "file": "blog/[[category]]/[[tag]]/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "blog",
-      "base": "blog",
-      "path": "blog",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "blog"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[[category]]",
-      "base": "[[category]]",
-      "path": "[[category]]",
-      "ext": "",
-      "param": {
-        "name": "category",
-        "const": "category",
-        "isRequired": false,
-        "isOptional": true,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "category",
+          "const": "category"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[[tag]]",
-      "base": "[[tag]]",
-      "path": "[[tag]]",
-      "ext": "",
-      "param": {
-        "name": "tag",
-        "const": "tag",
-        "isRequired": false,
-        "isOptional": true,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "tag",
+          "const": "tag"
+        }
+      ]
     }
   ]
 }

@@ -5,22 +5,38 @@
   "file": "dashboard/settings/security/layout.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "dashboard",
-      "base": "dashboard",
-      "path": "dashboard",
-      "ext": ""
+      "pattern": "dashboard",
+      "parts": [
+        {
+          "type": "static",
+          "value": "dashboard"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "settings",
-      "base": "settings",
-      "path": "settings",
-      "ext": ""
+      "pattern": "/settings",
+      "parts": [
+        {
+          "type": "static",
+          "value": "settings"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "security",
-      "base": "security",
-      "path": "security",
-      "ext": ""
+      "pattern": "/security",
+      "parts": [
+        {
+          "type": "static",
+          "value": "security"
+        }
+      ]
     }
-  ]
+  ],
+  "pathPattern": "dashboard/settings/security"
 }

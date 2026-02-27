@@ -5,42 +5,48 @@
   "file": "news/[category]/articles/[...articlePath]/index.tsx",
   "pathTokens": [
     {
+      "kind": "static",
       "orig": "news",
-      "base": "news",
-      "path": "news",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "news"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[category]",
-      "base": "[category]",
-      "path": "[category]",
-      "ext": "",
-      "param": {
-        "name": "category",
-        "const": "category",
-        "isRequired": true,
-        "isOptional": false,
-        "isRest": false
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "category",
+          "const": "category"
+        }
+      ]
     },
     {
+      "kind": "static",
       "orig": "articles",
-      "base": "articles",
-      "path": "articles",
-      "ext": ""
+      "parts": [
+        {
+          "type": "static",
+          "value": "articles"
+        }
+      ]
     },
     {
+      "kind": "param",
       "orig": "[...articlePath]",
-      "base": "[...articlePath]",
-      "path": "[...articlePath]",
-      "ext": "",
-      "param": {
-        "name": "articlePath",
-        "const": "articlePath",
-        "isRequired": false,
-        "isOptional": false,
-        "isRest": true
-      }
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "articlePath",
+          "const": "articlePath"
+        }
+      ]
     }
   ]
 }
