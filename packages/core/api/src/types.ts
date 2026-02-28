@@ -40,7 +40,6 @@ export interface UseSlots {
   "validate:cookies": string;
   "validate:json": string;
   "validate:form": string;
-  "validate:multipart": string;
   "validate:raw": string;
   "validate:response": string;
 }
@@ -183,7 +182,7 @@ export const RequestMetadataTargets = {
  * **Development behavior:**
  * - If multiple formats are defined, the builder displays a warning and
  *   disables validation schemas for the affected handler.
- * - If an unsuitable target is defined (e.g., `json`, `form`, `multipart`
+ * - If an unsuitable target is defined (e.g., `json`, `form`)
  *   for a method without a body like GET, HEAD), a warning is displayed and
  *   validation schemas are disabled for that handler.
  *
@@ -194,8 +193,7 @@ export const RequestMetadataTargets = {
  * */
 export const RequestBodyTargets = {
   json: "JSON request body",
-  form: "URL-encoded form data",
-  multipart: "Multipart form data",
+  form: "URL-encoded or Multipart form",
   raw: "Raw body format (string/Buffer/ArrayBuffer/Blob)",
 } as const;
 
@@ -223,12 +221,11 @@ export type ValidationDefmap = Partial<{
    *
    * POST<
    *   json: { id: number }
-   *   // or form/multipart/raw
+   *   // or form/raw
    * >((ctx) => {})
    * */
   json: unknown;
   form: Record<string, unknown>;
-  multipart: Record<string, unknown>;
   raw: string | Buffer | ArrayBuffer | Blob;
 
   /**
@@ -260,13 +257,62 @@ export type ValidationDefmap = Partial<{
 }>;
 
 export type ValidationCustomErrors = {
+  /**
+   * Custom error messages for validation failures.
+   *
+   * Use `error` to set a general error message for the entire validation target.
+   * Use `error.<fieldName>` to set specific error messages for individual fields.
+   *
+   * @example Override validation error messages
+   * POST<{
+   *   json: {
+   *     id: number;
+   *     email: string;
+   *     age: number;
+   *   }
+   * }, {
+   *   json: {
+   *     error: "Invalid user data provided",
+   *     "error.id": "User ID must be a valid number",
+   *     "error.email": "Please provide a valid email address",
+   *     "error.age": "Age must be a number"
+   *   }
+   * }>
+   * */
   error?: string;
 } & {
   [E in `error.${string}`]?: string;
 };
 
 export type ValidationOptions = {
+  /**
+   * Controls runtime validation for this target.
+   *
+   * By default, all validation targets are validated at runtime. Set this to
+   * `false` if you only need compile-time type checking without runtime validation.
+   *
+   * @example Disable runtime validation for JSON payload
+   * POST<{
+   *   json: Payload<User>
+   * }, {
+   *   json: {
+   *     runtimeValidation: false
+   *   }
+   * }>
+   * */
   runtimeValidation?: boolean | undefined;
+
+  /**
+   * Specifies the request Content-Type for OpenAPI schema generation.
+   *
+   * When the validation target is `form`, the OpenAPI generator will include
+   * both `application/x-www-form-urlencoded` and `multipart/form-data` in the
+   * request body content types by default. This indicates the handler accepts
+   * either format, which may not be accurate for your use case.
+   *
+   * Use this option to explicitly declare which content type your handler expects.
+   * */
+  contentType?: string;
 } & ValidationCustomErrors;
 
 export type ValidationOptmap = {

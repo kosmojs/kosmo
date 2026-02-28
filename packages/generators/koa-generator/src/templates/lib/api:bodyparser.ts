@@ -1,13 +1,6 @@
 import zlib from "node:zlib";
 
-import Formidable, {
-  type Options as FormidableOptions,
-  // until this merged: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/74513
-  // @ts-expect-error
-  multipart as multipartPlugin,
-  // @ts-expect-error
-  querystring as querystringPlugin,
-} from "formidable";
+import Formidable, { type Options as FormidableOptions } from "formidable";
 import type { ParameterizedContext } from "koa";
 import rawParser from "raw-body";
 
@@ -94,17 +87,13 @@ type RawOptions = Partial<{
 
 export const defaults: {
   json: JsonOptions;
-  form: FormOptions;
-  multipart: MultipartOptions;
+  form: FormOptions | MultipartOptions;
   raw: RawOptions;
 } = {
   json: {
     limit: 1024 ** 2,
   },
   form: {
-    limit: 1024 ** 2,
-  },
-  multipart: {
     limit: 1024 ** 2,
   },
   raw: {
@@ -114,8 +103,7 @@ export const defaults: {
 
 export type BodyparserOptions = {
   json: JsonOptions;
-  form: FormOptions;
-  multipart: MultipartOptions;
+  form: FormOptions | MultipartOptions;
   raw: RawOptions;
 };
 
@@ -160,26 +148,8 @@ export const bodyparsers: {
   async form(ctx, opt) {
     const form = Formidable({
       maxFieldsSize: opt?.limit || defaults.form.limit,
+      maxFileSize: opt?.limit || defaults.form.limit,
       ...opt,
-      // "querystring" is the name of plugin that parses urlencoded
-      enabledPlugins: [querystringPlugin],
-    });
-    return new Promise((resolve, reject) => {
-      form.parse(ctx.request.req, (err, fields) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve(unwrap(fields, opt?.unwrap));
-      });
-    });
-  },
-
-  async multipart(ctx, opt) {
-    const form = Formidable({
-      maxFieldsSize: opt?.limit || defaults.multipart.limit,
-      maxFileSize: opt?.limit || defaults.multipart.limit,
-      ...opt,
-      enabledPlugins: [multipartPlugin],
     });
     return new Promise((resolve, reject) => {
       form.parse(ctx.request.req, (err, fields, files) => {

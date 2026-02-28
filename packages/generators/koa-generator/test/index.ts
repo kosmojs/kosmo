@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
-import type FormData from "form-data";
+import FormData from "form-data";
 import Koa, { type Next } from "koa";
 import compose from "koa-compose";
 import { type InjectPayload, inject } from "light-my-request";
@@ -59,8 +59,7 @@ export const middlewareStackBuilder = (
 type Payload = Partial<{
   params: Record<string, unknown>;
   json: unknown;
-  form: Record<string, unknown>;
-  multipart: FormData;
+  form: Record<string, unknown> | FormData;
   raw: Buffer | string;
 }>;
 
@@ -71,11 +70,11 @@ export const runMiddleware = async <T = any>(
   const url = "/";
   const app = new Koa();
 
-  const payloadOptions = ({ json, form, multipart, raw }: Partial<Payload>) => {
-    if (multipart) {
+  const payloadOptions = ({ json, form, raw }: Partial<Payload>) => {
+    if (form instanceof FormData) {
       return {
-        headers: multipart.getHeaders(),
-        payload: multipart,
+        headers: form.getHeaders(),
+        payload: form,
       };
     }
 

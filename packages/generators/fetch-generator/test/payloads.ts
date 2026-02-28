@@ -8,8 +8,7 @@ export type PayloadVariant = Partial<{
   headers: Record<string, unknown>;
   query: Record<string, unknown>;
   json: unknown;
-  form: Record<string, unknown>;
-  multipart: FormData;
+  form: Record<string, unknown> | FormData;
   raw: string | Buffer | ArrayBuffer | Blob;
 }>;
 
@@ -148,10 +147,10 @@ export const payloadMap: PayloadMap = {
     params: [["42"]],
     POST: [
       {
-        multipart: formDataFactory({}, ["avatar001.png"]),
+        form: formDataFactory({}, ["avatar001.png"]),
       },
       {
-        multipart: formDataFactory({ cropX: "100", cropY: "100" }, [
+        form: formDataFactory({ cropX: "100", cropY: "100" }, [
           "avatar002.png",
         ]),
       },
@@ -399,15 +398,15 @@ export const payloadMap: PayloadMap = {
   uploads: {
     POST: [
       {
-        multipart: formDataFactory({}, ["report.pdf"]),
+        form: formDataFactory({}, ["report.pdf"]),
         headers: { authorization: "Bearer tok_abc123" },
       },
       {
-        multipart: formDataFactory({ folder: "images" }, ["photo.png"]),
+        form: formDataFactory({ folder: "images" }, ["photo.png"]),
         headers: { authorization: "Bearer tok_abc123" },
       },
       {
-        multipart: formDataFactory(
+        form: formDataFactory(
           {
             folder: "documents",
             description: "Q4 report",
@@ -422,11 +421,11 @@ export const payloadMap: PayloadMap = {
   "uploads/batch": {
     POST: [
       {
-        multipart: formDataFactory({}, ["a.jpg", "b.jpg"]),
+        form: formDataFactory({}, ["a.jpg", "b.jpg"]),
         headers: { authorization: "Bearer tok_abc123" },
       },
       {
-        multipart: formDataFactory({ folder: "gallery" }, [
+        form: formDataFactory({ folder: "gallery" }, [
           "a.jpg",
           "b.jpg",
           "c.jpg",
@@ -535,11 +534,11 @@ export const payloadMap: PayloadMap = {
   "admin/import": {
     POST: [
       {
-        multipart: formDataFactory({ type: "users" }, ["users.csv"]),
+        form: formDataFactory({ type: "users" }, ["users.csv"]),
         headers: { authorization: "Bearer tok_admin" },
       },
       {
-        multipart: formDataFactory({ type: "products", overwrite: "true" }, [
+        form: formDataFactory({ type: "products", overwrite: "true" }, [
           "products.csv",
         ]),
         headers: { authorization: "Bearer tok_admin" },

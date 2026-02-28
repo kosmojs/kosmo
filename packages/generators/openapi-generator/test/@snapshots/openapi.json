@@ -88,9 +88,14 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "application/x-www-form-urlencoded": {
               "schema": {
-                "$ref": "#/components/schemas/auth_login_index_ts_1750344579_JsonTPOST2274346999"
+                "$ref": "#/components/schemas/auth_login_index_ts_1750344579_FormTPOST2274346999"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/auth_login_index_ts_1750344579_FormTPOST2274346999"
               }
             }
           }
@@ -650,9 +655,9 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/articles_id_index_ts_1668155142_JsonTGET278414657"
+                "$ref": "#/components/schemas/articles_id_index_ts_1668155142_FormTGET278414657"
               }
             }
           }
@@ -2286,7 +2291,7 @@
           }
         }
       },
-      "auth_login_index_ts_1750344579_JsonTPOST2274346999": {
+      "auth_login_index_ts_1750344579_FormTPOST2274346999": {
         "type": "object",
         "required": [
           "email",
@@ -3336,7 +3341,7 @@
           }
         }
       },
-      "articles_id_index_ts_1668155142_JsonTGET278414657": {
+      "articles_id_index_ts_1668155142_FormTGET278414657": {
         "type": "object",
         "properties": {
           "includeComments": {

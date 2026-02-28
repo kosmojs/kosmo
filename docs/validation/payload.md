@@ -34,8 +34,7 @@ Each target represents a different part of the incoming HTTP request:
 
 **Body Targets** (available for POST/PUT/PATCH):
 - `json` - JSON request body
-- `form` - URL-encoded form data (`application/x-www-form-urlencoded`)
-- `multipart` - Multipart form data (file uploads)
+- `form` - URL-encoded or Multipart form
 - `raw` - Raw body format (plain text, binary data, Buffer, ArrayBuffer, Blob)
 
 You can validate any combination of metadata targets (query, headers, cookies)
@@ -269,13 +268,13 @@ POST<{
 ### Multipart Form Data (File Uploads)
 ```ts
 POST<{
-  multipart: {
+  form: {
     file: File; // File upload
     title: string;
     description?: string;
   };
 }>(async (ctx) => {
-  const { file, title, description } = ctx.validated.multipart;
+  const { file, title, description } = ctx.validated.form;
 })
 ```
 
@@ -289,7 +288,7 @@ POST<{
 })
 ```
 
-Remember: you can only specify **one body target** per handler (`json`, `form`, `multipart`, or `raw`),
+Remember: you can only specify **one body target** per handler (`json`, `form` or `raw`),
 but you can combine it with any number of metadata targets (`query`, `headers`, `cookies`).
 
 ## 🔗 Working with Referenced Types

@@ -5,8 +5,10 @@ import { routesFactory } from "@kosmojs/dev";
 
 import { appRoot, resolvedOptions } from ".";
 
+const cleanup = () => rm(`${appRoot}/lib`, { force: true, recursive: true });
+
 export default async () => {
-  await rm(`${appRoot}/lib`, { force: true, recursive: true });
+  await cleanup();
 
   const { resolvers } = await routesFactory(resolvedOptions);
 
@@ -33,5 +35,5 @@ export default async () => {
     "utf8",
   );
 
-  return async () => {};
+  return cleanup;
 };

@@ -57,11 +57,13 @@ export default (base: string | URL, baseOpts?: Options): FetchMapper => {
         contentType = "application/json";
         body = JSON.stringify(data.json);
       } else if (data?.form) {
-        contentType = "application/x-www-form-urlencoded";
-        body = stringify(data.form as never);
-      } else if (data?.multipart) {
-        // let fetch set Content-Type, with boundary etc.
-        body = data.multipart;
+        if (data.form instanceof FormData) {
+          // let fetch set Content-Type, with boundary etc.
+          body = data.form;
+        } else {
+          contentType = "application/x-www-form-urlencoded";
+          body = stringify(data.form as never);
+        }
       } else if (data?.raw) {
         // no Content-Type needed
         body = data.raw;

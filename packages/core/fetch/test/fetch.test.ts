@@ -101,7 +101,7 @@ describe("fetch", () => {
     }
   });
 
-  describe("form", () => {
+  describe("form: URL-encoded", () => {
     const fetch = fetchWrapper("http://form");
     const name = "John";
     for (const method of ["POST", "PUT", "PATCH"] as const) {
@@ -112,16 +112,16 @@ describe("fetch", () => {
     }
   });
 
-  describe("multipart", () => {
+  describe("form: Multipart", () => {
     const fetch = fetchWrapper("http://multipart");
     const name = "John";
     for (const method of ["POST", "PUT", "PATCH"] as const) {
-      const formData = new FormData();
-      formData.set("name", name);
+      const form = new FormData();
+      form.set("name", name);
       test(method, async () => {
         const res = await fetch[method]<FormData>(
           [],
-          { multipart: formData },
+          { form },
           { responseMode: "formData" },
         );
         expect(res.get("name")).toEqual(name);

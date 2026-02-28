@@ -16,7 +16,14 @@ type ArticleQuery = {
 };
 
 export default defineRoute<[TRefine<number, { minimum: 1 }>]>(({ GET }) => [
-  GET<{ json: ArticleQuery; response: [200, "json", ArticleResponse] }>(
+  GET<{
+    form: ArticleQuery;
+    response: [200, "json", ArticleResponse],
+  }, {
+    form: {
+      contentType: "multipart/form-data",
+    }
+  }>(
     async (ctx) => {
       ctx.body = {
         id: Number(ctx.params.id),

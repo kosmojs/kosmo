@@ -219,8 +219,7 @@ The `target` property tells you which part of the request failed validation:
 - `"headers"` - Request headers validation failures
 - `"cookies"` - Cookie validation failures
 - `"json"` - JSON request body validation failures
-- `"form"` - Form data validation failures
-- `"multipart"` - Multipart form data validation failures
+- `"form"` - Form validation failures
 - `"raw"` - Raw body validation failures
 - `"response"` - Response validation failures (data your handler tried to return)
 

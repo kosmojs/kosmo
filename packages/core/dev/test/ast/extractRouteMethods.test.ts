@@ -14,7 +14,6 @@ describe("extractRouteMethods", () => {
   const validationTargetMap: Array<[RequestBodyTarget, string]> = [
     ["json", "{ id?: number }"],
     ["form", "{ id?: number }"],
-    ["multipart", "{ id?: number }"],
     ["raw", "string"],
   ];
 

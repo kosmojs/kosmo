@@ -47,7 +47,7 @@ export default function Page() {
 
   const handleSubmit = async () => {
     // unwrap is called internally by the fetch client
-    await useFetch.POST([], formData);
+    await useFetch.POST([], { form: formData });
   };
 
   return <form onSubmit={handleSubmit}>...</form>;

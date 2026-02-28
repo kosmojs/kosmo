@@ -86,7 +86,7 @@ describe("bodyparser", () => {
     });
   });
 
-  describe("form", () => {
+  describe("form: URL-Encoded", () => {
     const form = { id: "0", page: "1" };
 
     for (const [unwrap, body] of [
@@ -121,25 +121,25 @@ describe("bodyparser", () => {
     }
   });
 
-  describe("multipart", () => {
+  describe("form: Multipart", () => {
     test("fields only", async ({ expect }) => {
       const stack = middlewareStackBuilder([
         {
           definitionItems: defineRouteFactory(({ POST }) => [
             POST(async (ctx) => {
-              ctx.body = await ctx.bodyparser.multipart({ unwrap: true });
+              ctx.body = await ctx.bodyparser.form({ unwrap: true });
             }),
           ]),
         },
       ]);
 
-      const multipart = new FormData();
+      const form = new FormData();
 
-      multipart.append("id", 0);
+      form.append("id", 0);
 
       const ctx = await runMiddleware(
         stack.flatMap((e) => e.middleware),
-        { multipart },
+        { form },
       );
 
       expect({ id: "0" }).toEqual(ctx.body);
@@ -150,24 +150,24 @@ describe("bodyparser", () => {
         {
           definitionItems: defineRouteFactory(({ POST }) => [
             POST(async (ctx) => {
-              ctx.body = await ctx.bodyparser.multipart({ unwrap: true });
+              ctx.body = await ctx.bodyparser.form({ unwrap: true });
             }),
           ]),
         },
       ]);
 
-      const multipart = new FormData();
+      const form = new FormData();
 
-      multipart.append("id", 0);
+      form.append("id", 0);
 
-      multipart.append("file", Buffer.from("..."), {
+      form.append("file", Buffer.from("..."), {
         filename: "a.png",
         contentType: "image/png",
       });
 
       const ctx = await runMiddleware(
         stack.flatMap((e) => e.middleware),
-        { multipart },
+        { form },
       );
 
       const { body } = ctx as { body: Record<string, never> };

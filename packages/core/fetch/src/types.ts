@@ -33,7 +33,7 @@ export type Options = Partial<Defaults> &
 export type PathEntry = string | number;
 
 export type Data = Partial<
-  Record<"query" | "json" | "form" | "multipart" | "raw", unknown> & {
+  Record<"query" | "json" | "form" | "raw", unknown> & {
     headers: Headers | Record<string, string>;
   }
 >;

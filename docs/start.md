@@ -463,8 +463,7 @@ If someone requests `/api/users/abc`, validation fails before your handler runs.
 
 **Request Body Targets** - Mutually exclusive, choose one per handler:
 - `json`: JSON request body
-- `form`: URL-encoded form data
-- `multipart`: Multipart form data
+- `form`: URL-encoded or Multipart form
 - `raw`: Raw body format (string/Buffer/ArrayBuffer/Blob)
 
 Body targets are only suitable for methods that accept request bodies (POST, PUT, PATCH, DELETE?).

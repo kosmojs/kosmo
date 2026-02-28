@@ -18,9 +18,12 @@ type LoginResponse = {
 };
 
 export default defineRoute(({ POST }) => [
-  POST<{ json: LoginPayload; response: [200, "json", LoginResponse] }>(
+  POST<{
+    form: LoginPayload;
+    response: [200, "json", LoginResponse],
+  }>(
     async (ctx) => {
-      const { email, rememberMe } = ctx.validated.json;
+      const { email, rememberMe } = ctx.validated.form;
       ctx.body = {
         token: "jwt-token-here",
         user: {

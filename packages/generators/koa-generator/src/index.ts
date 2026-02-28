@@ -26,7 +26,6 @@ export default (options?: Options): GeneratorConstructor => {
       "raw-body": self.devDependencies["raw-body"],
     },
     devDependencies: {
-      "@kosmojs/fetch": self.version,
       "@types/koa": self.devDependencies["@types/koa"],
       "@types/qs": self.devDependencies["@types/qs"],
       "@types/formidable": self.devDependencies["@types/formidable"],

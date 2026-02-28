@@ -31,7 +31,6 @@ export const createRouterRoutes = <MiddlewareT, MiddlewareR>(
     "validate:cookies",
     "validate:json",
     "validate:form",
-    "validate:multipart",
     "validate:raw",
     "validate:response",
   ];

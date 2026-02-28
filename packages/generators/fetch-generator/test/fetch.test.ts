@@ -35,22 +35,15 @@ for (const [route, payloads] of typedEntries(payloadMap)) {
               ? "Buffer"
               : Object.prototype.toString.call(xMockPayload);
 
-            const {
-              headers,
-              params,
-              searchParams,
-              json,
-              form,
-              multipart,
-              raw,
-            } = await fetchClient[method](paramsVariant as never, {
-              ...variant,
-              headers: {
-                ...variant.headers,
-                "x-mock-target": xMockTarget,
-                "x-mock-type": xMockType,
-              },
-            });
+            const { headers, params, searchParams, json, form, raw } =
+              await fetchClient[method](paramsVariant as never, {
+                ...variant,
+                headers: {
+                  ...variant.headers,
+                  "x-mock-target": xMockTarget,
+                  "x-mock-type": xMockType,
+                },
+              });
 
             expect(paramsVariant).toEqual(Object.values(params));
 
@@ -71,13 +64,11 @@ for (const [route, payloads] of typedEntries(payloadMap)) {
             }
 
             if (variant.form) {
-              expect(form).toEqual(variant.form);
-            }
-
-            if (variant.multipart) {
-              expect(multipart).toEqual(
-                await serializeFormData(variant.multipart),
-              );
+              if (variant.form instanceof FormData) {
+                expect(form).toEqual(await serializeFormData(variant.form));
+              } else {
+                expect(form).toEqual(variant.form);
+              }
             }
 
             if (variant.raw) {

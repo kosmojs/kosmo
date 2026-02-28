@@ -45,7 +45,7 @@ const formData = ref({
 
 async function submit() {
   // unwrap is automatically applied inside the fetch client
-  await useFetch.POST([], formData.value);
+  await useFetch.POST([], { form: formData.value });
 }
 </script>
 

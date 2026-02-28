@@ -36,13 +36,10 @@ export const handlers: Array<HttpHandler> = typedEntries(payloadMap).flatMap(
                   ? { json: (await request.json()) as never }
                   : {}),
                 ...(headers["x-mock-target"] === "form"
-                  ? { form: parse(await request.text()) }
-                  : {}),
-                ...(headers["x-mock-target"] === "multipart"
                   ? {
-                      multipart: await serializeFormData(
-                        await request.formData(),
-                      ),
+                      form: /multipart/.test(headers["content-type"])
+                        ? await serializeFormData(await request.formData())
+                        : parse(await request.text()),
                     }
                   : {}),
                 ...(headers["x-mock-target"] === "raw"

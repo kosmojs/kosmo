@@ -41,7 +41,6 @@ export type ResponseT = {
   searchParams: Record<string, unknown>;
   json?: Record<string, unknown>;
   form?: Record<string, unknown>;
-  multipart?: Record<string, unknown>;
   raw?: unknown;
 };
 

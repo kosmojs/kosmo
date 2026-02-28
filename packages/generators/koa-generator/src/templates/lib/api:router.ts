@@ -55,7 +55,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
      * Extends Koa context with:
      *
      * - `ctx.bodyparser[target](opts?)` - lazy, cached body parsers.
-     *   Each parser (json, form, multipart, raw) runs at most once per request;
+     *   Each parser (json, form, raw) runs at most once per request;
      *   subsequent calls return the cached result.
      *   This allows both user middleware/handlers and validators
      *   to call the same parser without re-consuming the request stream.
@@ -268,7 +268,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
 
   /**
    * Request validation - dynamically creates one middleware per target
-   * (query, headers, cookies, json, form, multipart, raw).
+   * (query, headers, cookies, json, form, raw).
    *
    * Each middleware:
    * 1. Checks if a schema exists for the current HTTP method
@@ -276,7 +276,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
    * 3. Loads data via the appropriate source (ctx.query, ctx.headers, or ctx.bodyparser)
    * 4. Validates via `schema.validate()` which throws on failure
    *
-   * Body targets (json, form, multipart, raw) go through `ctx.bodyparser[target]()`,
+   * Body targets (json, form, raw) go through `ctx.bodyparser[target]()`,
    * benefiting from the lazy parsing and caching set up by slot:extendContext middleware.
    *
    * All request validators are active on any HTTP method that has at least one
@@ -298,7 +298,6 @@ export const createRouteMiddleware: CreateRouteMiddleware<
     cookies: async (ctx) => parseCookie(ctx.headers.cookie ?? ""),
     json: async (ctx) => ctx.bodyparser.json(),
     form: async (ctx) => ctx.bodyparser.form(),
-    multipart: async (ctx) => ctx.bodyparser.multipart(),
     raw: (ctx) => ctx.bodyparser.raw(),
   };
 

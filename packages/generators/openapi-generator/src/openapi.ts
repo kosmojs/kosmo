@@ -21,10 +21,9 @@ import type {
   OpenAPIResponse,
 } from "./types";
 
-const requestBodyMap: Record<RequestBodyTarget, string | undefined> = {
+const requestBodyMap: Record<RequestBodyTarget, unknown> = {
   json: "application/json",
-  form: "application/x-www-form-urlencoded",
-  multipart: "multipart/form-data",
+  form: ["application/x-www-form-urlencoded", "multipart/form-data"],
   raw: undefined,
 };
 
@@ -465,26 +464,18 @@ export default (pluginOptions: PluginOptionsResolved) => {
             required: true,
             content: bodyTypes.reduce<
               Record<string, { schema: { $ref: string } }>
-            >(
-              (
-                map,
-                {
-                  target,
-                  schema,
-                  contentType = requestBodyMap[target as never],
-                },
-              ) => {
-                if (contentType) {
-                  map[contentType] = {
-                    schema: {
-                      $ref: generateComponentPath("schemas", route, schema.id),
-                    },
-                  };
+            >((map, def) => {
+              const { contentType = requestBodyMap[def.target as never] } = def;
+              if (contentType) {
+                const schema = {
+                  $ref: generateComponentPath("schemas", route, def.schema.id),
+                };
+                for (const variant of [contentType].flat()) {
+                  map[variant] = { schema };
                 }
-                return map;
-              },
-              {},
-            ),
+              }
+              return map;
+            }, {}),
           };
         }
 

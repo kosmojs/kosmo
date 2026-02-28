@@ -27,7 +27,6 @@ Available parsers:
 ```ts
 await ctx.bodyparser.json()       // Parse JSON request body
 await ctx.bodyparser.form()       // Parse URL-encoded form data
-await ctx.bodyparser.multipart()  // Parse multipart form data
 await ctx.bodyparser.raw()        // Get raw body buffer
 ```
 

@@ -2,7 +2,7 @@ import { defineRoute } from "@test/index";
 
 export default defineRoute(({ POST }) => [
   POST<{
-    multipart: {
+    form: {
       file: File;
       cropX?: number;
       cropY?: number;
