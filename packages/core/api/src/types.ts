@@ -60,7 +60,7 @@ export type RouteSource<MiddlewareT> = {
   // just automatically imported from use.ts files
   useWrappers: [...a: Array<MiddlewareDefinition<MiddlewareT>>];
   definitionItems: Array<RouteDefinitionItem<MiddlewareT>>;
-  params: Array<[name: string, isSplat?: boolean]>;
+  params: Array<string>;
   numericParams: Array<string>;
   validationSchemas: ValidationSchemas;
   meta?: Record<string, unknown>;
