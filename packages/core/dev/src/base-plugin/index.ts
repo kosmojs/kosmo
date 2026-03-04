@@ -279,6 +279,7 @@ export default (apiurl: string, pluginOptions?: PluginOptions): Plugin => {
       }
 
       if (!store.resolvedOptions.generators.find((e) => e.slot === "api")) {
+        const stopWorker = workerHandler(() => stopWorker());
         return;
       }
 
