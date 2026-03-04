@@ -41,7 +41,6 @@
     "koa-compose": "^4.1.0",
     "light-my-request": "^6.6.0",
     "path-to-regexp": "^8.3.0",
-    "raw-body": "^3.0.2",
-    "typebox": "^1.1.5"
+    "raw-body": "^3.0.2"
   }
 }
