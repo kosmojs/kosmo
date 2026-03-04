@@ -107,7 +107,7 @@ export const factory: GeneratorFactory<Options> = async (
             funcName: [
               "use",
               entry.name
-                .replace(/\[|\]/g, "")
+                .replace(/\{|\}/g, "")
                 .replace(/\W+(\w)/g, (...a) => String(a[1]).toUpperCase())
                 .replace(/^(\w)/, (m) => m.toUpperCase()),
             ].join(""),
