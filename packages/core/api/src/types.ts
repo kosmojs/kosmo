@@ -53,6 +53,8 @@ export type UseOptions = {
 export type RouteSource<MiddlewareT> = {
   name: string;
   path: string;
+  // path-to-regexp pattern
+  pathPattern: string;
   file: string;
   // useWrappers is same as defining middleware inside route definition,
   // just automatically imported from use.ts files
