@@ -2,6 +2,6 @@ import { defineRoute } from "{{ createImport "libApi" route.name }}";
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {
-    ctx.body = "Automatically generated route: [ {{route.name}} ]"
+    ctx.body = "Automatically generated route: [ {{route.name}} ]";
   }),
 ]);

@@ -37,6 +37,11 @@ declare module "{{ createImport 'api' 'use' }}" {
   export default [];
 }
 
+declare module "{{ createImport 'lib' 'api' }}" {
+  export interface DefaultState {}
+  export interface DefaultContext {}
+}
+
 declare module "{{ createImport 'lib' 'api:app' }}" {
   import type { AppFactory } from "@kosmojs/api";
   import type { App, AppOptions } from "./templates/lib/api:app";
@@ -49,14 +54,15 @@ declare module "{{ createImport 'lib' 'api:dev' }}" {
 }
 
 declare module "{{ createImport 'lib' 'api:routes' }}" {
-  export const routeSources = [];
+  import type { RouteSource } from "@kosmojs/api";
+  export const routeSources: Array<RouteSource> = [];
 }
 
 declare module "{{ createImport 'lib' 'api:router' }}" {
-  import type { RouterFactory } from "@kosmojs/api";
-  import type { Router, RouterOptions } from "./templates/lib/api:app";
-  export const routerFactory: RouterFactory<Router, RouterOptions>;
-  export const routes = [];
+  import type { RouterFactory, Route } from "@kosmojs/api";
+  import type Router from "@koa/router";
+  export const routerFactory: RouterFactory<Router, never>;
+  export const routes: Array<Route> = [];
 }
 
 declare module "{{ createImport 'lib' 'api:server' }}" {

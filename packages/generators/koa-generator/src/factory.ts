@@ -47,11 +47,6 @@ export const factory: GeneratorFactory<Options> = async (
   const { renderToFile } = renderFactory({
     helpers: {
       createImport: createImportHelper,
-      createParamsLiteral(params: ApiRoute["params"]) {
-        return params.schema.map(({ name, kind }) => {
-          return JSON.stringify([name, kind === "splat"]);
-        });
-      },
     },
     partials: {
       libApiTpl,
