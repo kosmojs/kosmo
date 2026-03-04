@@ -5,7 +5,6 @@ import type {
   ExtendContext,
   MiddlewareDefinition,
   UseOptions,
-  ValidatedResponseBodies,
   ValidationDefmap,
   ValidationOptmap,
 } from "@kosmojs/api";
@@ -15,6 +14,14 @@ import type { BodyparserOptions } from "./api:bodyparser";
 export interface DefaultState {}
 
 export interface DefaultContext {}
+
+type ExtractBodies<R> = R extends [number, string, infer Body] ? Body : never;
+
+type ValidatedResponseBodies<VDefs extends ValidationDefmap> = [
+  ExtractBodies<VDefs["response"]>,
+] extends [never]
+  ? unknown // No bodies extracted at all - fallback to unknown
+  : ExtractBodies<VDefs["response"]>;
 
 export type ParameterizedContext<
   ParamsT,

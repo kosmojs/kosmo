@@ -299,7 +299,7 @@ export type ExtendContext<
 > = {
   [StateKey]: Map<ValidationTarget, unknown>;
   bodyparser: {
-    [T in RequestBodyTarget]: <R = Record<string, unknown>>(
+    [T in RequestBodyTarget]: <R = unknown>(
       opts?: BodyparserOptions[T],
     ) => Promise<R>;
   };
@@ -312,14 +312,6 @@ export type ExtendContext<
       : never]: VDefs[K];
   } & { params: ParamsT };
 };
-
-type ExtractBodies<R> = R extends [number, string, infer Body] ? Body : never;
-
-export type ValidatedResponseBodies<VDefs extends ValidationDefmap> = [
-  ExtractBodies<VDefs["response"]>,
-] extends [never]
-  ? unknown // No bodies extracted at all - fallback to unknown
-  : ExtractBodies<VDefs["response"]>;
 
 export type ValidationSchema = {
   check: (data: unknown) => boolean;
