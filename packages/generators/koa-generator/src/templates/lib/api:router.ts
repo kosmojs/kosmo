@@ -1,5 +1,6 @@
 import KoaRouter, { type RouterMiddleware } from "@koa/router";
 import { parseCookie } from "cookie";
+import { match } from "path-to-regexp";
 
 import {
   type CreateRouteMiddleware,
@@ -45,7 +46,16 @@ export type RouterOptions = import("@koa/router").RouterOptions;
  * */
 export const createRouteMiddleware: CreateRouteMiddleware<
   ParameterizedMiddleware
-> = ({ route, validationSchemas, params, numericParams }) => {
+> = ({ name, pathPattern, params, numericParams, validationSchemas }) => {
+  const pathMatcher = match(pathPattern);
+
+  const matchPath = (path: string) => {
+    try {
+      return pathMatcher(path);
+    } catch (e) {
+      return undefined;
+    }
+  };
   const validationMiddleware = [
     /**
      * Extends Koa context with:
@@ -106,21 +116,18 @@ export const createRouteMiddleware: CreateRouteMiddleware<
      * */
     use(
       function useValidateParams(ctx, next) {
+        const matched = matchPath(ctx.path);
         const normalizedParams = params.reduce(
-          (map: Record<string, unknown>, [name, isSplat]) => {
-            const value = ctx.params[name];
-            if (value) {
-              if (isSplat) {
-                map[name] = numericParams.includes(name)
-                  ? value.split("/").map(Number)
-                  : value.split("/");
-              } else {
-                map[name] = numericParams.includes(name)
-                  ? Number(value)
-                  : value;
-              }
-            } else {
-              map[name] = value;
+          (map: Record<string, unknown>, name) => {
+            const value = matched ? matched.params[name] : undefined;
+            if (Array.isArray(value)) {
+              map[name] = numericParams.includes(name)
+                ? value.map(Number)
+                : value;
+            } else if (value) {
+              map[name] = numericParams.includes(name) //
+                ? Number(value)
+                : value;
             }
             return map;
           },

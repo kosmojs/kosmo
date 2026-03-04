@@ -19,6 +19,7 @@ export default (options?: Options): GeneratorConstructor => {
       "@kosmojs/api": self.version,
       koa: self.devDependencies.koa,
       "@koa/router": self.devDependencies["@koa/router"],
+      "path-to-regexp": self.devDependencies["path-to-regexp"],
       typebox: self.devDependencies.typebox,
       cookie: self.devDependencies.cookie,
       formidable: self.devDependencies.formidable,
