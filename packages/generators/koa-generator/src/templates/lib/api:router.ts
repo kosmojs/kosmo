@@ -74,32 +74,34 @@ export const createRouteMiddleware: CreateRouteMiddleware<
      * */
     use(
       function useExtendContext(ctx, next) {
-        // initialize per-request cache with empty params
-        // (later populated by useValidateParams)
-        ctx[StateKey] = new Map([["params", {}]]);
-        Object.defineProperty(ctx, "bodyparser", {
-          value: Object.entries(bodyparsers).reduce<{
-            [T in RequestBodyTarget]?: (
-              opt?: BodyparserOptions[T],
-            ) => Promise<unknown>;
-          }>((map, entry) => {
-            const [target, parser] = entry as [RequestBodyTarget, Function];
-            map[target] = async (opt) => {
-              if (!ctx[StateKey].has(target)) {
-                ctx[StateKey].set(target, await parser(ctx, opt as never));
-              }
-              return ctx[StateKey].get(target);
-            };
-            return map;
-          }, {}),
-          enumerable: true,
-        });
-        Object.defineProperty(ctx, "validated", {
-          get() {
-            return Object.fromEntries(ctx[StateKey]);
-          },
-          enumerable: true,
-        });
+        if (!ctx[StateKey]) {
+          // initialize per-request cache with empty params
+          // (later populated by useValidateParams)
+          ctx[StateKey] = new Map([["params", {}]]);
+          Object.defineProperty(ctx, "bodyparser", {
+            value: Object.entries(bodyparsers).reduce<{
+              [T in RequestBodyTarget]?: (
+                opt?: BodyparserOptions[T],
+              ) => Promise<unknown>;
+            }>((map, entry) => {
+              const [target, parser] = entry as [RequestBodyTarget, Function];
+              map[target] = async (opt) => {
+                if (!ctx[StateKey].has(target)) {
+                  ctx[StateKey].set(target, await parser(ctx, opt as never));
+                }
+                return ctx[StateKey].get(target);
+              };
+              return map;
+            }, {}),
+            enumerable: true,
+          });
+          Object.defineProperty(ctx, "validated", {
+            get() {
+              return Object.fromEntries(ctx[StateKey]);
+            },
+            enumerable: true,
+          });
+        }
         return next();
       },
       { slot: "extendContext" },
