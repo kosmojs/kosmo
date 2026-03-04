@@ -46,6 +46,10 @@ export default async (options: PluginOptionsResolved) => {
 
     const ctx = await context({
       ...esbuildOptions,
+      define: {
+        ...esbuildOptions.define,
+        PRODUCTION_BUILD: "false",
+      },
       logLevel: "error",
       bundle: true,
       entryPoints: [createPath.api("dev.ts")],

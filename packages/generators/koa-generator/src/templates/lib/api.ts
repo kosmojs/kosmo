@@ -15,6 +15,10 @@ export interface DefaultState {}
 
 export interface DefaultContext {}
 
+declare global {
+  var PRODUCTION_BUILD: boolean;
+}
+
 type ExtractBodies<R> = R extends [number, string, infer Body] ? Body : never;
 
 type ValidatedResponseBodies<VDefs extends ValidationDefmap> = [

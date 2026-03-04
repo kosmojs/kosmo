@@ -27,10 +27,6 @@ import { type BodyparserOptions, bodyparsers } from "./api:bodyparser";
 import globalMiddleware from "{{ createImport 'api' 'use' }}";
 import { routeSources } from "{{ createImport 'lib' 'api:routes' }}";
 
-const devMode = () => {
-  return ["development", "test"].includes(process.env.NODE_ENV ?? "");
-};
-
 export type Router = import("@koa/router").Router<DefaultState, DefaultContext>;
 export type RouterOptions = import("@koa/router").RouterOptions;
 
@@ -165,14 +161,14 @@ export const createRouteMiddleware: CreateRouteMiddleware<
         // options are same for all variants
         const { runtimeValidation, customErrors } = variants[0];
 
-        if (devMode()) {
-          // dev mode, skip only if explicitly set to false
-          if (runtimeValidation === false) {
+        if (PRODUCTION_BUILD) {
+          // skip if undefined or explicitly set to false
+          if (runtimeValidation === undefined || runtimeValidation === false) {
             return next();
           }
         } else {
-          // in production, skip if undefined or explicitly set to false
-          if (runtimeValidation === undefined || runtimeValidation === false) {
+          // skip only if explicitly set to false
+          if (runtimeValidation === false) {
             return next();
           }
         }

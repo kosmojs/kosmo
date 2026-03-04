@@ -257,6 +257,10 @@ export const factory: GeneratorFactory<Options> = async (
       // run esbuild only after all files generated
       await esbuild({
         ...esbuildOptions,
+        define: {
+          ...esbuildOptions.define,
+          PRODUCTION_BUILD: "true",
+        },
         bundle: true,
         entryPoints: [
           // Build both app factory and server bundle for deployment flexibility.
