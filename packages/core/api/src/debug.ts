@@ -2,7 +2,7 @@ import { styleText } from "node:util";
 
 import stringWidth from "string-width";
 
-import type { HTTPMethod, RouterRoute, UseOptions } from "./types";
+import type { HTTPMethod, Route, UseOptions } from "./types";
 
 const colorizeMethod = (method: string): string => {
   const color = (
@@ -32,7 +32,7 @@ export const debugRouteEntry = <MiddlewareT>(entry: {
     middleware: Array<MiddlewareT>;
     method: HTTPMethod;
   };
-}): RouterRoute<MiddlewareT>["debug"] => {
+}): Route<MiddlewareT>["debug"] => {
   const { path, file } = entry;
 
   const methodLines = entry.methods.flatMap((method) => {
@@ -98,7 +98,7 @@ export const debugRouteEntry = <MiddlewareT>(entry: {
       map[key] = line.split("\n").map(lineMapper).join("\n");
       return map;
     },
-    {} as RouterRoute<MiddlewareT>["debug"],
+    {} as Route<MiddlewareT>["debug"],
   );
 
   return {

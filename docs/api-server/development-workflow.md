@@ -221,7 +221,7 @@ what middleware applies to them, and which handlers they use.
 Each route returned by `createRoutes` includes a `debug` property with formatted output:
 
 ```ts
-export type RouterRoute = {
+export type Route = {
   name: string;
   path: string;
   file: string;

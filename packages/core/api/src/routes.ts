@@ -3,13 +3,13 @@ import type {
   CreateRouteMiddleware,
   HandlerDefinition,
   MiddlewareDefinition,
-  RouterRoute,
-  RouterRouteSource,
+  Route,
+  RouteSource,
   UseSlots,
 } from "./types";
 
-export const createRouterRoutes = <MiddlewareT, MiddlewareR>(
-  routeSources: Array<RouterRouteSource<MiddlewareT>>,
+export const createRoutes = <MiddlewareT, MiddlewareR>(
+  routeSources: Array<RouteSource<MiddlewareT>>,
   {
     globalMiddleware,
     createRouteMiddleware,
@@ -19,7 +19,7 @@ export const createRouterRoutes = <MiddlewareT, MiddlewareR>(
     // route-specific middlware
     createRouteMiddleware: CreateRouteMiddleware<MiddlewareT>;
   },
-): Array<RouterRoute<MiddlewareR>> => {
+): Array<Route<MiddlewareR>> => {
   // NOTE:: prioritized middleware must run in this exact order!
   const prioritizedSlots: Array<keyof UseSlots> = [
     "errorHandler",
@@ -35,14 +35,16 @@ export const createRouterRoutes = <MiddlewareT, MiddlewareR>(
     "validate:response",
   ];
 
-  const stack: Array<RouterRoute<MiddlewareR>> = [];
+  const stack: Array<Route<MiddlewareR>> = [];
 
   // Iterate over each route definition
-  for (const { name, path, file, ...rest } of routeSources) {
+  for (const routeSource of routeSources) {
+    const { name, path, file } = routeSource;
+
     // Include both middleware and HTTP method handlers
     const definitionItems = [
-      ...rest.useWrappers,
-      ...rest.definitionItems,
+      ...routeSource.useWrappers,
+      ...routeSource.definitionItems,
     ].flat();
 
     const routeMiddleware: Array<MiddlewareDefinition<MiddlewareT>> =
@@ -50,7 +52,7 @@ export const createRouterRoutes = <MiddlewareT, MiddlewareR>(
 
     // NOTE: should be built in exactly this order
     const middlewareStack: Array<MiddlewareDefinition<MiddlewareT>> = [
-      ...createRouteMiddleware({ ...rest, route: name }),
+      ...createRouteMiddleware(routeSource),
       ...globalMiddleware,
       ...routeMiddleware,
     ];

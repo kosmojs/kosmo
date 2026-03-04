@@ -7,10 +7,10 @@ import { type InjectPayload, inject } from "light-my-request";
 import { vi } from "vitest";
 
 import {
-  createRouterRoutes,
+  createRoutes,
   HTTPMethods,
   type MiddlewareDefinition,
-  type RouterRouteSource,
+  type RouteSource,
 } from "@kosmojs/api";
 
 import type { ParameterizedMiddleware } from "@src/templates/lib/api";
@@ -28,12 +28,12 @@ vi.mock("{{ createImport 'lib' 'api:routes' }}", () => ({
 export const defaultMethods = Object.keys(HTTPMethods);
 
 export const middlewareStackBuilder = (
-  a: Array<Partial<RouterRouteSource<ParameterizedMiddleware>>>,
+  a: Array<Partial<RouteSource<ParameterizedMiddleware>>>,
   b?: {
     globalMiddleware?: Array<MiddlewareDefinition<ParameterizedMiddleware>>;
   },
 ) => {
-  return createRouterRoutes<ParameterizedMiddleware, ParameterizedMiddleware>(
+  return createRoutes<ParameterizedMiddleware, ParameterizedMiddleware>(
     a.map((e) => {
       return {
         name: "",
@@ -46,7 +46,7 @@ export const middlewareStackBuilder = (
         params: [],
         numericParams: [],
         validationSchemas: {},
-        ...(e as Partial<RouterRouteSource<ParameterizedMiddleware>>),
+        ...(e as Partial<RouteSource<ParameterizedMiddleware>>),
       };
     }),
     {

@@ -50,7 +50,7 @@ export type UseOptions = {
   debug?: string | undefined;
 };
 
-export type RouterRouteSource<MiddlewareT> = {
+export type RouteSource<MiddlewareT> = {
   name: string;
   path: string;
   file: string;
@@ -64,7 +64,7 @@ export type RouterRouteSource<MiddlewareT> = {
   meta?: Record<string, unknown>;
 };
 
-export type RouterRoute<MiddlewareT> = {
+export type Route<MiddlewareT> = {
   name: string;
   path: string;
   file: string;
@@ -145,12 +145,9 @@ export type RouterFactory<Router, RouterOptions = unknown> = (
   factory: (a: { createRouter: (o?: RouterOptions) => Router }) => Router,
 ) => Router;
 
-export type CreateRouteMiddleware<MiddlewareT> = (data: {
-  route: string;
-  validationSchemas: ValidationSchemas;
-  params: RouterRouteSource<MiddlewareT>["params"];
-  numericParams: RouterRouteSource<MiddlewareT>["numericParams"];
-}) => Array<MiddlewareDefinition<MiddlewareT>>;
+export type CreateRouteMiddleware<MiddlewareT> = (
+  routeSource: RouteSource<MiddlewareT>,
+) => Array<MiddlewareDefinition<MiddlewareT>>;
 
 export type CreateServer<App, Server> = (
   app: App,
