@@ -110,38 +110,9 @@ export type DevSetup = {
   teardownHandler?: () => void | Promise<void>;
 };
 
-type NodeServer = import("node:http").Server;
-
-type NodeListen = {
-  (
-    port?: number,
-    hostname?: string,
-    backlog?: number,
-    callback?: () => void,
-  ): NodeServer;
-  (port: number, hostname?: string, callback?: () => void): NodeServer;
-  (port: number, backlog?: number, callback?: () => void): NodeServer;
-  (port: number, callback?: () => void): NodeServer;
-  (path: string, backlog?: number, callback?: () => void): NodeServer;
-  (path: string, callback?: () => void): NodeServer;
-  (options: import("net").ListenOptions, callback?: () => void): NodeServer;
-  (handle: unknown, backlog?: number, callback?: () => void): NodeServer;
-  (handle: unknown, callback?: () => void): NodeServer;
-};
-
-export type AppFactory<
-  App extends {
-    // All apps must support Node.js via .listen() interface.
-    // Express/Koa have this natively.
-    // Hono requires @hono/node-server adapter to provide .listen().
-    listen: NodeListen;
-
-    // Optional: native fetch handler for edge runtimes (Bun/Deno/Cloudflare).
-    // Hono provides this natively; Express/Koa do not.
-    fetch?: (request: Request) => Response | Promise<Response>;
-  },
-  AppOptions = unknown,
-> = (factory: (a: { createApp: (o?: AppOptions) => App }) => App) => App;
+export type AppFactory<App, AppOptions = unknown> = (
+  factory: (a: { createApp: (o?: AppOptions) => App }) => App,
+) => App;
 
 export type RouterFactory<Router, RouterOptions = unknown> = (
   factory: (a: { createRouter: (o?: RouterOptions) => Router }) => Router,
