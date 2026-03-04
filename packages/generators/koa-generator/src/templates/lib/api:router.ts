@@ -4,7 +4,7 @@ import { match } from "path-to-regexp";
 
 import {
   type CreateRouteMiddleware,
-  createRouterRoutes,
+  createRoutes,
   type HTTPMethod,
   type RequestBodyTarget,
   type RequestValidationTarget,
@@ -353,13 +353,13 @@ export const createRouteMiddleware: CreateRouteMiddleware<
   return validationMiddleware;
 };
 
-export const routes = createRouterRoutes<
-  ParameterizedMiddleware,
-  RouterMiddleware
->(routeSources as never, {
-  globalMiddleware: globalMiddleware as never,
-  createRouteMiddleware,
-});
+export const routes = createRoutes<ParameterizedMiddleware, RouterMiddleware>(
+  routeSources,
+  {
+    globalMiddleware: globalMiddleware as never,
+    createRouteMiddleware,
+  },
+);
 
 export const routerFactory: RouterFactory<Router, RouterOptions> = (
   factory,
