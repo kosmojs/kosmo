@@ -186,6 +186,20 @@ export const createRouteMiddleware: CreateRouteMiddleware<
         // so ctx.status / ctx.type / ctx.body are set before we validate the response
         await next();
 
+        const response: {
+          status: number;
+          contentType: string | null;
+          body?: unknown;
+        } = {
+          status: ctx.status,
+          contentType: ctx.type,
+        };
+
+        // Validate body only for JSON variants
+        if (variants.some((e) => e.contentType?.includes("json"))) {
+          response.body = ctx.body;
+        }
+
         /**
          * Returns an array of validator functions for a single response variant.
          * Each validator checks one aspect (status, content-type, body)
@@ -218,7 +232,8 @@ export const createRouteMiddleware: CreateRouteMiddleware<
                   };
             },
             (i) => {
-              if (!schema) {
+              if (!schema || "body" in response === false) {
+                // no body schema or contentType is not JSON
                 return;
               }
               return schema.check(ctx.body)
@@ -259,8 +274,8 @@ export const createRouteMiddleware: CreateRouteMiddleware<
             errors,
             errorMessage: customErrors?.error || errorMessage,
             errorSummary,
-            route,
-            data: { status: ctx.status, contentType: ctx.type, body: ctx.body },
+            route: name,
+            data: response,
           },
         ]);
       },
@@ -303,7 +318,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
     cookies: async (ctx) => parseCookie(ctx.headers.cookie ?? ""),
     json: async (ctx) => ctx.bodyparser.json(),
     form: async (ctx) => ctx.bodyparser.form(),
-    raw: (ctx) => ctx.bodyparser.raw(),
+    raw: async (ctx) => ctx.bodyparser.raw(),
   };
 
   const requestEntries = Object.entries(requestTargets) as Array<
