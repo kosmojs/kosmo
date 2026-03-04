@@ -79,13 +79,13 @@ export const pathTokensFactory = (
     return parts;
   };
 
-  const patternTransormers: Array<(s: string) => string> = [
+  const patternTransforms: Array<(s: string) => string> = [
     // Transform splat params
     // {...param} => {*param}
     // NOTE: should run first
     (src) => src.replace(/\{\.\.\./, "{*"),
 
-    // Restore leading slash inside optional/splat groups.
+    // Insert leading slash inside optional/splat groups.
     // {:name} => {/:name}
     // {*name} => {/*name}
     (src) => {
@@ -98,12 +98,12 @@ export const pathTokensFactory = (
   const tokens = path
     .replace(/^index\/?/, "")
     .split("/")
-    .flatMap<PathToken>((orig, i) => {
+    .flatMap<PathToken>((orig) => {
       if (!orig.length) {
         return [];
       }
 
-      const pattern = patternTransormers.reduce((src, fn) => fn(src), orig);
+      const pattern = patternTransforms.reduce((src, fn) => fn(src), orig);
 
       const { tokens } = parse(pattern);
 
@@ -127,13 +127,32 @@ export const pathTokensFactory = (
         {
           kind,
           orig,
-          pattern: pattern.startsWith("{") || i === 0 ? pattern : `/${pattern}`,
+          pattern,
           parts,
         },
       ];
     });
 
-  return [tokens, tokens.map((e) => e.pattern).join("")];
+  return [
+    tokens,
+    tokens
+      .map(({ pattern }, i) => {
+        const next = tokens[i + 1];
+
+        if (!next || next.pattern.includes("/")) {
+          return pattern;
+        }
+
+        const slashRequired = tokens.slice(i + 1).some((e) => {
+          return e.parts.some((e) => {
+            return e.type === "static" || e.kind === "required";
+          });
+        });
+
+        return slashRequired ? `${pattern}/` : pattern;
+      })
+      .join(""),
+  ];
 };
 
 export const normalizeStaticValue = (value: string) => {
