@@ -20,14 +20,12 @@ export default (options?: Options): GeneratorConstructor => {
       koa: self.devDependencies.koa,
       "@koa/router": self.devDependencies["@koa/router"],
       typebox: self.devDependencies.typebox,
-      qs: self.devDependencies.qs,
       cookie: self.devDependencies.cookie,
       formidable: self.devDependencies.formidable,
       "raw-body": self.devDependencies["raw-body"],
     },
     devDependencies: {
       "@types/koa": self.devDependencies["@types/koa"],
-      "@types/qs": self.devDependencies["@types/qs"],
       "@types/formidable": self.devDependencies["@types/formidable"],
     },
   };
