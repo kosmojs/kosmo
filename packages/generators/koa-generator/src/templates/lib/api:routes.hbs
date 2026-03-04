@@ -1,5 +1,7 @@
 import { join } from "node:path";
 
+import type { RouteSource } from "@kosmojs/api";
+
 import { baseurl, apiurl } from "{{ createImport "config" }}";
 
 {{#each routes}}
@@ -11,19 +13,21 @@ import { validationSchemas as {{id}}_schemas } from "{{ createImport "libApi" na
 import {{id}} from "{{ createImport "api" file }}";
 {{/each}}
 
-export const routeSources = [
+export const routeSources: Array<RouteSource<never>> = [
   {{#each routes}}
   {
     name: "{{name}}",
     {{#if fullpath}}
     path: "{{fullpath}}",
+    pathPattern: "{{fullpath}}",
     {{else}}
     path: join(baseurl, apiurl, "{{path}}"),
+    pathPattern: join(baseurl, apiurl, "{{pathPattern}}"),
     {{/if}}
     file: "{{file}}",
-    useWrappers: [{{#each useWrappers}}...{{id}}, {{/each}}],
+    useWrappers: [ {{#each useWrappers}}...{{id}}, {{/each}}] as Array<never>,
     definitionItems: {{id}} as never,
-    params: [ {{createParamsLiteral params}} ],
+    params: [ {{#each params.schema}}"{{name}}", {{/each}}],
     numericParams: [ {{#each numericParams}}"{{.}}", {{/each}}],
     validationSchemas: {{id}}_schemas,
     {{#if meta}}meta: {{meta}},
