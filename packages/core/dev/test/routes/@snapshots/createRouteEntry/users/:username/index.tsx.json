@@ -18,7 +18,7 @@
     {
       "kind": "param",
       "orig": ":username",
-      "pattern": "/:username",
+      "pattern": ":username",
       "parts": [
         {
           "type": "param",

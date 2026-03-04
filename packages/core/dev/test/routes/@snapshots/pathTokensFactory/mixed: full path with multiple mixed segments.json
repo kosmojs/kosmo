@@ -13,7 +13,7 @@
   {
     "kind": "mixed",
     "orig": ":name-v:version",
-    "pattern": "/:name-v:version",
+    "pattern": ":name-v:version",
     "parts": [
       {
         "type": "param",
@@ -36,7 +36,7 @@
   {
     "kind": "mixed",
     "orig": ":resource.:ext",
-    "pattern": "/:resource.:ext",
+    "pattern": ":resource.:ext",
     "parts": [
       {
         "type": "param",

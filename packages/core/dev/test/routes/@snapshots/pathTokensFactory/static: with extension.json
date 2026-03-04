@@ -13,7 +13,7 @@
   {
     "kind": "static",
     "orig": "page.html",
-    "pattern": "/page.html",
+    "pattern": "page.html",
     "parts": [
       {
         "type": "static",

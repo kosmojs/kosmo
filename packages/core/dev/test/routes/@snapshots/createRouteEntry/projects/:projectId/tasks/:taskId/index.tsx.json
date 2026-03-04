@@ -18,7 +18,7 @@
     {
       "kind": "param",
       "orig": ":projectId",
-      "pattern": "/:projectId",
+      "pattern": ":projectId",
       "parts": [
         {
           "type": "param",
@@ -31,7 +31,7 @@
     {
       "kind": "static",
       "orig": "tasks",
-      "pattern": "/tasks",
+      "pattern": "tasks",
       "parts": [
         {
           "type": "static",
@@ -42,7 +42,7 @@
     {
       "kind": "param",
       "orig": ":taskId",
-      "pattern": "/:taskId",
+      "pattern": ":taskId",
       "parts": [
         {
           "type": "param",

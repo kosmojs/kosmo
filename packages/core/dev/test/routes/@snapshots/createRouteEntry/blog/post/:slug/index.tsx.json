@@ -18,7 +18,7 @@
     {
       "kind": "static",
       "orig": "post",
-      "pattern": "/post",
+      "pattern": "post",
       "parts": [
         {
           "type": "static",
@@ -29,7 +29,7 @@
     {
       "kind": "param",
       "orig": ":slug",
-      "pattern": "/:slug",
+      "pattern": ":slug",
       "parts": [
         {
           "type": "param",

@@ -30,7 +30,7 @@
           {
             "kind": "param",
             "orig": ":id",
-            "pattern": "/:id",
+            "pattern": ":id",
             "parts": [
               {
                 "type": "param",

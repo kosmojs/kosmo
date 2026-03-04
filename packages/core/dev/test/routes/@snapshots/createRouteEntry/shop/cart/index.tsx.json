@@ -18,7 +18,7 @@
     {
       "kind": "static",
       "orig": "cart",
-      "pattern": "/cart",
+      "pattern": "cart",
       "parts": [
         {
           "type": "static",

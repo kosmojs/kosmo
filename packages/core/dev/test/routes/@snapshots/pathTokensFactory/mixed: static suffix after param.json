@@ -13,7 +13,7 @@
   {
     "kind": "mixed",
     "orig": ":id-details",
-    "pattern": "/:id-details",
+    "pattern": ":id-details",
     "parts": [
       {
         "type": "param",

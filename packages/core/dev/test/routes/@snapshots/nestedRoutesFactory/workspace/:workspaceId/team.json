@@ -19,7 +19,7 @@
       {
         "kind": "param",
         "orig": ":workspaceId",
-        "pattern": "/:workspaceId",
+        "pattern": ":workspaceId",
         "parts": [
           {
             "type": "param",
@@ -32,7 +32,7 @@
       {
         "kind": "static",
         "orig": "team",
-        "pattern": "/team",
+        "pattern": "team",
         "parts": [
           {
             "type": "static",
@@ -54,7 +54,7 @@
           {
             "kind": "param",
             "orig": ":memberId",
-            "pattern": "/:memberId",
+            "pattern": ":memberId",
             "parts": [
               {
                 "type": "param",
@@ -67,7 +67,7 @@
           {
             "kind": "static",
             "orig": "permissions",
-            "pattern": "/permissions",
+            "pattern": "permissions",
             "parts": [
               {
                 "type": "static",

@@ -18,7 +18,7 @@
     {
       "kind": "param",
       "orig": ":projectId",
-      "pattern": "/:projectId",
+      "pattern": ":projectId",
       "parts": [
         {
           "type": "param",

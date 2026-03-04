@@ -13,7 +13,7 @@
   {
     "kind": "mixed",
     "orig": ":name-v:version",
-    "pattern": "/:name-v:version",
+    "pattern": ":name-v:version",
     "parts": [
       {
         "type": "param",

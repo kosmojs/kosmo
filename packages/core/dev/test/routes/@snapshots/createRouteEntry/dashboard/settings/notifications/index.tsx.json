@@ -18,7 +18,7 @@
     {
       "kind": "static",
       "orig": "settings",
-      "pattern": "/settings",
+      "pattern": "settings",
       "parts": [
         {
           "type": "static",
@@ -29,7 +29,7 @@
     {
       "kind": "static",
       "orig": "notifications",
-      "pattern": "/notifications",
+      "pattern": "notifications",
       "parts": [
         {
           "type": "static",

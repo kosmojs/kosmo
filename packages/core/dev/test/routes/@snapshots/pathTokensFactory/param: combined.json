@@ -15,7 +15,7 @@
   {
     "kind": "static",
     "orig": "with",
-    "pattern": "/with",
+    "pattern": "with",
     "parts": [
       {
         "type": "static",

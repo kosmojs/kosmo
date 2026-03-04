@@ -18,7 +18,7 @@
     {
       "kind": "static",
       "orig": "orders",
-      "pattern": "/orders",
+      "pattern": "orders",
       "parts": [
         {
           "type": "static",

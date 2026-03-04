@@ -13,7 +13,7 @@
   {
     "kind": "mixed",
     "orig": ":name{-v:version{-:pre}}",
-    "pattern": "/:name{-v:version{-:pre}}",
+    "pattern": ":name{-v:version{-:pre}}",
     "parts": [
       {
         "type": "param",

@@ -30,7 +30,7 @@
           {
             "kind": "param",
             "orig": ":category",
-            "pattern": "/:category",
+            "pattern": ":category",
             "parts": [
               {
                 "type": "param",
@@ -43,7 +43,7 @@
           {
             "kind": "static",
             "orig": "sort",
-            "pattern": "/sort",
+            "pattern": "sort",
             "parts": [
               {
                 "type": "static",
@@ -66,7 +66,7 @@
               {
                 "kind": "param",
                 "orig": ":sortBy",
-                "pattern": "/:sortBy",
+                "pattern": ":sortBy",
                 "parts": [
                   {
                     "type": "param",
@@ -94,7 +94,7 @@
           {
             "kind": "param",
             "orig": ":category",
-            "pattern": "/:category",
+            "pattern": ":category",
             "parts": [
               {
                 "type": "param",
@@ -107,7 +107,7 @@
           {
             "kind": "static",
             "orig": "filters",
-            "pattern": "/filters",
+            "pattern": "filters",
             "parts": [
               {
                 "type": "static",

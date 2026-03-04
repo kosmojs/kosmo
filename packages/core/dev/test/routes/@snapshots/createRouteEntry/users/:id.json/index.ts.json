@@ -18,7 +18,7 @@
     {
       "kind": "mixed",
       "orig": ":id.json",
-      "pattern": "/:id.json",
+      "pattern": ":id.json",
       "parts": [
         {
           "type": "param",

@@ -18,7 +18,7 @@
     {
       "kind": "param",
       "orig": ":view",
-      "pattern": "/:view",
+      "pattern": ":view",
       "parts": [
         {
           "type": "param",

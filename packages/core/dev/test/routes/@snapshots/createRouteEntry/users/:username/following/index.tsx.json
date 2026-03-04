@@ -18,7 +18,7 @@
     {
       "kind": "param",
       "orig": ":username",
-      "pattern": "/:username",
+      "pattern": ":username",
       "parts": [
         {
           "type": "param",
@@ -31,7 +31,7 @@
     {
       "kind": "static",
       "orig": "following",
-      "pattern": "/following",
+      "pattern": "following",
       "parts": [
         {
           "type": "static",

@@ -30,7 +30,7 @@
           {
             "kind": "static",
             "orig": "profile",
-            "pattern": "/profile",
+            "pattern": "profile",
             "parts": [
               {
                 "type": "static",

@@ -18,7 +18,7 @@
     {
       "kind": "static",
       "orig": "checkout",
-      "pattern": "/checkout",
+      "pattern": "checkout",
       "parts": [
         {
           "type": "static",
@@ -29,7 +29,7 @@
     {
       "kind": "static",
       "orig": "confirm",
-      "pattern": "/confirm",
+      "pattern": "confirm",
       "parts": [
         {
           "type": "static",

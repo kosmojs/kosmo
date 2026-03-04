@@ -18,7 +18,7 @@
     {
       "kind": "static",
       "orig": "settings",
-      "pattern": "/settings",
+      "pattern": "settings",
       "parts": [
         {
           "type": "static",

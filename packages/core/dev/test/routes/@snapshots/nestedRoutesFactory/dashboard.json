@@ -50,7 +50,7 @@
           {
             "kind": "static",
             "orig": "analytics",
-            "pattern": "/analytics",
+            "pattern": "analytics",
             "parts": [
               {
                 "type": "static",
@@ -74,7 +74,7 @@
           {
             "kind": "static",
             "orig": "settings",
-            "pattern": "/settings",
+            "pattern": "settings",
             "parts": [
               {
                 "type": "static",
@@ -94,7 +94,7 @@
           {
             "kind": "static",
             "orig": "settings",
-            "pattern": "/settings",
+            "pattern": "settings",
             "parts": [
               {
                 "type": "static",
@@ -117,7 +117,7 @@
               {
                 "kind": "static",
                 "orig": "billing",
-                "pattern": "/billing",
+                "pattern": "billing",
                 "parts": [
                   {
                     "type": "static",
@@ -141,7 +141,7 @@
               {
                 "kind": "static",
                 "orig": "notifications",
-                "pattern": "/notifications",
+                "pattern": "notifications",
                 "parts": [
                   {
                     "type": "static",
@@ -165,7 +165,7 @@
               {
                 "kind": "static",
                 "orig": "profile",
-                "pattern": "/profile",
+                "pattern": "profile",
                 "parts": [
                   {
                     "type": "static",
@@ -189,7 +189,7 @@
               {
                 "kind": "static",
                 "orig": "security",
-                "pattern": "/security",
+                "pattern": "security",
                 "parts": [
                   {
                     "type": "static",
@@ -209,7 +209,7 @@
               {
                 "kind": "static",
                 "orig": "security",
-                "pattern": "/security",
+                "pattern": "security",
                 "parts": [
                   {
                     "type": "static",
@@ -235,7 +235,7 @@
           {
             "kind": "param",
             "orig": ":view",
-            "pattern": "/:view",
+            "pattern": ":view",
             "parts": [
               {
                 "type": "param",

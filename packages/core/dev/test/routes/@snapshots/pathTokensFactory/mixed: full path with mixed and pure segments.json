@@ -13,7 +13,7 @@
   {
     "kind": "static",
     "orig": "v1",
-    "pattern": "/v1",
+    "pattern": "v1",
     "parts": [
       {
         "type": "static",
@@ -24,7 +24,7 @@
   {
     "kind": "static",
     "orig": "products",
-    "pattern": "/products",
+    "pattern": "products",
     "parts": [
       {
         "type": "static",
@@ -35,7 +35,7 @@
   {
     "kind": "mixed",
     "orig": "book-:id",
-    "pattern": "/book-:id",
+    "pattern": "book-:id",
     "parts": [
       {
         "type": "static",
@@ -52,7 +52,7 @@
   {
     "kind": "mixed",
     "orig": "reviews{...path}.json",
-    "pattern": "/reviews{*path}.json",
+    "pattern": "reviews{*path}.json",
     "parts": [
       {
         "type": "static",

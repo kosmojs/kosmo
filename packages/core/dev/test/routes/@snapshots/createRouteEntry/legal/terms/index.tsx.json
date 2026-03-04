@@ -18,7 +18,7 @@
     {
       "kind": "static",
       "orig": "terms",
-      "pattern": "/terms",
+      "pattern": "terms",
       "parts": [
         {
           "type": "static",

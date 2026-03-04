@@ -18,7 +18,7 @@
     {
       "kind": "param",
       "orig": ":tenant",
-      "pattern": "/:tenant",
+      "pattern": ":tenant",
       "parts": [
         {
           "type": "param",
@@ -31,7 +31,7 @@
     {
       "kind": "static",
       "orig": "users",
-      "pattern": "/users",
+      "pattern": "users",
       "parts": [
         {
           "type": "static",
@@ -42,7 +42,7 @@
     {
       "kind": "param",
       "orig": ":userId",
-      "pattern": "/:userId",
+      "pattern": ":userId",
       "parts": [
         {
           "type": "param",

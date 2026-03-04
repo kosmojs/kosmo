@@ -18,7 +18,7 @@
     {
       "kind": "static",
       "orig": "team",
-      "pattern": "/team",
+      "pattern": "team",
       "parts": [
         {
           "type": "static",

@@ -13,7 +13,7 @@
   {
     "kind": "mixed",
     "orig": "report{.:format}",
-    "pattern": "/report{.:format}",
+    "pattern": "report{.:format}",
     "parts": [
       {
         "type": "static",

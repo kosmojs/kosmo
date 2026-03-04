@@ -50,7 +50,7 @@
           {
             "kind": "param",
             "orig": ":tenant",
-            "pattern": "/:tenant",
+            "pattern": ":tenant",
             "parts": [
               {
                 "type": "param",
@@ -75,7 +75,7 @@
               {
                 "kind": "static",
                 "orig": "resources",
-                "pattern": "/resources",
+                "pattern": "resources",
                 "parts": [
                   {
                     "type": "static",
@@ -95,7 +95,7 @@
               {
                 "kind": "static",
                 "orig": "resources",
-                "pattern": "/resources",
+                "pattern": "resources",
                 "parts": [
                   {
                     "type": "static",
@@ -118,7 +118,7 @@
                   {
                     "kind": "param",
                     "orig": ":type",
-                    "pattern": "/:type",
+                    "pattern": ":type",
                     "parts": [
                       {
                         "type": "param",
@@ -140,7 +140,7 @@
                   {
                     "kind": "param",
                     "orig": ":type",
-                    "pattern": "/:type",
+                    "pattern": ":type",
                     "parts": [
                       {
                         "type": "param",
@@ -195,7 +195,7 @@
               {
                 "kind": "static",
                 "orig": "settings",
-                "pattern": "/settings",
+                "pattern": "settings",
                 "parts": [
                   {
                     "type": "static",
@@ -215,7 +215,7 @@
               {
                 "kind": "static",
                 "orig": "settings",
-                "pattern": "/settings",
+                "pattern": "settings",
                 "parts": [
                   {
                     "type": "static",
@@ -238,7 +238,7 @@
                   {
                     "kind": "static",
                     "orig": "general",
-                    "pattern": "/general",
+                    "pattern": "general",
                     "parts": [
                       {
                         "type": "static",
@@ -262,7 +262,7 @@
                   {
                     "kind": "static",
                     "orig": "permissions",
-                    "pattern": "/permissions",
+                    "pattern": "permissions",
                     "parts": [
                       {
                         "type": "static",
@@ -288,7 +288,7 @@
               {
                 "kind": "static",
                 "orig": "users",
-                "pattern": "/users",
+                "pattern": "users",
                 "parts": [
                   {
                     "type": "static",
@@ -308,7 +308,7 @@
               {
                 "kind": "static",
                 "orig": "users",
-                "pattern": "/users",
+                "pattern": "users",
                 "parts": [
                   {
                     "type": "static",
@@ -331,7 +331,7 @@
                   {
                     "kind": "param",
                     "orig": ":userId",
-                    "pattern": "/:userId",
+                    "pattern": ":userId",
                     "parts": [
                       {
                         "type": "param",

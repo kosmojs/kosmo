@@ -18,7 +18,7 @@
     {
       "kind": "param",
       "orig": ":tenant",
-      "pattern": "/:tenant",
+      "pattern": ":tenant",
       "parts": [
         {
           "type": "param",

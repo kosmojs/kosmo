@@ -18,7 +18,7 @@
     {
       "kind": "param",
       "orig": ":clientId",
-      "pattern": "/:clientId",
+      "pattern": ":clientId",
       "parts": [
         {
           "type": "param",
@@ -31,7 +31,7 @@
     {
       "kind": "static",
       "orig": "reports",
-      "pattern": "/reports",
+      "pattern": "reports",
       "parts": [
         {
           "type": "static",
@@ -42,7 +42,7 @@
     {
       "kind": "param",
       "orig": ":reportType",
-      "pattern": "/:reportType",
+      "pattern": ":reportType",
       "parts": [
         {
           "type": "param",
@@ -55,7 +55,7 @@
     {
       "kind": "static",
       "orig": "data",
-      "pattern": "/data",
+      "pattern": "data",
       "parts": [
         {
           "type": "static",
@@ -66,7 +66,7 @@
     {
       "kind": "param",
       "orig": ":dataView",
-      "pattern": "/:dataView",
+      "pattern": ":dataView",
       "parts": [
         {
           "type": "param",

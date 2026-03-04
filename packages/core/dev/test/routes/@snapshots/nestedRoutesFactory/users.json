@@ -50,7 +50,7 @@
           {
             "kind": "param",
             "orig": ":username",
-            "pattern": "/:username",
+            "pattern": ":username",
             "parts": [
               {
                 "type": "param",
@@ -72,7 +72,7 @@
           {
             "kind": "param",
             "orig": ":username",
-            "pattern": "/:username",
+            "pattern": ":username",
             "parts": [
               {
                 "type": "param",
@@ -97,7 +97,7 @@
               {
                 "kind": "static",
                 "orig": "followers",
-                "pattern": "/followers",
+                "pattern": "followers",
                 "parts": [
                   {
                     "type": "static",
@@ -121,7 +121,7 @@
               {
                 "kind": "static",
                 "orig": "following",
-                "pattern": "/following",
+                "pattern": "following",
                 "parts": [
                   {
                     "type": "static",
@@ -145,7 +145,7 @@
               {
                 "kind": "static",
                 "orig": "posts",
-                "pattern": "/posts",
+                "pattern": "posts",
                 "parts": [
                   {
                     "type": "static",
@@ -165,7 +165,7 @@
               {
                 "kind": "static",
                 "orig": "posts",
-                "pattern": "/posts",
+                "pattern": "posts",
                 "parts": [
                   {
                     "type": "static",
@@ -188,7 +188,7 @@
                   {
                     "kind": "param",
                     "orig": ":postId",
-                    "pattern": "/:postId",
+                    "pattern": ":postId",
                     "parts": [
                       {
                         "type": "param",
@@ -210,7 +210,7 @@
                   {
                     "kind": "param",
                     "orig": ":postId",
-                    "pattern": "/:postId",
+                    "pattern": ":postId",
                     "parts": [
                       {
                         "type": "param",

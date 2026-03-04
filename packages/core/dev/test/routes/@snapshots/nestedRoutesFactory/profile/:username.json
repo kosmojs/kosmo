@@ -19,7 +19,7 @@
       {
         "kind": "param",
         "orig": ":username",
-        "pattern": "/:username",
+        "pattern": ":username",
         "parts": [
           {
             "type": "param",
@@ -43,7 +43,7 @@
           {
             "kind": "static",
             "orig": "posts",
-            "pattern": "/posts",
+            "pattern": "posts",
             "parts": [
               {
                 "type": "static",
@@ -54,7 +54,7 @@
           {
             "kind": "param",
             "orig": ":postId",
-            "pattern": "/:postId",
+            "pattern": ":postId",
             "parts": [
               {
                 "type": "param",
@@ -79,7 +79,7 @@
               {
                 "kind": "static",
                 "orig": "comments",
-                "pattern": "/comments",
+                "pattern": "comments",
                 "parts": [
                   {
                     "type": "static",

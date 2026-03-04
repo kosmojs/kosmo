@@ -13,7 +13,7 @@
   {
     "kind": "mixed",
     "orig": "item-:id-info",
-    "pattern": "/item-:id-info",
+    "pattern": "item-:id-info",
     "parts": [
       {
         "type": "static",

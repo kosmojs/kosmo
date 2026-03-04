@@ -19,7 +19,7 @@
       {
         "kind": "param",
         "orig": ":courseId",
-        "pattern": "/:courseId",
+        "pattern": ":courseId",
         "parts": [
           {
             "type": "param",
@@ -43,7 +43,7 @@
           {
             "kind": "static",
             "orig": "lessons",
-            "pattern": "/lessons",
+            "pattern": "lessons",
             "parts": [
               {
                 "type": "static",
@@ -54,7 +54,7 @@
           {
             "kind": "param",
             "orig": ":lessonId",
-            "pattern": "/:lessonId",
+            "pattern": ":lessonId",
             "parts": [
               {
                 "type": "param",
@@ -67,7 +67,7 @@
           {
             "kind": "static",
             "orig": "assignments",
-            "pattern": "/assignments",
+            "pattern": "assignments",
             "parts": [
               {
                 "type": "static",

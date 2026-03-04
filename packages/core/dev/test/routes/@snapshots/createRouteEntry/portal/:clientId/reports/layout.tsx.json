@@ -18,7 +18,7 @@
     {
       "kind": "param",
       "orig": ":clientId",
-      "pattern": "/:clientId",
+      "pattern": ":clientId",
       "parts": [
         {
           "type": "param",
@@ -31,7 +31,7 @@
     {
       "kind": "static",
       "orig": "reports",
-      "pattern": "/reports",
+      "pattern": "reports",
       "parts": [
         {
           "type": "static",

@@ -18,7 +18,7 @@
     {
       "kind": "param",
       "orig": ":category",
-      "pattern": "/:category",
+      "pattern": ":category",
       "parts": [
         {
           "type": "param",

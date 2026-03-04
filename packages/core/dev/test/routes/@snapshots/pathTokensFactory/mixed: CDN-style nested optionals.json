@@ -13,7 +13,7 @@
   {
     "kind": "mixed",
     "orig": ":name{@:version{.:min}}.js",
-    "pattern": "/:name{@:version{.:min}}.js",
+    "pattern": ":name{@:version{.:min}}.js",
     "parts": [
       {
         "type": "param",

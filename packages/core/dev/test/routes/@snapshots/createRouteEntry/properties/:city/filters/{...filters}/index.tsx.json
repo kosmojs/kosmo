@@ -18,7 +18,7 @@
     {
       "kind": "param",
       "orig": ":city",
-      "pattern": "/:city",
+      "pattern": ":city",
       "parts": [
         {
           "type": "param",
@@ -31,7 +31,7 @@
     {
       "kind": "static",
       "orig": "filters",
-      "pattern": "/filters",
+      "pattern": "filters",
       "parts": [
         {
           "type": "static",
