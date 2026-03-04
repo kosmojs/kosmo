@@ -86,7 +86,7 @@ describe("bodyparser", () => {
     });
   });
 
-  describe("form: URL-Encoded", () => {
+  describe("form: URL-encoded", () => {
     const form = { id: "0", page: "1" };
 
     for (const [unwrap, body] of [
@@ -194,8 +194,8 @@ describe("bodyparser", () => {
         ]);
 
         const raw = compress
-          ? Buffer.from("hello")
-          : zlib.gzipSync(Buffer.from("hello"));
+          ? zlib.gzipSync(Buffer.from("hello"))
+          : Buffer.from("hello");
 
         const ctx = await runMiddleware(
           stack.flatMap((e) => e.middleware),
