@@ -27,13 +27,13 @@
     "test": "vitest --root ../../.. --project core/dev"
   },
   "dependencies": {
+    "@topcli/spinner": "^4.2.1",
     "chokidar": "^5.0.0",
     "crc": "^4.3.2",
     "dotenv": "^17.3.1",
     "esbuild": "^0.27.3",
     "handlebars": "^4.7.8",
     "mime-types": "^3.0.2",
-    "ora": "^9.3.0",
     "path-to-regexp": "^8.3.0",
     "picomatch": "^4.0.3",
     "tfusion": "^0.0.23",
