@@ -1,6 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
-import FormData from "form-data";
 import Koa, { type Next } from "koa";
 import compose from "koa-compose";
 import { type InjectPayload, inject } from "light-my-request";
@@ -38,6 +37,7 @@ export const middlewareStackBuilder = (
       return {
         name: "",
         path: "",
+        pathPattern: "",
         file: "",
         useWrappers: [],
         definitionItems: defineRouteFactory(({ GET }) => [
@@ -57,7 +57,7 @@ export const middlewareStackBuilder = (
 };
 
 type Payload = Partial<{
-  params: Record<string, unknown>;
+  path: string;
   json: unknown;
   form: Record<string, unknown> | FormData;
   raw: Buffer | string;
@@ -65,15 +65,13 @@ type Payload = Partial<{
 
 export const runMiddleware = async <T = any>(
   middleware: Array<(ctx: T, next: Next) => void | Promise<void>>,
-  payload?: Payload,
+  { path = "/", ...payload }: Payload,
 ) => {
-  const url = "/";
   const app = new Koa();
 
   const payloadOptions = ({ json, form, raw }: Partial<Payload>) => {
     if (form instanceof FormData) {
       return {
-        headers: form.getHeaders(),
         payload: form,
       };
     }
@@ -122,17 +120,13 @@ export const runMiddleware = async <T = any>(
     inject(
       (req, res) => resolve({ req, res }),
       payload
-        ? { method: "POST", url, ...payloadOptions(payload) }
-        : { method: "GET", url },
+        ? { method: "POST", url: path, ...payloadOptions(payload) }
+        : { method: "GET", url: path },
     );
   });
 
   // create real Koa context
   const ctx = app.createContext(req, res);
-
-  Object.assign(ctx, {
-    ...(payload?.params ? { params: payload.params } : {}),
-  });
 
   const fn = compose(middleware);
   await fn(ctx as never);

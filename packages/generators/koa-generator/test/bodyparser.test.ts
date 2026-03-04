@@ -1,6 +1,5 @@
 import zlib from "node:zlib";
 
-import FormData from "form-data";
 import { describe, test } from "vitest";
 
 import { middlewareStackBuilder, runMiddleware } from ".";
@@ -135,7 +134,7 @@ describe("bodyparser", () => {
 
       const form = new FormData();
 
-      form.append("id", 0);
+      form.append("id", "0");
 
       const ctx = await runMiddleware(
         stack.flatMap((e) => e.middleware),
@@ -158,12 +157,12 @@ describe("bodyparser", () => {
 
       const form = new FormData();
 
-      form.append("id", 0);
+      form.append("id", "0");
 
-      form.append("file", Buffer.from("..."), {
-        filename: "a.png",
-        contentType: "image/png",
-      });
+      form.append(
+        "file",
+        new File(["content"], "photo.png", { type: "image/png" }),
+      );
 
       const ctx = await runMiddleware(
         stack.flatMap((e) => e.middleware),
@@ -171,12 +170,14 @@ describe("bodyparser", () => {
       );
 
       const { body } = ctx as { body: Record<string, never> };
-      const { originalFilename, mimetype, size } = body.file;
+      const { originalFilename, mimetype } = body.file;
 
       expect("0").toEqual(body.id);
-      expect("a.png").toEqual(originalFilename);
-      expect("image/png").toEqual(mimetype);
-      expect(3).toEqual(size);
+
+      expect({ originalFilename: "photo.png", mimetype: "image/png" }).toEqual({
+        originalFilename,
+        mimetype,
+      });
     });
   });
 

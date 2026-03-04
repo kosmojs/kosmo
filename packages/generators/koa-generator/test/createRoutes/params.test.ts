@@ -1,70 +1,97 @@
 import { describe, expect, test } from "vitest";
 
+import { pathTokensFactory } from "@kosmojs/dev";
+
 import { middlewareStackBuilder, runMiddleware } from "..";
 
-describe("params", () => {
-  test("splat params", async () => {
-    const stack = middlewareStackBuilder(
-      [
+import { defineRouteFactory } from "@src/index";
+
+describe("createRouterRoutes", () => {
+  describe("params", () => {
+    test("splat params", async () => {
+      const [, pathPattern] = pathTokensFactory("{...path}");
+
+      const stack = middlewareStackBuilder(
+        [
+          {
+            pathPattern,
+            params: ["path"],
+            definitionItems: defineRouteFactory(({ GET }) => [
+              GET((ctx) => {
+                ctx.body = ctx.validated.params;
+              }),
+            ]),
+          },
+        ],
+        {},
+      );
+
+      const ctx = await runMiddleware(
+        stack.flatMap((e) => e.middleware),
         {
-          params: [["path", true]],
+          path: "/a/b/c",
         },
-      ],
-      {},
-    );
+      );
 
-    const ctx = await runMiddleware(
-      stack.flatMap((e) => e.middleware),
-      { params: { path: "a/b/c" } },
-    );
+      expect(ctx.body).toEqual({ path: ["a", "b", "c"] });
+    });
 
-    expect(ctx.params.path).toEqual("a/b/c");
-    expect(ctx.validated.params.path).toEqual(["a", "b", "c"]);
-  });
+    test("numeric params", async () => {
+      const [, pathPattern] = pathTokensFactory(":id/:name");
 
-  test("numeric params", async () => {
-    const stack = middlewareStackBuilder(
-      [
+      const stack = middlewareStackBuilder(
+        [
+          {
+            pathPattern: `/${pathPattern}`,
+            params: ["id", "name"],
+            numericParams: ["id"],
+            definitionItems: defineRouteFactory(({ GET }) => [
+              GET((ctx) => {
+                ctx.body = ctx.validated.params;
+              }),
+            ]),
+          },
+        ],
+        {},
+      );
+
+      const ctx = await runMiddleware(
+        stack.flatMap((e) => e.middleware),
         {
-          params: [
-            ["id", false],
-            ["name", false],
-          ],
-          numericParams: ["id"],
+          path: "/0/name",
         },
-      ],
-      {},
-    );
+      );
 
-    const ctx = await runMiddleware(
-      stack.flatMap((e) => e.middleware),
-      { params: { id: "0", name: "test" } },
-    );
+      expect(ctx.body).toEqual({ id: 0, name: "name" });
+    });
 
-    expect(ctx.params.id).toEqual("0");
-    expect(ctx.validated.params.id).toEqual(0);
+    test("splat numeric params", async () => {
+      const [, pathPattern] = pathTokensFactory("{...ids}");
 
-    expect(ctx.params.name).toEqual("test");
-    expect(ctx.validated.params.name).toEqual("test");
-  });
+      const stack = middlewareStackBuilder(
+        [
+          {
+            pathPattern,
+            params: ["ids"],
+            numericParams: ["ids"],
+            definitionItems: defineRouteFactory(({ GET }) => [
+              GET((ctx) => {
+                ctx.body = ctx.validated.params;
+              }),
+            ]),
+          },
+        ],
+        {},
+      );
 
-  test("splat numeric params", async () => {
-    const stack = middlewareStackBuilder(
-      [
+      const ctx = await runMiddleware(
+        stack.flatMap((e) => e.middleware),
         {
-          params: [["ids", true]],
-          numericParams: ["ids"],
+          path: "/1/2/3",
         },
-      ],
-      {},
-    );
+      );
 
-    const ctx = await runMiddleware(
-      stack.flatMap((e) => e.middleware),
-      { params: { ids: "1/2/3" } },
-    );
-
-    expect(ctx.params.ids).toEqual("1/2/3");
-    expect(ctx.validated.params.ids).toEqual([1, 2, 3]);
+      expect(ctx.body).toEqual({ ids: [1, 2, 3] });
+    });
   });
 });
