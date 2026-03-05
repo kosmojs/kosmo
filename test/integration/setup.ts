@@ -4,6 +4,7 @@ import { createServer as createNodeServer } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
+import { serve } from "@hono/node-server";
 import crc from "crc/crc32";
 import got, { type Response } from "got";
 import { compile } from "path-to-regexp";
@@ -29,7 +30,6 @@ const project = {
 const pkgsDir = resolve(import.meta.dirname, "../../packages");
 const pnpmDir = resolve(tmpdir(), ".kosmojs/pnpm-store");
 
-const api = inject("API");
 const csr = inject("CSR");
 const ssr = inject("SSR");
 
@@ -56,12 +56,12 @@ export const setupTestProject = async (opt?: {
   framework?: keyof typeof FRAMEWORKS;
   frameworkOptions?: Record<string, unknown>;
   backend?: keyof typeof BACKEND_FRAMEWORKS;
-  skip?: (a: { ssr: boolean; csr: boolean; api: boolean }) => boolean;
+  skip?: (a: { ssr: boolean; csr: boolean }) => boolean;
 }) => {
-  const { framework, frameworkOptions, backend = "koa" } = { ...opt };
+  const { framework, frameworkOptions, backend } = { ...opt };
 
   const skip = opt?.skip //
-    ? opt.skip({ csr, ssr, api })
+    ? opt.skip({ csr, ssr })
     : false;
 
   const port = await findFreePort();
@@ -172,7 +172,7 @@ export const setupTestProject = async (opt?: {
       };
     }
 
-    if (api) {
+    if (backend) {
       await build({
         root: createPath.src(),
       });
@@ -190,7 +190,10 @@ export const setupTestProject = async (opt?: {
         )
       ).then((e) => e.default);
 
-      const server = await app.listen(port);
+      const server =
+        backend === "hono"
+          ? serve({ fetch: app.fetch, port })
+          : app.listen(port);
 
       return async () => {
         await server.close();
@@ -233,7 +236,7 @@ export const setupTestProject = async (opt?: {
       {
         name: sourceFolder,
         port,
-        backend,
+        ...(backend ? { backend } : {}),
         ...(framework ? { framework } : {}),
         ...(ssr ? { ssr: true } : {}),
       },

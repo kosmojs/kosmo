@@ -59,6 +59,7 @@ export default defineConfig({
       }),
 
       setupFactory("generators/koa-generator"),
+      setupFactory("generators/hono-generator"),
 
       setupFactory("generators/openapi-generator", {
         testTimeout: 30_000,
@@ -93,10 +94,7 @@ export default defineConfig({
       setupFactory("generators/ssr-generator"),
 
       setupFactory("integration:api", {
-        include: ["test/integration/api/*.test.ts"],
-        provide: {
-          API: "true",
-        },
+        include: ["test/integration/{koa,hono}/*.test.ts"],
       }),
 
       setupFactory("integration:csr", {

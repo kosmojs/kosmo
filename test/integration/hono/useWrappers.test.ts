@@ -27,7 +27,7 @@ const {
   withApiResponse,
   startServer,
   teardown,
-} = await setupTestProject({ backend: "koa" });
+} = await setupTestProject({ backend: "hono" });
 
 const { createImport } = pathResolver({ sourceFolder });
 
@@ -41,10 +41,10 @@ beforeAll(async () => {
           import { use } from "${createImport.libApi()}";
           export default [
             use((ctx, next) => {
-              if (!ctx.state.stack) {
-                ctx.state.stack = []
+              if (!ctx.var.stack) {
+                ctx.set("stack", []);
               }
-              ctx.state.stack.push("${name}/${file}");
+              ctx.var.stack.push("${name}/${file}");
               return next();
             }),
           ];
@@ -54,8 +54,8 @@ beforeAll(async () => {
         import { defineRoute } from "${createImport.libApi(name)}";
         export default defineRoute(({ GET }) => [
           GET(async (ctx) => {
-            ctx.state.stack?.push("${name}/${file}");
-            ctx.body = ctx.state.stack || [ "${name}/${file}" ];
+            ctx.var.stack?.push("${name}/${file}");
+            return ctx.json(ctx.var.stack || [ "${name}/${file}" ]);
           }),
         ]);
       `;
@@ -75,7 +75,7 @@ describe("API - useWrappers", async () => {
     test(snapshotName, async () => {
       await withApiResponse(name, params, async ({ response }) => {
         await expect(response.body).toMatchFileSnapshot(
-          `@snapshots/useWrappers/${snapshotName}.json`,
+          `../@snapshots/useWrappers/${snapshotName}.json`,
         );
       });
     });

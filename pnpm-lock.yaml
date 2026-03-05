@@ -14,6 +14,9 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.8
         version: 2.29.8(@types/node@25.3.2)
+      '@hono/node-server':
+        specifier: ^1.19.9
+        version: 1.19.9(hono@4.12.3)
       '@kosmojs/api':
         specifier: workspace:^
         version: link:packages/core/api
@@ -182,6 +185,9 @@ importers:
 
   packages/core/dev:
     dependencies:
+      '@topcli/spinner':
+        specifier: ^4.2.1
+        version: 4.2.1
       chokidar:
         specifier: ^5.0.0
         version: 5.0.0
@@ -200,9 +206,6 @@ importers:
       mime-types:
         specifier: ^3.0.2
         version: 3.0.2
-      ora:
-        specifier: ^9.3.0
-        version: 9.3.0
       path-to-regexp:
         specifier: ^8.3.0
         version: 8.3.0
@@ -284,6 +287,9 @@ importers:
       '@kosmojs/fetch-generator':
         specifier: workspace:^
         version: link:../fetch-generator
+      '@kosmojs/hono-generator':
+        specifier: workspace:^
+        version: link:../hono-generator
       '@kosmojs/koa-generator':
         specifier: workspace:^
         version: link:../koa-generator
@@ -305,6 +311,37 @@ importers:
       '@kosmojs/vue-generator':
         specifier: workspace:^
         version: link:../vue-generator
+
+  packages/generators/hono-generator:
+    dependencies:
+      '@kosmojs/dev':
+        specifier: workspace:^
+        version: link:../../core/dev
+      crc:
+        specifier: ^4.3.2
+        version: 4.3.2
+      esbuild:
+        specifier: ^0.27.3
+        version: 0.27.3
+      picomatch:
+        specifier: ^4.0.3
+        version: 4.0.3
+    devDependencies:
+      '@hono/node-server':
+        specifier: ^1.19.9
+        version: 1.19.9(hono@4.12.3)
+      '@kosmojs/api':
+        specifier: workspace:^
+        version: link:../../core/api
+      '@types/picomatch':
+        specifier: ^4.0.2
+        version: 4.0.2
+      hono:
+        specifier: ^4.12.3
+        version: 4.12.3
+      path-to-regexp:
+        specifier: ^8.3.0
+        version: 8.3.0
 
   packages/generators/koa-generator:
     dependencies:
@@ -339,15 +376,9 @@ importers:
       '@types/picomatch':
         specifier: ^4.0.2
         version: 4.0.2
-      '@types/qs':
-        specifier: ^6.14.0
-        version: 6.14.0
       cookie:
         specifier: ^1.1.1
         version: 1.1.1
-      form-data:
-        specifier: ^4.0.5
-        version: 4.0.5
       formidable:
         specifier: ^3.5.4
         version: 3.5.4
@@ -360,15 +391,12 @@ importers:
       light-my-request:
         specifier: ^6.6.0
         version: 6.6.0
-      qs:
-        specifier: ^6.15.0
-        version: 6.15.0
+      path-to-regexp:
+        specifier: ^8.3.0
+        version: 8.3.0
       raw-body:
         specifier: ^3.0.2
         version: 3.0.2
-      typebox:
-        specifier: ^1.1.5
-        version: 1.1.5
 
   packages/generators/openapi-generator:
     dependencies:
@@ -958,6 +986,12 @@ packages:
       '@noble/hashes':
         optional: true
 
+  '@hono/node-server@1.19.9':
+    resolution: {integrity: sha512-vHL6w3ecZsky+8P5MD+eFfaGTyCeOHUIFYMGpQGbrBTSmNNoxv0if69rEZ5giu36weC5saFuznL411gRX7bJDw==}
+    engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: ^4
+
   '@inquirer/ansi@1.0.2':
     resolution: {integrity: sha512-S8qNSZiYzFd0wAcyG5AXCvUHC5Sr7xpZ9wZ2py9XR88jUz8wooStVx5M6dRzczbBWjic9NP7+rY0Xi7qqK/aMQ==}
     engines: {node: '>=18'}
@@ -1339,6 +1373,10 @@ packages:
     resolution: {integrity: sha512-JZlVFE6/dYpP9tQmV0/ADfn32L9uFarHWxfcRhReKUnljz1ZiUM5zpX+PH8h5CJs6lao3TuFqnPm9IJJCEkE2w==}
     engines: {node: '>=10.8'}
 
+  '@topcli/spinner@4.2.1':
+    resolution: {integrity: sha512-JY+3i4ZFunrSazc6UnJfWiuTF8L357+m052Xq093H0l9w5WLZ/JTtmJZVHBi3Lptvv/X4C2u6x7r6rDJaE4BSw==}
+    engines: {node: '>=22'}
+
   '@ts-morph/common@0.28.1':
     resolution: {integrity: sha512-W74iWf7ILp1ZKNYXY5qbddNaml7e9Sedv5lvU1V8lftlitkc9Pq1A+jlH23ltDgWYeZFFEqGCD1Ies9hqu3O+g==}
 
@@ -1642,9 +1680,6 @@ packages:
     resolution: {integrity: sha512-hsU18Ae8CDTR6Kgu9DYf0EbCr/a5iGL0rytQDobUcdpYOKokk8LEjVphnXkDkgpi0wYVsqrXuP0bZxJaTqdgoA==}
     engines: {node: '>= 0.4'}
 
-  asynckit@0.4.0:
-    resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
-
   available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
@@ -1794,10 +1829,6 @@ packages:
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
 
-  combined-stream@1.0.8:
-    resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
-    engines: {node: '>= 0.8'}
-
   commander@12.1.0:
     resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
     engines: {node: '>=18'}
@@ -1912,10 +1943,6 @@ packages:
   define-properties@1.2.1:
     resolution: {integrity: sha512-8QmQKqEASLd5nx0U1B1okLElbUuuttJ/AnYmRXbbbGDWh6uS208EjD4Xqq/I9wK7u0v6O08XhTWnt5XtEbR6Dg==}
     engines: {node: '>= 0.4'}
-
-  delayed-stream@1.0.0:
-    resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
-    engines: {node: '>=0.4.0'}
 
   delegates@1.0.0:
     resolution: {integrity: sha512-bd2L678uiWATM6m5Z1VzNCErI3jiGzt6HGY8OVICs40JQq/HALfbyNJmp0UDakEY4pMMaN0Ly5om/B1VI/+xfQ==}
@@ -2117,10 +2144,6 @@ packages:
     resolution: {integrity: sha512-G6NsmEW15s0Uw9XnCg+33H3ViYRyiM0hMrMhhqQOR8NFc5GhYrI+6I3u7OTw7b91J2g8rtvMBZJDbcGb2YUniw==}
     engines: {node: '>= 18'}
 
-  form-data@4.0.5:
-    resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
-    engines: {node: '>= 6'}
-
   formidable@3.5.4:
     resolution: {integrity: sha512-YikH+7CUTOtP44ZTnUhR7Ic2UASBPOqmaRkRKxRbywPTe5VxF7RRCck4af9wutiZ/QKM5nME9Bie2fFaPz5Gug==}
     engines: {node: '>=14.0.0'}
@@ -2254,6 +2277,10 @@ packages:
 
   headers-polyfill@4.0.3:
     resolution: {integrity: sha512-IScLbePpkvO846sIwOtOTDjutRMWdXdJmXdMvk6gCBHxFO8d+QKOQedyZSxFTTFYRSmlgSTDtXqqq4pcenBXLQ==}
+
+  hono@4.12.3:
+    resolution: {integrity: sha512-SFsVSjp8sj5UumXOOFlkZOG6XS9SJDKw0TbwFeV+AJ8xlST8kxK5Z/5EYa111UY8732lK2S/xB653ceuaoGwpg==}
+    engines: {node: '>=16.9.0'}
 
   hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
@@ -4162,6 +4189,10 @@ snapshots:
       '@noble/hashes': 1.8.0
     optional: true
 
+  '@hono/node-server@1.19.9(hono@4.12.3)':
+    dependencies:
+      hono: 4.12.3
+
   '@inquirer/ansi@1.0.2': {}
 
   '@inquirer/confirm@5.1.21(@types/node@25.3.2)':
@@ -4569,6 +4600,10 @@ snapshots:
       '@stoplight/yaml-ast-parser': 0.0.50
       tslib: 2.8.1
 
+  '@topcli/spinner@4.2.1':
+    dependencies:
+      cli-spinners: 3.4.0
+
   '@ts-morph/common@0.28.1':
     dependencies:
       minimatch: 10.2.4
@@ -4941,8 +4976,6 @@ snapshots:
 
   async-function@1.0.0: {}
 
-  asynckit@0.4.0: {}
-
   available-typed-arrays@1.0.7:
     dependencies:
       possible-typed-array-names: 1.1.0
@@ -5104,10 +5137,6 @@ snapshots:
 
   color-name@1.1.4: {}
 
-  combined-stream@1.0.8:
-    dependencies:
-      delayed-stream: 1.0.0
-
   commander@12.1.0: {}
 
   concat-map@0.0.1: {}
@@ -5226,8 +5255,6 @@ snapshots:
       define-data-property: 1.1.4
       has-property-descriptors: 1.0.2
       object-keys: 1.1.1
-
-  delayed-stream@1.0.0: {}
 
   delegates@1.0.0: {}
 
@@ -5490,14 +5517,6 @@ snapshots:
 
   form-data-encoder@4.1.0: {}
 
-  form-data@4.0.5:
-    dependencies:
-      asynckit: 0.4.0
-      combined-stream: 1.0.8
-      es-set-tostringtag: 2.1.0
-      hasown: 2.0.2
-      mime-types: 2.1.35
-
   formidable@3.5.4:
     dependencies:
       '@paralleldrive/cuid2': 2.3.1
@@ -5651,6 +5670,8 @@ snapshots:
       function-bind: 1.1.2
 
   headers-polyfill@4.0.3: {}
+
+  hono@4.12.3: {}
 
   hookable@5.5.3: {}
 
