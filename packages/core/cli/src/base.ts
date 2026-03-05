@@ -14,12 +14,13 @@ export type SourceFolder = {
 };
 
 export enum FRAMEWORKS {
-  solid = "SolidJS",
   react = "React",
   vue = "Vue",
+  solid = "SolidJS",
 }
 
 export enum BACKEND_FRAMEWORKS {
+  hono = "Hono",
   koa = "Koa",
 }
 

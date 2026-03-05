@@ -1,4 +1,5 @@
 export { default as fetchGenerator } from "@kosmojs/fetch-generator";
+export { default as honoGenerator } from "@kosmojs/hono-generator";
 export { default as koaGenerator } from "@kosmojs/koa-generator";
 export { default as openapiGenerator } from "@kosmojs/openapi-generator";
 export { default as reactGenerator } from "@kosmojs/react-generator";

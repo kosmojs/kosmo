@@ -16,6 +16,7 @@ import {
 } from "@kosmojs/dev";
 import {
   fetchGenerator,
+  honoGenerator,
   koaGenerator,
   reactGenerator,
   solidGenerator,
@@ -226,6 +227,12 @@ export const createSourceFolder = async (
       name: "koaGenerator",
       options: "",
       instance: koaGenerator(),
+    });
+  } else if (backendFramework === "hono") {
+    generators.push({
+      name: "honoGenerator",
+      options: "",
+      instance: honoGenerator(),
     });
   }
 

@@ -1,0 +1,35 @@
+import type { RouteDefinitionItem } from "@kosmojs/api";
+
+import type {
+  ParameterizedMiddleware,
+} from "{{ createImport "libApi" }}";
+
+import {
+  type DefineRouteFactory,
+  defineRouteFactory,
+} from "{{ createImport "lib" "api:route" }}";
+
+type ParamsTuple = [{{#each paramsSchema}}unknown?,{{/each}}];
+
+type ParamsMapper<T extends ParamsTuple> = {
+  {{#each paramsSchema}}
+  "{{name}}"{{#unless isRequired}}?{{/unless}}: T[{{@index}}] extends undefined
+    ? string
+    : T[{{@index}}];
+  {{/each}}
+};
+
+export const defineRoute: <
+  ParamsT extends ParamsTuple = [
+    {{#each paramsSchema}}string{{#unless isRequired}}?{{/unless}},
+    {{/each}}
+  ],
+  VariablesT extends object = object,
+  BindingsT extends object = object
+>(
+  factory: DefineRouteFactory<ParamsMapper<ParamsT>, VariablesT, BindingsT>,
+) => Array<
+  RouteDefinitionItem<
+    ParameterizedMiddleware<ParamsMapper<ParamsT>, VariablesT, BindingsT>
+  >
+> = (factory) => defineRouteFactory(factory);

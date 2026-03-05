@@ -20,13 +20,14 @@
     "build": "esbuilder src/index.ts"
   },
   "dependencies": {
+    "@kosmojs/hono-generator": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
     "@kosmojs/fetch-generator": "workspace:^",
     "@kosmojs/typebox-generator": "workspace:^",
     "@kosmojs/openapi-generator": "workspace:^",
-    "@kosmojs/solid-generator": "workspace:^",
     "@kosmojs/react-generator": "workspace:^",
     "@kosmojs/vue-generator": "workspace:^",
+    "@kosmojs/solid-generator": "workspace:^",
     "@kosmojs/ssr-generator": "workspace:^"
   }
 }
