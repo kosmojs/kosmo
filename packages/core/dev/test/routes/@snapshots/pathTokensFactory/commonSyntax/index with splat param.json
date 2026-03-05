@@ -1,0 +1,15 @@
+[
+  {
+    "kind": "param",
+    "orig": "{...path}",
+    "pattern": "{/*path}",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "splat",
+        "name": "path",
+        "const": "path"
+      }
+    ]
+  }
+]

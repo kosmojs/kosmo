@@ -22,38 +22,14 @@
   "children": [
     {
       "index": {
-        "id": "properties_filters_index_tsx_1571931483",
-        "name": "properties/filters",
+        "id": "properties_city_filters_filters_index_tsx_1192904431",
+        "name": "properties/[city]/filters/{...filters}",
         "folder": "pages",
-        "file": "properties/filters/index.tsx",
-        "pathTokens": [
-          {
-            "kind": "static",
-            "orig": "filters",
-            "pattern": "filters",
-            "parts": [
-              {
-                "type": "static",
-                "value": "filters"
-              }
-            ]
-          }
-        ],
-        "pathPattern": "properties/filters"
-      },
-      "parent": "properties",
-      "children": []
-    },
-    {
-      "index": {
-        "id": "properties_city_filters_filters_index_tsx_2966262615",
-        "name": "properties/:city/filters/{...filters}",
-        "folder": "pages",
-        "file": "properties/:city/filters/{...filters}/index.tsx",
+        "file": "properties/[city]/filters/{...filters}/index.tsx",
         "pathTokens": [
           {
             "kind": "param",
-            "orig": ":city",
+            "orig": "[city]",
             "pattern": ":city",
             "parts": [
               {
@@ -90,6 +66,30 @@
           }
         ],
         "pathPattern": "properties/:city/filters{/*filters}"
+      },
+      "parent": "properties",
+      "children": []
+    },
+    {
+      "index": {
+        "id": "properties_filters_index_tsx_1571931483",
+        "name": "properties/filters",
+        "folder": "pages",
+        "file": "properties/filters/index.tsx",
+        "pathTokens": [
+          {
+            "kind": "static",
+            "orig": "filters",
+            "pattern": "filters",
+            "parts": [
+              {
+                "type": "static",
+                "value": "filters"
+              }
+            ]
+          }
+        ],
+        "pathPattern": "properties/filters"
       },
       "parent": "properties",
       "children": []

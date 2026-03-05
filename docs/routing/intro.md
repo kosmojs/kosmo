@@ -37,7 +37,7 @@ api/
     index.ts          ➜ /api
   users/
     index.ts          ➜ /api/users
-    :id/
+    [id]/
       index.ts        ➜ /api/users/:id
 
 pages/
@@ -45,13 +45,13 @@ pages/
     index.tsx          ➜ /
   users/
     index.tsx          ➜ /users
-    :id/
+    [id]/
       index.tsx        ➜ /users/:id
 ```
 
 Notice how the structure mirrors itself between API and pages.
 
-If you have a `/users/:id` page, you'll likely have a corresponding `/api/users/:id` endpoint to fetch that user's data.
+If you have a `/users/[id]` page, you'll likely have a corresponding `/api/users/[id]` endpoint to fetch that user's data.
 
 The parallel structure makes it easy to understand how your frontend and backend relate to each other.
 
@@ -83,7 +83,7 @@ and prevents utility files from cluttering your route directories.
 
 The directory-based routing structure naturally supports nested routes.
 
-If you create `api/users/:id/posts/index.ts`, you get an endpoint at `/api/users/:id/posts`.
+If you create `api/users/[id]/posts/index.ts`, you get an endpoint at `/api/users/[id]/posts`.
 This nesting can go as deep as your application needs.
 
 For client pages, nested routes often benefit from layout components

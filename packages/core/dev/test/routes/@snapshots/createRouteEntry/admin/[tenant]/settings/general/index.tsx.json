@@ -7,6 +7,7 @@
     {
       "kind": "static",
       "orig": "admin",
+      "pattern": "admin",
       "parts": [
         {
           "type": "static",
@@ -17,6 +18,7 @@
     {
       "kind": "param",
       "orig": "[tenant]",
+      "pattern": ":tenant",
       "parts": [
         {
           "type": "param",
@@ -29,6 +31,7 @@
     {
       "kind": "static",
       "orig": "settings",
+      "pattern": "settings",
       "parts": [
         {
           "type": "static",
@@ -39,6 +42,7 @@
     {
       "kind": "static",
       "orig": "general",
+      "pattern": "general",
       "parts": [
         {
           "type": "static",
@@ -46,5 +50,6 @@
         }
       ]
     }
-  ]
+  ],
+  "pathPattern": "admin/:tenant/settings/general"
 }

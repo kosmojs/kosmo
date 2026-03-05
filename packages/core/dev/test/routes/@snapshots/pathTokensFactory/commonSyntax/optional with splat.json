@@ -1,0 +1,28 @@
+[
+  {
+    "kind": "param",
+    "orig": "{optional}",
+    "pattern": "{/:optional}",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "optional",
+        "name": "optional",
+        "const": "optional"
+      }
+    ]
+  },
+  {
+    "kind": "param",
+    "orig": "{...splat}",
+    "pattern": "{/*splat}",
+    "parts": [
+      {
+        "type": "param",
+        "kind": "splat",
+        "name": "splat",
+        "const": "splat"
+      }
+    ]
+  }
+]

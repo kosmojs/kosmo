@@ -7,6 +7,7 @@
     {
       "kind": "static",
       "orig": "portal",
+      "pattern": "portal",
       "parts": [
         {
           "type": "static",
@@ -17,6 +18,7 @@
     {
       "kind": "param",
       "orig": "[clientId]",
+      "pattern": ":clientId",
       "parts": [
         {
           "type": "param",
@@ -29,6 +31,7 @@
     {
       "kind": "static",
       "orig": "reports",
+      "pattern": "reports",
       "parts": [
         {
           "type": "static",
@@ -36,5 +39,6 @@
         }
       ]
     }
-  ]
+  ],
+  "pathPattern": "portal/:clientId/reports"
 }

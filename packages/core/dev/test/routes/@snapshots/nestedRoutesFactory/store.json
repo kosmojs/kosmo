@@ -22,14 +22,14 @@
   "children": [
     {
       "layout": {
-        "id": "store_category_sort_layout_tsx_2585651172",
-        "name": "store/:category/sort",
+        "id": "store_category_sort_layout_tsx_1255246087",
+        "name": "store/[category]/sort",
         "folder": "pages",
-        "file": "store/:category/sort/layout.tsx",
+        "file": "store/[category]/sort/layout.tsx",
         "pathTokens": [
           {
             "kind": "param",
-            "orig": ":category",
+            "orig": "[category]",
             "pattern": ":category",
             "parts": [
               {
@@ -58,14 +58,14 @@
       "children": [
         {
           "index": {
-            "id": "store_category_sort_sortBy_index_tsx_38398676",
-            "name": "store/:category/sort/:sortBy",
+            "id": "store_category_sort_sortBy_index_tsx_282881663",
+            "name": "store/[category]/sort/[sortBy]",
             "folder": "pages",
-            "file": "store/:category/sort/:sortBy/index.tsx",
+            "file": "store/[category]/sort/[sortBy]/index.tsx",
             "pathTokens": [
               {
                 "kind": "param",
-                "orig": ":sortBy",
+                "orig": "[sortBy]",
                 "pattern": ":sortBy",
                 "parts": [
                   {
@@ -79,21 +79,21 @@
             ],
             "pathPattern": "store/:category/sort/:sortBy"
           },
-          "parent": "store/:category/sort",
+          "parent": "store/[category]/sort",
           "children": []
         }
       ]
     },
     {
       "index": {
-        "id": "store_category_filters_filters_index_tsx_462992166",
-        "name": "store/:category/filters/{...filters}",
+        "id": "store_category_filters_filters_index_tsx_2600177157",
+        "name": "store/[category]/filters/{...filters}",
         "folder": "pages",
-        "file": "store/:category/filters/{...filters}/index.tsx",
+        "file": "store/[category]/filters/{...filters}/index.tsx",
         "pathTokens": [
           {
             "kind": "param",
-            "orig": ":category",
+            "orig": "[category]",
             "pattern": ":category",
             "parts": [
               {

@@ -10,7 +10,7 @@ head:
 ---
 
 At first glance, directory-based routing might seem more verbose compared to file-based routing systems.
-You might wonder why `api/users/:id/index.ts` is better than simply `api/users/:id.ts`.
+You might wonder why `api/users/[id]/index.ts` is better than simply `api/users/[id].ts`.
 The answer becomes clear as your application scales.
 
 ### ⚠️ File-Based Routing Limitations
@@ -21,7 +21,7 @@ In file-based routing systems, each route is a single file. Consider a typical A
 api/
   users/
     index.ts           ➜ Handler for /users
-    :id.ts             ➜ Handler for /users/:id
+    [id].ts            ➜ Handler for /users/:id
     schema.ts          ➜ Validation schemas... for which route?
     auth.ts            ➜ Authorization... for which endpoint?
     utils.ts           ➜ Helpers... used by what?
@@ -43,7 +43,7 @@ api/
     index.ts           ➜ Handler for /users
     schema.ts          ➜ Clearly for /users route
 
-    :id/
+    [id]/
       index.ts         ➜ Handler for /users/:id
       permissions.ts   ➜ Obviously for this endpoint
 
@@ -65,7 +65,7 @@ Each route has its own namespace. Name collision? Impossible.
 Want to add validation? Just create `validation.ts` in that route's folder.
 
 **Clear ownership:**
-Looking at `api/users/:id/permissions.ts`, you immediately know it's for the `/users/:id` endpoint.
+Looking at `api/users/[id]/permissions.ts`, you immediately know it's for the `/users/[id]` endpoint.
 No need to trace imports or read code to understand the relationship.
 
 **Self-documenting structure:**
@@ -79,7 +79,7 @@ api/
   products/
     index.ts
 
-    :id/
+    [id]/
       index.ts
       cache.ts
       pricing.ts
@@ -88,7 +88,7 @@ api/
         index.ts
         moderation.ts
 
-        :reviewId/
+        [reviewId]/
           index.ts
           flags.ts
 ```

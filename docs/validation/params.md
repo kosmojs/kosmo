@@ -23,11 +23,11 @@ or perhaps it should fall within a certain range.
 `KosmoJS` lets you refine parameter types through a tuple passed as the first type argument to `defineRoute`.
 This tuple uses positional parameters that align with your route's parameter order.
 
-Consider a route at `api/users/:id/index.ts` where you want to ensure the ID is a number.
+Consider a route at `api/users/[id]/index.ts` where you want to ensure the ID is a number.
 You specify this by passing `[number]` as the first type argument `defineRoute`:
 
-```ts [api/users/:id/index.ts]
-import { defineRoute } from "_/front/api/users/:id";
+```ts [api/users/[id]/index.ts]
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute<[
   number // validate id as number // [!code hl]
@@ -54,8 +54,8 @@ but `ctx.validated.params` is what you'll typically use when you've provided typ
 
 You can refine parameters further by using `TRefine` (globally available, no need to import):
 
-```ts [api/users/:id/index.ts]
-import { defineRoute } from "_/front/api/users/:id";
+```ts [api/users/[id]/index.ts]
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute<[
   // validate id as a positive integer // [!code hl]
@@ -76,10 +76,10 @@ the second argument refines the second parameter, and so on.
 
 All positions are optional, so you can refine just the parameters that need it.
 
-For a route at `api/users/:id/:view/index.ts`:
+For a route at `api/users/[id]/[view]/index.ts`:
 
-```ts [api/users/:id/:view/index.ts]
-import { defineRoute } from "_/front/api/users/:id/:view";
+```ts [api/users/[id]/[view]/index.ts]
+import { defineRoute } from "_/front/api/users/[id]/[view]";
 
 export default defineRoute<[
   // validate id as a positive integer // [!code hl]
@@ -97,5 +97,5 @@ export default defineRoute<[
 If you only need to refine the first parameter, you can omit the second argument entirely.
 
 Also, position-based validation is name-agnostic - params refinements doesn't depend on parameter names.
-If you refactor your route from `users/:id` to `users/:userId`,
+If you refactor your route from `users/[id]` to `users/[userId]`,
 positional refinements still works without any changes.

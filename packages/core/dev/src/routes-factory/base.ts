@@ -11,16 +11,20 @@ import type {
 /**
  * Parse a filesystem route path into structured PathToken array.
  *
- * Uses path-to-regexp v8 AST for parsing, with two adaptations:
- *   - {...param} splat notation is transformed to {/*param}
- *   - Leading { in segments gets / restored (stripped by path split)
+ * Uses path-to-regexp v8 AST for parsing, with directory-friendly syntax:
+ *   - [param]     => required param - :param
+ *   - {param}     => optional param - {:param}
+ *   - {...param}  => splat - {*param}
  *
- * Supports all path-to-regexp v8 patterns including nested optional groups:
+ * Direct :param syntax is prohibited outside {} to avoid ambiguity.
+ * Inside {} it is treated as path-to-regexp power syntax and used as-is.
  *
- *   Required:  :name, :id, v:version
- *   Optional:  {:name}, {.:format}, {-v:version{-:pre}}
- *   Splat:     {...path}, {...path{.html}}
- *   Mixed:     book-:id, :name{@:version{.:min}}.js
+ * Examples:
+ *   Required:       [id], [name]
+ *   Optional:       {name}, {format}
+ *   Splat:          {...path}
+ *   Mixed segments: shop/[id]-{name}
+ *   Power syntax:   {-v:version{-:pre}}, :name{@:version{.:min}}.js
  * */
 export const pathTokensFactory = (
   path: string,
@@ -80,20 +84,48 @@ export const pathTokensFactory = (
   };
 
   const patternTransforms: Array<(s: string) => string> = [
-    // Transform splat params
-    // {...param} => {*param}
-    // NOTE: should run first
-    (src) => src.replace(/\{\.\.\./, "{*"),
+    // Transform required params: [id] => :id
+    // Only pure \w param names,
+    // [some-id] used as is, not treated as param,
+    // use [some_id] instead.
+    (s) => s.replace(/\[(\w+)\]/g, ":$1"),
+
+    // Transform optional params: {id} => {:id}
+    // Only pure \w param names,
+    // anything else treated as a path-to-regexp pattern and used as is.
+    // {some-id} treated as an optional static segment.
+    // use {some_id} for simple param syntax
+    // or {:some-id} pattern where :some is the param name and -id is a static segment.
+    (s) => s.replace(/\{(\w+)\}/g, "{:$1}"),
+
+    // Transform splat params: {...param} => {*param}
+    (s) => s.replace(/\{\.\.\./g, "{*"),
 
     // Insert leading slash inside optional/splat groups.
     // {:name} => {/:name}
     // {*name} => {/*name}
-    (src) => {
-      return src.startsWith("{") //
-        ? src.replace(/^\{/, "{/")
-        : src;
+    (s) => {
+      return s.startsWith("{") // keep this check for intention clarity
+        ? s.replace(/^\{/, "{/")
+        : s;
     },
   ];
+
+  // detect :param used outside {}
+  const detectBareParams = (s: string): ":" | string | undefined => {
+    let depth = 0;
+    for (const [i, ch] of [...s].entries()) {
+      if (ch === "{") {
+        depth += 1;
+      } else if (ch === "}") {
+        depth -= 1;
+      } else if (ch === ":" && depth === 0) {
+        const match = s.slice(i + 1).match(/^\w+/);
+        return match?.[0] || ":";
+      }
+    }
+    return;
+  };
 
   const tokens = path
     .replace(/^index\/?/, "")
@@ -101,6 +133,18 @@ export const pathTokensFactory = (
     .flatMap<PathToken>((orig) => {
       if (!orig.length) {
         return [];
+      }
+
+      const bareParam = detectBareParams(orig);
+
+      if (bareParam === ":") {
+        throw new Error(
+          `${path} contains colons outside braces, use : only within {}`,
+        );
+      } else if (bareParam) {
+        throw new Error(
+          `${path} contains bare params, use [${bareParam}] instead of :${bareParam}`,
+        );
       }
 
       const pattern = patternTransforms.reduce((src, fn) => fn(src), orig);
@@ -162,38 +206,82 @@ export const normalizeStaticValue = (value: string) => {
 /**
  * Sort routes so that more specific (static) paths come before dynamic ones.
  *
- * This is important because dynamic segments
- * (e.g., `:id` or `*catchall`) are more general,
+ * This is important because dynamic segments are more general,
  * and can match values that should be routed to more specific static paths.
  *
  * For example, given:
  *   - `/users/account`
- *   - `/users/:id`
+ *   - `/users/[id]`
  *
- * If `/users/:id` comes first, visiting `/users/account` would incorrectly match it,
+ * If `/users/[id]` comes first, visiting `/users/account` would incorrectly match it,
  * treating "account" as an `id`. So static routes must take precedence.
+ *
+ * Specificity is calculated per segment with fixed weights:
+ *   - static segment:   4 (most specific, exact match)
+ *   - mixed segment:    3 (has both static and dynamic parts)
+ *   - required param:   2 (matches any single segment)
+ *   - optional param:   1 (may or may not match)
+ *   - splat param:      0 (matches anything, least specific)
+ *
+ * Fixed per-segment weights ensure that deeply nested mixed segments
+ * never outscore multiple static segments.
  * */
 export const sortRoutes = (
   a: Pick<RouteEntry, "name" | "pathTokens">,
   b: Pick<RouteEntry, "name" | "pathTokens">,
-) => {
-  const aStaticSegments = staticSegments(a.pathTokens);
-  const bStaticSegments = staticSegments(b.pathTokens);
+): number => {
+  const aSpecificity = routeSpecificity(a.pathTokens);
+  const bSpecificity = routeSpecificity(b.pathTokens);
 
-  // First: compare static segments (more static = higher priority)
-  if (aStaticSegments !== bStaticSegments) {
-    return bStaticSegments - aStaticSegments;
+  // higher specificity = higher priority
+  if (aSpecificity !== bSpecificity) {
+    return bSpecificity - aSpecificity;
   }
 
-  // Second: compare depth (shallower = higher priority)
+  // at equal specificity, shallower = higher priority
   if (a.pathTokens.length !== b.pathTokens.length) {
     return a.pathTokens.length - b.pathTokens.length;
   }
 
-  // Third: alphabetical for consistency
+  // deterministic tiebreaker
   return a.name.localeCompare(b.name);
 };
 
-const staticSegments = (pathTokens: Array<PathToken>) => {
-  return pathTokens.reduce((a, e) => a + (e.kind === "static" ? 1 : 0), 0);
+/**
+ * Weight of a single param part, used for pure param segments.
+ * */
+const paramWeight = (part: PathTokenParamPart): number => {
+  return {
+    required: 2,
+    optional: 1,
+    splat: 0,
+  }[part.kind];
+};
+
+const mixedSegmentWeight = (parts: PathToken["parts"]): number => {
+  const hasSplat = parts.some((p) => {
+    return p.type === "param" ? p.kind === "splat" : false;
+  });
+  return hasSplat ? 0.5 : 3;
+};
+
+/**
+ * Weight of a single path segment.
+ *
+ * Uses fixed values per segment kind to prevent
+ * complex mixed segments from outscoring multiple statics.
+ * */
+const segmentWeight = (token: PathToken): number => {
+  return {
+    static: 4,
+    mixed: mixedSegmentWeight(token.parts),
+    param: paramWeight(token.parts[0] as PathTokenParamPart),
+  }[token.kind];
+};
+
+/**
+ * Total route specificity: sum of all segment weights.
+ * */
+const routeSpecificity = (pathTokens: Array<PathToken>): number => {
+  return pathTokens.reduce((sum, token) => sum + segmentWeight(token), 0);
 };

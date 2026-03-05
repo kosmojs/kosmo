@@ -1,6 +1,5 @@
 <script setup>
-import ParamsValidation001 from './ParamsValidation001.md'
-import ParamsValidation002 from './ParamsValidation002.md'
+import ParamsValidation001 from './ParamsValidation.md'
 import PayloadValidation from './PayloadValidation.md'
 import ResponseValidation from './ResponseValidation.md'
 import GlobalMiddleware from './GlobalMiddleware.md'
@@ -9,12 +8,21 @@ import LinkButton from './LinkButton.vue'
 </script>
 <template>
   <div class="hero-sections">
+
     <div class="hero-block">
       <div class="hero-content">
         <div class="hero-text">
-          <h1 class="hero-title">Simple Params Validation</h1>
+          <h1 class="hero-title">Params Validation</h1>
           <div class="hero-description">
-            Require <code>id</code> to be a number
+            Rather than learn and maintain separate schema definition languages,
+            you can express validation rules directly in TypeScript.
+            <div class="text-hint">
+              KosmoJS automatically generates high-performance runtime validators
+              from your types.
+            </div>
+            <div class="text-hint">
+              Use <code>TRefine</code> to specify JSON Schema constraints.
+            </div>
           </div>
         </div>
         <a href="/validation/params" class="details-button">Details ➜</a>
@@ -26,25 +34,7 @@ import LinkButton from './LinkButton.vue'
 
     <div class="divider" />
 
-    <div class="hero-block">
-      <div>
-        <ParamsValidation002 />
-      </div>
-      <div class="hero-content">
-        <div class="hero-text">
-          <h1 class="hero-title">Refined Params Validation</h1>
-          <div class="hero-description">
-            Require <code>id</code> to be a positive integer.<br />
-            Use <code>TRefine</code> to specify JSON Schema constraints.
-          </div>
-        </div>
-        <a href="/validation/params" class="details-button">Details ➜</a>
-      </div>
-    </div>
-
-    <div class="divider" />
-
-    <div class="hero-block">
+    <div class="hero-block hero-block--reversed">
       <div class="hero-content">
         <div class="hero-text">
           <h1 class="hero-title">Payload Validation</h1>
@@ -63,9 +53,6 @@ import LinkButton from './LinkButton.vue'
     <div class="divider" />
 
     <div class="hero-block">
-      <div>
-        <ResponseValidation />
-      </div>
       <div class="hero-content">
         <div class="hero-text">
           <h1 class="hero-title">Response Validation</h1>
@@ -82,11 +69,14 @@ import LinkButton from './LinkButton.vue'
         </div>
         <a href="/validation/response" class="details-button">Details ➜</a>
       </div>
+      <div>
+        <ResponseValidation />
+      </div>
     </div>
 
     <div class="divider" />
 
-    <div class="hero-block">
+    <div class="hero-block hero-block--reversed">
       <div class="hero-content">
         <div class="hero-text">
           <h1 class="hero-title">Global Middleware</h1>
@@ -109,9 +99,6 @@ import LinkButton from './LinkButton.vue'
     <div class="divider" />
 
     <div class="hero-block">
-      <div>
-        <OverrideMiddleware />
-      </div>
       <div class="hero-content">
         <div class="hero-text">
           <h1 class="hero-title">Override Middleware</h1>
@@ -120,6 +107,9 @@ import LinkButton from './LinkButton.vue'
           </div>
         </div>
         <a href="/api-server/use-middleware/slot-composition" class="details-button">Details ➜</a>
+      </div>
+      <div>
+        <OverrideMiddleware />
       </div>
     </div>
   </div>
@@ -135,24 +125,23 @@ import LinkButton from './LinkButton.vue'
   padding: 2rem 1rem;
 }
 
+/* Mobile: single column */
 .hero-block {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: 2rem;
   padding: 2rem 0;
 }
 
+/* hero-content contains hero-text + button stacked vertically on desktop */
 .hero-content {
-  flex: 0 1 auto;
-  width: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
-  order: -1;
+  width: 100%;
 }
 
 .hero-text {
@@ -197,7 +186,6 @@ import LinkButton from './LinkButton.vue'
   background-color: var(--vp-button-brand-hover-bg);
 }
 
-
 .text-hint {
   margin-top: 0.5rem;
   font-size: 1rem;
@@ -218,67 +206,30 @@ import LinkButton from './LinkButton.vue'
   margin: 2rem 0;
 }
 
-/* Lightbox styles */
-.lightbox-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  padding: 2rem;
-  cursor: pointer;
-}
-
-.lightbox-content {
-  position: relative;
-  max-width: 95%;
-  max-height: 95%;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.lightbox-content img {
-  max-width: 100%;
-  max-height: 90vh;
-  object-fit: contain;
-  border-radius: 8px;
-}
-
-.close-hint {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
-  text-align: center;
-}
-
-/* Fade transition */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.1s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-/* Media Queries - Mobile First */
-@media (min-width: 961px) {
+@media (min-width: 993px) {
+  /* Desktop: two columns side by side */
   .hero-block {
     flex-direction: row;
+    align-items: flex-start;
     gap: 3rem;
     padding: 3rem 0;
   }
 
+  /* Both direct children share equal width */
+  .hero-block > * {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* hero-content stacks text + button vertically */
   .hero-content {
     flex-direction: column;
-    order: 0;
+    width: auto;
+  }
+
+  /* Reversed: push hero-content to the right */
+  .hero-block--reversed .hero-content {
+    order: 1;
   }
 
   .hero-description {

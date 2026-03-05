@@ -22,14 +22,14 @@
   "children": [
     {
       "layout": {
-        "id": "portal_clientId_layout_tsx_3060437117",
-        "name": "portal/:clientId",
+        "id": "portal_clientId_layout_tsx_3114159634",
+        "name": "portal/[clientId]",
         "folder": "pages",
-        "file": "portal/:clientId/layout.tsx",
+        "file": "portal/[clientId]/layout.tsx",
         "pathTokens": [
           {
             "kind": "param",
-            "orig": ":clientId",
+            "orig": "[clientId]",
             "pattern": ":clientId",
             "parts": [
               {
@@ -47,10 +47,10 @@
       "children": [
         {
           "layout": {
-            "id": "portal_clientId_reports_layout_tsx_2289023329",
-            "name": "portal/:clientId/reports",
+            "id": "portal_clientId_reports_layout_tsx_1980481456",
+            "name": "portal/[clientId]/reports",
             "folder": "pages",
-            "file": "portal/:clientId/reports/layout.tsx",
+            "file": "portal/[clientId]/reports/layout.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -66,18 +66,18 @@
             ],
             "pathPattern": "portal/:clientId/reports"
           },
-          "parent": "portal/:clientId",
+          "parent": "portal/[clientId]",
           "children": [
             {
               "layout": {
-                "id": "portal_clientId_reports_reportType_layout_tsx_29367928",
-                "name": "portal/:clientId/reports/:reportType",
+                "id": "portal_clientId_reports_reportType_layout_tsx_3694080843",
+                "name": "portal/[clientId]/reports/[reportType]",
                 "folder": "pages",
-                "file": "portal/:clientId/reports/:reportType/layout.tsx",
+                "file": "portal/[clientId]/reports/[reportType]/layout.tsx",
                 "pathTokens": [
                   {
                     "kind": "param",
-                    "orig": ":reportType",
+                    "orig": "[reportType]",
                     "pattern": ":reportType",
                     "parts": [
                       {
@@ -91,14 +91,14 @@
                 ],
                 "pathPattern": "portal/:clientId/reports/:reportType"
               },
-              "parent": "portal/:clientId/reports",
+              "parent": "portal/[clientId]/reports",
               "children": [
                 {
                   "index": {
-                    "id": "portal_clientId_reports_reportType_data_dataView_index_tsx_3859103309",
-                    "name": "portal/:clientId/reports/:reportType/data/:dataView",
+                    "id": "portal_clientId_reports_reportType_data_dataView_index_tsx_245814616",
+                    "name": "portal/[clientId]/reports/[reportType]/data/[dataView]",
                     "folder": "pages",
-                    "file": "portal/:clientId/reports/:reportType/data/:dataView/index.tsx",
+                    "file": "portal/[clientId]/reports/[reportType]/data/[dataView]/index.tsx",
                     "pathTokens": [
                       {
                         "kind": "static",
@@ -113,7 +113,7 @@
                       },
                       {
                         "kind": "param",
-                        "orig": ":dataView",
+                        "orig": "[dataView]",
                         "pattern": ":dataView",
                         "parts": [
                           {
@@ -128,10 +128,10 @@
                     "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView"
                   },
                   "layout": {
-                    "id": "portal_clientId_reports_reportType_data_dataView_layout_tsx_1916777869",
-                    "name": "portal/:clientId/reports/:reportType/data/:dataView",
+                    "id": "portal_clientId_reports_reportType_data_dataView_layout_tsx_520811149",
+                    "name": "portal/[clientId]/reports/[reportType]/data/[dataView]",
                     "folder": "pages",
-                    "file": "portal/:clientId/reports/:reportType/data/:dataView/layout.tsx",
+                    "file": "portal/[clientId]/reports/[reportType]/data/[dataView]/layout.tsx",
                     "pathTokens": [
                       {
                         "kind": "static",
@@ -146,7 +146,7 @@
                       },
                       {
                         "kind": "param",
-                        "orig": ":dataView",
+                        "orig": "[dataView]",
                         "pattern": ":dataView",
                         "parts": [
                           {
@@ -160,7 +160,7 @@
                     ],
                     "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView"
                   },
-                  "parent": "portal/:clientId/reports/:reportType",
+                  "parent": "portal/[clientId]/reports/[reportType]",
                   "children": []
                 }
               ]

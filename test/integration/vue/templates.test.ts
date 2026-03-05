@@ -86,7 +86,7 @@ describe("Vue - Custom Templates", async () => {
   describe("Dynamic Routes with Custom Templates", () => {
     it("should apply custom template to dynamic routes", async () => {
       await withPageContent(
-        "landing/:slug",
+        "landing/[slug]",
         { slug: "product-a" },
         ({ content }) => {
           expect(content).toMatch(landingContent);
@@ -96,13 +96,13 @@ describe("Vue - Custom Templates", async () => {
 
     it("should apply custom template to routes with optional params", async () => {
       // Without optional param
-      await withPageContent("landing/search/{:query}", {}, ({ content }) => {
+      await withPageContent("landing/search/{query}", {}, ({ content }) => {
         expect(content).toMatch(landingContent);
       });
 
       // With optional param
       await withPageContent(
-        "landing/search/{:query}",
+        "landing/search/{query}",
         { query: "shoes" },
         ({ content }) => {
           expect(content).toMatch(landingContent);

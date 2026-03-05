@@ -14,8 +14,8 @@ One of `KosmoJS`'s most compelling features is its approach to validation.
 It's called "runtype" validation -
 your `TypeScript` types are automatically converted into JSON Schema and validated at runtime.
 
-Rather than forcing you to learn and maintain separate schema definition languages,
-`KosmoJS` lets you express validation rules directly in `TypeScript`.
+Rather than learn and maintain separate schema definition languages,
+you can express validation rules directly in `TypeScript`.
 
 You write standard `TypeScript` types with optional refinements,
 and `KosmoJS` automatically generates high-performance runtime validators from those types.

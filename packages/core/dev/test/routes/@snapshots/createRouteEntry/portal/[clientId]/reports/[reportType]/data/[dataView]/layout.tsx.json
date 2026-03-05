@@ -7,6 +7,7 @@
     {
       "kind": "static",
       "orig": "portal",
+      "pattern": "portal",
       "parts": [
         {
           "type": "static",
@@ -17,6 +18,7 @@
     {
       "kind": "param",
       "orig": "[clientId]",
+      "pattern": ":clientId",
       "parts": [
         {
           "type": "param",
@@ -29,6 +31,7 @@
     {
       "kind": "static",
       "orig": "reports",
+      "pattern": "reports",
       "parts": [
         {
           "type": "static",
@@ -39,6 +42,7 @@
     {
       "kind": "param",
       "orig": "[reportType]",
+      "pattern": ":reportType",
       "parts": [
         {
           "type": "param",
@@ -51,6 +55,7 @@
     {
       "kind": "static",
       "orig": "data",
+      "pattern": "data",
       "parts": [
         {
           "type": "static",
@@ -61,6 +66,7 @@
     {
       "kind": "param",
       "orig": "[dataView]",
+      "pattern": ":dataView",
       "parts": [
         {
           "type": "param",
@@ -70,5 +76,6 @@
         }
       ]
     }
-  ]
+  ],
+  "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView"
 }

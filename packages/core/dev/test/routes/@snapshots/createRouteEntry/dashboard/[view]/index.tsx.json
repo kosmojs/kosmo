@@ -7,6 +7,7 @@
     {
       "kind": "static",
       "orig": "dashboard",
+      "pattern": "dashboard",
       "parts": [
         {
           "type": "static",
@@ -17,6 +18,7 @@
     {
       "kind": "param",
       "orig": "[view]",
+      "pattern": ":view",
       "parts": [
         {
           "type": "param",
@@ -26,5 +28,6 @@
         }
       ]
     }
-  ]
+  ],
+  "pathPattern": "dashboard/:view"
 }

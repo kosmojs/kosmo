@@ -47,6 +47,9 @@ importers:
       got:
         specifier: ^14.6.6
         version: 14.6.6
+      hono:
+        specifier: ^4.12.3
+        version: 4.12.3
       msw:
         specifier: ^2.12.10
         version: 2.12.10(@types/node@25.3.2)(typescript@5.9.3)

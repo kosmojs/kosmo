@@ -173,7 +173,7 @@ api/
     index.ts          ➜ /api
   users/
     index.ts          ➜ /api/users
-    :id/
+    [id]/
       index.ts        ➜ /api/users/:id
 
 pages/
@@ -181,7 +181,7 @@ pages/
     index.tsx         ➜ /
   users/
     index.tsx         ➜ /users
-    :id/
+    [id]/
       index.tsx       ➜ /users/:id
 ```
 
@@ -190,7 +190,7 @@ pages/
 - **No routing config files** - The file system IS the routing table
 - **API and pages mirror each other** - Easy to see how frontend and backend relate
 - **Colocalization** - Each route folder can contain helpers, types, tests
-- **Dynamic parameters** - Use `:id` for required params, `{:id}` for optional, `{...path}` for splat params
+- **Dynamic parameters** - Use `[id]` for required params, `{id}` for optional, `{...path}` for splat params
 
 This works identically for both API routes and client pages, so you learn the pattern once.
 
@@ -242,7 +242,7 @@ Access generated files from `lib/src/`, which mirrors your `src/` directory stru
 
 ```ts
 import fetchMap from "_/front/fetch";            // All fetch clients
-import { GET } from "_/front/fetch/users/:id";  // Specific fetch client
+import { GET } from "_/front/fetch/users/[id]"; // Specific fetch client
 ```
 
 All generated files - api routes, validators, fetch clients -
@@ -250,13 +250,13 @@ live in `lib/src/` and are accessible via the `_/` prefix.
 
 ## ⚙️ Create Your First API Route
 
-In your source folder, create `api/users/:id/index.ts` file:
+In your source folder, create `api/users/[id]/index.ts` file:
 
 ```txt
 src/front/
 └── api/
     └── users/
-        └── :id/
+        └── [id]/
             └── index.ts
 ```
 
@@ -268,21 +268,21 @@ You'll see this structure appear:
 
 ::: code-group
 ```ts [Koa]
-import { defineRoute } from "_/front/api/users/:id";
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {
-    ctx.body = "Automatically generated route: [ users/:id ]"
+    ctx.body = "Automatically generated route: [ users/[id] ]"
   }),
 ]);
 ```
 
 ```ts [Hono]
-import { defineRoute } from "_/front/api/users/:id";
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {
-    ctx.text("Automatically generated route: [ users/:id ]");
+    ctx.text("Automatically generated route: [ users/[id] ]");
   }),
 ]);
 ```
@@ -292,7 +292,7 @@ Let's make it actually useful. Replace the generated code with:
 
 ::: code-group
 ```ts [Koa]
-import { defineRoute } from "_/front/api/users/:id";
+import { defineRoute } from "_/front/api/users/[id]";
 
 type User = {
   id: number;
@@ -317,7 +317,7 @@ export default defineRoute(({ GET }) => [
 ```
 
 ```ts [Hono]
-import { defineRoute } from "_/front/api/users/:id";
+import { defineRoute } from "_/front/api/users/[id]";
 
 type User = {
   id: number;
@@ -375,14 +375,14 @@ library to convert your types into high-performance JSON Schema validators.
 ### Parameter Validation
 
 Route parameters come from URL paths.
-For example, the URL `/api/users/123` is matched by the `api/users/:id` route,
-where `:id` captures `123`. Since URLs are text, parameters arrive as strings.
+For example, the URL `/api/users/123` is matched by the `api/users/[id]` route,
+where `[id]` captures `123`. Since URLs are text, parameters arrive as strings.
 
-You can instruct `KosmoJS` to cast `:id` into a number at runtime:
+You can instruct `KosmoJS` to cast `[id]` into a number at runtime:
 
 ::: code-group
 ```ts [Koa]
-import { defineRoute } from "_/front/api/users/:id";
+import { defineRoute } from "_/front/api/users/[id]";
 
 type User = {
   id: number;
@@ -408,7 +408,7 @@ export default defineRoute<[
 ```
 
 ```ts [Hono]
-import { defineRoute } from "_/front/api/users/:id";
+import { defineRoute } from "_/front/api/users/[id]";
 
 type User = {
   id: number;
@@ -617,7 +617,7 @@ The straightforward approach is to import and wire middleware manually:
 
 ```ts [Koa / Hono]
 import { logRequest } from "~/middleware/logging";
-import { defineRoute } from "_/front/api/users/:id";
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute(({ use, GET }) => [
   use(logRequest), // Wire it manually
@@ -644,7 +644,7 @@ src/front/
 └── api/
     └── users/
         ├── use.ts          🢀 Wraps all routes under /users
-        └── :id/
+        └── [id]/
             └── index.ts
 ```
 
@@ -740,7 +740,7 @@ Import the generated fetch client for type-safe API calls with built-in validati
 ::: code-group
 ```tsx [SolidJS]
 import { useParams, createAsync } from "@solidjs/router";
-import { GET } from "_/front/fetch/users/:id"; // [!code hl]
+import { GET } from "_/front/fetch/users/[id]"; // [!code hl]
 
 export default function UserPage() {
   const params = useParams();
@@ -752,7 +752,7 @@ export default function UserPage() {
 ```tsx [React]
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { GET } from "_/front/fetch/users/:id"; // [!code hl]
+import { GET } from "_/front/fetch/users/[id]"; // [!code hl]
 
 export default function UserPage() {
   const params = useParams();
@@ -770,7 +770,7 @@ export default function UserPage() {
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { GET } from "_/front/fetch/users/:id"; // [!code hl]
+import { GET } from "_/front/fetch/users/[id]"; // [!code hl]
 
 const route = useRoute();
 const user = ref(null);
@@ -795,7 +795,7 @@ onMounted(async () => {
 import fetchMap from "_/front/fetch";
 
 // Access routes through the centralized map
-const userFetch = fetchMap["users/:id"];
+const userFetch = fetchMap["users/[id]"];
 const response = await userFetch.GET([123]); // Tuple matches route params
 ```
 

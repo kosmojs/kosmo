@@ -1,5 +1,5 @@
-```ts [api/pages/:id/index.ts]
-import { defineRoute } from "_/admin/api/pages/:id";
+```ts [api/pages/[id]/index.ts]
+import { defineRoute } from "_/admin/api/pages/[id]";
 
 type Page = {
   id: TRefine<string, { format: "uuid" }>;

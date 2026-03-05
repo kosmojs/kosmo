@@ -1,0 +1,30 @@
+[
+  {
+    "kind": "static",
+    "orig": "files",
+    "pattern": "files",
+    "parts": [
+      {
+        "type": "static",
+        "value": "files"
+      }
+    ]
+  },
+  {
+    "kind": "mixed",
+    "orig": "report{format}",
+    "pattern": "report{:format}",
+    "parts": [
+      {
+        "type": "static",
+        "value": "report"
+      },
+      {
+        "type": "param",
+        "kind": "optional",
+        "name": "format",
+        "const": "format"
+      }
+    ]
+  }
+]

@@ -58,7 +58,7 @@ describe("React - Route Integration", async () => {
   describe("Required Parameters", () => {
     it("should render route with single required parameter", async () => {
       await withPageContent(
-        "users/:id",
+        "users/[id]",
         { id: "123" },
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("users/123");
@@ -69,7 +69,7 @@ describe("React - Route Integration", async () => {
 
     it("should render route with multiple required parameters", async () => {
       await withPageContent(
-        "posts/:userId/comments/:commentId",
+        "posts/[userId]/comments/[commentId]",
         { userId: "456", commentId: "789" },
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("posts/456/comments/789");
@@ -80,7 +80,7 @@ describe("React - Route Integration", async () => {
 
     it("should handle numeric parameter values", async () => {
       await withPageContent(
-        "users/:id",
+        "users/[id]",
         { id: "999" },
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("users/999");
@@ -91,7 +91,7 @@ describe("React - Route Integration", async () => {
 
     it("should handle string parameter values", async () => {
       await withPageContent(
-        "users/:id",
+        "users/[id]",
         { id: "john-doe" },
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("users/john-doe");
@@ -104,7 +104,7 @@ describe("React - Route Integration", async () => {
   describe("Optional Parameters", () => {
     it("should render route without optional parameter", async () => {
       await withPageContent(
-        "products/{:category}",
+        "products/{category}",
         {},
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("products");
@@ -115,7 +115,7 @@ describe("React - Route Integration", async () => {
 
     it("should render route with optional parameter provided", async () => {
       await withPageContent(
-        "products/{:category}",
+        "products/{category}",
         { category: "electronics" },
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("products/electronics");
@@ -127,7 +127,7 @@ describe("React - Route Integration", async () => {
     it("should handle multiple optional parameters", async () => {
       // With first parameter only
       await withPageContent(
-        "search/{:query}/{:page}",
+        "search/{query}/{page}",
         { query: "laptops" },
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("search/laptops");
@@ -137,7 +137,7 @@ describe("React - Route Integration", async () => {
 
       // With both parameters
       await withPageContent(
-        "search/{:query}/{:page}",
+        "search/{query}/{page}",
         { query: "laptops", page: "2" },
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("search/laptops/2");
@@ -208,7 +208,7 @@ describe("React - Route Integration", async () => {
     it("should handle required + optional parameters", async () => {
       // Without optional
       await withPageContent(
-        "shop/:category/{:subcategory}",
+        "shop/[category]/{subcategory}",
         { category: "electronics" },
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("shop/electronics");
@@ -218,7 +218,7 @@ describe("React - Route Integration", async () => {
 
       // With optional
       await withPageContent(
-        "shop/:category/{:subcategory}",
+        "shop/[category]/{subcategory}",
         { category: "electronics", subcategory: "laptops" },
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("shop/electronics/laptops");
@@ -229,7 +229,7 @@ describe("React - Route Integration", async () => {
 
     it("should handle required + splat parameters", async () => {
       await withPageContent(
-        "files/:bucket/{...path}",
+        "files/[bucket]/{...path}",
         { bucket: "my-bucket", path: ["folder", "subfolder", "file.txt"] },
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("files/my-bucket/folder/subfolder/file.txt");
@@ -256,7 +256,7 @@ describe("React - Route Integration", async () => {
 
     it("should match dynamic route for non-static values", async () => {
       await withPageContent(
-        "priority/:id",
+        "priority/[id]",
         { id: "123" },
         ({ path, content, defaultContentPattern }) => {
           expect(path).toBe("priority/123");

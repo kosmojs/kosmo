@@ -39,7 +39,7 @@ describe("createRouterRoutes", () => {
     });
 
     test("numeric params", async () => {
-      const [, pathPattern] = pathTokensFactory(":id/:name");
+      const [, pathPattern] = pathTokensFactory("[id]/[name]");
 
       const stack = middlewareStackBuilder(
         [

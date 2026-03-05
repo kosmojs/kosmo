@@ -28,21 +28,21 @@ export const routes = [
 
   // Required parameters
   {
-    name: "users/:id",
+    name: "users/[id]",
     params: { id: "123" },
     id: "link-users-123",
     href: "/users/123",
     label: "User 123",
   },
   {
-    name: "users/:id",
+    name: "users/[id]",
     params: { id: "john-doe" },
     id: "link-users-john",
     href: "/users/john-doe",
     label: "User John Doe",
   },
   {
-    name: "posts/:userId/comments/:commentId",
+    name: "posts/[userId]/comments/[commentId]",
     params: { userId: "456", commentId: "789" },
     id: "link-post-comment",
     href: "/posts/456/comments/789",
@@ -51,14 +51,14 @@ export const routes = [
 
   // Optional parameters - without
   {
-    name: "products/{:category}",
+    name: "products/{category}",
     params: {},
     id: "link-products-all",
     href: "/products",
     label: "All Products",
   },
   {
-    name: "search/{:query}/{:page}",
+    name: "search/{query}/{page}",
     params: {},
     id: "link-search-empty",
     href: "/search",
@@ -67,21 +67,21 @@ export const routes = [
 
   // Optional parameters - with
   {
-    name: "products/{:category}",
+    name: "products/{category}",
     params: { category: "electronics" },
     id: "link-products-electronics",
     href: "/products/electronics",
     label: "Electronics",
   },
   {
-    name: "search/{:query}/{:page}",
+    name: "search/{query}/{page}",
     params: { query: "laptops" },
     id: "link-search-laptops",
     href: "/search/laptops",
     label: "Search Laptops",
   },
   {
-    name: "search/{:query}/{:page}",
+    name: "search/{query}/{page}",
     params: { query: "laptops", page: "2" },
     id: "link-search-laptops-page2",
     href: "/search/laptops/2",
@@ -106,14 +106,14 @@ export const routes = [
 
   // Combined: required + optional
   {
-    name: "shop/:category/{:subcategory}",
+    name: "shop/[category]/{subcategory}",
     params: { category: "electronics" },
     id: "link-shop-electronics",
     href: "/shop/electronics",
     label: "Shop Electronics",
   },
   {
-    name: "shop/:category/{:subcategory}",
+    name: "shop/[category]/{subcategory}",
     params: { category: "electronics", subcategory: "laptops" },
     id: "link-shop-laptops",
     href: "/shop/electronics/laptops",
@@ -122,7 +122,7 @@ export const routes = [
 
   // Combined: required + splat
   {
-    name: "files/:bucket/{...path}",
+    name: "files/[bucket]/{...path}",
     params: { bucket: "my-bucket", path: ["folder", "file.txt"] },
     id: "link-files",
     href: "/files/my-bucket/folder/file.txt",
@@ -138,7 +138,7 @@ export const routes = [
     label: "Priority Profile",
   },
   {
-    name: "priority/:id",
+    name: "priority/[id]",
     params: { id: "123" },
     id: "link-priority-dynamic",
     href: "/priority/123",
@@ -168,21 +168,21 @@ export const routes = [
     label: "Landing Features",
   },
   {
-    name: "landing/:slug",
+    name: "landing/[slug]",
     params: { slug: "promo" },
     id: "link-landing-slug",
     href: "/landing/promo",
     label: "Landing Promo",
   },
   {
-    name: "landing/search/{:query}",
+    name: "landing/search/{query}",
     params: {},
     id: "link-landing-search-empty",
     href: "/landing/search",
     label: "Landing Search",
   },
   {
-    name: "landing/search/{:query}",
+    name: "landing/search/{query}",
     params: { query: "deals" },
     id: "link-landing-search-query",
     href: "/landing/search/deals",
@@ -231,7 +231,7 @@ export const nestedRoutes = [
   { name: "about/team", file: "index", params: {} },
   { name: "about/careers", file: "layout", params: {} },
   {
-    name: "about/careers/:jobId",
+    name: "about/careers/[jobId]",
     file: "index",
     params: { jobId: "job-123" },
   },
@@ -243,69 +243,69 @@ export const nestedRoutes = [
   // admin
   { name: "admin", file: "index", params: {} },
   { name: "admin", file: "layout", params: {} },
-  { name: "admin/:tenant", file: "index", params: { tenant: "acme" } },
+  { name: "admin/[tenant]", file: "index", params: { tenant: "acme" } },
   {
-    name: "admin/:tenant/users",
+    name: "admin/[tenant]/users",
     file: "index",
     params: { tenant: "acme" },
   },
   {
-    name: "admin/:tenant/users",
+    name: "admin/[tenant]/users",
     file: "layout",
     params: {},
   },
   {
-    name: "admin/:tenant/users/:userId",
+    name: "admin/[tenant]/users/[userId]",
     file: "index",
     params: { tenant: "acme", userId: "user-456" },
   },
   {
-    name: "admin/:tenant/settings",
+    name: "admin/[tenant]/settings",
     file: "index",
     params: { tenant: "acme" },
   },
   {
-    name: "admin/:tenant/settings",
+    name: "admin/[tenant]/settings",
     file: "layout",
     params: {},
   },
   {
-    name: "admin/:tenant/settings/general",
+    name: "admin/[tenant]/settings/general",
     file: "index",
     params: { tenant: "acme" },
   },
   {
-    name: "admin/:tenant/settings/permissions",
+    name: "admin/[tenant]/settings/permissions",
     file: "index",
     params: { tenant: "acme" },
   },
   {
-    name: "admin/:tenant/resources",
+    name: "admin/[tenant]/resources",
     file: "index",
     params: { tenant: "acme" },
   },
   {
-    name: "admin/:tenant/resources",
+    name: "admin/[tenant]/resources",
     file: "layout",
     params: {},
   },
   {
-    name: "admin/:tenant/resources/{:type}",
+    name: "admin/[tenant]/resources/{type}",
     file: "index",
     params: { tenant: "acme", type: "posts" },
   },
   {
-    name: "admin/:tenant/resources/{:type}",
+    name: "admin/[tenant]/resources/{type}",
     file: "index",
     params: { tenant: "acme" },
   },
   {
-    name: "admin/:tenant/resources/{:type}",
+    name: "admin/[tenant]/resources/{type}",
     file: "layout",
     params: {},
   },
   {
-    name: "admin/:tenant/resources/{...path}",
+    name: "admin/[tenant]/resources/{...path}",
     file: "index",
     params: { tenant: "acme", path: ["edit", "123"] },
   },
@@ -314,33 +314,33 @@ export const nestedRoutes = [
   { name: "blog", file: "index", params: {} },
   { name: "blog", file: "layout", params: {} },
   {
-    name: "blog/{:category}",
+    name: "blog/{category}",
     file: "index",
     params: { category: "tech" },
   },
-  { name: "blog/{:category}", file: "index", params: {} },
+  { name: "blog/{category}", file: "index", params: {} },
   {
-    name: "blog/{:category}/{:tag}",
+    name: "blog/{category}/{tag}",
     file: "index",
     params: { category: "dev", tag: "typescript" },
   },
   {
-    name: "blog/{:category}/{:tag}",
+    name: "blog/{category}/{tag}",
     file: "index",
     params: { category: "dev" },
   },
   {
-    name: "blog/{:category}/{:tag}",
+    name: "blog/{category}/{tag}",
     file: "index",
     params: {},
   },
   {
-    name: "blog/post/:slug",
+    name: "blog/post/[slug]",
     file: "index",
     params: { slug: "my-article" },
   },
   {
-    name: "blog/post/:slug",
+    name: "blog/post/[slug]",
     file: "layout",
     params: {},
   },
@@ -353,7 +353,7 @@ export const nestedRoutes = [
   { name: "dashboard", file: "index", params: {} },
   { name: "dashboard", file: "layout", params: {} },
   {
-    name: "dashboard/:view",
+    name: "dashboard/[view]",
     file: "index",
     params: { view: "overview" },
   },
@@ -428,17 +428,17 @@ export const nestedRoutes = [
 
   // news
   {
-    name: "news/:category",
+    name: "news/[category]",
     file: "layout",
     params: {},
   },
   {
-    name: "news/:category/articles/{...articlePath}",
+    name: "news/[category]/articles/{...articlePath}",
     file: "index",
     params: { category: "world" },
   },
   {
-    name: "news/:category/articles/{...articlePath}",
+    name: "news/[category]/articles/{...articlePath}",
     file: "index",
     params: { category: "nature", articlePath: ["cruises", "islands"] },
   },
@@ -446,48 +446,48 @@ export const nestedRoutes = [
   // portal
   { name: "portal", file: "layout", params: {} },
   {
-    name: "portal/:clientId",
+    name: "portal/[clientId]",
     file: "layout",
     params: {},
   },
   {
-    name: "portal/:clientId/reports",
+    name: "portal/[clientId]/reports",
     file: "layout",
     params: {},
   },
   {
-    name: "portal/:clientId/reports/:reportType",
+    name: "portal/[clientId]/reports/[reportType]",
     file: "layout",
     params: {},
   },
   {
-    name: "portal/:clientId/reports/:reportType/data/:dataView",
+    name: "portal/[clientId]/reports/[reportType]/data/[dataView]",
     file: "index",
     params: { clientId: "client-42", reportType: "sales", dataView: "monthly" },
   },
   {
-    name: "portal/:clientId/reports/:reportType/data/:dataView",
+    name: "portal/[clientId]/reports/[reportType]/data/[dataView]",
     file: "layout",
     params: {},
   },
 
   // products
   { name: "products", file: "index", params: {} },
-  { name: "products/:id", file: "index", params: { id: "prod-789" } },
+  { name: "products/[id]", file: "index", params: { id: "prod-789" } },
 
   // profile
   {
-    name: "profile/:username",
+    name: "profile/[username]",
     file: "layout",
     params: {},
   },
   {
-    name: "profile/:username/posts/:postId",
+    name: "profile/[username]/posts/[postId]",
     file: "layout",
     params: {},
   },
   {
-    name: "profile/:username/posts/:postId/comments/{...thread}",
+    name: "profile/[username]/posts/[postId]/comments/{...thread}",
     file: "index",
     params: { username: "john", postId: "post-123", thread: ["reply", "123"] },
   },
@@ -496,98 +496,98 @@ export const nestedRoutes = [
   { name: "projects", file: "index", params: {} },
   { name: "projects", file: "layout", params: {} },
   {
-    name: "projects/:projectId",
+    name: "projects/[projectId]",
     file: "index",
     params: { projectId: "proj-100" },
   },
   {
-    name: "projects/:projectId",
+    name: "projects/[projectId]",
     file: "layout",
     params: {},
   },
   {
-    name: "projects/:projectId/files",
+    name: "projects/[projectId]/files",
     file: "index",
     params: { projectId: "proj-100" },
   },
   {
-    name: "projects/:projectId/files",
+    name: "projects/[projectId]/files",
     file: "layout",
     params: {},
   },
   {
-    name: "projects/:projectId/files/{...path}",
+    name: "projects/[projectId]/files/{...path}",
     file: "index",
     params: { projectId: "proj-100", path: ["docs", "README.md"] },
   },
   {
-    name: "projects/:projectId/tasks",
+    name: "projects/[projectId]/tasks",
     file: "index",
     params: { projectId: "proj-100" },
   },
   {
-    name: "projects/:projectId/tasks",
+    name: "projects/[projectId]/tasks",
     file: "layout",
     params: {},
   },
   {
-    name: "projects/:projectId/tasks/:taskId",
+    name: "projects/[projectId]/tasks/[taskId]",
     file: "index",
     params: { projectId: "proj-100", taskId: "task-5" },
   },
   {
-    name: "projects/:projectId/tasks/:taskId",
+    name: "projects/[projectId]/tasks/[taskId]",
     file: "layout",
     params: {},
   },
   {
-    name: "projects/:projectId/tasks/:taskId/comments",
+    name: "projects/[projectId]/tasks/[taskId]/comments",
     file: "index",
     params: { projectId: "proj-100", taskId: "task-5" },
   },
   {
-    name: "projects/:projectId/tasks/:taskId/comments",
+    name: "projects/[projectId]/tasks/[taskId]/comments",
     file: "layout",
     params: {},
   },
   {
-    name: "projects/:projectId/tasks/:taskId/comments/:commentId",
+    name: "projects/[projectId]/tasks/[taskId]/comments/[commentId]",
     file: "index",
     params: { projectId: "proj-100", taskId: "task-5", commentId: "comment-8" },
   },
   {
-    name: "projects/:projectId/team",
+    name: "projects/[projectId]/team",
     file: "index",
     params: { projectId: "proj-100" },
   },
   {
-    name: "projects/:projectId/team",
+    name: "projects/[projectId]/team",
     file: "layout",
     params: {},
   },
   {
-    name: "projects/:projectId/team/:userId",
+    name: "projects/[projectId]/team/[userId]",
     file: "index",
     params: { projectId: "proj-100", userId: "user-22" },
   },
 
   // search
   { name: "search", file: "index", params: {} },
-  { name: "search/{:query}", file: "layout", params: {} },
-  { name: "search/{:query}", file: "index", params: {} },
-  { name: "search/{:query}", file: "index", params: { query: "vue" } },
+  { name: "search/{query}", file: "layout", params: {} },
+  { name: "search/{query}", file: "index", params: {} },
+  { name: "search/{query}", file: "index", params: { query: "vue" } },
   {
-    name: "search/{:query}/{:page}",
+    name: "search/{query}/{page}",
     file: "index",
     params: { query: "react", page: "2" },
   },
   {
-    name: "search/{:query}/{:page}",
+    name: "search/{query}/{page}",
     file: "index",
     params: { query: "solid" },
   },
   {
-    name: "search/{:query}/{:page}",
+    name: "search/{query}/{page}",
     file: "index",
     params: {},
   },
@@ -620,44 +620,44 @@ export const nestedRoutes = [
   { name: "shop/orders", file: "index", params: {} },
   { name: "shop/orders", file: "layout", params: {} },
   {
-    name: "shop/orders/:orderId",
+    name: "shop/orders/[orderId]",
     file: "index",
     params: { orderId: "order-999" },
   },
   {
-    name: "shop/product/:id",
+    name: "shop/product/[id]",
     file: "index",
     params: { id: "prod-555" },
   },
   {
-    name: "shop/product/:id",
+    name: "shop/product/[id]",
     file: "layout",
     params: {},
   },
   {
-    name: "shop/product/:id/reviews",
+    name: "shop/product/[id]/reviews",
     file: "index",
     params: { id: "prod-555" },
   },
   { name: "shop/products", file: "index", params: {} },
   { name: "shop/products", file: "layout", params: {} },
   {
-    name: "shop/products/{:category}",
+    name: "shop/products/{category}",
     file: "index",
     params: { category: "electronics" },
   },
   {
-    name: "shop/products/{:category}",
+    name: "shop/products/{category}",
     file: "index",
     params: {},
   },
   {
-    name: "shop/:category/:productId",
+    name: "shop/[category]/[productId]",
     file: "index",
     params: { category: "furniture", productId: "chair-77" },
   },
   {
-    name: "shop/:category/:productId",
+    name: "shop/[category]/[productId]",
     file: "layout",
     params: {},
   },
@@ -668,17 +668,17 @@ export const nestedRoutes = [
   // store
   { name: "store", file: "layout", params: {} },
   {
-    name: "store/:category/filters/{...filters}",
+    name: "store/[category]/filters/{...filters}",
     file: "index",
     params: { category: "books", filters: ["fiction", "science"] },
   },
   {
-    name: "store/:category/sort",
+    name: "store/[category]/sort",
     file: "layout",
     params: {},
   },
   {
-    name: "store/:category/sort/:sortBy",
+    name: "store/[category]/sort/[sortBy]",
     file: "index",
     params: { category: "books", sortBy: "price" },
   },
@@ -687,74 +687,74 @@ export const nestedRoutes = [
   { name: "users", file: "index", params: {} },
   { name: "users", file: "layout", params: {} },
   {
-    name: "users/:username",
+    name: "users/[username]",
     file: "index",
     params: { username: "alice" },
   },
   {
-    name: "users/:username",
+    name: "users/[username]",
     file: "layout",
     params: {},
   },
   {
-    name: "users/:username/followers",
+    name: "users/[username]/followers",
     file: "index",
     params: { username: "alice" },
   },
   {
-    name: "users/:username/following",
+    name: "users/[username]/following",
     file: "index",
     params: { username: "alice" },
   },
   {
-    name: "users/:username/posts",
+    name: "users/[username]/posts",
     file: "index",
     params: { username: "alice" },
   },
   {
-    name: "users/:username/posts",
+    name: "users/[username]/posts",
     file: "layout",
     params: {},
   },
   {
-    name: "users/:username/posts/:postId",
+    name: "users/[username]/posts/[postId]",
     file: "index",
     params: { username: "alice", postId: "post-44" },
   },
   {
-    name: "users/:username/posts/:postId",
+    name: "users/[username]/posts/[postId]",
     file: "layout",
     params: {},
   },
 
   // workspace
   {
-    name: "workspace/:workspaceId/analytics",
+    name: "workspace/[workspaceId]/analytics",
     file: "index",
     params: { workspaceId: "ws-7" },
   },
   {
-    name: "workspace/:workspaceId/analytics",
+    name: "workspace/[workspaceId]/analytics",
     file: "layout",
     params: {},
   },
   {
-    name: "workspace/:workspaceId/analytics/:range",
+    name: "workspace/[workspaceId]/analytics/[range]",
     file: "index",
     params: { workspaceId: "ws-7", range: "monthly" },
   },
   {
-    name: "workspace/:workspaceId/analytics/:range",
+    name: "workspace/[workspaceId]/analytics/[range]",
     file: "layout",
     params: {},
   },
   {
-    name: "workspace/:workspaceId/team",
+    name: "workspace/[workspaceId]/team",
     file: "layout",
     params: {},
   },
   {
-    name: "workspace/:workspaceId/team/:memberId/permissions/{...permissionPath}",
+    name: "workspace/[workspaceId]/team/[memberId]/permissions/{...permissionPath}",
     file: "index",
     params: {
       workspaceId: "ws-7",
@@ -767,25 +767,25 @@ export const nestedRoutes = [
 export const apiRoutes = {
   index: [{}],
   "index/static": [{}],
-  "index/required/:param": [{ param: "required" }],
-  "index/optional/{:param}": [{}, { param: "optional" }],
+  "index/required/[param]": [{ param: "required" }],
+  "index/optional/{param}": [{}, { param: "optional" }],
 
-  "admin/:tenant/resources/{:type}": [
+  "admin/[tenant]/resources/{type}": [
     { tenant: "acme", type: "posts" },
     { tenant: "acme" },
   ],
-  "admin/:tenant/resources/{...path}": [
+  "admin/[tenant]/resources/{...path}": [
     { tenant: "acme", path: ["edit", "123"] },
     // path with a single segment, e.g. ["edit"],
-    // is matched by admin/:tenant/resources/{:type}
+    // is matched by admin/[tenant]/resources/{type}
   ],
 
   // Underscore as a literal delimiter
-  "user_:id": [
+  "user_[id]": [
     { id: "123" }, // "/user_123"
   ],
 
-  "app/:name{-v:version{-:pre}}": [
+  "app/[name]{-v:version{-:pre}}": [
     { name: "widget", version: "2", pre: "beta" },
     { name: "widget", version: "2" },
     { name: "widget" },
@@ -799,8 +799,8 @@ export const apiRoutes = {
     { format: "tar", compression: "gz" }, // "/archive.tar-gz"
   ],
 
-  "blog/{:category}": [{ category: "tech" }, {}],
-  "blog/{:category}/{...page}": [
+  "blog/{category}": [{ category: "tech" }, {}],
+  "blog/{category}/{...page}": [
     { category: "dev", page: ["2024", "01", "hello-world"] },
   ],
 
@@ -811,19 +811,19 @@ export const apiRoutes = {
   ],
 
   "files/report{.:format}": [{ format: "pdf" }, {}],
-  "files/:name{@:version{.:min}}.js": [
+  "files/[name]{@:version{.:min}}.js": [
     { name: "react", version: "18", min: "min" },
     { name: "react", version: "18" },
     { name: "react" },
   ],
-  "files/{...dir}/:name": [
+  "files/{...dir}/[name]": [
     // { name: "readme.md" }, // dir empty → files/readme.md
     { dir: ["docs"], name: "readme.md" }, // files/docs/readme.md
     // { dir: ["projects", "2024"], name: "plan.pdf" }, // files/projects/2024/plan.pdf
   ],
 
   // Multiple optional groups after a required parameter within a segment
-  "item-:id{-:color}{.:format}": [
+  "item-[id]{-:color}{.:format}": [
     { id: "42" }, // "/item-42"
     { id: "42", color: "red" }, // "/item-42-red"
     { id: "42", format: "json" }, // "/item-42.json"
@@ -849,62 +849,64 @@ export const apiRoutes = {
     { lang: "en", country: "US" }, // "/locale-en-US"
   ],
 
-  "landing/search/{:query}": [{ query: "deals" }, {}],
+  "landing/search/{query}": [{ query: "deals" }, {}],
   "landing/docs/{...path}": [{ path: ["guide"] }, {}],
 
-  "logs/:year-:month-:day": [{ year: "2024", month: "01", day: "15" }],
+  "logs/[year]-[month]-[day]": [{ year: "2024", month: "01", day: "15" }],
 
-  ":id-details": [{ id: "42" }],
-  "item-:id-info": [{ id: "42" }],
-  "results.:ext": [{ ext: "html" }],
+  "[id]-details": [{ id: "42" }],
+  "item-[id]-info": [{ id: "42" }],
+  "results.[ext]": [{ ext: "html" }],
 
-  "changelog/v:version.html": [{ version: "3" }],
+  "changelog/v[version].html": [{ version: "3" }],
 
-  "pages/:name-v:version/:resource.:ext": [
+  "pages/[name]-v[version]/[resource].[ext]": [
     { name: "docs", version: "2", resource: "readme", ext: "md" },
   ],
 
-  "news/:category/articles/{...articlePath}": [
+  "news/[category]/articles/{...articlePath}": [
     { category: "nature", articlePath: ["cruises", "islands"] },
     { category: "world" },
   ],
 
-  "products/{:category}": [{ category: "electronics" }, {}],
-  "products/{...path}.:ext": [{ path: ["electronics", "phones"], ext: "json" }],
+  "products/{category}": [{ category: "electronics" }, {}],
+  "products/{...path}.[ext]": [
+    { path: ["electronics", "phones"], ext: "json" },
+  ],
 
-  "profile/:username/posts/:postId/comments/{...thread}": [
+  "profile/[username]/posts/[postId]/comments/{...thread}": [
     { username: "john", postId: "post-123", thread: ["reply", "123"] },
     { username: "john", postId: "post-123" },
   ],
 
-  "projects/:projectId/files/{...path}": [
+  "projects/[projectId]/files/{...path}": [
     { projectId: "proj-100", path: ["docs", "README.md"] },
     { projectId: "proj-100" },
   ],
 
-  "search/{:query}/{:page}": [
+  "search/{query}/{page}": [
     { query: "laptops", page: "2" },
     { query: "laptops" },
     {},
   ],
 
-  "shop/:category/{:subcategory}": [
+  "shop/[category]/{subcategory}": [
     { category: "electronics", subcategory: "laptops" },
     { category: "electronics" },
   ],
-  "shop/products/{:category}": [{ category: "electronics" }, {}],
+  "shop/products/{category}": [{ category: "electronics" }, {}],
 
-  "store/:category/{...filters}": [
+  "store/[category]/{...filters}": [
     { category: "books", filters: ["fiction", "science"] },
     { category: "books" },
   ],
 
-  "v1/products/book-:id/{{:category-}reviews}": [
+  "v1/products/book-[id]/{{:category-}reviews}": [
     { id: "1", category: "top-rated" },
     { id: "1" },
   ],
 
-  "workspace/:workspaceId/team/:memberId/permissions/{...permissionPath}": [
+  "workspace/[workspaceId]/team/[memberId]/permissions/{...permissionPath}": [
     {
       workspaceId: "ws-7",
       memberId: "member-3",

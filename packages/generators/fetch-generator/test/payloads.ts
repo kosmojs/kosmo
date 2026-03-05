@@ -100,7 +100,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "users/:id": {
+  "users/[id]": {
     params: [["42"], ["usr_abc"]],
     GET: [{ query: {} }, { query: { include: "posts" } }],
     PUT: [
@@ -117,7 +117,7 @@ export const payloadMap: PayloadMap = {
     DELETE: [{}],
   },
 
-  "users/:id/profile": {
+  "users/[id]/profile": {
     params: [["42"]],
     GET: [{}],
     PATCH: [
@@ -143,7 +143,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "users/:id/avatar": {
+  "users/[id]/avatar": {
     params: [["42"]],
     POST: [
       {
@@ -157,7 +157,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "users/:id/posts/{:page}": {
+  "users/[id]/posts/{page}": {
     params: [["42"], ["42", "2"], ["usr_abc", "latest"]],
     GET: [
       { query: {} },
@@ -167,7 +167,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "users/:id/settings/{:section}": {
+  "users/[id]/settings/{section}": {
     params: [["42"], ["42", "privacy"], ["usr_abc", "notifications"]],
     GET: [{}],
     PUT: [
@@ -224,7 +224,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "posts/:id": {
+  "posts/[id]": {
     params: [["post_1"], ["post_abc"]],
     GET: [{}],
     PUT: [
@@ -247,7 +247,7 @@ export const payloadMap: PayloadMap = {
     DELETE: [{}],
   },
 
-  "posts/:id/comments": {
+  "posts/[id]/comments": {
     params: [["post_1"]],
     GET: [
       { query: {} },
@@ -290,7 +290,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "products/:id": {
+  "products/[id]": {
     params: [["prod_1"], ["prod_abc"]],
     GET: [
       { query: {} },
@@ -300,7 +300,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "products/:id/reviews": {
+  "products/[id]/reviews": {
     params: [["prod_1"]],
     GET: [
       { query: {} },
@@ -333,7 +333,7 @@ export const payloadMap: PayloadMap = {
     DELETE: [{ headers: { authorization: "Bearer tok_abc123" } }],
   },
 
-  "cart/items/:itemId": {
+  "cart/items/[itemId]": {
     params: [["ci_1"], ["ci_abc"]],
     PATCH: [{ json: { quantity: 3 } }],
     DELETE: [{}],
@@ -446,7 +446,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "uploads/:fileId": {
+  "uploads/[fileId]": {
     params: [["file_001"], ["file_abc"]],
     GET: [
       { query: {} },
@@ -508,7 +508,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "admin/users/:id/ban": {
+  "admin/users/[id]/ban": {
     params: [["usr_99"], ["usr_bad"]],
     POST: [
       {
@@ -610,7 +610,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "notifications/:id": {
+  "notifications/[id]": {
     params: [["n_1"], ["n_abc"]],
     PATCH: [{ json: { read: true } }],
     DELETE: [{}],
@@ -667,7 +667,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "orgs/:orgId": {
+  "orgs/[orgId]": {
     params: [["org_1"], ["org_acme"]],
     GET: [{}],
     PATCH: [
@@ -695,7 +695,7 @@ export const payloadMap: PayloadMap = {
     DELETE: [{ headers: { authorization: "Bearer tok_admin" } }],
   },
 
-  "orgs/:orgId/members": {
+  "orgs/[orgId]/members": {
     params: [["org_1"]],
     GET: [{ query: {} }, { query: { role: "admin" } }],
     POST: [
@@ -706,7 +706,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "orgs/:orgId/members/:memberId": {
+  "orgs/[orgId]/members/[memberId]": {
     params: [
       ["org_1", "m_2"],
       ["org_acme", "m_abc"],
@@ -720,7 +720,7 @@ export const payloadMap: PayloadMap = {
     DELETE: [{ headers: { authorization: "Bearer tok_admin" } }],
   },
 
-  "orgs/:orgId/projects/{...path}": {
+  "orgs/[orgId]/projects/{...path}": {
     params: [
       ["org_1", ["frontend-app"]],
       ["org_1", ["frontend-app", "src"]],
@@ -763,7 +763,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
 
-  "events/:id": {
+  "events/[id]": {
     params: [["evt_1"], ["evt_abc"]],
     GET: [
       { query: {} },

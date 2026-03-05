@@ -17,15 +17,15 @@ and creates a corresponding route configuration.
 These route configurations are written to your `lib` directory
 and imported by your router.
 
-For a component at `pages/users/:id/index.tsx`,
+For a component at `pages/users/[id]/index.tsx`,
 the generator creates a route configuration like this:
 
 ```ts
 {
-  path: "/users/:id",
-  component: lazy(() => import("@/front/pages/users/:id")),
+  path: "/users/[id]",
+  component: lazy(() => import("@/front/pages/users/[id]")),
   preload: () =>
-    import("@/front/pages/users/:id").then(
+    import("@/front/pages/users/[id]").then(
       (mdl) => (mdl as ComponentModule).preload?.()
     ),
 }

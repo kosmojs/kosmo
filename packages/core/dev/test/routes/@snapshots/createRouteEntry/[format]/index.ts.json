@@ -7,6 +7,7 @@
     {
       "kind": "param",
       "orig": "[format]",
+      "pattern": ":format",
       "parts": [
         {
           "type": "param",
@@ -16,5 +17,6 @@
         }
       ]
     }
-  ]
+  ],
+  "pathPattern": ":format"
 }

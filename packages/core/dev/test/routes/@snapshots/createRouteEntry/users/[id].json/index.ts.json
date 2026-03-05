@@ -7,6 +7,7 @@
     {
       "kind": "static",
       "orig": "users",
+      "pattern": "users",
       "parts": [
         {
           "type": "static",
@@ -17,6 +18,7 @@
     {
       "kind": "mixed",
       "orig": "[id].json",
+      "pattern": ":id.json",
       "parts": [
         {
           "type": "param",
@@ -30,5 +32,6 @@
         }
       ]
     }
-  ]
+  ],
+  "pathPattern": "users/:id.json"
 }

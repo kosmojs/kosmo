@@ -29,26 +29,26 @@ You get a working starting point that's already integrated with `KosmoJS`'s type
 
 ## ⚙️ API Route Generation
 
-When you create a file like `api/users/:id/index.ts`,
+When you create a file like `api/users/[id]/index.ts`,
 `KosmoJS` generates this content based on your chosen API framework:
 
 ::: code-group
 
 ```ts [Koa]
-import { defineRoute } from "_/front/api/users/:id";
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {
-    ctx.body = "Automatically generated route: [ users/:id ]";
+    ctx.body = "Automatically generated route: [ users/[id] ]";
   }),
 ]);
 ```
 ```ts [Hono]
-import { defineRoute } from "_/front/api/users/:id";
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute(({ GET }) => [
   GET(async (ctx) => {
-    ctx.text("Automatically generated route: [ users/:id ]");
+    ctx.text("Automatically generated route: [ users/[id] ]");
   }),
 ]);
 ```
@@ -59,13 +59,13 @@ Let's break down what's happening here.
 The import statement brings in a `defineRoute` helper function from a generated module.
 Notice the import path uses the `_/` prefix - this accesses generated code from the `lib/src/` directory.
 
-Breaking down `_/front/api/users/:id`:
+Breaking down `_/front/api/users/[id]`:
 
 * `_/` - Generated code prefix (maps to `lib/src/`)
 * `front` - Your source folder name (from `src/front/`)
-* `api/users/:id` - Mirrors your route file's location
+* `api/users/[id]` - Mirrors your route file's location
 
-So this import resolves to `lib/src/front/api/users/:id/index.ts` -
+So this import resolves to `lib/src/front/api/users/[id]/index.ts` -
 a file `KosmoJS` generated automatically that mirrors your route structure.
 
 This generated module includes `TypeScript` type information about your route's parameters.
@@ -81,11 +81,11 @@ You can define handlers for multiple methods in the same route by adding more me
 ## 🎨 Client Page Generation
 
 For client-side pages, the generated code adapts to your chosen framework.
-If you create `pages/users/:id/index.tsx` while using the `SolidJS` generator, `KosmoJS` generates:
+If you create `pages/users/[id]/index.tsx` while using the `SolidJS` generator, `KosmoJS` generates:
 
-```ts [pages/users/:id/index.tsx]
+```ts [pages/users/[id]/index.tsx]
 export default function Page() {
-  return <div>Automatically generated Solid Page: [ users/:id ]</div>;
+  return <div>Automatically generated Solid Page: [ users/[id] ]</div>;
 }
 ```
 

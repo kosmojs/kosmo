@@ -11,7 +11,7 @@ head:
 
 `KosmoJS` generates `TypeScript` types for your route parameters based on your directory structure.
 
-When you have a route like `users/:id/index.ts`, `KosmoJS` knows there's an `id` parameter.
+When you have a route like `users/[id]/index.ts`, `KosmoJS` knows there's an `id` parameter.
 
 However, by default, route parameters are typed as strings since that's what URLs contain.
 
@@ -21,10 +21,10 @@ or perhaps you have an action parameter that should be constrained to a specific
 Refine your parameter types by passing a tuple to `defineRoute`'s first type argument.
 The tuple positions correspond directly to the order of parameters in your route.
 
-For a route at `users/:id/index.ts` where the ID should be a number:
+For a route at `users/[id]/index.ts` where the ID should be a number:
 
-```ts [api/users/:id/index.ts]
-import { defineRoute } from "_/front/api/users/:id"
+```ts [api/users/[id]/index.ts]
+import { defineRoute } from "_/front/api/users/[id]"
 
 export default defineRoute<[
   number // validate id as number // [!code ++]
@@ -36,10 +36,10 @@ export default defineRoute<[
 ]);
 ```
 
-For a route with multiple parameters like `users/:id/:action/index.ts`:
+For a route with multiple parameters like `users/[id]/[action]/index.ts`:
 
-```ts [api/users/:id/:action/index.ts]
-import { defineRoute } from "_/front/api/users/:id/:action"
+```ts [api/users/[id]/[action]/index.ts]
+import { defineRoute } from "_/front/api/users/[id]/[action]"
 
 type UserAction = "retrieve" | "update" | "delete";
 

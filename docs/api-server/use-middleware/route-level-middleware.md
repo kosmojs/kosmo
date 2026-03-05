@@ -161,7 +161,7 @@ including routes that may not define all the parameters you expect.
 
 ```txt
 api/users/
-├── :id/
+├── [id]/
 │   ├── posts/
 │   │   └── index.ts    // Has 'id' param
 │   └── index.ts        // Has 'id' param
@@ -189,7 +189,7 @@ api/
     ├── use.ts           // Runs 3rd
     └── users/
         ├── use.ts       // Runs 4th
-        └── :id/
+        └── [id]/
             └── index.ts // Runs 5th (route handler)
 ```
 
@@ -198,7 +198,7 @@ For a request to `/api/admin/users/123`:
 2. `api/use.ts`
 3. `api/admin/use.ts`
 4. `api/admin/users/use.ts`
-5. Route-specific middleware from `api/admin/users/:id/index.ts`
+5. Route-specific middleware from `api/admin/users/[id]/index.ts`
 6. Final route handler
 
 You cannot skip parent middleware.

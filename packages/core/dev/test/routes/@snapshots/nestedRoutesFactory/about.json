@@ -65,14 +65,14 @@
       "children": [
         {
           "index": {
-            "id": "about_careers_jobId_index_tsx_2325497188",
-            "name": "about/careers/{:jobId}",
+            "id": "about_careers_jobId_index_tsx_125723793",
+            "name": "about/careers/{jobId}",
             "folder": "pages",
-            "file": "about/careers/{:jobId}/index.tsx",
+            "file": "about/careers/{jobId}/index.tsx",
             "pathTokens": [
               {
                 "kind": "param",
-                "orig": "{:jobId}",
+                "orig": "{jobId}",
                 "pattern": "{/:jobId}",
                 "parts": [
                   {

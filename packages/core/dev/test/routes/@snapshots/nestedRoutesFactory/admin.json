@@ -42,14 +42,14 @@
   "children": [
     {
       "index": {
-        "id": "admin_tenant_index_tsx_4274253536",
-        "name": "admin/:tenant",
+        "id": "admin_tenant_index_tsx_144548962",
+        "name": "admin/[tenant]",
         "folder": "pages",
-        "file": "admin/:tenant/index.tsx",
+        "file": "admin/[tenant]/index.tsx",
         "pathTokens": [
           {
             "kind": "param",
-            "orig": ":tenant",
+            "orig": "[tenant]",
             "pattern": ":tenant",
             "parts": [
               {
@@ -67,10 +67,10 @@
       "children": [
         {
           "index": {
-            "id": "admin_tenant_resources_index_tsx_3039477402",
-            "name": "admin/:tenant/resources",
+            "id": "admin_tenant_resources_index_tsx_1533280296",
+            "name": "admin/[tenant]/resources",
             "folder": "pages",
-            "file": "admin/:tenant/resources/index.tsx",
+            "file": "admin/[tenant]/resources/index.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -87,10 +87,10 @@
             "pathPattern": "admin/:tenant/resources"
           },
           "layout": {
-            "id": "admin_tenant_resources_layout_tsx_1792793978",
-            "name": "admin/:tenant/resources",
+            "id": "admin_tenant_resources_layout_tsx_1331315044",
+            "name": "admin/[tenant]/resources",
             "folder": "pages",
-            "file": "admin/:tenant/resources/layout.tsx",
+            "file": "admin/[tenant]/resources/layout.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -106,18 +106,18 @@
             ],
             "pathPattern": "admin/:tenant/resources"
           },
-          "parent": "admin/:tenant",
+          "parent": "admin/[tenant]",
           "children": [
             {
               "index": {
-                "id": "admin_tenant_resources_type_index_tsx_2861436527",
-                "name": "admin/:tenant/resources/:type",
+                "id": "admin_tenant_resources_type_index_tsx_2889345339",
+                "name": "admin/[tenant]/resources/[type]",
                 "folder": "pages",
-                "file": "admin/:tenant/resources/:type/index.tsx",
+                "file": "admin/[tenant]/resources/[type]/index.tsx",
                 "pathTokens": [
                   {
                     "kind": "param",
-                    "orig": ":type",
+                    "orig": "[type]",
                     "pattern": ":type",
                     "parts": [
                       {
@@ -132,14 +132,14 @@
                 "pathPattern": "admin/:tenant/resources/:type"
               },
               "layout": {
-                "id": "admin_tenant_resources_type_layout_tsx_2803072857",
-                "name": "admin/:tenant/resources/:type",
+                "id": "admin_tenant_resources_type_layout_tsx_3407041363",
+                "name": "admin/[tenant]/resources/[type]",
                 "folder": "pages",
-                "file": "admin/:tenant/resources/:type/layout.tsx",
+                "file": "admin/[tenant]/resources/[type]/layout.tsx",
                 "pathTokens": [
                   {
                     "kind": "param",
-                    "orig": ":type",
+                    "orig": "[type]",
                     "pattern": ":type",
                     "parts": [
                       {
@@ -153,14 +153,14 @@
                 ],
                 "pathPattern": "admin/:tenant/resources/:type"
               },
-              "parent": "admin/:tenant/resources",
+              "parent": "admin/[tenant]/resources",
               "children": [
                 {
                   "index": {
-                    "id": "admin_tenant_resources_type_path_index_tsx_2421160976",
-                    "name": "admin/:tenant/resources/:type/{...path}",
+                    "id": "admin_tenant_resources_type_path_index_tsx_3566128822",
+                    "name": "admin/[tenant]/resources/[type]/{...path}",
                     "folder": "pages",
-                    "file": "admin/:tenant/resources/:type/{...path}/index.tsx",
+                    "file": "admin/[tenant]/resources/[type]/{...path}/index.tsx",
                     "pathTokens": [
                       {
                         "kind": "param",
@@ -178,7 +178,7 @@
                     ],
                     "pathPattern": "admin/:tenant/resources/:type{/*path}"
                   },
-                  "parent": "admin/:tenant/resources/:type",
+                  "parent": "admin/[tenant]/resources/[type]",
                   "children": []
                 }
               ]
@@ -187,10 +187,10 @@
         },
         {
           "index": {
-            "id": "admin_tenant_settings_index_tsx_4269692300",
-            "name": "admin/:tenant/settings",
+            "id": "admin_tenant_settings_index_tsx_3198274446",
+            "name": "admin/[tenant]/settings",
             "folder": "pages",
-            "file": "admin/:tenant/settings/index.tsx",
+            "file": "admin/[tenant]/settings/index.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -207,10 +207,10 @@
             "pathPattern": "admin/:tenant/settings"
           },
           "layout": {
-            "id": "admin_tenant_settings_layout_tsx_2655272128",
-            "name": "admin/:tenant/settings",
+            "id": "admin_tenant_settings_layout_tsx_1879736946",
+            "name": "admin/[tenant]/settings",
             "folder": "pages",
-            "file": "admin/:tenant/settings/layout.tsx",
+            "file": "admin/[tenant]/settings/layout.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -226,14 +226,14 @@
             ],
             "pathPattern": "admin/:tenant/settings"
           },
-          "parent": "admin/:tenant",
+          "parent": "admin/[tenant]",
           "children": [
             {
               "index": {
-                "id": "admin_tenant_settings_general_index_tsx_3159612067",
-                "name": "admin/:tenant/settings/general",
+                "id": "admin_tenant_settings_general_index_tsx_4196017676",
+                "name": "admin/[tenant]/settings/general",
                 "folder": "pages",
-                "file": "admin/:tenant/settings/general/index.tsx",
+                "file": "admin/[tenant]/settings/general/index.tsx",
                 "pathTokens": [
                   {
                     "kind": "static",
@@ -249,15 +249,15 @@
                 ],
                 "pathPattern": "admin/:tenant/settings/general"
               },
-              "parent": "admin/:tenant/settings",
+              "parent": "admin/[tenant]/settings",
               "children": []
             },
             {
               "index": {
-                "id": "admin_tenant_settings_permissions_index_tsx_3335517226",
-                "name": "admin/:tenant/settings/permissions",
+                "id": "admin_tenant_settings_permissions_index_tsx_3508365092",
+                "name": "admin/[tenant]/settings/permissions",
                 "folder": "pages",
-                "file": "admin/:tenant/settings/permissions/index.tsx",
+                "file": "admin/[tenant]/settings/permissions/index.tsx",
                 "pathTokens": [
                   {
                     "kind": "static",
@@ -273,17 +273,17 @@
                 ],
                 "pathPattern": "admin/:tenant/settings/permissions"
               },
-              "parent": "admin/:tenant/settings",
+              "parent": "admin/[tenant]/settings",
               "children": []
             }
           ]
         },
         {
           "index": {
-            "id": "admin_tenant_users_index_tsx_2431065734",
-            "name": "admin/:tenant/users",
+            "id": "admin_tenant_users_index_tsx_1262984270",
+            "name": "admin/[tenant]/users",
             "folder": "pages",
-            "file": "admin/:tenant/users/index.tsx",
+            "file": "admin/[tenant]/users/index.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -300,10 +300,10 @@
             "pathPattern": "admin/:tenant/users"
           },
           "layout": {
-            "id": "admin_tenant_users_layout_tsx_2130660501",
-            "name": "admin/:tenant/users",
+            "id": "admin_tenant_users_layout_tsx_3952846485",
+            "name": "admin/[tenant]/users",
             "folder": "pages",
-            "file": "admin/:tenant/users/layout.tsx",
+            "file": "admin/[tenant]/users/layout.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -319,18 +319,18 @@
             ],
             "pathPattern": "admin/:tenant/users"
           },
-          "parent": "admin/:tenant",
+          "parent": "admin/[tenant]",
           "children": [
             {
               "index": {
-                "id": "admin_tenant_users_userId_index_tsx_3588794698",
-                "name": "admin/:tenant/users/:userId",
+                "id": "admin_tenant_users_userId_index_tsx_333896102",
+                "name": "admin/[tenant]/users/[userId]",
                 "folder": "pages",
-                "file": "admin/:tenant/users/:userId/index.tsx",
+                "file": "admin/[tenant]/users/[userId]/index.tsx",
                 "pathTokens": [
                   {
                     "kind": "param",
-                    "orig": ":userId",
+                    "orig": "[userId]",
                     "pattern": ":userId",
                     "parts": [
                       {
@@ -344,7 +344,7 @@
                 ],
                 "pathPattern": "admin/:tenant/users/:userId"
               },
-              "parent": "admin/:tenant/users",
+              "parent": "admin/[tenant]/users",
               "children": []
             }
           ]

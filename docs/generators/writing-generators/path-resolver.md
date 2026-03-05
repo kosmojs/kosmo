@@ -50,7 +50,7 @@ Use `createImport` methods to generate TypeScript import paths with proper prefi
 ```ts
 // Source folder imports (@/ prefix)
 createImport.src("config")             // → "@/front/config"
-createImport.api("users/:id")          // → "@/front/api/users/:id"
+createImport.api("users/[id]")         // → "@/front/api/users/[id]"
 createImport.pages("dashboard")        // → "@/front/pages/dashboard"
 
 // Generated code imports (_/ prefix)
@@ -112,7 +112,7 @@ Now you can use it in Handlebars templates:
 
 ```handlebars
 {{!-- Generate import paths in templates --}}
-import { defineRoute } from "{{createImport 'libApi' 'users/:id'}}";
+import { defineRoute } from "{{createImport 'libApi' 'users/[id]'}}";
 import config from "{{createImport 'config'}}";
 import { GET } from "{{createImport 'fetch' 'posts'}}";
 ```
@@ -120,7 +120,7 @@ import { GET } from "{{createImport 'fetch' 'posts'}}";
 Which compiles to:
 
 ```ts
-import { defineRoute } from "_/front/api/users/:id";
+import { defineRoute } from "_/front/api/users/[id]";
 import config from "@/front/config";
 import { GET } from "_/front/fetch/posts";
 ```

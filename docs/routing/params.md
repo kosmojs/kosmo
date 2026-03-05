@@ -1,6 +1,6 @@
 ---
 title: Dynamic Route Parameters
-description: Handle dynamic URL segments with required :id, optional {:id} and splat {...path} parameters.
+description: Handle dynamic URL segments with required [id], optional {id} and splat {...path} parameters.
     SolidStart-inspired syntax that works identically for API routes and client pages.
 head:
   - - meta
@@ -11,22 +11,22 @@ head:
 
 Real applications need to handle dynamic segments in URLs - user IDs, post slugs, category names, and so on.
 
-`KosmoJS` supports three types of dynamic parameters using a syntax inspired by
-[`SolidStart`](https://start.solidjs.com/).
+`KosmoJS` supports `[required]`, `{optional}` and `{...splat}` params
+using a friendly, readable and memorable syntax.
 
 The key benefit is that these patterns work identically for both API routes and client pages,
 so you only need to learn the syntax once.
 
 ## Required Parameters
 
-Required parameters use semicolon prefix, like `:id`.
+Required parameters use square brackets, like `[id]`.
 
-A folder named `:id` matches exactly one path segment in that position,
+A folder named `[id]` matches exactly one path segment in that position,
 and the matched value is made available to your route handler or component.
 
 ```
 users/
-  :id/
+  [id]/
     index.ts         ➜ matches /users/123, /users/abc, /users/anything
 ```
 
@@ -34,21 +34,21 @@ This route matches `/users/123` or `/users/abc` but does not match `/users`
 (missing the required segment) or `/users/123/posts`
 (has an extra segment that isn't accounted for in the route structure).
 
-The parameter name inside the brackets is significant. If you name it `:id`,
+The parameter name inside the brackets is significant. If you name it `[id]`,
 your route handler will receive that segment as a parameter called `id`.
 
-If you name it `:userId`, it becomes `userId`. Choose names that make your code self-documenting.
+If you name it `[userId]`, it becomes `userId`. Choose names that make your code self-documenting.
 
 ## Optional Parameters
 
-Optional parameters use curly brackets, like `{:id}`.
+Optional parameters use curly braces, like `{id}`.
 
 These routes match whether or not that segment is present in the URL,
 giving you flexibility to handle both cases in a single route handler.
 
 ```
 users/
-  {:id}/
+  {id}/
     index.ts         ➜ matches both /users and /users/123
 ```
 
@@ -61,12 +61,12 @@ and branch your logic based on whether the parameter exists.
 **Important constraint:** Optional parameters must not be folowed by required parameters!
 
 Valid patterns:
-- `users/posts/{:postId}` ✅
-- `users/{:section}/{:subsection}` ✅
-- `users/{:id}/posts` ⚠️ (static segment, works with a caveat, see below)
+- `users/posts/{postId}` ✅
+- `users/{section}/{subsection}` ✅
+- `users/{id}/posts` ⚠️ (static segment, works with a caveat, see below)
 
 Invalid patterns:
-- `users/{:optional}/:required` ❌ (required after optional)
+- `users/{optional}/[required]` ❌ (required after optional)
 
 This constraint ensures the path variations make logical sense
 and prevents ambiguous routing scenarios.
@@ -77,7 +77,7 @@ A common mistake when using optional parameters is creating ambiguous route stru
 
 ```txt
 properties/
-└── {:city}/
+└── {city}/
     └── filters/
         └── index.tsx
 ```
@@ -91,7 +91,7 @@ properties/
 When visiting `/properties/filters`:
 
 1. Router first tries static routes: `properties/filters` (doesn't exist)
-2. Router then tries optional param: `properties/{:city}` with `city = "filters"`
+2. Router then tries optional param: `properties/{city}` with `city = "filters"`
 3. Router expects the next segment to be `filters`, but the path ends
 4. **Result**: No match, 404 error
 
@@ -105,14 +105,14 @@ Create an explicit static route for the ambiguous path:
 properties/
 ├── filters/
 │   └── index.tsx          🢀 Handles /properties/filters
-└── {:city}/
+└── {city}/
     └── filters/
         └── index.tsx      🢀 Handles /properties/NY/filters
 ```
 
 **Now it works:**
 - `/properties/filters` ➜ Matches static `properties/filters/index.tsx`
-- `/properties/NY/filters` ➜ Matches dynamic `properties/{:city}/filters/index.tsx`
+- `/properties/NY/filters` ➜ Matches dynamic `properties/{city}/filters/index.tsx`
 
 **Static routes always win over dynamic/optional routes!**
 
@@ -122,13 +122,13 @@ properties/
 have dedicated routes.**
 
 ```txt [❌ Ambiguous]
-blog/{:category}/archive    🢀 /blog/archive will 404
+blog/{category}/archive    🢀 /blog/archive will 404
 ```
 
 ```txt [✅ Good]
 blog/
 ├── archive/index.tsx        🢀 Handles /blog/archive
-└── {:category}/
+└── {category}/
     └── archive/index.tsx    🢀 Handles /blog/tech/archive
 ```
 
@@ -161,44 +161,44 @@ or in a file browser, you might navigate a directory structure.
 
 ## Understanding Required vs Optional
 
-The `:param` notation means **a value must be provided at this URL position**.
+The `[param]` notation means **a value must be provided at this URL position**.
 However, there are exceptions...
 
 Let's consider this example:
 
 ```txt
 careers/
-└── :jobId/
+└── [jobId]/
     └── index.tsx  🢀 Job detail
 ```
 
-Here `:jobId` is truly required to be present in the URL.
+Here `[jobId]` is truly required to be present in the URL.
 Otherwise the router would return `404` as no route matched.
 
-But if you add a `careers/index.tsx` file, `:jobId` becomes optional,
+But if you add a `careers/index.tsx` file, `[jobId]` becomes optional,
 because there is a fallback to render when the param is missing - `careers/index.tsx`:
 
 ```txt
 careers/
 ├── index.tsx      🢀 Job listings, rendered when no jobId provided
-└── :jobId/       🢀 This becomes optional
+└── [jobId]/       🢀 This becomes optional
     └── index.tsx  🢀 Job detail
 ```
 
 **Pro tip to avoid confusion:**
 
-When a parent index exists, `:param` effectively becomes `{:param}` from a routing perspective.
-In this case you can freely use `{:param}` notation to avoid confusion:
+When a parent index exists, `[param]` effectively becomes `{param}` from a routing perspective.
+In this case you can freely use `{param}` notation to avoid confusion:
 
 ```txt
 careers/
 ├── index.tsx
-└── {:jobId}/     🢀 Optional syntax makes intent clearer
+└── {jobId}/     🢀 Optional syntax makes intent clearer
     └── index.tsx
 ```
 
 This makes it explicit that the parameter is optional - users can visit `/careers` without it.
-Both notations work identically when a parent index exists, but `{:param}` communicates the intent better.
+Both notations work identically when a parent index exists, but `{param}` communicates the intent better.
 
 ## Required vs Optional Patterns
 
@@ -209,7 +209,7 @@ Both notations work identically when a parent index exists, but `{:param}` commu
 ```txt
 shop/
 └── product/
-    └── :id/
+    └── [id]/
         └── index.tsx
 ```
 
@@ -221,9 +221,9 @@ shop/
 There's no "product listing" page - you must specify a product ID.
 
 **Examples:**
-- `/order/:orderId` - Can't show "an order" without an ID
-- `/edit/:documentId` - Can't edit without specifying what to edit
-- `/invoice/:invoiceId` - Invoice page needs an invoice
+- `/order/[orderId]` - Can't show "an order" without an ID
+- `/edit/[documentId]` - Can't edit without specifying what to edit
+- `/invoice/[invoiceId]` - Invoice page needs an invoice
 
 ### Pattern 2: Separate Routes (List + Detail)
 
@@ -232,13 +232,13 @@ There's no "product listing" page - you must specify a product ID.
 ```txt
 careers/
 ├── index.tsx      🢀 Job listings
-└── {:jobId}/      🢀 Optional param
+└── {jobId}/      🢀 Optional param
     └── index.tsx  🢀 Job detail
 ```
 
 **Routes:**
 - ✅ `/careers` ➜ MATCHES `careers/index.tsx` (list all jobs)
-- ✅ `/careers/123` ➜ MATCHES `careers/:jobId/index.tsx` (specific job)
+- ✅ `/careers/123` ➜ MATCHES `careers/[jobId]/index.tsx` (specific job)
 
 **Use case:** Two **different pages** with different purposes.
 
@@ -246,8 +246,8 @@ careers/
 One shows a list, the other shows details.
 
 **Examples:**
-- `/products` (browse catalog) vs `/products/:id` (product page)
-- `/users` (user directory) vs `/users/:id` (user profile)
+- `/products` (browse catalog) vs `/products/[id]` (product page)
+- `/users` (user directory) vs `/users/[id]` (user profile)
 - `/docs` (documentation home) vs `/docs/{...path}` (specific doc)
 
 ### Pattern 3: Single Route with Optional Parameter
@@ -256,7 +256,7 @@ One shows a list, the other shows details.
 
 ```txt
 careers/
-└── {:jobId}/
+└── {jobId}/
     └── index.tsx
 ```
 
@@ -269,6 +269,6 @@ careers/
 **Key insight:** **One page, one file** - the component handles both states internally.
 
 **Examples:**
-- `/inbox/{:messageId}` - Email list with optional message preview
-- `/files/{:path}` - File browser with optional file selected
-- `/settings/{:section}` - Settings page with optional section focused
+- `/inbox/{messageId}` - Email list with optional message preview
+- `/files/{path}` - File browser with optional file selected
+- `/settings/{section}` - Settings page with optional section focused

@@ -22,14 +22,14 @@
   "children": [
     {
       "index": {
-        "id": "products_id_index_tsx_2425237269",
-        "name": "products/:id",
+        "id": "products_id_index_tsx_3698327518",
+        "name": "products/[id]",
         "folder": "pages",
-        "file": "products/:id/index.tsx",
+        "file": "products/[id]/index.tsx",
         "pathTokens": [
           {
             "kind": "param",
-            "orig": ":id",
+            "orig": "[id]",
             "pattern": ":id",
             "parts": [
               {

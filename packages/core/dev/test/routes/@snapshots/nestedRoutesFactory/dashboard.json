@@ -227,14 +227,14 @@
     },
     {
       "index": {
-        "id": "dashboard_view_index_tsx_2368687695",
-        "name": "dashboard/:view",
+        "id": "dashboard_view_index_tsx_3510080540",
+        "name": "dashboard/[view]",
         "folder": "pages",
-        "file": "dashboard/:view/index.tsx",
+        "file": "dashboard/[view]/index.tsx",
         "pathTokens": [
           {
             "kind": "param",
-            "orig": ":view",
+            "orig": "[view]",
             "pattern": ":view",
             "parts": [
               {

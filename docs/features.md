@@ -66,17 +66,17 @@ The folder name becomes the URL path segment:
 ```
 api/
   users/
-    :id/
+    [id]/
       index.ts       ➜ /api/users/:id
 pages/
   users/
-    :id/
+    [id]/
       index.tsx      ➜ /users/:id
 ```
 
 **Dynamic parameters:**
-- `:id` - Required parameter
-- `{:id}` - Optional parameter
+- `[id]` - Required parameter
+- `{id}` - Optional parameter
 - `{...path}` - Splat parameter (catches remaining segments)
 
 **Benefits:**
@@ -153,7 +153,7 @@ export default defineRoute(({ GET }) => [
 ]);
 ```
 
-Also route parameters like `/users/:id` are validated according to their types:
+Also route parameters like `/users/[id]` are validated according to their types:
 
 ```ts
 defineRoute<[
@@ -196,7 +196,7 @@ For every API route you define, `KosmoJS` generates:
 **1. Typed fetch clients:**
 
 ```ts
-import useFetch from "_/front/fetch/users/:id";
+import useFetch from "_/front/fetch/users/[id]";
 
 // Fully typed, validates before making request
 const user = await useFetch.GET([123]);

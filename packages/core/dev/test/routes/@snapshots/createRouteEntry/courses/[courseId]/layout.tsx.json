@@ -7,6 +7,7 @@
     {
       "kind": "static",
       "orig": "courses",
+      "pattern": "courses",
       "parts": [
         {
           "type": "static",
@@ -17,6 +18,7 @@
     {
       "kind": "param",
       "orig": "[courseId]",
+      "pattern": ":courseId",
       "parts": [
         {
           "type": "param",
@@ -26,5 +28,6 @@
         }
       ]
     }
-  ]
+  ],
+  "pathPattern": "courses/:courseId"
 }

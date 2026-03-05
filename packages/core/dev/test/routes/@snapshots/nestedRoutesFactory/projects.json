@@ -42,14 +42,14 @@
   "children": [
     {
       "index": {
-        "id": "projects_projectId_index_tsx_1256204218",
-        "name": "projects/:projectId",
+        "id": "projects_projectId_index_tsx_2013112903",
+        "name": "projects/[projectId]",
         "folder": "pages",
-        "file": "projects/:projectId/index.tsx",
+        "file": "projects/[projectId]/index.tsx",
         "pathTokens": [
           {
             "kind": "param",
-            "orig": ":projectId",
+            "orig": "[projectId]",
             "pattern": ":projectId",
             "parts": [
               {
@@ -64,14 +64,14 @@
         "pathPattern": "projects/:projectId"
       },
       "layout": {
-        "id": "projects_projectId_layout_tsx_1363818283",
-        "name": "projects/:projectId",
+        "id": "projects_projectId_layout_tsx_2457576455",
+        "name": "projects/[projectId]",
         "folder": "pages",
-        "file": "projects/:projectId/layout.tsx",
+        "file": "projects/[projectId]/layout.tsx",
         "pathTokens": [
           {
             "kind": "param",
-            "orig": ":projectId",
+            "orig": "[projectId]",
             "pattern": ":projectId",
             "parts": [
               {
@@ -89,10 +89,10 @@
       "children": [
         {
           "index": {
-            "id": "projects_projectId_files_index_tsx_3081303291",
-            "name": "projects/:projectId/files",
+            "id": "projects_projectId_files_index_tsx_3641865118",
+            "name": "projects/[projectId]/files",
             "folder": "pages",
-            "file": "projects/:projectId/files/index.tsx",
+            "file": "projects/[projectId]/files/index.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -109,10 +109,10 @@
             "pathPattern": "projects/:projectId/files"
           },
           "layout": {
-            "id": "projects_projectId_files_layout_tsx_1349259006",
-            "name": "projects/:projectId/files",
+            "id": "projects_projectId_files_layout_tsx_1843012014",
+            "name": "projects/[projectId]/files",
             "folder": "pages",
-            "file": "projects/:projectId/files/layout.tsx",
+            "file": "projects/[projectId]/files/layout.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -128,14 +128,14 @@
             ],
             "pathPattern": "projects/:projectId/files"
           },
-          "parent": "projects/:projectId",
+          "parent": "projects/[projectId]",
           "children": [
             {
               "index": {
-                "id": "projects_projectId_files_path_index_tsx_1657211736",
-                "name": "projects/:projectId/files/{...path}",
+                "id": "projects_projectId_files_path_index_tsx_3414316093",
+                "name": "projects/[projectId]/files/{...path}",
                 "folder": "pages",
-                "file": "projects/:projectId/files/{...path}/index.tsx",
+                "file": "projects/[projectId]/files/{...path}/index.tsx",
                 "pathTokens": [
                   {
                     "kind": "param",
@@ -153,17 +153,17 @@
                 ],
                 "pathPattern": "projects/:projectId/files{/*path}"
               },
-              "parent": "projects/:projectId/files",
+              "parent": "projects/[projectId]/files",
               "children": []
             }
           ]
         },
         {
           "index": {
-            "id": "projects_projectId_tasks_index_tsx_307455202",
-            "name": "projects/:projectId/tasks",
+            "id": "projects_projectId_tasks_index_tsx_2095702919",
+            "name": "projects/[projectId]/tasks",
             "folder": "pages",
-            "file": "projects/:projectId/tasks/index.tsx",
+            "file": "projects/[projectId]/tasks/index.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -180,10 +180,10 @@
             "pathPattern": "projects/:projectId/tasks"
           },
           "layout": {
-            "id": "projects_projectId_tasks_layout_tsx_883056046",
-            "name": "projects/:projectId/tasks",
+            "id": "projects_projectId_tasks_layout_tsx_152335102",
+            "name": "projects/[projectId]/tasks",
             "folder": "pages",
-            "file": "projects/:projectId/tasks/layout.tsx",
+            "file": "projects/[projectId]/tasks/layout.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -199,18 +199,18 @@
             ],
             "pathPattern": "projects/:projectId/tasks"
           },
-          "parent": "projects/:projectId",
+          "parent": "projects/[projectId]",
           "children": [
             {
               "index": {
-                "id": "projects_projectId_tasks_taskId_index_tsx_1816288856",
-                "name": "projects/:projectId/tasks/:taskId",
+                "id": "projects_projectId_tasks_taskId_index_tsx_876882048",
+                "name": "projects/[projectId]/tasks/[taskId]",
                 "folder": "pages",
-                "file": "projects/:projectId/tasks/:taskId/index.tsx",
+                "file": "projects/[projectId]/tasks/[taskId]/index.tsx",
                 "pathTokens": [
                   {
                     "kind": "param",
-                    "orig": ":taskId",
+                    "orig": "[taskId]",
                     "pattern": ":taskId",
                     "parts": [
                       {
@@ -225,14 +225,14 @@
                 "pathPattern": "projects/:projectId/tasks/:taskId"
               },
               "layout": {
-                "id": "projects_projectId_tasks_taskId_layout_tsx_526915078",
-                "name": "projects/:projectId/tasks/:taskId",
+                "id": "projects_projectId_tasks_taskId_layout_tsx_2537048726",
+                "name": "projects/[projectId]/tasks/[taskId]",
                 "folder": "pages",
-                "file": "projects/:projectId/tasks/:taskId/layout.tsx",
+                "file": "projects/[projectId]/tasks/[taskId]/layout.tsx",
                 "pathTokens": [
                   {
                     "kind": "param",
-                    "orig": ":taskId",
+                    "orig": "[taskId]",
                     "pattern": ":taskId",
                     "parts": [
                       {
@@ -246,14 +246,14 @@
                 ],
                 "pathPattern": "projects/:projectId/tasks/:taskId"
               },
-              "parent": "projects/:projectId/tasks",
+              "parent": "projects/[projectId]/tasks",
               "children": [
                 {
                   "index": {
-                    "id": "projects_projectId_tasks_taskId_comments_index_tsx_3779797664",
-                    "name": "projects/:projectId/tasks/:taskId/comments",
+                    "id": "projects_projectId_tasks_taskId_comments_index_tsx_2812732982",
+                    "name": "projects/[projectId]/tasks/[taskId]/comments",
                     "folder": "pages",
-                    "file": "projects/:projectId/tasks/:taskId/comments/index.tsx",
+                    "file": "projects/[projectId]/tasks/[taskId]/comments/index.tsx",
                     "pathTokens": [
                       {
                         "kind": "static",
@@ -270,10 +270,10 @@
                     "pathPattern": "projects/:projectId/tasks/:taskId/comments"
                   },
                   "layout": {
-                    "id": "projects_projectId_tasks_taskId_comments_layout_tsx_2894292308",
-                    "name": "projects/:projectId/tasks/:taskId/comments",
+                    "id": "projects_projectId_tasks_taskId_comments_layout_tsx_3047800545",
+                    "name": "projects/[projectId]/tasks/[taskId]/comments",
                     "folder": "pages",
-                    "file": "projects/:projectId/tasks/:taskId/comments/layout.tsx",
+                    "file": "projects/[projectId]/tasks/[taskId]/comments/layout.tsx",
                     "pathTokens": [
                       {
                         "kind": "static",
@@ -289,18 +289,18 @@
                     ],
                     "pathPattern": "projects/:projectId/tasks/:taskId/comments"
                   },
-                  "parent": "projects/:projectId/tasks/:taskId",
+                  "parent": "projects/[projectId]/tasks/[taskId]",
                   "children": [
                     {
                       "index": {
-                        "id": "projects_projectId_tasks_taskId_comments_commentId_index_tsx_2531164335",
-                        "name": "projects/:projectId/tasks/:taskId/comments/:commentId",
+                        "id": "projects_projectId_tasks_taskId_comments_commentId_index_tsx_3891983433",
+                        "name": "projects/[projectId]/tasks/[taskId]/comments/[commentId]",
                         "folder": "pages",
-                        "file": "projects/:projectId/tasks/:taskId/comments/:commentId/index.tsx",
+                        "file": "projects/[projectId]/tasks/[taskId]/comments/[commentId]/index.tsx",
                         "pathTokens": [
                           {
                             "kind": "param",
-                            "orig": ":commentId",
+                            "orig": "[commentId]",
                             "pattern": ":commentId",
                             "parts": [
                               {
@@ -314,7 +314,7 @@
                         ],
                         "pathPattern": "projects/:projectId/tasks/:taskId/comments/:commentId"
                       },
-                      "parent": "projects/:projectId/tasks/:taskId/comments",
+                      "parent": "projects/[projectId]/tasks/[taskId]/comments",
                       "children": []
                     }
                   ]
@@ -325,10 +325,10 @@
         },
         {
           "index": {
-            "id": "projects_projectId_team_index_tsx_2268032876",
-            "name": "projects/:projectId/team",
+            "id": "projects_projectId_team_index_tsx_1454304763",
+            "name": "projects/[projectId]/team",
             "folder": "pages",
-            "file": "projects/:projectId/team/index.tsx",
+            "file": "projects/[projectId]/team/index.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -345,10 +345,10 @@
             "pathPattern": "projects/:projectId/team"
           },
           "layout": {
-            "id": "projects_projectId_team_layout_tsx_1043828610",
-            "name": "projects/:projectId/team",
+            "id": "projects_projectId_team_layout_tsx_1351420135",
+            "name": "projects/[projectId]/team",
             "folder": "pages",
-            "file": "projects/:projectId/team/layout.tsx",
+            "file": "projects/[projectId]/team/layout.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -364,18 +364,18 @@
             ],
             "pathPattern": "projects/:projectId/team"
           },
-          "parent": "projects/:projectId",
+          "parent": "projects/[projectId]",
           "children": [
             {
               "index": {
-                "id": "projects_projectId_team_userId_index_tsx_2728172599",
-                "name": "projects/:projectId/team/:userId",
+                "id": "projects_projectId_team_userId_index_tsx_1486831611",
+                "name": "projects/[projectId]/team/[userId]",
                 "folder": "pages",
-                "file": "projects/:projectId/team/:userId/index.tsx",
+                "file": "projects/[projectId]/team/[userId]/index.tsx",
                 "pathTokens": [
                   {
                     "kind": "param",
-                    "orig": ":userId",
+                    "orig": "[userId]",
                     "pattern": ":userId",
                     "parts": [
                       {
@@ -389,7 +389,7 @@
                 ],
                 "pathPattern": "projects/:projectId/team/:userId"
               },
-              "parent": "projects/:projectId/team",
+              "parent": "projects/[projectId]/team",
               "children": []
             }
           ]

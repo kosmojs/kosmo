@@ -17,7 +17,7 @@ For `SolidJS`, you might use it with `createResource`:
 
 ```ts [pages/example/index.tsx]
 import { createResource } from "solid-js";
-import useFetch from "_/front/fetch/users/:id";
+import useFetch from "_/front/fetch/users/[id]";
 
 function UserProfile(props) {
   const [user] = createResource(
@@ -38,7 +38,7 @@ For `React` applications, you might create custom hooks that wrap the fetch clie
 
 ```ts [pages/example/index.tsx]
 import { useState, useEffect } from "react";
-import useFetch from "_/front/fetch/users/:id";
+import useFetch from "_/front/fetch/users/[id]";
 
 function useUser(userId: number) {
   const [user, setUser] = useState(null);

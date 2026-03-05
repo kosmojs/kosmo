@@ -11,7 +11,8 @@ export const handlers: Array<HttpHandler> = typedEntries(payloadMap).flatMap(
   ([route, payloads]) => {
     const mswPath = route
       .replace(/\{\.\.\.([^}]+)\}/g, ":$1*")
-      .replace(/\{:([^}]+)\}/g, ":$1?");
+      .replace(/\{([^}]+)\}/g, ":$1?")
+      .replace(/\[([^\]]+)\]/g, ":$1");
 
     return typedEntries(payloads).flatMap((entry) => {
       if (entry[0] === "params") {

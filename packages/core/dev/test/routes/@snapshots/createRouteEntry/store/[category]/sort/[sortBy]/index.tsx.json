@@ -7,6 +7,7 @@
     {
       "kind": "static",
       "orig": "store",
+      "pattern": "store",
       "parts": [
         {
           "type": "static",
@@ -17,6 +18,7 @@
     {
       "kind": "param",
       "orig": "[category]",
+      "pattern": ":category",
       "parts": [
         {
           "type": "param",
@@ -29,6 +31,7 @@
     {
       "kind": "static",
       "orig": "sort",
+      "pattern": "sort",
       "parts": [
         {
           "type": "static",
@@ -39,6 +42,7 @@
     {
       "kind": "param",
       "orig": "[sortBy]",
+      "pattern": ":sortBy",
       "parts": [
         {
           "type": "param",
@@ -48,5 +52,6 @@
         }
       ]
     }
-  ]
+  ],
+  "pathPattern": "store/:category/sort/:sortBy"
 }

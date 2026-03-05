@@ -77,7 +77,7 @@ Captures routes at one specific nesting level:
 **Captures:**
 - `landing/home`
 - `landing/about`
-- `landing/:slug`
+- `landing/[slug]`
 
 **Excludes:**
 - `landing/features/new` (excessive depth)
@@ -96,7 +96,7 @@ Captures routes at arbitrary nesting depths:
 **Captures:**
 - `marketing/campaigns/summer`
 - `marketing/promo/2024/special`
-- `marketing/:id/details`
+- `marketing/[id]/details`
 
 ### Literal Match
 
@@ -135,16 +135,16 @@ Templates works the same way with all parameter types:
 ```ts
 {
   // Required parameter
-  "users/:id": userTemplate,
+  "users/[id]": userTemplate,
 
   // Optional parameter
-  "products/{:category}": productTemplate,
+  "products/{category}": productTemplate,
 
   // Splat parameter
   "docs/{...path}": docsTemplate,
 
   // Combined
-  "shop/:category/{:subcategory}": shopTemplate,
+  "shop/[category]/{subcategory}": shopTemplate,
 }
 ```
 

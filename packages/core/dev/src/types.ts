@@ -51,17 +51,14 @@ export type PathToken = {
     | "param" // segment is a single pure param (no static parts)
     | "mixed"; // segment has both static and param parts
 
-  /** original segment string,
-   * eg. {:name} or {...path}
-   * */
+  // original segment string, eg. [id] or {name} or {...path}
   orig: string;
 
-  /** path-to-regexp pattern obtained from original segment,
-   * eg. {/:name} or {/*path}
-   * */
+  // path-to-regexp pattern obtained from original segment,
+  // eg. :id or {/:name} or {/*path}
   pattern: string;
 
-  /** parsed parts of the segment */
+  // parsed parts of the segment
   parts: Array<PathTokenStaticPart | PathTokenParamPart>;
 };
 

@@ -16,14 +16,14 @@ Whenever you add a page, the generator inspects its location in the folder
 hierarchy and produces a matching route definition. Those generated routes are
 written into your `lib` directory and then consumed by your `router.ts` file.
 
-For example, if you create a page component at `pages/users/:id/index.vue`,
+For example, if you create a page component at `pages/users/[id]/index.vue`,
 the generator produces a route entry similar to:
 
 ```ts
 {
-  name: "users/:id",
-  path: "/users/:id",
-  component: () => import("@/front/pages/users/:id/index.vue"),
+  name: "users/[id]",
+  path: "/users/[id]",
+  component: () => import("@/front/pages/users/[id]/index.vue"),
 }
 ```
 

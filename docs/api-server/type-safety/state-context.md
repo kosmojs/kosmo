@@ -21,8 +21,8 @@ The `defineRoute` function is a generic that accepts three type arguments, all o
 🔹 The second lets you type route-specific state/locals.<br/>
 🔹 The third lets you declare additional properties on the request/context object.
 
-```ts [api/users/:id/index.ts]
-import { defineRoute } from "_/front/api/users/:id";
+```ts [api/users/[id]/index.ts]
+import { defineRoute } from "_/front/api/users/[id]";
 import type { User } from "@/front/types";
 
 export default defineRoute<

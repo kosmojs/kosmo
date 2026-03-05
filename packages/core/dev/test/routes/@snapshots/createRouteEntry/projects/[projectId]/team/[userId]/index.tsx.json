@@ -7,6 +7,7 @@
     {
       "kind": "static",
       "orig": "projects",
+      "pattern": "projects",
       "parts": [
         {
           "type": "static",
@@ -17,6 +18,7 @@
     {
       "kind": "param",
       "orig": "[projectId]",
+      "pattern": ":projectId",
       "parts": [
         {
           "type": "param",
@@ -29,6 +31,7 @@
     {
       "kind": "static",
       "orig": "team",
+      "pattern": "team",
       "parts": [
         {
           "type": "static",
@@ -39,6 +42,7 @@
     {
       "kind": "param",
       "orig": "[userId]",
+      "pattern": ":userId",
       "parts": [
         {
           "type": "param",
@@ -48,5 +52,6 @@
         }
       ]
     }
-  ]
+  ],
+  "pathPattern": "projects/:projectId/team/:userId"
 }

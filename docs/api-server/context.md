@@ -78,8 +78,8 @@ with full TypeScript type information.
 When you specify parameter constraints (like numbers or string unions),
 these types flow through automatically:
 
-```ts [api/users/:id/index.ts]
-import { defineRoute } from "_/front/api/users/:id";
+```ts [api/users/[id]/index.ts]
+import { defineRoute } from "_/front/api/users/[id]";
 
 export default defineRoute<[
   number // validate id param as number // [!code hl]
