@@ -17,7 +17,7 @@ export const validationSchemas: ValidationSchemas = {
   {{target}}: {
     {{#each methods}}
     {{method}}: {
-      schema: validationSchemaFactory(
+      ...validationSchemaFactory(
         schemas.{{schema.id}},
         { route: "{{route}}", target: "{{target}}" },
       ),
@@ -37,15 +37,15 @@ export const validationSchemas: ValidationSchemas = {
     {{method}}: [
       {{#each variants}}
       {
-        status: {{status}},
-        {{#if contentType}}
-        contentType: "{{contentType}}",
-        {{/if}}
         {{#if resolvedType}}
-        schema: validationSchemaFactory(
+        ...validationSchemaFactory(
           schemas.{{id}},
           { route: "{{route}}", target: "{{target}}" },
         ),
+        {{/if}}
+        status: {{status}},
+        {{#if contentType}}
+        contentType: "{{contentType}}",
         {{/if}}
         {{#if runtimeValidation}}
         runtimeValidation: {{runtimeValidation}},

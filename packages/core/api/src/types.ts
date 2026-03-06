@@ -325,23 +325,25 @@ export type ValidationSchemas<Extend = object> = {
   [T in RequestValidationTarget]?: Record<
     // http method
     string,
-    {
-      schema: ValidationSchema & Extend;
-      runtimeValidation?: boolean;
-      customErrors?: ValidationCustomErrors;
-    }
+    ValidationSchema &
+      Extend & {
+        runtimeValidation?: boolean;
+        customErrors?: ValidationCustomErrors;
+      }
   >;
 } & {
   params?: ValidationSchema & Extend;
   response?: Record<
     // http method
     string,
-    Array<{
-      status: number;
-      contentType?: string;
-      schema?: ValidationSchema & Extend;
-      runtimeValidation?: boolean;
-      customErrors?: ValidationCustomErrors;
-    }>
+    Array<
+      ValidationSchema &
+        Extend & {
+          status: number;
+          contentType?: string;
+          runtimeValidation?: boolean;
+          customErrors?: ValidationCustomErrors;
+        }
+    >
   >;
 };
