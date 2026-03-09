@@ -3,9 +3,11 @@
 
 export type {{params.id}} = {
   {{#each paramsSchema}}
-  "{{name}}"{{#unless isRequired}}?{{/unless}}:{{#if isSplat}} Array<{{/if}}
-    {{#if refinement}}{{refinement.text}}{{else}}string{{/if}}
-  {{#if isSplat}}>{{/if}}
+  "{{name}}"{{#unless isRequired}}?{{/unless}}: {{#if refinement}}
+    {{refinement.text}},
+  {{else}}
+    {{#if isSplat}}Array<string>{{else}}string{{/if}},
+  {{/if}}
   {{/each}}
 };
 
