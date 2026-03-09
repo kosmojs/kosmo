@@ -1,8 +1,10 @@
-import type { ParameterizedContext } from "{{ createImport 'libApi' }}";
+import type { Context } from "hono";
+
+import type { AppEnv } from "./app";
 
 type ErrorHandler = (
   error: any,
-  ctx: ParameterizedContext<never, {}, {}>,
+  ctx: Context<AppEnv>,
 ) => Promise<Response> | Response;
 
 export type ErrorHandlerFactory = (handler: ErrorHandler) => ErrorHandler;

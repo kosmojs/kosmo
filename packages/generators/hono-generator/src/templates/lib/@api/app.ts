@@ -7,7 +7,7 @@ import type {
   DefaultVariables,
 } from "{{ createImport 'libApi' }}";
 
-type AppEnv = {
+export type AppEnv = {
   Variables: DefaultVariables;
   Bindings: DefaultBindings;
 };
