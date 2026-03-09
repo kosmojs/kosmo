@@ -39,8 +39,22 @@ import LinkButton from './LinkButton.vue'
         <div class="hero-text">
           <h1 class="hero-title">Payload Validation</h1>
           <div class="hero-description">
-            Use the first type argument to define the payload schema.
-            <code>TRefine</code> can be used to specify JSON Schema constraints.
+            Validation targets provides control over what gets validated.
+            <div>
+              Body targets:
+              <code>json</code> /
+              <code>form</code> /
+              <code>raw</code>.
+            </div>
+            <div>
+              Metadata targets:
+              <code>query</code>,
+              <code>headers</code>,
+              <code>cookies</code>.
+            </div>
+            <div class="text-hint">
+              Use <code>TRefine</code> to specify JSON Schema constraints.
+            </div>
           </div>
         </div>
         <a href="/validation/payload" class="details-button">Details ➜</a>
@@ -60,7 +74,7 @@ import LinkButton from './LinkButton.vue'
             Just as you validate incoming request data, you can validate outgoing response data
             by providing a tuple with status code, content type and expected schema.
             <div class="text-hint">
-              Also an union of tuples can be used to specify multiple response variants.
+              Also an union of tuples can be used to specify multiple variants.
             </div>
             <div class="text-hint">
               Enabled by default on dev, disabled in production.

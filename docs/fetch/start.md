@@ -9,31 +9,15 @@ head:
         payload typing, response types, typescript api client
 ---
 
-You can import fetch clients in two ways, depending on whether you want to access a specific route's client
-or work with all your routes through a centralized map.
-
-For direct access to a specific route's client, import from the route's generated fetch file:
+The fetch index exports a default object that maps route paths to their corresponding clients:
 
 ```ts [pages/example/index.tsx]
-import useFetch from "_/front/fetch/users/[id]";
+// import fetch clients
+import fetchClients from "_/front/fetch";
 
-// Use the client directly
-const response = await useFetch.GET([123]);
+// Pick needed client by route name
+const response = await fetchClients["users/[id]"].GET([123]);
 ```
-
-For access to all routes through a centralized map, import from your source folder's fetch index:
-
-```ts [pages/example/index.tsx]
-import fetchMap from "_/front/fetch";
-
-// Access a specific route through the map
-const useFetch = fetchMap["users/[id]"];
-const response = await useFetch.GET([123]);
-```
-
-The fetch index exports a default object that maps route paths to their corresponding clients.
-This approach is useful when you want to dynamically select clients based on route names,
-or when you prefer to work with a single import that gives you access to your entire API surface.
 
 ### 🚀 Using the Fetch Client Methods
 
@@ -54,13 +38,13 @@ Consider an API route with a typed parameter and payload:
 
 ```ts [api/users/[id]/index.ts]
 // API route definition
-import { defineRoute } from "_/front/api/users/[id]";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute<[number]>(({ GET }) => [
-  GET<
-    { name?: string },
-    { id: number; name: string; email: string }
-  >(async (ctx) => {
+export default defineRoute<"users/[id]", [number]>(({ GET }) => [
+  GET<{
+    json: { name?: string },
+    response: [200, "json", { id: number; name: string; email: string }],
+  }>(async (ctx) => {
     // Handler implementation
   }),
 ]);
@@ -69,17 +53,19 @@ export default defineRoute<[number]>(({ GET }) => [
 The generated fetch client for this route expects a number parameter and optional payload:
 
 ```ts [pages/example/index.tsx]
-import useFetch from "_/front/fetch/users/[id]";
+import fetchClients from "_/front/fetch";
+
+const useFetch = fetchClients["users/[id]"]
 
 // Call with just parameters
 const response = await useFetch.GET([123]);
 
 // Call with parameters and payload
-const response = await useFetch.GET([123], { name: "John" });
+const response = await useFetch.GET([123], { json: { name: "John" } });
 ```
 
 The `response` variable is typed as `{ id: number; name: string; email: string }`
-because that's what your API route declared as its response type.
+because that's what your API route declared as its response body.
 
 `TypeScript` ensures you handle the response correctly, and when validation is enabled,
 runtime checks ensure the response actually matches this structure.
@@ -90,9 +76,9 @@ Not all routes need parameters or payloads. A route at `api/users/index.ts`
 with no parameters and no payload or response types can be called without arguments:
 
 ```ts
-import useFetch from "_/front/fetch/users";
+import fetchClients from "_/front/fetch";
 
-const response = await useFetch.GET();
+const response = await fetchClients["users"].GET();
 ```
 
 If the route defines a payload type but you're using a method like GET that typically doesn't send a body,
@@ -100,7 +86,7 @@ you still provide the payload argument. The generated client handles translating
 
 ```ts
 // GET with query parameters
-const response = await useFetch.GET([], { filter: "active", page: 1 });
+const response = await fetchClients["users"].GET([], { filter: "active", page: 1 });
 ```
 
 If a route defines no payload type or explicitly uses `never` as the payload type,

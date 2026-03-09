@@ -77,7 +77,7 @@ Each source folder runs on its own port with its own base URL.
     Organize distinct concerns - public site, customer app, admin dashboard - all connected in one Vite project.
 
 * **🛣️ Directory-Based Nested Routing**<br>
-    Your folder structure defines your routes. Works identically for both API endpoints and client pages
+    Your folder structure defines your routes. Works identically for both API endpoints and client pages.
 
 * **🛡️ End-to-End Type Safety**<br>
     Write `TypeScript` types once, get runtime validation automatically. No separate schemas to maintain.

@@ -247,21 +247,3 @@ solidGenerator({
 ```
 
 This overrides the generator's default template for all routes.
-
-## 💡 Best Practices
-
-- **Keep templates focused**<br>
-Use custom templates for routes that need specific structure,
-not for minor variations.
-
-- **Use layouts**<br>
-Instead of duplicating structure across templates,
-import shared layouts within templates.
-
-- **Consider maintenance**<br>
-Remember that templates are strings in your config file.
-For complex templates, consider generating them from separate files.
-
-- **Test thoroughly**<br>
-Custom templates bypass the default generator behavior,
-so ensure they work with your routing and parameter handling.

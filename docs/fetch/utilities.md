@@ -17,14 +17,16 @@ or external references without making actual fetch requests.
 The `path` function constructs a relative path including your route's base URL and API URL configuration:
 
 ```ts [pages/example/index.tsx]
-import useFetch from "_/front/fetch/users/[id]";
+import fetchClients from "_/front/fetch";
+
+const useFetch = fetchClients["users/[id]"];
 
 // For a route with a numeric ID parameter
 const url = useFetch.path([123]);
 // Returns: "/api/users/123" (assuming baseurl="/" and apiurl="/api")
 
 // Include query parameters
-const urlWithQuery = useFetch.path([123], { include: "posts" });
+const urlWithQuery = useFetch.path([123], { query: { include: "posts" } });
 // Returns: "/api/users/123?include=posts"
 ```
 
@@ -39,7 +41,7 @@ const fullUrl = useFetch.href("https://api.example.com", [123]);
 const fullUrlWithQuery = useFetch.href(
   "https://api.example.com",
   [123],
-  { include: "posts" }
+    { query: { include: "posts" } }
 );
 // Returns: "https://api.example.com/api/users/123?include=posts"
 ```

@@ -9,20 +9,17 @@ head:
         typescript validation, type safety, validation generator, end-to-end validation
 ---
 
-One of `KosmoJS`'s most compelling features is its approach to validation.
+One of most compelling `KosmoJS` feature is the approach to validation.
 
-It's called "runtype" validation -
-your `TypeScript` types are automatically converted into JSON Schema and validated at runtime.
+It's called "runtype" validation - your types are automatically converted into JSON Schema and validated at runtime.
 
 Rather than learn and maintain separate schema definition languages,
 you can express validation rules directly in `TypeScript`.
 
-You write standard `TypeScript` types with optional refinements,
-and `KosmoJS` automatically generates high-performance runtime validators from those types.
-
-This creates a seamless development experience where your type definitions
-serve as both compile-time type checking and runtime validation,
-all without duplicating your specifications.
+Your types serve as source of truth for:
+- runtime validation on the server
+- client-side validated type-safe fetch clients
+- OpenAPI 3.1 specification
 
 <div class="text-center">
   <LinkButton href="/validation/payload">Get Started</LinkButton>
@@ -39,48 +36,30 @@ However, these compile-time checks don't protect you at runtime.
 When actual HTTP requests arrive with unpredictable data from the outside world,
 `TypeScript` can't help you - it only exists during development and compilation.
 
-This is where `KosmoJS`'s runtype validation comes in.
-By installing a validation generator, you enable runtime validation that mirrors your `TypeScript` types exactly.
-
+This is where runtype validation comes in.
 The same type definitions that give you compile-time safety
 also generate validation logic that runs when requests arrive,
 ensuring that the data actually matches what your types promise.
 
-`KosmoJS` provides a TypeBox-based validator that generates highly optimized validation code.
-TypeBox compiles your types into JSON Schema internally,
-which is the widely-recognized standard for data validation across programming languages and platforms.
-
-You don't need to learn JSON Schema directly - `KosmoJS` handles the conversion transparently.
-But knowing that JSON Schema powers the validation under the hood helps you understand
-what's possible and how to refine your types for specific validation needs.
-
 ## 🔄 The Power of End-to-End Validation
 
-`KosmoJS`'s validation is end-to-end, which means it spans from the client making requests
-all the way through to the server processing them.
-This architecture provides benefits beyond simple data validation.
+Being end-to-end, runtype validation happens at both ends:
+the client validates before sending requests,
+and the server validates before processing them.
 
-When you enable validation with the TypeBox generator,
-`KosmoJS` also generates a fully-typed fetch client for every API route.
-
-This generated client isn't just typed - it actively validates request data on the client side
+That means fetch clients actively validates request data on the client side
 before sending anything to the server.
 If validation fails, the client throws an error immediately without making a network request.
 
 This client-side validation uses exactly the same schemas that validate on the server,
 ensuring perfect consistency between what the client considers valid and what the server accepts.
 
-This approach has significant performance implications.
-Invalid requests never reach your server, reducing unnecessary network traffic and server load.
+And no, double validation is not a performance hit. Actually, it improves performance -
+invalid requests never reach your server, saving network bandwidth and server resources.
 
-For high-traffic APIs, this client-side validation can dramatically reduce the number of requests
+For high-traffic APIs, this client-side validation can reduce the number of requests
 your servers need to process. Users also get faster feedback when they make mistakes,
 since validation errors appear instantly without waiting for a round trip to the server.
-
-The generated fetch client understands all the specifics of your API routes-the HTTP methods they support,
-the parameters they expect, the structure of their request payloads, and the shape of their responses.
-When you use this client, you get full `TypeScript` autocomplete for all these aspects,
-making API consumption as type-safe as calling local functions.
 
 <div class="text-center">
   <LinkButton href="/validation/payload">Get Started</LinkButton>
@@ -88,11 +67,8 @@ making API consumption as type-safe as calling local functions.
 
 ## 🔍 Understanding the Generated Validation Code
 
-When you enable validation with the `TypeBox` generator,
-`KosmoJS` generates validation code in your `lib` directory alongside other generated artifacts.
-
-This code converts your `TypeScript` types into executable validation functions using the `TypeBox` library,
-which in turn generates optimized validators based on JSON Schema.
+For runtype validation to work seamlessly, `KosmoJS` uses AST parsing to extract types from your route files,
+then AOT compilation to generate high-performance validation routines in your `lib` directory.
 
 You don't need to understand the generated code to use validation -
 `KosmoJS` integrates it into the request processing pipeline automatically.
@@ -100,7 +76,7 @@ You don't need to understand the generated code to use validation -
 However, understanding what happens under the hood can help you reason about performance characteristics
 and troubleshoot issues if they arise.
 
-For each validated type, the generator produces a JSON Schema representation and a compiled validator function.
+For each validated type, `Typebox` used to produce a JSON Schema and a compiled validator function.
 The validator function is highly optimized -
 it doesn't use generic validation logic that checks every possible JSON Schema keyword.
 

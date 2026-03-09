@@ -94,13 +94,15 @@ of keeping schemas synchronized with your `TypeScript` types (if you need ones).
 `KosmoJS` trades a few seconds of automated generation time
 for eliminating this manual maintenance work entirely.
 
-For most development workflows, this tradeoff strongly favors automation -<br>
-machine time is cheaper and more reliable than human time.
+So, it's machine time vs human time.
+
+For most development workflows, this tradeoff strongly favors automation -
+machine time is cheaper than human time.
 
 ## 🚀 Future Performance Improvements
 
 As the `TypeScript` ecosystem continues evolving,
-particularly with developments around native `TypeScript` implementations
+particularly with developments around native implementations
 that tools like [ts-morph](https://ts-morph.com/)
 and [TFusion](https://github.com/sleewoo/tfusion) might leverage,
 generation performance may improve further.

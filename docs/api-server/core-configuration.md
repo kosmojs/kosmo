@@ -26,12 +26,20 @@ Just remember that anything you add here runs for every request, so keep it effi
 The second file, `api/env.d.ts`, provides `TypeScript` type definitions
 that extend default context and state objects:
 
-```ts [api/env.d.ts]
+::: code-group
+```ts [Koa]
 export declare module "_/front/api" {
   interface DefaultState {}
   interface DefaultContext {}
 }
 ```
+```ts [Hono]
+export declare module "_/front/api" {
+  interface DefaultVariables {}
+  interface DefaultBindings {}
+}
+```
+:::
 
 These empty interfaces are your extension points.
 When middleware adds properties to the context or state objects,
@@ -69,6 +77,13 @@ export declare module "_/front/api" {
 
 Now every route handler knows about `ctx.state.permissions`
 and `TypeScript` will properly type-check your usage of it.
+
+These are Koa examples. For Hono, the approach is identical - extend `DefaultVariables`
+and your properties will be available via `ctx.set()`, `ctx.get()`, and `ctx.var`.
+
+**Important:** Don't forget to add global middleware that actually sets these properties.
+Without the middleware, the properties you defined in `env.d.ts` won't be available in
+your handlers.
 
 This approach - declaring types once in a central location -
 keeps your codebase DRY and ensures consistency across all your endpoints.

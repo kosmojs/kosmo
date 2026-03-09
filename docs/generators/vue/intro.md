@@ -74,9 +74,6 @@ For example, your admin dashboard won't gain access to your public site's
 navigation helpers. Each area remains autonomous while still benefiting from
 shared conventions across the entire monorepo.
 
-In short: every source folder is a cohesive `Vue` app - aligned to the same
-structural principles, but independent where it matters most.
-
 ## 💡 TypeScript Configuration
 
 While Vue developers don't always use JSX, Vue fully supports JSX/TSX

@@ -3,8 +3,8 @@ import { use } from "_/admin/api";
 
 export default [
   use(
-    (ctx, next) => { // [!code hl:4]
-      // authentication logic here
+    (ctx, next) => {
+      // authentication logic here // [!code hl]
       return next();
     },
     {

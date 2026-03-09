@@ -209,7 +209,7 @@ export default renderFactory(() => {
       // Pipe the stream to the response
       pipe(response, {
         onCompleteShell() {
-          // Shell is ready—streaming begins
+          // Shell is ready - streaming begins
         },
         onCompleteAll() {
           // All Suspense boundaries resolved - finalize response
@@ -278,22 +278,12 @@ containing an `server.js` file ready to run in production.
 ## 🧪 Testing the SSR Build Locally
 
 Before deploying to production, test your SSR build locally.
-The SSR server accepts either a port or socket argument:
+The SSR server accepts either a port or socket argument.
 
 **Using a port:**
 
 ```sh
-node dist/front/ssr -p 4000
-# or
-node dist/front/ssr --port 4000
-```
-
-**Using a Unix socket:**
-
-```sh
-node dist/front/ssr -s /tmp/app.sock
-# or
-node dist/front/ssr --sock /tmp/app.sock
+node dist/front/ssr/server -p 4000
 ```
 
 Visit `http://localhost:4000` to verify your application renders correctly on the server.

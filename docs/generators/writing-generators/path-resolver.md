@@ -40,7 +40,6 @@ createPath.pages("dashboard.tsx")      // → "src/front/pages/dashboard.tsx"
 // Generated files (lib directory)
 createPath.lib("types.ts")             // → "lib/src/front/types.ts"
 createPath.libApi("routes.ts")         // → "lib/src/front/api/routes.ts"
-createPath.fetch("users.ts")           // → "lib/src/front/fetch/users.ts"
 ```
 
 ### Creating Import Paths
@@ -56,7 +55,6 @@ createImport.pages("dashboard")        // → "@/front/pages/dashboard"
 // Generated code imports (_/ prefix)
 createImport.lib("types")              // → "_/front/types"
 createImport.libApi("routes")          // → "_/front/api/routes"
-createImport.fetch("users")            // → "_/front/fetch/users"
 ```
 
 ### Available Methods
@@ -72,7 +70,6 @@ createImport.fetch("users")            // → "_/front/fetch/users"
 - `libApi(...paths)` - Generated API files
 - `libEntry(...paths)` - Generated entry files
 - `libPages(...paths)` - Generated page files
-- `fetch(...paths)` - Generated fetch client files
 
 **createImport methods:**
 - `coreApi(...paths)` - Core API imports with `~/` prefix
@@ -83,7 +80,6 @@ createImport.fetch("users")            // → "_/front/fetch/users"
 - `lib(...paths)` - Generated imports with `_/` prefix
 - `libApi(...paths)` - Generated API imports with `_/` prefix
 - `libEntry(...paths)` - Generated entry imports with `_/` prefix
-- `fetch(...paths)` - Fetch client imports with `_/` prefix
 
 The resolver ensures your generator uses the same path conventions as `KosmoJS` built-in generators,
 maintaining consistency across the codebase.
@@ -112,17 +108,15 @@ Now you can use it in Handlebars templates:
 
 ```handlebars
 {{!-- Generate import paths in templates --}}
-import { defineRoute } from "{{createImport 'libApi' 'users/[id]'}}";
-import config from "{{createImport 'config'}}";
-import { GET } from "{{createImport 'fetch' 'posts'}}";
+import { defineRoute } from "{{ createImport 'libApi' }}";
+import config from "{{ createImport 'config' }}";
 ```
 
 Which compiles to:
 
 ```ts
-import { defineRoute } from "_/front/api/users/[id]";
+import { defineRoute } from "_/front/api";
 import config from "@/front/config";
-import { GET } from "_/front/fetch/posts";
 ```
 
 The helper automatically handles Handlebars' argument passing
@@ -135,4 +129,4 @@ which `createImportHelper` strips off before delegating to `createImport`).
 ```
 
 Where `method` is any `createImport` method name:
-`"coreApi"`, `"src"`, `"api"`, `"pages"`, `"lib"`, `"libApi"`, `"fetch"`, etc.
+`"coreApi"`, `"src"`, `"api"`, `"pages"`, `"lib"`, `"libApi"` etc.

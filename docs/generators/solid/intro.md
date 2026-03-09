@@ -21,7 +21,7 @@ and provides utilities that work naturally with SolidJS's resource and suspense 
 ## 🛠️ Enable SolidJS Generator
 
 When creating a source folder, select `SolidJS` as your framework
-(or use <code style="white-space: nowrap;">--framework=vue</code> in command-line mode).
+(or use <code style="white-space: nowrap;">--framework=solid</code> in command-line mode).
 
 For source folders created without a framework (api-only folders) you can manualy enable `SolidJS` generator:
 import in and include in generators array:

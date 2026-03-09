@@ -110,12 +110,12 @@ Export a `loader` function that fetches data, and access it in your component wi
 ```tsx [dashboard/settings/layout.tsx]
 import { Outlet, useLoaderData } from "react-router";
 
-import { GET, type ResponseT } from "_/front/fetch/dashboard/data";
+import fetchClients, { type ResponseT } from "_/front/fetch";
 
-export { GET as loader };
+export const loader = fetchClients["dashboard/data"].GET;
 
 export default function Layout() {
-  const data = useLoaderData<ResponseT["GET"]>();
+  const data = useLoaderData<ResponseT["dashboard/data"]["GET"]>();
   // ...
 }
 ```
@@ -162,9 +162,9 @@ Export a `preload` function that returns a promise, and use `createAsync` to acc
 import { ParentComponent } from "solid-js";
 import { createAsync } from "@solidjs/router";
 
-import { GET, type ResponseT } from "_/front/fetch/dashboard/data";
+import fetchClients from "_/front/fetch";
 
-export { GET as preload };
+export const preload = fetchClients["dashboard/data"].GET;
 
 const Layout: ParentComponent = (props) => {
   const data = createAsync(preload);
@@ -217,15 +217,15 @@ Instead, you use Vue's lifecycle hooks to fetch data when the component mounts o
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 
-import { GET, type ResponseT } from "_/front/fetch/dashboard/data";
+import fetchClients, { type ResponseT } from "_/front/fetch";
 
-const data = ref<ResponseT["GET"] | null>(null);
+const data = ref<ResponseT["dashboard/data"]["GET"] | null>(null);
 const loading = ref(true);
 
 async function fetchData() {
   loading.value = true;
   try {
-    data.value = await GET();
+    data.value = await fetchClients["dashboard/data"].GET();
   } finally {
     loading.value = false;
   }

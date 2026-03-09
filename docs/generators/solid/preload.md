@@ -17,10 +17,10 @@ First, create an API endpoint that provides the data.
 Suppose you have `api/users/data/index.ts`:
 
 ```ts [api/users/data/index.ts]
-import { defineRoute } from "_/front/api/users/data";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute(({ GET }) => [
-  GET<never, Data>(async (ctx) => {
+export default defineRoute<"users/data", (({ GET }) => [
+  GET<{ response: [200, "json", Data] }>(async (ctx) => {
     // Fetch data from database or external API
     ctx.body = await fetchUserData();
   }),
@@ -32,7 +32,9 @@ and use it both for preloading and for accessing the data in your component:
 
 ```tsx [pages/users/index.tsx]
 import { createAsync } from "@solidjs/router";
-import { GET } from "_/front/fetch/users/data";
+import fetchClients from "_/front/fetch";
+
+const { GET } = fetchClients["users/data"];
 
 export default function Page() {
   // createAsync recognizes that fetchData is the same function from preload

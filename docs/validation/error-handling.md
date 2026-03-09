@@ -16,7 +16,7 @@ This error contains detailed information about the validation failure,
 including the scope (whether it was a parameter, payload, or response that failed)
 and descriptive error messages.
 
-Your `api/use.ts` provides a basic error handler middleware in the `errorHandler` slot.
+Your `api/errors.ts` provides a basic error handler.
 You can customize it for your specific error handling requirements -
 add logging, change response formats, or emit events.
 
@@ -25,33 +25,67 @@ add logging, change response formats, or emit events.
 The default error handler checks if an error is a `ValidationError`
 and returns a 400 Bad Request status with error message:
 
-```ts [api/use.ts]
-import { use, ValidationError } from "@kosmojs/api/errors";
+::: code-group
+```ts [Koa: api/errors.ts]
+import { ValidationError } from "@kosmojs/api/errors";
 
-// Define global middleware applied to all source folders.
-// Can be overridden on a per-route basis using the slot key.
-export default [
-  use(
-    async function useErrorHandler(ctx, next) {
-      try {
-        await next();
-      } catch (error: any) {
-        if (error instanceof ValidationError) {
-          const { target, errorMessage } = error;
-          ctx.status = 400;
-          ctx.body = { error: `ValidationError: ${target} - ${errorMessage}` };
-        } else {
-          ctx.status = error.statusCode || error.status || 500;
-          ctx.body = { error: error.message };
-        }
+import { errorHandlerFactory } from "_/front/api-factory";
+
+export default errorHandlerFactory(
+  async function defaultErrorHandler(ctx, next) {
+    try {
+      await next();
+    } catch (error: any) {
+      const [errorMessage, status] =
+        error instanceof ValidationError
+          ? [`${error.target}: ${error.errorMessage}`, 400]
+          : [error.message, error.statusCode || 500];
+      if (ctx.accepts("json")) {
+        ctx.status = 400;
+        ctx.body = { error: errorMessage };
+      } else {
+        ctx.status = status;
+        ctx.body = errorMessage;
       }
-    },
-    { slot: "errorHandler" },
-  ),
-
-  // ...
-];
+    }
+  },
+);
 ```
+
+```ts [Hono: api/errors.ts]
+import { accepts } from "hono/accepts";
+import { HTTPException } from "hono/http-exception";
+
+import { ValidationError } from "@kosmojs/api/errors";
+
+import { errorHandlerFactory } from "_/front/api-factory";
+
+export default errorHandlerFactory(
+  async function defaultErrorHandler(error, ctx) {
+    // Let Hono's HTTPException handle its own response
+    if (error instanceof HTTPException) {
+      return error.getResponse();
+    }
+
+    const [message, status] =
+      error instanceof ValidationError
+        ? [`${error.target}: ${error.errorMessage}`, 400]
+        : [error.message, error.statusCode || 500];
+
+    // Respond based on what the client accepts
+    const type = accepts(ctx, {
+      header: "Accept",
+      supports: ["application/json", "text/plain"],
+      default: "text/plain",
+    });
+
+    return type === "application/json"
+      ? ctx.json({ error: message }, status)
+      : ctx.text(message, status);
+  },
+);
+```
+:::
 
 This file is yours to customize.
 You can modify how errors are formatted, add logging, implement custom error responses,
@@ -214,7 +248,7 @@ if (error instanceof ValidationError) {
 
 The `target` property tells you which part of the request failed validation:
 
-- `"param"` - Route parameter validation failures
+- `"params"` - Route parameter validation failures
 - `"query"` - Query parameter validation failures
 - `"headers"` - Request headers validation failures
 - `"cookies"` - Cookie validation failures
@@ -269,9 +303,9 @@ Custom error messages are organized by validation target (just like the first ty
 and you can provide both generic messages and field-specific messages:
 
 ```ts [api/users/index.ts]
-import { defineRoute } from "_/front/api/users";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute(({ POST }) => [
+export default defineRoute<"users">(({ POST }) => [
   POST<
     {
       json: {
@@ -307,9 +341,9 @@ If a field-specific message exists, it's used; otherwise, the generic `error` me
 You can provide custom error messages for any validation target:
 
 ```ts [api/posts/search/index.ts]
-import { defineRoute } from "_/front/api/posts/search";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute(({ POST }) => [
+export default defineRoute<"posts/search">(({ POST }) => [
   POST<
     {
       query: {

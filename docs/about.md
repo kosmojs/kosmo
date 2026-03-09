@@ -43,7 +43,7 @@ each with its own framework choice and configuration, all within a single Vite p
 
 `KosmoJS`'s approach centers on three key ideas:
 
-🔹 First, it recognizes that applications often comprise multiple distinct areas -
+🔹 First, it recognizes that applications often include multiple distinct areas -
 and treats these as independent source folders, each with its own configuration and purpose,
 all within a single unified project.
 

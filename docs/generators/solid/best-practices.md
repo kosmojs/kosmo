@@ -20,7 +20,7 @@ preloading provides the best user experience.
 The data arrives before the component renders, eliminating loading spinners.
 
 - For data that depends on user interactions after the page loads,
-use `createResource` or [useResource](/generators/solid/useResource) directly in your components.
+use `createResource` directly in your components.
 This gives you control over when fetching occurs
 and how to handle loading and error states.
 

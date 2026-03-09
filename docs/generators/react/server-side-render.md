@@ -275,22 +275,12 @@ This produces an SSR-ready bundle at `dist/SOURCE_FOLDER/ssr/` containing `serve
 ## 🧪 Local Testing Before Deployment
 
 Test your SSR bundle locally before production deployment.
-The server accepts port or socket configuration:
+The server accepts port or socket configuration.
 
-**Port-based execution:**
-
-```sh
-node dist/front/ssr -p 4000
-# or
-node dist/front/ssr --port 4000
-```
-
-**Socket-based execution:**
+**Use port number:**
 
 ```sh
-node dist/front/ssr -s /tmp/app.sock
-# or
-node dist/front/ssr --sock /tmp/app.sock
+node dist/front/ssr/server -p 4000
 ```
 
 Navigate to `http://localhost:4000` to verify proper server-side rendering.

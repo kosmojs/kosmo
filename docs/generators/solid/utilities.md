@@ -37,7 +37,9 @@ This allows you to pass reactive data to fetch clients safely:
 
 ```tsx [pages/users/index.tsx]
 import { createStore } from "solid-js/store";
-import useFetch from "_/front/fetch/users";
+import fetchClients from "_/front/fetch";
+
+const useFetch = fetchClients["users"];
 
 export default function Page() {
   const [formData, setFormData] = createStore({
@@ -52,6 +54,14 @@ export default function Page() {
 
   return <form onSubmit={handleSubmit}>...</form>;
 }
+```
+
+For cases when a custom `unwrap` needed, it can be provided as option:
+
+```ts
+await useFetch.POST([], { form: formData }, {
+  unwrap: (data) => { /** custom logic here */ }
+});
 ```
 
 Different generators might implement these utilities differently

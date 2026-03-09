@@ -64,10 +64,6 @@ When projects span multiple source directories, each folder receives its own
 architectural pattern enables different application areas to coexist with
 distinct approaches.
 
-Your primary application might occupy one directory while administrative
-tooling resides in another, each maintaining separate routing hierarchies,
-component libraries, and data management strategies.
-
 Generated type definitions and utility functions remain isolated per source
 folder, preventing cross-contamination between application domains. Routes
 defined in your main application won't pollute the admin interface's

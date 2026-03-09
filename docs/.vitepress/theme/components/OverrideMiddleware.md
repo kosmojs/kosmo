@@ -1,10 +1,10 @@
 ```ts [api/dashboard/index.ts]
-import { defineRoute } from "_/admin/api/dashboard";
+import { defineRoute } from "_/admin/api";
 
-export default defineRoute(({ use, POST }) => [
+export default defineRoute<"dashboard">(({ use, POST }) => [
   use(
-    (ctx, next) => { // [!code hl:4]
-      // no authentication for dashboard
+    (ctx, next) => {
+      // no authentication for dashboard // [!code hl]
       return next();
     },
     {

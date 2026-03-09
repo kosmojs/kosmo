@@ -17,39 +17,33 @@ globally for your entire API, for route subtrees, or for individual endpoints.
 
 ## 📦 Default Error Handler
 
-When you create a source folder, `KosmoJS` generates `api/use.ts` with a basic error handler middleware:
+When you create a source folder, `KosmoJS` generates `api/errors.ts` with a basic error handler middleware:
 
 ```ts [api/use.ts]
 import { ValidationError } from "@kosmojs/api/errors";
-import { use } from "_/front/api";
 
-export default [
-  use(
-    async function useErrorHandler(ctx, next) {
-      try {
-        await next();
-      } catch (error: any) {
-        if (error instanceof ValidationError) {
-          const { target, errorMessage } = error;
-          ctx.status = 400;
-          ctx.body = { error: `ValidationError: ${target} - ${errorMessage}` };
-        } else {
-          ctx.status = error.statusCode || error.status || 500;
-          ctx.body = { error: error.message };
-        }
+import { errorHandlerFactory } from "_/front/api-factory";
+
+export default errorHandlerFactory(
+  async function defaultErrorHandler(ctx, next) {
+    try {
+      await next();
+    } catch (error: any) {
+      const [errorMessage, status] =
+        error instanceof ValidationError
+          ? [`${error.target}: ${error.errorMessage}`, 400]
+          : [error.message, error.statusCode || 500];
+      if (ctx.accepts("json")) {
+        ctx.status = 400;
+        ctx.body = { error: errorMessage };
+      } else {
+        ctx.status = status;
+        ctx.body = errorMessage;
       }
-    },
-    { slot: "errorHandler" }, // slot is essential // [!code hl]
-  ),
-
-  // ...
-];
+    }
+  },
+);
 ```
-
-Thanks to the `errorHandler` slot, this error handler can be overridden or customized at any route level -
-giving you flexibility to handle errors differently for specific parts of your API.
-
-The default handler returns JSON error responses, assuming clients expect JSON.
 
 When an error occurs anywhere in your middleware chain or route handlers,
 this error handler catches it and formats a consistent response.
@@ -59,8 +53,8 @@ this error handler catches it and formats a consistent response.
 You can customize the default error handler to match your application's needs.
 For example, add error logging or emit events for monitoring:
 
-```ts [api/use.ts]
-async function useErrorHandler(ctx, next) {
+```ts [api/errors.ts]
+async function defaultErrorHandler(error, ctx) {
   try {
     await next();
   } catch (error: any) {
@@ -76,28 +70,32 @@ async function useErrorHandler(ctx, next) {
 You can then add listeners to handle these events:
 
 ```ts [api/app.ts]
-import { type AppOptions, createApp } from "@kosmojs/api";
+import { appFactory } from "_/front/api-factory";
+import router from "./router";
 
-export default (options?: AppOptions) => {
-  const app = createApp(options);
+export default appFactory(({ createApp }) => {
+  const app = createApp();
 
   app.on("error", (error) => { // [!code focus:4]
     // Log to your monitoring service
     console.error("API Error:", error);
   });
 
+  // NOTE: Routes should be added last, after any middleware
+  app.use(router.routes());
+
   return app;
-};
+});
 ```
 
 The error handler can return different response formats based on request headers or other context.
 
-## 🎯 Route-Level Error Handlers
+## 🎯 Custom Error Handlers
 
-For routes that need different error handling behavior,
+For routes that need a custom error handling,
 override the default handler using the `errorHandler` slot.
 
-**Inline override:**
+**Inline override**
 
 ```ts [api/webhooks/github/index.ts]
 export default defineRoute(({ use, POST }) => [
@@ -117,7 +115,7 @@ export default defineRoute(({ use, POST }) => [
 ]);
 ```
 
-**Via use.ts file:**
+**Via cascading middleware**
 
 For multiple routes that need the same error handling, create a `use.ts` file:
 
@@ -142,7 +140,7 @@ export default [
 
 All routes under `/api/webhooks` now use this custom error handler instead of the default.
 
-[More on Route-Level Middleware ➜ ](/api-server/use-middleware/route-level-middleware)
+[More on Cascading Middleware ➜ ](/api-server/cascading-middleware)
 
 ## 🔄 Let Handlers Fail
 
@@ -150,7 +148,7 @@ Don't clutter your handler logic with try-catch blocks. Let handlers throw error
 the error handler middleware will catch and format them:
 
 ```ts
-// ❌ DON'T - Unnecessary error handling
+// ❌ Unnecessary error handling
 GET(async (ctx) => {
   try {
     const user = await fetchUser(ctx.params.id);
@@ -161,7 +159,7 @@ GET(async (ctx) => {
   }
 });
 
-// ✅ DO - Let the error handler catch it
+// ✅ Let the error handler catch it
 GET(async (ctx) => {
   const user = await fetchUser(ctx.params.id);
   ctx.assert(user, 404, "User not found");

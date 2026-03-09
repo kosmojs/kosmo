@@ -241,21 +241,3 @@ reactGenerator({
 ```
 
 This replaces the generator's fallback for all routes.
-
-## 💡 Implementation Guidelines
-
-**Maintain template focus**<br>
-Reserve custom templates for routes requiring structural differences, not
-cosmetic variations.
-
-**Leverage layout components**<br>
-Import shared layouts within templates rather than duplicating structure
-across template definitions.
-
-**Plan for maintainability**<br>
-Templates exist as configuration strings. Complex templates warrant external
-file generation strategies.
-
-**Validate thoroughly**<br>
-Custom templates bypass default generator patterns, requiring verification of
-routing and parameter handling compatibility.

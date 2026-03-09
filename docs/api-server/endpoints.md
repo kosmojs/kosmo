@@ -27,9 +27,9 @@ and the `use` function for custom middleware.
 You typically destructure this object to access only the methods you need for that particular endpoint.
 
 ```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api/users/[id]";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute(({ GET }) => [
+export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
     // Handle GET requests
   }),

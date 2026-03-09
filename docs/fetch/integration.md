@@ -17,12 +17,14 @@ For `SolidJS`, you might use it with `createResource`:
 
 ```ts [pages/example/index.tsx]
 import { createResource } from "solid-js";
-import useFetch from "_/front/fetch/users/[id]";
+import fetchClients from "_/front/fetch";
+
+const { GET } = fetchClients["users/[id]"];
 
 function UserProfile(props) {
   const [user] = createResource(
     () => props.userId,
-    (id) => useFetch.GET([id])
+    (id) => GET([id])
   );
 
   return (
@@ -38,7 +40,9 @@ For `React` applications, you might create custom hooks that wrap the fetch clie
 
 ```ts [pages/example/index.tsx]
 import { useState, useEffect } from "react";
-import useFetch from "_/front/fetch/users/[id]";
+import fetchClients from "_/front/fetch";
+
+const { GET } = fetchClients["users/[id]"];
 
 function useUser(userId: number) {
   const [user, setUser] = useState(null);
@@ -46,7 +50,7 @@ function useUser(userId: number) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    useFetch.GET([userId])
+    GET([userId])
       .then(setUser)
       .catch(setError)
       .finally(() => setLoading(false));

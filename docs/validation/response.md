@@ -21,9 +21,9 @@ just use `response` property to provide response schema, status code, content ty
 
 ```ts [api/users/index.ts]
 import type { User } from "@/front/types/api-payload";
-import { defineRoute } from "_/front/api/users";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute(({ GET }) => [
+export default defineRoute<"users">(({ GET }) => [
   GET<{
     response: [200, "json", User], // [!code hl]
   }>(async (ctx) => {

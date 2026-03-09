@@ -36,16 +36,16 @@ directly into network requests:
 ```vue [pages/users/index.vue]
 <script setup lang="ts">
 import { ref } from "vue";
-import useFetch from "_/front/fetch/users";
+import fetchClients from "_/front/fetch";
 
-const formData = ref({
+const json = ref({
   name: "",
   email: "",
 });
 
 async function submit() {
   // unwrap is automatically applied inside the fetch client
-  await useFetch.POST([], { form: formData.value });
+  await fetchClients["users"].POST([], { json });
 }
 </script>
 
@@ -54,6 +54,14 @@ async function submit() {
     ...
   </form>
 </template>
+```
+
+In case you need a custom unref logic, use the `unwrap` option:
+
+```ts
+await useFetch.POST([], { json }, {
+  unwrap: (data) => { /** custom logic here */ }
+});
 ```
 
 This allows:

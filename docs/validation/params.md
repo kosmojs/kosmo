@@ -20,16 +20,16 @@ or perhaps it should fall within a certain range.
 
 ## 🎯 Params Refinements
 
-`KosmoJS` lets you refine parameter types through a tuple passed as the first type argument to `defineRoute`.
+`KosmoJS` lets you refine parameter types through a tuple passed as the second type argument to `defineRoute`.
 This tuple uses positional parameters that align with your route's parameter order.
 
 Consider a route at `api/users/[id]/index.ts` where you want to ensure the ID is a number.
-You specify this by passing `[number]` as the first type argument `defineRoute`:
+You specify this by passing `[number]` tuple as the second type argument:
 
 ```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api/users/[id]";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute<[
+export default defineRoute<"users/[id]", [
   number // validate id as number // [!code hl]
 ]>(({ GET }) => [
   GET(async (ctx) => {
@@ -55,9 +55,9 @@ but `ctx.validated.params` is what you'll typically use when you've provided typ
 You can refine parameters further by using `TRefine` (globally available, no need to import):
 
 ```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api/users/[id]";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute<[
+export default defineRoute<"users/[id]", [
   // validate id as a positive integer // [!code hl]
   TRefine<number, { minimum: 1, multipleOf: 1 }>
 ]>(({ GET }) => [
@@ -79,9 +79,9 @@ All positions are optional, so you can refine just the parameters that need it.
 For a route at `api/users/[id]/[view]/index.ts`:
 
 ```ts [api/users/[id]/[view]/index.ts]
-import { defineRoute } from "_/front/api/users/[id]/[view]";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute<[
+export default defineRoute<"users/[id]/[view]", [
   // validate id as a positive integer // [!code hl]
   TRefine<number, { minimum: 1, multipleOf: 1 }>,
   // make sure view is one of // [!code hl]

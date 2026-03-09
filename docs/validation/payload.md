@@ -24,7 +24,7 @@ and runtime validation enforcement.
 
 ## 🎯 Validation Targets
 
-`KosmoJS` provides fine-grained control over what gets validated through **validation targets**.
+Validation targets provides fine-grained control over what gets validated.
 Each target represents a different part of the incoming HTTP request:
 
 **Metadata Targets** (available for all HTTP methods):
@@ -82,9 +82,9 @@ The simplest approach is to define the payload type inline as the first type arg
 specifying which validation targets you want to use:
 
 ```ts [api/posts/index.ts]
-import { defineRoute } from "_/front/api/posts";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute(({ POST }) => [
+export default defineRoute<"posts">(({ POST }) => [
   POST<{
     json: {
       title: TRefine<string, { minLength: 1, maxLength: 255 }>;
@@ -190,9 +190,9 @@ You can validate multiple parts of the request simultaneously by specifying mult
 This is particularly useful for endpoints that need to validate query parameters, headers, and request body together:
 
 ```ts [api/posts/search.ts]
-import { defineRoute } from "_/front/api/posts/search";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute(({ POST }) => [
+export default defineRoute<"posts/search">(({ POST }) => [
   POST<{
     query: {
       page: TRefine<number, { minimum: 1 }>;
@@ -356,9 +356,9 @@ Now you can use these types in any route by importing them:
 
 ```ts [api/users/index.ts]
 import type { User, Payload } from "@/front/types/api-payload";
-import { defineRoute } from "_/front/api/users";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute(({ POST }) => [
+export default defineRoute<"users">(({ POST }) => [
   POST<{
     json: Payload<User>, // [!code hl]
   }>(async (ctx) => {
@@ -383,9 +383,9 @@ Different routes can use the same generic type with different parameters:
 
 ```ts [api/posts/index.ts]
 import type { Post, Payload } from "@/front/types/api-payload";
-import { defineRoute } from "_/front/api/posts";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute(({ POST }) => [
+export default defineRoute<"posts">(({ POST }) => [
   POST<{
     json: Payload<Post>, // [!code hl]
   }>(async (ctx) => {

@@ -1,6 +1,6 @@
 ---
 title: TRefine for Type Refinement
-description: Express sophisticated validation constraints with TRefine using JSON Schema keywords.
+description: Advanced validation constraints with TRefine using JSON Schema keywords.
     Validate string formats, numeric ranges, array constraints, and custom patterns directly in TypeScript types.
 head:
   - - meta

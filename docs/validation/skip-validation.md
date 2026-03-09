@@ -13,8 +13,8 @@ Sometimes you might want `TypeScript` type checking without runtime validation.
 
 `KosmoJS` uses the second type argument for options (that's it, first argument for scheams, second for options).
 
-When `runtimeValidation` option set to false, you keep compile-time checking
-while skip runtime validation:
+When `runtimeValidation` option set to `false` for a specific target,
+you keep compile-time checking while skip runtime validation for that target:
 
 ```ts [api/example/index.ts]
 export default defineRoute(({ POST }) => [
@@ -26,8 +26,8 @@ export default defineRoute(({ POST }) => [
       runtimeValidation: false, // [!code hl]
     }
   }>(async (ctx) => {
-    // no ctx.validated.json, use `await ctx.bodyparser.json()` for Koa
-    // or `await ctx.req.json()` for Hono
+    // no ctx.validated.json, use `await ctx.bodyparser.json<User>()` for Koa
+    // or `await ctx.req.json<User>()` for Hono
   }),
 ]);
 ```

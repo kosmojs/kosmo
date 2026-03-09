@@ -225,33 +225,5 @@ vueGenerator({
 });
 ```
 
----
-
-## 💡 Best Practices
-
-**Focus templates where they matter**
-Use them for structural variety, not tiny changes.
-
-**Use shared layouts**
-Import reusable containers or UI primitives within templates.
-
-**Keep complexity manageable**
-Since templates are strings, large ones are easier to maintain in `.hbs`
-files.
-
-**Validate output**
-Generated files bypass default scaffolding - test navigation + data loading.
-
----
-
-## 📌 Reference Templates (Official)
-
-`KosmoJS` provides helpful [example templates](https://github.com/kosmojs/kosmo/tree/main/packages/generators/vue-generator/src/templates/public) you can adapt.
-
-These demonstrate common patterns such as styled page shells and placeholder
-content.
-
----
-
 Custom templates let you embed branding, layouts, and editorial style early -
 so every new page begins with a strong foundation tailored to your application.

@@ -1,5 +1,5 @@
 ```ts [api/pages/[id]/index.ts]
-import { defineRoute } from "_/admin/api/pages/[id]";
+import { defineRoute } from "_/admin/api";
 
 type Page = {
   id: TRefine<string, { format: "uuid" }>;
@@ -9,7 +9,7 @@ type Page = {
   status: "draft" | "published" | "scheduled";
 }
 
-export default defineRoute(({ GET }) => [
+export default defineRoute<"pages/[id]">(({ GET }) => [
   GET<{
     response: [200, "json", Page], // [!code hl]
   }>(async (ctx) => {

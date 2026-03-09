@@ -150,20 +150,12 @@ export default defineConfig({
               link: "/generators/solid/server-side-render",
             },
             {
-              text: "🔄 useResource Helper",
-              link: "/generators/solid/useResource",
-            },
-            {
               text: "🧭 Link Navigation",
               link: "/generators/solid/link",
             },
             {
               text: "🔧 Utilities",
               link: "/generators/solid/utilities",
-            },
-            {
-              text: `${icons.gear} Customization`,
-              link: "/generators/solid/customization",
             },
             {
               text: "🎨 Custom Templates",
@@ -206,10 +198,6 @@ export default defineConfig({
               link: "/generators/react/link",
             },
             {
-              text: `${icons.gear} Customization`,
-              link: "/generators/react/customization",
-            },
-            {
               text: "🎨 Custom Templates",
               link: "/generators/react/custom-templates",
             },
@@ -226,7 +214,7 @@ export default defineConfig({
           items: [
             {
               text: "🛠 Install / Setup",
-              docFooterText: "🛠 SolidJS - Install / Setup",
+              docFooterText: "🛠 Vue - Install / Setup",
               link: "/generators/vue/intro",
             },
             {
@@ -255,7 +243,7 @@ export default defineConfig({
             },
             {
               text: "💡 Best Practices",
-              docFooterText: "💡 SolidJS - Best Practices",
+              docFooterText: "💡 Vue - Best Practices",
               link: "/generators/vue/best-practices",
             },
           ],
@@ -427,49 +415,31 @@ export default defineConfig({
             {
               text: "🛡 Type Safety",
               collapsed: false,
-              items: [
-                {
-                  text: "🔹 Parameters",
-                  link: "/api-server/type-safety/params",
-                },
-                {
-                  text: "🔹 Payload / Response",
-                  link: "/api-server/type-safety/payload-response",
-                },
-                {
-                  text: "🔹 State / Context",
-                  link: "/api-server/type-safety/state-context",
-                },
-              ],
+              link: "/api-server/type-safety",
             },
             {
-              text: "⏩ use Middleware",
+              text: "▶️ Middleware",
               collapsed: false,
-              items: [
-                {
-                  text: "🔹 Rationale",
-                  docFooterText: "🔹 use Middleware",
-                  link: "/api-server/use-middleware/intro",
-                },
-                {
-                  text: "🔹 Method-Specific",
-                  docFooterText: "🔹 Method-Specific Middleware",
-                  link: "/api-server/use-middleware/method-specific",
-                },
-                {
-                  text: "🔹 Slot Composition",
-                  link: "/api-server/use-middleware/slot-composition",
-                },
-                {
-                  text: "🔹 Route-level Middleware",
-                  docFooterText: "🔹 Route-level Middleware",
-                  link: "/api-server/use-middleware/route-level-middleware",
-                },
-              ],
+              link: "/api-server/middleware",
+            },
+            {
+              text: "🔽 Cascading Middleware",
+              collapsed: false,
+              link: "/api-server/cascading-middleware",
             },
             {
               text: "🚨 Error Handling",
-              link: "/api-server/error-handling",
+              collapsed: false,
+              items: [
+                {
+                  text: "Koa",
+                  link: "/api-server/error-handling/koa",
+                },
+                {
+                  text: "Hono",
+                  link: "/api-server/error-handling/hono",
+                },
+              ],
             },
             {
               text: "💻 Development Workflow",
@@ -496,10 +466,6 @@ export default defineConfig({
               link: "/validation/intro",
             },
             {
-              text: "🎯 TRefine for Refinement",
-              link: "/validation/refine",
-            },
-            {
               text: "🚥 Validating Params",
               link: "/validation/params",
             },
@@ -510,6 +476,10 @@ export default defineConfig({
             {
               text: "📤 Validating Responses",
               link: "/validation/response",
+            },
+            {
+              text: "🎯 TRefine for Refinement",
+              link: "/validation/refine",
             },
             {
               text: "🏁 Skip Validation",

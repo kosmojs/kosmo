@@ -19,14 +19,15 @@ while Hono delivers exceptional performance across multiple runtimes including e
 ## 🎯 Choose Your Foundation
 
 **Koa** brings battle-tested stability with elegant async/await middleware patterns
-and a rich ecosystem of plugins built over years of production use.
+and a rich ecosystem of middleware built over years of production use.
 
 **Hono** offers blazing speed and runtime flexibility - deploy the same code to Node.js,
 Deno, Bun, Cloudflare Workers, or any edge platform with zero changes.
 
-The best part? Your application code remains identical regardless of which framework you choose.
-Switch between them by changing a single configuration setting - your routes, middleware,
-and type definitions work exactly the same way.
+Regardless of which framework you choose, the app infrastructure remains the same.
+Route organization, middleware patterns, and validation are identical between Koa and Hono.
+The only difference is the framework-specific API inside handlers and middleware -
+each framework has its own context object and methods.
 
 ## 🛡️ Type Safety Throughout
 
@@ -37,7 +38,7 @@ and these types flow through to runtime validation automatically.
 There's no context switching between writing schemas in one DSL
 and implementing logic in another language.
 Everything lives in `TypeScript`, in the same file, maintaining a cohesive development experience.
-([Details ➜ ](/api-server/type-safety/params))
+([Details ➜ ](/api-server/type-safety))
 
 ## 🔧 Structured Yet Flexible
 
@@ -50,7 +51,7 @@ the Ruby framework that pioneered minimalist web development back in 2007.
 
 The `use` function enables fine-grained middleware control at the route level,
 complementing global middleware with route-specific behavior.
-([Details ➜ ](/api-server/use-middleware/intro))
+([Details ➜ ](/api-server/middleware))
 
 Context and state extensibility means middleware can augment requests
 with authentication details, database connections, or any other request-scoped data,

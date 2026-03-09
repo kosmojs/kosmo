@@ -35,18 +35,18 @@ When you create a file like `api/users/[id]/index.ts`,
 ::: code-group
 
 ```ts [Koa]
-import { defineRoute } from "_/front/api/users/[id]";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute(({ GET }) => [
+export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
     ctx.body = "Automatically generated route: [ users/[id] ]";
   }),
 ]);
 ```
 ```ts [Hono]
-import { defineRoute } from "_/front/api/users/[id]";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute(({ GET }) => [
+export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
     ctx.text("Automatically generated route: [ users/[id] ]");
   }),
@@ -57,26 +57,14 @@ export default defineRoute(({ GET }) => [
 Let's break down what's happening here.
 
 The import statement brings in a `defineRoute` helper function from a generated module.
-Notice the import path uses the `_/` prefix - this accesses generated code from the `lib/src/` directory.
-
-Breaking down `_/front/api/users/[id]`:
+Notice the import path uses the `_/` prefix - this accesses generated code from the `lib/src/` directory:
 
 * `_/` - Generated code prefix (maps to `lib/src/`)
 * `front` - Your source folder name (from `src/front/`)
-* `api/users/[id]` - Mirrors your route file's location
 
-So this import resolves to `lib/src/front/api/users/[id]/index.ts` -
-a file `KosmoJS` generated automatically that mirrors your route structure.
-
-This generated module includes `TypeScript` type information about your route's parameters.
-In this case, it knows that this route has an `id` parameter,
-and that information flows through to your handler,
-enabling type-safe access via `ctx.validated.params.id`.
-
-The `defineRoute` function accepts a callback that receives HTTP method helpers.
-In this example, you see `GET`, but you also have access to `POST`, `PUT`, `DELETE`, `PATCH`, and other HTTP methods.
-
-You can define handlers for multiple methods in the same route by adding more method calls to the array.
+This import resolves to `lib/src/front/api.ts`, a generated file
+that provides type definitions for all your routes. With these types,
+`defineRoute` offers complete type safety and autocomplete.
 
 ## 🎨 Client Page Generation
 
@@ -95,6 +83,8 @@ when you navigate to the corresponding URL.
 The component is named `Page` by default but you can rename it to better reflect the component purpose.
 
 Generated component returns JSX that renders a placeholder message indicating which route this is.
+
+> Using annonymous arrow functions for default export is not recommended, this may break Vite's HMR.
 
 If you were using the `React` generator, the generated code would be nearly identical
 but would follow `React`-specific patterns and conventions.

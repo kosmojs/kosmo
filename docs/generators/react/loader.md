@@ -18,10 +18,10 @@ First, create an API endpoint that provides the data,
 eg.: `api/users/data/index.ts`:
 
 ```ts [api/users/data/index.ts]
-import { defineRoute } from "_/front/api/users/data";
+import { defineRoute } from "_/front/api";
 
-export default defineRoute(({ GET }) => [
-  GET<never, Data>(async (ctx) => {
+export default defineRoute<"users/data">(({ GET }) => [
+  GET<{ response: [200, "json", Data] }>(async (ctx) => {
     // Fetch data from database or external API
     ctx.body = await fetchUserData();
   }),
@@ -33,12 +33,12 @@ and use it both for the loader export and for accessing the data in your compone
 
 ```tsx [pages/users/index.tsx]
 import { useLoaderData } from "react-router";
-import { GET, type ResponseT } from "_/front/fetch/users/data";
+import fetchClients, { type ResponseT } from "_/front/fetch";
 
-export { GET as loader };
+export const loader = fetchClients["users/data"].GET;
 
 export default function Page() {
-  const data = useLoaderData<ResponseT["GET"]>();
+  const data = useLoaderData<ResponseT["users/data"]["GET"]>();
 
   return (
     <div>

@@ -65,23 +65,3 @@ organized by HTTP method.
 
 Each schema provides `check`, `errors`, `errorMessage`, `errorSummary`, and `validate` methods.
 ([Details ➜ ](/fetch/validation))
-
-**A default export** that bundles all of these together,
-making it convenient to destructure what you need or pass the entire client around as a single object.
-
-This structure gives you flexibility in how you use the client.
-Import the specific method you need, use the default export to access everything,
-or destructure multiple capabilities at once:
-
-```ts [pages/example/index.tsx]
-import useFetch, { path, validationSchemas } from "_/front/fetch/users/[id]";
-
-// Use the fetch method
-const user = await useFetch.GET([123]);
-
-// Build a URL
-const url = path([123]);
-
-// Validate form data
-const isValid = validationSchemas.payload.POST.check(formData);
-```

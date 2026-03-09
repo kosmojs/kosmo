@@ -58,11 +58,13 @@ These schemas are organized by HTTP method,
 so you can validate the exact structure that a specific endpoint expects:
 
 ```ts [pages/example/index.tsx]
-import useFetch from "_/front/fetch/users";
+import fetchClients from "_/front/fetch";
+
+const { validationSchemas } = fetchClients["users"];
 
 // Access validation schemas
-useFetch.validationSchemas.params;        // Parameter validation
-useFetch.validationSchemas.payload.POST;  // POST payload validation
+validationSchemas.params;      // Parameter validation
+validationSchemas.json.POST;  // JSON payload validation
 ```
 
 Each validation schema provides several methods with different performance characteristics and use cases.
@@ -76,7 +78,7 @@ This method is optimized for speed and can be called on every keystroke
 or input event without degrading UI performance:
 
 ```ts [pages/example/index.tsx]
-const isValid = useFetch.validationSchemas.payload.POST.check(formData);
+const isValid = validationSchemas.json.POST.check(formData);
 
 if (!isValid) {
   // Show validation errors
@@ -94,8 +96,8 @@ When `check` returns false, you call the `errors` method to get detailed informa
 This method returns an array of error entries, each describing a specific validation failure:
 
 ```ts [pages/example/index.tsx]
-if (!useFetch.validationSchemas.payload.POST.check(formData)) {
-  const errors = useFetch.validationSchemas.payload.POST.errors(formData);
+if (!validationSchemas.json.POST.check(formData)) {
+  const errors = validationSchemas.json.POST.errors(formData);
   // errors is Array<ValidationErrorEntry>
 }
 ```
@@ -141,8 +143,8 @@ const payload = {
   age: formFields.age,
 };
 
-if (!useFetch.validationSchemas.payload.POST.check(payload)) {
-  const errors = useFetch.validationSchemas.payload.POST.errors(payload);
+if (!validationSchemas.json.POST.check(payload)) {
+  const errors = validationSchemas.json.POST.errors(payload);
 
   // Find error for specific field
   const emailError = errors.find(e => e.path === "email");
@@ -177,8 +179,8 @@ Validation errors will have `path` like:
 **Match nested fields using regex with word boundaries:**
 
 ```ts [pages/example/index.tsx]
-if (!useFetch.validationSchemas.payload.POST.check(payload)) {
-  const errors = useFetch.validationSchemas.payload.POST.errors(payload);
+if (!validationSchemas.json.POST.check(payload)) {
+  const errors = validationSchemas.json.POST.errors(payload);
 
   // Use regex with word boundary for precise field matching
   const emailError = errors.find(({ path }) => /\bemail\b/.test(path));
@@ -200,7 +202,7 @@ that format errors into strings.
 The `errorMessage` method formats all validation errors into a single human-readable message:
 
 ```ts
-const message = useFetch.validationSchemas.payload.POST.errorMessage(formData);
+const message = validationSchemas.json.POST.errorMessage(formData);
 // Example: "Validation failed: user: missing required properties: "email", "name";
 //           password: must be at least 8 characters long"
 ```
@@ -208,7 +210,7 @@ const message = useFetch.validationSchemas.payload.POST.errorMessage(formData);
 The `errorSummary` method provides a brief overview of validation errors:
 
 ```ts
-const summary = useFetch.validationSchemas.payload.POST.errorSummary(formData);
+const summary = validationSchemas.json.POST.errorSummary(formData);
 // Example: "2 validation errors found across 2 fields"
 ```
 
@@ -235,10 +237,10 @@ const payload = {
   age: formFields.age,      // Empty
 };
 
-if (!useFetch.validationSchemas.payload.POST.check(payload)) {
+if (!validationSchemas.json.POST.check(payload)) {
   // This will be false because email and age are missing
   // Now you'd call the expensive errors() method even though name might be valid
-  const errors = useFetch.validationSchemas.payload.POST.errors(payload);
+  const errors = validationSchemas.json.POST.errors(payload);
 }
 ```
 
@@ -265,9 +267,9 @@ const payload = {
   name: event.target.value,  // Override with actual value
 };
 
-if (!useFetch.validationSchemas.payload.POST.check(payload)) {
+if (!validationSchemas.json.POST.check(payload)) {
   // This only returns false if name itself is invalid
-  const errors = useFetch.validationSchemas.payload.POST.errors(payload);
+  const errors = validationSchemas.json.POST.errors(payload);
   const nameError = errors.find(e => e.path === "name");
   // Show nameError.message in UI
 }
@@ -299,8 +301,8 @@ const actualPayload = {
   age: formFields.age,
 };
 
-if (!useFetch.validationSchemas.payload.POST.check(actualPayload)) {
-  const errors = useFetch.validationSchemas.payload.POST.errors(actualPayload);
+if (!validationSchemas.json.POST.check(actualPayload)) {
+  const errors = validationSchemas.json.POST.errors(actualPayload);
   // Handle all validation errors
   return;
 }

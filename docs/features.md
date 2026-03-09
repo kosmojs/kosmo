@@ -26,8 +26,6 @@ Different parts of your application have different needs.
 Your marketing site serves static content, your customer app handles authentication and user data,
 your admin panel requires different access patterns.
 
-Cramming everything into one `src` folder creates organizational chaos as your app grows.
-
 **How it works:**
 
 Each source folder is a standalone entity with its own:
@@ -37,7 +35,7 @@ Each source folder is a standalone entity with its own:
 - `api/` and `pages/` directories
 
 **Benefits:**
-- Work on one concern without loading everything else
+- Focus on one concern, no context switching
 - Deploy and scale each concern independently
 - Different teams can own different source folders
 - Clear boundaries prevent accidental cross-contamination
@@ -48,7 +46,7 @@ Each source folder is a standalone entity with its own:
 
 ## 🛣️ Directory-Based Routing
 
-Your folder structure defines your routes. Works identically for both API endpoints and client pages.
+Your folder structure defines your routes. Works identically for both API and client pages.
 
 **Why it matters:**
 
@@ -156,7 +154,7 @@ export default defineRoute(({ GET }) => [
 Also route parameters like `/users/[id]` are validated according to their types:
 
 ```ts
-defineRoute<[
+defineRoute<"users/[id]", [
   number // validate id as number // [!code hl]
 ]>(({ GET }) => [
   GET(async (ctx) => {
@@ -196,10 +194,10 @@ For every API route you define, `KosmoJS` generates:
 **1. Typed fetch clients:**
 
 ```ts
-import useFetch from "_/front/fetch/users/[id]";
+import fetchClients from "_/front/fetch";
 
 // Fully typed, validates before making request
-const user = await useFetch.GET([123]);
+const user = await fetchClients["users/[id]"].GET([123]);
 // TypeScript knows user's shape
 console.log(user.name, user.email);
 ```
@@ -225,7 +223,7 @@ Invalid data is caught immediately without server round trips:
 
 ```ts
 // This validates payload client-side
-await useFetch.POST([invalidId], { json: invalidPayload });
+await fetchClients["users/[id]"].POST([invalidId], { json: invalidPayload });
 // Throws ValidationError before making network request
 ```
 
@@ -276,7 +274,7 @@ Once selected, `KosmoJS` generates a ready-to-go folder with everything set up a
 New frameworks introduce new abstractions, new APIs to learn, new mental models to internalize.
 When the framework fades, your knowledge doesn't transfer.
 
-`KosmoJS` uses tools you already know (or easy to learn) and just provides organizational structure.
+`KosmoJS` uses tools you already know (or easy to learn) and just provides the structure.
 
 **The stack:**
 
@@ -303,7 +301,7 @@ When the framework fades, your knowledge doesn't transfer.
 - Deep ecosystem of tools and libraries
 - Skills transfer to other projects
 
-You're not learning "the `KosmoJS` way" - you're learning industry-standard tools
+You're not learning "the KosmoJS way" - you're learning industry-standard tools
 with safe and performant organizational structure.
 
 ---

@@ -114,9 +114,8 @@ Based on your parameter types, payload structures, and response shapes, `KosmoJS
 
 Everything stays aligned because everything derives from the same source of truth - your types.
 
-📘 [Type safety overview](/api-server/type-safety/params)
-· [Validation](/validation/intro)
-· [Payload validation](/validation/payload)
+📘 [Type safety overview](/api-server/type-safety)
+· [Runtype Validation](/validation/intro)
 
 ---
 
@@ -145,7 +144,7 @@ compose request handling precisely, maintain consistent patterns across routes.
 Development and production use the same structure - what you build locally is what deploys.
 
 📘 [Dev workflow](/api-server/development-workflow)
-· [Middleware patterns](/api-server/use-middleware/intro)
+· [Middleware patterns](/api-server/middleware)
 
 ---
 

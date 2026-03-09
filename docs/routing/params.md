@@ -17,7 +17,7 @@ using a friendly, readable and memorable syntax.
 The key benefit is that these patterns work identically for both API routes and client pages,
 so you only need to learn the syntax once.
 
-## Required Parameters
+## [] Required Parameters
 
 Required parameters use square brackets, like `[id]`.
 
@@ -27,7 +27,7 @@ and the matched value is made available to your route handler or component.
 ```
 users/
   [id]/
-    index.ts         ➜ matches /users/123, /users/abc, /users/anything
+    index.ts   ➜ matches /users/123, /users/abc, /users/anything
 ```
 
 This route matches `/users/123` or `/users/abc` but does not match `/users`
@@ -39,7 +39,7 @@ your route handler will receive that segment as a parameter called `id`.
 
 If you name it `[userId]`, it becomes `userId`. Choose names that make your code self-documenting.
 
-## Optional Parameters
+## {} Optional Parameters
 
 Optional parameters use curly braces, like `{id}`.
 
@@ -49,7 +49,7 @@ giving you flexibility to handle both cases in a single route handler.
 ```
 users/
   {id}/
-    index.ts         ➜ matches both /users and /users/123
+    index.ts   ➜ matches both /users and /users/123
 ```
 
 This is useful when you want a route that can show either a list view (when no ID is provided)
@@ -111,8 +111,8 @@ properties/
 ```
 
 **Now it works:**
-- `/properties/filters` ➜ Matches static `properties/filters/index.tsx`
-- `/properties/NY/filters` ➜ Matches dynamic `properties/{city}/filters/index.tsx`
+- ✅ `/properties/filters` ➜ Matches static `properties/filters/index.tsx`
+- ✅ `/properties/NY/filters` ➜ Matches dynamic `properties/{city}/filters/index.tsx`
 
 **Static routes always win over dynamic/optional routes!**
 
@@ -138,7 +138,7 @@ blog/
 - **Static routes have priority** over dynamic/optional routes in all frameworks
 - **Solution**: Create explicit static routes for potentially ambiguous paths
 
-## Splat Parameters
+## {...} Splat Parameters
 
 Splat parameters use the spread syntax `{...path}` and match any number of additional path segments.
 
@@ -148,9 +148,9 @@ file browsers, or any situation where you need to handle arbitrarily nested path
 ```
 docs/
   {...path}/
-    index.ts         ➜ matches /docs/getting-started
-                     ➜ matches /docs/api/reference
-                     ➜ matches /docs/guides/deployment/production
+    index.ts   ➜ matches /docs/getting-started
+               ➜ matches /docs/api/reference
+               ➜ matches /docs/guides/deployment/production
 ```
 
 The matched segments are provided to your handler as an array,
@@ -159,7 +159,7 @@ allowing you to process the full path structure however you need.
 For example, in a documentation site, you might use this to look up content files based on the full path,
 or in a file browser, you might navigate a directory structure.
 
-## Understanding Required vs Optional
+## 💡 Understanding Required vs Optional
 
 The `[param]` notation means **a value must be provided at this URL position**.
 However, there are exceptions...
@@ -200,75 +200,148 @@ careers/
 This makes it explicit that the parameter is optional - users can visit `/careers` without it.
 Both notations work identically when a parent index exists, but `{param}` communicates the intent better.
 
-## Required vs Optional Patterns
+## 🔗 Mixed Segments
 
-### Pattern 1: Truly Required Parameter
+Until now, we've used only single-purpose segments: either a static segment like `users` or a parameter like `[id]`.
 
-**No parent index = parameter is required to access the route**
+However, `KosmoJS` also supports mixed segments that combine static text with parameters.
 
-```txt
-shop/
-└── product/
-    └── [id]/
-        └── index.tsx
+### Examples
+
+**Product categories with file extension:**
+
+```
+products/[category].html
 ```
 
-**Routes:**
-- ❌ `/shop/product` ➜ NO MATCH (no index.tsx)
-- ✅ `/shop/product/123` ➜ MATCHES
+- ✅ `/products/electronics.html` - Matches
+- ✅ `/products/books.html` - Matches
+- ❌ `/products/books` - NO match (.html extension required)
+- ❌ `/products` - NO match (category parameter required)
 
-**Use case:** The page cannot function without the parameter.
-There's no "product listing" page - you must specify a product ID.
+**User profile data endpoints:**
 
-**Examples:**
-- `/order/[orderId]` - Can't show "an order" without an ID
-- `/edit/[documentId]` - Can't edit without specifying what to edit
-- `/invoice/[invoiceId]` - Invoice page needs an invoice
-
-### Pattern 2: Separate Routes (List + Detail)
-
-**Parent index exists = two independent routes**
-
-```txt
-careers/
-├── index.tsx      🢀 Job listings
-└── {jobId}/      🢀 Optional param
-    └── index.tsx  🢀 Job detail
+```
+profiles/[id]-[data].json
 ```
 
-**Routes:**
-- ✅ `/careers` ➜ MATCHES `careers/index.tsx` (list all jobs)
-- ✅ `/careers/123` ➜ MATCHES `careers/[jobId]/index.tsx` (specific job)
+- ✅ `/profiles/1-posts.json` - Matches
+- ✅ `/profiles/10-reviews.json` - Matches
+- ❌ `/profiles/1-posts` - NO match (.json extension required)
+- ❌ `/profiles/posts.json` - NO match (both id and data parameters required)
 
-**Use case:** Two **different pages** with different purposes.
+**Versioned API endpoints:**
 
-**Key insight:** These are **separate pages** with separate files.
-One shows a list, the other shows details.
-
-**Examples:**
-- `/products` (browse catalog) vs `/products/[id]` (product page)
-- `/users` (user directory) vs `/users/[id]` (user profile)
-- `/docs` (documentation home) vs `/docs/{...path}` (specific doc)
-
-### Pattern 3: Single Route with Optional Parameter
-
-**Single index with optional param = one page that adapts**
-
-```txt
-careers/
-└── {jobId}/
-    └── index.tsx
+```
+api/v[version]/[endpoint].json
 ```
 
-**Routes:**
-- ✅ `/careers` ➜ MATCHES (jobId is undefined)
-- ✅ `/careers/123` ➜ MATCHES (jobId is "123")
+- ✅ `/api/v1/users.json` - Matches
+- ✅ `/api/v2/products.json` - Matches
+- ❌ `/api/v1/users` - NO match (.json extension required)
+- ❌ `/api/v/users.json` - NO match (version parameter required)
 
-**Use case:** **Same page** that changes behavior based on parameter presence.
+**Monthly report archives:**
 
-**Key insight:** **One page, one file** - the component handles both states internally.
+```
+reports/[year]-[month]-summary.pdf
+```
 
-**Examples:**
-- `/inbox/{messageId}` - Email list with optional message preview
-- `/files/{path}` - File browser with optional file selected
-- `/settings/{section}` - Settings page with optional section focused
+- ✅ `/reports/2024-03-summary.pdf` - Matches
+- ✅ `/reports/2023-12-summary.pdf` - Matches
+- ❌ `/reports/2024-03-summary` - NO match (.pdf extension required)
+- ❌ `/reports/2024-summary.pdf` - NO match (month parameter required)
+
+**Generic file handler:**
+
+```
+files/[name].[ext]
+```
+
+- ✅ `/files/document.pdf` - Matches
+- ✅ `/files/image.png` - Matches
+- ❌ `/files/document` - NO match (extension required)
+- ❌ `/files/.pdf` - NO match (filename required)
+
+### Framework Support
+
+Mixed segments work perfectly for backend routes (Koa/Hono), but have limited support on the frontend:
+
+- **SolidJS Router** - No mixed segments support
+- **React Router** - Only `.ext` notation supported (e.g., `products/[category].html`)
+- **Vue Router** - Full mixed segments support
+
+**Recommendation:** Use mixed segments primarily for backend APIs where complex routing patterns are needed.
+For frontend routes, prefer simple URL patterns that render well in the address bar and are memorable for users.
+
+## ⚡ Power Syntax
+
+`KosmoJS` supports advanced `path-to-regexp@v8` patterns for maximum flexibility.
+
+**The rule:** If an optional parameter name contains only alphanumeric characters,
+it is treated as a simple parameter (e.g., `{name}`).
+If any non-alphanumeric characters are detected in the name,
+it is treated as a `path-to-regexp@v8` pattern and used directly without transformation.
+
+### Optional Static Parts
+
+Consider this pattern: `products/{category}.html`
+
+Without power syntax, this creates awkward URLs like `/products/.html` when no category is provided,
+and `/products` would never match because `.html` is a required static part.
+
+**With power syntax:** `products/{:category.html}`
+
+Both `category` and `.html` become optional:
+- ✅ `/products` - Matches (no category, no .html)
+- ✅ `/products/electronics.html` - Matches
+- ✅ `/products/books.html` - Matches
+- ❌ `/products/electronics` - No match (missing .html when category provided)
+
+### More Examples
+
+**Optional prefix and parameter:**
+
+```
+book{-:id}-info
+```
+
+- ✅ `/book-info` - Matches (no id)
+- ✅ `/book-123-info` - Matches (id = 123)
+
+**Nested optional parameters:**
+
+```
+book-[id]/{{:category-}reviews}
+```
+
+- ✅ `/book-123` - Matches (no category)
+- ✅ `/book-123/reviews` - Matches (still no category)
+- ✅ `/book-123/top-rated-reviews` - Matches (category = top-rated)
+
+**Complex optional structure:**
+
+```
+locale{-:lang{-:country}}
+```
+
+- ✅ `/locale` - Matches (no lang, no country)
+- ✅ `/locale-en` - Matches (lang = en, no country)
+- ✅ `/locale-en-US` - Matches (lang = en, country = US)
+
+**API versioning with optional parts:**
+
+```
+api/{v:version}/users
+```
+
+- ✅ `/api/users` - Matches (no version)
+- ✅ `/api/v1/users` - Matches (version = 1)
+- ✅ `/api/v2/users` - Matches (version = 2)
+
+### Learn More
+
+`path-to-regexp` v8 is state-of-the-art in routing, allowing highly customized patterns.
+However, use with caution - learn its syntax thoroughly before applying it to production routes.
+
+**Documentation:** [path-to-regexp](https://github.com/pillarjs/path-to-regexp)

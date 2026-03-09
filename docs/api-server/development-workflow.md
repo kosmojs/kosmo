@@ -50,7 +50,7 @@ The dev server starts on the port configured in your source folder's `vite.confi
 
 When you start a dev server, `KosmoJS`:
 
-1. **Builds your API** - Uses esbuild to compile `api/app.ts`
+1. **Builds your API** - Uses `esbuild` to compile `api/app.ts`
 2. **Starts Vite's dev server** - Serves your client pages with HMR
 3. **Integrates middleware** - Routes requests between `Vite` and your API
 4. **Watches for changes** - Rebuilds API code automatically
@@ -96,7 +96,7 @@ By default, it simply returns the Koa/Hono request handler:
 
 ::: code-group
 ```ts [Koa]
-import { devSetup } from "_/front/api:dev";
+import { devSetup } from "_/front/api-factory";
 import app from "./app";
 
 export default devSetup({
@@ -108,12 +108,12 @@ export default devSetup({
 
 ```ts [Hono]
 import { getRequestListener } from "@hono/node-server";
-import { devSetup } from "_/front/api:dev";
+import { devSetup } from "_/front/api-factory";
 import app from "./app";
 
 export default devSetup({
   requestHandler() {
-    return getRequestListener(app.fetch.bind(app));
+    return getRequestListener(app.fetch);
   },
 });
 ```
@@ -239,52 +239,31 @@ export type Route = {
 
 ### Inspecting Routes
 
-The `createRoutes` is lightweight and can be called anywhere without adding overhead -
-import it wherever you need route information.
-
 **The easiest way** - modify the default `api/router.ts` by adding debugging.
 
 You can add it directly and remember to remove it before production builds,
 or read `process.env.DEBUG` to display only when needed:
 
 ```ts [api/router.ts]
-import { createRoutes, routerFactory } from "_/front/api";
+import { routerFactory, routes } from "_/front/api";
 
-const DEBUG = // [!code ++:3]
-  process.env.DEBUG?.match(/(?<=\bapi(?:\+[^+]+)*\+)[^+]+/g) ||
-  /\bapi\b/i.test(process.env.DEBUG ?? "");
+const DEBUG = /\bapi\b/.test(process.env.DEBUG ?? ""); // [!code ++]
 
-export default routerFactory((router) => {
-  for (const { name, path, methods, middleware, debug } of createRoutes()) {
-    if (DEBUG === true) { // [!code ++:7]
-      // Debug all routes when DEBUG=api
-      console.log(debug.full);
-    } else if (Array.isArray(DEBUG) && DEBUG.some((e) => name.includes(e))) {
-      // Debug specific route when DEBUG=api+a+b+c
+export default routerFactory(({ createRouter }) => {
+  const router = createRouter();
+
+  for (const { name, path, methods, middleware, debug } of routes) {
+    if (DEBUG) { // [!code ++:3]
       console.log(debug.full);
     }
     router.register(path, methods, middleware, { name });
   }
+
   return router;
 });
 ```
 
-This way you can run:
-- `DEBUG=api pnpm dev` - to see all routes
-- `DEBUG=api+user pnpm dev` - to see only routes containing "user"
-- `DEBUG=api+user+blog pnpm dev` - to see only routes containing "user" or "blog"
-
-Or call it from anywhere else in your codebase - a debugging script, test file, or development utility:
-
-```ts
-import { createRoutes } from "_/front/api";
-
-// Inspect routes from anywhere
-const routes = createRoutes();
-routes.forEach(route => {
-  console.log(route.debug.headline);
-});
-```
+This way you can run `DEBUG=api pnpm dev` to see all routes.
 
 The `debug.full` property displays complete route information. Here's example output:
 

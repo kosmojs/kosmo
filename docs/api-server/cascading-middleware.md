@@ -1,5 +1,5 @@
 ---
-title: Route-level Middleware
+title: Cascading Middleware
 description: Organize middleware hierarchically using use.ts files that wrap route subtrees.
     Apply authentication, logging, and custom parsers to folders and their descendants
     without cluttering individual route definitions.
@@ -14,7 +14,7 @@ Defining middleware in every route file becomes tedious as your application grow
 You end up repeatedly importing/declaring the same authentication checks, logging setup,
 or body parser overrides across dozens of routes.
 
-`KosmoJS` solves this with `Route-level Middleware`.
+`KosmoJS` solves this with `Cascading Middleware`.
 
 Create a `use.ts` file in any folder, and its default exported middleware
 automatically wraps all routes in that folder and its subfolders -
@@ -74,7 +74,7 @@ export default [
 You can define multiple middleware in a single `use.ts` file,
 and they'll execute in the order you define them.
 
-## 🔐 Common Use Cases
+## 💼 Common Use Cases
 
 ### Authentication
 
@@ -156,7 +156,7 @@ Public endpoints get rate limiting, while internal or authenticated endpoints
 
 ### Parameter Availability
 
-Route-level middleware run for all routes in their folder hierarchy,
+Cascading middleware run for all routes in their folder hierarchy,
 including routes that may not define all the parameters you expect.
 
 ```txt
@@ -180,34 +180,28 @@ or in route-specific middleware defined within that route's `index.ts`.
 
 ### Middleware Hierarchy
 
-Route-level middleware execute from the outermost scope inward:
+Cascading middleware execute from the outermost scope inward.
+
+For a request to `/api/admin/users/123` the flow looks like:
 
 ```txt
 api/
-├── use.ts               // Runs 2nd (after global)
+├── use.ts               // Runs 1st (global middleware)
 └── admin/
-    ├── use.ts           // Runs 3rd
+    ├── use.ts           // Runs 2nd
     └── users/
-        ├── use.ts       // Runs 4th
+        ├── use.ts       // Runs 3th
         └── [id]/
-            └── index.ts // Runs 5th (route handler)
+            └── index.ts // Runs 4th (route handler)
 ```
 
-For a request to `/api/admin/users/123`:
-1. Global middleware (`api/use.ts`)
-2. `api/use.ts`
-3. `api/admin/use.ts`
-4. `api/admin/users/use.ts`
-5. Route-specific middleware from `api/admin/users/[id]/index.ts`
-6. Final route handler
-
-You cannot skip parent middleware.
+Handlers can not skip parent middleware.
 If a parent folder has `use.ts`, all child routes inherit it.
 This constraint keeps the middleware hierarchy predictable.
 
 ### Method-Specific Middleware
 
-Just like inline middleware, you can restrict route-level middleware to specific HTTP methods:
+Just like inline middleware, cascading middleware can run on specific HTTP methods:
 
 ```ts [api/users/use.ts]
 import { use } from "_/front/api";
@@ -215,19 +209,15 @@ import { use } from "_/front/api";
 export default [
   use(
     async (ctx, next) => {
-      // Authentication required for state-changing operations
-      const token = ctx.headers.authorization?.replace("Bearer ", "");
-      ctx.assert(token, 401, "Authentication required");
-      ctx.state.user = await verifyToken(token);
+      // authentication logic
       return next();
     },
-    { on: ["POST", "PUT", "PATCH", "DELETE"] },
+    { on: ["POST", "PUT", "PATCH", "DELETE"] }, // [!code focus]
   )
 ];
 ```
 
-This middleware only runs for methods that modify data,
-leaving GET requests public and unauthenticated.
+This middleware only runs for methods that modify data.
 
 ## 🎨 Multiple middleware in one file
 
@@ -288,7 +278,7 @@ and why they're needed. Future you (and your teammates) will appreciate the cont
 
 ---
 
-Route-level middleware transform how you organize cross-cutting concerns.
+Cascading middleware transform how you organize cross-cutting concerns.
 Instead of scattering the same authentication checks across dozens of files,
 you define them once at the appropriate level and let the hierarchy do the work.
 

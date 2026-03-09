@@ -110,3 +110,24 @@ But this small initial cost pays enormous dividends:
 It's one of those "trust the process" patterns where the benefit isn't obvious until your application grows.
 But once you've experienced trying to maintain a large file-based routing system with ambiguous file naming,
 you'll appreciate why directory-based routing enforces this clear structure from the start.
+
+Your folder structure naturally maps to your routing schema:
+
+```sh
+$ tree -d src/front/api
+src/front/api/
+└── shop
+    ├── cart
+    ├── [category]
+    │   └── {productId}
+    ├── checkout
+    │   ├── confirm
+    │   ├── payment
+    │   └── shipping
+    ├── orders
+    │   └── [orderId]
+    ├── product
+    │   └── [id]-reviews
+    └── products
+        └── {category}
+```
