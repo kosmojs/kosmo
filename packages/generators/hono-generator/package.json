@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@kosmojs/hono-generator",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "author": "Slee Woo",
   "license": "MIT",
   "publishConfig": {
