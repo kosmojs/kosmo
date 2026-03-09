@@ -3,7 +3,7 @@
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "fixed": [
-    ["kosmojs", "@kosmojs/*"]
+    ["create-kosmo", "@kosmojs/*"]
   ],
   "linked": [],
   "access": "restricted",
