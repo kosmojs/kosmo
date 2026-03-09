@@ -67,7 +67,10 @@ export const {{method}} = (
     {{target}}?: unknown;
     {{/if}}
     {{/each}}
-  }
+  },
+  opt?: {
+    unwrap?: <T>(data: MaybeWrapped<T>) => T;
+  },
 ): Promise<
   {{#if responseType}}
   ResponseT["{{method}}"]
@@ -75,18 +78,20 @@ export const {{method}} = (
   unknown
   {{/if}}
 > => {
-  const params = unwrap<ParamsT>(_params || []);
+  const [params, payload] = [_params, _payload].map((data) => {
+    return typeof opt?.unwrap === "function" ? opt.unwrap(data) : unwrap(data);
+  })
   if (validationSchemas.params) {
-    validationSchemas.params.validate(paramsMapper(params));
+    validationSchemas.params.validate(paramsMapper(params as never));
   }
   {{#each ../payloadTypes}}
   if (validationSchemas.{{target}}?.{{../method}}) {
     validationSchemas.{{target}}.{{../method}}.validate(
-      resolvePayload(_payload, "{{target}}")
+      resolvePayload(payload, "{{target}}")
     );
   }
   {{/each}}
-  return fetchApi.{{method}}(parametrize(params), _payload as never);
+  return fetchApi.{{method}}(parametrize(params as never), payload as never);
 };
 {{/each}}
 
