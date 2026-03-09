@@ -3,8 +3,8 @@ import { defineRoute } from "@test/index";
 export default defineRoute(({ GET, POST }) => [
   GET<{
     query: {
-      page?: number;
-      rating?: 1 | 2 | 3 | 4 | 5;
+      page?: string;
+      rating?: "1" | "2" | "3" | "4" | "5";
     };
   }>(async (ctx) => {}),
 

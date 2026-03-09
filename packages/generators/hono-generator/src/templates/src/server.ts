@@ -1,5 +1,6 @@
-import app from "{{ createImport 'api' 'app' }}";
-import { serverFactory } from "{{ createImport 'lib' 'api:server' }}";
+import app from "./app";
+
+import { serverFactory } from "{{ createImport 'lib' 'api-factory' }}";
 
 serverFactory(({ createServer }) => {
   createServer(app);

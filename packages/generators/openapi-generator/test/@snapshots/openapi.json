@@ -2144,10 +2144,7 @@
         "in": "path",
         "required": true,
         "schema": {
-          "type": "array",
-          "items": {
-            "type": "number"
-          }
+          "type": "number"
         }
       },
       "files_x_path_ext_index_ts_1377340925_ParamsT2195664104_ext30643714": {
@@ -2165,13 +2162,10 @@
         "schema": {
           "type": "array",
           "items": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "minItems": 1,
-            "maxItems": 10
-          }
+            "type": "string"
+          },
+          "minItems": 1,
+          "maxItems": 10
         }
       },
       "index_file_id_index_ts_2767746077_ParamsT3417421951_id3208210256": {

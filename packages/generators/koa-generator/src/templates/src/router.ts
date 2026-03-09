@@ -1,4 +1,4 @@
-import { routerFactory, routes } from "{{ createImport 'lib' 'api:router' }}";
+import { routerFactory, routes } from "{{ createImport 'lib' 'api-factory' }}";
 
 export default routerFactory(({ createRouter }) => {
   const router = createRouter();

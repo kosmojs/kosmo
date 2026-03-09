@@ -1,18 +1,11 @@
 import { resolve } from "node:path";
 
 import type {
-  RouteDefinitionItem,
   ValidationSchema,
   ValidationSchemas,
   ValidationTarget,
 } from "@kosmojs/api";
 import { type PluginOptionsResolved, pathResolver } from "@kosmojs/dev";
-
-import {
-  type DefineRouteFactory,
-  defineRouteFactory,
-  type ParameterizedMiddleware,
-} from "@kosmojs/koa-generator";
 
 import typeboxGenerator from "@src/index";
 
@@ -20,6 +13,8 @@ export { MESSAGE_CODES } from "@src/templates/error-handler";
 export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 
 import type { RouteName } from "./@fixtures/routes";
+
+export { defineRoute } from "@kosmojs/koa-generator/lib";
 
 export const resolvedOptions: PluginOptionsResolved = {
   generators: [typeboxGenerator()],
@@ -53,15 +48,12 @@ export const importSchema = async (
   ];
 
   if (target === "response") {
-    return schemas.validationSchemas.response?.[method][0]?.schema;
+    return schemas.validationSchemas.response?.[method][0];
   }
 
   return (
-    schemas.validationSchemas[target] as Record<
-      string,
-      { schema: ValidationSchema }
-    >
-  )?.[method]?.schema;
+    schemas.validationSchemas[target] as Record<string, ValidationSchema>
+  )?.[method];
 };
 
 /**
@@ -111,19 +103,3 @@ export const generatePathCombinations = (
         : a.length - b.length;
     });
 };
-
-type ParamsTuple = Array<unknown>;
-
-type ParamsMapper<_T extends ParamsTuple> = {};
-
-export const defineRoute: <
-  ParamsT extends ParamsTuple = [],
-  StateT extends object = object,
-  ContextT extends object = object,
->(
-  factory: DefineRouteFactory<ParamsMapper<ParamsT>, StateT, ContextT>,
-) => Array<
-  RouteDefinitionItem<
-    ParameterizedMiddleware<ParamsMapper<ParamsT>, StateT, ContextT>
-  >
-> = (factory) => defineRouteFactory(factory);

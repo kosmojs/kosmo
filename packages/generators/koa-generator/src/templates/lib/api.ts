@@ -3,21 +3,21 @@ import type { Next } from "koa";
 
 import type {
   ExtendContext,
+  HandlerDefinition,
+  HTTPMethod,
   MiddlewareDefinition,
+  RouteDefinitionItem,
   UseOptions,
   ValidationDefmap,
   ValidationOptmap,
 } from "@kosmojs/api";
 
-import type { BodyparserOptions } from "./api:bodyparser";
+import type { BodyparserOptions } from "./@api/bodyparser";
+
+import type { RouteMap } from "{{ createImport 'lib' '@api/routes' }}";
 
 export interface DefaultState {}
-
 export interface DefaultContext {}
-
-declare global {
-  var PRODUCTION_BUILD: boolean;
-}
 
 type ExtractBodies<R> = R extends [number, string, infer Body] ? Body : never;
 
@@ -59,10 +59,110 @@ export type Use = <StateT = DefaultState, ContextT = DefaultContext>(
   ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
 >;
 
+export type RouteHandler<
+  ParamsT,
+  StateT,
+  ContextT,
+  VDefs extends ValidationDefmap,
+  VOpts extends ValidationOptmap = {},
+> = (
+  ctx: ParameterizedContext<ParamsT, StateT, ContextT, VDefs, VOpts>,
+  next: Next,
+) => Promise<void> | void;
+
+export type DefineRouteFactory<ParamsT, StateT, ContextT> = (
+  a: {
+    // INFO: The `use` helper intentionally does not accept validation types.
+    // Allowing these type parameters on `use` would be misleading,
+    // since middleware operates across multiple request methods with varying types.
+    use: (
+      middleware:
+        | ParameterizedMiddleware<ParamsT, StateT, ContextT>
+        | Array<ParameterizedMiddleware<ParamsT, StateT, ContextT>>,
+      options?: UseOptions,
+    ) => MiddlewareDefinition<
+      ParameterizedMiddleware<ParamsT, StateT, ContextT>
+    >;
+  } & {
+    [M in HTTPMethod]: <
+      VDefs extends ValidationDefmap,
+      VOpts extends ValidationOptmap = {},
+    >(
+      handler:
+        | RouteHandler<ParamsT, StateT, ContextT, VDefs, VOpts>
+        | Array<RouteHandler<ParamsT, StateT, ContextT, VDefs, VOpts>>,
+    ) => HandlerDefinition<ParameterizedMiddleware<ParamsT, StateT, ContextT>>;
+  },
+) => Array<
+  RouteDefinitionItem<ParameterizedMiddleware<ParamsT, StateT, ContextT>>
+>;
+
+type ParamsMap<
+  Mappings extends Array<[string, unknown, boolean]>,
+  Refinements extends Array<unknown>,
+> = {
+  [I in Extract<keyof Mappings, `${number}`> as Mappings[I] extends [
+    infer ParamName extends string,
+    ...Array<unknown>,
+  ]
+    ? ParamName
+    : never]: Mappings[I] extends [string, infer Default, true]
+    ? I extends keyof Refinements
+      ? Refinements[I]
+      : Default
+    : Mappings[I] extends [string, infer Default, false]
+      ? I extends keyof Refinements
+        ? Refinements[I] | undefined
+        : Default | undefined
+      : never;
+};
+
 export const use: Use = (middleware, options) => {
   return {
     kind: "middleware",
     middleware: [middleware].flat() as never,
     options,
   };
+};
+
+export const defineRoute: <
+  R extends keyof RouteMap,
+  ParamsD extends RouteMap[R]["paramsDefaults"] = RouteMap[R]["paramsDefaults"],
+  StateT extends object = object,
+  ContextT extends object = object,
+>(
+  factory: DefineRouteFactory<
+    ParamsMap<RouteMap[R]["paramsMappings"], ParamsD>,
+    StateT,
+    ContextT
+  >,
+) => Array<
+  RouteDefinitionItem<
+    ParameterizedMiddleware<
+      ParamsMap<RouteMap[R]["paramsMappings"], ParamsD>,
+      StateT,
+      ContextT
+    >
+  >
+> = (factory) => {
+  const createHandler = <MiddlewareT>(method: HTTPMethod) => {
+    return (middleware: MiddlewareT | Array<MiddlewareT>) => {
+      return {
+        kind: "handler",
+        method,
+        middleware: [middleware].flat(),
+      };
+    };
+  };
+  return factory({
+    HEAD: createHandler("HEAD") as never,
+    OPTIONS: createHandler("OPTIONS") as never,
+    GET: createHandler("GET") as never,
+    POST: createHandler("POST") as never,
+    PUT: createHandler("PUT") as never,
+    PATCH: createHandler("PATCH") as never,
+    DELETE: createHandler("DELETE") as never,
+    // route-specific `use`, contains types for current route
+    use: use as never,
+  });
 };

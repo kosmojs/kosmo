@@ -25,7 +25,7 @@ type AnalyticsResponse = {
   };
 };
 
-export default defineRoute<["day" | "week" | "month" | "year"]>(({ POST }) => [
+export default defineRoute<"", ["day" | "week" | "month" | "year"]>(({ POST }) => [
   POST<
     {
       json: AnalyticsQuery;

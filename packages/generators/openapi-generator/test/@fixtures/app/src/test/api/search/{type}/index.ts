@@ -32,7 +32,7 @@ type SearchResponse = {
   hasMore: boolean;
 };
 
-export default defineRoute<["posts" | "users" | "all"]>(({ POST }) => [
+export default defineRoute<"", ["posts" | "users" | "all"]>(({ POST }) => [
   POST<
     { json: SearchPayload; response: [200, "json", SearchResponse] },
     {

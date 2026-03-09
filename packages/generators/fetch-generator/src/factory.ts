@@ -1,6 +1,5 @@
-import type { ValidationTarget } from "@kosmojs/api";
+import { RequestValidationTargets, type ValidationTarget } from "@kosmojs/api";
 import {
-  type ApiRoute,
   type GeneratorFactory,
   pathResolver,
   type ResolvedEntry,
@@ -9,7 +8,7 @@ import {
   sortRoutes,
 } from "@kosmojs/dev";
 
-import fetchLibTpl from "./templates/fetch:lib.ts?as=text";
+import fetchLibTpl from "./templates/@fetch/lib.ts?as=text";
 import fetchTpl from "./templates/fetch.hbs";
 import routeTpl from "./templates/route.hbs";
 import unwrapTpl from "./templates/unwrap.hbs";
@@ -24,17 +23,6 @@ export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
     helpers: {
       createImport: createImportHelper,
       createParamsLiteral: renderHelpers.createParamsLiteral,
-      serializeRoute({ name, pathPattern, params }: ApiRoute) {
-        return `{
-          name: "${name}",
-          pathPattern: "${pathPattern}",
-          params: {
-            id: "${params.id}",
-            schema: ${JSON.stringify(params.schema)},
-            resolvedType: undefined,
-          },
-        }`;
-      },
     },
   });
 
@@ -53,7 +41,7 @@ export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
 
     for (const [file, template] of [
       ["fetch.ts", fetchTpl],
-      ["fetch:lib.ts", fetchLibTpl],
+      ["@fetch/lib.ts", fetchLibTpl],
     ]) {
       await renderToFile(createPath.lib(file), template, {
         routes,
@@ -62,8 +50,6 @@ export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
 
     for (const { kind, entry } of updatedEntries) {
       if (kind === "apiRoute") {
-        let runtimeValidation = false;
-
         const validationTypes: Array<{
           id: string;
           target: ValidationTarget;
@@ -82,9 +68,6 @@ export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
                   resolvedType,
                 });
               }
-              if (resolvedType) {
-                runtimeValidation = true;
-              }
             }
           } else {
             const { id, resolvedType } = def.schema;
@@ -94,9 +77,6 @@ export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
               method: def.method,
               resolvedType,
             });
-            if (resolvedType) {
-              runtimeValidation = true;
-            }
           }
         }
 
@@ -126,6 +106,16 @@ export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
           return { name, types, target: types[0].target };
         });
 
+        const payloadTargets = Object.keys(RequestValidationTargets).map(
+          (target) => {
+            const payloadType = payloadTypes.find((e) => e.target === target);
+            return {
+              target,
+              payloadType,
+            };
+          },
+        );
+
         const responseTypes = Object.values(
           validationTypes.reduce<
             Record<
@@ -143,14 +133,18 @@ export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
           }, {}),
         );
 
-        await renderToFile(createPath.fetch(entry.file), routeTpl, {
-          route: entry,
-          validationTypes,
-          routeMethods,
-          payloadTypes,
-          responseTypes,
-          runtimeValidation,
-        });
+        await renderToFile(
+          createPath.libApi(entry.name, "fetch.ts"),
+          routeTpl,
+          {
+            route: entry,
+            validationTypes,
+            routeMethods,
+            payloadTypes,
+            payloadTargets,
+            responseTypes,
+          },
+        );
       }
     }
   };

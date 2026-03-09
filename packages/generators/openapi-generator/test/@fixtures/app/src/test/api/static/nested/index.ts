@@ -14,7 +14,7 @@ type StaticQuery = {
   includeMetadata?: boolean;
 };
 
-export default defineRoute<[]>(({ GET }) => [
+export default defineRoute<"", []>(({ GET }) => [
   GET<{
     json: StaticQuery,
     response: [200, "json", StaticResponse]

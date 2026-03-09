@@ -3,8 +3,8 @@ import { defineRoute } from "@test/index";
 export default defineRoute(({ GET, POST }) => [
   GET<{
     query: {
-      page?: number;
-      limit?: number;
+      page?:  string;
+      limit?: string;
     };
   }>(async (ctx) => {}),
 

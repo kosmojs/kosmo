@@ -23,6 +23,7 @@ type ProductsQuery = {
 };
 
 export default defineRoute<
+  "",
   [
     "electronics" | "clothing" | "books" | "home",
     "price" | "rating" | "name" | "date",

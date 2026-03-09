@@ -3,8 +3,8 @@ import { defineRoute } from "@test/index";
 export default defineRoute(({ GET }) => [
   GET<{
     query: {
-      page?: number;
-      limit?: number;
+      page?:  string;
+      limit?: string;
       search?: string;
       role?: "admin" | "user" | "moderator";
       sortBy?: "name" | "createdAt" | "email";

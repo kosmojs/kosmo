@@ -1,8 +1,6 @@
 import { describe, test } from "vitest";
 
-import { middlewareStackBuilder, runMiddleware } from ".";
-
-import { defineRouteFactory } from "@src/templates/lib/api:route";
+import { defineRoute, middlewareStackBuilder, runMiddleware } from ".";
 
 describe("bodyparser", () => {
   describe("json", () => {
@@ -15,11 +13,11 @@ describe("bodyparser", () => {
       test(JSON.stringify(json), async ({ expect }) => {
         const stack = middlewareStackBuilder([
           {
-            definitionItems: defineRouteFactory(({ POST }) => [
+            definitionItems: defineRoute(({ POST }) => [
               POST(async (ctx) => {
                 return ctx.json(await ctx.bodyparser.json());
               }),
-            ]),
+            ]) as never,
           },
         ]);
 
@@ -38,11 +36,11 @@ describe("bodyparser", () => {
 
     const stack = middlewareStackBuilder([
       {
-        definitionItems: defineRouteFactory(({ POST }) => [
+        definitionItems: defineRoute(({ POST }) => [
           POST(async (ctx) => {
             return ctx.json(await ctx.bodyparser.form());
           }),
-        ]),
+        ]) as never,
       },
     ]);
 
@@ -58,11 +56,11 @@ describe("bodyparser", () => {
     test("fields only", async ({ expect }) => {
       const stack = middlewareStackBuilder([
         {
-          definitionItems: defineRouteFactory(({ POST }) => [
+          definitionItems: defineRoute(({ POST }) => [
             POST(async (ctx) => {
               return ctx.json(await ctx.bodyparser.form<never>());
             }),
-          ]),
+          ]) as never,
         },
       ]);
 
@@ -81,13 +79,13 @@ describe("bodyparser", () => {
     test("fields and files", async ({ expect }) => {
       const stack = middlewareStackBuilder([
         {
-          definitionItems: defineRouteFactory(({ POST }) => [
+          definitionItems: defineRoute(({ POST }) => [
             POST(async (ctx) => {
               const form = await ctx.bodyparser.form<{ file: never }>();
               const { name, type } = form.file;
               return ctx.json({ ...form, file: { name, type } });
             }),
-          ]),
+          ]) as never,
         },
       ]);
 
@@ -117,11 +115,11 @@ describe("bodyparser", () => {
       test(`as ${as}`, async ({ expect }) => {
         const stack = middlewareStackBuilder([
           {
-            definitionItems: defineRouteFactory(({ POST }) => [
+            definitionItems: defineRoute(({ POST }) => [
               POST(async (ctx) => {
                 return ctx.body(await ctx.bodyparser.raw<never>({ as }));
               }),
-            ]),
+            ]) as never,
           },
         ]);
 
@@ -152,13 +150,13 @@ describe("bodyparser", () => {
 
       const stack = middlewareStackBuilder([
         {
-          definitionItems: defineRouteFactory(({ POST }) => [
+          definitionItems: defineRoute(({ POST }) => [
             POST(async (ctx) => {
               return ctx.body(
                 await ctx.bodyparser.raw<never>({ as: "formData" }),
               );
             }),
-          ]),
+          ]) as never,
         },
       ]);
 

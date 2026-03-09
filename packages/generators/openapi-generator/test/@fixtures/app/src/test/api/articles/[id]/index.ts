@@ -15,7 +15,7 @@ type ArticleQuery = {
   format?: "full" | "summary";
 };
 
-export default defineRoute<[TRefine<number, { minimum: 1 }>]>(({ GET }) => [
+export default defineRoute<"", [TRefine<number, { minimum: 1 }>]>(({ GET }) => [
   GET<{
     form: ArticleQuery;
     response: [200, "json", ArticleResponse],

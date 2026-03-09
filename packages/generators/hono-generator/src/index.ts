@@ -23,6 +23,3 @@ export default (options?: Options): GeneratorConstructor => {
     },
   };
 };
-
-export * from "./templates/lib/api";
-export * from "./templates/lib/api:route";

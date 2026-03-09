@@ -1,4 +1,4 @@
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 
 import crc from "crc/crc32";
 import { type BuildOptions, build as esbuild } from "esbuild";
@@ -22,20 +22,21 @@ import {
 
 import type { Options } from "./types";
 
-import libApiAppTpl from "./templates/lib/api:app.ts?as=text";
-import libApiBodyparserTpl from "./templates/lib/api:bodyparser.ts?as=text";
-import libApiDevTpl from "./templates/lib/api:dev.ts?as=text";
-import libApiRouteTpl from "./templates/lib/api:route.ts?as=text";
-import libApiRouterTpl from "./templates/lib/api:router.ts?as=text";
-import libApiRoutesTpl from "./templates/lib/api:routes.hbs";
-import libApiServerTpl from "./templates/lib/api:server.ts?as=text";
+import libApiAppTpl from "./templates/lib/@api/app.ts?as=text";
+import libApiBodyparserTpl from "./templates/lib/@api/bodyparser.ts?as=text";
+import libApiDevTpl from "./templates/lib/@api/dev.ts?as=text";
+import libApiErrorsTpl from "./templates/lib/@api/errors.ts?as=text";
+import libApiRouterTpl from "./templates/lib/@api/router.ts?as=text";
+import libApiRoutesTpl from "./templates/lib/@api/routes.hbs";
+import libApiServerTpl from "./templates/lib/@api/server.ts?as=text";
 import libApiTpl from "./templates/lib/api.ts?as=text";
-import libRouteTpl from "./templates/lib/route.hbs";
+import libApiFactoryTpl from "./templates/lib/api-factory.ts?as=text";
 import srcAppTpl from "./templates/src/app.ts?as=text";
 import srcDevTpl from "./templates/src/dev.ts?as=text";
-import srcEnvTpl from "./templates/src/env.hbs";
-import srcRouteIndexTpl from "./templates/src/route/index.hbs";
-import srcRouteUseTpl from "./templates/src/route/use.hbs";
+import srcEnvTpl from "./templates/src/env.d.ts?as=text";
+import srcErrorsTpl from "./templates/src/errors.ts?as=text";
+import srcRouteIndexTpl from "./templates/src/route/index.ts?as=text";
+import srcRouteUseTpl from "./templates/src/route/use.ts?as=text";
 import srcRouterTpl from "./templates/src/router.ts?as=text";
 import srcServerTpl from "./templates/src/server.ts?as=text";
 import srcUseTpl from "./templates/src/use.ts?as=text";
@@ -52,6 +53,16 @@ export const factory: GeneratorFactory<Options> = async (
   const { renderToFile } = renderFactory({
     helpers: {
       createImport: createImportHelper,
+      paramsDefaults({ params }: ApiRoute) {
+        const elements = params.schema.map(() => "unknown?");
+        return `[${elements.join(", ")}]`;
+      },
+      paramsMappings({ params }: ApiRoute) {
+        const elements = params.schema.map(({ name, kind }) => {
+          return `["${name}", unknown, ${kind === "required" ? "true" : "false"}]`;
+        });
+        return `[${elements.join(", ")}]`;
+      },
     },
     partials: {
       libApiTpl,
@@ -69,6 +80,7 @@ export const factory: GeneratorFactory<Options> = async (
     ["env.d.ts", srcEnvTpl],
     ["app.ts", srcAppTpl],
     ["dev.ts", srcDevTpl],
+    ["errors.ts", srcErrorsTpl],
     ["router.ts", srcRouterTpl],
     ["server.ts", srcServerTpl],
     ["use.ts", srcUseTpl],
@@ -92,25 +104,14 @@ export const factory: GeneratorFactory<Options> = async (
         await renderToFile(
           createPath.api(entry.file),
           srcRouteUseTpl,
-          {
-            funcName: [
-              "use",
-              entry.name
-                .replace(/\[|\]|\{|\}/g, "")
-                .replace(/\W+(\w)/g, (...a) => String(a[1]).toUpperCase())
-                .replace(/^(\w)/, (m) => m.toUpperCase()),
-            ].join(""),
-          },
+          {},
           { overwrite },
         );
       }
     }
   };
 
-  const generateLibFiles = async (
-    entries: Array<ResolvedEntry>,
-    updatedEntries: Array<ResolvedEntry>,
-  ) => {
+  const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
     const routesWithAliases = entries
       .flatMap(({ kind, entry }) => {
         if (kind !== "apiRoute") {
@@ -125,7 +126,7 @@ export const factory: GeneratorFactory<Options> = async (
             return acc;
           }, []);
 
-        const useWrappers = entries.flatMap((e) => {
+        const cascadingMiddleware = entries.flatMap((e) => {
           return e.kind === "apiUse"
             ? pathVariations.some((path) => e.entry.name === path)
               ? [e.entry]
@@ -136,7 +137,7 @@ export const factory: GeneratorFactory<Options> = async (
         const baseRoute = {
           ...entry,
           path: pathFactory(entry.pathTokens),
-          useWrappers,
+          cascadingMiddleware,
         };
 
         const aliases: Array<
@@ -162,42 +163,25 @@ export const factory: GeneratorFactory<Options> = async (
       })
       .sort(sortRoutes);
 
-    const useWrappers = entries.flatMap(({ kind, entry }) => {
+    const cascadingMiddleware = entries.flatMap(({ kind, entry }) => {
       return kind === "apiUse" ? [entry] : [];
     });
 
     for (const [file, template] of [
-      [createPath.lib("api.ts"), libApiTpl],
-      [createPath.lib("api:app.ts"), libApiAppTpl],
-      [createPath.lib("api:bodyparser.ts"), libApiBodyparserTpl],
-      [createPath.lib("api:dev.ts"), libApiDevTpl],
-      [createPath.lib("api:route.ts"), libApiRouteTpl],
-      [createPath.lib("api:routes.ts"), libApiRoutesTpl],
-      [createPath.lib("api:router.ts"), libApiRouterTpl],
-      [createPath.lib("api:server.ts"), libApiServerTpl],
+      ["api.ts", libApiTpl],
+      ["api-factory.ts", libApiFactoryTpl],
+      ["@api/app.ts", libApiAppTpl],
+      ["@api/bodyparser.ts", libApiBodyparserTpl],
+      ["@api/dev.ts", libApiDevTpl],
+      ["@api/errors.ts", libApiErrorsTpl],
+      ["@api/router.ts", libApiRouterTpl],
+      ["@api/routes.ts", libApiRoutesTpl],
+      ["@api/server.ts", libApiServerTpl],
     ]) {
-      await renderToFile(file, template, {
+      await renderToFile(createPath.lib(file), template, {
         routes: routesWithAliases,
-        useWrappers,
+        cascadingMiddleware,
       });
-    }
-
-    for (const { kind, entry } of updatedEntries) {
-      if (kind === "apiRoute") {
-        await renderToFile(
-          createPath.libApi(dirname(entry.file), "index.ts"),
-          libRouteTpl,
-          {
-            route: entry,
-            paramsSchema: entry.params.schema.map((param) => {
-              return {
-                ...param,
-                isRequired: param.kind === "required",
-              };
-            }),
-          },
-        );
-      }
     }
   };
 
@@ -212,22 +196,7 @@ export const factory: GeneratorFactory<Options> = async (
         await generateSrcFiles(entries);
       }
 
-      await generateLibFiles(
-        entries,
-        // create/overwrite lib files with proper content.
-        // handle 2 cases:
-        // - event is undefined (means initial call): process all routes
-        // - `update` event given: process updated route
-        event
-          ? entries.filter(({ kind, entry }) => {
-              return event.kind === "update"
-                ? kind === "apiRoute"
-                  ? entry.fileFullpath === event.file
-                  : false
-                : false;
-            })
-          : entries,
-      );
+      await generateLibFiles(entries);
 
       // TODO: handle `delete` event, cleanup lib files
     },
@@ -235,7 +204,7 @@ export const factory: GeneratorFactory<Options> = async (
     async build(entries) {
       // always generateSrcFiles before generateLibFiles
       await generateSrcFiles(entries);
-      await generateLibFiles(entries, entries);
+      await generateLibFiles(entries);
 
       const esbuildOptions: BuildOptions = await import(
         join(appRoot, "esbuild.json"),

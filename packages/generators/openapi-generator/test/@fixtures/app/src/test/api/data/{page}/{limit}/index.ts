@@ -26,6 +26,7 @@ type DataQuery = {
 };
 
 export default defineRoute<
+  "",
   [
     TRefine<number, { minimum: 1; maximum: 1000 }>,
     TRefine<number, { minimum: 1; maximum: 100; multipleOf: 1 }>,

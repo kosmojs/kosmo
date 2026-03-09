@@ -1,5 +1,4 @@
 import { Hono, type Next } from "hono";
-import { vi } from "vitest";
 
 import {
   createRoutes,
@@ -8,17 +7,14 @@ import {
   type RouteSource,
 } from "@kosmojs/api";
 
-import type { ParameterizedMiddleware } from "@src/templates/lib/api";
-import { defineRouteFactory } from "@src/templates/lib/api:route";
-import { createRouteMiddleware } from "@src/templates/lib/api:router";
+import {
+  defineRoute,
+  type ParameterizedMiddleware,
+  use,
+} from "@src/templates/lib/api";
+import { createRouteMiddleware } from "@src/templates/lib/api-factory";
 
-vi.mock("{{ createImport 'api' 'use' }}", () => ({
-  default: [],
-}));
-
-vi.mock("{{ createImport 'lib' 'api:routes' }}", () => ({
-  routeSources: [],
-}));
+export { defineRoute, use, type ParameterizedMiddleware };
 
 export const defaultMethods = Object.keys(HTTPMethods);
 
@@ -35,10 +31,10 @@ export const middlewareStackBuilder = (
         path: "",
         pathPattern: "",
         file: "",
-        useWrappers: [],
-        definitionItems: defineRouteFactory(({ GET }) => [
+        cascadingMiddleware: [],
+        definitionItems: defineRoute(({ GET }) => [
           GET(async function get() {}),
-        ]),
+        ]) as never,
         params: [],
         numericParams: [],
         validationSchemas: {},

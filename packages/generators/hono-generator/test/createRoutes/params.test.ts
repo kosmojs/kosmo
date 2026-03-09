@@ -2,9 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { pathTokensFactory } from "@kosmojs/dev";
 
-import { middlewareStackBuilder, runMiddleware } from "..";
-
-import { defineRouteFactory } from "@src/index";
+import { defineRoute, middlewareStackBuilder, runMiddleware } from "..";
 
 describe("createRouterRoutes", () => {
   describe("params", () => {
@@ -16,11 +14,11 @@ describe("createRouterRoutes", () => {
           {
             pathPattern,
             params: ["path"],
-            definitionItems: defineRouteFactory(({ GET }) => [
+            definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 return ctx.json(ctx.validated.params);
               }),
-            ]),
+            ]) as never,
           },
         ],
         {},
@@ -47,11 +45,11 @@ describe("createRouterRoutes", () => {
             pathPattern: `/${pathPattern}`,
             params: ["id", "name"],
             numericParams: ["id"],
-            definitionItems: defineRouteFactory(({ GET }) => [
+            definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 return ctx.json(ctx.validated.params);
               }),
-            ]),
+            ]) as never,
           },
         ],
         {},
@@ -78,11 +76,11 @@ describe("createRouterRoutes", () => {
             pathPattern,
             params: ["ids"],
             numericParams: ["ids"],
-            definitionItems: defineRouteFactory(({ GET }) => [
+            definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 return ctx.json(ctx.validated.params);
               }),
-            ]),
+            ]) as never,
           },
         ],
         {},

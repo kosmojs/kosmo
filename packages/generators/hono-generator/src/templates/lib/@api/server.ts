@@ -1,12 +1,17 @@
 import { chmod, unlink } from "node:fs/promises";
 import type { Server } from "node:http";
+import type { Http2Server } from "node:http2";
 import { parseArgs } from "node:util";
+
+import { serve } from "@hono/node-server";
 
 import type { ServerFactory } from "@kosmojs/api";
 
-import type { App } from "./api:app";
+import type { App } from "./app";
 
-export const serverFactory: ServerFactory<App, Server> = (factory) => {
+export const serverFactory: ServerFactory<App, Server | Http2Server> = (
+  factory,
+) => {
   const { values } = parseArgs({
     options: {
       port: {
@@ -43,13 +48,20 @@ export const serverFactory: ServerFactory<App, Server> = (factory) => {
         });
       }
 
-      const server = app.listen(port || sock, async () => {
-        if (sock) {
-          await chmod(sock, 0o777);
-        }
-        await callback?.();
-        console.log("\n  ➜ Server Started ✨\n");
-      });
+      const server = serve(
+        {
+          fetch: app.fetch,
+          ...(port ? { port: Number(port) } : {}),
+          ...(sock ? { sock } : {}),
+        },
+        async () => {
+          if (sock) {
+            await chmod(sock, 0o777);
+          }
+          await callback?.();
+          console.log("\n  ➜ Server Started ✨\n");
+        },
+      );
 
       return server;
     },

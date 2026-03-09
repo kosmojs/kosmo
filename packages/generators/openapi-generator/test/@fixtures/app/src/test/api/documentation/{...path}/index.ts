@@ -16,7 +16,7 @@ type DocumentationQuery = {
   includeExamples?: boolean;
 };
 
-export default defineRoute<[TRefine<string[], { minItems: 1; maxItems: 10 }>]>(
+export default defineRoute<"", [TRefine<string[], { minItems: 1; maxItems: 10 }>]>(
   ({ GET }) => [
     GET<{
       json: DocumentationQuery;

@@ -20,7 +20,7 @@ type UserQuery = {
   expand?: boolean;
 };
 
-export default defineRoute<[TRefine<number, { minimum: 1 }>]>(
+export default defineRoute<"", [TRefine<number, { minimum: 1 }>]>(
   ({ GET, PUT, DELETE }) => [
     GET<{
       json: UserQuery,

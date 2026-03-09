@@ -32,6 +32,7 @@ type StoreReviewsQuery = {
 };
 
 export default defineRoute<
+  "",
   [
     TRefine<number, { minimum: 1 }>,
     TRefine<number, { minimum: 1 }>,

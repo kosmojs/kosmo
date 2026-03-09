@@ -3,9 +3,9 @@ import { defineRoute } from "@test/index";
 export default defineRoute(({ GET, PATCH }) => [
   GET<{
     query: {
-      unreadOnly?: boolean;
+      unreadOnly?: string;
       type?: "mention" | "reply" | "system" | "follow";
-      limit?: number;
+      limit?: string;
     };
     headers: {
       authorization: string;

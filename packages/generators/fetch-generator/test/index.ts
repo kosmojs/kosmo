@@ -1,23 +1,16 @@
 import { resolve } from "node:path";
 
-import type {
-  HTTPMethod,
-  RequestValidationTarget,
-  RouteDefinitionItem,
-} from "@kosmojs/api";
+import type { HTTPMethod, RequestValidationTarget } from "@kosmojs/api";
 import { type PluginOptionsResolved, pathResolver } from "@kosmojs/dev";
 import type { Options } from "@kosmojs/fetch";
 
-import {
-  type DefineRouteFactory,
-  defineRouteFactory,
-  type ParameterizedMiddleware,
-} from "@kosmojs/koa-generator";
 import typeboxGenerator from "@kosmojs/typebox-generator";
 
 import type { RouteName } from "./@fixtures//routes";
 
 import fetchGenerator from "@src/index";
+
+export { defineRoute } from "@kosmojs/koa-generator/lib";
 
 export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 
@@ -44,22 +37,6 @@ export type ResponseT = {
   raw?: unknown;
 };
 
-type ParamsTuple = Array<unknown>;
-
-type ParamsMapper<_T extends ParamsTuple> = {};
-
-export const defineRoute: <
-  ParamsT extends ParamsTuple = [],
-  StateT extends object = object,
-  ContextT extends object = object,
->(
-  factory: DefineRouteFactory<ParamsMapper<ParamsT>, StateT, ContextT>,
-) => Array<
-  RouteDefinitionItem<
-    ParameterizedMiddleware<ParamsMapper<ParamsT>, StateT, ContextT>
-  >
-> = (factory) => defineRouteFactory(factory);
-
 export const importFetchClient = async (route: RouteName) => {
   const { createPath } = pathResolver(resolvedOptions);
 
@@ -70,7 +47,7 @@ export const importFetchClient = async (route: RouteName) => {
       payload?: Partial<Record<RequestValidationTarget, unknown>>,
       options?: Options,
     ) => Promise<ResponseT>
-  > = await import(createPath.fetch(route, `index.ts?${Date.now()}`)).then(
+  > = await import(createPath.libApi(route, `fetch.ts?${Date.now()}`)).then(
     (e) => e.default,
   );
 

@@ -20,19 +20,17 @@ import {
   type ValidationErrorEntry,
 } from "@kosmojs/api/errors";
 
+import { type BodyparserOptions, bodyparsers } from "./bodyparser";
+
+import globalMiddleware from "{{ createImport 'api' 'use' }}";
+import { routeSources } from "{{ createImport 'lib' '@api/routes' }}";
 import {
+  type DefaultBindings,
+  type DefaultVariables,
   type ParameterizedContext,
   type ParameterizedMiddleware,
   use,
-} from "./api";
-import { type BodyparserOptions, bodyparsers } from "./api:bodyparser";
-
-import globalMiddleware from "{{ createImport 'api' 'use' }}";
-import { routeSources } from "{{ createImport 'lib' 'api:routes' }}";
-import type {
-  DefaultBindings,
-  DefaultVariables,
-} from "{{ createImport 'lib' 'api' }}";
+} from "{{ createImport 'libApi' }}";
 
 /**
  * Create route-level middleware stack that handles:
@@ -211,32 +209,34 @@ export const createRouteMiddleware: CreateRouteMiddleware<
          * */
         const variantValidators: (
           v: (typeof variants)[number],
-        ) => Array<(i: number) => ValidationErrorEntry | undefined> = ({
-          status,
-          contentType,
+        ) => Array<(i: number) => ValidationErrorEntry | undefined> = (
           schema,
-        }) => {
+        ) => {
           return [
             (i) => {
-              return status === response.status
+              return schema.status === response.status
                 ? undefined
                 : {
                     keyword: "Status",
                     path: `Variant #${i}`,
-                    message: `expected: ${status}; actual: ${ctx.status}`,
+                    message: `expected: ${schema.status}; actual: ${ctx.status}`,
                   };
             },
             (i) => {
-              return !contentType || contentType === response.contentType
-                ? undefined
-                : {
-                    keyword: "ContentType",
-                    path: `Variant #${i}`,
-                    message: `expected: ${contentType}; actual: ${response.contentType}`,
-                  };
+              if (
+                !schema.contentType ||
+                schema.contentType === response.contentType
+              ) {
+                return undefined;
+              }
+              return {
+                keyword: "ContentType",
+                path: `Variant #${i}`,
+                message: `expected: ${schema.contentType}; actual: ${response.contentType}`,
+              };
             },
             (i) => {
-              if (!schema || "body" in response === false) {
+              if (!schema.check || "body" in response === false) {
                 // no body schema or contentType is not JSON
                 return;
               }
@@ -333,10 +333,10 @@ export const createRouteMiddleware: CreateRouteMiddleware<
     validationMiddleware.push(
       use(
         async (ctx, next) => {
-          const { schema, runtimeValidation } = {
+          const schema = {
             ...validationSchemas[target]?.[ctx.req.method],
           };
-          if (schema && runtimeValidation !== false) {
+          if (schema.validate && schema.runtimeValidation !== false) {
             schema.validate(await loadData(ctx));
           }
           return next();

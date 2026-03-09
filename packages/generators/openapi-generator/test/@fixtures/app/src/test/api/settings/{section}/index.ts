@@ -33,7 +33,7 @@ type SettingsQuery = {
   includeDefaults?: boolean;
 };
 
-export default defineRoute<["notifications" | "privacy" | "general"]>(
+export default defineRoute<"", ["notifications" | "privacy" | "general"]>(
   ({ GET, PATCH }) => [
     GET<{ json: SettingsQuery; response: [200, "json", SettingsResponse] }>(
       async (ctx) => {

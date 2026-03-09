@@ -25,6 +25,7 @@ type MetricsQuery = {
 };
 
 export default defineRoute<
+  "",
   [string, "hour" | "day" | "week" | "month" | "year"]
 >(({ GET, POST }) => [
   GET<{ json: MetricsQuery; response: [200, "json", MetricsResponse] }>(

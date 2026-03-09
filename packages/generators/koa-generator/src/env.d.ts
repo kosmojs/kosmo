@@ -9,65 +9,141 @@ declare module "*?as=text" {
 }
 
 declare module "{{ createImport 'libApi' }}" {
-  import type { RouterMiddleware } from "@koa/router";
-  import type { MiddlewareDefinition, UseOptions } from "@kosmojs/api";
-  import type { DefaultState, DefaultContext } from "./templates/lib/api:app";
+  import type { Next } from "koa";
+  import type { RouterContext } from "@koa/router";
+
+  import type {
+    ExtendContext,
+    HandlerDefinition,
+    HTTPMethod,
+    MiddlewareDefinition,
+    RouteDefinitionItem,
+    UseOptions,
+    ValidationDefmap,
+    ValidationOptmap,
+  } from "@kosmojs/api";
+
+  export interface DefaultState {}
+  export interface DefaultContext {}
+
+  export type ParameterizedContext<
+    ParamsT,
+    StateT,
+    ContextT,
+    VDefs extends ValidationDefmap = {},
+    VOpts extends ValidationOptmap = {},
+  > = RouterContext<
+    DefaultState & StateT,
+    DefaultContext & ContextT & ExtendContext<ParamsT, VDefs, VOpts, {}>
+  >;
+
+  export type RouteHandler<
+    ParamsT,
+    StateT,
+    ContextT,
+    VDefs extends ValidationDefmap,
+    VOpts extends ValidationOptmap = {},
+  > = (
+    ctx: ParameterizedContext<ParamsT, StateT, ContextT, VDefs, VOpts>,
+    next: Next,
+  ) => Promise<void> | void;
+
+  export type ParameterizedMiddleware<
+    ParamsT = Record<string, string>,
+    StateT = Record<string, unknown>,
+    ContextT = Record<string, unknown>,
+  > = (
+    ctx: ParameterizedContext<ParamsT, StateT, ContextT>,
+    next: Next,
+  ) => Promise<void> | void;
 
   export type Use = <StateT = DefaultState, ContextT = DefaultContext>(
     middleware:
-      | RouterMiddleware<StateT, ContextT>
-      | Array<RouterMiddleware<StateT, ContextT>>,
+      | ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
+      | Array<
+          ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
+        >,
     options?: UseOptions,
-  ) => MiddlewareDefinition<RouterMiddleware<StateT, ContextT>>;
+  ) => MiddlewareDefinition<
+    ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
+  >;
 
   export const use: Use;
+
+  export type DefineRouteFactory<ParamsT, StateT, ContextT> = (
+    a: {
+      [M in HTTPMethod]: <
+        VDefs extends ValidationDefmap,
+        VOpts extends ValidationOptmap = {},
+      >(
+        handler:
+          | RouteHandler<ParamsT, StateT, ContextT, VDefs, VOpts>
+          | Array<RouteHandler<ParamsT, StateT, ContextT, VDefs, VOpts>>,
+      ) => HandlerDefinition<
+        ParameterizedMiddleware<ParamsT, StateT, ContextT>
+      >;
+    },
+  ) => Array<
+    RouteDefinitionItem<ParameterizedMiddleware<ParamsT, StateT, ContextT>>
+  >;
+
+  export const defineRoute: <
+    R extends string,
+    ParamsD extends [] = [],
+    StateT extends object = object,
+    ContextT extends object = object,
+  >(
+    factory: DefineRouteFactory<{}, StateT, ContextT>,
+  ) => Array<
+    RouteDefinitionItem<ParameterizedMiddleware<{}, StateT, ContextT>>
+  >;
 }
 
-declare module "{{ createImport 'api' 'app' }}" {
-  import App from "koa";
-  export default new App();
-}
+declare module "{{ createImport 'lib' 'api-factory' }}" {
+  import type { Server } from "node:http";
 
-declare module "{{ createImport 'api' 'router' }}" {
-  import Router from "@koa/router";
-  export default new Router();
+  import type Koa from "koa";
+  import type { Router, RouterMiddleware } from "@koa/router";
+
+  import type {
+    AppFactory,
+    RouterFactory,
+    Route,
+    DevSetup,
+    ServerFactory,
+  } from "@kosmojs/api";
+
+  export type ErrorHandlerFactory = <T = RouterMiddleware<StateT, ContextT>>(
+    h: T,
+  ) => T;
+  export const errorHandlerFactory: ErrorHandlerFactory;
+
+  export type App = Koa<DefaultState, DefaultContext>;
+  export type AppOptions = ConstructorParameters<
+    typeof Koa<DefaultState, DefaultContext>
+  >[0];
+  export const appFactory: AppFactory<App, AppOptions>;
+
+  export const routerFactory: RouterFactory<Router, never>;
+  export const routes: Array<Route> = [];
+
+  export const devSetup: (setup: DevSetup) => DevSetup;
+
+  export const serverFactory: ServerFactory<App, Server>;
 }
 
 declare module "{{ createImport 'api' 'use' }}" {
   export default [];
 }
 
-declare module "{{ createImport 'lib' 'api' }}" {
-  export interface DefaultState {}
-  export interface DefaultContext {}
-}
-
-declare module "{{ createImport 'lib' 'api:app' }}" {
-  import type { AppFactory } from "@kosmojs/api";
-  import type { App, AppOptions } from "./templates/lib/api:app";
-  export const appFactory: AppFactory<App, AppOptions>;
-}
-
-declare module "{{ createImport 'lib' 'api:dev' }}" {
-  import type { DevSetup } from "@kosmojs/api";
-  export const devSetup: (setup: DevSetup) => DevSetup;
-}
-
-declare module "{{ createImport 'lib' 'api:routes' }}" {
+declare module "{{ createImport 'lib' '@api/routes' }}" {
   import type { RouteSource } from "@kosmojs/api";
+  export type RouteMap = Record<
+    string,
+    {
+      paramsDefaults: Array<unknown>;
+      paramsMappings: Array<[string, unknown, boolean]>;
+    }
+  >;
   export const routeSources: Array<RouteSource> = [];
-}
-
-declare module "{{ createImport 'lib' 'api:router' }}" {
-  import type { RouterFactory, Route } from "@kosmojs/api";
-  import type Router from "@koa/router";
-  export const routerFactory: RouterFactory<Router, never>;
-  export const routes: Array<Route> = [];
-}
-
-declare module "{{ createImport 'lib' 'api:server' }}" {
-  import type { Server } from "node:http";
-  import type { ServerFactory } from "@kosmojs/api";
-  import type { App } from "./templates/lib/api:app";
-  export const serverFactory: ServerFactory<App, Server>;
 }

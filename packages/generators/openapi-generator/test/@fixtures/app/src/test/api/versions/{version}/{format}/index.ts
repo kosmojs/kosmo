@@ -16,7 +16,7 @@ type VersionQuery = {
   fields?: string[];
 };
 
-export default defineRoute<["v1" | "v2" | "v3", "json" | "xml" | "yaml"]>(
+export default defineRoute<"", ["v1" | "v2" | "v3", "json" | "xml" | "yaml"]>(
   ({ GET }) => [
     GET<{
       json: VersionQuery,

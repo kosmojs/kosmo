@@ -1,9 +1,6 @@
 import { describe, expect, it, test } from "vitest";
 
-import { middlewareStackBuilder } from "..";
-
-import { use } from "@src/templates/lib/api";
-import { defineRouteFactory } from "@src/templates/lib/api:route";
+import { defineRoute, middlewareStackBuilder, use } from "..";
 
 describe("route middleware", () => {
   test("inserted after prioritized middleware", () => {
@@ -15,12 +12,12 @@ describe("route middleware", () => {
     const [getStack, postStack] = middlewareStackBuilder(
       [
         {
-          definitionItems: defineRouteFactory(({ use, GET, POST }) => [
+          definitionItems: defineRoute(({ use, GET, POST }) => [
             use(preMiddleware),
             GET(get),
             POST(post),
             use(postMiddleware),
-          ]),
+          ]) as never,
         },
       ],
       {},
@@ -48,12 +45,12 @@ describe("route middleware", () => {
     const [stack] = middlewareStackBuilder(
       [
         {
-          definitionItems: defineRouteFactory(({ use, GET }) => [
+          definitionItems: defineRoute(({ use, GET }) => [
             use(validateBody, { slot: "validate:json" }),
             use(validateParams, { slot: "validate:params" }),
             use(validateResponse, { slot: "validate:response" }),
             GET(get),
-          ]),
+          ]) as never,
         },
       ],
       {

@@ -19,7 +19,7 @@ type EventsQuery = {
   limit?: TRefine<number, { minimum: 1; maximum: 100 }>;
 };
 
-export default defineRoute<[TRefine<string, { format: "date" }>]>(({ GET }) => [
+export default defineRoute<"", [TRefine<string, { format: "date" }>]>(({ GET }) => [
   GET<{ json: EventsQuery; response: [200, "json", EventsResponse] }>(
     async (ctx) => {
       ctx.body = {

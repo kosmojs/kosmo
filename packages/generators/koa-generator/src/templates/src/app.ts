@@ -1,5 +1,6 @@
-import router from "{{ createImport 'api' 'router' }}";
-import { appFactory } from "{{ createImport 'lib' 'api:app' }}";
+import router from "./router";
+
+import { appFactory } from "{{ createImport 'lib' 'api-factory' }}";
 
 export default appFactory(({ createApp }) => {
   const app = createApp();

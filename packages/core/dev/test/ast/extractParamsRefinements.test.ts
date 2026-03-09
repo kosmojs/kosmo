@@ -23,7 +23,7 @@ describe("extractParamsRefinements", () => {
     const defaultExport = extractDefaultExport(
       project.createSourceFile(
         `${task.id}.ts`,
-        "export default defineRoute<[number]>()",
+        `export default defineRoute<"", [number]>()`,
       ),
     );
     const refinements = defaultExport
@@ -41,7 +41,7 @@ describe("extractParamsRefinements", () => {
     const defaultExport = extractDefaultExport(
       project.createSourceFile(
         `${task.id}.ts`,
-        `export default defineRoute<[number, "a" | "b"]>()`,
+        `export default defineRoute<"", [number, "a" | "b"]>()`,
       ),
     );
     const refinements = defaultExport
@@ -63,7 +63,7 @@ describe("extractParamsRefinements", () => {
     const defaultExport = extractDefaultExport(
       project.createSourceFile(
         `${task.id}.ts`,
-        `type T = string; export default defineRoute<[T]>()`,
+        `type T = string; export default defineRoute<"", [T]>()`,
       ),
     );
     const refinements = defaultExport
@@ -81,7 +81,7 @@ describe("extractParamsRefinements", () => {
     const defaultExport = extractDefaultExport(
       project.createSourceFile(
         `${task.id}.ts`,
-        `type T = [string]; export default defineRoute<T>()`,
+        `type T = [string]; export default defineRoute<"", T>()`,
       ),
     );
     const refinements = defaultExport

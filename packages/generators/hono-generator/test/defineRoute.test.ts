@@ -6,14 +6,13 @@ import {
   type MiddlewareDefinition,
 } from "@kosmojs/api";
 
-import type { ParameterizedMiddleware } from "@src/templates/lib/api";
-import { defineRouteFactory } from "@src/templates/lib/api:route";
+import { defineRoute, type ParameterizedMiddleware } from ".";
 
 describe("defineRoute", () => {
   describe("use", () => {
     test("accepts single middleware", () => {
       async function mw() {}
-      const [stack] = defineRouteFactory(({ use }) => [use(mw)]) as Array<
+      const [stack] = defineRoute(({ use }) => [use(mw)]) as Array<
         MiddlewareDefinition<ParameterizedMiddleware>
       >;
       expect(stack.kind).toEqual("middleware");
@@ -25,9 +24,9 @@ describe("defineRoute", () => {
     test("accepts middleware array", () => {
       async function mw1() {}
       async function mw2() {}
-      const [stack] = defineRouteFactory(({ use }) => [
-        use([mw1, mw2]),
-      ]) as Array<MiddlewareDefinition<ParameterizedMiddleware>>;
+      const [stack] = defineRoute(({ use }) => [use([mw1, mw2])]) as Array<
+        MiddlewareDefinition<ParameterizedMiddleware>
+      >;
       expect(stack.kind).toEqual("middleware");
       expect(stack.middleware[0]).toEqual(mw1);
       expect(stack.middleware[1]).toEqual(mw2);
@@ -36,14 +35,14 @@ describe("defineRoute", () => {
     });
 
     test("accepts slot option", () => {
-      const [stack] = defineRouteFactory(({ use }) => [
+      const [stack] = defineRoute(({ use }) => [
         use(async () => {}, { slot: "bodyparser" }),
       ]) as Array<MiddlewareDefinition<ParameterizedMiddleware>>;
       expect(stack.options?.slot).toEqual("bodyparser");
     });
 
     test("accepts `on` option", () => {
-      const [stack] = defineRouteFactory(({ use }) => [
+      const [stack] = defineRoute(({ use }) => [
         use(async () => {}, { on: ["GET"] }),
       ]) as Array<MiddlewareDefinition<ParameterizedMiddleware>>;
       expect(stack.options?.on).toEqual(["GET"]);
@@ -53,9 +52,9 @@ describe("defineRoute", () => {
   for (const method of Object.keys(HTTPMethods) as Array<HTTPMethod>) {
     test(`${method}: accepts single middleware`, () => {
       async function handler() {}
-      const [stack] = defineRouteFactory((map) => [
-        map[method](handler),
-      ]) as Array<MiddlewareDefinition<ParameterizedMiddleware>>;
+      const [stack] = defineRoute((map) => [map[method](handler)]) as Array<
+        MiddlewareDefinition<ParameterizedMiddleware>
+      >;
       expect(stack.kind).toEqual("handler");
       expect(stack.middleware[0]).toEqual(handler);
       expect(stack.middleware.length).toEqual(1);
@@ -64,7 +63,7 @@ describe("defineRoute", () => {
     test(`${method}: accepts middleware array`, () => {
       async function handler1() {}
       async function handler2() {}
-      const [stack] = defineRouteFactory((map) => [
+      const [stack] = defineRoute((map) => [
         map[method]([handler1, handler2]),
       ]) as Array<MiddlewareDefinition<ParameterizedMiddleware>>;
       expect(stack.kind).toEqual("handler");

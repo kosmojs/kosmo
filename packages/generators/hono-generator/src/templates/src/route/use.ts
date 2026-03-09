@@ -1,7 +1,7 @@
-import { use } from "{{ createImport "libApi" }}";
+import { use } from "{{ createImport 'libApi' }}";
 
 export default [
-  use(async function {{funcName}}(ctx, next) {
+  use(async (ctx, next) => {
     // Always `return next()` or `await next()`;
     // ❗ Never call `next()` by itself!
     return next();

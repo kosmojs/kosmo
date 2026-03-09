@@ -5,7 +5,7 @@ import type { AppFactory } from "@kosmojs/api";
 import type {
   DefaultBindings,
   DefaultVariables,
-} from "{{ createImport 'lib' 'api' }}";
+} from "{{ createImport 'libApi' }}";
 
 type AppEnv = {
   Variables: DefaultVariables;

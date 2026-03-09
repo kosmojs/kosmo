@@ -1,7 +1,8 @@
 import { getRequestListener } from "@hono/node-server";
 
-import app from "{{ createImport 'api' 'app' }}";
-import { devSetup } from "{{ createImport 'lib' 'api:dev' }}";
+import app from "./app";
+
+import { devSetup } from "{{ createImport 'lib' 'api-factory' }}";
 
 export default devSetup({
   requestHandler() {

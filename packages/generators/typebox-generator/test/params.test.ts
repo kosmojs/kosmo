@@ -197,12 +197,12 @@ describe("params", () => {
     const schema = await importSchema("params/{...path}", "params");
 
     test("pass without tokens", () => {
-      expect(schema?.check({ path: [] })).toBe(true);
+      expect(schema?.check({ path: [] })).toEqual(true);
     });
 
     test("pass with valid tokens", () => {
       for (const path of generatePathCombinations(["a", "b", "c"])) {
-        expect(schema?.check({ path })).toBe(true);
+        expect(schema?.check({ path })).toEqual(true);
       }
     });
 
@@ -214,7 +214,7 @@ describe("params", () => {
         ["abc", "xyz"],
         [""],
       ]) {
-        expect(schema?.check({ path })).toBe(false);
+        expect(schema?.check({ path })).toEqual(false);
       }
     });
   });

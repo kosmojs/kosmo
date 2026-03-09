@@ -4,10 +4,10 @@ export default defineRoute(({ GET, POST }) => [
   GET<{
     query: {
       cursor?: string;
-      limit?: number;
+      limit?: string;
       category?: string;
       author?: string;
-      published?: boolean;
+      published?: string;
     };
   }>(async (ctx) => {}),
 

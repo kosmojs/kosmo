@@ -18,6 +18,7 @@ type ProfileQuery = {
 };
 
 export default defineRoute<
+  "",
   [
     TRefine<
       string,
@@ -29,7 +30,7 @@ export default defineRoute<
     json: ProfileQuery,
     response: [200, "json", UserProfile]
   }>(async (ctx) => {
-    const { includeStats } = await ctx.bodyparser.json()
+    const { includeStats } = await ctx.bodyparser.json<ProfileQuery>()
     ctx.body = {
       username: ctx.params.username,
       displayName: "User Display Name",

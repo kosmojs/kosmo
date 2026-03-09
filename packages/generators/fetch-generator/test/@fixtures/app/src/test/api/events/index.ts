@@ -5,8 +5,8 @@ export default defineRoute(({ GET }) => [
     query: {
       tags?: string[];
       status?: "upcoming" | "past" | "live";
-      page?: number;
-      limit?: number;
+      page?: string;
+      limit?: string;
     };
   }>(async (ctx) => {}),
 ]);

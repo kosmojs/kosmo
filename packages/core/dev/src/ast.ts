@@ -87,7 +87,10 @@ export const extractDefaultExport = (
 export const extractParamsRefinements = (
   callExpression: CallExpression,
 ): Array<{ index: number; text: string }> | undefined => {
-  const [paramsGeneric] = extractGenerics(callExpression);
+  const [
+    _routeName, // first generic - the route name
+    paramsGeneric, // second generic - params refinements
+  ] = extractGenerics(callExpression);
 
   if (!paramsGeneric?.isKind(SyntaxKind.TupleType)) {
     return;

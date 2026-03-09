@@ -2,9 +2,7 @@ import zlib from "node:zlib";
 
 import { describe, test } from "vitest";
 
-import { middlewareStackBuilder, runMiddleware } from ".";
-
-import { defineRouteFactory } from "@src/templates/lib/api:route";
+import { defineRoute, middlewareStackBuilder, runMiddleware } from ".";
 
 describe("bodyparser", () => {
   describe("json", () => {
@@ -17,11 +15,11 @@ describe("bodyparser", () => {
       test(JSON.stringify(json), async ({ expect }) => {
         const stack = middlewareStackBuilder([
           {
-            definitionItems: defineRouteFactory(({ POST }) => [
+            definitionItems: defineRoute(({ POST }) => [
               POST(async (ctx) => {
                 ctx.body = await ctx.bodyparser.json();
               }),
-            ]),
+            ]) as never,
           },
         ]);
 
@@ -37,11 +35,11 @@ describe("bodyparser", () => {
     test("with options", async ({ expect }) => {
       const stack = middlewareStackBuilder([
         {
-          definitionItems: defineRouteFactory(({ POST }) => [
+          definitionItems: defineRoute(({ POST }) => [
             POST(async (ctx) => {
               ctx.body = await ctx.bodyparser.json({ limit: 1 });
             }),
-          ]),
+          ]) as never,
         },
       ]);
 
@@ -62,11 +60,11 @@ describe("bodyparser", () => {
     test("with compression", async ({ expect }) => {
       const stack = middlewareStackBuilder([
         {
-          definitionItems: defineRouteFactory(({ POST }) => [
+          definitionItems: defineRoute(({ POST }) => [
             POST(async (ctx) => {
               ctx.body = await ctx.bodyparser.json();
             }),
-          ]),
+          ]) as never,
         },
       ]);
 
@@ -100,13 +98,13 @@ describe("bodyparser", () => {
       }) => {
         const stack = middlewareStackBuilder([
           {
-            definitionItems: defineRouteFactory(({ POST }) => [
+            definitionItems: defineRoute(({ POST }) => [
               POST(async (ctx) => {
                 ctx.body = await ctx.bodyparser.form({
                   unwrap: unwrap as never,
                 });
               }),
-            ]),
+            ]) as never,
           },
         ]);
 
@@ -124,11 +122,11 @@ describe("bodyparser", () => {
     test("fields only", async ({ expect }) => {
       const stack = middlewareStackBuilder([
         {
-          definitionItems: defineRouteFactory(({ POST }) => [
+          definitionItems: defineRoute(({ POST }) => [
             POST(async (ctx) => {
               ctx.body = await ctx.bodyparser.form({ unwrap: true });
             }),
-          ]),
+          ]) as never,
         },
       ]);
 
@@ -147,11 +145,11 @@ describe("bodyparser", () => {
     test("fields and files", async ({ expect }) => {
       const stack = middlewareStackBuilder([
         {
-          definitionItems: defineRouteFactory(({ POST }) => [
+          definitionItems: defineRoute(({ POST }) => [
             POST(async (ctx) => {
               ctx.body = await ctx.bodyparser.form({ unwrap: true });
             }),
-          ]),
+          ]) as never,
         },
       ]);
 
@@ -186,11 +184,11 @@ describe("bodyparser", () => {
       test(`buffer compress:${compress}`, async ({ expect }) => {
         const stack = middlewareStackBuilder([
           {
-            definitionItems: defineRouteFactory(({ POST }) => [
+            definitionItems: defineRoute(({ POST }) => [
               POST(async (ctx) => {
                 ctx.body = await ctx.bodyparser.raw();
               }),
-            ]),
+            ]) as never,
           },
         ]);
 
@@ -213,13 +211,13 @@ describe("bodyparser", () => {
       test(`string as ${encoding ? "utf8" : "Buffer"}`, async ({ expect }) => {
         const stack = middlewareStackBuilder([
           {
-            definitionItems: defineRouteFactory(({ POST }) => [
+            definitionItems: defineRoute(({ POST }) => [
               POST(async (ctx) => {
                 ctx.body = await ctx.bodyparser.raw({
                   ...(encoding ? { encoding } : {}),
                 });
               }),
-            ]),
+            ]) as never,
           },
         ]);
 

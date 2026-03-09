@@ -20,7 +20,7 @@ type DocumentQuery = {
   format?: "full" | "minimal";
 };
 
-export default defineRoute<[TRefine<string, { format: "uuid" }>]>(
+export default defineRoute<"", [TRefine<string, { format: "uuid" }>]>(
   ({ GET, PUT, DELETE }) => [
     GET<{ json: DocumentQuery; response: [200, "json", DocumentResponse] }>(
       async (ctx) => {

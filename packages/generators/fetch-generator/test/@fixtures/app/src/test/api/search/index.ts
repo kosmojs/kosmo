@@ -5,8 +5,8 @@ export default defineRoute(({ GET, POST }) => [
     query: {
       q: string;
       type?: "posts" | "users" | "products" | "all";
-      page?: number;
-      limit?: number;
+      page?:  string;
+      limit?: string;
     };
   }>(async (ctx) => {}),
 

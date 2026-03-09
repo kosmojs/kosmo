@@ -4,7 +4,7 @@ export default defineRoute(({ GET }) => [
   GET<{
     query: {
       currency?: string;
-      includeReviews?: boolean;
+      includeReviews?: string;
     };
   }>(async (ctx) => {}),
 ]);

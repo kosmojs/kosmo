@@ -12,7 +12,7 @@ type ApiQuery = {
   includeEndpoints?: boolean;
 };
 
-export default defineRoute<[]>(({ GET }) => [
+export default defineRoute<"", []>(({ GET }) => [
   GET<{ json: ApiQuery; response: [200, "json", ApiInfo] }>(async (ctx) => {
     const { includeEndpoints } = ctx.validated.json;
     ctx.body = {

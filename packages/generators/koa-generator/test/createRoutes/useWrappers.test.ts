@@ -1,20 +1,17 @@
 import { describe, expect, it } from "vitest";
 
-import { middlewareStackBuilder } from "..";
-
-import { use } from "@src/templates/lib/api";
-import { defineRouteFactory } from "@src/templates/lib/api:route";
+import { defineRoute, middlewareStackBuilder, use } from "..";
 
 async function validateParams() {}
 async function validateBody() {}
 async function validateResponse() {}
 
-describe("useWrappers", () => {
+describe("cascadingMiddleware", () => {
   it("overrides global middleware", () => {
     const [stack] = middlewareStackBuilder(
       [
         {
-          useWrappers: [
+          cascadingMiddleware: [
             use(validateBody, { slot: "validate:json" }),
             use(validateParams, { slot: "validate:params" }),
             use(validateResponse, { slot: "validate:response" }),
@@ -35,12 +32,12 @@ describe("useWrappers", () => {
     const [stack] = middlewareStackBuilder(
       [
         {
-          definitionItems: defineRouteFactory(({ use, GET }) => [
+          definitionItems: defineRoute(({ use, GET }) => [
             use(validateBody, { slot: "validate:json" }),
             use(validateParams, { slot: "validate:params" }),
             use(validateResponse, { slot: "validate:response" }),
             GET(async function get() {}),
-          ]),
+          ]) as never,
         },
       ],
       {

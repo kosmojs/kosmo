@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { use } from "@src/templates/lib/api";
+import { use } from ".";
 
 describe("global use", () => {
   test("accepts single middleware", () => {

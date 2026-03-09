@@ -25,6 +25,7 @@ type OrderQuery = {
 };
 
 export default defineRoute<
+  "",
   [
     "pending" | "processing" | "shipped" | "delivered" | "cancelled",
     TRefine<string, { pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" }>,

@@ -1,10 +1,15 @@
 import zlib from "node:zlib";
 
 import Formidable, { type Options as FormidableOptions } from "formidable";
-import type { ParameterizedContext } from "koa";
 import rawParser from "raw-body";
 
 import type { RequestBodyTarget } from "@kosmojs/api";
+
+import type {
+  DefaultContext,
+  DefaultState,
+  ParameterizedContext,
+} from "{{ createImport 'libApi' }}";
 
 type JsonOptions = {
   limit?: number;
@@ -16,10 +21,10 @@ type JsonOptions = {
  * By default, all field values are returned as arrays (formidable v3 behavior),
  * since forms can submit multiple values under the same field name.
  *
- * - `false` (default) — no unwrapping, all values remain as arrays
- * - `true` — unwrap all fields; single-element arrays become scalars
- * - `{ only: string[] }` — unwrap only the specified fields
- * - `{ except: string[] }` — unwrap all fields except the specified ones
+ * - `false` (default) - no unwrapping, all values remain as arrays
+ * - `true` - unwrap all fields; single-element arrays become scalars
+ * - `{ only: string[] }` - unwrap only the specified fields
+ * - `{ except: string[] }` - unwrap all fields except the specified ones
  *
  * Fields with multiple values are always kept as arrays regardless of this option.
  * If both `only` and `except` are provided, `only` takes precedence.
@@ -133,7 +138,11 @@ const unwrap = (
 
 export const bodyparsers: {
   [T in RequestBodyTarget]: (
-    ctx: ParameterizedContext,
+    ctx: ParameterizedContext<
+      Record<string, string>,
+      DefaultState,
+      DefaultContext
+    >,
     opt?: BodyparserOptions[T],
   ) => Promise<unknown>;
 } = {

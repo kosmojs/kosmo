@@ -5,7 +5,7 @@ export default defineRoute(({ POST }) => [
     form: {
       file: File;
       type: "users" | "products" | "orders";
-      overwrite?: boolean;
+      overwrite?: "true";
     };
     headers: {
       authorization: string;

@@ -5,12 +5,12 @@ export default defineRoute(({ GET }) => [
     query: {
       q?: string;
       category?: string;
-      minPrice?: number;
-      maxPrice?: number;
-      inStock?: boolean;
+      minPrice?: string;
+      maxPrice?: string;
+      inStock?:  string;
       sort?: "price-asc" | "price-desc" | "newest" | "rating";
-      page?: number;
-      limit?: number;
+      page?:  string;
+      limit?: string;
     };
   }>(async (ctx) => {}),
 ]);

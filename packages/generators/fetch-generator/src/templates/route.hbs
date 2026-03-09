@@ -6,22 +6,19 @@ import fetchFactory, {
 } from "@kosmojs/fetch";
 
 import { baseurl, apiurl } from "{{ createImport "config" }}";
-{{#if runtimeValidation}}
-import { validationSchemas } from "{{ createImport "libApi" route.name "schemas" }}";
-{{/if}}
 
 import {
   type MaybeWrapped,
   unwrap,
 } from "{{ createImport "lib" "unwrap" }}";
 
-import { fetchClientFactory } from "{{ createImport "lib" "fetch:lib" }}";
+import { fetchClientFactory } from "{{ createImport "lib" "@fetch/lib" }}";
 
-import type {
-  {{route.params.id}},
-{{#each validationTypes}}  {{id}},
+{{#each validationTypes}}
+import type { {{id}} } from "./types";
 {{/each}}
-} from "{{ createImport "libApi" route.name "types" }}";
+
+import { validationSchemas } from "./schemas";
 
 export { ValidationError } from "@kosmojs/api/errors";
 
@@ -42,7 +39,16 @@ export type ResponseT = {
   {{/each}}
 }
 
-const { paramsMapper, parametrize } = fetchClientFactory({{serializeRoute route}});
+const {
+  paramsMapper,
+  parametrize,
+  resolvePayload,
+} = fetchClientFactory(
+  "{{route.name}}",
+  "{{route.pathPattern}}",
+  [{{#each route.params.schema}}["{{name}}", "{{kind}}"], {{/each}}],
+  [{{#each route.numericParams}}"{{.}}", {{/each}}],
+);
 
 const fetchApi = fetchFactory(join(baseurl, apiurl), { stringify });
 
@@ -50,10 +56,14 @@ const fetchApi = fetchFactory(join(baseurl, apiurl), { stringify });
 export const {{method}} = (
   _params{{#if ../route.optionalParams}}?{{/if}}: MaybeWrapped<ParamsT>,
   _payload?: {
-    {{#each ../payloadTypes}}
-    {{target}}: {{name}} extends { {{../method}}: unknown }
-      ? MaybeWrapped<{{name}}["{{../method}}"]>
+    {{#each ../payloadTargets}}
+    {{#if payloadType}}
+    {{target}}: {{payloadType.name}} extends { {{../method}}: unknown }
+      ? MaybeWrapped<{{payloadType.name}}["{{../method}}"]>
       : unknown,
+    {{else}}
+    {{target}}?: unknown;
+    {{/if}}
     {{/each}}
   }
 ): Promise<
@@ -64,18 +74,16 @@ export const {{method}} = (
   {{/if}}
 > => {
   const params = unwrap<ParamsT>(_params || []);
-  {{#if ../runtimeValidation}}
   if (validationSchemas.params) {
     validationSchemas.params.validate(paramsMapper(params));
   }
-  {{#each payloadTypes}}
+  {{#each ../payloadTypes}}
   if (validationSchemas.{{target}}?.{{../method}}) {
     validationSchemas.{{target}}.{{../method}}.validate(
-      _payload?.["{{target}}"]
+      resolvePayload(_payload, "{{target}}")
     );
   }
   {{/each}}
-  {{/if}}
   return fetchApi.{{method}}(parametrize(params), _payload as never);
 };
 {{/each}}

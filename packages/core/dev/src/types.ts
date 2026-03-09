@@ -66,6 +66,8 @@ export type PathToken = {
  * route entry as found in file-system, before any processing
  * */
 export type RouteEntry = {
+  // Unique ID across all routes, safe to use as a JavaScript identifier
+  // in generated code (constants, imports, etc.).
   id: string;
   name: string;
   // root folder route defined in; either api or pages

@@ -37,6 +37,7 @@ type ReviewsQuery = {
 };
 
 export default defineRoute<
+  "",
   [TRefine<number, { minimum: 1 }>, TRefine<number, { minimum: 1 }>]
 >(({ GET, POST }) => [
   GET<{ json: ReviewsQuery; response: [200, "json", ReviewsResponse] }>(

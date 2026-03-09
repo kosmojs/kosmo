@@ -1,4 +1,4 @@
-export declare module "{{ createImport "libApi" }}" {
+export declare module "{{ createImport 'libApi' }}" {
   interface DefaultState {}
   interface DefaultContext {}
 }

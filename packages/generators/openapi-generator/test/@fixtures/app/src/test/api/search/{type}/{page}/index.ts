@@ -21,6 +21,7 @@ type SearchQuery = {
 };
 
 export default defineRoute<
+  "",
   ["posts" | "users" | "all", TRefine<number, { minimum: 1 }>]
 >(({ GET }) => [
   GET<{ json: SearchQuery; response: [200, "json", SimpleSearchResponse] }>(

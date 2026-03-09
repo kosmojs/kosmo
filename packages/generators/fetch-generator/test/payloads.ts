@@ -19,30 +19,34 @@ export type PayloadMap = Record<
   } & Partial<Record<HTTPMethod, Array<PayloadVariant>>>
 >;
 
+type FormDataFactoryFile =
+  | string
+  | { name: string; type?: string; blob?: Blob };
+
 const formDataFactory = (
   fields: Record<string, string>,
-  files?: Array<string> | Array<{ name: string; type?: string; blob?: Blob }>,
+  files?: Record<string, FormDataFactoryFile | Array<FormDataFactoryFile>>,
 ) => {
   const formData = new FormData();
   for (const [key, val] of Object.entries(fields)) {
     formData.append(key, val);
   }
-  for (const file of files || []) {
-    const [name, type, blob] =
-      typeof file === "string" //
-        ? [file]
-        : [file.name, file.type, file.blob];
-    formData.append(
-      "file",
-      blob
-        ? blob
-        : new Blob([Buffer.from(name)], {
-            type: type
-              ? mimeTypes.lookup(type) || type
-              : mimeTypes.lookup(name) || "text/plain",
-          }),
-      name,
-    );
+  for (const [key, value] of Object.entries(files || {})) {
+    for (const file of [value].flat()) {
+      const [name, type, blob] =
+        typeof file === "string" ? [file] : [file.name, file.type, file.blob];
+      formData.append(
+        key,
+        blob
+          ? blob
+          : new Blob([Buffer.from(name)], {
+              type: type
+                ? mimeTypes.lookup(type) || type
+                : mimeTypes.lookup(name) || "text/plain",
+            }),
+        name,
+      );
+    }
   }
   return formData;
 };
@@ -147,12 +151,13 @@ export const payloadMap: PayloadMap = {
     params: [["42"]],
     POST: [
       {
-        form: formDataFactory({}, ["avatar001.png"]),
+        form: formDataFactory({}, { file: "avatar001.png" }),
       },
       {
-        form: formDataFactory({ cropX: "100", cropY: "100" }, [
-          "avatar002.png",
-        ]),
+        form: formDataFactory(
+          { cropX: "100", cropY: "100" },
+          { file: "avatar002.png" },
+        ),
       },
     ],
   },
@@ -398,11 +403,11 @@ export const payloadMap: PayloadMap = {
   uploads: {
     POST: [
       {
-        form: formDataFactory({}, ["report.pdf"]),
+        form: formDataFactory({}, { file: "report.pdf" }),
         headers: { authorization: "Bearer tok_abc123" },
       },
       {
-        form: formDataFactory({ folder: "images" }, ["photo.png"]),
+        form: formDataFactory({ folder: "images" }, { file: "photo.png" }),
         headers: { authorization: "Bearer tok_abc123" },
       },
       {
@@ -411,7 +416,7 @@ export const payloadMap: PayloadMap = {
             folder: "documents",
             description: "Q4 report",
           },
-          ["data.csv"],
+          { file: "data.csv" },
         ),
         headers: { authorization: "Bearer tok_abc123" },
       },
@@ -421,15 +426,14 @@ export const payloadMap: PayloadMap = {
   "uploads/batch": {
     POST: [
       {
-        form: formDataFactory({}, ["a.jpg", "b.jpg"]),
+        form: formDataFactory({}, { files: ["a.jpg", "b.jpg"] }),
         headers: { authorization: "Bearer tok_abc123" },
       },
       {
-        form: formDataFactory({ folder: "gallery" }, [
-          "a.jpg",
-          "b.jpg",
-          "c.jpg",
-        ]),
+        form: formDataFactory(
+          { folder: "gallery" },
+          { files: ["a.jpg", "b.jpg", "c.jpg"] },
+        ),
         headers: { authorization: "Bearer tok_abc123" },
       },
     ],
@@ -439,9 +443,6 @@ export const payloadMap: PayloadMap = {
     POST: [
       {
         raw: "...",
-      },
-      {
-        raw: Buffer.from("..."),
       },
     ],
   },
@@ -534,13 +535,14 @@ export const payloadMap: PayloadMap = {
   "admin/import": {
     POST: [
       {
-        form: formDataFactory({ type: "users" }, ["users.csv"]),
+        form: formDataFactory({ type: "users" }, { file: "users.csv" }),
         headers: { authorization: "Bearer tok_admin" },
       },
       {
-        form: formDataFactory({ type: "products", overwrite: "true" }, [
-          "products.csv",
-        ]),
+        form: formDataFactory(
+          { type: "products", overwrite: "true" },
+          { file: "products.csv" },
+        ),
         headers: { authorization: "Bearer tok_admin" },
       },
     ],
