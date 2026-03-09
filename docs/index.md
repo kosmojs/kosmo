@@ -5,12 +5,11 @@ description: KosmoJS - a Vite-based full‑stack meta‑framework for type‑saf
 hero:
   name: KosmoJS
   tagline: <span class="tagline-container">
-        <span class="headline">A Vite-based full‑stack meta‑framework for type‑safe apps</span>
-        <span>Multiple source folders.</span>
-        <span>Directory-based nested routing.</span>
-        <span>Runtime end-to-end validation.</span>
-        <span>Generated fetch clients, OpenAPI spec.</span>
-        <span>Koa, Hono, SolidJS, React, Vue and more.</span>
+      <span class="headline">A Vite template evolved into a full‑stack meta‑framework</span>
+      <span>Multiple source folders. Directory-based routing.</span>
+      <span>Cascading middleware. Nested routes.</span>
+      <span>End-to-end validation. Fetch clients. OpenAPI spec.</span>
+      <span>Koa, Hono, SolidJS, React, Vue and more.</span>
     </span>
   # image:
   #   src: /KosmoJS.svg

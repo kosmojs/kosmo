@@ -56,3 +56,7 @@ pre, code {
   color:var(--vp-c-white);
   margin-bottom: 0.8rem;;
 }
+
+.VPHero .tagline-container > span:not(.headline) {
+  white-space: nowrap;
+}

@@ -1,9 +1,11 @@
 # KosmoJS
 
-### A Vite-based full‑stack meta‑framework for type‑safe apps
+### A Vite template evolved into a full‑stack meta‑framework
 
-Multiple source folders. Directory-based nested routing. Runtime end-to-end validation.
-Generated fetch clients, OpenAPI spec. Koa, Hono, SolidJS, React, Vue and more.
+Multiple source folders. Directory-based routing.
+Cascading middleware. Nested routes.
+End-to-end validation. Fetch clients. OpenAPI spec.
+Koa, Hono, SolidJS, React, Vue and more.
 
 📘 [Documentation ➜ kosmojs.dev](https://kosmojs.dev)
 
