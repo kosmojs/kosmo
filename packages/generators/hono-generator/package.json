@@ -28,10 +28,10 @@
     "picomatch": "^4.0.3"
   },
   "devDependencies": {
-    "@hono/node-server": "^1.19.9",
+    "@hono/node-server": "^1.19.11",
     "@kosmojs/api": "workspace:^",
     "@types/picomatch": "^4.0.2",
-    "hono": "^4.12.3",
+    "hono": "^4.12.5",
     "path-to-regexp": "^8.3.0"
   }
 }

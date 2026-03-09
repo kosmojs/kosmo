@@ -32,9 +32,9 @@
     "picomatch": "^4.0.3"
   },
   "devDependencies": {
-    "@koa/router": "^15.3.0",
+    "@koa/router": "^15.3.1",
     "@kosmojs/api": "workspace:^",
-    "@types/formidable": "^3.4.7",
+    "@types/formidable": "^3.5.0",
     "@types/koa": "^3.0.1",
     "@types/koa-compose": "^3.2.9",
     "@types/picomatch": "^4.0.2",

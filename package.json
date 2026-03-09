@@ -5,7 +5,7 @@
   "devEngines": {
     "runtime": {
       "name": "node",
-      "version": "^22.22.0",
+      "version": "^22.22.1",
       "onFail": "download"
     }
   },
@@ -26,20 +26,20 @@
     "pub:tags": "git push --follow-tags"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.4",
-    "@changesets/cli": "^2.29.8",
-    "@hono/node-server": "^1.19.9",
+    "@biomejs/biome": "^2.4.6",
+    "@changesets/cli": "^2.30.0",
+    "@hono/node-server": "^1.19.11",
     "@kosmojs/api": "workspace:^",
     "@kosmojs/cli": "workspace:^",
     "@kosmojs/config": "workspace:^",
     "@kosmojs/dev": "workspace:^",
-    "@types/node": "^25.3.2",
+    "@types/node": "^25.3.5",
     "cheerio": "^1.2.0",
     "crc": "^4.3.2",
     "esbuild": "^0.27.3",
     "esbuilder": "link:esbuilder",
     "got": "^14.6.6",
-    "hono": "^4.12.3",
+    "hono": "^4.12.5",
     "msw": "^2.12.10",
     "ora": "^9.3.0",
     "path-to-regexp": "^8.3.0",
