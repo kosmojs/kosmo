@@ -8,7 +8,6 @@ type CreateImport = Record<
   | "config"
   | "api"
   | "pages"
-  | "fetch"
   | "lib"
   | "libApi"
   | "libEntry",
@@ -39,7 +38,6 @@ export const pathResolver = ({
     | "api"
     | "pages"
     | "entry"
-    | "fetch"
     | "lib"
     | "libApi"
     | "libEntry"
@@ -78,9 +76,6 @@ export const pathResolver = ({
     libEntry(...a) {
       return this.lib(defaults.entryDir, ...a);
     },
-    fetch(...a) {
-      return this.lib(defaults.fetchDir, ...a);
-    },
   };
 
   return {
@@ -114,9 +109,6 @@ export const pathResolver = ({
       },
       libPages(...a) {
         return this.lib(defaults.pagesDir, ...a);
-      },
-      fetch(...a) {
-        return this.lib(defaults.fetchDir, ...a);
       },
     },
     createImport,
