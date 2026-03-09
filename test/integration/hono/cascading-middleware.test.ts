@@ -51,7 +51,7 @@ beforeAll(async () => {
         `;
       }
       return `
-        import { defineRoute } from "${createImport.libApi(name)}";
+        import { defineRoute } from "${createImport.libApi()}";
         export default defineRoute(({ GET }) => [
           GET(async (ctx) => {
             ctx.var.stack?.push("${name}/${file}");
@@ -67,7 +67,7 @@ beforeAll(async () => {
 
 afterAll(teardown);
 
-describe("API - useWrappers", async () => {
+describe("cascading middleware", async () => {
   for (const { name, params } of apiRoutes.filter(
     ({ file }) => file === "index",
   )) {
@@ -75,7 +75,7 @@ describe("API - useWrappers", async () => {
     test(snapshotName, async () => {
       await withApiResponse(name, params, async ({ response }) => {
         await expect(response.body).toMatchFileSnapshot(
-          `../@snapshots/useWrappers/${snapshotName}.json`,
+          `../@snapshots/cascading-middleware/${snapshotName}.json`,
         );
       });
     });

@@ -58,8 +58,13 @@ export default defineConfig({
         globals: true,
       }),
 
-      setupFactory("generators/koa-generator"),
-      setupFactory("generators/hono-generator"),
+      setupFactory("generators/koa-generator", {
+        setupFiles: ["packages/generators/koa-generator/test/setup.ts"],
+      }),
+
+      setupFactory("generators/hono-generator", {
+        setupFiles: ["packages/generators/hono-generator/test/setup.ts"],
+      }),
 
       setupFactory("generators/openapi-generator", {
         testTimeout: 30_000,

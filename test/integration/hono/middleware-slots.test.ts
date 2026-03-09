@@ -15,7 +15,7 @@ const {
   withApiResponse,
   startServer,
   teardown,
-} = await setupTestProject({ backend: "koa" });
+} = await setupTestProject({ backend: "hono" });
 
 const coreSlots: Array<keyof UseSlots> = [
   "bodyparser",
@@ -50,10 +50,9 @@ beforeAll(async () => {
         use(
           async (ctx, next) => {
             try {
-              await next();
+              return await next();
             } catch (error) {
-              ctx.status = 400;
-              ctx.body = error.message || error;
+              return ctx.text(error.message || error, 400);
             }
           },
           { slot: "errorHandler" },
@@ -83,10 +82,10 @@ beforeAll(async () => {
           ];
     };
 
-    await createApiRoutes([route], async ({ name }) => {
+    await createApiRoutes([route], async () => {
       return () => {
         return `
-          import { defineRoute } from "${createImport.libApi(name)}";
+          import { defineRoute } from "${createImport.libApi()}";
           export default defineRoute(({ use, GET }) => [
             ${coreSlots.flatMap(coreSlotsMapper).join(",\n")},
             GET(() => {
@@ -107,21 +106,23 @@ beforeAll(async () => {
     const coreSlotsMapper = (s: string) => {
       return `use(
         (ctx, next) => {
-          if ("${s}" === "${slot}") { ctx.body = "${slot}" };
-          return next()
+          if ("${s}" === "${slot}") {
+            return ctx.text("${slot}");
+          };
+          return next();
         },
         { slot: "${s}" }
       )`;
     };
 
-    await createApiRoutes([route], async ({ name }) => {
+    await createApiRoutes([route], async () => {
       return () => {
         return `
-          import { defineRoute } from "${createImport.libApi(name)}";
+          import { defineRoute } from "${createImport.libApi()}";
           export default defineRoute(({ use, GET }) => [
             ${coreSlots.map(coreSlotsMapper).join(",\n")},
             GET(async (ctx) => {
-              // ctx.body set by overridden slot
+              // response handled by overridden slot
             }),
           ]);
         `;
@@ -134,7 +135,7 @@ beforeAll(async () => {
 
 afterAll(teardown);
 
-describe("API - useSlots", async () => {
+describe("middleware slots", async () => {
   describe("Override Core Slots", async () => {
     for (const slot of coreSlots) {
       it(`should throw if not overridden: ${slot}`, async ({ expect }) => {
