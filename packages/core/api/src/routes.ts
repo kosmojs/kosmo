@@ -43,7 +43,7 @@ export const createRoutes = <MiddlewareT, MiddlewareR>(
 
     // Include both middleware and HTTP method handlers
     const definitionItems = [
-      ...routeSource.useWrappers,
+      ...routeSource.cascadingMiddleware,
       ...routeSource.definitionItems,
     ].flat();
 

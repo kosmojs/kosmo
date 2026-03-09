@@ -56,9 +56,9 @@ export type RouteSource<MiddlewareT> = {
   // path-to-regexp pattern
   pathPattern: string;
   file: string;
-  // useWrappers is same as defining middleware inside route definition,
+  // same as inline middleware inside route definition,
   // just automatically imported from use.ts files
-  useWrappers: [...a: Array<MiddlewareDefinition<MiddlewareT>>];
+  cascadingMiddleware: [...a: Array<MiddlewareDefinition<MiddlewareT>>];
   definitionItems: Array<RouteDefinitionItem<MiddlewareT>>;
   params: Array<string>;
   numericParams: Array<string>;
