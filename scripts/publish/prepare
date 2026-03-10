@@ -5,4 +5,4 @@ changeset add
 git add --all .
 git commit -am changeset
 changeset version
-git commit -am "version bump"
+git commit -am "chore: version bump"
