@@ -86,6 +86,7 @@ export const createProject = async (
       "@kosmojs/config": SELF_VERSION,
       "@kosmojs/cli": SELF_VERSION,
       "@kosmojs/dev": SELF_VERSION,
+      "@kosmojs/fetch": SELF_VERSION,
       "@kosmojs/generators": SELF_VERSION,
       "@types/node": self.devDependencies["@types/node"],
       esbuild: self.devDependencies.esbuild,
