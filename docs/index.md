@@ -15,10 +15,10 @@ hero:
   #   src: /KosmoJS.svg
   actions:
     - theme: brand
-      text: Get Started
+      text: Get Started ➜
       link: /start
     - theme: alt
-      text: Explore Features
+      text: Explore Features ➜
       link: /features
 
 features:
@@ -55,6 +55,10 @@ features:
 ---
 
 <CodeSamples />
+
+<div class="text-center">
+<LinkButton href="/start">Get Started</LinkButton>
+</div>
 
 ## 🎯 The What
 

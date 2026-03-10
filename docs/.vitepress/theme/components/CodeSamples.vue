@@ -2,9 +2,8 @@
 import ParamsValidation001 from './ParamsValidation.md'
 import PayloadValidation from './PayloadValidation.md'
 import ResponseValidation from './ResponseValidation.md'
-import GlobalMiddleware from './GlobalMiddleware.md'
-import OverrideMiddleware from './OverrideMiddleware.md'
-import LinkButton from './LinkButton.vue'
+import ComposableMiddleware from './ComposableMiddleware.md'
+import CascadingMiddleware from './CascadingMiddleware.md'
 </script>
 <template>
   <div class="hero-sections">
@@ -93,20 +92,19 @@ import LinkButton from './LinkButton.vue'
     <div class="hero-block hero-block--reversed">
       <div class="hero-content">
         <div class="hero-text">
-          <h1 class="hero-title">Global Middleware</h1>
+          <h1 class="hero-title">Composable Middleware</h1>
           <div class="hero-description">
-            Define middleware to run on every route.
-            Use the <code>slot</code> option to allow routes to override this middleware later.
-            Use the <code>on</code> option to run middleware only for specific HTTP methods.
+            Global middleware added to <code>api/use.ts</code> will run on every route.
+            Routes can use <code>slot</code> option to override global middleware.
             <div class="text-hint">
-              Custom slots like <code>auth</code> should be added to <code>api/env.d.ts</code> file.
+              Custom slots like <code>logger</code> should be added to <code>api/env.d.ts</code> file.
             </div>
           </div>
         </div>
-        <a href="/api-server/use-middleware/slot-composition" class="details-button">Details ➜</a>
+        <a href="/api-server/middleware" class="details-button">Details ➜</a>
       </div>
       <div>
-        <GlobalMiddleware />
+        <ComposableMiddleware />
       </div>
     </div>
 
@@ -115,21 +113,20 @@ import LinkButton from './LinkButton.vue'
     <div class="hero-block">
       <div class="hero-content">
         <div class="hero-text">
-          <h1 class="hero-title">Override Middleware</h1>
+          <h1 class="hero-title">Cascading Middleware</h1>
           <div class="hero-description">
-            Use the <code>slot</code> option in routes to override global middleware with the same slot name.
+            Create a <code>use.ts</code> file in any folder,
+            and its default exported middleware automatically wraps all routes in that folder
+            and its subfolders - no imports or manual wiring required.
           </div>
         </div>
-        <a href="/api-server/use-middleware/slot-composition" class="details-button">Details ➜</a>
+        <a href="/api-server/cascading-middleware" class="details-button">Details ➜</a>
       </div>
       <div>
-        <OverrideMiddleware />
+        <CascadingMiddleware />
       </div>
     </div>
-  </div>
-
-  <div class="text-center">
-    <LinkButton href="/start">Get Started</LinkButton>
+    <hr />
   </div>
 </template>
 
