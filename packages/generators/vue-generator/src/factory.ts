@@ -153,6 +153,7 @@ export const factory: GeneratorFactory<Options> = async (
       await renderToFile(createPath.libEntry(file), template, {
         pageEntries,
         nestedRoutes,
+        ssrMode,
       });
     }
 
@@ -162,7 +163,6 @@ export const factory: GeneratorFactory<Options> = async (
     ]) {
       await renderToFile(createPath.lib(file), template, {
         indexRoutes,
-        ssrMode,
       });
     }
   };

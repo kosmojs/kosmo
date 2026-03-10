@@ -5,10 +5,6 @@ import { createHost, type HostOpt, join, stringify } from "@kosmojs/fetch";
 
 import { baseurl } from "{{ createImport 'config' }}";
 
-export const ssrMode = () => {
-  ssrMode;
-};
-
 type QueryT = Record<string, unknown>;
 
 export const pagePathFactory = <ParamsT extends Array<unknown>>(
