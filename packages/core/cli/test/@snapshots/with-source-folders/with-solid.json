@@ -66,6 +66,7 @@
       "      generators: [ solidGenerator(), ],",
       "    }),",
       "  ],",
+      "  esbuild: { jsx: \"automatic\", jsxImportSource: \"solid-js\" },",
       "});"
     ]
   ]

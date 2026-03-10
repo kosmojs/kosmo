@@ -263,6 +263,11 @@ export const createSourceFolder = async (
     defaults,
     plugins,
     generators,
+    frameworkSpecificConfig: [
+      ...(framework === "solid"
+        ? [`esbuild: { jsx: "automatic", jsxImportSource: "solid-js" }`]
+        : []),
+    ],
   };
 
   for (const [file, template] of [

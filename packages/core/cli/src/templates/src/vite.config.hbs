@@ -23,4 +23,6 @@ export default defineConfig(import.meta.dirname, {
       generators: [ {{#each generators}}{{name}}({{options}}), {{/each}}],
     }),
   ],
+{{#each frameworkSpecificConfig}}  {{.}},
+{{/each}}
 });
