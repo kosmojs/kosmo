@@ -188,6 +188,9 @@ importers:
 
   packages/core/dev:
     dependencies:
+      '@kosmojs/api':
+        specifier: workspace:^
+        version: link:../api
       '@topcli/spinner':
         specifier: ^4.2.1
         version: 4.2.1
@@ -228,9 +231,6 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
     devDependencies:
-      '@kosmojs/api':
-        specifier: workspace:^
-        version: link:../api
       '@types/mime-types':
         specifier: ^3.0.1
         version: 3.0.1
@@ -250,13 +250,13 @@ importers:
 
   packages/generators/fetch-generator:
     dependencies:
+      '@kosmojs/api':
+        specifier: workspace:^
+        version: link:../../core/api
       '@kosmojs/dev':
         specifier: workspace:^
         version: link:../../core/dev
     devDependencies:
-      '@kosmojs/api':
-        specifier: workspace:^
-        version: link:../../core/api
       '@kosmojs/fetch':
         specifier: workspace:^
         version: link:../../core/fetch
@@ -403,6 +403,9 @@ importers:
 
   packages/generators/openapi-generator:
     dependencies:
+      '@kosmojs/api':
+        specifier: workspace:^
+        version: link:../../core/api
       '@kosmojs/dev':
         specifier: workspace:^
         version: link:../../core/dev
@@ -419,9 +422,6 @@ importers:
         specifier: ^2.8.2
         version: 2.8.2
     devDependencies:
-      '@kosmojs/api':
-        specifier: workspace:^
-        version: link:../../core/api
       '@kosmojs/koa-generator':
         specifier: workspace:^
         version: link:../koa-generator
@@ -517,13 +517,13 @@ importers:
 
   packages/generators/typebox-generator:
     dependencies:
+      '@kosmojs/api':
+        specifier: workspace:^
+        version: link:../../core/api
       '@kosmojs/dev':
         specifier: workspace:^
         version: link:../../core/dev
     devDependencies:
-      '@kosmojs/api':
-        specifier: workspace:^
-        version: link:../../core/api
       '@kosmojs/koa-generator':
         specifier: workspace:^
         version: link:../koa-generator

@@ -22,10 +22,10 @@
     "test": "vitest --root ../../.. --project generators/typebox-generator"
   },
   "dependencies": {
+    "@kosmojs/api": "workspace:^",
     "@kosmojs/dev": "workspace:^"
   },
   "devDependencies": {
-    "@kosmojs/api": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
     "typebox": "^1.1.6"
   }

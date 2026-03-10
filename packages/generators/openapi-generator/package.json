@@ -21,6 +21,7 @@
     "test": "vitest --root ../../.. --project generators/openapi-generator"
   },
   "dependencies": {
+    "@kosmojs/api": "workspace:^",
     "@kosmojs/dev": "workspace:^",
     "crc": "^4.3.2",
     "path-to-regexp": "^8.3.0",
@@ -28,7 +29,6 @@
     "yaml": "^2.8.2"
   },
   "devDependencies": {
-    "@kosmojs/api": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
     "@stoplight/spectral-core": "^1.21.0",
     "@stoplight/spectral-rulesets": "^1.22.0"
