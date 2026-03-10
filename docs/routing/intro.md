@@ -90,4 +90,4 @@ For client pages, nested routes often benefit from layout components
 that wrap child routes and provide common UI elements like navigation or headers.
 
 `KosmoJS` supports nested routes naturally, featuring same consistent pattern across all frameworks.
-([Details ➜ ](/routing/nested-routes))
+([Details ➜ ](/frontend/routing))

@@ -45,7 +45,7 @@ When you run `pnpm build`, `KosmoJS` produces:
 
 **SSR Bundle:**
 
-When [SSR is enabled](/generators/solid/server-side-render#🛠%EF%B8%8F-enabling-ssr),
+When [SSR is enabled](/frontend/server-side-render),
 the build process also generates a production-ready SSR bundle at
 `dist/SOURCE_FOLDER/ssr/server.js`. This standalone Node.js server is ready
 to deploy for server-side rendering.

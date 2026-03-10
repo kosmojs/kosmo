@@ -233,7 +233,7 @@ await fetchClients["users/[id]"].POST([invalidId], { json: invalidPayload });
 - OpenAPI docs stay current automatically
 - Type safety flows through your entire stack
 
-[Read more: Fetch Clients](/fetch/intro) · [OpenAPI Generator](/generators/openapi/intro)
+[Read more: Fetch Clients](/fetch/intro) · [OpenAPI Generator](/openapi/intro)
 
 ---
 
@@ -261,7 +261,7 @@ Once selected, `KosmoJS` generates a ready-to-go folder with everything set up a
 - Generators are optional - use what you need
 - Framework ecosystem compatibility
 
-[Read more: Framework Setup](/start) · [SolidJS Generator](/generators/solid/intro)
+[Read more: Framework Setup](/frontend/intro)
 
 ---
 

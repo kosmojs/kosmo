@@ -599,7 +599,7 @@ validation throws an error instead of sending invalid data to clients.
 
 [More details: Runtype Validation →](/validation/intro)
 
-## ⏩ Add Middleware
+## ▶️ Add Middleware
 
 Middleware are functions that execute before your route handlers,
 handling cross-cutting concerns like authentication, logging, error handling, etc.
@@ -717,7 +717,7 @@ and validation schemas to produce a complete OpenAPI spec.
 You can use the generated `openapi.json` with tools like Swagger UI, Postman,
 or any OpenAPI-compatible client generator.
 
-[More details: OpenAPI Generator →](/generators/openapi/intro)
+[More details: OpenAPI Generator →](/openapi/intro)
 
 ## 📥 Fetch Clients
 
@@ -871,7 +871,7 @@ All routes under `/users` now render inside this layout. The navigation bar appe
 
 Layouts can be nested - deeper layouts wrap inner layouts, creating a hierarchy that matches your route structure.
 
-[More details: Nested Routes & Layouts →](/routing/nested-routes)
+[More details: Nested Routes & Layouts →](/frontend/routing)
 
 ## ⚡ Server-Side Rendering
 
@@ -993,10 +993,7 @@ or run them side-by-side.
 Your API server stays clean and dedicated to handling API requests,
 while the SSR server is dedicated entirely to rendering your app.
 
-More details on SSR:
-[SolidJS](/generators/solid/server-side-render)
- · [React](/generators/react/server-side-render)
- · [Vue](/generators/vue/server-side-render)
+[More details on SSR →](/frontend/server-side-render)
 
 ## 🌐 Scale with Multiple Source Folders
 
@@ -1053,12 +1050,12 @@ Your development workflow stays clean and fast:
 - [Directory-Based Routing](/routing/intro) - How folders become URLs
 - [Runtype Validation](/validation/intro) - Type definitions as validators
 - [Middleware Composition](/api-server/middleware) - Hierarchical middleware organization
-- [Nested Layouts](/routing/nested-routes) - Shared UI across route groups
+- [Nested Layouts](/frontend/routing) - Shared UI across route groups
 - [Generated Fetch Clients](/fetch/start) - Type-safe API consumption
 
 **Explore advanced features:**
 - [Custom Validation](/validation/refine) - Refine types with custom rules
-- [OpenAPI Generation](/generators/openapi/intro) - Automatic API documentation
+- [OpenAPI Generation](/openapi/intro) - Automatic API documentation
 - [Production Builds](/api-server/building-for-production) - Deployment strategies
 
 ---

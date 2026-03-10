@@ -82,38 +82,9 @@ export default defineConfig({
         activeMatch: "^/(?!generators/|plugins/).+",
       },
       {
-        text: "🎨 Generators",
+        text: "🛠️ Generators",
+        link: "/generators/intro",
         activeMatch: "^/generators/",
-        items: [
-          {
-            text: "🔹 SolidJS",
-            link: "/generators/solid/intro",
-          },
-          {
-            text: "🔹 React",
-            link: "/generators/react/intro",
-          },
-          {
-            text: "🔹 Vue",
-            link: "/generators/vue/intro",
-          },
-          {
-            items: [
-              {
-                text: "OpenAPI",
-                link: "/generators/openapi/intro",
-              },
-            ],
-          },
-          {
-            items: [
-              {
-                text: "Writing Generators",
-                link: "/generators/writing-generators/intro",
-              },
-            ],
-          },
-        ],
       },
       {
         text: "🔌 Plugins",
@@ -125,185 +96,37 @@ export default defineConfig({
     sidebar: {
       "/generators/": [
         {
-          text: "SolidJS Generator",
-          collapsed: false,
-          items: [
-            {
-              text: "🛠 Install / Setup",
-              docFooterText: "🛠 SolidJS - Install / Setup",
-              link: "/generators/solid/intro",
-            },
-            {
-              text: "🏗 Application",
-              link: "/generators/solid/application",
-            },
-            {
-              text: "🛣 Automated Routing",
-              link: "/generators/solid/routing",
-            },
-            {
-              text: "📥 Data / Preload",
-              link: "/generators/solid/preload",
-            },
-            {
-              text: "⚡ Server-Side Render",
-              link: "/generators/solid/server-side-render",
-            },
-            {
-              text: "🧭 Link Navigation",
-              link: "/generators/solid/link",
-            },
-            {
-              text: "🔧 Utilities",
-              link: "/generators/solid/utilities",
-            },
-            {
-              text: "🎨 Custom Templates",
-              link: "/generators/solid/custom-templates",
-            },
-            {
-              text: "💡 Best Practices",
-              docFooterText: "💡 SolidJS - Best Practices",
-              link: "/generators/solid/best-practices",
-            },
-          ],
-        },
-        {
-          text: "React Generator",
-          collapsed: false,
-          items: [
-            {
-              text: "🛠 Install / Setup",
-              docFooterText: "🛠 React - Install / Setup",
-              link: "/generators/react/intro",
-            },
-            {
-              text: "🏗 Application",
-              link: "/generators/react/application",
-            },
-            {
-              text: "🛣 Automated Routing",
-              link: "/generators/react/routing",
-            },
-            {
-              text: "📥 Data Loader",
-              link: "/generators/react/loader",
-            },
-            {
-              text: "⚡ Server-Side Render",
-              link: "/generators/react/server-side-render",
-            },
-            {
-              text: "🧭 Link Navigation",
-              link: "/generators/react/link",
-            },
-            {
-              text: "🎨 Custom Templates",
-              link: "/generators/react/custom-templates",
-            },
-            {
-              text: "💡 Best Practices",
-              docFooterText: "💡 React - Best Practices",
-              link: "/generators/react/best-practices",
-            },
-          ],
-        },
-        {
-          text: "Vue Generator",
-          collapsed: false,
-          items: [
-            {
-              text: "🛠 Install / Setup",
-              docFooterText: "🛠 Vue - Install / Setup",
-              link: "/generators/vue/intro",
-            },
-            {
-              text: "🏗 Application",
-              link: "/generators/vue/application",
-            },
-            {
-              text: "🛣 Automated Routing",
-              link: "/generators/vue/routing",
-            },
-            {
-              text: "⚡ Server-Side Render",
-              link: "/generators/vue/server-side-render",
-            },
-            {
-              text: "🧭 Link Navigation",
-              link: "/generators/vue/link",
-            },
-            {
-              text: "🔧 Utilities",
-              link: "/generators/vue/utilities",
-            },
-            {
-              text: "🎨 Custom Templates",
-              link: "/generators/vue/custom-templates",
-            },
-            {
-              text: "💡 Best Practices",
-              docFooterText: "💡 Vue - Best Practices",
-              link: "/generators/vue/best-practices",
-            },
-          ],
-        },
-        {
-          text: "OpenAPI Generator",
-          collapsed: false,
-          items: [
-            {
-              text: "🛠 Install / Setup",
-              docFooterText: "🛠 OpenAPI - Install / Setup",
-              link: "/generators/openapi/intro",
-            },
-            {
-              text: `${icons.gear} Configuration`,
-              link: "/generators/openapi/configuration",
-            },
-            {
-              text: "🏗 Generated Spec",
-              link: "/generators/openapi/generated-spec",
-            },
-            {
-              text: "💡 Best Practices",
-              docFooterText: "💡 OpenAPI Best Practices",
-              link: "/generators/openapi/best-practices",
-            },
-          ],
-        },
-        {
-          text: "Writing Generators",
+          text: "Generators",
           collapsed: false,
           items: [
             {
               text: "🏗 Architecture",
               docFooterText: "🏗 Generators Architecture",
-              link: "/generators/writing-generators/intro",
+              link: "/generators/intro",
             },
             {
               text: `${icons.gear} User Options`,
-              link: "/generators/writing-generators/user-options",
+              link: "/generators/user-options",
             },
             {
               text: "🏭 Factory",
-              link: "/generators/writing-generators/factory",
+              link: "/generators/factory",
             },
             {
               text: "🔄 Incremental Updates",
-              link: "/generators/writing-generators/incremental-updates",
+              link: "/generators/incremental-updates",
             },
             {
               text: "🗂 Route Entries",
-              link: "/generators/writing-generators/route-entries",
+              link: "/generators/route-entries",
             },
             {
               text: "🧭 Path Resolver",
-              link: "/generators/writing-generators/path-resolver",
+              link: "/generators/path-resolver",
             },
             {
               text: "💡 Best Practices",
-              link: "/generators/writing-generators/best-practices",
+              link: "/generators/best-practices",
             },
           ],
         },
@@ -375,10 +198,6 @@ export default defineConfig({
             {
               text: "🚥 Parameters",
               link: "/routing/params",
-            },
-            {
-              text: "🍀 Nested Routes",
-              link: "/routing/nested-routes",
             },
             {
               text: "🤖 Generated Content",
@@ -457,12 +276,56 @@ export default defineConfig({
           ],
         },
         {
+          text: "Frontend",
+          collapsed: false,
+          items: [
+            {
+              text: "🔰 Intro",
+              docFooterText: "🎨 Frontend",
+              link: "/frontend/intro",
+            },
+            {
+              text: "🏗 Application",
+              link: "/frontend/application",
+            },
+            {
+              text: "🛣 Routing",
+              link: "/frontend/routing",
+            },
+            {
+              text: "🧭 Link Navigation",
+              link: "/frontend/link-navigation",
+            },
+            {
+              text: "📥 Data / Preload",
+              link: "/frontend/data-preload",
+            },
+            {
+              text: "⚡ Server-Side Render",
+              link: "/frontend/server-side-render",
+            },
+            {
+              text: "🎨 Custom Templates",
+              link: "/frontend/custom-templates",
+            },
+            {
+              text: "🔧 Utilities",
+              link: "/frontend/utilities",
+            },
+            {
+              text: "💡 Best Practices",
+              docFooterText: "💡 Frontend - Best Practices",
+              link: "/frontend/best-practices",
+            },
+          ],
+        },
+        {
           text: "Runtype Validation",
           collapsed: false,
           items: [
             {
               text: "🔰 Intro",
-              docFooterText: "🛡 Runtime Validation",
+              docFooterText: "🛡 Runtype Validation",
               link: "/validation/intro",
             },
             {
@@ -537,6 +400,30 @@ export default defineConfig({
               text: "💡 Best Practices",
               docFooterText: "💡 Fetch Best Practices",
               link: "/fetch/best-practices",
+            },
+          ],
+        },
+        {
+          text: "OpenAPI Generator",
+          collapsed: false,
+          items: [
+            {
+              text: "🔰 Intro",
+              docFooterText: "🛠 OpenAPI - Install / Setup",
+              link: "/openapi/intro",
+            },
+            {
+              text: `${icons.gear} Configuration`,
+              link: "/openapi/configuration",
+            },
+            {
+              text: "📋 Generated Spec",
+              link: "/openapi/generated-spec",
+            },
+            {
+              text: "💡 Best Practices",
+              docFooterText: "💡 OpenAPI Best Practices",
+              link: "/openapi/best-practices",
             },
           ],
         },

@@ -43,4 +43,4 @@ This protects your API consumers from receiving malformed data and helps you cat
 
 Another major benefit of defining response schemas is automatic `OpenAPI` schema generation.
 This gives you both type safety and API documentation in one step.
-([Details ➜ ](/generators/openapi/intro))
+([Details ➜ ](/openapi/intro))
