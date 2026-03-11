@@ -8,28 +8,14 @@ head:
       content: directory-based routing, url mapping, api routes, page routes, route organization
 ---
 
-`KosmoJS` uses directory-based routing to map your file system structure to URL paths.
+`KosmoJS` uses directory-based routing: folder names become URL path segments,
+and `index` files define the actual endpoints or components.
 
-This approach eliminates the need for separate routing configuration files
-and ensures that your routes are always in sync with your actual code structure.
+No separate routing configuration - your file structure is your route definition.
 
-When you create a folder and file, you've created a route - no additional steps required.
+## 🛣️ How It Works
 
-## 🛣️ How Directory-Based Routing Works
-
-The fundamental principle is simple: folder names become path segments in your URLs,
-and each route requires an `index` file that serves as the actual endpoint or component.
-
-This pattern applies consistently to both API routes (in your `api` directory)
-and client pages (in your `pages` directory).
-
-Every route must live inside a folder, even the base route. For the root path,
-you create a folder named `index`, which maps to the base URL.
-
-This consistency means you never have to remember special cases -
-every single route follows the same pattern of folder-contains-index-file.
-
-Here's how a typical structure maps to actual URLs:
+The same pattern applies to both API routes and client pages:
 
 ```
 api/
@@ -42,52 +28,35 @@ api/
 
 pages/
   index/
-    index.tsx          ➜ /
+    index.tsx         ➜ /
   users/
-    index.tsx          ➜ /users
+    index.tsx         ➜ /users
     [id]/
-      index.tsx        ➜ /users/:id
+      index.tsx       ➜ /users/:id
 ```
 
-Notice how the structure mirrors itself between API and pages.
+The parallel structure between `api/` and `pages/` is intentional -
+if you have a `/users/[id]` page, the corresponding `/api/users/[id]` endpoint is easy to find.
 
-If you have a `/users/[id]` page, you'll likely have a corresponding `/api/users/[id]` endpoint to fetch that user's data.
-
-The parallel structure makes it easy to understand how your frontend and backend relate to each other.
+Every route lives in a folder, including the root - the base route uses a folder named `index`.
+This consistency means no special cases: every route is a folder with an `index` file inside.
 
 ## 📄 Route File Requirements
 
-Every route in `KosmoJS` is defined by an `index` file within a folder.
-This file must export a default value - the specific format of that export
-depends on whether you're creating an API route or a client page.
+API routes export a route definition (HTTP methods + handlers).
+Client pages export a component function.
 
-For API routes, you export a route definition that specifies which HTTP methods you handle
-and provides handler functions for each method.
+The [auto-generation feature](/routing/generated-content) creates the correct boilerplate
+for you when you create a new file, so you rarely need to write it from scratch.
 
-For client pages, you export a component function that renders your UI.
+The folder-per-route pattern gives each route its own namespace for colocating related files -
+utilities, types, tests - without cluttering parent directories.
 
-The auto-generation feature (covered in the next section) creates these exports
-for you with appropriate boilerplate, so you rarely need to write them from scratch.
+## 🏗️ Nested Routes
 
-The folder-contains-index pattern might seem verbose at first,
-especially if you're used to frameworks where a single file can be a route.
+Nesting works by nesting folders. `api/users/[id]/posts/index.ts` maps to `/api/users/:id/posts`,
+and can go as deep as needed.
 
-However, this pattern provides important benefits. Each route gets its own folder,
-giving you a natural place to colocate related files - utility functions, type definitions, test files,
-or any other code specific to that route.
-
-As your application grows, this colocalization keeps related code together
-and prevents utility files from cluttering your route directories.
-
-## 🏗️ Nested Routes and Layouts
-
-The directory-based routing structure naturally supports nested routes.
-
-If you create `api/users/[id]/posts/index.ts`, you get an endpoint at `/api/users/[id]/posts`.
-This nesting can go as deep as your application needs.
-
-For client pages, nested routes often benefit from layout components
-that wrap child routes and provide common UI elements like navigation or headers.
-
-`KosmoJS` supports nested routes naturally, featuring same consistent pattern across all frameworks.
+For client pages, nested routes support layout components that wrap child routes
+with shared UI like navigation or headers.
 ([Details ➜ ](/frontend/routing))

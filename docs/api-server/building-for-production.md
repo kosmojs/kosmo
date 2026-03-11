@@ -9,142 +9,80 @@ head:
         serverless api, edge runtime, nodejs deployment, api bundling, source maps
 ---
 
-Each source folder in `KosmoJS` builds independently,
-producing deployment-ready output for that specific concern.
-
-## ▶️ Build Command
-
-Build all source folders for production:
+Each source folder builds independently.
 
 ```sh
-pnpm build
+pnpm build          # all source folders (parallel)
+pnpm build front    # specific folder
 ```
 
-Build a specific source folder for production:
+## 📦 Build Output
 
-```sh
-pnpm build front
-```
-
-Replace `front` with your source folder name (`admin`, `app`, etc.).
-
-## 📦 What Gets Built
-
-When you run `pnpm build`, `KosmoJS` produces:
-
-**Frontend assets:**
-- Optimized, bundled client code
-- CSS, images, and other static assets
-- Chunked and tree-shaken for minimal size
-
-**API server:**
-- Bundled Node.js server at `dist/SOURCE_FOLDER/api/server.js`
-- App factory at `dist/SOURCE_FOLDER/api/app.js` - for custom deployments.
-- All routes, middleware, and dependencies bundled together
-- Ready to run with Node.js
-
-**SSR Bundle:**
-
-When [SSR is enabled](/frontend/server-side-render),
-the build process also generates a production-ready SSR bundle at
-`dist/SOURCE_FOLDER/ssr/server.js`. This standalone Node.js server is ready
-to deploy for server-side rendering.
-
-## 📂 Build Output Structure
-
-```txt [# tree -L3 dist]
+```txt
 dist/
 └── front
     ├── api
-    │   ├── app.js       # App factory
-    │   └── server.js    # Bundled API server
+    │   ├── app.js       # app factory (Koa) / app instance (Hono)
+    │   └── server.js    # bundled API server
     ├── client
-    │   ├── assets/      # Scripts, Styles, Images etc.
-    │   └── index.html   # Entry point
+    │   ├── assets/      # scripts, styles, images
+    │   └── index.html
     └── ssr
-        ├── app.js       # App factory (built by Vite for SSR)
-        └── server.js    # SSR Bundle
+        ├── app.js       # SSR app factory (Vite)
+        └── server.js    # SSR server bundle
 ```
 
-## 🚀 Running the Production Build
+The SSR output is only present when [SSR is enabled](/frontend/server-side-render).
 
-### Using the Built-in Server
+## 🚀 Running in Production
 
-Deploy the `dist/SOURCE_FOLDER` directory and run:
+The simplest deployment - just run the bundled server directly:
 
-```bash
+```sh
 node dist/front/api/server.js
 ```
 
-The API server is a standalone Node.js ESM module ready to run immediately.
+For more control, use the app factory at `dist/*/api/app.js`.
 
-### Custom Deployment with App Factory
+**Koa** - `app.callback()` is a Node.js `(IncomingMessage, ServerResponse)` handler.
+Deno and Bun support it via their `node:http` compat layer, not via their native serve APIs:
 
-For more control over deployment, use the app factory at `dist/*/api/app.js`:
+```js [Node / Deno / Bun]
+import { createServer } from "node:http";
 
-```js
-import createApp from "./dist/front/api/app.js";
+import app from "./dist/front/api/app.js";
 
-const app = createApp();
-
-// Run on any server that supports Koa
-app.listen(3000);
+createServer(app.callback()).listen(3000);
 ```
 
-The app factory returns a Koa application instance, giving you full flexibility:
+**Hono** - `app.fetch` is a Web Fetch API handler, so it plugs into each runtime's native server directly:
 
-**Node.js:**
-```js
-import createApp from "./dist/front/api/app.js";
-import http from "node:http";
+::: code-group
+```js [Node]
+import { createServer } from "node:http";
+import { getRequestListener } from "@hono/node-server";
 
-const app = createApp();
-const server = http.createServer(app.callback());
-server.listen(3000);
+import app from "./dist/front/api/app.js";
+
+createServer(getRequestListener(app.fetch)).listen(3000);
 ```
 
-**Deno:**
-```ts
-import createApp from "./dist/front/api/app.js";
+```ts [Deno]
+import app from "./dist/front/api/app.js";
 
-const app = createApp();
-Deno.serve({ port: 3000 }, app.callback());
+Deno.serve({ port: 3000 }, app.fetch);
 ```
 
-**Bun:**
-```ts
-import createApp from "./dist/front/api/app.js";
+```ts [Bun]
+import app from "./dist/front/api/app.js";
 
-const app = createApp();
-Bun.serve({
-  port: 3000,
-  fetch: app.callback(),
-});
+Bun.serve({ port: 3000, fetch: app.fetch });
 ```
-
-This pattern is particularly useful for:
-- Custom server initialization logic
-- Integration with existing Node.js applications
-- Deployment to runtimes with specific server requirements
-- Adding middleware at the server level (compression, helmet, etc.)
-
-The bundled output works on any environment that supports Koa -
-traditional servers, containers, serverless platforms, or edge runtimes.
-
-
-## 🏗️ Building Multiple Source Folders
-
-You can build all folders at once by simply omitting the source folder name:
-
-```sh
-pnpm build
-```
-
-This builds all your source folders in parallel, placing assets in the `dist` directory.
+:::
 
 ## ⚙️ Build Configuration
 
-API builds use the `esbuild.json` configuration at your project root:
+API builds use `esbuild.json` at the project root:
 
 ```json
 {
@@ -158,59 +96,17 @@ API builds use the `esbuild.json` configuration at your project root:
 }
 ```
 
-**Customization options:**
-- `target` - Node.js version (e.g., `node20`, `node22`)
-- `sourcemap` - Source map type (`linked`, `inline`, `false`)
-- `logLevel` - Build verbosity (`info`, `warning`, `error`, `silent`)
-
-**Important:** The `bundle: true` option is enforced for production builds,
-ensuring your API is bundled into a single executable file.
-
-## 💡 Best Practices
-
-**Test builds locally** before deploying:
-
-```bash
-pnpm build
-node dist/SOURCE_FOLDER/api/server.js -p 3000
-# Test at localhost:3000
-```
-
-**Use environment variables** for configuration:
-- Database connection strings
-- API keys and secrets
-- Feature flags
-- Service endpoints
-
-Never hardcode credentials in your source code.
-
-**Enable source maps for debugging** in production:
-
-```json
-{
-  "sourcemap": "linked"
-}
-```
-
-Source maps help debug production errors but increase bundle size slightly. Consider the tradeoff for your use case.
-
-**Review bundle size** periodically:
-
-```sh
-pnpm build
-# Check dist/SOURCE_FOLDER/api/server.js size
-```
-
-If the bundle grows significantly, review dependencies and consider marking some as external.
+`bundle: true` is enforced for production - it can't be disabled.
+Common things to tune: `target` (Node version), `sourcemap` (`linked`/`inline`/`false`),
+`logLevel` verbosity.
 
 ## ⚠️ Troubleshooting
 
-**Build fails?**
-- Check `esbuild.json` syntax
-- Verify all imports are resolvable
-- Review build terminal output for errors
+**Build fails** - check `esbuild.json` syntax, verify all imports are resolvable,
+review terminal output.
 
-**API crashes on startup?**
-- Verify environment variables are set
-- Check Node.js version matches `target` in `esbuild.json`
-- Test database/service connections
+**API crashes on startup** - verify environment variables are set,
+confirm Node.js version matches `target` in `esbuild.json`, check DB/service connections.
+
+**Bundle growing large** - review dependencies and mark stable ones as `external`
+in `esbuild.json`.

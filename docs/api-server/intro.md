@@ -9,54 +9,59 @@ head:
         framework choice, typescript api, defineRoute, api middleware
 ---
 
-`KosmoJS`'s API layer gives you the freedom to choose between two state-of-the-art frameworks:
-[Koa](https://koajs.com/) and [Hono](https://hono.dev/).
+`KosmoJS`'s API layer supports two frameworks: [Koa](https://koajs.com/) and [Hono](https://hono.dev/).
 
-Both share a minimalist philosophy and powerful middleware composition,
-but serve different needs - Koa excels in Node.js environments with its mature ecosystem,
-while Hono delivers exceptional performance across multiple runtimes including edge environments.
+**Koa** - battle-tested, mature ecosystem, elegant async/await middleware, Node.js-focused.
 
-## 🎯 Choose Your Foundation
+**Hono** - exceptional performance, runs on Node.js, Deno, Bun, Cloudflare Workers, and other edge platforms unchanged.
 
-**Koa** brings battle-tested stability with elegant async/await middleware patterns
-and a rich ecosystem of middleware built over years of production use.
+Route organization, middleware patterns, and validation are identical between the two.
+The difference is the context API inside handlers - each framework has its own.
 
-**Hono** offers blazing speed and runtime flexibility - deploy the same code to Node.js,
-Deno, Bun, Cloudflare Workers, or any edge platform with zero changes.
+## 🔧 Defining Endpoints
 
-Regardless of which framework you choose, the app infrastructure remains the same.
-Route organization, middleware patterns, and validation are identical between Koa and Hono.
-The only difference is the framework-specific API inside handlers and middleware -
-each framework has its own context object and methods.
+Every API route exports a `defineRoute` definition as its default export.
+The factory function receives HTTP method builders and `use` for middleware,
+and returns an array of handlers. Destructure only what you need:
 
-## 🛡️ Type Safety Throughout
+```ts [api/users/[id]/index.ts]
+import { defineRoute } from "_/front/api";
 
-`KosmoJS` extends both frameworks with type safety throughout the request-response cycle.
-You define your API contracts in `TypeScript` types - parameters, payloads, responses -
-and these types flow through to runtime validation automatically.
+export default defineRoute<"users/[id]">(({ GET }) => [
+  GET(async (ctx) => {
+    // handle GET /users/:id
+  }),
+]);
+```
 
-There's no context switching between writing schemas in one DSL
-and implementing logic in another language.
-Everything lives in `TypeScript`, in the same file, maintaining a cohesive development experience.
+Multiple methods in one route:
+
+```ts [api/users/index.ts]
+export default defineRoute(({ GET, POST, PUT, DELETE }) => [
+  GET(async (ctx) => { /* retrieve */ }),
+  POST(async (ctx) => { /* create */ }),
+  PUT(async (ctx) => { /* update */ }),
+  DELETE(async (ctx) => { /* delete */ }),
+]);
+```
+
+Handler order doesn't matter - requests are dispatched by HTTP method.
+Undefined methods return `405 Method Not Allowed` automatically.
+
+Available builders: `HEAD`, `OPTIONS`, `GET`, `POST`, `PUT`, `PATCH`, `DELETE`.
+
+## 🛡️ Type Safety
+
+Parameters, payloads, and responses are all typed through `TypeScript` type arguments -
+the same definitions drive both compile-time checking and runtime validation.
+No separate schema language, no DSL switching.
 ([Details ➜ ](/api-server/type-safety))
 
-## 🔧 Structured Yet Flexible
+## ▶️ Middleware
 
-The `defineRoute` function provides structure for organizing HTTP method handlers
-while preserving framework flexibility.
-
-Veterans will recognize the familiar elegance of `KosmoJS`'s HTTP methods mapper,
-which draw inspiration from [Sinatra](https://sinatrarb.com/) -
-the Ruby framework that pioneered minimalist web development back in 2007.
-
-The `use` function enables fine-grained middleware control at the route level,
-complementing global middleware with route-specific behavior.
+The `use` function gives you fine-grained middleware control at the route level,
+complementing global and cascading middleware.
 ([Details ➜ ](/api-server/middleware))
 
-Context and state extensibility means middleware can augment requests
-with authentication details, database connections, or any other request-scoped data,
-all with proper `TypeScript` types that flow through your entire handler chain.
-
-This approach creates APIs that are both type-safe and pragmatic -
-you get compile-time checking and runtime validation without sacrificing the flexibility
-to handle real-world requirements that don't fit neat abstractions.
+`KosmoJS`'s HTTP method mapper draws inspiration from [Sinatra](https://sinatrarb.com/) -
+the Ruby framework that pioneered this minimalist routing style back in 2007.

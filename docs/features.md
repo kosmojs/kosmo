@@ -7,302 +7,163 @@ head:
   - - meta
     - name: keywords
       content: typescript validation, vite multi-app, type-safe routing, fetch client generator,
-        openapi 3.1, solidjs vite, react vite, vue vite, koa middleware, hono middleware.
+        openapi 3.1, solidjs vite, react vite, vue vite, koa middleware, hono middleware,
+        cascading middleware, middleware slots, power syntax routing
 ---
 
-`KosmoJS` brings type-safe structure to full-stack development -
-using `Vite` as the foundation for both frontend builds and API development,
-with multiple source folders, directory-based routing, runtime validation,
-and typed fetch clients - without locking you into a single framework!
+`KosmoJS` is a `Vite`-based meta-framework for full-stack `TypeScript` apps -
+directory-based routing, runtime validation from types, generated fetch clients, and OpenAPI,
+with your choice of backend and frontend framework.
 
 ## 🗂️ Multiple Source Folders
 
 Organize distinct concerns - public site, customer app, admin dashboard -
-all connected yet independent in one `Vite` project.
+as independent source folders within a single `Vite` project.
+Each gets its own base URL, dev server, port, and `Vite` config.
 
-**Why it matters:**
-
-Different parts of your application have different needs.
-Your marketing site serves static content, your customer app handles authentication and user data,
-your admin panel requires different access patterns.
-
-**How it works:**
-
-Each source folder is a standalone entity with its own:
-- Base URL and routing namespace
-- Development server and port
-- `Vite` configuration
-- `api/` and `pages/` directories
-
-**Benefits:**
-- Focus on one concern, no context switching
-- Deploy and scale each concern independently
-- Different teams can own different source folders
-- Clear boundaries prevent accidental cross-contamination
-
-[Read more: Getting Started](/start#📁-create-your-first-source-folder)
-
----
+[Read more ➜](/start#📁-create-your-first-source-folder)
 
 ## 🛣️ Directory-Based Routing
 
-Your folder structure defines your routes. Works identically for both API and client pages.
-
-**Why it matters:**
-
-Keeping routing configuration separate from file structure creates friction.
-You update a route path in config, but forget to rename the component.
-Or you restructure files but miss updating the router.
-
-Directory-based routing eliminates this drift - your filesystem *is* your routing configuration.
-
-**How it works:**
-
-Create a folder, add an `index.ts` file, and you have a route.
-The folder name becomes the URL path segment:
+Your folder structure defines your routes - for both API and client pages.
 
 ```
-api/
-  users/
-    [id]/
-      index.ts       ➜ /api/users/:id
-pages/
-  users/
-    [id]/
-      index.tsx      ➜ /users/:id
+api/users/[id]/index.ts    ➜ /api/users/:id
+pages/users/[id]/index.tsx ➜ /users/:id
 ```
 
-**Dynamic parameters:**
-- `[id]` - Required parameter
-- `{id}` - Optional parameter
-- `{...path}` - Splat parameter (catches remaining segments)
+Dynamic parameters: `[id]` required · `{id}` optional · `{...path}` splat.
+No separate routing config to maintain - restructure files and routes update automatically.
 
-**Benefits:**
-- No separate routing configuration to maintain
-- Refactoring means moving folders - routes update automatically
-- Same pattern for API and pages - learn once, use everywhere
-- URL structure matches code structure - easy to navigate
+Also mixed sections supported for backend routes (and some frontend integrations):
 
-[Read more: Directory-Based Routing](/routing/intro)
+```
+products/[category].html/index.ts   ➜ products/electronics.html
+files/[name].[ext]/index.ts         ➜ files/document.pdf, /files/logo.png
+```
 
----
+[Read more ➜](/routing/intro)
+
+## ⚡ Power Syntax for Params
+
+When standard named parameters aren't enough, use raw [path-to-regexp v8](https://github.com/pillarjs/path-to-regexp)
+patterns directly in your folder names:
+
+```
+book{-:id}-info           ➜ /book-info or /book-123-info
+locale{-:lang{-:country}} ➜ /locale, /locale-en, /locale-en-US
+api/{v:version}/users     ➜ /api/users or /api/v2/users
+```
+
+Any folder name containing non-alphanumeric characters (except `-` and `.`)
+is treated as a raw pattern - giving you precise control over URL structure
+without sacrificing the directory-based routing model.
+
+[Read more ➜](/routing/params#power-syntax)
 
 ## 🛡️ End-to-End Type Safety
 
-Write `TypeScript` types once, get runtime validation automatically.
-No separate schemas to maintain.
-
-**Why it matters:**
-
-`TypeScript` provides compile-time type checking,
-but can't protect you at runtime when HTTP requests arrive with unpredictable data.
-
-Traditional solutions require maintaining separate validation schemas
-(Zod, Yup, io-ts) alongside your `TypeScript` types -
-doubling your maintenance burden and creating opportunities for drift.
-
-**How it works:**
-
-Define your types once in `TypeScript` and `KosmoJS` generates runtime validators automatically:
+Write `TypeScript` types once - `KosmoJS` generates runtime validators automatically.
+The same definition drives compile-time checking, runtime validation, and API docs.
 
 ```ts
-// Define types once
 export default defineRoute(({ POST }) => [
   POST<{
     json: {
-      email: TRefine<string, { format: "email" }>; // [!code hl:3]
-      age: TRefine<number, { minimum: 18, maximum: 120 }>;
-      name: TRefine<string, { minLength: 1, maxLength: 100 }>;
-    }
+      email: TRefine<string, { format: "email" }>;
+      age: TRefine<number, { minimum: 18 }>;
+    },
+    response: [200, "json", User],
   }>(async (ctx) => {
-    // ctx.validated.json is validated before reaching here
-    const { email, age, name } = ctx.validated.json;
-    // All fields guaranteed to match their constraints
+    const { email, age } = ctx.validated.json;
+    // payload validated before reaching here
+    // response validated before sending
   }),
 ]);
 ```
 
-Responses can be validated as well before sending to clients,
-catching bugs where handlers return incomplete or malformed data:
+[Read more ➜](/validation/intro)
 
-```ts
-type Payload = {
-  email: TRefine<string, { format: "email" }>;
-  age: TRefine<number, { minimum: 18, maximum: 120 }>;
-  name: TRefine<string, { minLength: 1, maxLength: 100 }>;
-}
+## 🔗 Generated Fetch Clients + OpenAPI
 
-type User = {
-  id: number;
-  email: string;
-  name: string;
-};
-
-export default defineRoute(({ GET }) => [
-  GET<{
-    json: Payload, // payload schema // [!code hl:2]
-    response: [200, "json", User] // response schema
-  }>(async (ctx) => {
-    const user = await fetchUserFromDatabase();
-    // response is validated before sending
-    ctx.body = user // for Koa
-    ctx.json(user) // for Hono
-  }),
-]);
-```
-
-Also route parameters like `/users/[id]` are validated according to their types:
-
-```ts
-defineRoute<"users/[id]", [
-  number // validate id as number // [!code hl]
-]>(({ GET }) => [
-  GET(async (ctx) => {
-    // id is guaranteed to be a number
-    const { id } = ctx.validated.params
-  }),
-]);
-```
-
-**Benefits:**
-- Single source of truth - types *are* validation
-- No schema duplication or drift between types and validators
-- Validation errors provide detailed feedback about what failed
-- Compile-time and runtime safety from the same definitions
-- Changes to types automatically update all validation
-
-[Read more: Validation](/validation/intro)
-
----
-
-## 🔗 Generated Fetch Clients + OpenAPI Spec
-
-Fully-typed fetch clients with client-side validation.
-Invalid requests never reach your server. Complete OpenAPI documentation generated automatically.
-
-**Why it matters:**
-
-Building type-safe API consumption layers is tedious.
-You write backend types, then manually create fetch functions,
-then duplicate validation logic client-side, then maintain OpenAPI docs separately.
-Each layer is an opportunity for bugs and drift.
-
-**How it works:**
-
-For every API route you define, `KosmoJS` generates:
-
-**1. Typed fetch clients:**
+For every API route, `KosmoJS` generates a fully-typed fetch client
+and an OpenAPI 3.1 spec - both derived from the same type definitions.
 
 ```ts
 import fetchClients from "_/front/fetch";
 
-// Fully typed, validates before making request
 const user = await fetchClients["users/[id]"].GET([123]);
-// TypeScript knows user's shape
-console.log(user.name, user.email);
+// fully typed, validates payload client-side before the request is sent
 ```
 
-**2. OpenAPI 3.1 schemas:**
-```json
-{
-  "openapi": "3.1.0",
-  "paths": {
-    "/api/users/{id}": {
-      "get": {
-        "parameters": [...],
-        "responses": {...}
-      }
-    }
-  }
-}
-```
+[Fetch Clients ➜](/fetch/intro) · [OpenAPI ➜](/openapi)
 
-**Client-side validation:**
+## 🎛️ Composable Middleware (Slots)
 
-Invalid data is caught immediately without server round trips:
+Global middleware defined in `api/use.ts` can be overridden per-route or per-subtree
+using named slots - without removing or bypassing parent middleware entirely.
 
 ```ts
-// This validates payload client-side
-await fetchClients["users/[id]"].POST([invalidId], { json: invalidPayload });
-// Throws ValidationError before making network request
+// global default in api/use.ts
+use(async (ctx, next) => { /* ... */ }, { slot: "logger" })
+
+// override for a specific route
+use(async (ctx, next) => { /* custom logger */ }, { slot: "logger" })
 ```
 
-**Benefits:**
-- Perfect sync between backend and frontend
-- Client-side validation reduces server load
-- OpenAPI docs stay current automatically
-- Type safety flows through your entire stack
+Slots give you surgical control over middleware composition:
+replace only what needs replacing, inherit everything else.
+Custom slot names are supported by extending the `UseSlots` interface.
 
-[Read more: Fetch Clients](/fetch/intro) · [OpenAPI Generator](/openapi/intro)
+[Read more ➜](/api-server/middleware)
 
----
+## 🌊 Cascading Middleware
+
+Place a `use.ts` file in any folder and its middleware automatically wraps
+all routes in that folder and its subfolders - no imports or wiring needed.
+
+```
+api/admin/use.ts       → wraps all routes under /api/admin
+api/admin/users/use.ts → wraps only routes under /api/admin/users
+```
+
+Parent middleware always runs before child middleware.
+Combine with slots to override globals for entire route subtrees.
+
+[Read more ➜](/api-server/cascading-middleware)
+
+## 🪆 Nested Layouts
+
+Frontend pages support nested layout components that wrap child routes -
+compose shared UI (nav, sidebars, auth shells) at any level of the route hierarchy.
+
+```
+pages/
+  app/
+    layout.tsx        ← wraps all /app/* pages
+    dashboard/
+      layout.tsx      ← wraps all /app/dashboard/* pages
+      index.tsx
+      settings/
+        index.tsx
+```
+
+[Read more ➜](/frontend/routing)
 
 ## 🎨 Multiple Frameworks
 
-Currently supports `SolidJS` / `React` / `Vue` for frontend and `Koa` / `Hono` for backend.
-Additional frameworks may be added based on community interest.
+**Backend:** `Koa` or `Hono` - same routing architecture, same type safety.
+**Frontend:** `React`, `Vue`, or `SolidJS` - same routing conventions.
 
-**Why it matters:**
+Different source folders can use different framework combinations.
+When you add a source folder, `KosmoJS` generates a ready-to-go setup for your chosen stack.
 
-Full-stack frameworks often lock you into specific frontend choices.
-
-- `Solid Start` assumes `SolidJS`.
-- `Next` assumes `React`.
-- `Nuxt` assumes `Vue`.
-
-`KosmoJS` is a meta-framework - you choose your stack.
-
-When you add a source folder, you'll be prompted to select your frontend and backend framework.
-Once selected, `KosmoJS` generates a ready-to-go folder with everything set up and aligned to your choice.
-
-**Benefits:**
-- Choose the right tool for each source folder
-- Not locked into vendor decisions
-- Generators are optional - use what you need
-- Framework ecosystem compatibility
-
-[Read more: Framework Setup](/frontend/intro)
-
----
+[Read more ➜](/frontend/intro)
 
 ## 🔧 Built on Proven Tools
 
-`Koa`/`Hono` for backend, `Vite` for frontend, `TypeScript` for safety. No proprietary abstractions.
-
-**Why it matters:**
-
-New frameworks introduce new abstractions, new APIs to learn, new mental models to internalize.
-When the framework fades, your knowledge doesn't transfer.
-
-`KosmoJS` uses tools you already know (or easy to learn) and just provides the structure.
-
-**The stack:**
-
-**Koa/Hono for APIs:**
-- Minimal, composable middleware model
-- Well-understood patterns
-- Rich ecosystem of middleware
-- Deploy freedom - Node/Deno/Bun/edge
-
-**Vite for frontend:**
-- Fast dev server with HMR
-- Optimized production builds
-- Framework-agnostic
-- Modern JavaScript ecosystem
-
-**TypeScript for type safety:**
-- Industry standard for type-safe JavaScript
-- Excellent tooling and editor support
-- Types flow through to validation and clients
-
-**Benefits:**
-- Learn once, use everywhere
-- No vendor lock-in or proprietary APIs
-- Deep ecosystem of tools and libraries
-- Skills transfer to other projects
-
-You're not learning "the KosmoJS way" - you're learning industry-standard tools
-with safe and performant organizational structure.
+`Koa`/`Hono` · `Vite` · `TypeScript` · `path-to-regexp` · `TypeBox`.
+No proprietary abstractions - just structure on top of tools you already know.
 
 ---
 

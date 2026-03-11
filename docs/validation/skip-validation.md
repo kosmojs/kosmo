@@ -9,39 +9,32 @@ head:
         gradual adoption, performance optimization, type checking only
 ---
 
-Sometimes you might want `TypeScript` type checking without runtime validation.
+There are cases where you want `TypeScript` type checking without the runtime validation overhead -
+rapid iteration on payload structures, or trusted internal endpoints where you control both sides.
 
-`KosmoJS` uses the second type argument for options (that's it, first argument for scheams, second for options).
-
-When `runtimeValidation` option set to `false` for a specific target,
-you keep compile-time checking while skip runtime validation for that target:
+The second type argument to your handler accepts per-target options.
+Set `runtimeValidation: false` to keep compile-time types while skipping runtime checks for that target:
 
 ```ts [api/example/index.ts]
 export default defineRoute(({ POST }) => [
   POST<{
-    json: Payload<User>, // payload won't be validated at runtime
+    json: Payload<User>,
   },
   {
     json: {
       runtimeValidation: false, // [!code hl]
     }
   }>(async (ctx) => {
-    // no ctx.validated.json, use `await ctx.bodyparser.json<User>()` for Koa
-    // or `await ctx.req.json<User>()` for Hono
+    // ctx.validated.json is not available - use the bodyparser directly
+    // Koa:  await ctx.bodyparser.json<User>()
+    // Hono: await ctx.req.json<User>()
   }),
 ]);
 ```
 
-In this example, the payload is typed but not validated.
-You might use this pattern during development when you're iterating quickly on payload structures
-and don't want validation failures interrupting your flow.
+This works for both payload and response targets. Route parameter validation cannot be skipped -
+parameters are part of the URL structure and always validated.
 
-Or you might use it for trusted internal endpoints where you control both client
-and server and have high confidence in data correctness.
-
-Works for both payload and response.
-However, you cannot skip parameter validation.
-Route parameters are always validated because they're part of your URL structure and affect routing behavior.
-
-Use with caution. Runtime validation is a powerful tool for ensuring data correctness and catching bugs early.
-Skipping validation means giving up these benefits, so you should have a clear reason for doing so.
+Use this sparingly. Runtime validation is what catches the bugs `TypeScript` can't -
+mismatched database responses, unexpected client payloads, API drift.
+Skipping it is a conscious tradeoff, not a default.

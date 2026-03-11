@@ -7,7 +7,7 @@ hero:
   tagline: <span class="tagline-container">
       <span class="headline">A Vite template evolved into a full‑stack meta‑framework</span>
       <span>Multiple source folders. Directory-based routing.</span>
-      <span>Cascading middleware. Nested routes.</span>
+      <span>Cascading middleware. Nested layouts.</span>
       <span>End-to-end validation. Fetch clients. OpenAPI spec.</span>
       <span>Koa, Hono, SolidJS, React, Vue and more.</span>
     </span>
@@ -24,33 +24,48 @@ hero:
 features:
   - icon: 🗂️
     title: Multiple Source Folders
-    details: Organize distinct concerns - public site, customer app, admin dashboard - all connected in one Vite project.
+    details: Organize distinct concerns - public site, customer app, admin dashboard - as independent source folders within a single Vite project.
     link: /features
 
   - icon: 🛣️
-    title: Directory-Based Nested Routing
-    details: Your folder structure defines your routes. Works identically for both API endpoints and client pages.
+    title: Directory-Based Routing
+    details: Folder structure defines routes for both API and pages. Dynamic parameters, mixed segments, no separate routing config.
     link: /routing/intro
+
+  - icon: 🪆
+    title: Nested Layouts
+    details: Compose shared UI - nav, sidebars, auth shells - at any level of the route hierarchy using nested layout components.
+    link: /frontend/routing
+
+  - icon: ⚡
+    title: Power Syntax for Params
+    details: Use raw path-to-regexp v8 patterns in folder names for precise URL control beyond standard named parameters.
+    link: /routing/params
 
   - icon: 🛡️
     title: End-to-End Type Safety
-    details: Write TypeScript types once, get runtime validation automatically. No separate schemas to maintain.
+    details: Write TypeScript types once - runtime validation, typed fetch clients, and OpenAPI docs all derived from the same definitions.
     link: /validation/intro
 
   - icon: 🔗
-    title: Generated Fetch Clients + OpenAPI spec
-    details: Typed fetch clients with client-side validation. Invalid requests never reach your server.
+    title: Generated Fetch Clients + OpenAPI
+    details: Fully-typed fetch clients with client-side validation. Invalid requests never reach your server. OpenAPI 3.1 spec generated automatically.
     link: /fetch/intro
+
+  - icon: 🎛️
+    title: Composable Middleware (Slots)
+    details: Override global middleware per-route or per-subtree using named slots. Replace only what needs replacing, inherit everything else.
+    link: /api-server/middleware
+
+  - icon: 🌊
+    title: Cascading Middleware
+    details: Place a use.ts in any folder and its middleware automatically wraps all routes in that subtree. No imports or wiring needed.
+    link: /api-server/cascading-middleware
 
   - icon: 🎨
     title: Multiple Frameworks
-    details: Currently supports Koa / Hono for backend, SolidJS / React / Vue for frontend.
+    details: Koa or Hono for backend, React, Vue, or SolidJS for frontend. Different source folders can use different combinations.
     link: /start
-
-  - icon: 🔧
-    title: Built on Proven Tools
-    details: No proprietary abstractions, just the tools you already know (or easy to learn).
-    link: /api-server/intro
 
 ---
 
@@ -60,108 +75,60 @@ features:
 <LinkButton href="/start">Get Started</LinkButton>
 </div>
 
-## 🎯 The What
+## 🎯 What is KosmoJS?
 
-`KosmoJS` is a **meta-framework** that keeps your full-stack concerns aligned.
-
-Rather than inventing yet another framework, `KosmoJS` integrates proven tools -
-`TypeScript`, `Vite`, `Koa`/`Hono`, and your frontend framework - into a clear organizational pattern.
+`KosmoJS` is a **meta-framework** that integrates `TypeScript`, `Vite`, `Koa`/`Hono`,
+and your frontend framework into a clear organizational pattern.
 Separation of concerns isn't something you have to remember - it's built into the structure.
 
-No proprietary abstractions. No new paradigms.
-Just thoughtful structure around tools you already know (or easy to learn).
+No proprietary abstractions. No new paradigms. Just thoughtful structure around tools you already know.
 
 📘 [Learn more](/about)
 
 ---
 
-## 💡 The Why
+## 💡 Why Source Folders?
 
-**Multiple source folders** for distinct concerns - each with its own API and pages directories, eg.:
+Applications often include multiple distinct concerns - each with different routing, auth, and config:
 
 🔹 Public marketing site at `/`<br>
 🔹 Customer application at `/app`<br>
 🔹 Admin dashboard at `/admin`<br>
 
-All in one monorepo-like project, each with independent routing and configuration,
-yet sharing types and validation logic.<br>
-**API / Pages separation** keeps server and client code from mixing.
-Your directory structure enforces boundaries that code review can't.
+Each lives in its own source folder with independent `api/` and `pages/` directories,
+sharing types and validation logic across a single project.
+The directory structure enforces boundaries that code review can't.
 
-📘 [Getting started](/start)
-· [Directory-based routing](/routing/intro)
+📘 [Getting started](/start) · [Directory-based routing](/routing/intro)
 
 ---
 
-## 📦 The How
+## 🛡️ One Source of Truth
 
-Being a Vite-based meta‑framework, KosmoJS unifies your frontend framework
-(Solid/React/Vue) with your backend choice (Koa/Hono) in a type‑safe, organized structure.
+`KosmoJS` converts your `TypeScript` types into runtime validators, typed fetch clients,
+client-side validation, and OpenAPI schemas - all from the same definitions.
+No duplication, no drift.
 
-🔹 `Vite` handles your frontend builds and organizational structure.<br>
-🔹 `Koa`/`Hono` powers your API runtime with [runtype validation](/validation/intro) and middleware composition.<br>
-🔹 `KosmoJS` is the structured template that brings them together.<br>
-
----
-
-## 🛡️ Type Safety & Validation
-
-`KosmoJS` converts your types into runtime validation routines,
-ensuring type safety beyond compile time - no duplication, no drift.
-
-Based on your parameter types, payload structures, and response shapes, `KosmoJS` generates:
-- Runtime validators for your API
-- Typed fetch clients for your frontend
-- Client-side validation that catches errors before requests
-- As well as OpenAPI schema for your entire API
-
-Everything stays aligned because everything derives from the same source of truth - your types.
-
-📘 [Type safety overview](/api-server/type-safety)
-· [Runtype Validation](/validation/intro)
-
----
-
-## ⚡ Generated Fetch Clients
-
-Every API route gets a fully-typed fetch client with built-in validation.
-Your frontend knows exactly what parameters each endpoint expects,
-what payload structure it accepts, and what response shape it returns.
-
-Invalid data is caught client-side, before network requests.
-Your API never processes malformed requests.
-
-📘 [Fetch clients intro](/fetch/intro)
-· [Getting started](/fetch/start)
-· [Client-side validation](/fetch/validation)
+📘 [Type safety](/api-server/type-safety) · [Validation](/validation/intro) · [Fetch clients](/fetch/intro)
 
 ---
 
 ## ⚙️ API Development
 
-Build APIs directly inside Vite's dev server with hot-reload support.
+Build APIs inside Vite's dev server with hot-reload. Slot-based middleware gives you
+fine-grained control - override globals per-route or per-subtree, compose request handling precisely.
+What you build locally is what deploys.
 
-**Slot-based middleware** gives you fine-grained control - override global middleware per endpoint,
-compose request handling precisely, maintain consistent patterns across routes.
-
-Development and production use the same structure - what you build locally is what deploys.
-
-📘 [Dev workflow](/api-server/development-workflow)
-· [Middleware patterns](/api-server/middleware)
+📘 [Dev workflow](/api-server/development-workflow) · [Middleware](/api-server/middleware)
 
 ---
 
 ## 🚀 Production Ready
 
-`pnpm build` produces deployment-ready output:
+`pnpm build` produces a bundled API server, optimized frontend assets,
+and an optional SSR bundle. Deploy to Node.js, Deno, Bun, containers, serverless, or edge.
 
-- a bundled API server
-- optimized frontend assets
-- an SSR bundle enabling smooth server-side rendering
-
-Deploy to any Node.js environment: traditional servers, containers, serverless platforms, or edge runtimes.
-
-📘 [Production build guide](/api-server/building-for-production)
+📘 [Production build](/api-server/building-for-production)
 
 ---
 
@@ -169,15 +136,11 @@ Deploy to any Node.js environment: traditional servers, containers, serverless p
 
 **Structure without constraints.**
 
-`KosmoJS` is opinionated about organization but unopinionated about implementation.
-Clear boundaries between API and pages. Obvious locations for shared types and utilities.
-Separation of concerns built into the filesystem.
-
-You choose your frontend framework, state management, styling approach, database, and everything else.<br>
+Opinionated about organization, unopinionated about implementation.
+You choose your frontend framework, state management, styling, database - everything else.
 The structure scales; your choices remain free.
 
-📘 [About KosmoJS](/about)
-· [Features](/features)
+📘 [About KosmoJS](/about) · [Features](/features)
 
 <hr />
 <div class="text-center">

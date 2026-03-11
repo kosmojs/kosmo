@@ -9,48 +9,31 @@ head:
         href builder, url builder, api urls, navigation links
 ---
 
-The fetch client exports utility functions for constructing URLs that respect your route's parameter structure.
-
-These are useful when you need to build URLs for navigation, links,
-or external references without making actual fetch requests.
-
-The `path` function constructs a relative path including your route's base URL and API URL configuration:
+Each fetch client exposes `path` and `href` for building URLs without making a request -
+useful for navigation, `<a>` tags, or passing URLs to other services.
 
 ```ts [pages/example/index.tsx]
 import fetchClients from "_/front/fetch";
 
 const useFetch = fetchClients["users/[id]"];
 
-// For a route with a numeric ID parameter
-const url = useFetch.path([123]);
-// Returns: "/api/users/123" (assuming baseurl="/" and apiurl="/api")
+useFetch.path([123]);
+// → "/api/users/123"
 
-// Include query parameters
-const urlWithQuery = useFetch.path([123], { query: { include: "posts" } });
-// Returns: "/api/users/123?include=posts"
+useFetch.path([123], { query: { include: "posts" } });
+// → "/api/users/123?include=posts"
+
+useFetch.href("https://api.example.com", [123]);
+// → "https://api.example.com/api/users/123"
+
+useFetch.href("https://api.example.com", [123], { query: { include: "posts" } });
+// → "https://api.example.com/api/users/123?include=posts"
 ```
 
-The `href` function constructs a complete absolute URL including the host:
+Multiple parameters follow path order:
 
-```ts [pages/example/index.tsx]
-// Build absolute URL with host
-const fullUrl = useFetch.href("https://api.example.com", [123]);
-// Returns: "https://api.example.com/api/users/123"
-
-// With query parameters
-const fullUrlWithQuery = useFetch.href(
-  "https://api.example.com",
-  [123],
-    { query: { include: "posts" } }
-);
-// Returns: "https://api.example.com/api/users/123?include=posts"
-```
-
-These utilities understand your route's parameter structure and handle URL construction correctly.
-For routes with multiple parameters, you pass them in order:
-
-```ts [pages/example/index.tsx]
-// For route: posts/[userId]/comments/[commentId]
-const url = useFetch.path([456, 789]);
-// Returns: "/api/posts/456/comments/789"
+```ts
+// route: posts/[userId]/comments/[commentId]
+useFetch.path([456, 789]);
+// → "/api/posts/456/comments/789"
 ```

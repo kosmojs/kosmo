@@ -5,124 +5,57 @@ description: Refine params/payload/response types in KosmoJS with compile-time T
 head:
   - - meta
     - name: keywords
-      content: typed params, typed json payload, typed response
+      content: typed params, typed json payload, typed response, global middleware,
+        DefaultContext, DefaultState, DefaultVariables, env.d.ts
 ---
 
-With `KosmoJS`, you get type safety across your entire route: path parameters,
-request payloads (JSON/form/query), and responses.
+Type safety in `KosmoJS` covers the full request-response cycle:
+path parameters, payloads, responses, and context/state properties -
+all driving both compile-time checking and runtime validation from the same type definitions.
 
 ## 🔗 Typing Params
 
-With directory-based routing, route name serve as the source of truth for path parameters.
-When you have a route like `users/[id]/index.ts`, `KosmoJS` knows there's an `id` param.
-
-However, by default, route parameters are typed as strings since that's what URLs contain.
-
-Often you need more specific types. Maybe your user ID is actually a number,
-or perhaps you have an action parameter that should be constrained to a specific set of valid values.
-
-Refine your parameter types by passing a tuple to `defineRoute`'s second type argument.
-The <ins>tuple positions correspond directly to the order of parameters</ins> in your route name.
-
-For a route at `users/[id]/index.ts` where the ID should be a number:
-
-```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api"
-
-export default defineRoute<"users/[id]", [
-  number // validate id as number // [!code ++]
-]>(({ GET }) => [
-  GET(async (ctx) => {
-    // id is typed and casted/validated to a number // [!code hl]
-    const { id } = ctx.validated.params
-  }),
-]);
-```
-
-For a route with multiple parameters like `users/[id]/{action}/index.ts`:
+Parameters are strings by default. Refine them via the second type argument to `defineRoute`
+by providing a tuple where each position maps to the corresponding parameter in the path:
 
 ```ts [api/users/[id]/{action}/index.ts]
-import { defineRoute } from "_/front/api"
-
 type UserAction = "retrieve" | "update" | "delete";
 
 export default defineRoute<"users/[id]/{action}", [
-  number, // [!code ++:2]
-  UserAction,
-]>(({ GET, POST }) => [
-  GET(async (ctx) => {
-    // id is a number // [!code hl:2]
-    // action is one of "retrieve" | "update" | "delete" | undefined
-    const { id, action } = ctx.validated.params;
-  }),
-]);
-```
-
-The position of the type argument corresponds to the position of the parameter in your route path.
-The first type refines the first parameter, the second type refines the second parameter, and so on.
-
-All positions are optional, with a caveat - if you need to refine second param,
-you'll have to also provide a type for the first one.
-
-### ❗ Type Literal Requirement
-
-The refinement tuple must be declared **inline as a type literal**.
-While you can use type aliases for individual parameter types, you cannot reference a pre-defined tuple type.
-
-**✅ This works:**
-
-```ts
-// Individual type aliases are fine
-type UserID = number;
-type UserAction = "retrieve" | "update" | "delete";
-
-defineRoute<"[id]/[action]", [
-  UserID,
-  UserAction,
+  number,      // id
+  UserAction,  // action
 ]>(({ GET }) => [
   GET(async (ctx) => {
-    // ...
+    const { id, action } = ctx.validated.params;
+    // id: number, action: UserAction | undefined
   }),
 ]);
 ```
 
-**❌ This won't work:**
+Positions are optional - but to refine the second param you must also provide the first.
+
+### ❗ Inline Tuple Requirement
+
+The refinement tuple must be declared inline. Individual type aliases are fine,
+but a pre-defined tuple type won't work:
 
 ```ts
-// Pre-defined tuple types are not supported
-type Params = [number, UserAction];
-defineRoute<"[id]/[action]", Params>(/* ... */) // Error: type references won't work
+// ✅ works
+defineRoute<"[id]/[action]", [UserID, UserAction]>
+
+// ❌ won't work - tuple reference loses structural info needed for schema generation
+type Params = [UserID, UserAction];
+defineRoute<"[id]/[action]", Params>
 ```
 
-**💡 Why this requirement?**
-`KosmoJS` needs to analyze the type structure at generation time to create corresponding validation schemas.
-Type references don't preserve the necessary structural information for this analysis.
+Refinements also generate runtime validation - invalid params are rejected before your handler runs.
+([Details ➜ ](/validation/params))
 
-Think of it as providing the "blueprint" directly rather than a "reference to the blueprint"! 🏗️
+## 🔋 Typing Payload & Response
 
-### ✨ Beyond compile-time safety
-
-These type refinements aren't just for `TypeScript`'s benefit.
-`KosmoJS` also validates parameters at runtime according to your specifications!
-([Details ➜ ](/validation/params)).
-
-If a request comes in with an ID that can't be parsed as a number,
-or an action that isn't one of your allowed values, `KosmoJS` rejects the request before your handler runs.
-
-This validation happens automatically - you don't need to write additional validation code!
-
-## 🔋 Typing Payload/Response
-
-Beyond route parameters, you can also type the request payload and response body for each HTTP method handler.
-
-This ensures that your handlers receive the data they expect and return properly structured responses.
-
-Method handlers (GET, POST, PUT, etc.) are generic functions that accept optional type arguments.
-
-Use first type argument to define expected payload/response schemas.
+The first type argument to each method handler defines payload and response schemas:
 
 ```ts [api/example/index.ts]
-import { defineRoute } from "_/front/api";
 import type { User } from "@/front/types";
 
 export default defineRoute<"example">(({ POST }) => [
@@ -130,71 +63,122 @@ export default defineRoute<"example">(({ POST }) => [
     json: { name: string; email: string; status?: string },
     response: [200, "json", User],
   }>(async (ctx) => {
-    // ctx.validated.json is typed as { name: string; email: string; status?: string }
     const { name, email, status } = ctx.validated.json;
-
     const user = await createUser({ name, email, status });
 
-    // response body must be set to a User object
-    ctx.body = user; // for Koa
-    ctx.json(user); // for Hono
+    ctx.body = user;     // Koa
+    ctx.json(user);      // Hono
   }),
 ]);
 ```
 
-When you provide these types, `TypeScript` enforces them throughout your handler.
-You get autocomplete on `ctx.validated` properties,
-and `TypeScript` verifies that you assign correct response body.
+Both payload and response are validated at runtime, not just at compile time.
+([Details ➜ ](/validation/payload))
 
-Like parameter refinement, these types aren't just compile-time checks.
-`KosmoJS` validates the incoming payload against your specified type at runtime
-and validates the outgoing response as well.
-([Details ➜ ](/validation/payload)).
+## 📋 Typing State & Context
 
-If validation fails, `KosmoJS` handles the error appropriately without your handler code running.
+`defineRoute` accepts four type arguments:
 
-## 📋 Typing State/Context
+::: code-group
+```ts [Koa]
+defineRoute<
+  RouteName,        // required
+  ParamsTuple,      // param refinements
+  State,            // route-specific state/locals
+  Context,          // route-specific context properties
+>
+```
 
-You might also need to provide type information about state or context properties
-that aren't covered by the global declarations in [api/env.d.ts](/api-server/core-configuration).
+```ts [Hono]
+defineRoute<
+  RouteName,        // required
+  ParamsTuple,      // param refinements
+  Variables,        // route-specific locals
+  Bindings,         // route-specific bindings
+>
+```
+:::
 
-Perhaps a specific route uses middleware that adds properties that aren't used elsewhere,
-making them inappropriate for the global interface.
+Use the third and fourth arguments for types that are unique to a specific route:
 
-The `defineRoute` function is a generic that accepts four type arguments:<br />
-🔹 The first is the route name and is the only required argument<br />
-🔹 The second is a params refinement tuple<br/>
-🔹 The third lets you type route-specific state/locals<br/>
-🔹 The fourth lets you declare additional properties on the request/context object
-
-```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api";
-import type { User } from "@/front/types";
-
+::: code-group
+```ts [Koa]
 export default defineRoute<
-  "users/[id]", // route name
-  [number], // params refinements
-  { permissions: Array<"read" | "write"> }, // route-specific state
-  { authorizedUser: User }, // route-specific context
+  "users/[id]",
+  [number],
+  { permissions: Array<"read" | "write"> },  // ctx.state.permissions
+  { authorizedUser: User },                  // ctx.authorizedUser
 >(({ GET }) => [
   GET(async (ctx) => {
-    // ctx.validated.params.id is number
-    // ctx.state.permissions is Array<"read" | "write">
-    // ctx.authorizedUser is User
+    const { id } = ctx.validated.params;
+    const { permissions } = ctx.state;
+    const { authorizedUser } = ctx;
   }),
 ]);
 ```
 
-This is a Koa example. For Hono, the approach is identical -
-add custom variables to third argument and/or custom bindings to forth,
-and your properties will be available via `ctx.set()`, `ctx.get()`, and `ctx.var`.
+```ts [Hono]
+export default defineRoute<
+  "users/[id]",
+  [number],
+  { permissions: Array<"read" | "write"> },  // ctx.get("permissions")
+  { DB: D1Database },                        // Cloudflare binding
+>(({ GET }) => [
+  GET(async (ctx) => {
+    const { id } = ctx.validated.params;
+    const permissions = ctx.get("permissions");
+    const db = ctx.env.DB;
+  }),
+]);
+```
+:::
 
-**Important:** Don't forget to add the middleware that actually sets these properties.
-Without the middleware, the properties you defined won't be available in the handlers.
+If you find yourself declaring the same properties across many routes,
+move them to the global declarations in `api/env.d.ts` instead.
 
-This approach is useful for route-specific types, but remember
-that if you find yourself declaring the same properties in many routes,
-it's better to add them to the global declarations in `api/env.d.ts` instead.
-([Details ➜ ](/api-server/core-configuration))
+## ⚙️ Global Context Types - `api/env.d.ts`
 
-Use route-specific type arguments for properties that truly are unique to specific endpoints.
+`api/env.d.ts` extends the default context and state interfaces globally,
+so every route handler picks them up automatically:
+
+::: code-group
+```ts [Koa: api/env.d.ts]
+export declare module "_/front/api" {
+  interface DefaultState {
+    permissions: Array<"read" | "write" | "admin">;
+  }
+  interface DefaultContext {
+    authorizedUser: User;
+  }
+}
+```
+
+```ts [Hono: api/env.d.ts]
+export declare module "_/front/api" {
+  interface DefaultVariables {
+    permissions: Array<"read" | "write" | "admin">;
+  }
+  interface DefaultBindings {
+    DB: D1Database;
+  }
+}
+```
+:::
+
+`api/use.ts` defines global middleware that runs for every endpoint -
+the right place to set these properties so they're always available:
+
+```ts [api/use.ts]
+import { use } from "_/front/api";
+
+export default [
+  use(async (ctx, next) => {
+    ctx.state.permissions = await getPermissions(ctx);  // Koa
+    // ctx.set("permissions", await getPermissions(ctx)); // Hono
+    return next();
+  }),
+];
+```
+
+**Important:** declaring types in `env.d.ts` doesn't set the values -
+you still need the middleware that actually populates them.

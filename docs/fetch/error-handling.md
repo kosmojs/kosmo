@@ -9,35 +9,30 @@ head:
         try-catch, network errors, validation feedback, defensive programming
 ---
 
-When fetch requests fail, the client throws errors
-that you handle through standard try-catch blocks or promise rejection handlers.
-
-Validation errors thrown before making requests contain detailed information about what failed validation,
-letting you provide meaningful feedback to users.
-
-Network errors, server errors, and other runtime failures follow standard fetch error patterns.
-You handle them the same way you'd handle any fetch-based API calls:
+The fetch client throws two distinct error types worth handling separately:
+`ValidationError` for failed validation before the request is sent,
+and standard errors for network or server failures.
 
 ```ts [pages/example/index.tsx]
 import fetchMap, { ValidationError } from "_/front/fetch";
+
 const useFetch = fetchMap["users/[id]"];
 
 try {
   const response = await useFetch.POST([userId], payload);
-  // Handle success
 } catch (error) {
   if (error instanceof ValidationError) {
-    // Handle validation failure
+    // data didn't pass validation - no request was made
     console.error("Invalid data:", error.message);
   } else {
-    // Handle other errors (network, server, etc.)
+    // network error, server error, etc.
     console.error("Request failed:", error);
   }
 }
 ```
 
-The combination of client-side validation (which catches problems before making requests)
-and server-side validation (which catches problems if client-side checks are bypassed) provides defense in depth.
+Validation errors carry the same structured detail as server-side `ValidationError` instances -
+`target`, `errors`, `errorMessage`, `errorSummary` - so you can surface field-level feedback
+without waiting for a server response.
 
-Users get immediate feedback for common validation issues,
-while the server remains protected against invalid data.
+[More on Error Details →](/validation/error-handling)

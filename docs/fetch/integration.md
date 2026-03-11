@@ -9,23 +9,17 @@ head:
         fetch client integration, state management, promise handling, typescript hooks
 ---
 
-The generated fetch client integrates naturally with modern frontend patterns.
-You can wrap it in custom hooks, use it directly in event handlers,
-or incorporate it into state management solutions.
+The fetch client returns standard promises, so it fits naturally into whatever async pattern your framework uses.
 
-For `SolidJS`, you might use it with `createResource`:
-
-```ts [pages/example/index.tsx]
+::: code-group
+```ts [SolidJS]
 import { createResource } from "solid-js";
 import fetchClients from "_/front/fetch";
 
 const { GET } = fetchClients["users/[id]"];
 
 function UserProfile(props) {
-  const [user] = createResource(
-    () => props.userId,
-    (id) => GET([id])
-  );
+  const [user] = createResource(() => props.userId, (id) => GET([id]));
 
   return (
     <div>
@@ -36,9 +30,7 @@ function UserProfile(props) {
 }
 ```
 
-For `React` applications, you might create custom hooks that wrap the fetch client:
-
-```ts [pages/example/index.tsx]
+```ts [React]
 import { useState, useEffect } from "react";
 import fetchClients from "_/front/fetch";
 
@@ -59,8 +51,7 @@ function useUser(userId: number) {
   return { user, loading, error };
 }
 ```
+:::
 
-The fetch client returns standard promises, so it works with any async pattern your framework supports.
-
-The type safety flows through these abstractions - your custom hooks and components know exactly
-what shape of data to expect based on your API definitions.
+Types flow through these abstractions - hooks and components automatically know the response shape
+from your API definition.

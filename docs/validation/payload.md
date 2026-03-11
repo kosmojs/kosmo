@@ -9,12 +9,9 @@ head:
         union types, generic types, json validation, form validation, TRefine
 ---
 
-Request payloads are the data your API receives from clients -
-including query parameters, headers, cookies for any request method,
-and request bodies for POST/PUT/PATCH requests.
-
-These payloads often have complex nested structures with multiple fields,
-each requiring specific validation rules to ensure data integrity.
+Payload validation covers everything your API receives from clients:
+query parameters, headers, cookies for any method,
+and request bodies for POST/PUT/PATCH.
 
 `KosmoJS` makes payload validation straightforward by letting you express validation rules
 directly through `TypeScript` types.
@@ -24,62 +21,52 @@ and runtime validation enforcement.
 
 ## 🎯 Validation Targets
 
-Validation targets provides fine-grained control over what gets validated.
-Each target represents a different part of the incoming HTTP request:
+Each target maps to a part of the incoming HTTP request.
 
-**Metadata Targets** (available for all HTTP methods):
+**Metadata targets** (all HTTP methods):
 - `query` - URL query parameters (`?page=1&limit=10`)
-- `headers` - HTTP request headers (`Authorization`, `Content-Type`, etc.)
+- `headers` - HTTP request headers
 - `cookies` - HTTP cookies
 
-**Body Targets** (available for POST/PUT/PATCH):
+**Body targets** (POST/PUT/PATCH only):
 - `json` - JSON request body
-- `form` - URL-encoded or Multipart form
-- `raw` - Raw body format (plain text, binary data, Buffer, ArrayBuffer, Blob)
+- `form` - URL-encoded or multipart form
+- `raw` - plain text, binary, Buffer, ArrayBuffer, Blob
 
-You can validate any combination of metadata targets (query, headers, cookies)
-along with **at most one** body target per handler.
-Body targets are mutually exclusive - a request can only have one body format.
-
+Any combination of metadata targets is valid. Body targets are mutually exclusive - one per handler.
 
 ```ts
-// ✅ Valid: Multiple metadata targets + one body target
+// ✅ Multiple metadata targets + one body target
 POST<{
   query: { page: number };
   headers: { authorization: string };
   json: { title: string };
 }>
 
-// ✅ Valid: Only metadata targets
+// ✅ Only metadata targets
 GET<{
   query: { search: string };
   headers: { 'x-api-key': string };
   cookies: { session: string };
 }>
 
-// ❌ Invalid: Multiple body targets
+// ❌ Multiple body targets
 POST<{
   json: { title: string };
   form: { title: string };  // Error: only one body target allowed
 }>
 
-// ❌ Invalid: Body target on GET request
+// ❌ Body target on GET
 GET<{
   json: { data: string };  // Error: GET cannot have request body
 }>
 ```
 
-During development, `KosmoJS` detects these misconfigurations and displays warnings,
-automatically disabling validation schemas for affected handlers to prevent runtime errors.
+Invalid configurations are detected at dev time - `KosmoJS` warns and disables affected schemas automatically.
 
-## 📦 Validating Request Payloads
+## 📦 Basic Payload Validation
 
-`KosmoJS` makes payload validation as simple as providing types to your method handler.
-
-You can use literal type definitions written inline, or you can reference types defined elsewhere and imported.
-
-The simplest approach is to define the payload type inline as the first type argument to your method handler,
-specifying which validation targets you want to use:
+Pass the payload type as the first type argument to your method handler:
 
 ```ts [api/posts/index.ts]
 import { defineRoute } from "_/front/api";
@@ -94,19 +81,12 @@ export default defineRoute<"posts">(({ POST }) => [
       scheduledPublishAt?: TRefine<string, { format: "date-time" }>;
     },
   }>(async (ctx) => {
-    // ctx.validated.json is fully validated and typed // [!code hl]
-    const { title, content, tags } = ctx.validated.json;
+    const { title, content, tags } = ctx.validated.json; // [!code hl]
   }),
 ]);
 ```
 
-In this example, we're creating a blog post endpoint that validates the `json` body target.
-
-🔹The title must be a non-empty string no longer than 255 characters.<br/>
-🔹The content is required but has no length constraints.<br/>
-🔹Tags must be an array of strings.<br/>
-🔹The published status is a required boolean.<br/>
-🔹The scheduled publish time is optional, but when provided, it must be valid.
+Optional fields (`?`) can be omitted entirely. When present, they must still pass their type and refinement constraints.
 
 Notice how `TRefine` is used to add validation constraints to specific fields.
 
@@ -118,19 +98,12 @@ to ensure dates are properly formatted.
 Without `TRefine`, fields are validated only for their basic type - a string must be a string,
 an array must be an array, but no additional constraints apply.
 
-The question mark after `scheduledPublishAt` makes it optional.
-Optional fields can be omitted from the payload entirely.
-If they are present, they must match their specified type and pass any refinement constraints.
+[More on TRefine ➜ ](/validation/refine)
 
 ## 🏗️ Complex Nested Structures
 
-Real-world payloads often have deeply nested structures with conditional fields and references to other types.
-`KosmoJS` handles this complexity naturally because you're just writing `TypeScript` types.
-
-You can nest objects, use union types for conditional fields, reference other types,
-and generally express any structure that `TypeScript` can represent.
-
-Here's a more complex example for a payment processing endpoint:
+Since validation rules are just `TypeScript` types, nested objects, union types,
+conditional fields, referenced types - all work naturally:
 
 ```ts [api/example/index.ts]
 export default defineRoute(({ POST }) => [
@@ -163,26 +136,10 @@ export default defineRoute(({ POST }) => [
       };
     },
   }>(async (ctx) => {
-    // Every field is validated according to its constraints
+    // every field validated before handler runs
   }),
 ]);
 ```
-
-This payload type demonstrates several advanced patterns.
-
-The `orderId` uses a regex pattern to ensure it contains only alphanumeric characters, underscores, and hyphens.
-
-The `amount` must be a positive number (at least one cent) capped at a reasonable maximum.
-
-The `currency` must be a three-letter uppercase code.
-
-The `paymentMethod` field shows conditional validation.
-
-And so on...
-
-All of these constraints are checked at runtime before your handler executes.
-If any field fails validation, `KosmoJS` rejects the request
-with a detailed validation error that tells the client exactly what went wrong.
 
 ## 🎨 Combining Multiple Targets
 
@@ -190,8 +147,6 @@ You can validate multiple parts of the request simultaneously by specifying mult
 This is particularly useful for endpoints that need to validate query parameters, headers, and request body together:
 
 ```ts [api/posts/search.ts]
-import { defineRoute } from "_/front/api";
-
 export default defineRoute<"posts/search">(({ POST }) => [
   POST<{
     query: {
@@ -217,31 +172,19 @@ export default defineRoute<"posts/search">(({ POST }) => [
       };
     };
   }>(async (ctx) => {
-    // All targets are validated and typed
     const { page, limit, sortBy } = ctx.validated.query;
     const { authorization } = ctx.validated.headers;
     const { session } = ctx.validated.cookies;
     const { filters } = ctx.validated.json;
-
-    // Use validated data safely...
   }),
 ]);
 ```
 
-In this search endpoint:
-- Query parameters control pagination (`page`, `limit`) and sorting (`sortBy`)
-- Headers provide authentication (`authorization`) and API versioning
-- Cookies maintain the session
-- The JSON body contains complex search filters
+Each target is validated independently. All must pass before your handler executes.
 
-Each target is independently validated, and all must pass validation before your handler executes.
-This ensures complete request validation across all input sources.
+## 📝 Body Formats
 
-## 📝 Different Body Formats
-
-Different endpoints may accept different body formats. Here are examples of each body target:
-
-### JSON Body
+### JSON
 ```ts
 POST<{
   json: {
@@ -253,7 +196,7 @@ POST<{
 })
 ```
 
-### Form Data (URL-encoded)
+### Form (URL-encoded)
 ```ts
 POST<{
   form: {
@@ -265,11 +208,11 @@ POST<{
 })
 ```
 
-### Multipart Form Data (File Uploads)
+### Multipart (file uploads)
 ```ts
 POST<{
   form: {
-    file: File; // File upload
+    file: File;
     title: string;
     description?: string;
   };
@@ -278,20 +221,19 @@ POST<{
 })
 ```
 
-### Raw Body (Text, Binary, Buffer)
+### Raw
 ```ts
 POST<{
   raw: TRefine<string, { minLength: 1, maxLength: 10000 }>;
 }>(async (ctx) => {
   const rawContent = ctx.validated.raw;
-  // Process raw text/binary data...
 })
 ```
 
-Remember: you can only specify **one body target** per handler (`json`, `form` or `raw`),
+**Worth noting:** you can only specify **one body target** per handler (`json`, `form` or `raw`),
 but you can combine it with any number of metadata targets (`query`, `headers`, `cookies`).
 
-## 🔗 Working with Referenced Types
+## 🔗 Referenced Types
 
 As your application grows, defining complex types inline becomes unwieldy.
 You'll want to define types once and reuse them across multiple routes.
@@ -317,23 +259,14 @@ type NotificationPreferences = {
 };
 ```
 
-And another file defining API payload wrappers:
-
 ```ts [types/api-payload.ts]
 import type { UserProfile, UserPreferences } from "./user";
 
 export type Payload<T> = {
   data: T;
   meta: {
-    pagination?: {
-      page: number;
-      limit: number;
-      total: number;
-    };
-    cache: {
-      ttl: number;
-      revalidate: boolean;
-    };
+    pagination?: { page: number; limit: number; total: number };
+    cache: { ttl: number; revalidate: boolean };
   };
 };
 
@@ -362,39 +295,22 @@ export default defineRoute<"users">(({ POST }) => [
   POST<{
     json: Payload<User>, // [!code hl]
   }>(async (ctx) => {
-    // ctx.validated.json is fully validated as Payload<User>
+    // ctx.validated.json typed as Payload<User>
   }),
 ]);
 ```
 
-`KosmoJS`'s type-to-schema conversion handles complex type constructs including generics,
-unions, intersections, and deeply nested structures.
+The generator resolves generics, traces all referenced types, and builds a complete validation schema.
+Update a shared type and validation updates everywhere it's used.
 
-When you use `Payload<User>`, the generator resolves the generic type parameter,
-traces through all the referenced types (including `UserProfile` and `UserPreferences`),
-and generates a complete validation schema that validates the entire structure.
-
-This means you can build a library of reusable types that encode your domain model and validation rules once,
-then reference them throughout your API.
-
-Changes to these type definitions automatically update the validation behavior everywhere they're used.
-
-Different routes can use the same generic type with different parameters:
+Different routes, same wrapper:
 
 ```ts [api/posts/index.ts]
 import type { Post, Payload } from "@/front/types/api-payload";
-import { defineRoute } from "_/front/api";
 
 export default defineRoute<"posts">(({ POST }) => [
   POST<{
     json: Payload<Post>, // [!code hl]
-  }>(async (ctx) => {
-    // ctx.validated.json is fully validated as Payload<Post>
-  }),
+  }>(async (ctx) => {}),
 ]);
 ```
-
-Both routes benefit from the same payload wrapper structure with its metadata and pagination fields,
-but validate different data types within that structure.
-
-This composability makes your validation logic both DRY and maintainable.

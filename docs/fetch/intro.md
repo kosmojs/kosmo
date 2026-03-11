@@ -9,59 +9,40 @@ head:
         fetch generator, api consumption, validation schemas, url utilities
 ---
 
-`KosmoJS` automatically generates a fully-typed fetch client for every API route,
-creating a seamless bridge between your backend API definitions and frontend consumption.
+When you define an API route with typed parameters, payloads, and responses,
+`KosmoJS` generates a corresponding fetch client - automatically, as part of the same build step.
 
-This generated client delivers end-to-end type safety from frontend code to backend handlers,
-complete with runtime validation that catches errors before requests reach the server.
+The result is a fully-typed client that mirrors your route definition exactly.
+Parameters, payload shape, response type - all derived from the same source.
+Change your API, and the client updates with it. No manual sync required.
 
-## 🤖 Understanding the Generated Client
-
-When you define API routes with typed parameters, payloads, and responses,
-`KosmoJS` generates corresponding fetch clients that mirror this structure exactly.
-
-The generator runs alongside other generators like the validation generator,
-placing its output in the lib directory alongside other generated artifacts.
+## 🤖 What Gets Generated
 
 Each route's client module exports:
 
-🔹 HTTP method functions corresponding to your route's handlers
-
-🔹 Utility functions for URL construction
-
-🔹 Validation schemas for client-side validation
-
-🔹 Full `TypeScript` types derived from your API route definitions
-
-The client understands your complete API structure - parameters, payload requirements, response shapes -
-and provides this intelligence through both `TypeScript`'s type system and runtime validation checks,
-ensuring your frontend and backend remain perfectly synchronized.
-
-This eliminates the traditional friction between API definition and consumption,
-letting you work with your API as if it were local functions while maintaining all the safety guarantees of runtime validation.
-
-## 🏗️ The Complete Generated Client Structure
-
-While you typically interact with the fetch client through its exported methods,
-understanding its complete structure helps you make the most of its capabilities.
-
-Each generated fetch client exports:
-
-**HTTP method functions** corresponding to the methods your API route handles (GET, POST, PUT, DELETE, etc.).
+🔹 **HTTP method functions** - `GET`, `POST`, `PUT`, etc., accepting parameters and payloads
+typed to match your route definition and returning typed response promises.
 ([Details ➜ ](/fetch/start))
 
-Each function accepts parameters and payload according to your type definitions
-and returns a typed promise for the response.
-
-**The `path` utility function** for constructing relative URLs with proper parameter handling
-and optional query string support.
+🔹 **`path` and `href` utilities** - construct relative or absolute URLs with proper
+parameter substitution and optional query string support.
 ([Details ➜ ](/fetch/utilities))
 
-**The `href` utility function** for constructing absolute URLs with host, parameters, and query strings.
-([Details ➜ ](/fetch/utilities))
-
-**The `validationSchemas` object** containing validation schemas for parameters, payloads and responses,
-organized by HTTP method.
-
-Each schema provides `check`, `errors`, `errorMessage`, `errorSummary`, and `validate` methods.
+🔹 **`validationSchemas`** - the same schemas used for server-side validation,
+exposed for client-side form validation with `check`, `errors`, `errorMessage`,
+`errorSummary`, and `validate` methods.
 ([Details ➜ ](/fetch/validation))
+
+## 🏗️ Using the Generated Client
+
+Import the fetch map and pick the client for your route by path:
+
+```ts [pages/example/index.tsx]
+import fetchClients from "_/front/fetch";
+
+const response = await fetchClients["users/[id]"].GET([123]);
+```
+
+The generator places its output in the `lib` directory alongside other generated artifacts
+(validation routines, OpenAPI spec). Everything is updated automatically in the background
+as you modify routes during development.

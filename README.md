@@ -3,7 +3,7 @@
 ### A Vite template evolved into a full‑stack meta‑framework
 
 Multiple source folders. Directory-based routing.
-Cascading middleware. Nested routes.
+Cascading middleware. Nested layouts.
 End-to-end validation. Fetch clients. OpenAPI spec.
 Koa, Hono, SolidJS, React, Vue and more.
 
@@ -11,14 +11,13 @@ Koa, Hono, SolidJS, React, Vue and more.
 
 ## 🎯 What is KosmoJS?
 
-It's a **meta-framework** that gives your `Vite` project a scalable shape:
+A **meta-framework** that gives your `Vite` project a scalable shape:
 
-* Multiple **source folders** for distinct areas (website, admin dashboard, API).
-* Each folder splits into **`api/` and `pages/`**, creating a clean boundary between server and client.
-* **Generators** that produce validation schemas, fetch clients, and `OpenAPI` specs from your types.
+- Multiple **source folders** for distinct areas (website, admin dashboard, API)
+- Each folder splits into **`api/` and `pages/`** - clean boundary between server and client
+- **Generators** that produce validation schemas, fetch clients, and `OpenAPI` specs from your types
 
-`KosmoJS` is named after the Greek "Kosmos" (κόσμος), meaning "order" or "world",
-reflecting the focus on organized, structured project architecture.
+Named after the Greek "Kosmos" (κόσμος) - "order" or "world".
 
 📘 [Learn more](https://kosmojs.dev/about.html)
 
@@ -75,33 +74,34 @@ Each source folder runs on its own port with its own base URL.
 
 ## ✨ Features
 
-* **🗂️ Multiple Source Folders**<br>
-    Organize distinct concerns - public site, customer app, admin dashboard - all connected in one Vite project.
+- **🗂️ Multiple Source Folders** - organize distinct concerns (public site, customer app, admin dashboard) as independent source folders within a single Vite project.
 
-* **🛣️ Directory-Based Nested Routing**<br>
-    Your folder structure defines your routes. Works identically for both API endpoints and client pages.
+- **🛣️ Directory-Based Routing** - folder structure defines routes for both API and pages. Dynamic parameters: `[id]` required · `{id}` optional · `{...path}` splat. Mixed segments supported for backend routes.
 
-* **🛡️ End-to-End Type Safety**<br>
-    Write `TypeScript` types once, get runtime validation automatically. No separate schemas to maintain.
+- **🪆 Nested Layouts** - frontend pages support nested layout components that wrap child routes, letting you compose shared UI (nav, sidebars, auth shells) at any level of the route hierarchy.
 
-* **🔗 Generated Fetch Clients + OpenAPI spec**<br>
-    Fully-typed fetch clients with client-side validation. Invalid requests never reach your server.
+- **⚡ Power Syntax for Params** - use raw [path-to-regexp v8](https://github.com/pillarjs/path-to-regexp) patterns directly in folder names for precise URL control beyond standard named parameters.
 
-* **🎨 Multiple Frameworks**<br>
-    Currently supports `Koa` / `Hono` for backend, `SolidJS` / `React` / `Vue` for frontend.
-    Additional frameworks may be added based on community interest.
+- **🛡️ End-to-End Type Safety** - write `TypeScript` types once, get runtime validation automatically. Same definition drives compile-time checking, runtime validation, and API docs.
 
-* **🔧 Built on Proven Tools**<br>
-    No proprietary abstractions, just the tools you already know (or easy to learn).
+- **🔗 Generated Fetch Clients + OpenAPI** - fully-typed fetch clients with client-side validation and an OpenAPI 3.1 spec, both derived from the same type definitions.
+
+- **🎛️ Composable Middleware (Slots)** - override global middleware per-route or per-subtree using named slots. Replace only what needs replacing, inherit everything else.
+
+- **🌊 Cascading Middleware** - place a `use.ts` in any folder and its middleware automatically wraps all routes in that folder and its subfolders. No imports or wiring needed.
+
+- **🎨 Multiple Frameworks** - `Koa` or `Hono` for backend, `React`, `Vue`, or `SolidJS` for frontend. Different source folders can use different combinations.
+
+- **🔧 Built on Proven Tools** - `Koa`/`Hono` · `Vite` · `TypeScript` · `path-to-regexp` · `TypeBox`. No proprietary abstractions.
 
 📘 [Learn more](https://kosmojs.dev/features.html)
 
 ## 🧭 Example Use Cases
 
-* Monorepo-like projects where frontend and API must live side by side.
-* Teams needing **strong typing and runtime validation** without duplicating schemas.
-* Developers who want **framework freedom** while keeping consistent structure.
-* Projects that must scale from prototype to production with a deterministic structure.
+- Projects where frontend and API must live side by side
+- Teams needing strong typing and runtime validation without duplicating schemas
+- Developers who want framework freedom with consistent structure
+- Projects that must scale from prototype to production with deterministic structure
 
 ## 🛠️ Contributing
 

@@ -9,93 +9,62 @@ head:
         numeric validation, TRefine, typed parameters, runtime param validation
 ---
 
-Route parameters are values extracted from the URL path itself,
-like the user ID in <span class="text-nowrap">`/api/users/123`</span>.
+Route parameters are extracted from the URL path as strings - that's just how URLs work.
+But you often need more than a string: a numeric ID, a positive integer, a value from a fixed set.
 
-By default, these parameters are strings because URLs are text.
-
-However, you often need to ensure parameters meet specific criteria -
-perhaps a numeric ID should actually be a number type,
-or perhaps it should fall within a certain range.
+`KosmoJS` lets you express these requirements directly in the type system.
 
 ## 🎯 Params Refinements
 
-`KosmoJS` lets you refine parameter types through a tuple passed as the second type argument to `defineRoute`.
-This tuple uses positional parameters that align with your route's parameter order.
+Pass a tuple as the second type argument to `defineRoute`.
+Each position refines the corresponding parameter in route order.
 
-Consider a route at `api/users/[id]/index.ts` where you want to ensure the ID is a number.
-You specify this by passing `[number]` tuple as the second type argument:
+For a route at `api/users/[id]/index.ts`:
 
 ```ts [api/users/[id]/index.ts]
 import { defineRoute } from "_/front/api";
 
 export default defineRoute<"users/[id]", [
-  number // validate id as number // [!code hl]
+  number // [!code hl]
 ]>(({ GET }) => [
   GET(async (ctx) => {
-    // id is a validated number // [!code hl]
-    const { id } = ctx.validated.params;
+    const { id } = ctx.validated.params; // typed as number // [!code hl]
   }),
 ]);
 ```
 
-With this type refinement, `KosmoJS` validates that the ID can be converted to a number at runtime.
+A request to `/api/users/abc` is rejected with a 400 before your handler runs.
 
-If someone makes a request to `/api/users/abc`, where `abc` cannot be parsed as a number,
-`KosmoJS` rejects the request with a validation error before your handler runs.
-The client receives a 400 status code with information about what went wrong.
+Access validated parameters through `ctx.validated.params` - it carries the refined type,
+not the raw string. The underlying `ctx.params` (Koa) or `ctx.req.param()` (Hono) still exists
+if you need the original.
 
-Access validated parameters through `ctx.validated.params`.
-
-This gives you the refined type (number in this case) rather than the original string type.
-
-The standard Koa's `ctx.params` or Hono's `ctx.req.param()` still exists if you need it,
-but `ctx.validated.params` is what you'll typically use when you've provided type refinements.
-
-You can refine parameters further by using `TRefine` (globally available, no need to import):
+Refine further with `TRefine` (globally available, no import needed):
 
 ```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api";
-
 export default defineRoute<"users/[id]", [
-  // validate id as a positive integer // [!code hl]
-  TRefine<number, { minimum: 1, multipleOf: 1 }>
+  TRefine<number, { minimum: 1, multipleOf: 1 }> // positive integer // [!code hl]
 ]>(({ GET }) => [
   // ...
 ]);
 ```
 
-[More Details on TRefine ➜ ](/validation/refine)
+[More on TRefine ➜ ](/validation/refine)
 
-## 🚥 Validating Multiple Parameters
+## 🚥 Multiple Parameters
 
-When your route has multiple parameters, you provide type refinements positionally.
-
-The first tuple argument refines the first parameter,
-the second argument refines the second parameter, and so on.
-
-All positions are optional, so you can refine just the parameters that need it.
-
-For a route at `api/users/[id]/[view]/index.ts`:
+For routes with multiple parameters, each tuple position maps to the corresponding param.
+Positions are optional - omit any you don't need to refine.
 
 ```ts [api/users/[id]/[view]/index.ts]
-import { defineRoute } from "_/front/api";
-
 export default defineRoute<"users/[id]/[view]", [
-  // validate id as a positive integer // [!code hl]
-  TRefine<number, { minimum: 1, multipleOf: 1 }>,
-  // make sure view is one of // [!code hl]
-  "profile" | "settings" | "data"
+  TRefine<number, { minimum: 1, multipleOf: 1 }>, // id // [!code hl]
+  "profile" | "settings" | "data"                 // view // [!code hl]
 ]>(({ GET }) => [
   GET(async (ctx) => {
-    // Both id and view are validated at this point // [!code hl]
-    const { id, view } = ctx.validated.params;
+    const { id, view } = ctx.validated.params; // [!code hl]
   }),
 ]);
 ```
 
-If you only need to refine the first parameter, you can omit the second argument entirely.
-
-Also, position-based validation is name-agnostic - params refinements doesn't depend on parameter names.
-If you refactor your route from `users/[id]` to `users/[userId]`,
-positional refinements still works without any changes.
+Refinements are positional, not name-based - renaming `[id]` to `[userId]` requires no changes here.

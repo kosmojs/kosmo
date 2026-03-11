@@ -10,23 +10,10 @@ head:
         automatic middleware, middleware composition, authentication middleware
 ---
 
-Defining middleware in every route file becomes tedious as your application grows.
-You end up repeatedly importing/declaring the same authentication checks, logging setup,
-or body parser overrides across dozens of routes.
-
-`KosmoJS` solves this with `Cascading Middleware`.
-
-Create a `use.ts` file in any folder, and its default exported middleware
-automatically wraps all routes in that folder and its subfolders -
-no imports or manual wiring required.
-
-This hierarchical approach lets you organize middleware the same way you organize routes,
-keeping related concerns together and eliminating repetition.
+Place a `use.ts` file in any folder, and its middleware automatically wraps all routes
+in that folder and its subfolders - no imports or wiring required.
 
 ## 🎯 How it Works
-
-The pattern is straightforward: place a `use.ts` file in a folder,
-and every route beneath that folder inherits its middleware.
 
 ```txt
 api/users/
@@ -39,53 +26,43 @@ api/users/
 └── use.ts
 ```
 
-In this structure:
-- `users/use.ts` wraps **all routes** under `/api/users` (including `about`, `account`, and the users index)
-- `users/account/use.ts` wraps **only** routes under `/api/users/account`
+- `users/use.ts` wraps all routes under `/api/users`
+- `users/account/use.ts` wraps only routes under `/api/users/account`
 
-When a request hits `/api/users/account`, the middleware execution order is:
-1. Global middleware from `api/use.ts`
-2. `users/use.ts` (parent folder)
-3. `users/account/use.ts` (current folder)
-4. Route-specific middleware from `users/account/index.ts`
-5. Final route handler
+Execution order for a request to `/api/users/account`:
 
-Parent middleware always runs before child middleware.
-This predictable order mirrors the folder hierarchy, making it easy to reason about what executes when.
+```txt
+api/use.ts               → global middleware
+users/use.ts             → parent folder
+users/account/use.ts     → current folder
+users/account/index.ts   → route handler
+```
 
-When you create a new `use.ts` file, `KosmoJS` instantly generates boilerplate content.
+Parent middleware always runs before child middleware. Child routes cannot skip parent `use.ts`.
 
-> Depending on your editor, this content may appear immediately
-or after briefly unfocusing and refocusing the file.
-
-The generated structure gives you a starting point:
+The generated boilerplate when you create a new `use.ts`:
 
 ```ts [api/users/use.ts]
 import { use } from "_/front/api";
 
 export default [
   use(async (ctx, next) => {
-    // Your middleware logic here
     return next();
   })
 ];
 ```
 
-You can define multiple middleware in a single `use.ts` file,
-and they'll execute in the order you define them.
+> Some editors load the generated content immediately, others require a brief unfocus/refocus.
 
 ## 💼 Common Use Cases
 
 ### Authentication
 
-Apply authentication to entire route subtrees without repeating the logic:
-
-```ts [api/admin/use.ts]
-import { use } from "_/front/api";
-
+::: code-group
+```ts [Koa: api/admin/use.ts]
 export default [
   use(async (ctx, next) => {
-    const token = ctx.headers.authorization?.replace("Bearer ", ""); // [!code focus:8]
+    const token = ctx.headers.authorization?.replace("Bearer ", "");
     ctx.assert(token, 401, "Authentication required");
 
     const user = await verifyToken(token);
@@ -97,20 +74,34 @@ export default [
 ];
 ```
 
-Now every route under `/api/admin` requires admin authentication.
-Individual route files can focus on their business logic,
-assuming `ctx.state.user` is already validated and available.
-
-### Request Logging
-
-Add structured logging for specific parts of your API:
-
-```ts [api/payments/use.ts]
-import { use } from "_/front/api";
+```ts [Hono: api/admin/use.ts]
+import { HTTPException } from "hono/http-exception";
 
 export default [
   use(async (ctx, next) => {
-    const start = Date.now(); // [!code focus:12]
+    const token = ctx.req.header("authorization")?.replace("Bearer ", "");
+    if (!token) throw new HTTPException(401, { message: "Authentication required" });
+
+    const user = await verifyToken(token);
+    if (user.role !== "admin") throw new HTTPException(403, { message: "Admin access required" });
+
+    ctx.set("user", user);
+    return next();
+  })
+];
+```
+:::
+
+Every route under `/api/admin` now requires admin auth. Route handlers can assume
+the user is already validated (`ctx.state.user` for Koa, `ctx.get("user")` for Hono).
+
+### Request Logging
+
+::: code-group
+```ts [Koa: api/payments/use.ts]
+export default [
+  use(async (ctx, next) => {
+    const start = Date.now();
     const requestId = crypto.randomUUID();
 
     ctx.state.requestId = requestId;
@@ -119,22 +110,32 @@ export default [
     try {
       await next();
     } finally {
-      const duration = Date.now() - start;
-      console.log(`[${requestId}] completed in ${duration}ms`);
+      console.log(`[${requestId}] completed in ${Date.now() - start}ms`);
     }
   })
-]);
+];
 ```
 
-The onion model allows you to do work both before and after the route handler executes,
-perfect for timing, logging, or cleaning up resources.
+```ts [Hono: api/payments/use.ts]
+export default [
+  use(async (ctx, next) => {
+    const start = Date.now();
+    const requestId = crypto.randomUUID();
+
+    ctx.set("requestId", requestId);
+    console.log(`[${requestId}] ${ctx.req.method} ${ctx.req.path}`);
+
+    await next();
+    console.log(`[${requestId}] completed in ${Date.now() - start}ms`);
+  })
+];
+```
+:::
 
 ### Rate Limiting
 
-Apply rate limits to specific endpoint groups:
-
-```ts [api/public/use.ts]
-import { use } from "_/front/api";
+::: code-group
+```ts [Koa: api/public/use.ts]
 import rateLimit from "koa-ratelimit";
 
 export default [
@@ -142,99 +143,55 @@ export default [
     rateLimit({
       driver: "memory",
       db: new Map(),
-      duration: 60000, // 1 minute
+      duration: 60000,
       max: 100,
     })
   )
 ];
 ```
 
-Public endpoints get rate limiting, while internal or authenticated endpoints
-(in different folders) don't inherit this restriction.
-
-## ⚠️ Important Considerations
-
-### Parameter Availability
-
-Cascading middleware run for all routes in their folder hierarchy,
-including routes that may not define all the parameters you expect.
-
-```txt
-api/users/
-├── [id]/
-│   ├── posts/
-│   │   └── index.ts    // Has 'id' param
-│   └── index.ts        // Has 'id' param
-├── index.ts            // NO 'id' param
-└── use.ts
-```
-
-If `users/use.ts` tries to access `ctx.params.id`, it will work for `/users/123`
-but `ctx.params.id` will be undefined for `/users`.
-
-Keep middleware generic. Focus on concerns that apply uniformly -
-authentication, logging, body parsing - rather than parameter-specific logic.
-
-If you need parameter validation or transformation, do it in the route handler itself
-or in route-specific middleware defined within that route's `index.ts`.
-
-### Middleware Hierarchy
-
-Cascading middleware execute from the outermost scope inward.
-
-For a request to `/api/admin/users/123` the flow looks like:
-
-```txt
-api/
-├── use.ts               // Runs 1st (global middleware)
-└── admin/
-    ├── use.ts           // Runs 2nd
-    └── users/
-        ├── use.ts       // Runs 3th
-        └── [id]/
-            └── index.ts // Runs 4th (route handler)
-```
-
-Handlers can not skip parent middleware.
-If a parent folder has `use.ts`, all child routes inherit it.
-This constraint keeps the middleware hierarchy predictable.
-
-### Method-Specific Middleware
-
-Just like inline middleware, cascading middleware can run on specific HTTP methods:
-
-```ts [api/users/use.ts]
-import { use } from "_/front/api";
+```ts [Hono: api/public/use.ts]
+import { rateLimiter } from "hono-rate-limiter";
 
 export default [
   use(
-    async (ctx, next) => {
-      // authentication logic
-      return next();
-    },
-    { on: ["POST", "PUT", "PATCH", "DELETE"] }, // [!code focus]
+    rateLimiter({
+      windowMs: 60000,
+      limit: 100,
+      keyGenerator: (ctx) => ctx.req.header("x-forwarded-for") ?? "",
+    }),
   )
 ];
 ```
+:::
 
-This middleware only runs for methods that modify data.
+## ⚠️ Parameter Availability
 
-## 🎨 Multiple middleware in one file
+Cascading middleware runs for all routes in the hierarchy, including ones that don't
+define the parameters you might expect:
 
-A single `use.ts` can define multiple middleware functions.
-They execute in the order you define them:
+```txt
+api/users/
+├── [id]/index.ts    ← has 'id' param
+├── index.ts         ← NO 'id' param
+└── use.ts
+```
 
-```ts [api/users/use.ts]
-import { use } from "_/front/api";
+`ctx.params.id` is undefined for `/users`. Keep cascading middleware generic -
+authentication, logging, rate limiting. Parameter-specific logic belongs in the route handler.
 
+## 🎨 Multiple Middleware + Method Filtering
+
+A single `use.ts` can define multiple functions, and each supports the `on` option:
+
+::: code-group
+```ts [Koa: api/users/use.ts]
 export default [
-  // First: Logging
   use(async (ctx, next) => {
-    console.log(`Request: ${ctx.method} ${ctx.path}`);
+    console.log(`${ctx.method} ${ctx.path}`);
     return next();
   }),
 
-  // Second: Authentication (only for certain methods)
   use(
     async (ctx, next) => {
       const token = ctx.headers.authorization?.replace("Bearer ", "");
@@ -242,10 +199,9 @@ export default [
       ctx.state.user = await verifyToken(token);
       return next();
     },
-    { on: ["POST", "PUT", "DELETE"] },
+    { on: ["POST", "PUT", "PATCH", "DELETE"] },
   ),
 
-  // Third: Request timing
   use(async (ctx, next) => {
     const start = Date.now();
     await next();
@@ -254,34 +210,30 @@ export default [
 ];
 ```
 
-This keeps related middleware organized in one place while maintaining clear separation of concerns.
+```ts [Hono: api/users/use.ts]
+import { HTTPException } from "hono/http-exception";
 
-## 💡 Best Practices
+export default [
+  use(async (ctx, next) => {
+    console.log(`${ctx.req.method} ${ctx.req.path}`);
+    return next();
+  }),
 
-**Use for cross-cutting concerns:** Authentication, logging, rate limiting, and CORS are perfect candidates.
-These apply broadly to groups of routes.
+  use(
+    async (ctx, next) => {
+      const token = ctx.req.header("authorization")?.replace("Bearer ", "");
+      if (!token) throw new HTTPException(401, { message: "Authentication required" });
+      ctx.set("user", await verifyToken(token));
+      return next();
+    },
+    { on: ["POST", "PUT", "PATCH", "DELETE"] },
+  ),
 
-**Keep it generic:** Avoid parameter-specific logic or assumptions about request structure
-that won't hold for all routes in the hierarchy.
-
-**Use slots for overrides:** Use the `slot` option when you need to replace global middleware -
-without slot your middleware runs alongside the global middleware instead of replacing it.
-
-**Organize by feature:** If you have a `/api/admin` section with different authentication requirements,
-give it its own `use.ts` rather than adding conditional logic to a parent middleware.
-
-**Consider middleware composition:** A deeply nested route might inherit middleware from multiple `use.ts` files.
-Make sure they compose well - each layer should add value without conflicting with parent middleware.
-
-**Document middleware behavior:** Leave comments in your `use.ts` files explaining what they do
-and why they're needed. Future you (and your teammates) will appreciate the context.
-
----
-
-Cascading middleware transform how you organize cross-cutting concerns.
-Instead of scattering the same authentication checks across dozens of files,
-you define them once at the appropriate level and let the hierarchy do the work.
-
-As your API grows, this pattern keeps your codebase maintainable
-by mirroring your route structure in your middleware organization.
-
+  use(async (ctx, next) => {
+    const start = Date.now();
+    await next();
+    ctx.header("X-Response-Time", `${Date.now() - start}ms`);
+  }),
+];
+```
+:::

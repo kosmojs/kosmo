@@ -9,31 +9,17 @@ head:
         boilerplate code, koa context, page components
 ---
 
-When you create a new route file, `KosmoJS` detects it and instantly generates appropriate boilerplate code.
+When you create a new route file, `KosmoJS` detects it and generates appropriate boilerplate immediately.
+The output differs based on whether the file is an API route or a client page, and which framework you're using.
 
-This generation is context-aware - it produces different code
-depending on whether you're creating an API route or a client page,
-and adapts to your chosen framework.
+> Some editors load generated content instantly, others may require you to briefly unfocus
+> and refocus the file to see the new content.
 
-This automatic generation serves two purposes.
+## ⚙️ API Routes
 
-First, it saves you from the tedium of repeatedly typing the same structural code.
-
-Second, and more importantly, it ensures that every route follows the correct patterns
-and imports the right types from the beginning.
-
-You get a working starting point that's already integrated with `KosmoJS`'s type system.
-
-> Some editors loads generated content immediately,
-> others may require you to briefly unfocus and refocus the editor to load the new content.
-
-## ⚙️ API Route Generation
-
-When you create a file like `api/users/[id]/index.ts`,
-`KosmoJS` generates this content based on your chosen API framework:
+Creating `api/users/[id]/index.ts` generates:
 
 ::: code-group
-
 ```ts [Koa]
 import { defineRoute } from "_/front/api";
 
@@ -54,45 +40,19 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ```
 :::
 
-Let's break down what's happening here.
+The `_/` import prefix maps to `lib/src/` - generated code that provides full type definitions
+for all your routes. `_/front/api` resolves to `lib/src/front/api.ts`, where `front` is your source folder name.
 
-The import statement brings in a `defineRoute` helper function from a generated module.
-Notice the import path uses the `_/` prefix - this accesses generated code from the `lib/src/` directory:
+## 🎨 Client Pages
 
-* `_/` - Generated code prefix (maps to `lib/src/`)
-* `front` - Your source folder name (from `src/front/`)
+Creating `pages/users/[id]/index.tsx` generates a minimal framework component:
 
-This import resolves to `lib/src/front/api.ts`, a generated file
-that provides type definitions for all your routes. With these types,
-`defineRoute` offers complete type safety and autocomplete.
-
-## 🎨 Client Page Generation
-
-For client-side pages, the generated code adapts to your chosen framework.
-If you create `pages/users/[id]/index.tsx` while using the `SolidJS` generator, `KosmoJS` generates:
-
-```ts [pages/users/[id]/index.tsx]
+```tsx [pages/users/[id]/index.tsx]
 export default function Page() {
   return <div>Automatically generated Solid Page: [ users/[id] ]</div>;
 }
 ```
 
-This is a minimal functional component that you can immediately see in your browser
-when you navigate to the corresponding URL.
+The component is named `Page` by default - rename it to something meaningful as you build it out.
 
-The component is named `Page` by default but you can rename it to better reflect the component purpose.
-
-Generated component returns JSX that renders a placeholder message indicating which route this is.
-
-> Using annonymous arrow functions for default export is not recommended, this may break Vite's HMR.
-
-If you were using the `React` generator, the generated code would be nearly identical
-but would follow `React`-specific patterns and conventions.
-
-The generator understands your framework and produces appropriate code.
-
-The generated scaffold gives you the component structure,
-and you add your framework-specific logic for routing, data fetching, and rendering.
-
-Because the route parameters are part of the URL structure that `KosmoJS` manages,
-your framework's router integration can access them naturally.
+> Avoid anonymous arrow functions for default exports - they can break Vite's HMR.

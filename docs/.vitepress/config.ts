@@ -122,11 +122,8 @@ export default defineConfig({
             },
             {
               text: "🧭 Path Resolver",
+              docFooterText: "🧭 Generators - Path Resolver",
               link: "/generators/path-resolver",
-            },
-            {
-              text: "💡 Best Practices",
-              link: "/generators/best-practices",
             },
           ],
         },
@@ -154,11 +151,8 @@ export default defineConfig({
             },
             {
               text: "🔀 Alias Plugin",
+              docFooterText: "🔀 Plugins - Alias",
               link: "/plugins/alias-plugin",
-            },
-            {
-              text: "💡 Best Practices",
-              link: "/plugins/best-practices",
             },
           ],
         },
@@ -201,12 +195,8 @@ export default defineConfig({
             },
             {
               text: "🤖 Generated Content",
+              docFooterText: "🤖 Routing - Generated Content",
               link: "/routing/generated-content",
-            },
-            {
-              text: "💡 Best Practices",
-              docFooterText: "💡 Routing Best Practices",
-              link: "/routing/best-practices",
             },
           ],
         },
@@ -220,16 +210,8 @@ export default defineConfig({
               link: "/api-server/intro",
             },
             {
-              text: "🧩 Endpoints",
-              link: "/api-server/endpoints",
-            },
-            {
               text: "📋 Request Context",
               link: "/api-server/context",
-            },
-            {
-              text: `${icons.gear} Core Configuration`,
-              link: "/api-server/core-configuration",
             },
             {
               text: "🛡 Type Safety",
@@ -249,16 +231,7 @@ export default defineConfig({
             {
               text: "🚨 Error Handling",
               collapsed: false,
-              items: [
-                {
-                  text: "Koa",
-                  link: "/api-server/error-handling/koa",
-                },
-                {
-                  text: "Hono",
-                  link: "/api-server/error-handling/hono",
-                },
-              ],
+              link: "/api-server/error-handling",
             },
             {
               text: "💻 Development Workflow",
@@ -267,11 +240,6 @@ export default defineConfig({
             {
               text: "🌐 Building for Production",
               link: "/api-server/building-for-production",
-            },
-            {
-              text: "💡 Best Practices",
-              docFooterText: "💡 API Best Practices",
-              link: "/api-server/best-practices",
             },
           ],
         },
@@ -310,12 +278,8 @@ export default defineConfig({
             },
             {
               text: "🔧 Utilities",
+              docFooterText: "🔧 Frontend - Utilities",
               link: "/frontend/utilities",
-            },
-            {
-              text: "💡 Best Practices",
-              docFooterText: "💡 Frontend - Best Practices",
-              link: "/frontend/best-practices",
             },
           ],
         },
@@ -358,12 +322,8 @@ export default defineConfig({
             },
             {
               text: "📊 About Performance",
+              docFooterText: "📊 Validation - Performance",
               link: "/validation/performance",
-            },
-            {
-              text: "💡 Best Practices",
-              docFooterText: "💡 Validation Best Practices",
-              link: "/validation/best-practices",
             },
           ],
         },
@@ -394,36 +354,19 @@ export default defineConfig({
             },
             {
               text: "🛠 Utilities",
+              docFooterText: "🛠 Fetch Utilities",
               link: "/fetch/utilities",
-            },
-            {
-              text: "💡 Best Practices",
-              docFooterText: "💡 Fetch Best Practices",
-              link: "/fetch/best-practices",
             },
           ],
         },
         {
-          text: "OpenAPI Generator",
+          text: "More Generators",
           collapsed: false,
           items: [
             {
-              text: "🔰 Intro",
-              docFooterText: "🛠 OpenAPI - Install / Setup",
-              link: "/openapi/intro",
-            },
-            {
-              text: `${icons.gear} Configuration`,
-              link: "/openapi/configuration",
-            },
-            {
-              text: "📋 Generated Spec",
-              link: "/openapi/generated-spec",
-            },
-            {
-              text: "💡 Best Practices",
-              docFooterText: "💡 OpenAPI Best Practices",
-              link: "/openapi/best-practices",
+              text: "📋 OpenAPI",
+              docFooterText: "📋 OpenAPI Generator",
+              link: "/openapi",
             },
           ],
         },

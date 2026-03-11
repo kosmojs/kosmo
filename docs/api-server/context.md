@@ -9,54 +9,27 @@ head:
         request body parsing, koa bodyparser, hono bodyparser
 ---
 
-`KosmoJS` extends the standard Koa/Hono context with two key enhancements:
-a unified bodyparser API and `ctx.validated` for accessing validated data.
+`KosmoJS` extends the standard Koa/Hono context with two additions:
+a unified bodyparser API and `ctx.validated` for type-safe access to validated request data.
 
-## 🔋 Unified Bodyparser API
+## 🔋 Unified Bodyparser
 
-While Koa and Hono each have their own approach to parsing request bodies,
-`KosmoJS` provides a unified `ctx.bodyparser` interface that works seamlessly across both frameworks.
-
-This abstraction serves two purposes: it provides a consistent API
-regardless of which framework you choose, and it enables the validation system to work transparently.
-
-Available parsers:
+`ctx.bodyparser` works the same regardless of framework:
 
 ```ts
-await ctx.bodyparser.json()       // Parse JSON request body
-await ctx.bodyparser.form()       // Parse URL-encoded form data
-await ctx.bodyparser.raw()        // Get raw body buffer
+await ctx.bodyparser.json()   // JSON request body
+await ctx.bodyparser.form()   // URL-encoded or multipart form
+await ctx.bodyparser.raw()    // raw body buffer
 ```
 
-The body parser automatically caches results, so calling the same parser multiple times
-returns the cached data instead of re-parsing the request body.
+Results are cached - calling the same parser multiple times doesn't re-parse the request.
 
-In practice, you rarely call the body parser directly. Simply define
-a validation schema in your handler, and the appropriate body parser
-runs automatically. More details below ↓
+In practice you rarely call this directly. Define a validation schema in your handler
+and the appropriate parser runs automatically, placing the result in `ctx.validated`.
 
 ## ☔ Validated Data Access
 
-The `ctx.validated` object provides type-safe access to validated request data.
-When you define validation schemas in your route handlers, validated data becomes available here:
-
-```ts
-export default defineRoute(({ POST }) => [
-  POST<{
-    json: Payload<User>,
-  }>(async (ctx) => {
-    // ctx.validated.json is fully validated as Payload<User>
-    const { name, email } = ctx.validated.json;
-  }),
-]);
-```
-
-Under the hood, `KosmoJS` runs validation middleware that:
-1. Calls the appropriate bodyparser method (e.g., `await ctx.bodyparser.json()`)
-2. Validates the parsed data against your schema
-3. Places the validated result in `ctx.validated.json`
-
-The same pattern works for other validation targets:
+`ctx.validated` holds the validated, typed result for each target you defined:
 
 ```ts
 export default defineRoute(({ POST }) => [
@@ -65,65 +38,33 @@ export default defineRoute(({ POST }) => [
     query: { limit: number },
     headers: { "x-api-key": string },
   }>(async (ctx) => {
-    const user = ctx.validated.json;      // Validated JSON body
-    const limit = ctx.validated.query;    // Validated query params
-    const apiKey = ctx.validated.headers; // Validated headers
+    const user = ctx.validated.json;      // validated JSON body
+    const limit = ctx.validated.query;    // validated query params
+    const apiKey = ctx.validated.headers; // validated headers
   }),
 ]);
 ```
 
 ## 🔗 Route Parameters
 
-The `ctx.validated.params` property gives you access to route parameters
-with full TypeScript type information.
-
-When you specify parameter constraints (like numbers or string unions),
-these types flow through automatically:
+Validated params are available at `ctx.validated.params`, typed according to your refinements:
 
 ```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api";
-
-export default defineRoute<"users/[id]", [
-  number // validate id param as number // [!code hl]
-]>(({ GET }) => [
-  GET(async (ctx) => {
-    // id is a validated number
-    const { id } = ctx.validated.params;
-  }),
-]);
-```
-
-This is similar to the standard Koa's `ctx.params` and Hono's `ctx.req.param()`,
-but with the benefit of type refinement and runtime validation based on your route's parameter definitions.
-
-## 💡 Example: Complete Request Handling
-
-```ts
-export default defineRoute<
-  "users/[id]",
-  [
-    number, // validate id as number
-  ]
->(({ POST, GET }) => [
+export default defineRoute<"users/[id]", [number]>(({ GET, POST }) => [
   GET<{
     query: { page: string; filter?: string },
   }>(async (ctx) => {
-    // Validated params, id is a number
-    const { id } = ctx.validated.params;
-    // Validated query string
+    const { id } = ctx.validated.params;    // number
     const { page, filter } = ctx.validated.query;
   }),
 
   POST<{
     json: Payload<User>,
   }>(async (ctx) => {
-    // Validated params, id is a number
-    const { id } = ctx.validated.params;
-    // Validated JSON body
+    const { id } = ctx.validated.params;    // number
     const user = ctx.validated.json;
   }),
 ]);
 ```
 
-The validation happens automatically before your handler runs,
-so `ctx.validated` always contains properly typed, validated data.
+The underlying `ctx.params` (Koa) and `ctx.req.param()` (Hono) still exist if you need the raw strings.

@@ -9,15 +9,8 @@ head:
         data integrity, runtime response check, ValidationError
 ---
 
-Just as you validate incoming request data, you can validate outgoing response data.
-
-Response validation ensures that your API contract is honored -
-that you actually return the data structure your types promise.
-
-This catches bugs where handlers might return incomplete objects, wrong types, or unexpected structures.
-
-Response validation works similarly to payload validation,
-just use `response` property to provide response schema, status code, content type and body:
+Outgoing responses can be validated too. Use the `response` property to declare the expected status code,
+content type, and body schema:
 
 ```ts [api/users/index.ts]
 import type { User } from "@/front/types/api-payload";
@@ -32,15 +25,12 @@ export default defineRoute<"users">(({ GET }) => [
 ]);
 ```
 
-Before sending the response to the client,
-`KosmoJS` validates that status, content type and body actually matches defined schema.
+Before sending, `KosmoJS` checks that the actual status, content type, and body match the schema.
+If anything is off - a missing field, a type mismatch, a constraint violation - it throws a `ValidationError`
+instead of sending malformed data to the client.
 
-If validation fails - perhaps because the database returned a user object that's missing the `preferences` field,
-or because the `profile.email` doesn't match email format constraints - `KosmoJS` throws a ValidationError
-instead of sending invalid data to the client.
+Response validation is especially valuable for data sourced from databases or third-party APIs,
+where the shape can change without warning.
 
-This protects your API consumers from receiving malformed data and helps you catch bugs in your handler logic.
-
-Another major benefit of defining response schemas is automatic `OpenAPI` schema generation.
-This gives you both type safety and API documentation in one step.
-([Details ➜ ](/openapi/intro))
+Defining a response schema also enables automatic `OpenAPI` generation -
+type safety and documentation in one step. ([Details ➜ ](/openapi))

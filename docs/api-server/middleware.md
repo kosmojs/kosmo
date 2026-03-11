@@ -23,7 +23,7 @@ By default, middleware applied to all HTTP methods:
 ```ts [api/example/index.ts]
 export default defineRoute<"example">(({ GET, POST, use }) => [
   use(async (ctx, next) => {
-    // This runs for both GET and POST requests
+    // runs for both GET and POST
     return next();
   }),
 
@@ -32,16 +32,12 @@ export default defineRoute<"example">(({ GET, POST, use }) => [
 ]);
 ```
 
-Both `Koa` and `Hono` middleware receive the `ctx` (context) object and a `next` function.
-They must call `next()` to allow the request to proceed to subsequent middleware or the final handler.
+Middleware must call `next()` to pass control to the next layer.
+Skipping `next()` short-circuits the chain - useful for early rejections.
 
-If middleware doesn't call `next()`, the request stops there -
-useful for cases where you want to reject a request early based on some condition.
+## 🔄 Execution Order (Onion Model)
 
-## 🔄 Middleware Chains
-
-Understanding how middleware executes helps you structure your endpoints effectively.
-Middleware runs in the order you define it in the array returned from your factory function.
+Middleware runs in definition order going in, then unwinds in reverse after the handler.
 
 Consider this example:
 
@@ -67,7 +63,7 @@ export default defineRoute<"example">(({ POST, use }) => [
 ]);
 ```
 
-When a POST request arrives, you'll see this output:
+When a POST request arrives, the execution order is like:
 
 ```
 First middleware
@@ -77,162 +73,77 @@ Second middleware after next
 First middleware after next
 ```
 
-Middleware executes in order until reaching your method handler,
-then unwinds back through the middleware in reverse order.
+Global middleware from `api/use.ts` runs first, then route-level `use` calls, then the handler.
 
-This "onion" model allows middleware to do work both before and after your handler runs -
-useful for tasks like timing requests, catching errors, or modifying responses.
-
-Global middleware from `api/use.ts` executes first,
-followed by route-specific middleware defined with `use`, and finally your method handler.
-
-This predictable order makes it easier to reason about what happens during a request.
-
-## 📍 Middleware Positioning
-
-The rule of thumb: All middleware always runs before method handlers,
-regardless of where you place the `use` calls in your array.
-
-It doesn't matter where `use` is placed, before handlers or after - middleware always runs before handlers.
+**Positioning note:** All `use` calls run before method handlers regardless of where they appear
+in the array. Defining `use` after a handler doesn't change this:
 
 ```ts
 export default defineRoute(({ use, GET, POST }) => [
   use(firstMiddleware),
-
-  GET(async (req, res) => { // or (ctx) for Koa
-    // ... handler logic
-  }),
-
-  POST(async (req, res) => { // or (ctx) for Koa
-    // ... handler logic
-  }),
-
-  use(secondMiddleware), // Still runs BEFORE handlers! [!code hl]
+  GET(async (ctx) => { /* ... */ }),
+  POST(async (ctx) => { /* ... */ }),
+  use(secondMiddleware), // still runs BEFORE handlers [!code hl]
 ]);
 ```
 
-Even though `secondMiddleware` is defined after the GET and POST handlers,
-it executes before them. The execution order is:
-
-1. `firstMiddleware`
-2. `secondMiddleware`
-3. GET or POST handler (whichever matches the request)
-
-`KosmoJS` collects all middleware first, then routes to the appropriate method handler.
-The position of `use` calls relative to method handlers doesn't change execution order.
-
 ## 🎯 Method-Specific Middleware
 
-Often you need middleware to run only for specific HTTP methods.
-
-For example, authentication might be required for POST, PUT, and DELETE requests
-but not for GET requests.
-
-`KosmoJS` supports this through the `on` option:
+Use the `on` option to restrict middleware to specific HTTP methods:
 
 ```ts [api/example/index.ts]
 export default defineRoute<"example">(({ GET, POST, PUT, DELETE, use }) => [
   use(async (ctx, next) => {
-    // ...
-    ctx.state.user = await verifyToken(token);
+    ctx.state.user = await verifyToken(ctx.headers.authorization);
     return next();
   }, {
-    on: ["POST", "PUT", "DELETE"], // run only on these methods // [!code hl]
+    on: ["POST", "PUT", "DELETE"], // [!code hl]
   }),
 
   GET(async (ctx) => {
-    // Public access - no authentication required
+    // no auth required
   }),
 
   POST(async (ctx) => {
-    // ctx.state.user is available here
-  }),
-
-  PUT(async (ctx) => {
-    // ctx.state.user is available here
-  }),
-
-  DELETE(async (ctx) => {
-    // ctx.state.user is available here
+    // ctx.state.user is available
   }),
 ]);
 ```
 
-The `on` option accepts an array of HTTP method names.
-The middleware only executes when the incoming request matches one of those methods.
+## 🎛️ Slot Composition
 
-This targeted approach keeps your middleware efficient and your intentions clear.
+Slots are named positions in the middleware chain. Middleware with the same slot name
+replaces earlier middleware at that position - useful for overriding global defaults per-route.
 
-## 🎛 Slot Composition
-
-Slot system gives you fine-grained control over middleware composition and override behavior.
-
-Using slot composition, you can precisely control which middleware runs and when,
-including selective overrides.
-
-This becomes important when working with global middleware that applies to all routes
-but needs customization for specific endpoints.
-
-`KosmoJS` applies certain middleware globally through a core configuration file
-located at `api/use.ts`.
-
-This file defines middleware that runs for every API endpoint by default.
-However, individual routes can override this default behavior using slots.
-
-A slot is essentially a named position in the middleware chain.
-When you assign a slot name to middleware, any subsequent middleware
-with the same slot name replaces the earlier one.
-
-This replacement mechanism gives you fine-grained control over which middleware runs where.
-
-Let's look at a concrete example from `KosmoJS`'s core configuration:
+A global error handler defined in `api/use.ts`:
 
 ```ts [api/use.ts]
-import { use } from "_/front/api";
-
 export default [
   use(
-    async function useErrorHandler(ctx, next) {
-      // default error handler
-    },
-    { slot: "errorHandler" },
+    async (ctx, next) => { /* global logger */ },
+    { slot: "logger" },
   ),
 ];
 ```
 
-Now suppose you have an endpoint that needs custom error handler.
-You can override the `errorHandler` middleware by using the same slot name:
+Override it for a specific route:
 
 ```ts [api/upload/index.ts]
-import { defineRoute } from "_/front/api";
-
 export default defineRoute<"upload">(({ POST, use }) => [
   use(
     async (ctx, next) => {
-      // custom error handler
+      // custom logger for this route only
     },
-    { slot: "errorHandler" },
+    { slot: "logger" },
   ),
-
-  POST(async (ctx) => {
-    // ...
-  }),
+  POST(async (ctx) => { /* ... */ }),
 ]);
 ```
 
-By using `slot: "errorHandler"`, this route-specific middleware replaces
-the default error handler for this endpoint only.
+**Important:** When overriding via slot, explicitly set `on` if needed -
+it doesn't inherit from the middleware being replaced.
 
-**Important:** When you override middleware using a slot,
-you must explicitly specify which methods it should run on with the `on` option.
-The `on` configuration doesn't inherit from the middleware you're replacing.
-
-If you omit the `on` option, your slotted middleware will run for all HTTP methods,
-which might not be what you want and could cause errors for methods that don't expect that processing.
-
-**Worth noting:** Slot names aren't limited to built-in slots.
-You can define custom slots by extending the `UseSlots` interface
-in your `api/env.d.ts` file:
+Custom slot names, like `logger`, should be added to `api/env.d.ts`:
 
 ```ts [api/env.d.ts]
 export declare module "@kosmojs/api" {
@@ -242,18 +153,8 @@ export declare module "@kosmojs/api" {
 }
 ```
 
-Now you can use the `logger` slot with your middleware:
+Then use it anywhere:
 
 ```ts
-export default defineRoute<"example">(({ POST, use }) => [
-  use(
-    async (ctx, next) => {
-      // Custom logger implementation
-    },
-    { slot: "logger" }, // [!code hl]
-  ),
-  POST(async (ctx) => {
-    // ...
-  }),
-]);
+use(async (ctx, next) => { /* ... */ }, { slot: "logger" })
 ```

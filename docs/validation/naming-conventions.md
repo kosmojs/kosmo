@@ -9,119 +9,37 @@ head:
         EventT, ResponseT, validation types, typescript conventions
 ---
 
-When defining types that will be used for runtime validation,
-avoid using names that conflict with TypeScript/JavaScript built-in types.
-
-Type names like `Event`, `Response`, `Request`, `Error`, or `Element`
-may work fine at compile time, but cause issues during runtime validation.
+Avoid naming your types after TypeScript/JavaScript built-ins like `Event`, `Response`, `Request`, or `Error`.
+These names compile fine, but cause silent failures during runtime validation.
 
 ## ⚠️ Why This Matters
 
-When `KosmoJS` flattens types for validation schema generation,
-built-in names are referenced as-is rather than being resolved to their definitions.
-
-This prevents the validator from understanding the actual structure,
-causing validation to fail at runtime.
-
-The type system at compile time understands context and scope,
-but the runtime validator needs explicit type definitions it can analyze.
-
-## 🚫 Problematic Naming
+When `KosmoJS` flattens types for schema generation, built-in names are referenced as-is
+rather than resolved to your custom definition. The validator sees the built-in, not your type,
+and validation fails at runtime without a compile-time warning.
 
 ```ts
-type Event = {
-  id: number;
-  name: string;
-  timestamp: string;
-};
+// ❌ Compiles fine, breaks at runtime
+type Event = { id: number; name: string; timestamp: string };
 
-// This compiles but fails runtime validation
-export default defineRoute(({ POST }) => [
-  POST<{ json: Event }>(async (ctx) => {
-    // Validation will fail because Event is treated as built-in DOM Event
-    // The validator doesn't see your custom definition
-  }),
-]);
+// ✅ Works correctly
+type EventT = { id: number; name: string; timestamp: string };
+type TEvent = { id: number; name: string; timestamp: string }; // also fine
 ```
 
-## ✅ Recommended Naming
-
-```ts
-type EventT = {
-  id: number;
-  name: string;
-  timestamp: string;
-};
-
-// Or with prefix
-type TEvent = {
-  id: number;
-  name: string;
-  timestamp: string;
-};
-
-// Runtime validation works correctly
-export default defineRoute(({ POST }) => [
-  POST<{ json: EventT }>(async (ctx) => {
-    // Validation succeeds with your custom type
-  }),
-]);
-```
-
-Use suffixes like `T` (e.g., `EventT`, `ResponseT`, `DataT`)
-or prefixes like `T` (e.g., `TEvent`, `TResponse`, `TData`)
-to avoid conflicts with built-in types.
-
-Both conventions are widely used in the `TypeScript` community.
-Choose one and use it consistently throughout your project.
+Use a consistent `T` suffix (`EventT`, `ResponseT`) or prefix (`TEvent`, `TResponse`) throughout your project.
+If validation fails unexpectedly despite correct type definitions, a naming conflict is the first thing to check.
 
 ## 📋 Common Built-ins to Avoid
 
-**DOM and Browser APIs:**
-- `Event`, `Element`, `Document`, `Window`, `Node`
-- `HTMLElement`, `SVGElement`, `Text`, `Comment`
-- `EventTarget`, `EventListener`, `CustomEvent`
+**DOM:** `Event`, `Element`, `Document`, `Window`, `Node`, `HTMLElement`, `EventTarget`, `CustomEvent`
 
-**Web APIs:**
-- `Response`, `Request`, `Headers`, `Body`
-- `Blob`, `File`, `FormData`, `URLSearchParams`
-- `WebSocket`, `MessageEvent`, `CloseEvent`
+**Web APIs:** `Response`, `Request`, `Headers`, `Body`, `Blob`, `File`, `FormData`, `URLSearchParams`, `WebSocket`
 
-**JavaScript Built-ins:**
-- `Error`, `TypeError`, `RangeError`, `SyntaxError`
-- `Date`, `RegExp`, `Promise`, `Symbol`
-- `Map`, `Set`, `WeakMap`, `WeakSet`
-- `Array`, `Object`, `String`, `Number`, `Boolean`
+**JavaScript:** `Error`, `Date`, `RegExp`, `Promise`, `Symbol`, `Map`, `Set`, `Array`, `Object`, `String`, `Number`
 
-**TypeScript Utility Types:**
-- `Partial`, `Required`, `Readonly`, `Pick`, `Omit`
-- `Record`, `Exclude`, `Extract`, `NonNullable`
-- `Parameters`, `ReturnType`, `InstanceType`
+**TypeScript utilities:** `Partial`, `Required`, `Readonly`, `Pick`, `Omit`, `Record`, `Exclude`, `Extract`, `NonNullable`
 
-**Node.js Types:**
-- `Buffer`, `Stream`, `EventEmitter`
-- `Timeout`, `Immediate`, `Timer`
+**Node.js:** `Buffer`, `Stream`, `EventEmitter`, `Timeout`
 
-## 🔍 Complete Reference
-
-For a comprehensive list of all built-in types to avoid,
-check the [TFusion library](https://github.com/sleewoo/tfusion/blob/main/src/builtins.ts)
-that `KosmoJS` uses for type flattening.
-
-## 💡 Best Practices
-
-- **Establish a naming convention early** in your project and document it.
-Whether you choose `TypeT` or `TType`, consistency matters more than the specific pattern.
-
-- **Use descriptive names** that indicate the type's purpose.
-`UserEventT` is better than `EventT` if it's specific to user events.
-
-- **Consider domain prefixes** for complex projects.
-`ApiResponseT`, `DbRecordT`, `UiComponentT` clearly indicate context.
-
-- **Review existing types** when adding validation to an established codebase.
-Look for conflicts with built-in names that need renaming.
-
-- **Test your validation** after defining types.
-If validation fails unexpectedly despite correct type definitions,
-check for built-in name conflicts.
+For the full list, see the [TFusion builtins reference](https://github.com/sleewoo/tfusion/blob/main/src/builtins.ts).

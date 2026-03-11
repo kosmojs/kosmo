@@ -9,13 +9,13 @@ head:
         scalability, code organization, folder structure, routing patterns
 ---
 
-At first glance, directory-based routing might seem more verbose compared to file-based routing systems.
-You might wonder why `api/users/[id]/index.ts` is better than simply `api/users/[id].ts`.
-The answer becomes clear as your application scales.
+At first glance, directory-based routing looks more verbose than file-based alternatives.
+`api/users/[id]/index.ts` vs `api/users/[id].ts` - the extra folder seems unnecessary.
+It isn't, and the reason becomes obvious as your project grows.
 
-### ⚠️ File-Based Routing Limitations
+## ⚠️ The File-Based Routing Problem
 
-In file-based routing systems, each route is a single file. Consider a typical API structure:
+In file-based routing, route handlers and helper files live side by side:
 
 ```
 api/
@@ -27,91 +27,60 @@ api/
     utils.ts           ➜ Helpers... used by what?
 ```
 
-**The problem: Which file is the actual route handler?**
+Which files are route handlers? Which are helpers? Is `schema.ts` a route at `/users/schema`
+or a shared validation file? You can't tell without opening files or relying on team conventions.
 
-At first glance, which files are route handlers and which are helpers?
-Is `schema.ts` a route that handles `/users/schema`? Or is it a helper file?
-You have to open files or rely on framework-specific conventions to figure out what's what.
+## 🏆 Directory-Based Clarity
 
-### 🏆 Directory-Based Routing Benefits
-
-With directory-based routing, each route gets its own folder with one handler: `index.ts`
+With directory-based routing, the rule is simple: **only `index.ts` is a route handler**.
+Everything else in the folder is a helper for that route.
 
 ```
 api/
   users/
     index.ts           ➜ Handler for /users
-    schema.ts          ➜ Clearly for /users route
+    schema.ts          ➜ Obviously a helper for /users
 
     [id]/
       index.ts         ➜ Handler for /users/:id
-      permissions.ts   ➜ Obviously for this endpoint
+      permissions.ts   ➜ Obviously a helper for this endpoint
 
       posts/
         index.ts       ➜ Handler for /users/:id/posts
-        formatter.ts   ➜ Post-specific logic
+        formatter.ts   ➜ Obviously post-specific logic
 ```
 
-**The clarity: Only `index.ts` is special. Everything else is a helper.**
+No conventions to memorize, no ambiguity. The folder tree is your API map -
+every folder with an `index.ts` is a route, everything else is support code.
 
-The benefits become apparent at scale:
-
-**Instant recognition:**
-Every route handler is named `index.ts`. No guessing, no pattern matching.
-See `index.ts`? That's the handler. Everything else? Helpers for that route.
-
-**Natural colocalization:**
-Each route has its own namespace. Name collision? Impossible.
-Want to add validation? Just create `validation.ts` in that route's folder.
-
-**Clear ownership:**
-Looking at `api/users/[id]/permissions.ts`, you immediately know it's for the `/users/[id]` endpoint.
-No need to trace imports or read code to understand the relationship.
-
-**Self-documenting structure:**
-The folder tree *is* your API documentation. Want to see all endpoints? Look at the folders.
-Each folder with an `index.ts` is a route. Everything else is support code.
-
-**Scales gracefully:**
+This scales naturally:
 
 ```
 api/
   products/
     index.ts
-
     [id]/
       index.ts
       cache.ts
       pricing.ts
-
       reviews/
         index.ts
         moderation.ts
-
         [reviewId]/
           index.ts
           flags.ts
 ```
 
-The hierarchy is immediately clear. Each route's complexity is isolated to its own folder.
+Each route's complexity is isolated in its own folder.
+New developers understand the structure immediately.
+Six months later, you can still navigate it without re-reading the codebase.
 
-### ⚖️ The Trade-off
+## ⚖️ The Trade-off
 
-Yes, directory-based routing is slightly more verbose upfront.
-You create a folder even when you only have an `index.ts` inside it.
-But this small initial cost pays enormous dividends:
+You create a folder even when it only contains `index.ts`. That's the entire cost.
 
-- **Consistent conventions:** `index.ts` is always the handler, no exceptions
-- **Zero ambiguity:** Helpers are obviously helpers because they're not named `index.ts`
-- **Room to grow:** When you need to add helpers, there's already a natural place for them
-- **Instant navigation:** Six months later, you can find any route instantly
-- **Onboarding:** New developers understand the structure in minutes, not days
-
-It's one of those "trust the process" patterns where the benefit isn't obvious until your application grows.
-But once you've experienced trying to maintain a large file-based routing system with ambiguous file naming,
-you'll appreciate why directory-based routing enforces this clear structure from the start.
-
-Your folder structure naturally maps to your routing schema:
+In return: zero ambiguity, natural colocalization, room to grow without restructuring,
+and a folder tree that directly mirrors your API surface:
 
 ```sh
 $ tree -d src/front/api
@@ -119,15 +88,13 @@ src/front/api/
 └── shop
     ├── cart
     ├── [category]
-    │   └── {productId}
+    │   └── {productId}
     ├── checkout
-    │   ├── confirm
-    │   ├── payment
-    │   └── shipping
+    │   ├── confirm
+    │   ├── payment
+    │   └── shipping
     ├── orders
-    │   └── [orderId]
-    ├── product
-    │   └── [id]-reviews
+    │   └── [orderId]
     └── products
         └── {category}
 ```

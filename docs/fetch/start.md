@@ -9,88 +9,57 @@ head:
         payload typing, response types, typescript api client
 ---
 
-The fetch index exports a default object that maps route paths to their corresponding clients:
+The fetch index exports a map of route paths to their generated clients:
 
 ```ts [pages/example/index.tsx]
-// import fetch clients
 import fetchClients from "_/front/fetch";
 
-// Pick needed client by route name
 const response = await fetchClients["users/[id]"].GET([123]);
 ```
 
-### 🚀 Using the Fetch Client Methods
+## 🚀 Method Signatures
 
-The fetch client exports methods for each HTTP verb your API route handles.
+Each client exposes methods for the HTTP verbs your route handles.
+The signature reflects your route definition directly:
+- First argument is a parameter array, in path order
+- Second argument is the payload, if your handler defines one
 
-If your route defines GET, POST, and PUT handlers, the client exports GET, POST, and PUT functions.
-
-These functions accept parameters and payloads according to the types you specified in your route definition.
-
-The method signature adapts to your route's requirements. If your route has parameters,
-the first argument is an array of parameter values in the order they appear in the route path.
-
-If your route's handler defines a payload type, the second argument accepts payload data.
-
-Both arguments are typed according to your API definition, so `TypeScript` guides you toward correct usage.
-
-Consider an API route with a typed parameter and payload:
+Given this route:
 
 ```ts [api/users/[id]/index.ts]
-// API route definition
-import { defineRoute } from "_/front/api";
-
 export default defineRoute<"users/[id]", [number]>(({ GET }) => [
   GET<{
-    json: { name?: string },
+    query: { name?: string },
     response: [200, "json", { id: number; name: string; email: string }],
-  }>(async (ctx) => {
-    // Handler implementation
-  }),
+  }>(async (ctx) => { /* ... */ }),
 ]);
 ```
 
-The generated fetch client for this route expects a number parameter and optional payload:
+The generated client expects a number parameter and an optional payload:
 
 ```ts [pages/example/index.tsx]
-import fetchClients from "_/front/fetch";
+const useFetch = fetchClients["users/[id]"];
 
-const useFetch = fetchClients["users/[id]"]
-
-// Call with just parameters
 const response = await useFetch.GET([123]);
-
-// Call with parameters and payload
-const response = await useFetch.GET([123], { json: { name: "John" } });
+const response = await useFetch.GET([123], { query: { name: "John" } });
+// response is typed as { id: number; name: string; email: string }
 ```
 
-The `response` variable is typed as `{ id: number; name: string; email: string }`
-because that's what your API route declared as its response body.
+## 📭 Routes Without Parameters or Payloads
 
-`TypeScript` ensures you handle the response correctly, and when validation is enabled,
-runtime checks ensure the response actually matches this structure.
-
-### 📭 Routes Without Parameters or Payloads
-
-Not all routes need parameters or payloads. A route at `api/users/index.ts`
-with no parameters and no payload or response types can be called without arguments:
+No parameters, no array:
 
 ```ts
-import fetchClients from "_/front/fetch";
-
 const response = await fetchClients["users"].GET();
 ```
 
-If the route defines a payload type but you're using a method like GET that typically doesn't send a body,
-you still provide the payload argument. The generated client handles translating this into query parameters:
+If there is a payload to send without params, just use an empty array for params:
 
 ```ts
-// GET with query parameters
-const response = await fetchClients["users"].GET([], { filter: "active", page: 1 });
+const response = await fetchClients["users"].GET([], {
+  query: { filter: "active", page: 1 }
+});
 ```
 
-If a route defines no payload type or explicitly uses `never` as the payload type,
-the fetch method doesn't require the second argument.
-
-The generated client adapts to exactly what your API expects,
-making it impossible to call endpoints incorrectly.
+If the route defines no payload type (or `never`), the second argument is not required.
+The client adapts to exactly what your API expects - passing the wrong shape is a type error.

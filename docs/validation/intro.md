@@ -9,16 +9,13 @@ head:
         typescript validation, type safety, validation generator, end-to-end validation
 ---
 
-One of most compelling `KosmoJS` feature is the approach to validation.
+`KosmoJS` uses a "runtype" validation approach - your `TypeScript` types are automatically
+converted into JSON Schema and validated at runtime.
 
-It's called "runtype" validation - your types are automatically converted into JSON Schema and validated at runtime.
-
-Rather than learn and maintain separate schema definition languages,
-you can express validation rules directly in `TypeScript`.
-
-Your types serve as source of truth for:
+No separate schema language to learn. No schemas drifting out of sync with your types.
+One type definition becomes the source of truth for:
 - runtime validation on the server
-- client-side validated type-safe fetch clients
+- client-side validation in generated fetch clients
 - OpenAPI 3.1 specification
 
 <div class="text-center">
@@ -27,67 +24,50 @@ Your types serve as source of truth for:
 
 ## 🛡️ Understanding Runtype Validation
 
-By default, when you provide type annotations to your route parameters, payloads, and responses,
-those annotations provide compile-time type checking through `TypeScript`.
+When you provide type annotations to your route parameters, payloads, and responses,
+`TypeScript` gives you compile-time checking - autocomplete, refactoring safety, and error detection before you run your code.
 
-Your editor gives you autocomplete, catches type errors before you run your code, and helps you refactor safely.
-
-However, these compile-time checks don't protect you at runtime.
+But compile-time checks don't protect you at runtime.
 When actual HTTP requests arrive with unpredictable data from the outside world,
-`TypeScript` can't help you - it only exists during development and compilation.
+`TypeScript` is no longer in the picture.
 
-This is where runtype validation comes in.
+Runtype validation closes this gap.
 The same type definitions that give you compile-time safety
 also generate validation logic that runs when requests arrive,
-ensuring that the data actually matches what your types promise.
+ensuring that incoming data actually matches what your types promise.
 
-## 🔄 The Power of End-to-End Validation
+## 🔄 End-to-End Validation
 
-Being end-to-end, runtype validation happens at both ends:
+Runtype validation happens at both ends:
 the client validates before sending requests,
 and the server validates before processing them.
 
-That means fetch clients actively validates request data on the client side
-before sending anything to the server.
-If validation fails, the client throws an error immediately without making a network request.
+Generated fetch clients validate request data on the client side before making any network request.
+If validation fails, the client throws immediately - no round trip needed.
 
-This client-side validation uses exactly the same schemas that validate on the server,
-ensuring perfect consistency between what the client considers valid and what the server accepts.
+This uses the exact same schemas that validate on the server,
+so what the client considers valid and what the server accepts are always in sync.
 
-And no, double validation is not a performance hit. Actually, it improves performance -
-invalid requests never reach your server, saving network bandwidth and server resources.
-
-For high-traffic APIs, this client-side validation can reduce the number of requests
-your servers need to process. Users also get faster feedback when they make mistakes,
-since validation errors appear instantly without waiting for a round trip to the server.
+Double validation is not a performance cost - it's a performance gain.
+Invalid requests never reach your server, saving bandwidth and compute.
+Users also get instant feedback instead of waiting for a server response.
 
 <div class="text-center">
   <LinkButton href="/validation/payload">Get Started</LinkButton>
 </div>
 
-## 🔍 Understanding the Generated Validation Code
+## 🔍 How Generation Works
 
-For runtype validation to work seamlessly, `KosmoJS` uses AST parsing to extract types from your route files,
+`KosmoJS` uses AST parsing to extract types from your route files,
 then AOT compilation to generate high-performance validation routines in your `lib` directory.
 
-You don't need to understand the generated code to use validation -
-`KosmoJS` integrates it into the request processing pipeline automatically.
+For each validated type, [TypeBox](https://github.com/sinclairzx81/typebox) produces a JSON Schema
+and a compiled validator function tailored specifically to that structure -
+direct property checks with minimal overhead, not a generic JSON Schema interpreter.
 
-However, understanding what happens under the hood can help you reason about performance characteristics
-and troubleshoot issues if they arise.
+The generated code lives in `lib`, keeping your source directories focused on business logic.
+At production build time it's bundled like any other dependency.
 
-For each validated type, `Typebox` used to produce a JSON Schema and a compiled validator function.
-The validator function is highly optimized -
-it doesn't use generic validation logic that checks every possible JSON Schema keyword.
-
-Instead, it's specifically tailored to validate the exact structure you defined,
-with direct property checks and minimal overhead.
-
-This compilation approach means validation is fast enough for production use.
-The performance overhead of validation is typically negligible compared to other parts of request processing
-like parsing, database queries, or business logic.
-For most applications, the benefits of guaranteed data correctness far outweigh any performance cost.
-
-The generated validation code lives in `lib` rather than in your source directories,
-keeping your code focused on business logic.
-When you build for production, this generated code is included in the bundle just like any other dependency.
+You don't need to read or understand the generated code to use validation.
+If you're curious about performance characteristics or need to troubleshoot,
+see [Validation Performance](/validation/performance).
