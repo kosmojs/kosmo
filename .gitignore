@@ -5,7 +5,6 @@
 /docs/.vitepress/cache/
 /docs/.vitepress/.temp/
 
-/test/__test_app/
 /.tmuxinator*
 
 # ignore var dir any level depth
