@@ -448,7 +448,7 @@ The API server and SSR server are bundled separately - deploy, scale, and run th
 
 [Read more ➜](/frontend/server-side-render)
 
-## 🌐 Multiple Source Folders
+## 🗂️ Multiple Source Folders
 
 Add more source folders as your app grows - each with its own framework, base URL, port, and config:
 
