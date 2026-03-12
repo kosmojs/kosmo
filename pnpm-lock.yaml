@@ -16,7 +16,7 @@ importers:
         version: 2.30.0(@types/node@25.4.0)
       '@hono/node-server':
         specifier: ^1.19.11
-        version: 1.19.11(hono@4.12.5)
+        version: 1.19.11(hono@4.12.7)
       '@kosmojs/api':
         specifier: workspace:^
         version: link:packages/core/api
@@ -48,14 +48,14 @@ importers:
         specifier: ^14.6.6
         version: 14.6.6
       hono:
-        specifier: ^4.12.5
-        version: 4.12.5
+        specifier: ^4.12.7
+        version: 4.12.7
       msw:
         specifier: ^2.12.10
         version: 2.12.10(@types/node@25.4.0)(typescript@5.9.3)
       node:
-        specifier: runtime:^22.22.1
-        version: runtime:22.22.1
+        specifier: runtime:^24.14.0
+        version: runtime:24.14.0
       ora:
         specifier: ^9.3.0
         version: 9.3.0
@@ -332,7 +332,7 @@ importers:
     devDependencies:
       '@hono/node-server':
         specifier: ^1.19.11
-        version: 1.19.11(hono@4.12.5)
+        version: 1.19.11(hono@4.12.7)
       '@kosmojs/api':
         specifier: workspace:^
         version: link:../../core/api
@@ -340,8 +340,8 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
       hono:
-        specifier: ^4.12.5
-        version: 4.12.5
+        specifier: ^4.12.7
+        version: 4.12.7
       path-to-regexp:
         specifier: ^8.3.0
         version: 8.3.0
@@ -2273,8 +2273,8 @@ packages:
   headers-polyfill@4.0.3:
     resolution: {integrity: sha512-IScLbePpkvO846sIwOtOTDjutRMWdXdJmXdMvk6gCBHxFO8d+QKOQedyZSxFTTFYRSmlgSTDtXqqq4pcenBXLQ==}
 
-  hono@4.12.5:
-    resolution: {integrity: sha512-3qq+FUBtlTHhtYxbxheZgY8NIFnkkC/MR8u5TTsr7YZ3wixryQ3cCwn3iZbg8p8B88iDBBAYSfZDS75t8MN7Vg==}
+  hono@4.12.7:
+    resolution: {integrity: sha512-jq9l1DM0zVIvsm3lv9Nw9nlJnMNPOcAtsbsgiUhWcFzPE99Gvo6yRTlszSLLYacMeQ6quHD6hMfId8crVHvexw==}
     engines: {node: '>=16.9.0'}
 
   hookable@5.5.3:
@@ -2716,113 +2716,94 @@ packages:
   node-releases@2.0.36:
     resolution: {integrity: sha512-TdC8FSgHz8Mwtw9g5L4gR/Sh9XhSP/0DEkQxfEFXOpiul5IiHgHan2VhYYb6agDSfp4KuvltmGApc8HMgUrIkA==}
 
-  node@runtime:22.22.1:
+  node@runtime:24.14.0:
     resolution:
       type: variations
       variants:
         - resolution:
             archive: tarball
             bin: bin/node
-            integrity: sha256-3XVCX+eHWwT7277urZuycdqs/4S3XQuh1PbMvuUV6uE=
+            integrity: sha256-J6xI+Ux+iPSwxdkHfw/sECViicfcoh4Nn4LLqtE9bj0=
             type: binary
-            url: https://nodejs.org/download/release/v22.22.1/node-v22.22.1-aix-ppc64.tar.gz
+            url: https://nodejs.org/download/release/v24.14.0/node-v24.14.0-aix-ppc64.tar.gz
           targets:
             - cpu: ppc64
               os: aix
         - resolution:
             archive: tarball
             bin: bin/node
-            integrity: sha256-Z5rUlmM55O9JAPV5lnFIZOQhG4mIJbuEDDCGxBn7zvI=
+            integrity: sha256-oaVPRqdQ0lI9Yo2SSqthdYpRydrT4COL6xQUG+lhXdM=
             type: binary
-            url: https://nodejs.org/download/release/v22.22.1/node-v22.22.1-darwin-arm64.tar.gz
+            url: https://nodejs.org/download/release/v24.14.0/node-v24.14.0-darwin-arm64.tar.gz
           targets:
             - cpu: arm64
               os: darwin
         - resolution:
             archive: tarball
             bin: bin/node
-            integrity: sha256-B7E3ItVYeQ/KILsez2G94kt6SGMRH3vnf8VyUaQHNZo=
+            integrity: sha256-8oeeuBDiWZOgV45dh4kwJm/S6vz/6fKDmz2Ns1TUh54=
             type: binary
-            url: https://nodejs.org/download/release/v22.22.1/node-v22.22.1-darwin-x64.tar.gz
+            url: https://nodejs.org/download/release/v24.14.0/node-v24.14.0-darwin-x64.tar.gz
           targets:
             - cpu: x64
               os: darwin
         - resolution:
             archive: tarball
             bin: bin/node
-            integrity: sha256-HRaQ6aukfoh6J1q8bY9zF+VxoHAN6u9JP3aDd+mRVfU=
+            integrity: sha256-9EdAzSGN6BJ/HETEFRCjp0D6XJyNHNzhw77a2nnzzec=
             type: binary
-            url: https://nodejs.org/download/release/v22.22.1/node-v22.22.1-linux-arm64.tar.gz
+            url: https://nodejs.org/download/release/v24.14.0/node-v24.14.0-linux-arm64.tar.gz
           targets:
             - cpu: arm64
               os: linux
         - resolution:
             archive: tarball
             bin: bin/node
-            integrity: sha256-K1ktIWCe8pnR45GLuAbtYrpxXUEJsPjsEbEyr5+kLXA=
+            integrity: sha256-g7Jj+cLqlGwMShXDyupkcNxJ/gvrbzPf0pqpEoJQY3o=
             type: binary
-            url: https://nodejs.org/download/release/v22.22.1/node-v22.22.1-linux-armv7l.tar.gz
-          targets:
-            - cpu: armv7l
-              os: linux
-        - resolution:
-            archive: tarball
-            bin: bin/node
-            integrity: sha256-GPmrfaTzoE7CE1kLFOXXi2C/tca4v1NUHn6vGt+dJwo=
-            type: binary
-            url: https://nodejs.org/download/release/v22.22.1/node-v22.22.1-linux-ppc64le.tar.gz
+            url: https://nodejs.org/download/release/v24.14.0/node-v24.14.0-linux-ppc64le.tar.gz
           targets:
             - cpu: ppc64le
               os: linux
         - resolution:
             archive: tarball
             bin: bin/node
-            integrity: sha256-YSj51UobQyWBRNesB0qC07bJbY6cs6jhTkcipmmQrb4=
+            integrity: sha256-j6Igofe3dpYFwukp/b9zaCKZe/TPiKPbBRiOq9dxIyg=
             type: binary
-            url: https://nodejs.org/download/release/v22.22.1/node-v22.22.1-linux-s390x.tar.gz
+            url: https://nodejs.org/download/release/v24.14.0/node-v24.14.0-linux-s390x.tar.gz
           targets:
             - cpu: s390x
               os: linux
         - resolution:
             archive: tarball
             bin: bin/node
-            integrity: sha256-B8iq+mBkT7ga3voe59qGDrGSCFH/3Jo3Agqwvkf7wQ4=
+            integrity: sha256-2/W4Zl3sFeWeY1mlF/77R7I/25FS2N75dbm8o9/G01U=
             type: binary
-            url: https://nodejs.org/download/release/v22.22.1/node-v22.22.1-linux-x64.tar.gz
+            url: https://nodejs.org/download/release/v24.14.0/node-v24.14.0-linux-x64.tar.gz
           targets:
             - cpu: x64
               os: linux
         - resolution:
             archive: zip
             bin: node.exe
-            integrity: sha256-0HIvze+hwI5K8xgJ6RrU8jKC9sU1wmFgfoqjctDOYd0=
-            prefix: node-v22.22.1-win-arm64
+            integrity: sha256-iNNugQlzai+pvcWW8s9QejxSxpzfluVPis1HPsFL6FM=
+            prefix: node-v24.14.0-win-arm64
             type: binary
-            url: https://nodejs.org/download/release/v22.22.1/node-v22.22.1-win-arm64.zip
+            url: https://nodejs.org/download/release/v24.14.0/node-v24.14.0-win-arm64.zip
           targets:
             - cpu: arm64
               os: win32
         - resolution:
             archive: zip
             bin: node.exe
-            integrity: sha256-h3y5OCnhT/+7x5A+fYA3M2yaefPqQ8XQuMI3m3naVt4=
-            prefix: node-v22.22.1-win-x64
+            integrity: sha256-MT+kDA17GFdYId6MsXSDAx/gfZXeWZT29DXzs0X4XGY=
+            prefix: node-v24.14.0-win-x64
             type: binary
-            url: https://nodejs.org/download/release/v22.22.1/node-v22.22.1-win-x64.zip
+            url: https://nodejs.org/download/release/v24.14.0/node-v24.14.0-win-x64.zip
           targets:
             - cpu: x64
               os: win32
-        - resolution:
-            archive: zip
-            bin: node.exe
-            integrity: sha256-r+PSNWOozDZ1m0xgZF0S888oB9AQBWTc3G84H6BxUhc=
-            prefix: node-v22.22.1-win-x86
-            type: binary
-            url: https://nodejs.org/download/release/v22.22.1/node-v22.22.1-win-x86.zip
-          targets:
-            - cpu: x86
-              os: win32
-    version: 22.22.1
+    version: 24.14.0
     hasBin: true
 
   normalize-url@8.1.1:
@@ -4165,9 +4146,9 @@ snapshots:
       '@noble/hashes': 1.8.0
     optional: true
 
-  '@hono/node-server@1.19.11(hono@4.12.5)':
+  '@hono/node-server@1.19.11(hono@4.12.7)':
     dependencies:
-      hono: 4.12.5
+      hono: 4.12.7
 
   '@inquirer/ansi@1.0.2': {}
 
@@ -5636,7 +5617,7 @@ snapshots:
 
   headers-polyfill@4.0.3: {}
 
-  hono@4.12.5: {}
+  hono@4.12.7: {}
 
   hookable@5.5.3: {}
 
@@ -6102,7 +6083,7 @@ snapshots:
 
   node-releases@2.0.36: {}
 
-  node@runtime:22.22.1: {}
+  node@runtime:24.14.0: {}
 
   normalize-url@8.1.1: {}
 

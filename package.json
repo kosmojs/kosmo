@@ -5,7 +5,7 @@
   "devEngines": {
     "runtime": {
       "name": "node",
-      "version": "^22.22.1",
+      "version": "^24.14.0",
       "onFail": "download"
     }
   },
@@ -39,7 +39,7 @@
     "esbuild": "^0.27.3",
     "esbuilder": "link:esbuilder",
     "got": "^14.6.6",
-    "hono": "^4.12.5",
+    "hono": "^4.12.7",
     "msw": "^2.12.10",
     "ora": "^9.3.0",
     "path-to-regexp": "^8.3.0",
