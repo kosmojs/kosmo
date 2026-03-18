@@ -15,9 +15,9 @@ reflecting the focus on organized, structured project architecture.
 
 ### 🎯 What is KosmoJS?
 
-A `Vite` template evolved into a composable meta-framework built around a specific approach
-to organizing full-stack applications. You keep the full Vite ecosystem
-while working within a structure designed to scale.
+A `Vite` template evolved into a composable meta-framework.<br/>
+It is built around a specific approach to organizing full-stack applications.<br/>
+You keep the full Vite ecosystem while working within a structure designed to scale.
 
 Backend: **Koa** or **Hono**. Frontend: **React**, **Vue**, or **SolidJS**.
 Same routing architecture and type safety across all combinations.
