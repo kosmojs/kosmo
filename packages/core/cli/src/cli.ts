@@ -7,6 +7,8 @@ import concurrently from "concurrently";
 import prompts, { type PromptObject } from "prompts";
 import { glob } from "tinyglobby";
 
+import { defaults } from "@kosmojs/dev";
+
 import {
   assertNoError,
   BACKEND_FRAMEWORKS,
@@ -323,7 +325,7 @@ try {
   } else {
     const configs = await glob(
       optedFolders.length
-        ? optedFolders.map((e) => `${e}/vite.config.*`)
+        ? optedFolders.map((e) => `${defaults.srcDir}/${e}/vite.config.*`)
         : "**/vite.config.*",
       {
         absolute: false,
