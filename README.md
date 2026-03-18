@@ -1,6 +1,4 @@
-# KosmoJS
-
-### A Vite template evolved into a full‑stack meta‑framework
+## KosmoJS - the composable meta-framework
 
 Multiple source folders. Directory-based routing.
 Cascading middleware. Nested layouts.

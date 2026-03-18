@@ -11,6 +11,8 @@ head:
 
 Starting your `KosmoJS` journey is a breeze! ✨
 
+[![asciicast](https://asciinema.org/a/kj91nc9avKDyMN4t.svg)](https://asciinema.org/a/kj91nc9avKDyMN4t)
+
 ## 🚀 Create Your Project
 
 ::: code-group

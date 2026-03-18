@@ -1,11 +1,11 @@
 ---
 layout: home
-description: KosmoJS - a Vite-based full‑stack meta‑framework for type‑safe apps
+description: KosmoJS - the composable meta-framework
 
 hero:
   name: KosmoJS
   tagline: <span class="tagline-container">
-      <span class="headline">A Vite template evolved into a full‑stack meta‑framework</span>
+      <span class="headline">the composable meta-framework</span>
       <span>Multiple source folders. Directory-based routing.</span>
       <span>Cascading middleware. Nested layouts.</span>
       <span>End-to-end validation. Fetch clients. OpenAPI spec.</span>
@@ -77,7 +77,7 @@ features:
 
 ## 🎯 What is KosmoJS?
 
-`KosmoJS` is a **meta-framework** that integrates `TypeScript`, `Vite`, `Koa`/`Hono`,
+`KosmoJS` is a composable **meta-framework** that integrates `TypeScript`, `Vite`, `Koa`/`Hono`,
 and your frontend framework into a clear organizational pattern.
 Separation of concerns isn't something you have to remember - it's built into the structure.
 
