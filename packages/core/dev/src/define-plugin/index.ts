@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
+import { parseEnv } from "node:util";
 
-import { parse as dotenv } from "dotenv";
 import type { Plugin } from "vite";
 
 import { pathExists } from "../fs";
@@ -27,7 +27,7 @@ export default (entries: Array<Entry>): Plugin => {
           : false;
 
         const env = fileExists
-          ? dotenv(await readFile(file as never, "utf8"))
+          ? parseEnv(await readFile(file as never, "utf8"))
           : process.env;
 
         for (const [key, val] of Object.entries(env)) {

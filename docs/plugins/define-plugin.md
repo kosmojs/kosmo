@@ -5,8 +5,7 @@ description: DefinePlugin provides fine-grained control over environment variabl
 head:
   - - meta
     - name: keywords
-      content: define plugin, environment variables, env vars, vite env,
-        process.env, dotenv, client environment
+      content: define plugin, environment variables, env vars, vite env, process.env, client environment
 ---
 
 ### The DefinePlugin
