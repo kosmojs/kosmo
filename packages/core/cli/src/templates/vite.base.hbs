@@ -1,6 +1,5 @@
 import { basename, resolve } from "node:path";
 
-import { aliasPlugin, definePlugin } from "@kosmojs/vite/plugins";
 import { loadEnv, mergeConfig, type UserConfig } from "vite";
 
 import pkg from "./package.json" with { type: "json" };
@@ -31,15 +30,5 @@ export default (sourceFolderPath: string, config: UserConfig) => {
     },
 
     cacheDir: resolve(import.meta.dirname, `var/.vite/${sourceFolder}`),
-
-    plugins: [
-      aliasPlugin(import.meta.dirname),
-      definePlugin([
-        {
-          // keys extracted from process.env and exposed to client
-          keys: ["DEBUG"],
-        },
-      ]),
-    ],
   });
 };
