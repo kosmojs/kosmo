@@ -10,7 +10,7 @@ npm install -D @kosmojs/hono-generator
 
 ## Documentation
 
-See [kosmojs.dev](https://kosmojs.dev/generators/writing-generators/intro.html)
+See [kosmojs.dev](https://kosmojs.dev/generators/intro.html)
 
 ## License
 
