@@ -1,6 +1,6 @@
 import { basename, resolve } from "node:path";
 
-import { aliasPlugin, definePlugin } from "@kosmojs/dev";
+import { aliasPlugin, definePlugin } from "@kosmojs/vite/plugins";
 import { loadEnv, mergeConfig, type UserConfig } from "vite";
 
 import pkg from "./package.json" with { type: "json" };

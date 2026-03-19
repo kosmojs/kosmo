@@ -1,5 +1,5 @@
-/packages/*/*/test/**/@fixtures/**/lib/
-/packages/*/*/pkg/
+/packages/**/test/**/@fixtures/**/lib/
+/packages/**/pkg/
 
 /docs/.vitepress/dist/
 /docs/.vitepress/cache/

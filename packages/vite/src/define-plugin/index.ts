@@ -3,7 +3,7 @@ import { parseEnv } from "node:util";
 
 import type { Plugin } from "vite";
 
-import { pathExists } from "../fs";
+import { pathExists } from "@kosmojs/dev";
 
 type Entry = {
   keys: Array<string>;

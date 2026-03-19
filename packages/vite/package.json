@@ -1,0 +1,25 @@
+{
+  "type": "module",
+  "name": "@kosmojs/vite",
+  "version": "0.0.25",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "pkg/*"
+  ],
+  "exports": {
+    "./plugins": {
+      "types": "./pkg/plugins.d.ts",
+      "default": "./pkg/plugins.js"
+    }
+  },
+  "scripts": {
+    "build": "esbuilder src/plugins.ts"
+  },
+  "dependencies": {
+        "@kosmojs/dev": "workspace:^"
+  }
+}

@@ -7,7 +7,7 @@
       "esbuilder/esbuilder.js",
       "docs/**/*.ts",
       "test/**/*.ts",
-      "packages/*/*/{src,test}/**/*.ts",
+      "packages/**/{src,test}/**/*.ts",
       "packages/**/*.js",
       "!packages/*/*/test/**/@fixtures/**/*"
     ]
