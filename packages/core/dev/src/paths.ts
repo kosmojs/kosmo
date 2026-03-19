@@ -1,3 +1,4 @@
+import { access, constants } from "node:fs/promises";
 import { join } from "node:path";
 
 import { defaults } from "./defaults";
@@ -118,4 +119,13 @@ export const pathResolver = ({
       return createImport[key](...a.slice(0, -1));
     },
   };
+};
+
+export const pathExists = async (path: string): Promise<boolean> => {
+  try {
+    await access(path, constants.F_OK);
+    return true;
+  } catch {
+    return false;
+  }
 };

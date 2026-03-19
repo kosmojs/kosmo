@@ -10,8 +10,7 @@ import crc from "crc/crc32";
  * */
 import self from "@kosmojs/dev/package.json" with { type: "json" };
 
-import { pathExists } from "./fs";
-import { pathResolver } from "./paths";
+import { pathExists, pathResolver } from "./paths";
 import type { ApiRoute } from "./types";
 
 export type Cache = {

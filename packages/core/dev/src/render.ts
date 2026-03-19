@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import crc from "crc/crc32";
 import handlebars from "handlebars";
 
-import { pathExists } from "./fs";
+import { pathExists } from "./paths";
 import type { PageRoute } from "./types";
 
 export type RenderOptions = {

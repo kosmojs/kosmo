@@ -1,5 +1,3 @@
-import { access, constants } from "node:fs/promises";
-
 import picomatch, { type Matcher } from "picomatch";
 
 import {
@@ -185,13 +183,4 @@ export const factory: GeneratorFactory<Options> = async (
       await generateLibFiles(entries);
     },
   };
-};
-
-export const pathExists = async (path: string): Promise<boolean> => {
-  try {
-    await access(path, constants.F_OK);
-    return true;
-  } catch {
-    return false;
-  }
 };

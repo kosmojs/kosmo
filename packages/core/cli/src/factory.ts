@@ -12,6 +12,7 @@ import self from "@kosmojs/cli/package.json" with { type: "json" };
 import {
   defaults,
   type GeneratorConstructor,
+  pathExists,
   renderToFile,
 } from "@kosmojs/dev";
 import {
@@ -34,7 +35,6 @@ import {
   DEFAULT_PORT,
   NODE_VERSION,
   type Project,
-  pathExists,
   type SourceFolder,
 } from "./base";
 

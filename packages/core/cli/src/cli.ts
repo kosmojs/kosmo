@@ -7,7 +7,7 @@ import concurrently from "concurrently";
 import prompts, { type PromptObject } from "prompts";
 import { glob } from "tinyglobby";
 
-import { defaults } from "@kosmojs/dev";
+import { defaults, pathExists } from "@kosmojs/dev";
 
 import {
   assertNoError,
@@ -16,7 +16,6 @@ import {
   DEFAULT_PORT,
   FRAMEWORKS,
   messageFactory,
-  pathExists,
   type SourceFolder,
   validateBase,
   validateName,

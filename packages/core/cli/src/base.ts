@@ -1,4 +1,4 @@
-import { access, constants, cp } from "node:fs/promises";
+import { cp } from "node:fs/promises";
 import { basename } from "node:path";
 import { styleText } from "node:util";
 
@@ -50,15 +50,6 @@ export const copyFiles = async (
     force: true,
     filter,
   });
-};
-
-export const pathExists = async (path: string): Promise<boolean> => {
-  try {
-    await access(path, constants.F_OK);
-    return true;
-  } catch {
-    return false;
-  }
 };
 
 export const validateName = (name: string | undefined) => {
