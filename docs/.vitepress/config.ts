@@ -77,86 +77,13 @@ export default defineConfig({
     },
     nav: [
       {
-        text: "📚 Guide",
+        text: "Guide",
         link: "/start",
         activeMatch: "^/(?!generators/|plugins/).+",
-      },
-      {
-        text: "🛠️ Generators",
-        link: "/generators/intro",
-        activeMatch: "^/generators/",
-      },
-      {
-        text: "🔌 Plugins",
-        link: "/plugins/intro",
-        activeMatch: "^/plugins/",
       },
     ],
 
     sidebar: {
-      "/generators/": [
-        {
-          text: "Generators",
-          collapsed: false,
-          items: [
-            {
-              text: "🏗 Architecture",
-              docFooterText: "🏗 Generators Architecture",
-              link: "/generators/intro",
-            },
-            {
-              text: `${icons.gear} User Options`,
-              link: "/generators/user-options",
-            },
-            {
-              text: "🏭 Factory",
-              link: "/generators/factory",
-            },
-            {
-              text: "🔄 Incremental Updates",
-              link: "/generators/incremental-updates",
-            },
-            {
-              text: "🗂 Route Entries",
-              link: "/generators/route-entries",
-            },
-            {
-              text: "🧭 Path Resolver",
-              docFooterText: "🧭 Generators - Path Resolver",
-              link: "/generators/path-resolver",
-            },
-          ],
-        },
-      ],
-      "/plugins/": [
-        {
-          text: "Plugins",
-          collapsed: false,
-          items: [
-            {
-              text: "🔰 Intro",
-              link: "/plugins/intro",
-            },
-            {
-              text: "🔧 Configuration",
-              link: "/plugins/configuration",
-            },
-            {
-              text: "🏗 Dev Plugin",
-              link: "/plugins/dev-plugin",
-            },
-            {
-              text: "📝 Define Plugin",
-              link: "/plugins/define-plugin",
-            },
-            {
-              text: "🔀 Alias Plugin",
-              docFooterText: "🔀 Plugins - Alias",
-              link: "/plugins/alias-plugin",
-            },
-          ],
-        },
-      ],
       "/": [
         {
           text: "Introduction",
@@ -328,12 +255,12 @@ export default defineConfig({
           ],
         },
         {
-          text: "Fetch Client",
+          text: "Fetch Clients",
           collapsed: false,
           items: [
             {
               text: "🔰 Intro",
-              docFooterText: "🔗 Fetch Client",
+              docFooterText: "🔗 Fetch Clients",
               link: "/fetch/intro",
             },
             {
@@ -367,6 +294,38 @@ export default defineConfig({
               text: "📋 OpenAPI",
               docFooterText: "📋 OpenAPI Generator",
               link: "/openapi",
+            },
+          ],
+        },
+        {
+          text: "Authoring Generators",
+          collapsed: false,
+          items: [
+            {
+              text: "🏗 Architecture",
+              docFooterText: "🏗 Generators Architecture",
+              link: "/generators/intro",
+            },
+            {
+              text: `${icons.gear} User Options`,
+              link: "/generators/user-options",
+            },
+            {
+              text: "🏭 Factory",
+              link: "/generators/factory",
+            },
+            {
+              text: "🔄 Incremental Updates",
+              link: "/generators/incremental-updates",
+            },
+            {
+              text: "🗂 Route Entries",
+              link: "/generators/route-entries",
+            },
+            {
+              text: "🧭 Path Resolver",
+              docFooterText: "🧭 Generators - Path Resolver",
+              link: "/generators/path-resolver",
             },
           ],
         },
