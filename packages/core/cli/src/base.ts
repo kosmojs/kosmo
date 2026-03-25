@@ -37,7 +37,7 @@ export enum BACKEND_FRAMEWORKS {
 export const CREATE_OPTIONS = ["project", "folder"] as const;
 export const DEFAULT_DIST = "dist";
 export const DEFAULT_BASE = "/";
-export const DEFAULT_PORT = 4000;
+export const DEFAULT_PORT = 4556;
 export const DEFAULT_FRAMEWORK: SourceFolder["framework"] = "none";
 export const DEFAULT_BACKEND: SourceFolder["backend"] = "none";
 
