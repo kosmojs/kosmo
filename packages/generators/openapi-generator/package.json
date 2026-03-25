@@ -22,11 +22,11 @@
   },
   "dependencies": {
     "@kosmojs/api": "workspace:^",
-    "@kosmojs/dev": "workspace:^",
+    "@kosmojs/lib": "workspace:^",
     "crc": "^4.3.2",
     "path-to-regexp": "^8.3.0",
     "typebox": "^1.1.6",
-    "yaml": "^2.8.2"
+    "yaml": "^2.8.3"
   },
   "devDependencies": {
     "@kosmojs/koa-generator": "workspace:^",

@@ -14,24 +14,25 @@
     ".": {
       "types": "./pkg/index.d.ts",
       "default": "./pkg/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "esbuilder src/index.ts",
     "test": "vitest --root ../../.. --project generators/solid-generator"
   },
   "dependencies": {
-    "@kosmojs/dev": "workspace:^",
-    "picomatch": "^4.0.3"
+    "@kosmojs/lib": "workspace:^",
+    "picomatch": "^4.0.4"
   },
   "devDependencies": {
     "@kosmojs/fetch": "workspace:^",
-    "@solidjs/router": "^0.15.4",
+    "@solidjs/router": "^0.16.1",
     "@types/picomatch": "^4.0.2",
     "path-to-regexp": "^8.3.0",
-    "solid-js": "^1.9.11",
-    "vite": "^7.3.1",
-    "vite-plugin-solid": "^2.11.10"
+    "solid-js": "^1.9.12",
+    "vite": "^8.0.2",
+    "vite-plugin-solid": "^2.11.11"
   },
   "peerDependencies": {
     "@solidjs/router": "^0.15.3",

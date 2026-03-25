@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@kosmojs/api": "workspace:^",
-    "@kosmojs/dev": "workspace:^"
+    "@kosmojs/lib": "workspace:^"
   },
   "devDependencies": {
     "@kosmojs/koa-generator": "workspace:^",
