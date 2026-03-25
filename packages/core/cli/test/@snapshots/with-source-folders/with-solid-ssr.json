@@ -9,7 +9,7 @@
     "with-source-folders/src/with-solid-ssr/config/index.ts",
     [
       "export const baseurl = \"/\";",
-      "export const apiurl = \"/api\"; // relative to baseurl"
+      "export const apiurl = \"/api\";"
     ]
   ],
   [
@@ -28,6 +28,29 @@
     ]
   ],
   [
+    "with-source-folders/src/with-solid-ssr/kosmo.config.ts",
+    [
+      "import {",
+      "  defineConfig,",
+      "  solidGenerator,",
+      "ssrGenerator,",
+      "} from \"@kosmojs/dev\";",
+      "",
+      "import solidPlugin from \"vite-plugin-solid\";",
+      "",
+      "export default defineConfig({",
+      "  plugins: [",
+      "    solidPlugin({ ssr: true }),",
+      "  ],",
+      "  generators: [",
+      "    solidGenerator(),",
+      "ssrGenerator(),",
+      "  ],",
+      "  oxc: { jsx: { importSource: \"solid-js\" } }",
+      "});"
+    ]
+  ],
+  [
     "with-source-folders/src/with-solid-ssr/pages/index/index.tsx",
     [
       ""
@@ -39,36 +62,6 @@
       "{",
       "  \"extends\": \"@kosmojs/config/tsconfig.solid.json\"",
       "}"
-    ]
-  ],
-  [
-    "with-source-folders/src/with-solid-ssr/vite.config.ts",
-    [
-      "import { join } from \"node:path\";",
-      "",
-      "import solidPlugin from \"vite-plugin-solid\";",
-      "import devPlugin from \"@kosmojs/dev\";",
-      "import {",
-      "  solidGenerator,",
-      "  ssrGenerator,",
-      "} from \"@kosmojs/generators\";",
-      "",
-      "import defineConfig from \"../../vite.base\";",
-      "import { apiurl, baseurl } from \"./config\";",
-      "",
-      "export default defineConfig(import.meta.dirname, {",
-      "  base: join(baseurl, \"/\"),",
-      "  server: {",
-      "    port: 4000,",
-      "  },",
-      "  plugins: [",
-      "    solidPlugin({ ssr: true }),",
-      "    devPlugin(apiurl, {",
-      "      generators: [ solidGenerator(), ssrGenerator(), ],",
-      "    }),",
-      "  ],",
-      "  esbuild: { jsx: \"automatic\", jsxImportSource: \"solid-js\" },",
-      "});"
     ]
   ]
 ]

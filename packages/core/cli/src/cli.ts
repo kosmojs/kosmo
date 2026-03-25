@@ -1,114 +1,41 @@
 #!/usr/bin/env -S node --enable-source-maps --no-warnings=ExperimentalWarning
 
-import { dirname, resolve } from "node:path";
-import { parseArgs, styleText } from "node:util";
+import { readFile } from "node:fs/promises";
+import { basename, dirname, resolve } from "node:path";
+import { parseArgs } from "node:util";
 
-import concurrently from "concurrently";
+import { createJiti } from "jiti";
 import prompts, { type PromptObject } from "prompts";
 import { glob } from "tinyglobby";
 
-import { defaults, pathExists } from "@kosmojs/dev";
+import chassis from "@kosmojs/dev/chassis";
+import {
+  defaults,
+  type FolderConfig,
+  type ProjectSettings,
+  pathExists,
+} from "@kosmojs/lib";
 
 import {
   assertNoError,
   BACKEND_FRAMEWORKS,
+  compareDependencies,
   DEFAULT_BASE,
-  DEFAULT_PORT,
   FRAMEWORKS,
-  messageFactory,
+  printUsage,
   type SourceFolder,
   validateBase,
   validateName,
-  validatePort,
 } from "./base";
 import { createSourceFolder } from "./factory";
-
-const usage = [
-  "",
-  `🚀 ${styleText(["bold", "underline", "cyan"], "KosmoJS CLI")}`,
-  "",
-
-  styleText("bold", "FOLDER COMMAND"),
-  "",
-  `  ${styleText("blue", "kosmo folder")}`,
-  `  Create a new Source Folder in interactive mode, prompting for each step`,
-  "",
-  styleText(
-    "bold",
-    "  Use these options to create a Source Folder in non-interactive mode:",
-  ),
-  "",
-  `  ${styleText("cyan", "--name")} ${styleText("dim", "<name>")}`,
-  `  Source folder name`,
-  "",
-  `  ${styleText("cyan", "--base")} ${styleText("dim", "<path>")}`,
-  `  Base URL`,
-  "",
-  `  ${styleText("cyan", "--port")} ${styleText("dim", "<number>")}`,
-  `  Development server port`,
-  "",
-  `  ${styleText("cyan", "--framework")} ${styleText("dim", "<framework>")}`,
-  `  Framework: ${Object.keys(FRAMEWORKS)
-    .map((e) => styleText("yellow", e))
-    .join(", ")} ${styleText("dim", "(omit for API-only folders)")}`,
-  "",
-  `  ${styleText("cyan", "--backend")} ${styleText("dim", "<framework>")}`,
-  `  Backend framework: ${Object.keys(BACKEND_FRAMEWORKS)
-    .map((e) => styleText("yellow", e))
-    .join(", ")} ${styleText("dim", "(omit for client-only folders)")}`,
-  "",
-  `  ${styleText("cyan", "--ssr")}`,
-  `  Enable server-side rendering (SSR)`,
-  "",
-
-  styleText("bold", "DEV COMMAND"),
-  "",
-  `  ${styleText("blue", "kosmo dev")}`,
-  `  Start dev server for all source folders`,
-  "",
-  `  ${styleText("blue", "kosmo dev")} ${styleText("magenta", "admin")}`,
-  `  Start dev server for single source folder`,
-  "",
-  `  ${styleText("blue", "kosmo dev")} ${styleText("magenta", "admin front")}`,
-  `  Start dev server for multiple source folders`,
-  "",
-
-  styleText("bold", "BUILD COMMAND"),
-  "",
-  `  ${styleText("blue", "kosmo build")}`,
-  `  Build all source folders`,
-  "",
-  `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "admin")}`,
-  `  Build single source folder`,
-  "",
-  `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "admin front")}`,
-  `  Build multiple source folders`,
-  "",
-
-  styleText("bold", "COMMON OPTIONS"),
-  "",
-  `  ${styleText("magenta", "-q, --quiet")}`,
-  `  Suppress all output in non-interactive mode (errors still shown)`,
-  "",
-  `  ${styleText("magenta", "-h, --help")}`,
-  `  Display this help message and exit`,
-  "",
-];
-
-const printUsage = () => {
-  for (const line of usage) {
-    console.log(line);
-  }
-};
 
 const options = parseArgs({
   options: {
     name: { type: "string" },
+    base: { type: "string" },
     backend: { type: "string" },
     framework: { type: "string" },
     ssr: { type: "boolean" },
-    base: { type: "string" },
-    port: { type: "string" },
     quiet: { type: "boolean", short: "q" },
     help: { type: "boolean", short: "h" },
   },
@@ -121,233 +48,202 @@ if (options.values.help) {
   process.exit(0);
 }
 
-const cwd = process.cwd();
+const root = process.cwd();
 
-const prefixColors = ["cyan", "magenta", "yellow", "green", "blue", "auto"];
+const jiti = createJiti(root);
 
-const packageFile = resolve(cwd, "package.json");
+const packageFile = resolve(root, "package.json");
 const packageFileExists = await pathExists(packageFile);
 
 const packageJson = packageFileExists
   ? await import(packageFile, { with: { type: "json" } }).then((e) => e.default)
   : undefined;
 
-const handlers: Record<
-  "folder" | "dev" | "build",
-  (f: Array<string>) => Promise<void>
-> = {
-  async folder() {
-    const messages = messageFactory(
-      options.values.quiet ? () => {} : console.log,
-    );
+const run = async () => {
+  const commands = ["folder", "serve", "build"] as const;
 
-    if ("name" in options.values) {
-      // non-interactive mode
+  const [command, ...optedFolders] = options.positionals as [
+    command: (typeof commands)[number],
+    ...optedFolders: Array<string>,
+  ];
 
-      assertNoError(() => validateName(options.values.name));
-
-      assertNoError(() => validateBase(options.values.base));
-
-      assertNoError(() => validatePort(options.values.port));
-
-      for (const [key, values] of [
-        ["framework", FRAMEWORKS],
-        ["backend", BACKEND_FRAMEWORKS],
-      ] as const) {
-        if (options.values[key]) {
-          assertNoError(() => {
-            return Object.keys(values).includes(options.values[key] as never)
-              ? undefined
-              : `Invalid ${key}, use one of: ${Object.keys(values).join(", ")}`;
-          });
-        }
-      }
-
-      const folder = options.values as SourceFolder;
-
-      await createSourceFolder(cwd, folder);
-
-      messages.sourceFolderCreated(folder);
-
-      return;
-    }
-
-    // interactive mode
-
-    const onState: PromptObject["onState"] = (state) => {
-      if (state.aborted) {
-        process.nextTick(() => process.exit(1));
-      }
-    };
-
-    console.log(
-      styleText(
-        ["bold", "green"],
-        "➜ Great! Let's create a new Source Folder:\n",
-      ),
-    );
-
-    const folder = await prompts<keyof SourceFolder>([
-      {
-        type: "text",
-        name: "name",
-        message: "Folder Name",
-        onState,
-        validate: (name) => validateName(name) || true,
-      },
-
-      {
-        type: "text",
-        name: "base",
-        message: "Base URL",
-        initial: DEFAULT_BASE,
-        onState,
-        validate: (base) => validateBase(base || DEFAULT_BASE) || true,
-      },
-
-      {
-        type: "number",
-        name: "port",
-        message: "Dev Server Port",
-        initial: DEFAULT_PORT,
-        onState,
-        validate: (port) => validatePort(port || DEFAULT_PORT) || true,
-      },
-
-      {
-        type: "select",
-        name: "backend",
-        message: "Backend Framework",
-        onState,
-        choices: [
-          ...Object.entries(BACKEND_FRAMEWORKS).map(([value, title]) => {
-            return { value, title };
-          }),
-          { value: "none", title: "None (client-only folder)" },
-        ],
-      },
-
-      {
-        type: "select",
-        name: "framework",
-        message: "Framework",
-        onState,
-        choices: [
-          ...Object.entries(FRAMEWORKS).map(([value, title]) => {
-            return { value, title };
-          }),
-          { value: "none", title: "None (API-only folder)" },
-        ],
-      },
-
-      {
-        // NOTE: this should follow framework prompt!
-        type: (prev: SourceFolder["framework"]) => {
-          return prev === "none" // skip if no framework
-            ? undefined
-            : "toggle";
-        },
-        name: "ssr",
-        message: "Enable server-side rendering (SSR)?",
-        initial: false,
-        active: "yes",
-        inactive: "no",
-      },
-    ]);
-
-    await createSourceFolder(cwd, folder);
-
-    messages.sourceFolderCreated(folder);
-  },
-
-  async dev(folders) {
-    const { result, commands } = concurrently(
-      folders.map((name) => {
-        return { name, command: "vite dev", cwd: name };
-      }),
-      {
-        prefixColors,
-        handleInput: true,
-        raw: true,
-      },
-    );
-
-    let manualShutdown = false;
-
-    process.stdin.on("end", async () => {
-      manualShutdown = true;
-      console.log("\nEOF detected - stopping all processes...");
-      for (const cmd of commands) {
-        cmd.kill();
-      }
-      // Give processes time to cleanup
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    });
-
-    return result.then(
-      () => process.exit(0),
-      () => process.exit(manualShutdown ? 0 : 1),
-    );
-  },
-
-  async build(folders) {
-    const { result } = concurrently(
-      folders.map((name) => {
-        return { name, command: "vite build", cwd: name };
-      }),
-      { prefixColors, raw: true },
-    );
-    await result;
-  },
-};
-
-const [command, ...optedFolders] = options.positionals as [
-  command: keyof typeof handlers,
-  ...optedFolders: Array<string>,
-];
-
-try {
   assertNoError(() => {
-    return packageJson?.distDir
-      ? undefined
-      : "No KosmoJS project found in current directory";
+    return !packageJson?.distDir || !packageJson.devPort
+      ? "Found package.json but it's missing `distDir` or `devPort` - is this a KosmoJS project?"
+      : undefined;
   });
 
   assertNoError(() => {
-    return handlers[command]
-      ? undefined
-      : `Invalid command, use one of ${Object.keys(handlers).join(", ")}`;
+    return !commands.includes(command)
+      ? `Invalid command, use one of ${commands.join(", ")}`
+      : undefined;
   });
 
   if (command === "folder") {
-    await handlers[command]([]);
-  } else {
-    const configs = await glob(
-      optedFolders.length
-        ? optedFolders.map((e) => `${defaults.srcDir}/${e}/vite.config.*`)
-        : "**/vite.config.*",
-      {
-        absolute: false,
-        deep: 2,
-      },
-    );
+    await createFolder();
 
-    const sourceFolders = configs.map(dirname);
+    if (!options.values.quiet) {
+      // Using readFile instead of import() because reimporting returns
+      // cached content, and adding a cache-busting query string causes
+      // Vite's module runner to treat JSON as JavaScript, failing to parse
+      const json = await readFile(packageFile, "utf8");
+      await compareDependencies(packageJson, JSON.parse(json));
+    }
 
-    assertNoError(() => {
-      if (optedFolders.length) {
-        return optedFolders.length === sourceFolders.length
-          ? undefined
-          : "Some of given names does not contain a valid KosmoJS source folder";
-      }
-
-      return sourceFolders.length //
-        ? undefined
-        : "No source folders detected";
-    });
-
-    await handlers[command](sourceFolders);
+    return;
   }
+
+  const configFiles = await glob(
+    optedFolders.length
+      ? optedFolders.map((e) => `${defaults.srcDir}/${e}/kosmo.config.ts`)
+      : `${defaults.srcDir}/*/kosmo.config.ts`,
+    {
+      cwd: root,
+      absolute: true,
+    },
+  );
+
+  assertNoError(() => {
+    if (optedFolders.length) {
+      return optedFolders.length !== configFiles.length
+        ? "Some of given names does not contain a valid KosmoJS source folder"
+        : undefined;
+    }
+
+    return !configFiles.length //
+      ? "No source folders detected"
+      : undefined;
+  });
+
+  const settings: ProjectSettings = {
+    root,
+    command,
+    sourceFolders: [],
+    devPort: packageJson.devPort,
+  };
+
+  for (const file of configFiles) {
+    const config = await jiti.import<FolderConfig>(file, { default: true });
+
+    const { baseurl, apiurl } = await jiti.import<{
+      baseurl: string;
+      apiurl: string;
+    }>(resolve(dirname(file), "config/index.ts"));
+
+    settings.sourceFolders.push({
+      name: basename(dirname(file)),
+      config: { ...config },
+      root,
+      baseurl,
+      apiurl,
+      distDir: packageJson.distDir,
+    });
+  }
+
+  await chassis(settings);
+};
+
+const createFolder = async () => {
+  if ("name" in options.values) {
+    // non-interactive mode
+
+    assertNoError(() => validateName(options.values.name));
+    assertNoError(() => validateBase(options.values.base));
+
+    for (const [key, values] of [
+      ["framework", FRAMEWORKS],
+      ["backend", BACKEND_FRAMEWORKS],
+    ] as const) {
+      if (options.values[key]) {
+        assertNoError(() => {
+          return !Object.keys(values).includes(options.values[key] as never)
+            ? `Invalid ${key}, use one of: ${Object.keys(values).join(", ")}`
+            : undefined;
+        });
+      }
+    }
+
+    const folder = options.values as SourceFolder;
+
+    await createSourceFolder(root, folder);
+
+    return folder;
+  }
+
+  // interactive mode
+
+  const onState: PromptObject["onState"] = (state) => {
+    if (state.aborted) {
+      process.nextTick(() => process.exit(1));
+    }
+  };
+
+  const folder = await prompts<keyof SourceFolder>([
+    {
+      type: "text",
+      name: "name",
+      message: "Folder Name",
+      onState,
+      validate: (name) => validateName(name) || true,
+    },
+
+    {
+      type: "text",
+      name: "base",
+      message: "Base URL",
+      initial: DEFAULT_BASE,
+      onState,
+      validate: (base) => validateBase(base || DEFAULT_BASE) || true,
+    },
+
+    {
+      type: "select",
+      name: "backend",
+      message: "Backend Framework",
+      onState,
+      choices: [
+        ...Object.entries(BACKEND_FRAMEWORKS).map(([value, title]) => {
+          return { value, title };
+        }),
+        { value: "none", title: "None (client-only folder)" },
+      ],
+    },
+
+    {
+      type: "select",
+      name: "framework",
+      message: "Framework",
+      onState,
+      choices: [
+        ...Object.entries(FRAMEWORKS).map(([value, title]) => {
+          return { value, title };
+        }),
+        { value: "none", title: "None (API-only folder)" },
+      ],
+    },
+
+    {
+      // NOTE: this should follow framework prompt!
+      type: (prev: SourceFolder["framework"]) => {
+        return prev === "none" // skip if no framework
+          ? undefined
+          : "toggle";
+      },
+      name: "ssr",
+      message: "Enable server-side rendering (SSR)?",
+      initial: false,
+      active: "yes",
+      inactive: "no",
+    },
+  ]);
+
+  await createSourceFolder(root, folder);
+
+  return folder as SourceFolder;
+};
+
+try {
+  await run();
 } catch (
   // biome-ignore lint: any
   error: any

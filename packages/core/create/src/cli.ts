@@ -7,10 +7,11 @@ import prompts, { type PromptObject } from "prompts";
 import {
   assertNoError,
   createProject,
-  messageFactory,
   type Project,
   validateName,
 } from "@kosmojs/cli";
+
+import { messageFactory } from "./base";
 
 const usage = [
   "",
@@ -54,20 +55,11 @@ if (values.help) {
 
 const cwd = process.cwd();
 
-const messages = messageFactory(values.quiet ? () => {} : console.log);
-
 let { name } = values;
 
-if (!name) {
-  console.log();
-  console.log(
-    styleText(
-      ["bold", "green"],
-      "🚀 Great! Let's create a new KosmoJS project",
-    ),
-  );
-  console.log();
+const messages = messageFactory(name || values.quiet ? () => {} : console.log);
 
+if (!name) {
   const onState: PromptObject["onState"] = (state) => {
     if (state.aborted) {
       process.nextTick(() => process.exit(1));
@@ -103,6 +95,8 @@ try {
   const project: Project = {
     name: name as string,
   };
+
+  messages.preamble();
 
   await createProject(cwd, project);
 

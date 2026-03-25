@@ -9,7 +9,7 @@
     "with-source-folders/src/with-vue/config/index.ts",
     [
       "export const baseurl = \"/\";",
-      "export const apiurl = \"/api\"; // relative to baseurl"
+      "export const apiurl = \"/api\";"
     ]
   ],
   [
@@ -28,6 +28,26 @@
     ]
   ],
   [
+    "with-source-folders/src/with-vue/kosmo.config.ts",
+    [
+      "import {",
+      "  defineConfig,",
+      "  vueGenerator,",
+      "} from \"@kosmojs/dev\";",
+      "",
+      "import vuePlugin from \"@vitejs/plugin-vue\";",
+      "",
+      "export default defineConfig({",
+      "  plugins: [",
+      "    vuePlugin(),",
+      "  ],",
+      "  generators: [",
+      "    vueGenerator(),",
+      "  ],",
+      "  });"
+    ]
+  ],
+  [
     "with-source-folders/src/with-vue/pages/index/index.vue",
     [
       ""
@@ -39,34 +59,6 @@
       "{",
       "  \"extends\": \"@kosmojs/config/tsconfig.vue.json\"",
       "}"
-    ]
-  ],
-  [
-    "with-source-folders/src/with-vue/vite.config.ts",
-    [
-      "import { join } from \"node:path\";",
-      "",
-      "import vuePlugin from \"@vitejs/plugin-vue\";",
-      "import devPlugin from \"@kosmojs/dev\";",
-      "import {",
-      "  vueGenerator,",
-      "} from \"@kosmojs/generators\";",
-      "",
-      "import defineConfig from \"../../vite.base\";",
-      "import { apiurl, baseurl } from \"./config\";",
-      "",
-      "export default defineConfig(import.meta.dirname, {",
-      "  base: join(baseurl, \"/\"),",
-      "  server: {",
-      "    port: 4000,",
-      "  },",
-      "  plugins: [",
-      "    vuePlugin(),",
-      "    devPlugin(apiurl, {",
-      "      generators: [ vueGenerator(), ],",
-      "    }),",
-      "  ],",
-      "});"
     ]
   ]
 ]

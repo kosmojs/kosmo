@@ -1,4 +1,4 @@
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 /**
@@ -10,12 +10,6 @@ import { resolve } from "node:path";
  * */
 import self from "@kosmojs/cli/package.json" with { type: "json" };
 import {
-  defaults,
-  type GeneratorConstructor,
-  pathExists,
-  renderToFile,
-} from "@kosmojs/dev";
-import {
   fetchGenerator,
   honoGenerator,
   koaGenerator,
@@ -24,7 +18,14 @@ import {
   ssrGenerator,
   typeboxGenerator,
   vueGenerator,
-} from "@kosmojs/generators";
+} from "@kosmojs/dev";
+import {
+  defaults,
+  type GeneratorMeta,
+  getGeneratorMeta,
+  pathExists,
+  renderToFile,
+} from "@kosmojs/lib";
 
 import {
   copyFiles,
@@ -33,14 +34,12 @@ import {
   DEFAULT_DIST,
   DEFAULT_FRAMEWORK,
   DEFAULT_PORT,
-  NODE_VERSION,
   type Project,
   type SourceFolder,
 } from "./base";
 
-import srcConfigTpl from "./templates/src/config/index.hbs";
-import srcViteConfigTpl from "./templates/src/vite.config.hbs";
-import viteBaseTpl from "./templates/vite.base.hbs";
+import configTpl from "./templates/src/config/index.hbs";
+import kosmoConfigTpl from "./templates/src/kosmo.config.hbs";
 
 const TPL_DIR = resolve(import.meta.dirname, "templates");
 
@@ -53,7 +52,7 @@ type Plugin = {
 type Generator = {
   name: string;
   options: string;
-  instance: GeneratorConstructor;
+  meta: GeneratorMeta | undefined;
 };
 
 const tsconfigJson = {
@@ -66,7 +65,6 @@ export const createProject = async (
   path: string,
   project: Project,
   assets?: {
-    NODE_VERSION?: `${number}`;
     dependencies?: Record<string, string>;
     devDependencies?: Record<string, string>;
   },
@@ -74,40 +72,26 @@ export const createProject = async (
   const packageJson = {
     type: "module",
     distDir: project.distDir || DEFAULT_DIST,
+    devPort: project.devPort || DEFAULT_PORT,
     scripts: {
-      dev: "kosmo dev",
+      dev: "kosmo serve",
       build: "kosmo build",
       "+folder": "kosmo folder",
     },
     dependencies: {
+      "@kosmojs/api": SELF_VERSION,
       ...assets?.dependencies,
     },
     devDependencies: {
       "@kosmojs/config": SELF_VERSION,
       "@kosmojs/cli": SELF_VERSION,
       "@kosmojs/dev": SELF_VERSION,
-      "@kosmojs/fetch": SELF_VERSION,
-      "@kosmojs/generators": SELF_VERSION,
       "@types/node": self.devDependencies["@types/node"],
-      esbuild: self.devDependencies.esbuild,
       tslib: self.devDependencies.tslib,
       typescript: self.devDependencies.typescript,
       vite: self.devDependencies.vite,
       ...assets?.devDependencies,
     },
-    pnpm: {
-      onlyBuiltDependencies: ["esbuild"],
-    },
-  };
-
-  const esbuildJson = {
-    bundle: true,
-    platform: "node",
-    target: `node${assets?.NODE_VERSION || NODE_VERSION}`,
-    format: "esm",
-    packages: "external",
-    sourcemap: "linked",
-    logLevel: "info",
   };
 
   const projectPath = resolve(path, project.name);
@@ -116,13 +100,7 @@ export const createProject = async (
     throw new Error(`${project.name} already exists`);
   }
 
-  await copyFiles(TPL_DIR, projectPath, {
-    exclude: [/src/, /.+\.hbs/],
-  });
-
   for (const [file, template] of [
-    ["vite.base.ts", viteBaseTpl],
-    ["esbuild.json", JSON.stringify(esbuildJson, null, 2)],
     ["package.json", JSON.stringify(packageJson, null, 2)],
     ["tsconfig.json", JSON.stringify(tsconfigJson, null, 2)],
   ]) {
@@ -134,7 +112,7 @@ export const createProject = async (
 };
 
 export const createSourceFolder = async (
-  projectRoot: string, // path inside project
+  projectRoot: string,
   folder: SourceFolder,
   opt?: {
     frameworkOptions?: Record<string, unknown>;
@@ -152,11 +130,16 @@ export const createSourceFolder = async (
     exclude: [/.+\.hbs/],
   });
 
-  const packageJsonFile = resolve(projectRoot, "package.json");
+  const packageFile = resolve(projectRoot, "package.json");
 
-  const packageJson = await import(packageJsonFile, {
-    with: { type: "json" },
-  }).then((e) => e.default);
+  // Using readFile instead of import() because reimporting returns
+  // cached content, and adding a cache-busting query string causes
+  // Vite's module runner to treat JSON as JavaScript, failing to parse
+  const packageFileContent = await readFile(packageFile, "utf8");
+
+  const packageJson = JSON.parse(packageFileContent);
+
+  const { base = DEFAULT_BASE } = folder;
 
   const plugins: Array<Plugin> = [];
 
@@ -179,7 +162,7 @@ export const createSourceFolder = async (
       options: opt?.frameworkOptions
         ? JSON.stringify(opt.frameworkOptions, null, 2)
         : "",
-      instance: solidGenerator(),
+      meta: getGeneratorMeta(solidGenerator),
     });
 
     tsconfig = {
@@ -197,7 +180,7 @@ export const createSourceFolder = async (
       options: opt?.frameworkOptions
         ? JSON.stringify(opt.frameworkOptions, null, 2)
         : "",
-      instance: reactGenerator(),
+      meta: getGeneratorMeta(reactGenerator),
     });
 
     tsconfig = {
@@ -215,7 +198,7 @@ export const createSourceFolder = async (
       options: opt?.frameworkOptions
         ? JSON.stringify(opt.frameworkOptions, null, 2)
         : "",
-      instance: vueGenerator(),
+      meta: getGeneratorMeta(vueGenerator),
     });
 
     tsconfig = {
@@ -227,13 +210,13 @@ export const createSourceFolder = async (
     generators.push({
       name: "koaGenerator",
       options: "",
-      instance: koaGenerator(),
+      meta: getGeneratorMeta(koaGenerator),
     });
   } else if (backendFramework === "hono") {
     generators.push({
       name: "honoGenerator",
       options: "",
-      instance: honoGenerator(),
+      meta: getGeneratorMeta(honoGenerator),
     });
   }
 
@@ -241,38 +224,41 @@ export const createSourceFolder = async (
     generators.push({
       name: "ssrGenerator",
       options: "",
-      instance: ssrGenerator(),
+      meta: getGeneratorMeta(ssrGenerator),
     });
   }
 
-  if (generators.some((e) => e.instance.slot === "api")) {
+  if (generators.some((e) => e.meta?.slot === "api")) {
     generators.push(
       ...[
-        { name: "fetchGenerator", options: "", instance: fetchGenerator() },
-        { name: "typeboxGenerator", options: "", instance: typeboxGenerator() },
+        {
+          name: "fetchGenerator",
+          options: "",
+          meta: getGeneratorMeta(fetchGenerator),
+        },
+        {
+          name: "typeboxGenerator",
+          options: "",
+          meta: getGeneratorMeta(typeboxGenerator),
+        },
       ],
     );
   }
 
   const context = {
-    folder: {
-      base: DEFAULT_BASE,
-      port: DEFAULT_PORT,
-      ...folder,
-    },
-    defaults,
+    base,
     plugins,
     generators,
-    frameworkSpecificConfig: [
+    frameworkSpecificOptions: [
       ...(framework === "solid"
-        ? [`esbuild: { jsx: "automatic", jsxImportSource: "solid-js" }`]
+        ? [`oxc: { jsx: { importSource: "solid-js" } }`]
         : []),
     ],
   };
 
   for (const [file, template] of [
-    ["vite.config.ts", srcViteConfigTpl],
-    [`${defaults.configDir}/index.ts`, srcConfigTpl],
+    ["config/index.ts", configTpl],
+    ["kosmo.config.ts", kosmoConfigTpl],
     // stub files for initial build to pass;
     // generators will fill them with appropriate content.
     [`${defaults.apiDir}/index/index.ts`, ""],
@@ -300,9 +286,9 @@ export const createSourceFolder = async (
     );
   }
 
-  for (const { instance } of generators) {
+  for (const generator of generators) {
     for (const key of ["dependencies", "devDependencies"] as const) {
-      packageJson[key] = { ...packageJson[key], ...instance[key] };
+      packageJson[key] = { ...packageJson[key], ...generator.meta?.[key] };
     }
   }
 
@@ -310,5 +296,7 @@ export const createSourceFolder = async (
     packageJson[key] = { ...packageJson[key], ...opt?.[key] };
   }
 
-  await writeFile(packageJsonFile, JSON.stringify(packageJson, null, 2));
+  await writeFile(packageFile, JSON.stringify(packageJson, null, 2));
+
+  return folder;
 };

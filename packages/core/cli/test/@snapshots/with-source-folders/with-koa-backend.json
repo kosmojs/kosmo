@@ -9,7 +9,7 @@
     "with-source-folders/src/with-koa-backend/config/index.ts",
     [
       "export const baseurl = \"/\";",
-      "export const apiurl = \"/api\"; // relative to baseurl"
+      "export const apiurl = \"/api\";"
     ]
   ],
   [
@@ -22,31 +22,25 @@
     ]
   ],
   [
-    "with-source-folders/src/with-koa-backend/vite.config.ts",
+    "with-source-folders/src/with-koa-backend/kosmo.config.ts",
     [
-      "import { join } from \"node:path\";",
-      "",
-      "import devPlugin from \"@kosmojs/dev\";",
       "import {",
+      "  defineConfig,",
       "  koaGenerator,",
-      "  fetchGenerator,",
-      "  typeboxGenerator,",
-      "} from \"@kosmojs/generators\";",
+      "fetchGenerator,",
+      "typeboxGenerator,",
+      "} from \"@kosmojs/dev\";",
       "",
-      "import defineConfig from \"../../vite.base\";",
-      "import { apiurl, baseurl } from \"./config\";",
       "",
-      "export default defineConfig(import.meta.dirname, {",
-      "  base: join(baseurl, \"/\"),",
-      "  server: {",
-      "    port: 4000,",
-      "  },",
+      "export default defineConfig({",
       "  plugins: [",
-      "        devPlugin(apiurl, {",
-      "      generators: [ koaGenerator(), fetchGenerator(), typeboxGenerator(), ],",
-      "    }),",
+      "      ],",
+      "  generators: [",
+      "    koaGenerator(),",
+      "fetchGenerator(),",
+      "typeboxGenerator(),",
       "  ],",
-      "});"
+      "  });"
     ]
   ]
 ]

@@ -9,7 +9,7 @@
     "with-source-folders/src/with-defaults/config/index.ts",
     [
       "export const baseurl = \"/\";",
-      "export const apiurl = \"/api\"; // relative to baseurl"
+      "export const apiurl = \"/api\";"
     ]
   ],
   [
@@ -22,28 +22,19 @@
     ]
   ],
   [
-    "with-source-folders/src/with-defaults/vite.config.ts",
+    "with-source-folders/src/with-defaults/kosmo.config.ts",
     [
-      "import { join } from \"node:path\";",
-      "",
-      "import devPlugin from \"@kosmojs/dev\";",
       "import {",
-      "} from \"@kosmojs/generators\";",
+      "  defineConfig,",
+      "  } from \"@kosmojs/dev\";",
       "",
-      "import defineConfig from \"../../vite.base\";",
-      "import { apiurl, baseurl } from \"./config\";",
       "",
-      "export default defineConfig(import.meta.dirname, {",
-      "  base: join(baseurl, \"/\"),",
-      "  server: {",
-      "    port: 4000,",
-      "  },",
+      "export default defineConfig({",
       "  plugins: [",
-      "        devPlugin(apiurl, {",
-      "      generators: [ ],",
-      "    }),",
-      "  ],",
-      "});"
+      "      ],",
+      "  generators: [",
+      "      ],",
+      "  });"
     ]
   ]
 ]
