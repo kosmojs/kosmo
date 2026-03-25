@@ -4,28 +4,28 @@ export default defineRoute(({ POST }) => [
   POST<{
     json: {
       // String length constraints
-      minLength: TRefine<string, { minLength: 5 }>;
-      maxLength: TRefine<string, { maxLength: 10 }>;
-      minMaxLength: TRefine<string, { minLength: 3; maxLength: 20 }>;
+      minLength: VRefine<string, { minLength: 5 }>;
+      maxLength: VRefine<string, { maxLength: 10 }>;
+      minMaxLength: VRefine<string, { minLength: 3; maxLength: 20 }>;
 
       // String pattern
-      alphanumeric: TRefine<string, { pattern: "^[a-zA-Z0-9]+$" }>;
-      hexColor: TRefine<
+      alphanumeric: VRefine<string, { pattern: "^[a-zA-Z0-9]+$" }>;
+      hexColor: VRefine<
         string,
         { pattern: "^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$" }
       >;
 
       // String formats
-      email: TRefine<string, { format: "email" }>;
-      date: TRefine<string, { format: "date" }>;
-      dateTime: TRefine<string, { format: "date-time" }>;
-      time: TRefine<string, { format: "time" }>;
-      uri: TRefine<string, { format: "uri" }>;
-      url: TRefine<string, { format: "url" }>;
-      uuid: TRefine<string, { format: "uuid" }>;
-      ipv4: TRefine<string, { format: "ipv4" }>;
-      ipv6: TRefine<string, { format: "ipv6" }>;
-      hostname: TRefine<string, { format: "hostname" }>;
+      email: VRefine<string, { format: "email" }>;
+      date: VRefine<string, { format: "date" }>;
+      dateTime: VRefine<string, { format: "date-time" }>;
+      time: VRefine<string, { format: "time" }>;
+      uri: VRefine<string, { format: "uri" }>;
+      url: VRefine<string, { format: "url" }>;
+      uuid: VRefine<string, { format: "uuid" }>;
+      ipv4: VRefine<string, { format: "ipv4" }>;
+      ipv6: VRefine<string, { format: "ipv6" }>;
+      hostname: VRefine<string, { format: "hostname" }>;
     };
   }>(async () => {}),
 ]);

@@ -4,7 +4,7 @@ type UserPost = {
   id: number;
   title: string;
   content?: string;
-  createdAt: TRefine<string, { format: "date-time" }>;
+  createdAt: VRefine<string, { format: "date-time" }>;
 };
 
 type UserPostsResponse = {
@@ -22,7 +22,7 @@ type UserPostsQuery = {
 
 export default defineRoute<
   "",
-  [TRefine<number, { minimum: 1 }>, TRefine<number, { minimum: 1 }>]
+  [VRefine<number, { minimum: 1 }>, VRefine<number, { minimum: 1 }>]
 >(({ GET }) => [
   GET<{
     json: UserPostsQuery,

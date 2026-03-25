@@ -5,17 +5,17 @@ export default defineRoute(({ POST }) => [
     json: {
       // User registration with multiple constraints
       userRegistration: {
-        username: TRefine<
+        username: VRefine<
           string,
           { minLength: 3; maxLength: 20; pattern: "^[a-zA-Z0-9_]+$" }
         >;
-        email: TRefine<string, { format: "email" }>;
-        password: TRefine<
+        email: VRefine<string, { format: "email" }>;
+        password: VRefine<
           string,
           { minLength: 8; pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)" }
         >;
-        age: TRefine<number, { minimum: 13; maximum: 120 }>;
-        roles: TRefine<
+        age: VRefine<number, { minimum: 13; maximum: 120 }>;
+        roles: VRefine<
           Array<string>,
           {
             minItems: 1;
@@ -27,27 +27,27 @@ export default defineRoute(({ POST }) => [
 
       // Pagination with constraints
       pagination: {
-        page: TRefine<number, { minimum: 1 }>;
-        pageSize: TRefine<number, { minimum: 1; maximum: 100 }>;
-        sortBy?: TRefine<string, { enum: ["name", "date", "price"] }>;
-        sortOrder?: TRefine<string, { enum: ["asc", "desc"] }>;
+        page: VRefine<number, { minimum: 1 }>;
+        pageSize: VRefine<number, { minimum: 1; maximum: 100 }>;
+        sortBy?: VRefine<string, { enum: ["name", "date", "price"] }>;
+        sortOrder?: VRefine<string, { enum: ["asc", "desc"] }>;
       };
 
       // Product with nested validation
       product: {
-        id: TRefine<string, { format: "uuid" }>;
-        name: TRefine<string, { minLength: 1; maxLength: 100 }>;
-        price: TRefine<number, { minimum: 0; multipleOf: 0.01 }>;
-        tags: TRefine<
+        id: VRefine<string, { format: "uuid" }>;
+        name: VRefine<string, { minLength: 1; maxLength: 100 }>;
+        price: VRefine<number, { minimum: 0; multipleOf: 0.01 }>;
+        tags: VRefine<
           Array<string>,
           { minItems: 1; maxItems: 10; uniqueItems: true }
         >;
         dimensions: {
-          width: TRefine<number, { minimum: 0 }>;
-          height: TRefine<number, { minimum: 0 }>;
-          depth: TRefine<number, { minimum: 0 }>;
+          width: VRefine<number, { minimum: 0 }>;
+          height: VRefine<number, { minimum: 0 }>;
+          depth: VRefine<number, { minimum: 0 }>;
         };
-        metadata: TRefine<Record<string, string>, { maxProperties: 20 }>;
+        metadata: VRefine<Record<string, string>, { maxProperties: 20 }>;
       };
     };
   }>(async () => {}),

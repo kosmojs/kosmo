@@ -4,7 +4,7 @@ export default defineRoute(({ POST }) => [
   POST<{
     json: {
       // Simple object tuples
-      simpleObject: TRefine<
+      simpleObject: VRefine<
         [{ name: string; age: number }],
         {
           prefixItems: [
@@ -21,7 +21,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Multiple object tuples
-      multiObject: TRefine<
+      multiObject: VRefine<
         [
           { user: string; role: string },
           { enabled: boolean; priority: number },
@@ -49,7 +49,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Nested object tuples
-      nestedObject: TRefine<
+      nestedObject: VRefine<
         [{ profile: { name: string; settings: { theme: string } } }],
         {
           prefixItems: [

@@ -28,8 +28,8 @@ type DataQuery = {
 export default defineRoute<
   "",
   [
-    TRefine<number, { minimum: 1; maximum: 1000 }>,
-    TRefine<number, { minimum: 1; maximum: 100; multipleOf: 1 }>,
+    VRefine<number, { minimum: 1; maximum: 1000 }>,
+    VRefine<number, { minimum: 1; maximum: 100; multipleOf: 1 }>,
   ]
 >(({ GET }) => [
   GET<{ json: DataQuery; response: [200, "json", DataResponse] }>(

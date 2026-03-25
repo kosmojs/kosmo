@@ -6,18 +6,16 @@
  * Useful for generating validation schemas and ensuring
  * data conforms to specific business rules beyond basic type checking.
  * */
-export declare global {
-  type TRefine<
-    T extends unknown[] | number | string | object,
-    _ extends T extends unknown[]
-      ? TArrayOptions
-      : T extends number
-        ? TNumberOptions
-        : T extends string
-          ? TStringOptions
-          : TObjectOptions,
-  > = T;
-}
+declare type VRefine<
+  T extends unknown[] | number | string | object,
+  _ extends T extends unknown[]
+    ? TArrayOptions
+    : T extends number
+      ? TNumberOptions
+      : T extends string
+        ? TStringOptions
+        : TObjectOptions,
+> = T;
 
 /**
  * Type definitions inspired by and gently adapted from TypeBox.

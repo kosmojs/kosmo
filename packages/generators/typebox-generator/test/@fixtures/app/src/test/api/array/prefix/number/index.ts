@@ -4,7 +4,7 @@ export default defineRoute(({ POST }) => [
   POST<{
     json: {
       // Basic number tuples
-      rangeTuple: TRefine<
+      rangeTuple: VRefine<
         [number, number],
         {
           prefixItems: [
@@ -13,7 +13,7 @@ export default defineRoute(({ POST }) => [
           ];
         }
       >;
-      valueTuple: TRefine<
+      valueTuple: VRefine<
         [number, number, number],
         {
           prefixItems: [
@@ -25,7 +25,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Number tuples with complex constraints
-      complexTuple: TRefine<
+      complexTuple: VRefine<
         [number, number, number],
         {
           prefixItems: [
@@ -37,7 +37,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Decimal precision
-      decimalTuple: TRefine<
+      decimalTuple: VRefine<
         [number, number],
         {
           prefixItems: [

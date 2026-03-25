@@ -3,7 +3,7 @@ import { defineRoute } from "@test/index";
 export default defineRoute(({ POST }) => [
   POST<{
     json: {
-      value: TRefine<string, { format: "base64" }>;
+      value: VRefine<string, { format: "base64" }>;
     };
   }>(async () => {}),
 ]);

@@ -4,20 +4,20 @@ export default defineRoute(({ POST }) => [
   POST<{
     json: {
       // Enum validation
-      status: TRefine<
+      status: VRefine<
         string,
         { enum: ["pending", "active", "completed", "failed"] }
       >;
-      priority: TRefine<number, { enum: [1, 2, 3, 4, 5] }>;
+      priority: VRefine<number, { enum: [1, 2, 3, 4, 5] }>;
       booleanEnum: true | false;
 
       // Const validation
-      version: TRefine<string, { const: "1.0.0" }>;
-      apiVersion: TRefine<number, { const: 2 }>;
+      version: VRefine<string, { const: "1.0.0" }>;
+      apiVersion: VRefine<number, { const: 2 }>;
       enabled: true;
 
       // Mixed types
-      mixedEnum: TRefine<string | number, { enum: ["auto", 0, 100] }>;
+      mixedEnum: VRefine<string | number, { enum: ["auto", 0, 100] }>;
     };
   }>(async () => {}),
 ]);

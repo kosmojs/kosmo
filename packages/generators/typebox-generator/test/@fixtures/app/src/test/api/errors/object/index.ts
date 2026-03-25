@@ -7,7 +7,7 @@ export default defineRoute(({ POST }) => [
       requiredProps: {
         id: string;
         name: string;
-        email: TRefine<string, { format: "email" }>;
+        email: VRefine<string, { format: "email" }>;
       };
 
       // Optional properties
@@ -17,14 +17,14 @@ export default defineRoute(({ POST }) => [
       };
 
       // Additional properties constraint
-      noAdditionalProps: TRefine<
+      noAdditionalProps: VRefine<
         { id: string; name: string },
         { additionalProperties: false }
       >;
 
       // Property count constraints
-      minProperties: TRefine<Record<string, unknown>, { minProperties: 2 }>;
-      maxProperties: TRefine<Record<string, unknown>, { maxProperties: 5 }>;
+      minProperties: VRefine<Record<string, unknown>, { minProperties: 2 }>;
+      maxProperties: VRefine<Record<string, unknown>, { maxProperties: 5 }>;
 
       // Nested objects
       nestedObject: {
@@ -32,7 +32,7 @@ export default defineRoute(({ POST }) => [
           profile: {
             name: string;
             settings: {
-              theme: TRefine<string, { enum: ["light", "dark"] }>;
+              theme: VRefine<string, { enum: ["light", "dark"] }>;
               notifications: boolean;
             };
           };
@@ -40,7 +40,7 @@ export default defineRoute(({ POST }) => [
       };
 
       // Object with specific property names
-      dynamicKeys: TRefine<
+      dynamicKeys: VRefine<
         Record<string, number>,
         { propertyNames: { pattern: "^[a-z]+$" } }
       >;

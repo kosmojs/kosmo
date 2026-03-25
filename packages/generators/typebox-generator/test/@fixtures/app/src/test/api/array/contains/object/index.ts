@@ -4,7 +4,7 @@ export default defineRoute(({ POST }) => [
   POST<{
     json: {
       // Basic object contains
-      simpleObject: TRefine<
+      simpleObject: VRefine<
         Array<{ role: string; level: number }>,
         {
           contains: {
@@ -17,7 +17,7 @@ export default defineRoute(({ POST }) => [
           };
         }
       >;
-      multipleProps: TRefine<
+      multipleProps: VRefine<
         Array<{ category: string; price: number }>,
         {
           contains: {
@@ -32,7 +32,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Object contains with min/max
-      minContains: TRefine<
+      minContains: VRefine<
         Array<{ status: string; priority: number }>,
         {
           contains: {
@@ -46,7 +46,7 @@ export default defineRoute(({ POST }) => [
           minContains: 1;
         }
       >;
-      maxContains: TRefine<
+      maxContains: VRefine<
         Array<{ type: string; enabled: boolean }>,
         {
           contains: {

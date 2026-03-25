@@ -21,14 +21,14 @@ type OrderResponse = {
 type OrderQuery = {
   includeItems?: boolean;
   includeCustomer?: boolean;
-  limit?: TRefine<number, { minimum: 1; maximum: 100 }>;
+  limit?: VRefine<number, { minimum: 1; maximum: 100 }>;
 };
 
 export default defineRoute<
   "",
   [
     "pending" | "processing" | "shipped" | "delivered" | "cancelled",
-    TRefine<string, { pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" }>,
+    VRefine<string, { pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" }>,
   ]
 >(({ GET, POST }) => [
   GET<{ json: OrderQuery; response: [200, "json", OrderResponse] }>(

@@ -2,15 +2,15 @@ import { defineRoute } from "@test/index";
 
 type UserResponse = {
   id: number;
-  name: TRefine<string, { minLength: 1; maxLength: 100 }>;
-  email: TRefine<string, { format: "email" }>;
+  name: VRefine<string, { minLength: 1; maxLength: 100 }>;
+  email: VRefine<string, { format: "email" }>;
   role: "admin" | "user" | "moderator";
-  createdAt: TRefine<string, { format: "date-time" }>;
+  createdAt: VRefine<string, { format: "date-time" }>;
 };
 
 type UpdateUserPayload = {
-  name?: TRefine<string, { minLength: 1; maxLength: 100 }>;
-  email?: TRefine<string, { format: "email" }>;
+  name?: VRefine<string, { minLength: 1; maxLength: 100 }>;
+  email?: VRefine<string, { format: "email" }>;
   role?: "admin" | "user" | "moderator";
 };
 
@@ -20,7 +20,7 @@ type UserQuery = {
   expand?: boolean;
 };
 
-export default defineRoute<"", [TRefine<number, { minimum: 1 }>]>(
+export default defineRoute<"", [VRefine<number, { minimum: 1 }>]>(
   ({ GET, PUT, DELETE }) => [
     GET<{
       json: UserQuery,

@@ -8,23 +8,23 @@ export default defineRoute(({ POST }) => [
       booleanStringTuple: [boolean, string];
 
       // Tuples with constraints
-      minLengthTuple: TRefine<[string, number], { minItems: 2 }>;
-      maxLengthTuple: TRefine<[string, number, boolean], { maxItems: 3 }>;
+      minLengthTuple: VRefine<[string, number], { minItems: 2 }>;
+      maxLengthTuple: VRefine<[string, number, boolean], { maxItems: 3 }>;
 
       // Tuples with refined elements
       emailAgeTuple: [
-        TRefine<string, { format: "email" }>,
-        TRefine<number, { minimum: 0; maximum: 120 }>,
+        VRefine<string, { format: "email" }>,
+        VRefine<number, { minimum: 0; maximum: 120 }>,
       ];
 
       // Tuple with const values
       configTuple: [
-        TRefine<string, { const: "config" }>,
-        TRefine<number, { minimum: 1 }>,
+        VRefine<string, { const: "config" }>,
+        VRefine<number, { minimum: 1 }>,
       ];
       rangeTuple: [
-        TRefine<number, { minimum: 0 }>,
-        TRefine<number, { maximum: 100 }>,
+        VRefine<number, { minimum: 0 }>,
+        VRefine<number, { maximum: 100 }>,
       ];
     };
   }>(async () => {}),

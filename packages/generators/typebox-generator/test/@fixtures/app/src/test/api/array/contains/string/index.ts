@@ -4,19 +4,19 @@ export default defineRoute(({ POST }) => [
   POST<{
     json: {
       // Basic string contains
-      constContains: TRefine<
+      constContains: VRefine<
         string[],
         {
           contains: { type: "string"; const: "admin" };
         }
       >;
-      patternContains: TRefine<
+      patternContains: VRefine<
         string[],
         {
           contains: { type: "string"; pattern: "^VIP" };
         }
       >;
-      enumContains: TRefine<
+      enumContains: VRefine<
         string[],
         {
           contains: {
@@ -27,21 +27,21 @@ export default defineRoute(({ POST }) => [
       >;
 
       // String contains with min/max
-      minContains: TRefine<
+      minContains: VRefine<
         string[],
         {
           contains: { type: "string"; const: "gold" };
           minContains: 2;
         }
       >;
-      maxContains: TRefine<
+      maxContains: VRefine<
         string[],
         {
           contains: { type: "string"; const: "silver" };
           maxContains: 3;
         }
       >;
-      minMaxContains: TRefine<
+      minMaxContains: VRefine<
         string[],
         {
           contains: { type: "string"; const: "premium" };
@@ -51,7 +51,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Complex string patterns
-      multiConstraintContains: TRefine<
+      multiConstraintContains: VRefine<
         string[],
         {
           contains: {
@@ -62,7 +62,7 @@ export default defineRoute(({ POST }) => [
           };
         }
       >;
-      emailContains: TRefine<
+      emailContains: VRefine<
         string[],
         {
           contains: {

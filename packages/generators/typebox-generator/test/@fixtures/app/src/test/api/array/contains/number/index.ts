@@ -4,19 +4,19 @@ export default defineRoute(({ POST }) => [
   POST<{
     json: {
       // Basic number contains
-      valueContains: TRefine<
+      valueContains: VRefine<
         number[],
         {
           contains: { type: "number"; const: 42 };
         }
       >;
-      rangeContains: TRefine<
+      rangeContains: VRefine<
         number[],
         {
           contains: { type: "number"; minimum: 10; maximum: 20 };
         }
       >;
-      multipleContains: TRefine<
+      multipleContains: VRefine<
         number[],
         {
           contains: { type: "number"; multipleOf: 5 };
@@ -24,21 +24,21 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Number contains with min/max
-      minContains: TRefine<
+      minContains: VRefine<
         number[],
         {
           contains: { type: "number"; minimum: 100 };
           minContains: 2;
         }
       >;
-      maxContains: TRefine<
+      maxContains: VRefine<
         number[],
         {
           contains: { type: "number"; maximum: 0 };
           maxContains: 1;
         }
       >;
-      minMaxContains: TRefine<
+      minMaxContains: VRefine<
         number[],
         {
           contains: { type: "number"; minimum: 50; maximum: 100 };
@@ -48,7 +48,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Complex number constraints
-      exclusiveContains: TRefine<
+      exclusiveContains: VRefine<
         number[],
         {
           contains: {
@@ -58,7 +58,7 @@ export default defineRoute(({ POST }) => [
           };
         }
       >;
-      integerContains: TRefine<
+      integerContains: VRefine<
         number[],
         {
           contains: {

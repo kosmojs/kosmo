@@ -2,7 +2,7 @@ import { defineRoute } from "@test/index";
 
 export default defineRoute<
   "params/[numberWithRefinements]",
-  [TRefine<number, { minimum: 0; maximum: 5 }>]
+  [VRefine<number, { minimum: 0; maximum: 5 }>]
 >(
   ({ GET }) => [
     GET(async (ctx) => {

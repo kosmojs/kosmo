@@ -3,7 +3,7 @@ import { defineRoute } from "@test/index";
 type StrictPayload = {
   id: number;
   name: string;
-  email: TRefine<string, { format: "email" }>;
+  email: VRefine<string, { format: "email" }>;
 };
 
 type LoosePayload = {

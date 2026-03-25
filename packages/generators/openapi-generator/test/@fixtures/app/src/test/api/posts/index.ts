@@ -1,11 +1,11 @@
 import { defineRoute } from "@test/index";
 
 type CreatePostPayload = {
-  title: TRefine<string, { minLength: 1; maxLength: 255 }>;
+  title: VRefine<string, { minLength: 1; maxLength: 255 }>;
   content: string;
-  tags: TRefine<string[], { maxItems: 10 }>;
+  tags: VRefine<string[], { maxItems: 10 }>;
   isPublished: boolean;
-  scheduledPublishAt?: TRefine<string, { format: "date-time" }>;
+  scheduledPublishAt?: VRefine<string, { format: "date-time" }>;
 };
 
 type PostResponse = {
@@ -15,8 +15,8 @@ type PostResponse = {
   tags: string[];
   isPublished: boolean;
   authorId: number;
-  createdAt: TRefine<string, { format: "date-time" }>;
-  publishedAt?: TRefine<string, { format: "date-time" }>;
+  createdAt: VRefine<string, { format: "date-time" }>;
+  publishedAt?: VRefine<string, { format: "date-time" }>;
 };
 
 type PostsListResponse = {
@@ -30,8 +30,8 @@ type PostsListResponse = {
 };
 
 type PostsQuery = {
-  page?: TRefine<number, { minimum: 1 }>;
-  limit?: TRefine<number, { minimum: 1; maximum: 100 }>;
+  page?: VRefine<number, { minimum: 1 }>;
+  limit?: VRefine<number, { minimum: 1; maximum: 100 }>;
   sort?: "newest" | "oldest" | "popular";
   tags?: string[];
   authorId?: number;

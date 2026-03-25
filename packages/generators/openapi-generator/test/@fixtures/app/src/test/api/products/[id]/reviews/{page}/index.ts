@@ -1,9 +1,9 @@
 import { defineRoute } from "@test/index";
 
 type CreateReviewPayload = {
-  rating: TRefine<number, { minimum: 1; maximum: 5 }>;
-  title: TRefine<string, { maxLength: 100 }>;
-  comment: TRefine<string, { maxLength: 1000 }>;
+  rating: VRefine<number, { minimum: 1; maximum: 5 }>;
+  title: VRefine<string, { maxLength: 100 }>;
+  comment: VRefine<string, { maxLength: 1000 }>;
   isAnonymous?: boolean;
 };
 
@@ -16,7 +16,7 @@ type ReviewResponse = {
     id: number;
     name: string;
   };
-  createdAt: TRefine<string, { format: "date-time" }>;
+  createdAt: VRefine<string, { format: "date-time" }>;
 };
 
 type ReviewsResponse = {
@@ -32,13 +32,13 @@ type ReviewsResponse = {
 
 type ReviewsQuery = {
   sort?: "newest" | "oldest" | "highest" | "lowest";
-  minRating?: TRefine<number, { minimum: 1; maximum: 5 }>;
+  minRating?: VRefine<number, { minimum: 1; maximum: 5 }>;
   verifiedOnly?: boolean;
 };
 
 export default defineRoute<
   "",
-  [TRefine<number, { minimum: 1 }>, TRefine<number, { minimum: 1 }>]
+  [VRefine<number, { minimum: 1 }>, VRefine<number, { minimum: 1 }>]
 >(({ GET, POST }) => [
   GET<{ json: ReviewsQuery; response: [200, "json", ReviewsResponse] }>(
     async (ctx) => {

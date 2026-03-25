@@ -2,10 +2,7 @@
   "extends": "@kosmojs/config/tsconfig.vite.json",
   "compilerOptions": {
     "paths": {
-      "~/*": ["./*"],
-      "@/*": ["./src/*"],
-      "@test/*": ["../../*"],
-      "_/*": ["./lib/src/*"]
+      "@test/*": ["../../*"]
     }
   }
 }

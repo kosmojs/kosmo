@@ -4,23 +4,23 @@ export default defineRoute(({ POST }) => [
   POST<{
     json: {
       // Basic range validation
-      minMax: TRefine<number, { minimum: 0; maximum: 100 }>;
+      minMax: VRefine<number, { minimum: 0; maximum: 100 }>;
 
       // Exclusive bounds
-      exclusiveMin: TRefine<number, { exclusiveMinimum: 0 }>;
-      exclusiveMax: TRefine<number, { exclusiveMaximum: 100 }>;
+      exclusiveMin: VRefine<number, { exclusiveMinimum: 0 }>;
+      exclusiveMax: VRefine<number, { exclusiveMaximum: 100 }>;
 
       // Combined exclusive bounds
-      exclusiveRange: TRefine<
+      exclusiveRange: VRefine<
         number,
         { exclusiveMinimum: 0; exclusiveMaximum: 100 }
       >;
 
       // Multiple of constraint
-      multipleOfFive: TRefine<number, { multipleOf: 5 }>;
+      multipleOfFive: VRefine<number, { multipleOf: 5 }>;
 
       // Mixed constraints
-      complexConstraint: TRefine<
+      complexConstraint: VRefine<
         number,
         {
           minimum: 10;
@@ -30,17 +30,17 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Negative ranges
-      negativeRange: TRefine<number, { minimum: -100; maximum: -10 }>;
+      negativeRange: VRefine<number, { minimum: -100; maximum: -10 }>;
 
       // Decimal constraints
-      decimalRange: TRefine<number, { minimum: 0.1; maximum: 1.0 }>;
+      decimalRange: VRefine<number, { minimum: 0.1; maximum: 1.0 }>;
 
       // Integer constraints with multipleOf
-      integerMultiple: TRefine<number, { multipleOf: 1 }>; // Forces integers
+      integerMultiple: VRefine<number, { multipleOf: 1 }>; // Forces integers
 
       // Zero boundary
-      positiveOnly: TRefine<number, { minimum: 0 }>;
-      negativeOnly: TRefine<number, { maximum: 0 }>;
+      positiveOnly: VRefine<number, { minimum: 0 }>;
+      negativeOnly: VRefine<number, { maximum: 0 }>;
     };
   }>(async () => {}),
 ]);

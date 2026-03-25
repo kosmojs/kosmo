@@ -10,7 +10,7 @@ type StoreReview = {
     id: number;
     name: string;
   };
-  createdAt: TRefine<string, { format: "date-time" }>;
+  createdAt: VRefine<string, { format: "date-time" }>;
 };
 
 type StoreReviewsResponse = {
@@ -26,7 +26,7 @@ type StoreReviewsResponse = {
 };
 
 type StoreReviewsQuery = {
-  minRating?: TRefine<number, { minimum: 1; maximum: 5 }>;
+  minRating?: VRefine<number, { minimum: 1; maximum: 5 }>;
   verifiedOnly?: boolean;
   includeReplies?: boolean;
 };
@@ -34,9 +34,9 @@ type StoreReviewsQuery = {
 export default defineRoute<
   "",
   [
-    TRefine<number, { minimum: 1 }>,
-    TRefine<number, { minimum: 1 }>,
-    TRefine<number, { minimum: 1 }>,
+    VRefine<number, { minimum: 1 }>,
+    VRefine<number, { minimum: 1 }>,
+    VRefine<number, { minimum: 1 }>,
   ]
 >(({ GET }) => [
   GET<{

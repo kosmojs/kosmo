@@ -3,7 +3,7 @@ import { defineRoute } from "@test/index";
 type UserProfile = {
   username: string;
   displayName: string;
-  joinedAt: TRefine<string, { format: "date-time" }>;
+  joinedAt: VRefine<string, { format: "date-time" }>;
   stats?: {
     posts: number;
     followers: number;
@@ -20,7 +20,7 @@ type ProfileQuery = {
 export default defineRoute<
   "",
   [
-    TRefine<
+    VRefine<
       string,
       { pattern: "^[a-zA-Z0-9_]{3,20}$"; minLength: 3; maxLength: 20 }
     >,

@@ -4,7 +4,7 @@ export default defineRoute(({ POST }) => [
   POST<{
     json: {
       // Basic string tuples
-      constTuple: TRefine<
+      constTuple: VRefine<
         [string, string],
         {
           prefixItems: [
@@ -13,7 +13,7 @@ export default defineRoute(({ POST }) => [
           ];
         }
       >;
-      patternTuple: TRefine<
+      patternTuple: VRefine<
         [string, string],
         {
           prefixItems: [
@@ -24,7 +24,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // String tuples with length constraints
-      lengthTuple: TRefine<
+      lengthTuple: VRefine<
         [string, string, string],
         {
           prefixItems: [
@@ -36,7 +36,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Mixed string constraints
-      mixedString: TRefine<
+      mixedString: VRefine<
         [string, string, string],
         {
           prefixItems: [

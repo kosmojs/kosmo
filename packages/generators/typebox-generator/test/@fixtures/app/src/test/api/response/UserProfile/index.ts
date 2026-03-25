@@ -6,12 +6,12 @@ export default defineRoute(({ POST }) => [
       200,
       "json",
       {
-        id: TRefine<string, { pattern: "^[a-zA-Z0-9_-]{1,50}$" }>;
-        email: TRefine<string, { format: "email" }>;
+        id: VRefine<string, { pattern: "^[a-zA-Z0-9_-]{1,50}$" }>;
+        email: VRefine<string, { format: "email" }>;
         firstName: string;
         lastName: string;
-        dateOfBirth: TRefine<string, { format: "date" }>; // String (from DB)
-        phoneNumber?: TRefine<string, { pattern: "^\\+?[1-9][0-9]{4,14}$" }>;
+        dateOfBirth: VRefine<string, { format: "date" }>; // String (from DB)
+        phoneNumber?: VRefine<string, { pattern: "^\\+?[1-9][0-9]{4,14}$" }>;
         avatar?: string;
         emailVerified: boolean;
         preferences: {
@@ -26,10 +26,10 @@ export default defineRoute(({ POST }) => [
         addresses: Array<{
           id: string;
           type: "home" | "work" | "billing";
-          street: TRefine<string, { minLength: 1; maxLength: 100 }>;
+          street: VRefine<string, { minLength: 1; maxLength: 100 }>;
           city: string;
-          state: TRefine<string, { minLength: 2; maxLength: 2 }>;
-          zipCode: TRefine<string, { pattern: "^[0-9]{5}(-[0-9]{4})?$" }>;
+          state: VRefine<string, { minLength: 2; maxLength: 2 }>;
+          zipCode: VRefine<string, { pattern: "^[0-9]{5}(-[0-9]{4})?$" }>;
           country: string;
           isDefault: boolean;
         }>;

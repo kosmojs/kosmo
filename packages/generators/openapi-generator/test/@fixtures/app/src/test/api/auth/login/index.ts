@@ -1,8 +1,8 @@
 import { defineRoute } from "@test/index";
 
 type LoginPayload = {
-  email: TRefine<string, { format: "email" }>;
-  password: TRefine<string, { minLength: 8 }>;
+  email: VRefine<string, { format: "email" }>;
+  password: VRefine<string, { minLength: 8 }>;
   rememberMe?: boolean;
 };
 

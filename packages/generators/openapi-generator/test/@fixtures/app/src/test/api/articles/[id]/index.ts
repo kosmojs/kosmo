@@ -5,7 +5,7 @@ type ArticleResponse = {
   title: string;
   content: string;
   author: string;
-  publishedAt: TRefine<string, { format: "date-time" }>;
+  publishedAt: VRefine<string, { format: "date-time" }>;
   tags: string[];
 };
 
@@ -15,7 +15,7 @@ type ArticleQuery = {
   format?: "full" | "summary";
 };
 
-export default defineRoute<"", [TRefine<number, { minimum: 1 }>]>(({ GET }) => [
+export default defineRoute<"", [VRefine<number, { minimum: 1 }>]>(({ GET }) => [
   GET<{
     form: ArticleQuery;
     response: [200, "json", ArticleResponse],

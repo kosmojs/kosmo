@@ -6,6 +6,6 @@ export default defineRoute(({ GET, POST }) => [
   }>(async () => {}),
 
   POST<{
-    raw: TRefine<string, { minLength: 5 }>;
+    raw: VRefine<string, { minLength: 5 }>;
   }>(async () => {}),
 ]);

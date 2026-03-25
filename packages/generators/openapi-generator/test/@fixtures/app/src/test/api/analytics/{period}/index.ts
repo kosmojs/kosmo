@@ -7,7 +7,7 @@ type AnalyticsQuery = {
 };
 
 type AnalyticsDataPoint = {
-  date: TRefine<string, { format: "date" }>;
+  date: VRefine<string, { format: "date" }>;
   views: number;
   clicks: number;
   conversions: number;

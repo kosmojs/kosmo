@@ -4,7 +4,7 @@ export default defineRoute(({ POST }) => [
   POST<{
     json: {
       // Nested array contains
-      nestedArray: TRefine<
+      nestedArray: VRefine<
         Array<{
           user: string;
           permissions: string[];
@@ -25,7 +25,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Deeply nested object
-      deepNested: TRefine<
+      deepNested: VRefine<
         Array<{
           profile: {
             name: string;
@@ -58,7 +58,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Multiple constraints combined
-      multiConstraint: TRefine<
+      multiConstraint: VRefine<
         Array<{
           id: string;
           tags: string[];

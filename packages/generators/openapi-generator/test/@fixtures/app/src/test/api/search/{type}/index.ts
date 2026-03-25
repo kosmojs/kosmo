@@ -1,18 +1,18 @@
 import { defineRoute } from "@test/index";
 
 type SearchPayload = {
-  query: TRefine<string, { minLength: 1; maxLength: 100 }>;
+  query: VRefine<string, { minLength: 1; maxLength: 100 }>;
   filters?: {
     category?: "tech" | "science" | "arts";
     dateRange?: {
-      from: TRefine<string, { format: "date" }>;
-      to: TRefine<string, { format: "date" }>;
+      from: VRefine<string, { format: "date" }>;
+      to: VRefine<string, { format: "date" }>;
     };
-    tags?: TRefine<string[], { maxItems: 5 }>;
+    tags?: VRefine<string[], { maxItems: 5 }>;
   };
   pagination?: {
-    page?: TRefine<number, { minimum: 1 }>;
-    limit?: TRefine<number, { minimum: 1; maximum: 100 }>;
+    page?: VRefine<number, { minimum: 1 }>;
+    limit?: VRefine<number, { minimum: 1; maximum: 100 }>;
   };
 };
 

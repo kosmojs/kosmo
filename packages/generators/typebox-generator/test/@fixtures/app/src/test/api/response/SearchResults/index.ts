@@ -6,13 +6,13 @@ export default defineRoute(({ POST }) => [
       200,
       "json",
       {
-        query: TRefine<string, { minLength: 1; maxLength: 100 }>;
+        query: VRefine<string, { minLength: 1; maxLength: 100 }>;
         results: unknown[];
         pagination: {
-          page: TRefine<number, { minimum: 1 }>;
-          limit: TRefine<number, { minimum: 1; maximum: 100 }>;
-          total: TRefine<number, { minimum: 0 }>;
-          totalPages: TRefine<number, { minimum: 0 }>;
+          page: VRefine<number, { minimum: 1 }>;
+          limit: VRefine<number, { minimum: 1; maximum: 100 }>;
+          total: VRefine<number, { minimum: 0 }>;
+          totalPages: VRefine<number, { minimum: 0 }>;
           hasNext: boolean;
           hasPrev: boolean;
         };
@@ -21,20 +21,20 @@ export default defineRoute(({ POST }) => [
           available: {
             categories: Array<{
               name: string;
-              count: TRefine<number, { minimum: 0 }>;
+              count: VRefine<number, { minimum: 0 }>;
             }>;
             priceRanges: Array<{
-              min: TRefine<number, { minimum: 0 }>;
-              max: TRefine<number, { minimum: 0 }>;
-              count: TRefine<number, { minimum: 0 }>;
+              min: VRefine<number, { minimum: 0 }>;
+              max: VRefine<number, { minimum: 0 }>;
+              count: VRefine<number, { minimum: 0 }>;
             }>;
             ratings: Array<{
-              rating: TRefine<number, { minimum: 1; maximum: 5 }>;
-              count: TRefine<number, { minimum: 0 }>;
+              rating: VRefine<number, { minimum: 1; maximum: 5 }>;
+              count: VRefine<number, { minimum: 0 }>;
             }>;
           };
         };
-        processingTime: TRefine<number, { minimum: 0 }>;
+        processingTime: VRefine<number, { minimum: 0 }>;
       },
     ];
   }>(async () => {}),

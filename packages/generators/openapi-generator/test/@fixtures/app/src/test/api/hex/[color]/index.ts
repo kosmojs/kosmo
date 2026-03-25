@@ -20,7 +20,7 @@ type ColorQuery = {
   includeName?: boolean;
 };
 
-export default defineRoute<"", [TRefine<string, { pattern: "^#[0-9A-Fa-f]{6}$" }>]>(
+export default defineRoute<"", [VRefine<string, { pattern: "^#[0-9A-Fa-f]{6}$" }>]>(
   ({ GET }) => [
     GET<{ json: ColorQuery; response: [200, "json", ColorInfo] }>(
       async (ctx) => {

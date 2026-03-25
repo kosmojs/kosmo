@@ -12,7 +12,7 @@ type EmailQuery = {
   includeStats?: boolean;
 };
 
-export default defineRoute<"", [TRefine<string, { format: "email" }>]>(
+export default defineRoute<"", [VRefine<string, { format: "email" }>]>(
   ({ GET }) => [
     GET<{ json: EmailQuery; response: [200, "json", EmailResponse] }>(
       async (ctx) => {

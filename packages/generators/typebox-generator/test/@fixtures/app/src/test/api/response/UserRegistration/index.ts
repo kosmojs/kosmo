@@ -6,11 +6,11 @@ export default defineRoute(({ POST }) => [
       200,
       "json",
       {
-        id: TRefine<string, { format: "uuid" }>;
-        email: TRefine<string, { format: "email" }>;
+        id: VRefine<string, { format: "uuid" }>;
+        email: VRefine<string, { format: "email" }>;
         firstName: string;
         lastName: string;
-        dateOfBirth: TRefine<string, { format: "date" }>;
+        dateOfBirth: VRefine<string, { format: "date" }>;
         emailVerified: boolean;
         createdAt: Date; // Date instance (from ORM)
         updatedAt: Date; // Date instance (from ORM)

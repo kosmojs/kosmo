@@ -18,7 +18,7 @@ type CodeQuery = {
   includeUsage?: boolean;
 };
 
-export default defineRoute<"", [TRefine<string, { pattern: "^[A-Z0-9]{3,10}$" }>]>(
+export default defineRoute<"", [VRefine<string, { pattern: "^[A-Z0-9]{3,10}$" }>]>(
   ({ GET }) => [
     GET<{ json: CodeQuery; response: [200, "json", CodeResponse] }>(
       async (ctx) => {

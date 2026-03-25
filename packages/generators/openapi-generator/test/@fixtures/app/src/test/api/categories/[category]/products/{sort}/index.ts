@@ -18,7 +18,7 @@ type ProductsResponse = {
 type ProductsQuery = {
   minPrice?: number;
   maxPrice?: number;
-  minRating?: TRefine<number, { minimum: 1; maximum: 5 }>;
+  minRating?: VRefine<number, { minimum: 1; maximum: 5 }>;
   inStock?: boolean;
 };
 

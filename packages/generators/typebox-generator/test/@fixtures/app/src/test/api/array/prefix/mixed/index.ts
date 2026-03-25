@@ -4,7 +4,7 @@ export default defineRoute(({ POST }) => [
   POST<{
     json: {
       // Basic mixed tuples
-      simpleMixed: TRefine<
+      simpleMixed: VRefine<
         [string, number, boolean],
         {
           prefixItems: [
@@ -16,7 +16,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Complex mixed tuples
-      complexMixed: TRefine<
+      complexMixed: VRefine<
         [string, number, boolean, string],
         {
           prefixItems: [
@@ -29,7 +29,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // Mixed with formats
-      formatMixed: TRefine<
+      formatMixed: VRefine<
         [string, string, number],
         {
           prefixItems: [

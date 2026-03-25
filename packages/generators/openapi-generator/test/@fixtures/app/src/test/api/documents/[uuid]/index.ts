@@ -5,12 +5,12 @@ type DocumentResponse = {
   title: string;
   content: string;
   ownerId: number;
-  createdAt: TRefine<string, { format: "date-time" }>;
-  updatedAt: TRefine<string, { format: "date-time" }>;
+  createdAt: VRefine<string, { format: "date-time" }>;
+  updatedAt: VRefine<string, { format: "date-time" }>;
 };
 
 type UpdateDocumentPayload = {
-  title?: TRefine<string, { minLength: 1; maxLength: 255 }>;
+  title?: VRefine<string, { minLength: 1; maxLength: 255 }>;
   content?: string;
 };
 
@@ -20,7 +20,7 @@ type DocumentQuery = {
   format?: "full" | "minimal";
 };
 
-export default defineRoute<"", [TRefine<string, { format: "uuid" }>]>(
+export default defineRoute<"", [VRefine<string, { format: "uuid" }>]>(
   ({ GET, PUT, DELETE }) => [
     GET<{ json: DocumentQuery; response: [200, "json", DocumentResponse] }>(
       async (ctx) => {

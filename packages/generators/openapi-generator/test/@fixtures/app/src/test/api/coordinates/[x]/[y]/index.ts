@@ -17,8 +17,8 @@ type CoordinateQuery = {
 export default defineRoute<
   "",
   [
-    TRefine<number, { minimum: -180; maximum: 180; multipleOf: 0.000001 }>,
-    TRefine<number, { minimum: -90; maximum: 90; multipleOf: 0.000001 }>,
+    VRefine<number, { minimum: -180; maximum: 180; multipleOf: 0.000001 }>,
+    VRefine<number, { minimum: -90; maximum: 90; multipleOf: 0.000001 }>,
   ]
 >(({ GET }) => [
   GET<{ json: CoordinateQuery; response: [200, "json", CoordinateResponse] }>(

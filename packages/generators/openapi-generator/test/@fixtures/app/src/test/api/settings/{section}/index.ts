@@ -25,7 +25,7 @@ type SettingsResponse = {
   privacy: PrivacySettings;
   language: string;
   timezone: string;
-  updatedAt: TRefine<string, { format: "date-time" }>;
+  updatedAt: VRefine<string, { format: "date-time" }>;
 };
 
 type SettingsQuery = {

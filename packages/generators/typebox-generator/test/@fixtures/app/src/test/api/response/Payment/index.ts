@@ -6,14 +6,14 @@ export default defineRoute(({ POST }) => [
       200,
       "json",
       {
-        paymentId: TRefine<string, { pattern: "^[a-zA-Z0-9_-]{1,50}$" }>;
-        orderId: TRefine<string, { pattern: "^[a-zA-Z0-9_-]{1,50}$" }>;
+        paymentId: VRefine<string, { pattern: "^[a-zA-Z0-9_-]{1,50}$" }>;
+        orderId: VRefine<string, { pattern: "^[a-zA-Z0-9_-]{1,50}$" }>;
         status: "succeeded" | "pending" | "failed" | "refunded";
-        amount: TRefine<number, { minimum: 0.01; maximum: 1000000 }>;
-        currency: TRefine<string, { pattern: "^[A-Z]{3}$" }>;
+        amount: VRefine<number, { minimum: 0.01; maximum: 1000000 }>;
+        currency: VRefine<string, { pattern: "^[A-Z]{3}$" }>;
         paymentMethod: {
           type: string;
-          last4?: TRefine<string, { pattern: "^[0-9]{4}$" }>;
+          last4?: VRefine<string, { pattern: "^[0-9]{4}$" }>;
           brand?: string;
         };
         processedAt: string; // String (from DB)
@@ -21,7 +21,7 @@ export default defineRoute(({ POST }) => [
         nextAction?:
           | {
               type: "redirect" | "3d_secure" | "wait";
-              url?: TRefine<string, { format: "url" }>;
+              url?: VRefine<string, { format: "url" }>;
             }
           | undefined;
       },

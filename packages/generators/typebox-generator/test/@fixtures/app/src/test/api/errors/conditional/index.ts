@@ -4,7 +4,7 @@ export default defineRoute(({ POST }) => [
   POST<{
     json: {
       // If country is "US", then zipCode is required
-      shippingAddress: TRefine<
+      shippingAddress: VRefine<
         {
           country: string;
           zipCode?: string;
@@ -16,7 +16,7 @@ export default defineRoute(({ POST }) => [
       >;
 
       // If age >= 18, then hasDriverLicense must be provided
-      userInfo: TRefine<
+      userInfo: VRefine<
         {
           age: number;
           hasDriverLicense?: boolean;
