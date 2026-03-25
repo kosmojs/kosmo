@@ -4,10 +4,10 @@ import { defineRoute } from "_/front/api";
 export default defineRoute<
   "users/[id]/{activity}",
   [
-    // validate id as number // [!code hl]
+    // validate id param as number // [!code hl]
     number,
     // activity, if given, should be one of // [!code hl]
-    TRefine<string, "posts" | "comments" | "likes">,
+    "posts" | "comments" | "likes",
   ]
 >(({ GET }) => [
   GET((ctx) => {

@@ -1,16 +1,16 @@
 ---
 title: Parameter Validation
 description: Validate route parameters at runtime with type refinements using defineRoute type arguments.
-    Convert string URL parameters to validated numbers, integers, or constrained values with TRefine.
+    Convert string URL parameters to validated numbers, integers, or constrained values with VRefine.
 head:
   - - meta
     - name: keywords
       content: parameter validation, route parameters, type refinement, url validation,
-        numeric validation, TRefine, typed parameters, runtime param validation
+        numeric validation, VRefine, typed parameters, runtime param validation
 ---
 
 Route parameters are extracted from the URL path as strings - that's just how URLs work.
-But you often need more than a string: a numeric ID, a positive integer, a value from a fixed set.
+But you often need more than a string: a numeric ID, a positive integer, a value from a fixed set or of a specific pattern, uuid, date, etc.
 
 `KosmoJS` lets you express these requirements directly in the type system.
 
@@ -39,17 +39,17 @@ Access validated parameters through `ctx.validated.params` - it carries the refi
 not the raw string. The underlying `ctx.params` (Koa) or `ctx.req.param()` (Hono) still exists
 if you need the original.
 
-Refine further with `TRefine` (globally available, no import needed):
+Refine further with `VRefine` (globally available, no import needed):
 
 ```ts [api/users/[id]/index.ts]
 export default defineRoute<"users/[id]", [
-  TRefine<number, { minimum: 1, multipleOf: 1 }> // positive integer // [!code hl]
+  VRefine<number, { minimum: 1, multipleOf: 1 }> // positive integer // [!code hl]
 ]>(({ GET }) => [
   // ...
 ]);
 ```
 
-[More on TRefine ➜ ](/validation/refine)
+[More on VRefine ➜ ](/validation/refine)
 
 ## 🚥 Multiple Parameters
 
@@ -58,7 +58,7 @@ Positions are optional - omit any you don't need to refine.
 
 ```ts [api/users/[id]/[view]/index.ts]
 export default defineRoute<"users/[id]/[view]", [
-  TRefine<number, { minimum: 1, multipleOf: 1 }>, // id // [!code hl]
+  VRefine<number, { minimum: 1, multipleOf: 1 }>, // id // [!code hl]
   "profile" | "settings" | "data"                 // view // [!code hl]
 ]>(({ GET }) => [
   GET(async (ctx) => {

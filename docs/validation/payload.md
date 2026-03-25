@@ -1,12 +1,12 @@
 ---
 title: Payload Validation
 description: Validate request payloads with inline TypeScript types or imported type definitions.
-    Support for nested structures, conditional validation, generics, and complex domain models with TRefine constraints.
+    Support for nested structures, conditional validation, generics, and complex domain models with VRefine constraints.
 head:
   - - meta
     - name: keywords
       content: payload validation, request validation, nested types, conditional validation,
-        union types, generic types, json validation, form validation, TRefine
+        union types, generic types, json validation, form validation, VRefine
 ---
 
 Payload validation covers everything your API receives from clients:
@@ -74,11 +74,11 @@ import { defineRoute } from "_/front/api";
 export default defineRoute<"posts">(({ POST }) => [
   POST<{
     json: {
-      title: TRefine<string, { minLength: 1, maxLength: 255 }>;
+      title: VRefine<string, { minLength: 1, maxLength: 255 }>;
       content: string;
       tags: string[];
       isPublished: boolean;
-      scheduledPublishAt?: TRefine<string, { format: "date-time" }>;
+      scheduledPublishAt?: VRefine<string, { format: "date-time" }>;
     },
   }>(async (ctx) => {
     const { title, content, tags } = ctx.validated.json; // [!code hl]
@@ -88,17 +88,17 @@ export default defineRoute<"posts">(({ POST }) => [
 
 Optional fields (`?`) can be omitted entirely. When present, they must still pass their type and refinement constraints.
 
-Notice how `TRefine` is used to add validation constraints to specific fields.
+Notice how `VRefine` is used to add validation constraints to specific fields.
 
 The `minLength` and `maxLength` constraints ensure titles aren't empty or excessively long.
 
 The `format: "date-time"` constraint leverages JSON Schema's format validation
 to ensure dates are properly formatted.
 
-Without `TRefine`, fields are validated only for their basic type - a string must be a string,
+Without `VRefine`, fields are validated only for their basic type - a string must be a string,
 an array must be an array, but no additional constraints apply.
 
-[More on TRefine ➜ ](/validation/refine)
+[More on VRefine ➜ ](/validation/refine)
 
 ## 🏗️ Complex Nested Structures
 
@@ -106,35 +106,34 @@ Since validation rules are just `TypeScript` types, nested objects, union types,
 conditional fields, referenced types - all work naturally:
 
 ```ts [api/example/index.ts]
+import type { BillingAddress } from "~/types/checkout";
+
+type PaymentMethod = {
+  type: "card" | "wallet";
+  card?: {
+    number: VRefine<string, { pattern: "^[0-9]{13,19}$" }>;
+    expMonth: VRefine<number, { minimum: 1, maximum: 12 }>;
+    expYear: number;
+    cvc: VRefine<string, { pattern: "^[0-9]{3,4}$" }>;
+    holderName: string;
+  };
+  wallet?: {
+    walletId: string;
+    token: VRefine<string, { minLength: 1, maxLength: 500 }>;
+  };
+};
+
+type Payload = {
+  orderId: VRefine<string, { pattern: "^[a-zA-Z0-9_-]{1,50}$" }>;
+  amount: VRefine<number, { minimum: 0.01, maximum: 1000000 }>;
+  currency: VRefine<string, { pattern: "^[A-Z]{3}$" }>;
+  paymentMethod: PaymentMethod;
+  billingAddress: BillingAddress;
+};
+
 export default defineRoute(({ POST }) => [
   POST<{
-    json: {
-      orderId: TRefine<string, { pattern: "^[a-zA-Z0-9_-]{1,50}$" }>;
-      amount: TRefine<number, { minimum: 0.01, maximum: 1000000 }>;
-      currency: TRefine<string, { pattern: "^[A-Z]{3}$" }>;
-      paymentMethod: {
-        type: "card" | "wallet";
-        card?: {
-          number: TRefine<string, { pattern: "^[0-9]{13,19}$" }>;
-          expMonth: TRefine<number, { minimum: 1, maximum: 12 }>;
-          expYear: number;
-          cvc: TRefine<string, { pattern: "^[0-9]{3,4}$" }>;
-          holderName: string;
-        };
-        wallet?: {
-          walletId: string;
-          token: TRefine<string, { minLength: 1, maxLength: 500 }>;
-        };
-      };
-      billingAddress: {
-        line1: TRefine<string, { minLength: 1, maxLength: 100 }>;
-        line2?: string;
-        city: string;
-        state: TRefine<string, { minLength: 2, maxLength: 2 }>;
-        postalCode: TRefine<string, { pattern: "^[0-9]{5}(-[0-9]{4})?$" }>;
-        country: string;
-      };
-    },
+    json: Payload,
   }>(async (ctx) => {
     // every field validated before handler runs
   }),
@@ -150,12 +149,12 @@ This is particularly useful for endpoints that need to validate query parameters
 export default defineRoute<"posts/search">(({ POST }) => [
   POST<{
     query: {
-      page: TRefine<number, { minimum: 1 }>;
-      limit: TRefine<number, { minimum: 1, maximum: 100 }>;
+      page: VRefine<number, { minimum: 1 }>;
+      limit: VRefine<number, { minimum: 1, maximum: 100 }>;
       sortBy?: "date" | "title" | "views";
     };
     headers: {
-      authorization: TRefine<string, { pattern: "^Bearer .+" }>;
+      authorization: VRefine<string, { pattern: "^Bearer .+" }>;
       "x-api-version"?: string;
     };
     cookies: {
@@ -166,8 +165,8 @@ export default defineRoute<"posts/search">(({ POST }) => [
         tags?: string[];
         status?: "draft" | "published" | "archived";
         dateRange?: {
-          from: TRefine<string, { format: "date-time" }>;
-          to: TRefine<string, { format: "date-time" }>;
+          from: VRefine<string, { format: "date-time" }>;
+          to: VRefine<string, { format: "date-time" }>;
         };
       };
     };
@@ -189,7 +188,7 @@ Each target is validated independently. All must pass before your handler execut
 POST<{
   json: {
     name: string;
-    email: TRefine<string, { format: "email" }>;
+    email: VRefine<string, { format: "email" }>;
   };
 }>(async (ctx) => {
   const { name, email } = ctx.validated.json;
@@ -200,8 +199,8 @@ POST<{
 ```ts
 POST<{
   form: {
-    username: TRefine<string, { minLength: 3, maxLength: 20 }>;
-    password: TRefine<string, { minLength: 8 }>;
+    username: VRefine<string, { minLength: 3, maxLength: 20 }>;
+    password: VRefine<string, { minLength: 8 }>;
   };
 }>(async (ctx) => {
   const { username, password } = ctx.validated.form;
@@ -224,7 +223,7 @@ POST<{
 ### Raw
 ```ts
 POST<{
-  raw: TRefine<string, { minLength: 1, maxLength: 10000 }>;
+  raw: VRefine<string, { minLength: 1, maxLength: 10000 }>;
 }>(async (ctx) => {
   const rawContent = ctx.validated.raw;
 })
@@ -245,8 +244,8 @@ Suppose you have a file defining user-related types:
 
 ```ts [types/user.ts]
 export type UserProfile = {
-  name: TRefine<string, { minLength: 1, maxLength: 255 }>;
-  email: TRefine<string, { format: "email" }>;
+  name: VRefine<string, { minLength: 1, maxLength: 255 }>;
+  email: VRefine<string, { format: "email" }>;
 };
 
 export type UserPreferences = {
@@ -278,7 +277,7 @@ export type User = {
 };
 
 export type Post = {
-  id: TRefine<number, { minimum: 1, multipleOf: 1 }>;
+  id: VRefine<number, { minimum: 1, multipleOf: 1 }>;
   title: string;
   tags: { id: string; name: string }[];
   stats?: { views: number; likes: number };

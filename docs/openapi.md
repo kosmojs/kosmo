@@ -10,42 +10,28 @@ head:
 ---
 
 `KosmoJS` generates an `OpenAPI 3.1` specification directly from your route definitions.
-Route structure, `TypeScript` types, `TRefine` constraints, parameters, responses -
+Route structure, `TypeScript` types, `VRefine` constraints, parameters, responses -
 all reflected in the spec automatically. No manual schema authoring, no annotation layers.
 
 ## 🔧 Enable the generator
 
-Simply add it to your source folder's `vite.config.ts`:
+Simply add it to your source folder's `kosmo.config.ts`:
 
-```typescript
-import { join } from "node:path";
-import devPlugin from "@kosmojs/dev";
+```ts
 import {
-  koaGenerator,
-  fetchGenerator,
-  typeboxGenerator,
+  defineConfig,
+  // ...other generators
   openapiGenerator, // [!code ++]
-} from "@kosmojs/generators";
-
-import defineConfig from "../../vite.base";
-import { apiurl, baseurl } from "./config";
+} from "@kosmojs/dev";
 
 const openapiConfig = { // [!code ++:3]
   // ...
 };
 
-export default defineConfig(import.meta.dirname, {
-  base: join(baseurl, "/"),
-  server: { port: 4000 },
-  plugins: [
-    devPlugin(apiurl, {
-      generators: [
-        koaGenerator(),
-        fetchGenerator(),
-        typeboxGenerator(),
-        openapiGenerator(openapiConfig), // [!code ++]
-      ],
-    }),
+export default defineConfig({
+  generators: [
+    // ...other generators
+    openapiGenerator(openapiConfig), // [!code ++]
   ],
 });
 ```
@@ -54,7 +40,7 @@ export default defineConfig(import.meta.dirname, {
 
 ### Required Options
 
-**`outfile`** - Path where the spec is written, relative to your `vite.config.ts`.
+**`outfile`** - Path where the spec is written, relative to your `kosmo.config.ts`.
 
 **`openapi`** - OpenAPI version. Use `"3.1.0"` or any `3.1.x` version.
 
@@ -104,7 +90,7 @@ user management, billing, and analytics.`,
     },
   },
   servers: [
-    { url: "http://localhost:4000", description: "Development server" },
+    { url: "http://localhost:4556", description: "Development server" },
     { url: "https://staging-api.myapp.com", description: "Staging environment" },
     { url: "https://api.myapp.com", description: "Production server" },
   ],
@@ -120,7 +106,7 @@ The output is a complete `OpenAPI 3.1` document covering:
 - **Parameters** - path, query, and header parameters with types and constraints
 - **Request Bodies** - payload schemas for POST, PUT, and PATCH endpoints
 - **Responses** - response schemas with status codes and content types
-- **Validation Rules** - `TRefine` constraints appear as JSON Schema keywords
+- **Validation Rules** - `VRefine` constraints appear as JSON Schema keywords
 
 ### Path Variations for Optional Parameters
 

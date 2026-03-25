@@ -110,7 +110,7 @@ Prefer simple segments for frontend routes.
 ## ⚡ Power Syntax
 
 For advanced cases, `KosmoJS` passes `path-to-regexp v8` patterns through directly.
-**The rule:** if the parameter name contains non-alphanumeric characters, it's treated as a raw pattern.
+**The rule:** if the param name contains non-alphanumeric characters, it's treated as a raw pattern.
 
 This unlocks things like optional static parts:
 

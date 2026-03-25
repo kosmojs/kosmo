@@ -19,84 +19,22 @@ development workflow unchanged.
 
 SSR is automatically enabled if selected during source folder creation.
 To add it to an existing folder, register `ssrGenerator` in your source
-folder's `vite.config.ts`:
+folder's `kosmo.config.ts`:
 
-::: code-group
-
-```ts [React]
-import reactPlugin from "@vitejs/plugin-react";
-import devPlugin from "@kosmojs/dev";
+```ts [kosmo.config.ts]
 import {
-  reactGenerator,
+  defineConfig,
+  // ...other generators
   ssrGenerator, // [!code ++]
-} from "@kosmojs/generators";
+} from "@kosmojs/dev";
 
-import defineConfig from "../vite.base";
-
-export default defineConfig(import.meta.dirname, {
-  plugins: [
-    reactPlugin(),
-    devPlugin(apiurl, {
-      generators: [
-        reactGenerator(),
-        ssrGenerator(), // [!code ++]
-      ],
-    }),
+export default defineConfig({
+  generators: [
+    // ...other generators
+    ssrGenerator(), // [!code ++]
   ],
 });
 ```
-
-```ts [SolidJS]
-import solidPlugin from "vite-plugin-solid";
-import devPlugin from "@kosmojs/dev";
-import {
-  solidGenerator,
-  ssrGenerator, // [!code ++]
-} from "@kosmojs/generators";
-
-import defineConfig from "../vite.base";
-
-export default defineConfig(import.meta.dirname, {
-  plugins: [
-    solidPlugin({
-      ssr: true, // [!code ++]
-    }),
-    devPlugin(apiurl, {
-      generators: [
-        solidGenerator(),
-        ssrGenerator(), // [!code ++]
-      ],
-    }),
-  ],
-});
-```
-
-```ts [Vue]
-import vuePlugin from "@vitejs/plugin-vue";
-import devPlugin from "@kosmojs/dev";
-import {
-  vueGenerator,
-  ssrGenerator, // [!code ++]
-} from "@kosmojs/generators";
-
-import defineConfig from "../vite.base";
-
-export default defineConfig(import.meta.dirname, {
-  plugins: [
-    vuePlugin(),
-    devPlugin(apiurl, {
-      generators: [
-        vueGenerator(),
-        ssrGenerator(), // [!code ++]
-      ],
-    }),
-  ],
-});
-```
-
-:::
-
-> SolidJS requires `ssr: true` in `solidPlugin` options when enabling SSR.
 
 ## 📄 Server Entry Point
 
@@ -416,10 +354,10 @@ production execution.
 Test your SSR bundle before deploying:
 
 ```sh
-node dist/front/ssr/server.js -p 4000
+node dist/front/ssr/server.js -p 4557
 ```
 
-Navigate to `http://localhost:4000` to verify server-side rendering.
+Navigate to `http://localhost:4557` to verify server-side rendering.
 
 ## 🚀 Production Deployment
 
@@ -427,7 +365,7 @@ Deploy behind a reverse proxy such as Nginx or Caddy:
 
 ```nginx
 upstream ssr_backend {
-  server 127.0.0.1:4000;
+  server 127.0.0.1:4557;
   # server unix:/tmp/app.sock;
 }
 

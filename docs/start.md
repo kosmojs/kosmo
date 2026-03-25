@@ -56,7 +56,7 @@ yarn install
 
 `KosmoJS` doesn't create a source folder automatically - you add them as needed,
 one per distinct concern (main app, admin panel, marketing site, etc.).
-Each is independent with its own config, base URL, and dev server port.
+Each is independent with its own set of frameworks, config, base URL, etc.
 
 ::: code-group
 ```sh [npm]
@@ -72,24 +72,24 @@ yarn +folder
 ```
 :::
 
-You'll be prompted for folder name, base URL, port, framework, backend, and SSR.
+You'll be prompted for folder name, base URL, framework, backend, and SSR.
 For non-interactive mode:
 
 ::: code-group
 ```sh [npm]
-npm run +folder -- --name front --base / --port 4000 --framework solid --backend koa --ssr
+npm run +folder -- --name front --base / --framework solid --backend koa --ssr
 ```
 
 ```sh [pnpm]
-pnpm +folder --name front --base / --port 4000 --framework solid --backend koa --ssr
+pnpm +folder --name front --base / --framework solid --backend koa --ssr
 ```
 
 ```sh [yarn]
-yarn +folder --name front --base / --port 4000 --framework solid --backend koa --ssr
+yarn +folder --name front --base / --framework solid --backend koa --ssr
 ```
 :::
 
-Options: `--name` (required) · `--base` · `--port` · `--framework solid|react|vue` · `--backend koa|hono` · `--ssr`
+Options: `--name` (required) · `--base` · `--framework solid|react|vue` · `--backend koa|hono` · `--ssr`
 
 The source folder may add new dependencies - run install again:
 
@@ -208,7 +208,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ```
 :::
 
-Start the dev server and visit `http://localhost:4000/api/users/123`:
+Start the dev server and visit `http://localhost:4556/api/users/123`:
 
 ::: code-group
 ```sh [npm]
@@ -258,11 +258,11 @@ export default defineRoute<"users/[id]", [
 ```
 :::
 
-Use `TRefine` for additional constraints (no import needed):
+Use `VRefine` for additional constraints (no import needed):
 
 ```ts
 defineRoute<"users/[id]", [
-  TRefine<number, { minimum: 1, multipleOf: 1 }> // positive integer
+  VRefine<number, { minimum: 1, multipleOf: 1 }> // positive integer
 ]>
 ```
 
@@ -280,7 +280,7 @@ Body targets (mutually exclusive, POST/PUT/PATCH/DELETE only): `json` · `form` 
 ```ts [Koa]
 type CreateUserPayload = {
   name: string;
-  email: TRefine<string, { format: "email" }>;
+  email: VRefine<string, { format: "email" }>;
   age?: number;
 }
 
@@ -298,7 +298,7 @@ export default defineRoute<"users">(({ POST }) => [
 ```ts [Hono]
 type CreateUserPayload = {
   name: string;
-  email: TRefine<string, { format: "email" }>;
+  email: VRefine<string, { format: "email" }>;
   age?: number;
 }
 
@@ -423,18 +423,20 @@ Layouts can be nested - deeper layouts wrap inner layouts, matching your route h
 
 ## ⚡ Server-Side Rendering
 
-Enable when creating a source folder (`--ssr`), or add it later in `vite.config.ts`:
+Enable when creating a source folder (`--ssr`), or add it later in `kosmo.config.ts`:
 
-```ts [src/front/vite.config.ts]
-import { ssrGenerator } from "@kosmojs/generators"; // [!code ++]
+```ts [kosmo.config.ts]
+import { defineConfig, ssrGenerator } from "@kosmojs/dev"; // [!code ++]
 
-generators: [
-  // ...
-  ssrGenerator(), // [!code ++]
-]
+export default defineConfig({
+  generators: [
+    // ...
+    ssrGenerator(), // [!code ++]
+  ]
+});
 ```
 
-> Restart the dev server manually after adding new generators.
+> Restart dev server after adding new generators.
 
 `KosmoJS` generates `entry/server.ts` - your SSR orchestration file.
 Critical CSS is extracted and inlined automatically; remaining styles load asynchronously.
@@ -443,7 +445,7 @@ Build and run:
 
 ```sh
 pnpm build
-node dist/front/ssr/server.js -p 4001
+node dist/front/ssr/server.js -p 4557
 ```
 
 The API server and SSR server are bundled separately - deploy, scale, and run them independently.
@@ -452,7 +454,7 @@ The API server and SSR server are bundled separately - deploy, scale, and run th
 
 ## 🗂️ Multiple Source Folders
 
-Add more source folders as your app grows - each with its own framework, base URL, port, and config:
+Add more source folders as your app grows - each serving a specific purpose.
 
 ```sh
 pnpm dev  # runs all source folders in parallel
@@ -464,4 +466,4 @@ pnpm dev  # runs all source folders in parallel
 
 **Core patterns:** [Routing](/routing/intro) · [Validation](/validation/intro) · [Middleware](/api-server/middleware) · [Layouts](/frontend/routing) · [Fetch Clients](/fetch/start)
 
-**Advanced:** [TRefine](/validation/refine) · [OpenAPI](/openapi) · [Production Builds](/api-server/building-for-production)
+**Advanced:** [VRefine](/validation/refine) · [OpenAPI](/openapi) · [Production Builds](/api-server/building-for-production)

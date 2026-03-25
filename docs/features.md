@@ -11,15 +11,13 @@ head:
         cascading middleware, middleware slots, power syntax routing
 ---
 
-`KosmoJS` is a `Vite`-based meta-framework for full-stack `TypeScript` apps -
-directory-based routing, runtime validation from types, generated fetch clients, and OpenAPI,
-with your choice of backend and frontend framework.
+Production-ready features, right out of the box.
 
 ## 🗂️ Multiple Source Folders
 
 Organize distinct concerns - public site, customer app, admin dashboard -
 as independent source folders within a single `Vite` project.
-Each gets its own base URL, dev server, port, and `Vite` config.
+Each gets its own set of frameworks, base URL, development workflow and build pipeline.
 
 [Read more ➜](/start#📁-create-your-first-source-folder)
 
@@ -55,7 +53,7 @@ locale{-:lang{-:country}} ➜ /locale, /locale-en, /locale-en-US
 api/{v:version}/users     ➜ /api/users or /api/v2/users
 ```
 
-Any folder name containing non-alphanumeric characters (except `-` and `.`)
+Any param name containing non-alphanumeric characters
 is treated as a raw pattern - giving you precise control over URL structure
 without sacrificing the directory-based routing model.
 
@@ -64,14 +62,14 @@ without sacrificing the directory-based routing model.
 ## 🛡️ End-to-End Type Safety
 
 Write `TypeScript` types once - `KosmoJS` generates runtime validators automatically.
-The same definition drives compile-time checking, runtime validation, and API docs.
+The same definition drives compile-time checking, runtime validation, type-safe fetch clients, and OpenAPI specs.
 
 ```ts
 export default defineRoute(({ POST }) => [
   POST<{
     json: {
-      email: TRefine<string, { format: "email" }>;
-      age: TRefine<number, { minimum: 18 }>;
+      email: VRefine<string, { format: "email" }>;
+      age: VRefine<number, { minimum: 18 }>;
     },
     response: [200, "json", User],
   }>(async (ctx) => {
@@ -162,7 +160,7 @@ When you add a source folder, `KosmoJS` generates a ready-to-go setup for your c
 
 ## 🔧 Built on Proven Tools
 
-`Koa`/`Hono` · `Vite` · `TypeScript` · `path-to-regexp` · `TypeBox`.
+`Koa`/`Hono`  · `React`/`Vue`/`Solid` · `Vite` · `TypeScript`.
 No proprietary abstractions - just structure on top of tools you already know.
 
 ---

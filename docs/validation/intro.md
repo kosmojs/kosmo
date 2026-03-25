@@ -9,7 +9,7 @@ head:
         typescript validation, type safety, validation generator, end-to-end validation
 ---
 
-`KosmoJS` uses a "runtype" validation approach - your `TypeScript` types are automatically
+`KosmoJS` uses the "runtype" validation approach - your `TypeScript` types are automatically
 converted into JSON Schema and validated at runtime.
 
 No separate schema language to learn. No schemas drifting out of sync with your types.

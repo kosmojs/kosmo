@@ -66,7 +66,7 @@ npm run dev
 # or `pnpm dev` / `yarn dev`
 ```
 
-Each source folder runs on its own port with its own base URL.
+Each source folder runs its own set of frameworks with its own base URL, config etc.
 
 📘 [Learn more](https://kosmojs.dev/start.html)
 
@@ -90,16 +90,11 @@ Each source folder runs on its own port with its own base URL.
 
 - **🎨 Multiple Frameworks** - `Koa` or `Hono` for backend, `React`, `Vue`, or `SolidJS` for frontend. Different source folders can use different combinations.
 
-- **🔧 Built on Proven Tools** - `Koa`/`Hono` · `Vite` · `TypeScript` · `path-to-regexp` · `TypeBox`. No proprietary abstractions.
+- **🔧 Built on Proven Tools** - `Koa`/`Hono` · `React`/`Vue`/`Solid` · `Vite` · `TypeScript`. No proprietary abstractions.
 
 📘 [Learn more](https://kosmojs.dev/features.html)
 
-## 🧭 Example Use Cases
-
-- Projects where frontend and API must live side by side
-- Teams needing strong typing and runtime validation without duplicating schemas
-- Developers who want framework freedom with consistent structure
-- Projects that must scale from prototype to production with deterministic structure
+---
 
 ## 🛠️ Contributing
 

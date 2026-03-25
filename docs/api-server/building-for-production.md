@@ -1,18 +1,18 @@
 ---
 title: Building for Production
 description: Build and deploy KosmoJS applications to production with independent source folder builds,
-    esbuild configuration, deployment strategies for containers, serverless, and edge runtimes.
+    deployment strategies for containers, serverless, and edge runtimes.
 head:
   - - meta
     - name: keywords
-      content: vite build, production deployment, esbuild configuration, docker deployment,
+      content: vite build, production deployment, docker deployment,
         serverless api, edge runtime, nodejs deployment, api bundling, source maps
 ---
 
 Each source folder builds independently.
 
 ```sh
-pnpm build          # all source folders (parallel)
+pnpm build          # all source folders
 pnpm build front    # specific folder
 ```
 
@@ -79,34 +79,3 @@ import app from "./dist/front/api/app.js";
 Bun.serve({ port: 3000, fetch: app.fetch });
 ```
 :::
-
-## ⚙️ Build Configuration
-
-API builds use `esbuild.json` at the project root:
-
-```json
-{
-  "bundle": true,
-  "platform": "node",
-  "target": "node22",
-  "format": "esm",
-  "packages": "external",
-  "sourcemap": "linked",
-  "logLevel": "info"
-}
-```
-
-`bundle: true` is enforced for production - it can't be disabled.
-Common things to tune: `target` (Node version), `sourcemap` (`linked`/`inline`/`false`),
-`logLevel` verbosity.
-
-## ⚠️ Troubleshooting
-
-**Build fails** - check `esbuild.json` syntax, verify all imports are resolvable,
-review terminal output.
-
-**API crashes on startup** - verify environment variables are set,
-confirm Node.js version matches `target` in `esbuild.json`, check DB/service connections.
-
-**Bundle growing large** - review dependencies and mark stable ones as `external`
-in `esbuild.json`.

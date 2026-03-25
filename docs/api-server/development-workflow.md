@@ -5,14 +5,13 @@ description: Run multiple KosmoJS source folders independently with separate dev
 head:
   - - meta
     - name: keywords
-      content: vite dev server, hot reload, esbuild, rolldown, api development,
+      content: vite dev server, hot reload, rolldown, api development,
         multiple ports, teardown handler, development middleware, file watching
 ---
 
-Each source folder runs as a standalone dev server on its own port.
+Each source folder serve a specific concern - marketing site, customer app, admin, etc.
 
-Different concerns (marketing site, customer app, admin panel) stay isolated -
-separate configs, separate builds, separate deploys.
+Yet, development workflow is identical.
 
 ## 🚀 Starting the Dev Server
 
@@ -21,21 +20,14 @@ pnpm dev          # all source folders
 pnpm dev front    # specific folder (front, admin, app, etc.)
 ```
 
-Default port is `4000`, configured in the source folder's `vite.config.ts`.
+Default port is `4556`, configured as `devPort` in `package.json`.
 
 ## 🔀 What Happens on Start
 
-1. `esbuild` compiles `api/app.ts`
-2. Vite's dev server starts, serving client pages with HMR
-3. Requests are routed between Vite and your API based on `apiurl`
+1. `Vite` compiles `api/app.ts`
+2. Dev server starts, serving both client pages and your API routes
+3. Requests are routed between Vite and your API
 4. File watcher monitors API files for changes
-
-On API file change: waits for write stability (default 1s) → rebuilds in a background worker thread →
-swaps in the new handler. Vite stays responsive throughout.
-
-**Rolldown note:** `KosmoJS` is watching [Rolldown](https://rolldown.rs/) as a potential
-esbuild replacement - it aims to bring HMR to server-side code.
-Until it stabilizes, full rebuilds via esbuild are the baseline.
 
 ## ⚙️ api/dev.ts
 
@@ -151,23 +143,3 @@ Name your middleware functions - it makes this output significantly easier to re
 
 Individual `debug` properties are also available for targeted output:
 `debug.headline`, `debug.methods`, `debug.middleware`, `debug.handler`.
-
-## ⚠️ Troubleshooting
-
-**Port in use** - change it in `vite.config.ts`:
-```ts
-export default { server: { port: 4005 } }
-```
-
-**Unnecessary rebuilds from editor save behavior** - increase the stability threshold:
-```ts
-export default {
-  server: { watch: { awaitWriteFinish: { stabilityThreshold: 1500 } } }
-}
-```
-
-**API not rebuilding** - check the Vite terminal for build errors.
-The watcher may be detecting changes but the build is failing silently.
-
-**Slow rebuilds** - consider splitting across multiple source folders.
-Each builds independently, so splitting reduces per-rebuild scope.

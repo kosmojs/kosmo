@@ -232,7 +232,7 @@ export default defineConfig({
               link: "/validation/response",
             },
             {
-              text: "🎯 TRefine for Refinement",
+              text: "🎯 VRefine for Refinement",
               link: "/validation/refine",
             },
             {

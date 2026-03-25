@@ -19,12 +19,9 @@ The `pathResolver` utility provides consistent path generation across KosmoJS's 
 ### Usage
 
 ```ts
-import { pathResolver } from "@kosmojs/core";
+import { pathResolver } from "@kosmojs/lib";
 
-const { createPath, createImport } = pathResolver({
-  appRoot: "/path/to/project",  // Optional: absolute project root
-  sourceFolder: "front",         // Required: source folder name
-});
+const { createPath, createImport } = pathResolver(sourceFolder);
 ```
 
 ### Creating Filesystem Paths
@@ -60,7 +57,6 @@ createImport.libApi("routes")          // → "_/front/api/routes"
 ### Available Methods
 
 **createPath methods:**
-- `coreApi(...paths)` - Core API directory files
 - `src(...paths)` - Source folder files
 - `api(...paths)` - API route files
 - `pages(...paths)` - Page component files
@@ -70,9 +66,9 @@ createImport.libApi("routes")          // → "_/front/api/routes"
 - `libApi(...paths)` - Generated API files
 - `libEntry(...paths)` - Generated entry files
 - `libPages(...paths)` - Generated page files
+- `distDir(...paths)` - Path to source folder's output directory
 
 **createImport methods:**
-- `coreApi(...paths)` - Core API imports with `~/` prefix
 - `src(...paths)` - Source imports with `@/` prefix
 - `config(...paths)` - Config imports with `@/` prefix
 - `api(...paths)` - API imports with `@/` prefix
@@ -90,12 +86,9 @@ The `createImportHelper` method provides a Handlebars-ready helper for template 
 Register it through `renderFactory`:
 
 ```ts
-import { pathResolver, renderFactory } from "@kosmojs/dev";
+import { pathResolver, renderFactory } from "@kosmojs/lib";
 
-const { createPath, createImportHelper } = pathResolver({
-  appRoot,
-  sourceFolder,
-});
+const { createPath, createImportHelper } = pathResolver(sourceFolder);
 
 const { render, renderToFile } = renderFactory({
   helpers: {
@@ -125,7 +118,7 @@ which `createImportHelper` strips off before delegating to `createImport`).
 
 **Usage in templates:**
 ```handlebars
-{{createImport method ...paths}}
+{{ createImport method "a" "b" "c" }}
 ```
 
 Where `method` is any `createImport` method name:

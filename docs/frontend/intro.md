@@ -21,83 +21,27 @@ integrate naturally with each framework's patterns.
 
 Framework generators are automatically enabled when creating a source folder
 and selecting your framework. To add one to an existing folder, register it
-manually in your source folder's `vite.config.ts`:
+manually in your source folder's `kosmo.config.ts`:
 
-::: code-group
-
-```ts [React]
-import reactPlugin from "@vitejs/plugin-react";
-import devPlugin from "@kosmojs/dev";
+```ts [kosmo.config.ts]
+import reactPlugin from "@vitejs/plugin-react"; // [!code ++]
 import {
+  defineConfig,
   // ...
   reactGenerator, // [!code ++]
-} from "@kosmojs/generators";
+} from "@kosmojs/dev";
 
-import defineConfig from "../vite.base";
-
-export default defineConfig(import.meta.dirname, {
+export default defineConfig({
   // ...
   plugins: [
-    reactPlugin(),
-    devPlugin(apiurl, {
-      generators: [
-        // ...
-        reactGenerator(), // [!code ++]
-      ],
-    }),
+    reactPlugin(), // [!code ++]
+  ],
+  generators: [
+    // ...
+    reactGenerator(), // [!code ++]
   ],
 });
 ```
-
-```ts [SolidJS]
-import solidPlugin from "vite-plugin-solid";
-import devPlugin from "@kosmojs/dev";
-import {
-  // ...
-  solidGenerator, // [!code ++]
-} from "@kosmojs/generators";
-
-import defineConfig from "../vite.base";
-
-export default defineConfig(import.meta.dirname, {
-  // ...
-  plugins: [
-    solidPlugin(),
-    devPlugin(apiurl, {
-      generators: [
-        // ...
-        solidGenerator(), // [!code ++]
-      ],
-    }),
-  ],
-});
-```
-
-```ts [Vue]
-import vuePlugin from "@vitejs/plugin-vue";
-import devPlugin from "@kosmojs/dev";
-import {
-  // ...
-  vueGenerator, // [!code ++]
-} from "@kosmojs/generators";
-
-import defineConfig from "../vite.base";
-
-export default defineConfig(import.meta.dirname, {
-  // ...
-  plugins: [
-    vuePlugin(),
-    devPlugin(apiurl, {
-      generators: [
-        // ...
-        vueGenerator(), // [!code ++]
-      ],
-    }),
-  ],
-});
-```
-
-:::
 
 After configuration, the generator deploys essential files to your source
 folder, establishing the application foundation.

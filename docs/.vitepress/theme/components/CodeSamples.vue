@@ -11,17 +11,12 @@ import CascadingMiddleware from './CascadingMiddleware.md'
     <div class="hero-block">
       <div class="hero-content">
         <div class="hero-text">
-          <h1 class="hero-title">Params Validation</h1>
+          <h1 class="hero-title">Validation</h1>
           <div class="hero-description">
-            Rather than learn and maintain separate schema definition languages,
-            you can express validation rules directly in TypeScript.
-            <div class="text-hint">
-              KosmoJS automatically generates high-performance runtime validators
-              from your types.
-            </div>
-            <div class="text-hint">
-              Use <code>TRefine</code> to specify JSON Schema constraints.
-            </div>
+            Define types in TypeScript. Get runtime validation, type-safe clients,
+            and OpenAPI specs for free. No schema DSLs.
+            Just pure TypeScript with superpowers.
+            One source of truth, zero maintenance overhead.
           </div>
         </div>
         <a href="/validation/params" class="details-button">Details ➜</a>
@@ -52,7 +47,7 @@ import CascadingMiddleware from './CascadingMiddleware.md'
               <code>cookies</code>.
             </div>
             <div class="text-hint">
-              Use <code>TRefine</code> to specify JSON Schema constraints.
+              Use <code>VRefine</code> to specify JSON Schema constraints.
             </div>
           </div>
         </div>

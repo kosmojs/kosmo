@@ -1,11 +1,11 @@
 ---
 title: Writing Custom Generators
 description: Create custom KosmoJS generators to produce code based on route structure and types.
-    Learn generator architecture, worker threads, and the GeneratorConstructor structure.
+    Learn generator architecture, and the GeneratorConstructor structure.
 head:
   - - meta
     - name: keywords
-      content: custom generators, vite plugin development, generator api, worker threads,
+      content: custom generators, vite plugin development, generator api,
         code generation, plugin architecture, GeneratorConstructor
 ---
 
@@ -16,7 +16,7 @@ you can create custom generators tailored to your specific requirements.
 
 ## Understanding the Architecture
 
-At the core, a worker thread parses your `api/` and `pages/` directories
+At the core, the dev server watches `api/` and `pages/` directories
 and sends resolved route entries to all registered generators.
 
 Generators receive route information and generate files accordingly -
@@ -29,35 +29,41 @@ A generator is a module that exports a default function
 returning a `GeneratorConstructor` object:
 
 ```ts
-import type { GeneratorConstructor } from "@kosmojs/dev";
+import { defineGenerator } from "@kosmojs/lib";
 import { factory } from "./factory";
 
-export default (): GeneratorConstructor => {
-  return {
-    name: "MyGenerator",
-    moduleImport: import.meta.filename,
-    moduleConfig: undefined,
-    factory,
-  };
-};
+export default defineGenerator(() => factory, {
+  name: "MyGenerator",
+});
 ```
 
-### Generator Constructor Properties
+Second argument used to define metadata for given generator.
+The only required prop is `name`. Here is the signature:
 
-**name** - Unique identifier for your generator, used in logs and debugging.
+```ts
+export type GeneratorMeta = {
+  name: string;
 
-**moduleImport** - Path to the generator module.
-Use `import.meta.filename` to reference the current file.
-This is needed because generators run in worker threads
-where functions can't be directly passed.
+  /*
+   * Used on core built-in generators to distinguish them from user-defined ones.
+   * api/fetch generators always run first, ssr always run last.
+   * User generators run in the order they were added.
+   * */
+  slot?: "api" | "fetch" | "ssr";
 
-**moduleConfig** - Configuration options passed to your generator.
-Can be any JSON-serializable value or `undefined`.
+  /**
+   * Package dependencies required by this generator.
+   * The dev plugin checks installation status before running.
+   * */
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
 
-**factory** - The actual generator implementation function.
-This receives plugin options and returns a watch handler.
-
-**options** (optional) - Generator-specific options:
-- `resolveTypes?: boolean` - When `true`, `KosmoJS` resolves all type references
-  to their flattened representations before calling your generator,
-  providing complete type information for validation or documentation.
+  /**
+   * Enables type resolution for generators that require fully resolved type information.
+   *
+   * When `true`, types are resolved to their flattened representations before
+   * generator execution, making complete type data available.
+   * */
+  resolveTypes?: boolean;
+};
+```

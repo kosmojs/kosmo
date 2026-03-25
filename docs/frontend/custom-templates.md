@@ -26,18 +26,12 @@ writing the same skeleton N times by hand.
 ## ⚙️ Configuration
 
 Pass custom templates via generator options in your source folder's
-`vite.config.ts`:
+`kosmo.config.ts`:
 
-::: code-group
+```ts [kosmo.config.ts]
+import { defineConfig, reactGenerator } from "@kosmojs/dev";
 
-```ts [React]
-import reactPlugin from "@vitejs/plugin-react";
-import devPlugin from "@kosmojs/dev";
-import { reactGenerator } from "@kosmojs/generators";
-
-import defineConfig from "../vite.base";
-
-// [!code ++:9]
+// [!code ++:8]
 const landingTemplate = `
 export default function Page() {
   return (
@@ -47,94 +41,17 @@ export default function Page() {
   );
 }`;
 
-export default defineConfig(import.meta.dirname, {
-  plugins: [
-    reactPlugin(),
-    devPlugin(apiurl, {
-      generators: [
-        reactGenerator({ // [!code ++:4]
-          templates: {
-            "landing/*": landingTemplate,
-            "marketing/**/*": landingTemplate,
-          },
-        }),
-      ],
+export default defineConfig({
+  generators: [
+    reactGenerator({
+      templates: { // [!code ++:4]
+        "landing/*": landingTemplate,
+        "marketing/**/*": landingTemplate,
+      },
     }),
   ],
 });
 ```
-
-```ts [SolidJS]
-import solidPlugin from "vite-plugin-solid";
-import devPlugin from "@kosmojs/dev";
-import { solidGenerator } from "@kosmojs/generators";
-
-import defineConfig from "../vite.base";
-
-// [!code ++:9]
-const landingTemplate = `
-export default function Page() {
-  return (
-    <div class="landing-page">
-      <h1>Welcome</h1>
-    </div>
-  );
-}`;
-
-export default defineConfig(import.meta.dirname, {
-  plugins: [
-    solidPlugin(),
-    devPlugin(apiurl, {
-      generators: [
-        solidGenerator({ // [!code ++:4]
-          templates: {
-            "landing/*": landingTemplate,
-            "marketing/**/*": landingTemplate,
-          },
-        }),
-      ],
-    }),
-  ],
-});
-```
-
-```ts [Vue]
-import vuePlugin from "@vitejs/plugin-vue";
-import devPlugin from "@kosmojs/dev";
-import { vueGenerator } from "@kosmojs/generators";
-
-import defineConfig from "../vite.base";
-
-// [!code ++:11]
-const landingTemplate = `
-<template>
-  <div class="landing-page">
-    <h1>Welcome</h1>
-  </div>
-</template>
-
-<script setup lang="ts">
-// Add script logic here
-</script>`;
-
-export default defineConfig(import.meta.dirname, {
-  plugins: [
-    vuePlugin(),
-    devPlugin(apiurl, {
-      generators: [
-        vueGenerator({ // [!code ++:4]
-          templates: {
-            "landing/*": landingTemplate,
-            "marketing/**/*": landingTemplate,
-          },
-        }),
-      ],
-    }),
-  ],
-});
-```
-
-:::
 
 ## 🎯 Pattern Syntax
 

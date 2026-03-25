@@ -2,8 +2,8 @@
 import { defineRoute } from "_/admin/api";
 
 type Page = {
-  id: TRefine<string, { format: "uuid" }>;
-  title: TRefine<string, { minLength: 1; maxLength: 255 }>;
+  id: VRefine<string, { format: "uuid" }>;
+  title: VRefine<string, { minLength: 1; maxLength: 255 }>;
   content: string;
   tags: string[];
   status: "draft" | "published" | "scheduled";

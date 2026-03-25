@@ -13,37 +13,40 @@ To make your generator configurable, define an options type
 and pass it through the default function:
 
 ```ts
+import { defineGenerator } from "@kosmojs/lib";
+
+import { factory } from "./factory";
+
 export type Options = {
   outfile: string;
   format?: "json" | "yaml";
   includeExamples?: boolean;
 };
 
-export default (options?: Options): GeneratorConstructor<Options> => {
-  return {
+export default defineGenerator<Options, true>(
+  (options) => {
+    return (sourceFolder) => factory(sourceFolder, options);
+  },
+  {
     name: "MyGenerator",
-    moduleImport: import.meta.filename,
-    moduleConfig: options,
-    factory: (...args) => factory(...args, options),
-  };
-};
+    resolveTypes: true,
+  },
+);
+
 ```
 
-Users configure your generator when adding it to their `Vite` config:
+Users configure your generator when adding it to their `kosmo.config.ts`:
 
 ```ts
+import { defineConfig } from "@kosmojs/dev";
 import myGenerator from "@my/generator";
 
-export default {
-  plugins: [
-    devPlugin(apiurl, {
-      generators: [
-        myGenerator({
-          outfile: "output.json",
-          includeExamples: true,
-        }),
-      ],
+export default defineConfig({
+  generators: [
+    myGenerator({
+      outfile: "output.json",
+      includeExamples: true,
     }),
   ],
-}
+});
 ```

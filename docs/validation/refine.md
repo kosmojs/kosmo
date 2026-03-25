@@ -1,18 +1,18 @@
 ---
-title: TRefine for Type Refinement
-description: Advanced validation constraints with TRefine using JSON Schema keywords.
+title: VRefine for Type Refinement
+description: Advanced validation constraints with VRefine using JSON Schema keywords.
     Validate string formats, numeric ranges, array constraints, and custom patterns directly in TypeScript types.
 head:
   - - meta
     - name: keywords
-      content: TRefine, type refinement, json schema constraints, validation rules,
+      content: VRefine, type refinement, json schema constraints, validation rules,
         string validation, numeric validation, pattern matching, format validation
 ---
 
-`TRefine` adds JSON Schema constraints to a primitive type. It's globally available - no import needed.
+`VRefine` adds JSON Schema constraints to a primitive type. It's globally available - no import needed.
 
 ```ts
-TRefine<number, { minimum: 1000, maximum: 1_000_000 }>
+VRefine<number, { minimum: 1000, maximum: 1_000_000 }>
 ```
 
 The first argument is the base type, the second is any valid
@@ -27,10 +27,10 @@ it means the value must be evenly divisible by 1:
 
 ```ts
 // allows 1000.5 - probably not what you want
-TRefine<number, { minimum: 1000, maximum: 1_000_000 }>
+VRefine<number, { minimum: 1000, maximum: 1_000_000 }>
 
 // integers only
-TRefine<number, { minimum: 1000, maximum: 1_000_000, multipleOf: 1 }>
+VRefine<number, { minimum: 1000, maximum: 1_000_000, multipleOf: 1 }>
 ```
 
 This matters especially for database IDs, where a float would pass validation
