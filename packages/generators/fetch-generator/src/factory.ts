@@ -6,18 +6,15 @@ import {
   renderFactory,
   renderHelpers,
   sortRoutes,
-} from "@kosmojs/dev";
+} from "@kosmojs/lib";
 
 import fetchLibTpl from "./templates/@fetch/lib.ts?as=text";
 import fetchTpl from "./templates/fetch.hbs";
 import routeTpl from "./templates/route.hbs";
 import unwrapTpl from "./templates/unwrap.hbs";
 
-export const factory: GeneratorFactory = async ({ appRoot, sourceFolder }) => {
-  const { createPath, createImportHelper } = pathResolver({
-    appRoot,
-    sourceFolder,
-  });
+export const factory: GeneratorFactory = async (sourceFolder) => {
+  const { createPath, createImportHelper } = pathResolver(sourceFolder);
 
   const { renderToFile } = renderFactory({
     helpers: {

@@ -12,4 +12,6 @@ export const defaults = {
   pagesDir: "pages",
   entryDir: "entry",
   fetchDir: "fetch",
+
+  refineTypeName: "VRefine",
 };

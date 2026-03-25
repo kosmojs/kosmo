@@ -1,8 +1,11 @@
 import { dirname } from "node:path";
 
-import { pathResolver } from "../paths";
-import { renderToFile } from "../render";
-import type { GeneratorConstructor, ResolvedEntry } from "../types";
+import {
+  defineGenerator,
+  pathResolver,
+  type ResolvedEntry,
+  renderToFile,
+} from "@kosmojs/lib";
 
 import envTpl from "./templates/env.d.ts?as=text";
 import gitignoreTpl from "./templates/gitignore.hbs";
@@ -13,17 +16,14 @@ import schemasTpl from "./templates/schemas.hbs";
  * Ensures cross-generator dependencies remain resolvable
  * even if specialized generators supposed to generate these files are not installed.
  * */
-export default (): GeneratorConstructor => {
-  return {
-    name: "Stub",
-    moduleImport: import.meta.filename,
-    moduleConfig: undefined,
-    async factory({ appRoot, sourceFolder }) {
+export default defineGenerator(
+  () => {
+    return async (sourceFolder) => {
       const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
-        const { createPath } = pathResolver({ appRoot, sourceFolder });
+        const { createPath } = pathResolver(sourceFolder);
 
         /**
-         * expose TRefine as a global type.
+         * expose VRefine as a global type.
          * not supposed to be overriden by generators.
          * */
         await renderToFile(createPath.lib("../env.d.ts"), envTpl, {});
@@ -58,6 +58,9 @@ export default (): GeneratorConstructor => {
         watch: generateLibFiles,
         build: generateLibFiles,
       };
-    },
-  };
-};
+    };
+  },
+  {
+    name: "Stub",
+  },
+);

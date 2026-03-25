@@ -3,7 +3,7 @@ import http, { type IncomingMessage, type ServerResponse } from "node:http";
 import { extname, join, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
 
-import type { SSRManifestEntry, SSRSetup } from "@kosmojs/dev";
+import type { SSRManifestEntry, SSRSetup } from "@kosmojs/lib";
 
 import { baseurl } from "{{ createImport 'config' }}";
 import { routeMap } from "{{ createImport 'lib' 'ssr:routes' }}";
@@ -98,7 +98,7 @@ export const requestHandlerFactory = ({
       } else {
         // file could not be read or `serveStaticAssets` option is false
         response.writeHead(404, { "Content-Type": "text/html" });
-        response.end("<h1>404 · Not Found</h1>");
+        response.end("<h1>404: Not Found</h1>");
       }
       return;
     }
@@ -110,7 +110,7 @@ export const requestHandlerFactory = ({
     if (!route) {
       // not a static file and no route matched, return 404
       response.writeHead(404, { "Content-Type": "text/html" });
-      response.end("<h1>404 · Not Found</h1>");
+      response.end("<h1>404: Not Found</h1>");
       return;
     }
 

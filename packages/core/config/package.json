@@ -23,6 +23,6 @@
     "build": "node ./index.js"
   },
   "devDependencies": {
-    "@kosmojs/dev": "workspace:^"
+    "@kosmojs/lib": "workspace:^"
   }
 }

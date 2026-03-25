@@ -1,6 +1,8 @@
 import { resolve } from "node:path";
 
-import type { PluginOptionsResolved } from "@kosmojs/dev";
+import type { SourceFolder } from "@kosmojs/lib";
+
+import openapiGenerator from "@src/index";
 
 export { defineRoute } from "@kosmojs/koa-generator/lib";
 
@@ -15,25 +17,23 @@ export const openapiOptions = {
   servers: [{ url: "http://localhost:8080" }],
 };
 
-export const resolvedOptions: PluginOptionsResolved = {
-  generators: [
-    // providing a stub generator with options.resolveTypes
-    {
-      name: "",
-      moduleConfig: {},
-      moduleImport: "",
-      async factory() {
-        return { async watch() {}, async build() {} };
-      },
-      options: { resolveTypes: true },
-    },
-  ],
-  refineTypeName: "TRefine",
-  watcher: { delay: 0 },
+export const sourceFolder: SourceFolder = {
+  name: "test",
+  config: {
+    generators: [
+      openapiGenerator({
+        outfile: "",
+        openapi: "3.1.0",
+        info: {
+          title: "",
+          version: "",
+        },
+        servers: [],
+      }),
+    ],
+  },
+  root: appRoot,
   baseurl: "",
   apiurl: "",
-  appRoot,
-  sourceFolder: "test",
-  outDir: "_dist",
-  command: "build",
+  distDir: "",
 };

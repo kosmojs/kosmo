@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-import { pathResolver } from "@kosmojs/dev";
+import { pathResolver } from "@kosmojs/lib";
 
 import { apiRoutes, setupTestProject } from "../setup";
 
@@ -13,7 +13,7 @@ const {
   teardown,
 } = await setupTestProject({ backend: "koa" });
 
-const { createImport } = pathResolver({ sourceFolder });
+const { createImport } = pathResolver(sourceFolder);
 
 beforeAll(async () => {
   await bootstrapProject();

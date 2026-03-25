@@ -1,13 +1,144 @@
+import { dirname, join, resolve } from "node:path";
+import { styleText } from "node:util";
+
 import crc from "crc/crc32";
 import { parse, type Token } from "path-to-regexp";
+import picomatch from "picomatch";
+import { glob } from "tinyglobby";
 
+import { defaults } from "../defaults";
+import { pathResolver } from "../paths";
 import type {
   PathToken,
   PathTokenParamPart,
   PathTokenStaticPart,
+  ResolvedEntry,
   RouteEntry,
+  SourceFolder,
 } from "../types";
 
+export type ResolverSignature = {
+  name: string;
+  handler: (updatedFile?: string) => Promise<ResolvedEntry>;
+};
+
+export const API_INDEX_BASENAME = "index";
+export const API_INDEX_PATTERN = `${API_INDEX_BASENAME}.ts`;
+
+export const API_USE_BASENAME = "use";
+export const API_USE_PATTERN = `${API_USE_BASENAME}.ts`;
+
+export const PAGE_INDEX_BASENAME = "index";
+export const PAGE_INDEX_PATTERN = `${PAGE_INDEX_BASENAME}.{tsx,vue}`;
+
+export const PAGE_LAYOUT_BASENAME = "layout";
+export const PAGE_LAYOUT_PATTERN = `${PAGE_LAYOUT_BASENAME}.{tsx,vue}`;
+
+const ROUTE_FILE_PATTERNS = [
+  // match index files in api dir
+  `${defaults.apiDir}/**/${API_INDEX_PATTERN}`,
+  // match use files in api dir
+  `${defaults.apiDir}/**/${API_USE_PATTERN}`,
+  // match index files in pages dir
+  `${defaults.pagesDir}/**/${PAGE_INDEX_PATTERN}`,
+  // match layout files in pages dir
+  `${defaults.pagesDir}/**/${PAGE_LAYOUT_PATTERN}`,
+];
+
+export const scanRoutes = async (sourceFolder: SourceFolder) => {
+  const { createPath } = pathResolver(sourceFolder);
+  return glob(ROUTE_FILE_PATTERNS, {
+    cwd: createPath.src(),
+    absolute: true,
+    onlyFiles: true,
+    followSymbolicLinks: false,
+    ignore: [
+      // ignore top-level matches, routes resides in folders, even index route
+      `${defaults.apiDir}/${API_INDEX_PATTERN}`,
+      `${defaults.apiDir}/${API_USE_PATTERN}`,
+      `${defaults.pagesDir}/${PAGE_INDEX_PATTERN}`,
+      `${defaults.pagesDir}/${PAGE_LAYOUT_PATTERN}`,
+    ],
+  });
+};
+
+export const isRouteFile = (
+  file: string,
+  sourceFolder: SourceFolder,
+):
+  | [
+      // Either `apiDir` or `pagesDir`
+      folder: string,
+      // Path to a file within the folder, nested at least one level deep
+      file: string,
+    ]
+  | false => {
+  const [_sourceFolder, _folder, ...rest] = resolve(sourceFolder.root, file)
+    .replace(`${sourceFolder.root}/${defaults.srcDir}/`, "")
+    .split("/");
+
+  /**
+   * Ensure the file:
+   * - is under the correct source root
+   * - belongs to a known route folder (`apiDir` or `pagesDir`)
+   * - is nested at least one level deep (not a direct child of the folder)
+   * */
+  if (!_folder || _sourceFolder !== sourceFolder.name || rest.length < 2) {
+    return false;
+  }
+
+  return picomatch.isMatch(join(_folder, ...rest), ROUTE_FILE_PATTERNS)
+    ? [_folder, rest.join("/")]
+    : false;
+};
+
+export const isApiRoute = (file: string) => {
+  return picomatch.matchBase(file, `**/${API_INDEX_PATTERN}`);
+};
+
+export const isApiUse = (file: string) => {
+  return picomatch.matchBase(file, `**/${API_USE_PATTERN}`);
+};
+
+export const isPageRoute = (file: string) => {
+  return picomatch.matchBase(file, `**/${PAGE_INDEX_PATTERN}`);
+};
+
+export const isPageLayout = (file: string) => {
+  return picomatch.matchBase(file, `**/${PAGE_LAYOUT_PATTERN}`);
+};
+
+export const createRouteEntry = (
+  fileFullpath: string,
+  sourceFolder: SourceFolder,
+): RouteEntry | undefined => {
+  // scanner already is doing a great job on matching only relevant files
+  // but doing a double check here to make sure only needed files added to stack
+  const resolvedPaths = isRouteFile(fileFullpath, sourceFolder);
+
+  if (!resolvedPaths) {
+    return;
+  }
+
+  const [folder, file] = resolvedPaths;
+
+  const id = `${file.replace(/\W+/g, "_")}_${crc(file)}`;
+  const name = dirname(file);
+
+  try {
+    const [pathTokens, pathPattern] = pathTokensFactory(dirname(file));
+    return { id, name, folder, file, fileFullpath, pathTokens, pathPattern };
+  } catch (
+    // biome-ignore lint: any
+    error: any
+  ) {
+    console.error(
+      `❗${styleText("red", "ERROR")}: Failed parsing path for "${styleText("cyan", file)}"`,
+    );
+    console.error(error);
+    return;
+  }
+};
 /**
  * Parse a filesystem route path into structured PathToken array.
  *

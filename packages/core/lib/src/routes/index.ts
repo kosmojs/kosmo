@@ -1,30 +1,33 @@
 import { defaults } from "../defaults";
-import type { PluginOptionsResolved, RouteEntry } from "../types";
+import type {
+  RouteEntry,
+  RouteResolverCacheFactory,
+  SourceFolder,
+} from "../types";
 import {
-  apiRouteResolverFactory,
-  apiUseResolverFactory,
   createRouteEntry,
   isApiRoute,
   isApiUse,
   isPageLayout,
   isPageRoute,
-  pageLayoutResolverFactory,
-  pageRouteResolverFactory,
   type ResolverSignature,
   scanRoutes,
-} from "./resolve";
+} from "./base";
+import { resolverFactory } from "./resolve";
 
 export * from "./base";
 export * from "./nesting";
-export * from "./resolve";
 
-export const routesFactory = async (pluginOptions: PluginOptionsResolved) => {
-  const { appRoot, sourceFolder } = pluginOptions;
-
-  const apiRouteResolver = apiRouteResolverFactory(pluginOptions);
-  const apiUseResolver = apiUseResolverFactory(pluginOptions);
-  const pageRouteResolver = pageRouteResolverFactory(pluginOptions);
-  const pageLayoutResolver = pageLayoutResolverFactory(pluginOptions);
+export const routesFactory = async (
+  sourceFolder: SourceFolder,
+  cacheFactory?: RouteResolverCacheFactory,
+) => {
+  const {
+    apiRouteResolver,
+    apiUseResolver,
+    pageRouteResolver,
+    pageLayoutResolver,
+  } = resolverFactory(sourceFolder, cacheFactory);
 
   const resolversFactory = (routeFiles: Array<string>) => {
     const resolvers = new Map<
@@ -33,7 +36,7 @@ export const routesFactory = async (pluginOptions: PluginOptionsResolved) => {
     >();
 
     const entries: Array<RouteEntry> = routeFiles.flatMap((file) => {
-      const entry = createRouteEntry(file, pluginOptions);
+      const entry = createRouteEntry(file, sourceFolder);
       return entry ? [entry] : [];
     });
 
@@ -56,7 +59,7 @@ export const routesFactory = async (pluginOptions: PluginOptionsResolved) => {
     return resolvers;
   };
 
-  const routeFiles = await scanRoutes({ appRoot, sourceFolder });
+  const routeFiles = await scanRoutes(sourceFolder);
 
   return {
     resolvers: resolversFactory(routeFiles),

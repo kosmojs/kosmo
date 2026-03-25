@@ -1,17 +1,11 @@
 import { access, constants } from "node:fs/promises";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
 import { defaults } from "./defaults";
+import type { SourceFolder } from "./types";
 
 type CreateImport = Record<
-  | "coreApi"
-  | "src"
-  | "config"
-  | "api"
-  | "pages"
-  | "lib"
-  | "libApi"
-  | "libEntry",
+  "src" | "config" | "api" | "pages" | "lib" | "libApi" | "libEntry",
   (...a: Array<string>) => string
 >;
 
@@ -25,15 +19,10 @@ export const createTsconfigPaths = (prefix: string) => {
   };
 };
 
-export const pathResolver = ({
-  appRoot,
-  sourceFolder,
-}: {
-  appRoot?: string;
-  sourceFolder: string;
-}): {
+export const pathResolver = (
+  sourceFolder: Omit<SourceFolder, "root"> & { root?: string | undefined },
+): {
   createPath: Record<
-    | "coreApi"
     | "src"
     | "config"
     | "api"
@@ -42,22 +31,22 @@ export const pathResolver = ({
     | "lib"
     | "libApi"
     | "libEntry"
-    | "libPages",
+    | "libPages"
+    | "distDir",
     (...a: Array<string>) => string
   >;
   createImport: CreateImport;
   createImportHelper: (k: keyof CreateImport, ...a: Array<string>) => string;
 } => {
   const createPath = (...a: Array<string>) => {
-    return appRoot ? join(appRoot, ...a) : join(...a);
+    return sourceFolder.root
+      ? resolve(sourceFolder.root, join(...a))
+      : join(...a);
   };
 
   const createImport: CreateImport = {
-    coreApi(...a) {
-      return join(defaults.appPrefix, defaults.coreDir, defaults.apiDir, ...a);
-    },
     src(...a) {
-      return join(defaults.srcPrefix, sourceFolder, ...a);
+      return join(defaults.srcPrefix, sourceFolder.name, ...a);
     },
     config(...a) {
       return this.src(defaults.configDir, ...a);
@@ -69,7 +58,7 @@ export const pathResolver = ({
       return this.src(defaults.pagesDir, ...a);
     },
     lib(...a) {
-      return join(defaults.libPrefix, sourceFolder, ...a);
+      return join(defaults.libPrefix, sourceFolder.name, ...a);
     },
     libApi(...a) {
       return this.lib(defaults.apiDir, ...a);
@@ -81,11 +70,8 @@ export const pathResolver = ({
 
   return {
     createPath: {
-      coreApi(...a) {
-        return createPath(defaults.coreDir, defaults.apiDir, ...a);
-      },
       src(...a) {
-        return createPath(defaults.srcDir, sourceFolder, ...a);
+        return createPath(defaults.srcDir, sourceFolder.name, ...a);
       },
       api(...a) {
         return this.src(defaults.apiDir, ...a);
@@ -100,7 +86,12 @@ export const pathResolver = ({
         return this.src(defaults.entryDir, ...a);
       },
       lib(...a) {
-        return createPath(defaults.libDir, defaults.srcDir, sourceFolder, ...a);
+        return createPath(
+          defaults.libDir,
+          defaults.srcDir,
+          sourceFolder.name,
+          ...a,
+        );
       },
       libApi(...a) {
         return this.lib(defaults.apiDir, ...a);
@@ -110,6 +101,9 @@ export const pathResolver = ({
       },
       libPages(...a) {
         return this.lib(defaults.pagesDir, ...a);
+      },
+      distDir(...a) {
+        return createPath(sourceFolder.distDir, sourceFolder.name, ...a);
       },
     },
     createImport,

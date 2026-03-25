@@ -5,34 +5,34 @@ import type {
   ValidationSchemas,
   ValidationTarget,
 } from "@kosmojs/api";
-import { type PluginOptionsResolved, pathResolver } from "@kosmojs/dev";
+import { pathResolver, type SourceFolder } from "@kosmojs/lib";
 
-import typeboxGenerator from "@src/index";
+import typeboxGenerator from "@kosmojs/typebox-generator";
 
-export { MESSAGE_CODES } from "@src/templates/error-handler";
+export { MESSAGE_CODES } from "@kosmojs/typebox-generator";
+
 export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 
 import type { RouteName } from "./@fixtures/routes";
 
 export { defineRoute } from "@kosmojs/koa-generator/lib";
 
-export const resolvedOptions: PluginOptionsResolved = {
-  generators: [typeboxGenerator()],
-  refineTypeName: "TRefine",
-  watcher: { delay: 0 },
+export const sourceFolder: SourceFolder = {
+  name: "test",
+  config: {
+    generators: [typeboxGenerator()],
+  },
+  root: appRoot,
   baseurl: "",
   apiurl: "",
-  appRoot,
-  sourceFolder: "test",
-  outDir: "_dist",
-  command: "build",
+  distDir: "dist",
 };
 
 export const importSchema = async (
   route: RouteName,
   schemaPath: "params" | `${ValidationTarget}.${"GET" | "POST"}`,
 ) => {
-  const { createPath } = pathResolver(resolvedOptions);
+  const { createPath } = pathResolver(sourceFolder);
 
   const schemas: { validationSchemas: ValidationSchemas } = await import(
     createPath.libApi(route, `schemas.ts?${Date.now()}`)

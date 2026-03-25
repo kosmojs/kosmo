@@ -1,8 +1,8 @@
 import { resolve } from "node:path";
 
 import type { HTTPMethod, RequestValidationTarget } from "@kosmojs/api";
-import { type PluginOptionsResolved, pathResolver } from "@kosmojs/dev";
 import type { Options } from "@kosmojs/fetch";
+import { pathResolver, type SourceFolder } from "@kosmojs/lib";
 
 import typeboxGenerator from "@kosmojs/typebox-generator";
 
@@ -14,16 +14,15 @@ export { defineRoute } from "@kosmojs/koa-generator/lib";
 
 export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 
-export const resolvedOptions: PluginOptionsResolved = {
-  generators: [fetchGenerator(), typeboxGenerator()],
-  refineTypeName: "TRefine",
-  watcher: { delay: 0 },
+export const sourceFolder: SourceFolder = {
+  name: "test",
+  config: {
+    generators: [fetchGenerator(), typeboxGenerator()],
+  },
+  root: appRoot,
   baseurl: "",
   apiurl: "",
-  appRoot,
-  sourceFolder: "test",
-  outDir: "_dist",
-  command: "build",
+  distDir: "dist",
 };
 
 export type ResponseT = {
@@ -38,7 +37,7 @@ export type ResponseT = {
 };
 
 export const importFetchClient = async (route: RouteName) => {
-  const { createPath } = pathResolver(resolvedOptions);
+  const { createPath } = pathResolver(sourceFolder);
 
   const fetchClient: Record<
     HTTPMethod,

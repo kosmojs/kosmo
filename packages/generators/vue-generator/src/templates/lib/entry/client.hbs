@@ -1,4 +1,4 @@
-import type { RenderFactory } from "@kosmojs/dev";
+import type { RenderFactory } from "@kosmojs/lib";
 
 {{#each pageEntries}}
 const {{id}} = () => import("{{ createImport "pages" file }}");
@@ -16,7 +16,7 @@ export const renderFactory: RenderFactory = async (factory) => {
     clientRender = fallbackRender("client"),
     serverRender = fallbackRender("server"),
   } = await factory();
-  if ({{ssrMode}}) {
+  if (KOSMO_SSR_MODE) {
     await serverRender();
   } else {
     await clientRender();

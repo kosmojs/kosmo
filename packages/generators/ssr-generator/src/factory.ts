@@ -1,7 +1,7 @@
+import { rm } from "node:fs/promises";
 import { join } from "node:path";
 
-import { type BuildOptions, build as esbuild } from "esbuild";
-import { build, loadConfigFromFile, type Plugin } from "vite";
+import { build } from "vite";
 
 import {
   defaults,
@@ -11,21 +11,15 @@ import {
   type ResolvedEntry,
   renderFactory,
   sortRoutes,
-} from "@kosmojs/dev";
+} from "@kosmojs/lib";
 
 import routesTpl from "./templates/routes.hbs";
 import serverTpl from "./templates/server.ts?as=text";
 
-export const factory: GeneratorFactory = async ({
-  appRoot,
-  sourceFolder,
-  outDir,
-}) => {
+export const factory: GeneratorFactory = async (sourceFolder) => {
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
-    const { createPath, createImportHelper } = pathResolver({
-      appRoot,
-      sourceFolder,
-    });
+    const { config } = sourceFolder;
+    const { createPath, createImportHelper } = pathResolver(sourceFolder);
 
     const { renderToFile } = renderFactory({
       helpers: {
@@ -41,43 +35,37 @@ export const factory: GeneratorFactory = async ({
       return kind === "pageLayout" ? [entry] : [];
     });
 
-    const viteConfig = await loadConfigFromFile(
-      { command: "build", mode: "ssr" },
-      createPath.src("vite.config.ts"),
-    );
-
-    const esbuildOptions: BuildOptions = await import(
-      join(appRoot, "esbuild.json"),
-      { with: { type: "json" } }
-    ).then((e) => e.default);
-
-    const { plugins, ...config } = { ...viteConfig?.config };
-
     // build the SSR bundle using `entry/server.ts` as the entry point.
-    // NOTE: this file is deployed by userland generators,
-    // therefore the SSR generator must run last to ensure this file exists.
-    await build({
-      configFile: false,
-      ...config,
-      // WARN: excluding basePlugin is essential to avoid an infinite build loop.
-      plugins: plugins
-        ? plugins.filter((e) => (e as Plugin)?.name !== "@kosmojs:basePlugin")
-        : [],
-      build: {
-        ssr: createPath.entry("server.ts"),
-        ssrEmitAssets: false,
-        outDir: join(outDir, "ssr"),
-        emptyOutDir: true,
-        sourcemap: true,
-        // TODO: review this option when Vite switched to Rolldown
-        rollupOptions: {
-          output: {
-            entryFileNames: "app.js",
+    {
+      const outDir = createPath.distDir("ssr");
+      // emptyOutDir wont work cause dir is outside project root
+      await rm(outDir, { recursive: true, force: true });
+      await build({
+        ...config,
+        configFile: false,
+        root: createPath.src(),
+        define: {
+          ...config.define,
+          KOSMO_SSR_MODE: "true",
+        },
+        resolve: {
+          ...config.resolve,
+          tsconfigPaths: true,
+        },
+        build: {
+          ssr: createPath.entry("server.ts"),
+          outDir,
+          ssrEmitAssets: false,
+          sourcemap: true,
+          rolldownOptions: {
+            output: {
+              entryFileNames: "app.js",
+              format: "esm",
+            },
           },
         },
-      },
-    });
-
+      });
+    }
     const sortedRoutes: Array<PageRoute & { layouts: Array<string> }> = routes
       .map((route) => {
         return {
@@ -103,11 +91,33 @@ export const factory: GeneratorFactory = async ({
 
     // Build default server for SSR. It is using node:http server.
     // For custom deployment, use the app factory directly and discard the built server.
-    await esbuild({
-      ...esbuildOptions,
-      bundle: true,
-      entryPoints: [createPath.lib("ssr.ts")],
-      outfile: join(outDir, "ssr", "server.js"),
+    await build({
+      configFile: false,
+      root: createPath.lib(),
+      appType: "custom",
+      plugins: config.plugins || [],
+      define: {
+        ...config.define,
+        KOSMO_SSR_MODE: "true",
+      },
+      resolve: {
+        ...config.resolve,
+        tsconfigPaths: true,
+        conditions: ["node"],
+      },
+      build: {
+        ssr: true,
+        target: "esnext",
+        sourcemap: true,
+        rolldownOptions: {
+          input: [createPath.lib("ssr.ts")],
+          output: {
+            dir: createPath.distDir("ssr"),
+            entryFileNames: "server.js",
+            format: "esm",
+          },
+        },
+      },
     });
   };
 

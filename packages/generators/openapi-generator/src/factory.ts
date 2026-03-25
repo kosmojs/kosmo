@@ -5,21 +5,20 @@ import {
   pathResolver,
   type ResolvedEntry,
   renderToFile,
-} from "@kosmojs/dev";
+} from "@kosmojs/lib";
 
 import openapiFactory from "./openapi";
 import type { Options } from "./types";
 
-export const factory: GeneratorFactory<Options> = async (
-  pluginOptions,
-  openapiOptions: Options,
+export const factory: GeneratorFactory<Options, true> = async (
+  sourceFolder,
+  options,
 ) => {
-  const { appRoot, sourceFolder } = pluginOptions;
-  const { outfile, ...baseSpec } = openapiOptions;
+  const { outfile, ...baseSpec } = { ...options };
 
-  const { createPath } = pathResolver({ appRoot, sourceFolder });
+  const { createPath } = pathResolver(sourceFolder);
 
-  const { generateOpenAPISchema } = openapiFactory(pluginOptions);
+  const { generateOpenAPISchema } = openapiFactory(sourceFolder);
 
   const generateSchemas = async (entries: Array<ResolvedEntry>) => {
     const apiRoutes = entries.flatMap(({ kind, entry }) =>

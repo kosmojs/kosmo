@@ -1,16 +1,15 @@
 import { describe, expect, test } from "vitest";
 
-import { pluginOptions } from ".";
+import { sourceFolder } from ".";
 
-import { sortRoutes } from "@src/routes-factory/base";
-import { createRouteEntry, scanRoutes } from "@src/routes-factory/resolve";
+import { createRouteEntry, scanRoutes, sortRoutes } from "@src/routes";
 
 describe("Routes Resolver", async () => {
-  const routeFiles = await scanRoutes(pluginOptions);
+  const routeFiles = await scanRoutes(sourceFolder);
 
   const routeEntries = routeFiles
     .flatMap((file) => {
-      const entry = createRouteEntry(file, pluginOptions);
+      const entry = createRouteEntry(file, sourceFolder);
       return entry ? [entry] : [];
     })
     .sort(sortRoutes)

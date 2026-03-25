@@ -1,19 +1,17 @@
 import { join } from "node:path";
 
 import crc from "crc/crc32";
-import { type BuildOptions, build as esbuild } from "esbuild";
 import picomatch, { type Matcher } from "picomatch";
 
 import {
   type ApiRoute,
-  defaults,
   type GeneratorFactory,
   pathResolver,
   pathTokensFactory,
   type ResolvedEntry,
   renderFactory,
   sortRoutes,
-} from "@kosmojs/dev";
+} from "@kosmojs/lib";
 
 import type { Options } from "./types";
 
@@ -37,13 +35,11 @@ import srcServerTpl from "./templates/src/server.ts?as=text";
 import srcUseTpl from "./templates/src/use.ts?as=text";
 
 export const factory: GeneratorFactory<Options> = async (
-  { appRoot, sourceFolder, outDir },
-  { alias, templates, meta },
+  sourceFolder,
+  options,
 ) => {
-  const { createPath, createImportHelper } = pathResolver({
-    appRoot,
-    sourceFolder,
-  });
+  const { alias, templates, meta } = { ...options };
+  const { createPath, createImportHelper } = pathResolver(sourceFolder);
 
   const { renderToFile } = renderFactory({
     helpers: {
@@ -209,29 +205,6 @@ export const factory: GeneratorFactory<Options> = async (
       // always generateSrcFiles before generateLibFiles
       await generateSrcFiles(entries);
       await generateLibFiles(entries);
-
-      const esbuildOptions: BuildOptions = await import(
-        join(appRoot, "esbuild.json"),
-        { with: { type: "json" } }
-      ).then((e) => e.default);
-
-      // run esbuild only after all files generated
-      await esbuild({
-        ...esbuildOptions,
-        define: {
-          ...esbuildOptions.define,
-          PRODUCTION_BUILD: "true",
-        },
-        bundle: true,
-        entryPoints: [
-          // Build both app factory and server bundle for deployment flexibility.
-          // The app exports a function returning a Koa instance (Node/Deno/Bun compatible).
-          // For custom deployment, use the app factory directly and discard the built server.
-          createPath.api("app.ts"),
-          createPath.api("server.ts"),
-        ],
-        outdir: join(outDir, defaults.apiDir),
-      });
     },
   };
 };

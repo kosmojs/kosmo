@@ -9,7 +9,7 @@ import {
   type PathTokenParamPart,
   type PathTokenStaticPart,
   type RouteEntry,
-} from "@kosmojs/dev";
+} from "@kosmojs/lib";
 
 import type { Options } from "./types";
 
@@ -20,9 +20,9 @@ export type TransformedEntry = {
   meta?: string | undefined;
 };
 
-export const traverseFactory = (options: Options) => {
+export const traverseFactory = (options?: Options | undefined) => {
   const metaMatchers: Array<[Matcher, unknown]> = Object.entries({
-    ...options.meta,
+    ...options?.meta,
   }).map(([pattern, meta]) => [picomatch(pattern), meta]);
 
   const hasSplatParam = (token: PathToken | undefined) => {

@@ -5,7 +5,7 @@ import Value from "typebox/value";
 import type { ValidationSchema, ValidationTarget } from "@kosmojs/api";
 import { ValidationError } from "@kosmojs/api/errors";
 
-import errorHandlerFactory from "./error-handler";
+import { errorHandlerFactory } from "./error-handler";
 
 import {
   customTypes,

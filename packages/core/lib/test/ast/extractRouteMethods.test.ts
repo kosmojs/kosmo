@@ -2,13 +2,16 @@ import { describe, test } from "vitest";
 
 import type { RequestBodyTarget } from "@kosmojs/api";
 
-import {
-  createProject,
-  extractDefaultExport,
-  extractRouteMethods,
-} from "@src/ast";
+import { astFactory } from "@src/ast";
 
 describe("extractRouteMethods", () => {
+  const {
+    //
+    createProject,
+    extractDefaultExport,
+    extractRouteMethods,
+  } = astFactory();
+
   const project = createProject();
 
   const validationTargetMap: Array<[RequestBodyTarget, string]> = [

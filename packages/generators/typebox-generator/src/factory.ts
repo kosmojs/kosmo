@@ -11,7 +11,7 @@ import {
   type ResponseValidationDefinition,
   renderFactory,
   typeboxLiteralText,
-} from "@kosmojs/dev";
+} from "@kosmojs/lib";
 
 import type { Options } from "./types";
 
@@ -26,15 +26,15 @@ const defaultSettings: Options["settings"] = {
 };
 
 export const factory: GeneratorFactory<Options> = async (
-  pluginoptions,
+  sourceFolder,
   options,
 ) => {
-  const { appRoot, sourceFolder } = pluginoptions;
-
-  const { createPath, createImport, createImportHelper } = pathResolver({
-    appRoot,
-    sourceFolder,
-  });
+  const {
+    //
+    createPath,
+    createImport,
+    createImportHelper,
+  } = pathResolver(sourceFolder);
 
   const {
     validationMessages = {},
@@ -79,7 +79,7 @@ export const factory: GeneratorFactory<Options> = async (
           ? [
               {
                 ...resolvedType,
-                text: typeboxLiteralText(resolvedType.text, pluginoptions),
+                text: typeboxLiteralText(resolvedType.text, sourceFolder),
               },
             ]
           : [];

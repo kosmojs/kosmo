@@ -315,7 +315,7 @@ const MESSAGE_MAP: Record<keyof ValidationMessages, string> = {
  * Supports most JSON Schema validation keywords and produces human-friendly messages
  * with i18n/l10n support through message code mapping.
  */
-export default (
+export const errorHandlerFactory = (
   customMessages?: Partial<Record<keyof ValidationMessages, string>>,
 ) => {
   const messageMap = { ...MESSAGE_MAP, ...customMessages };

@@ -3,6 +3,7 @@ import picomatch, { type Matcher } from "picomatch";
 import {
   defaults,
   type GeneratorFactory,
+  getGeneratorMeta,
   nestedRoutesFactory,
   type PageRoute,
   pathResolver,
@@ -10,7 +11,7 @@ import {
   renderFactory,
   renderHelpers,
   sortRoutes,
-} from "@kosmojs/dev";
+} from "@kosmojs/lib";
 
 import { randomCongratMessage, traverseFactory } from "./base";
 import type { Options } from "./types";
@@ -36,13 +37,11 @@ import srcPageSamplesWelcomeTpl from "./templates/src/pageSamples/welcome.hbs";
 import srcRouterTpl from "./templates/src/router.hbs";
 
 export const factory: GeneratorFactory<Options> = async (
-  { appRoot, sourceFolder, generators, command },
+  sourceFolder,
   options,
 ) => {
-  const { createPath, createImportHelper } = pathResolver({
-    appRoot,
-    sourceFolder,
-  });
+  const { generators = [] } = sourceFolder.config;
+  const { createPath, createImportHelper } = pathResolver(sourceFolder);
 
   const { renderToFile } = renderFactory({
     helpers: {
@@ -58,10 +57,12 @@ export const factory: GeneratorFactory<Options> = async (
   });
 
   const customTemplates: Array<[Matcher, string]> = Object.entries({
-    ...options.templates,
+    ...options?.templates,
   }).map(([pattern, template]) => [picomatch(pattern), template]);
 
-  const ssrGenerator = generators.some((e) => e.slot === "ssr");
+  const ssrGenerator = generators.some(
+    (e) => getGeneratorMeta(e)?.slot === "ssr",
+  );
 
   const entriesTraverser = traverseFactory(options);
 
@@ -144,8 +145,6 @@ export const factory: GeneratorFactory<Options> = async (
 
     const nestedRoutes = entriesTraverser(nestedRoutesFactory(pageEntries));
 
-    const ssrMode = JSON.stringify(ssrGenerator ? command === "build" : false);
-
     for (const [file, template] of [
       ["client.ts", libEntryClientTpl],
       ["server.ts", libEntryServerTpl],
@@ -153,7 +152,6 @@ export const factory: GeneratorFactory<Options> = async (
       await renderToFile(createPath.libEntry(file), template, {
         pageEntries,
         nestedRoutes,
-        ssrMode,
       });
     }
 

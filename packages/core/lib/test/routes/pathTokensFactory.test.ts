@@ -1,7 +1,7 @@
 import { match } from "path-to-regexp";
 import { describe, test } from "vitest";
 
-import { pathTokensFactory } from "@src/routes-factory/base";
+import { pathTokensFactory } from "@src/routes";
 
 const map = {
   commonSyntax: {

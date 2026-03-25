@@ -7,11 +7,11 @@ import Type from "typebox";
 import { type RequestBodyTarget, RequestBodyTargets } from "@kosmojs/api";
 import {
   type ApiRoute,
-  type PluginOptionsResolved,
   type ResponseValidationDefinition,
+  type SourceFolder,
   sortRoutes,
   typeboxLiteralText,
-} from "@kosmojs/dev";
+} from "@kosmojs/lib";
 
 import type {
   JsonSchema,
@@ -27,7 +27,7 @@ const requestBodyMap: Record<RequestBodyTarget, unknown> = {
   raw: undefined,
 };
 
-export default (pluginOptions: PluginOptionsResolved) => {
+export default (sourceFolder: SourceFolder) => {
   const jsonSchemaBuilder = (text: string): JsonSchema => {
     if (["Buffer", "ArrayBuffer", "Blob"].includes(text)) {
       return {
@@ -36,7 +36,7 @@ export default (pluginOptions: PluginOptionsResolved) => {
       };
     }
     return Type.Script(
-      typeboxLiteralText(text, pluginOptions),
+      typeboxLiteralText(text, sourceFolder),
     ) as unknown as JsonSchema;
   };
 

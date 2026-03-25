@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { pathTokensFactory } from "@kosmojs/dev";
+import { pathTokensFactory } from "@kosmojs/lib";
 
 import { pathFactory } from "../src/base";
 

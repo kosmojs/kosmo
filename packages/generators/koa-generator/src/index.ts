@@ -1,20 +1,20 @@
-import type { GeneratorConstructor } from "@kosmojs/dev";
 /**
  * Import from published package to ensure correct version at runtime.
  * Local import would be bundled with pre-bump version.
  * */
 import self from "@kosmojs/koa-generator/package.json" with { type: "json" };
+import { defineGenerator } from "@kosmojs/lib";
 
 import { factory } from "./factory";
 import type { Options } from "./types";
 
-export default (options?: Options): GeneratorConstructor => {
-  return {
-    name: "Api",
+export default defineGenerator<Options>(
+  (options) => {
+    return (sourceFolder) => factory(sourceFolder, { ...options });
+  },
+  {
+    name: "Koa",
     slot: "api",
-    moduleImport: import.meta.filename,
-    moduleConfig: options,
-    factory: (...args) => factory(...args, { ...options }),
     dependencies: {
       "@kosmojs/api": self.version,
       koa: self.devDependencies.koa,
@@ -28,5 +28,5 @@ export default (options?: Options): GeneratorConstructor => {
       "@types/koa": self.devDependencies["@types/koa"],
       "@types/formidable": self.devDependencies["@types/formidable"],
     },
-  };
-};
+  },
+);

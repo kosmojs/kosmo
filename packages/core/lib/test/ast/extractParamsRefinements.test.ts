@@ -1,12 +1,15 @@
 import { describe, expect, test } from "vitest";
 
-import {
-  createProject,
-  extractDefaultExport,
-  extractParamsRefinements,
-} from "@src/ast";
+import { astFactory } from "@src/ast";
 
 describe("extractParamsRefinements", () => {
+  const {
+    //
+    createProject,
+    extractDefaultExport,
+    extractParamsRefinements,
+  } = astFactory();
+
   const project = createProject();
 
   test("no refinements", ({ task }) => {

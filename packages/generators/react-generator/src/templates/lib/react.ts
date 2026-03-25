@@ -1,7 +1,7 @@
 import { compile } from "path-to-regexp";
 
-import type { PageRoute } from "@kosmojs/dev";
 import { createHost, type HostOpt, join, stringify } from "@kosmojs/fetch";
+import type { PageRoute } from "@kosmojs/lib";
 
 import { baseurl } from "{{ createImport 'config' }}";
 

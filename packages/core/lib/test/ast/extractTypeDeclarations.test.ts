@@ -2,9 +2,11 @@ import { resolve } from "node:path";
 
 import { describe, expect, test } from "vitest";
 
-import { createProject, extractTypeDeclarations } from "@src/ast";
+import { astFactory } from "@src/ast";
 
 describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
+  const { createProject, extractTypeDeclarations } = astFactory();
+
   const project = createProject();
 
   describe("imports", () => {

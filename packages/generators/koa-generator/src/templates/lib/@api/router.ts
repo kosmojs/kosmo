@@ -170,7 +170,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
         // options are same for all variants
         const { runtimeValidation, customErrors } = variants[0];
 
-        if (PRODUCTION_BUILD) {
+        if (KOSMO_PRODUCTION_BUILD) {
           // skip if undefined or explicitly set to false
           if (runtimeValidation === undefined || runtimeValidation === false) {
             return next();

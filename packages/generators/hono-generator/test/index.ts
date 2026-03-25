@@ -14,7 +14,7 @@ import {
 } from "@src/templates/lib/api";
 import { createRouteMiddleware } from "@src/templates/lib/api-factory";
 
-export { defineRoute, use, type ParameterizedMiddleware };
+export { defineRoute, type ParameterizedMiddleware, use };
 
 export const defaultMethods = Object.keys(HTTPMethods);
 

@@ -3,12 +3,11 @@ import { writeFile } from "node:fs/promises";
 import { afterAll, beforeAll, describe, it } from "vitest";
 
 import type { UseSlots } from "@kosmojs/api";
-import { pathResolver } from "@kosmojs/dev";
+import { pathResolver } from "@kosmojs/lib";
 
 import { setupTestProject } from "../setup";
 
 const {
-  projectRoot,
   sourceFolder,
   bootstrapProject,
   createApiRoutes,
@@ -26,10 +25,7 @@ const coreSlots: Array<keyof UseSlots> = [
 
 const createRouteName = (slot: keyof UseSlots) => slot.replace(/\W/g, "_");
 
-const { createPath, createImport } = pathResolver({
-  appRoot: projectRoot,
-  sourceFolder,
-});
+const { createPath, createImport } = pathResolver(sourceFolder);
 
 beforeAll(async () => {
   await bootstrapProject();

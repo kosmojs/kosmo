@@ -1,0 +1,39 @@
+{
+  "type": "module",
+  "name": "@kosmojs/lib",
+  "version": "0.0.25",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "pkg/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    }
+  },
+  "scripts": {
+    "build": "esbuilder src/index.ts",
+    "test": "vitest --root ../../.. --project core/lib"
+  },
+  "dependencies": {
+    "@kosmojs/api": "workspace:^",
+    "@topcli/spinner": "^4.2.1",
+    "crc": "^4.3.2",
+    "handlebars": "^4.7.8",
+    "mime-types": "^3.0.2",
+    "path-to-regexp": "^8.3.0",
+    "picomatch": "^4.0.4",
+    "tfusion": "^0.0.23",
+    "ts-morph": "^27.0.2"
+  },
+  "devDependencies": {
+    "@types/mime-types": "^3.0.1",
+    "@types/picomatch": "^4.0.2",
+    "vite": "^8.0.2"
+  }
+}

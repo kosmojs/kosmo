@@ -26,16 +26,15 @@
     "test": "vitest --root ../../.. --project generators/koa-generator"
   },
   "dependencies": {
-    "@kosmojs/dev": "workspace:^",
+    "@kosmojs/lib": "workspace:^",
     "crc": "^4.3.2",
-    "esbuild": "^0.27.3",
-    "picomatch": "^4.0.3"
+    "picomatch": "^4.0.4"
   },
   "devDependencies": {
-    "@koa/router": "^15.3.1",
+    "@koa/router": "^15.4.0",
     "@kosmojs/api": "workspace:^",
     "@types/formidable": "^3.5.0",
-    "@types/koa": "^3.0.1",
+    "@types/koa": "^3.0.2",
     "@types/koa-compose": "^3.2.9",
     "@types/picomatch": "^4.0.2",
     "cookie": "^1.1.1",

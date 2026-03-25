@@ -18,10 +18,10 @@ export type Options = {
       url?: string;
     };
   };
-  servers: {
+  servers: Array<{
     url: string;
     description?: string;
-  }[];
+  }>;
 };
 
 export type JsonSchema = {

@@ -1,36 +1,56 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 import type { ResolvedType } from "tfusion";
-import type { ResolvedConfig } from "vite";
+import type { UserConfig } from "vite";
 
 import type { HTTPMethod, ValidationTarget } from "@kosmojs/api";
 
-export type PluginOptions = {
-  generators?: Array<GeneratorConstructor>;
+export type FolderConfig = Pick<
+  UserConfig,
+  | "publicDir"
+  | "plugins"
+  | "html"
+  | "css"
+  | "json"
+  | "oxc"
+  | "assetsInclude"
+  | "server"
+  | "logLevel"
+  | "customLogger"
+  | "clearScreen"
+  | "envDir"
+  | "envPrefix"
+  | "optimizeDeps"
+  | "ssr"
+  | "dev"
+  | "build"
+  | "define"
+  | "resolve"
+> & {
+  generators?: Array<GeneratorFactory>;
 
   /**
    * Name to use for custom runtime validation refinements.
-   * @default "TRefine"
+   * @default "VRefine"
    * */
   refineTypeName?: string;
 };
 
-export type PluginOptionsResolved = {
+export type SourceFolder = {
+  name: string;
+  config: FolderConfig;
+  root: string;
   baseurl: string;
   apiurl: string;
-  appRoot: string;
-  sourceFolder: string;
-  outDir: string;
-  command: ResolvedConfig["command"];
-  generators: Array<GeneratorConstructor>;
-  refineTypeName: string;
-  watcher: {
-    // waits this many milliseconds before reacting after a change is detected
-    delay: number;
-    // copying watch options from vite config and passing down to workers
-    options?: import("vite").WatchOptions;
-  };
-} & Omit<PluginOptions, "generators" | "refineTypeName">;
+  distDir: string;
+};
+
+export type ProjectSettings = {
+  root: string;
+  sourceFolders: Array<SourceFolder>;
+  command: "serve" | "build";
+  devPort: number;
+};
 
 export type PathTokenStaticPart = {
   type: "static";
@@ -200,34 +220,38 @@ type GeneratorFactoryReturn = {
   build: (entries: Array<ResolvedEntry>) => Promise<void>;
 };
 
-export type GeneratorFactory<T = undefined> = T extends undefined
-  ? (options: PluginOptionsResolved) => Promise<GeneratorFactoryReturn>
-  : (
-      options: PluginOptionsResolved,
-      extra: T,
-    ) => Promise<GeneratorFactoryReturn>;
+export type DefineGenerator = <
+  O extends Record<string, unknown> | undefined = undefined,
+  R extends boolean = false,
+>(
+  factory: [O] extends [undefined]
+    ? () => GeneratorFactory
+    : (o: O) => GeneratorFactory<O>,
+  options?: GeneratorMeta,
+) => [O] extends [undefined]
+  ? () => GeneratorFactory
+  : [R] extends [true]
+    ? (o: O) => GeneratorFactory<O>
+    : (o?: O) => GeneratorFactory<O>;
 
-export type GeneratorConstructor = {
+export type GeneratorFactory<
+  O extends Record<string, unknown> | undefined = undefined,
+  R extends boolean = false,
+> = [O] extends [undefined]
+  ? (f: SourceFolder) => Promise<GeneratorFactoryReturn>
+  : [R] extends [true]
+    ? (f: SourceFolder, o: O) => Promise<GeneratorFactoryReturn>
+    : (f: SourceFolder, o?: O) => Promise<GeneratorFactoryReturn>;
+
+export type GeneratorMeta = {
+  name: string;
+
   /*
    * Used on core built-in generators to distinguish them from user-defined ones.
    * api/fetch generators always run first, ssr always run last.
    * User generators run in the order they were added.
    * */
   slot?: "api" | "fetch" | "ssr";
-
-  name: string;
-
-  /**
-   * Specifies the module import path and provided config for worker thread imports.
-   *
-   * In development mode, generators run inside a worker thread.
-   * Since functions cannot be directly passed to worker threads,
-   * this provides the module assets for the worker to dynamically import the generator.
-   * */
-  moduleImport: string;
-  moduleConfig: unknown;
-
-  factory: GeneratorFactory;
 
   /**
    * Package dependencies required by this generator.
@@ -236,15 +260,13 @@ export type GeneratorConstructor = {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
 
-  options?: {
-    /**
-     * Enables type resolution for generators that require fully resolved type information.
-     *
-     * When `true`, types are resolved to their flattened representations before
-     * generator execution, making complete type data available.
-     * */
-    resolveTypes?: boolean;
-  };
+  /**
+   * Enables type resolution for generators that require fully resolved type information.
+   *
+   * When `true`, types are resolved to their flattened representations before
+   * generator execution, making complete type data available.
+   * */
+  resolveTypes?: boolean;
 };
 
 type RouterSetup<R> = {
@@ -411,3 +433,33 @@ export type SSRSetup = {
 export type SSRFactory = (
   factory: () => SSRSetup | Promise<SSRSetup>,
 ) => SSRSetup | Promise<SSRSetup>;
+
+export type RouteResolverCache = {
+  hash: number;
+  referencedFiles: Record<string, number>;
+} & Pick<
+  ApiRoute,
+  | "params"
+  | "methods"
+  | "numericParams"
+  | "typeDeclarations"
+  | "validationDefinitions"
+>;
+
+export type RouteResolverCacheFactory = (
+  route: Pick<ApiRoute, "id" | "file" | "fileFullpath">,
+  sourceFolder: SourceFolder,
+  extraContext?: object,
+) => {
+  get: (opt?: {
+    validate?: boolean;
+  }) => Promise<RouteResolverCache | undefined>;
+  // set is taking referencedFiles as an array
+  // and transforming into an object;
+  // also is adding a hash.
+  set: (
+    cache: Omit<RouteResolverCache, "hash" | "referencedFiles"> & {
+      referencedFiles: Array<string>;
+    },
+  ) => Promise<RouteResolverCache>;
+};

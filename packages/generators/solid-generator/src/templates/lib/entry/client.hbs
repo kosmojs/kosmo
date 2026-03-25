@@ -1,5 +1,5 @@
 import { lazy } from "solid-js";
-import type { RenderFactory } from "@kosmojs/dev";
+import type { RenderFactory } from "@kosmojs/lib";
 
 import { loaderFactory } from "../solid";
 
@@ -21,7 +21,7 @@ export const renderFactory: RenderFactory = async (factory) => {
     clientRender = fallbackRender("client"),
     serverRender = fallbackRender("server"),
   } = await factory();
-  if ({{ssrMode}}) {
+  if (KOSMO_SSR_MODE) {
     await serverRender();
   } else {
     await clientRender();

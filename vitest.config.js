@@ -29,7 +29,7 @@ export default defineConfig({
         setupFiles: ["packages/core/cli/test/setup.ts"],
       }),
 
-      setupFactory("core/dev"),
+      setupFactory("core/lib"),
 
       setupFactory("core/fetch", {
         setupFiles: ["packages/core/fetch/test/setup.ts"],

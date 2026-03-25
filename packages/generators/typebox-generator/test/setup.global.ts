@@ -1,16 +1,16 @@
 import { rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-import { routesFactory } from "@kosmojs/dev";
+import { routesFactory } from "@kosmojs/lib";
 
-import { appRoot, resolvedOptions } from ".";
+import { appRoot, sourceFolder } from ".";
 
 const cleanup = () => rm(`${appRoot}/lib`, { force: true, recursive: true });
 
 export default async () => {
   await cleanup();
 
-  const { resolvers } = await routesFactory(resolvedOptions);
+  const { resolvers } = await routesFactory(sourceFolder);
 
   const resolvedRoutes = [];
 
@@ -18,9 +18,9 @@ export default async () => {
     resolvedRoutes.push(await handler());
   }
 
-  for (const { factory } of resolvedOptions.generators) {
-    const { build } = await factory(resolvedOptions);
-    await build(resolvedRoutes);
+  for (const generator of sourceFolder.config.generators || []) {
+    const instance = await generator(sourceFolder);
+    await instance.build(resolvedRoutes);
   }
 
   const routeNames = resolvedRoutes

@@ -2,14 +2,14 @@ import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { createServer as createNodeServer } from "node:net";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 
 import { serve } from "@hono/node-server";
 import crc from "crc/crc32";
 import got, { type Response } from "got";
+import { createJiti } from "jiti";
 import { compile } from "path-to-regexp";
 import { chromium } from "playwright";
-import { build, createServer } from "vite";
 import { inject } from "vitest";
 
 import {
@@ -18,14 +18,16 @@ import {
   createSourceFolder,
   type FRAMEWORKS,
 } from "@kosmojs/cli";
-import { defaults, pathResolver, pathTokensFactory } from "@kosmojs/dev";
+import chassis from "@kosmojs/dev/chassis";
+import {
+  type FolderConfig,
+  type ProjectSettings,
+  pathResolver,
+  pathTokensFactory,
+  type SourceFolder,
+} from "@kosmojs/lib";
 
 import type { RouteName } from "./routes";
-
-const project = {
-  name: "integration-test",
-  distDir: "dist",
-};
 
 const pkgsDir = resolve(import.meta.dirname, "../../packages");
 const pnpmDir = resolve(tmpdir(), ".kosmojs/pnpm-store");
@@ -48,9 +50,9 @@ const apiClient = got.extend({
 
 const PORT_RANGE = [40_600, 40_800];
 
-export const sourceFolder = "test";
-
 export * from "./routes";
+
+export const sourceFolderName = "test";
 
 export const setupTestProject = async (opt?: {
   framework?: keyof typeof FRAMEWORKS;
@@ -64,11 +66,27 @@ export const setupTestProject = async (opt?: {
     ? opt.skip({ csr, ssr })
     : false;
 
-  const port = await findFreePort();
-  const baseURL = `http://localhost:${port}`;
+  const devPort = await findFreePort();
+  const baseURL = `http://localhost:${devPort}`;
 
   const tempDir = skip ? "" : await mkdtemp(resolve(tmpdir(), ".kosmojs-"));
-  const projectRoot = resolve(tempDir, project.name);
+  const projectRoot = resolve(tempDir, "app");
+
+  const sourceFolder: SourceFolder = {
+    name: sourceFolderName,
+    config: {},
+    root: projectRoot,
+    baseurl: "/",
+    apiurl: "/api",
+    distDir: "dist",
+  };
+
+  const projectSettings: ProjectSettings = {
+    root: projectRoot,
+    sourceFolders: [sourceFolder],
+    command: "serve",
+    devPort,
+  };
 
   let closeServer: () => Promise<void> | undefined;
 
@@ -78,10 +96,8 @@ export const setupTestProject = async (opt?: {
     }
   };
 
-  const { createPath, createImport } = pathResolver({
-    appRoot: projectRoot,
-    sourceFolder,
-  });
+  const { createPath, createImport } = pathResolver(sourceFolder);
+  const jiti = createJiti(projectRoot);
 
   type PageTemplateFactory = (a: {
     name: string;
@@ -152,20 +168,13 @@ export const setupTestProject = async (opt?: {
 
   const createDevServer = async () => {
     if (ssr) {
-      await build({
-        root: createPath.src(),
-      });
-
-      // INFO: wait for files to persist
-      await new Promise((resolve) => setTimeout(resolve, 1_000));
-
       const { createServer } = await import(
-        join(projectRoot, project.distDir, sourceFolder, "ssr/server.js")
+        createPath.distDir("ssr/server.js")
       );
 
       const server = await createServer();
 
-      server.listen(port);
+      server.listen(devPort);
 
       return async () => {
         await server.close();
@@ -173,46 +182,32 @@ export const setupTestProject = async (opt?: {
     }
 
     if (backend) {
-      await build({
-        root: createPath.src(),
-      });
-
-      // INFO: wait for files to persist
-      await new Promise((resolve) => setTimeout(resolve, 1_000));
-
-      const app = await import(
-        join(
-          projectRoot,
-          project.distDir,
-          sourceFolder,
-          defaults.apiDir,
-          "app.js",
-        )
-      ).then((e) => e.default);
+      const app = await jiti.import<{ fetch: never; listen: Function }>(
+        createPath.distDir("api/app.js"),
+        { default: true },
+      );
 
       const server =
         backend === "hono"
-          ? serve({ fetch: app.fetch, port })
-          : app.listen(port);
+          ? serve({ fetch: app.fetch, port: devPort })
+          : app.listen(devPort);
 
       return async () => {
         await server.close();
       };
     }
 
-    const server = await createServer({
-      root: createPath.src(),
-      logLevel: "error",
+    const config = await jiti.import<FolderConfig>(
+      createPath.src("kosmo.config.ts"),
+      { default: true },
+    );
+
+    const teardown = await chassis({
+      ...projectSettings,
+      sourceFolders: [{ ...sourceFolder, config }],
     });
 
-    await server.listen();
-
-    // INFO: wait for generators to deploy files!
-    await new Promise((resolve) => setTimeout(resolve, 1_000));
-
-    return async () => {
-      await server.close();
-    };
+    return teardown;
   };
 
   const bootstrapProject = async () => {
@@ -222,46 +217,37 @@ export const setupTestProject = async (opt?: {
 
     await cleanup();
 
-    await createProject(tempDir, project, {
-      devDependencies: {
-        "@kosmojs/config": resolve(pkgsDir, "core/config"),
-        "@kosmojs/cli": resolve(pkgsDir, "core/cli"),
-        "@kosmojs/dev": resolve(pkgsDir, "core/dev"),
-        "@kosmojs/generators": resolve(pkgsDir, "generators/generators"),
+    await createProject(
+      tempDir,
+      { name: "app", ...projectSettings },
+      {
+        dependencies: {
+          "@kosmojs/api": resolve(pkgsDir, "core/api"),
+        },
+        devDependencies: {
+          "@kosmojs/config": resolve(pkgsDir, "core/config"),
+          "@kosmojs/cli": resolve(pkgsDir, "core/cli"),
+          "@kosmojs/dev": resolve(pkgsDir, "core/dev"),
+        },
       },
-    });
+    );
 
     await createSourceFolder(
       projectRoot,
       {
-        name: sourceFolder,
-        port,
+        name: sourceFolder.name,
         ...(backend ? { backend } : {}),
         ...(framework ? { framework } : {}),
         ...(ssr ? { ssr: true } : {}),
       },
       {
         ...(frameworkOptions ? { frameworkOptions } : {}),
-        dependencies: {
-          "@kosmojs/api": resolve(pkgsDir, "core/api"),
-        },
         devDependencies: {
           "@kosmojs/fetch": resolve(pkgsDir, "core/fetch"),
+          "@kosmojs/lib": resolve(pkgsDir, "core/lib"),
         },
       },
     );
-
-    await new Promise((resolve, reject) => {
-      execFile(
-        "pnpm",
-        ["install", "--dir", projectRoot, "--store-dir", pnpmDir],
-        (error) => {
-          error //
-            ? reject(error)
-            : resolve(true);
-        },
-      );
-    });
   };
 
   const defaultContentPatternFor = (route: string) => {
@@ -300,7 +286,7 @@ export const setupTestProject = async (opt?: {
 
       // Wait for page content to be rendered
       await page.waitForSelector("body:has-text('')", {
-        timeout: 1_000,
+        timeout: 3_000,
       });
 
       maybeContent = await page.content();
@@ -354,8 +340,26 @@ export const setupTestProject = async (opt?: {
       if (skip) {
         return;
       }
+
+      for (const args of [
+        ["--dir", projectRoot, "--store-dir", pnpmDir, "install"],
+        ["--dir", projectRoot, "build"],
+      ]) {
+        await new Promise((resolve, reject) => {
+          execFile("pnpm", args, (error, stdout, stderr) => {
+            console.log(stdout);
+            console.error(stderr);
+            error //
+              ? reject(error)
+              : resolve(true);
+          });
+        });
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
       closeServer = await createDevServer();
       await new Promise((resolve) => setTimeout(resolve, 1_000));
+
       if (browser) {
         // Initial warmup navigation
         const page = await browser.newPage();

@@ -9,86 +9,24 @@ import crc from "crc/crc32";
  * import resolves to the actual published package.json.
  * */
 import self from "@kosmojs/dev/package.json" with { type: "json" };
+import {
+  pathExists,
+  pathResolver,
+  type RouteResolverCache,
+  type RouteResolverCacheFactory,
+} from "@kosmojs/lib";
 
-import { pathExists, pathResolver } from "./paths";
-import type { ApiRoute } from "./types";
-
-export type Cache = {
-  hash: number;
-  referencedFiles: Record<string, number>;
-} & Pick<
-  ApiRoute,
-  | "params"
-  | "methods"
-  | "numericParams"
-  | "typeDeclarations"
-  | "validationDefinitions"
->;
-
-type ExtraContext = Record<string | number, unknown>;
-
-export const cacheFactory = (
-  route: Pick<ApiRoute, "id" | "file" | "fileFullpath">,
-  {
-    appRoot,
-    sourceFolder,
-    extraContext,
-  }: {
-    appRoot: string;
-    sourceFolder: string;
-    extraContext?: ExtraContext;
-  },
+export const cacheFactory: RouteResolverCacheFactory = (
+  route,
+  sourceFolder,
+  extraContext,
 ) => {
-  const cacheFile = pathResolver({
-    appRoot,
-    sourceFolder,
-  }).createPath.libApi(dirname(route.file), "cache.json");
+  const cacheFile = pathResolver(sourceFolder).createPath.libApi(
+    dirname(route.file),
+    "cache.json",
+  );
 
-  const getCache = async (opt?: {
-    validate?: boolean;
-  }): Promise<Cache | undefined> => {
-    if (await pathExists(cacheFile)) {
-      try {
-        const cache = JSON.parse(await readFile(cacheFile, "utf8"));
-        return opt?.validate //
-          ? validateCache(cache)
-          : cache;
-      } catch (_e) {}
-    }
-    return undefined;
-  };
-
-  const persistCache = async ({
-    referencedFiles: _referencedFiles,
-    ...rest
-  }: Omit<Cache, "hash" | "referencedFiles"> & {
-    referencedFiles: Array<string>;
-  }): Promise<Cache> => {
-    const hash = await generateFileHash(route.fileFullpath, {
-      ...extraContext,
-    });
-
-    const referencedFiles: Cache["referencedFiles"] = {};
-
-    for (const file of _referencedFiles) {
-      referencedFiles[
-        // Strip project root to ensure cached paths are relative
-        // and portable across environments (CI, local, etc.)
-        file.replace(`${appRoot}/`, "")
-      ] = await generateFileHash(file);
-    }
-
-    const cache = { ...rest, hash, referencedFiles };
-
-    await mkdir(dirname(cacheFile), { recursive: true });
-    await writeFile(cacheFile, JSON.stringify(cache, null, 2), "utf8");
-
-    return cache;
-  };
-
-  const validateCache = async (
-    cache: Cache | undefined,
-  ): Promise<Cache | undefined> => {
+  const validateCache = async (cache: RouteResolverCache) => {
     if (!cache?.hash) {
       return;
     }
@@ -109,7 +47,10 @@ export const cacheFactory = (
 
     for (const [file, hash] of Object.entries(cache.referencedFiles)) {
       if (
-        !identicalHashSum(hash, await generateFileHash(resolve(appRoot, file)))
+        !identicalHashSum(
+          hash,
+          await generateFileHash(resolve(sourceFolder.root, file)),
+        )
       ) {
         // some referenced file updated
         return;
@@ -120,15 +61,46 @@ export const cacheFactory = (
   };
 
   return {
-    getCache,
-    validateCache,
-    persistCache,
+    async get(opt?: { validate?: boolean }) {
+      if (await pathExists(cacheFile)) {
+        try {
+          const cache = JSON.parse(await readFile(cacheFile, "utf8"));
+          return opt?.validate //
+            ? validateCache(cache)
+            : cache;
+        } catch (_e) {}
+      }
+      return undefined;
+    },
+
+    async set(cache) {
+      const hash = await generateFileHash(route.fileFullpath, {
+        ...extraContext,
+      });
+
+      const referencedFiles: Record<string, number> = {};
+
+      for (const file of cache.referencedFiles) {
+        referencedFiles[
+          // Strip project root to ensure cached paths are relative
+          // and portable across environments (CI, local, etc.)
+          file.replace(`${sourceFolder.root}/`, "")
+        ] = await generateFileHash(file);
+      }
+
+      const value = { ...cache, hash, referencedFiles };
+
+      await mkdir(dirname(cacheFile), { recursive: true });
+      await writeFile(cacheFile, JSON.stringify(value, null, 2), "utf8");
+
+      return value;
+    },
   };
 };
 
 const generateFileHash = async (
   file: string,
-  extraContext?: ExtraContext,
+  extraContext?: object,
 ): Promise<number> => {
   let fileContent: string | undefined;
   try {

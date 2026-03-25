@@ -1,18 +1,17 @@
 import { describe, expect, test } from "vitest";
 
-import { pluginOptions } from ".";
+import { sourceFolder } from ".";
 
 import { defaults } from "@src/defaults";
-import { nestedRoutesFactory } from "@src/routes-factory/nesting";
-import { createRouteEntry, scanRoutes } from "@src/routes-factory/resolve";
+import { createRouteEntry, nestedRoutesFactory, scanRoutes } from "@src/routes";
 import type { NestedRouteEntry } from "@src/types";
 
 describe("Nested Routes", async () => {
-  const routeFiles = await scanRoutes(pluginOptions);
+  const routeFiles = await scanRoutes(sourceFolder);
 
   const routeEntries = routeFiles
     .flatMap((file) => {
-      const entry = createRouteEntry(file, pluginOptions);
+      const entry = createRouteEntry(file, sourceFolder);
       return entry?.folder === defaults.pagesDir ? [entry] : [];
     })
     .sort((a, b) => a.name.localeCompare(b.name));

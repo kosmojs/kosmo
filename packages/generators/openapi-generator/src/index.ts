@@ -1,16 +1,14 @@
-import type { GeneratorConstructor } from "@kosmojs/dev";
+import { defineGenerator } from "@kosmojs/lib";
 
 import { factory } from "./factory";
 import type { Options } from "./types";
 
-export default (openapiOptions: Options): GeneratorConstructor => {
-  return {
+export default defineGenerator<Options, true>(
+  (options) => {
+    return (sourceFolder) => factory(sourceFolder, options);
+  },
+  {
     name: "OpenAPI",
-    moduleImport: import.meta.filename,
-    moduleConfig: openapiOptions,
-    factory: (options) => factory(options, openapiOptions),
-    options: {
-      resolveTypes: true,
-    },
-  };
-};
+    resolveTypes: true,
+  },
+);

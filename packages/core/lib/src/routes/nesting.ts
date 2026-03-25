@@ -1,10 +1,7 @@
 import { basename } from "node:path";
 
 import type { NestedRouteEntry, RouteEntry } from "../types";
-import { sortRoutes } from "./base";
-import { PAGE_INDEX_BASENAME, PAGE_LAYOUT_BASENAME } from "./resolve";
-
-export * from "./base";
+import { PAGE_INDEX_BASENAME, PAGE_LAYOUT_BASENAME, sortRoutes } from "./base";
 
 export const nestedRoutesFactory = (routeEntries: Array<RouteEntry>) => {
   const entryStack = structuredClone(routeEntries).sort(sortRoutes);

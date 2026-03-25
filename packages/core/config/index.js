@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 
-import { createTsconfigPaths, renderToFile } from "@kosmojs/dev";
+import { createTsconfigPaths, renderToFile } from "@kosmojs/lib";
 
 await renderToFile(
   resolve(import.meta.dirname, "tsconfig.vite.json"),
