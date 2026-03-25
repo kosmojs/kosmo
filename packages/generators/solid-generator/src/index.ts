@@ -5,7 +5,7 @@ import { defineGenerator } from "@kosmojs/lib";
  * */
 import self from "@kosmojs/solid-generator/package.json" with { type: "json" };
 
-import { factory } from "./factory";
+import factory from "./factory";
 import type { Options } from "./types";
 
 export default defineGenerator<Options>(

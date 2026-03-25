@@ -27,6 +27,7 @@ export type FolderConfig = Pick<
   | "define"
   | "resolve"
 > & {
+  /** Generators to run for this source folder (validation, fetch clients, OpenAPI, etc.) */
   generators?: Array<GeneratorFactory>;
 
   /**
@@ -37,11 +38,17 @@ export type FolderConfig = Pick<
 };
 
 export type SourceFolder = {
+  /** Source folder name, e.g. "front", "admin", "app" */
   name: string;
+  /** Resolved folder configuration */
   config: FolderConfig;
+  /** Absolute path to the project root */
   root: string;
+  /** Base URL this source folder is served from, e.g. "/" or "/admin" */
   baseurl: string;
+  /** Base URL for API routes, e.g. "/api" */
   apiurl: string;
+  /** output directory name, configured as `distDir` in package.json */
   distDir: string;
 };
 
@@ -227,12 +234,19 @@ export type DefineGenerator = <
   factory: [O] extends [undefined]
     ? () => GeneratorFactory
     : (o: O) => GeneratorFactory<O>,
-  options?: GeneratorMeta,
+  m?: GeneratorMeta,
 ) => [O] extends [undefined]
   ? () => GeneratorFactory
   : [R] extends [true]
     ? (o: O) => GeneratorFactory<O>
     : (o?: O) => GeneratorFactory<O>;
+
+export type DefineGeneratorFactory = <
+  O extends Record<string, unknown> | undefined = undefined,
+  R extends boolean = false,
+>(
+  f: GeneratorFactory<O, R>,
+) => GeneratorFactory<O, R>;
 
 export type GeneratorFactory<
   O extends Record<string, unknown> | undefined = undefined,

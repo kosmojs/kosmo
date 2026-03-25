@@ -1,7 +1,7 @@
 import YAML from "yaml";
 
 import {
-  type GeneratorFactory,
+  defineGeneratorFactory,
   pathResolver,
   type ResolvedEntry,
   renderToFile,
@@ -10,44 +10,43 @@ import {
 import openapiFactory from "./openapi";
 import type { Options } from "./types";
 
-export const factory: GeneratorFactory<Options, true> = async (
-  sourceFolder,
-  options,
-) => {
-  const { outfile, ...baseSpec } = { ...options };
+export default defineGeneratorFactory<Options, true>(
+  async (sourceFolder, options) => {
+    const { outfile, ...baseSpec } = { ...options };
 
-  const { createPath } = pathResolver(sourceFolder);
+    const { createPath } = pathResolver(sourceFolder);
 
-  const { generateOpenAPISchema } = openapiFactory(sourceFolder);
+    const { generateOpenAPISchema } = openapiFactory(sourceFolder);
 
-  const generateSchemas = async (entries: Array<ResolvedEntry>) => {
-    const apiRoutes = entries.flatMap(({ kind, entry }) =>
-      kind === "apiRoute" //
-        ? [entry]
-        : [],
-    );
+    const generateSchemas = async (entries: Array<ResolvedEntry>) => {
+      const apiRoutes = entries.flatMap(({ kind, entry }) =>
+        kind === "apiRoute" //
+          ? [entry]
+          : [],
+      );
 
-    const { paths, components } = generateOpenAPISchema(apiRoutes);
+      const { paths, components } = generateOpenAPISchema(apiRoutes);
 
-    const spec = {
-      ...JSON.parse(JSON.stringify(baseSpec)),
-      paths,
-      components,
+      const spec = {
+        ...JSON.parse(JSON.stringify(baseSpec)),
+        paths,
+        components,
+      };
+
+      const output = /ya?ml/.test(outfile)
+        ? YAML.stringify(spec)
+        : JSON.stringify(spec, null, 2);
+
+      await renderToFile(createPath.src(outfile), output, {});
     };
 
-    const output = /ya?ml/.test(outfile)
-      ? YAML.stringify(spec)
-      : JSON.stringify(spec, null, 2);
-
-    await renderToFile(createPath.src(outfile), output, {});
-  };
-
-  return {
-    async watch(entries) {
-      await generateSchemas(entries);
-    },
-    async build(entries) {
-      await generateSchemas(entries);
-    },
-  };
-};
+    return {
+      async watch(entries) {
+        await generateSchemas(entries);
+      },
+      async build(entries) {
+        await generateSchemas(entries);
+      },
+    };
+  },
+);

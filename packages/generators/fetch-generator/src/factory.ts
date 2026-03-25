@@ -1,6 +1,6 @@
 import { RequestValidationTargets, type ValidationTarget } from "@kosmojs/api";
 import {
-  type GeneratorFactory,
+  defineGeneratorFactory,
   pathResolver,
   type ResolvedEntry,
   renderFactory,
@@ -13,7 +13,7 @@ import fetchTpl from "./templates/fetch.hbs";
 import routeTpl from "./templates/route.hbs";
 import unwrapTpl from "./templates/unwrap.hbs";
 
-export const factory: GeneratorFactory = async (sourceFolder) => {
+export default defineGeneratorFactory(async (sourceFolder) => {
   const { createPath, createImportHelper } = pathResolver(sourceFolder);
 
   const { renderToFile } = renderFactory({
@@ -171,4 +171,4 @@ export const factory: GeneratorFactory = async (sourceFolder) => {
       await generateLibFiles(entries, entries);
     },
   };
-};
+});

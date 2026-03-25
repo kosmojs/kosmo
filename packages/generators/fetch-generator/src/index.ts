@@ -5,7 +5,7 @@
 import self from "@kosmojs/fetch-generator/package.json" with { type: "json" };
 import { defineGenerator } from "@kosmojs/lib";
 
-import { factory } from "./factory";
+import factory from "./factory";
 
 export default defineGenerator(() => factory, {
   name: "Fetch",

@@ -6,7 +6,7 @@ import picomatch, { type Matcher } from "picomatch";
 
 import {
   type ApiRoute,
-  type GeneratorFactory,
+  defineGeneratorFactory,
   normalizeStaticValue,
   type PathToken,
   type PathTokenParamPart,
@@ -39,171 +39,170 @@ import srcRouterTpl from "./templates/src/router.ts?as=text";
 import srcServerTpl from "./templates/src/server.ts?as=text";
 import srcUseTpl from "./templates/src/use.ts?as=text";
 
-export const factory: GeneratorFactory<Options> = async (
-  sourceFolder,
-  options,
-) => {
-  const { alias, templates } = { ...options };
-  const { createPath, createImportHelper } = pathResolver(sourceFolder);
+export default defineGeneratorFactory<Options>(
+  async (sourceFolder, options) => {
+    const { alias, templates } = { ...options };
+    const { createPath, createImportHelper } = pathResolver(sourceFolder);
 
-  const { renderToFile } = renderFactory({
-    helpers: {
-      createImport: createImportHelper,
-      paramsDefaults({ params }: ApiRoute) {
-        const elements = params.schema.map(() => "unknown?");
-        return `[${elements.join(", ")}]`;
+    const { renderToFile } = renderFactory({
+      helpers: {
+        createImport: createImportHelper,
+        paramsDefaults({ params }: ApiRoute) {
+          const elements = params.schema.map(() => "unknown?");
+          return `[${elements.join(", ")}]`;
+        },
+        paramsMappings({ params }: ApiRoute) {
+          const elements = params.schema.map(({ name, kind }) => {
+            return `["${name}", unknown, ${kind === "required" ? "true" : "false"}]`;
+          });
+          return `[${elements.join(", ")}]`;
+        },
       },
-      paramsMappings({ params }: ApiRoute) {
-        const elements = params.schema.map(({ name, kind }) => {
-          return `["${name}", unknown, ${kind === "required" ? "true" : "false"}]`;
-        });
-        return `[${elements.join(", ")}]`;
+      partials: {
+        libApiTpl,
       },
-    },
-    partials: {
-      libApiTpl,
-    },
-  });
-
-  const customTemplates: Array<[Matcher, string]> = Object.entries(
-    templates || {},
-  ).map(([pattern, template]) => [picomatch(pattern), template]);
-
-  // by default, write only to blank files
-  const overwrite = (content: string) => content?.trim().length === 0;
-
-  for (const [file, template] of [
-    ["env.d.ts", srcEnvTpl],
-    ["app.ts", srcAppTpl],
-    ["dev.ts", srcDevTpl],
-    ["errors.ts", srcErrorsTpl],
-    ["router.ts", srcRouterTpl],
-    ["server.ts", srcServerTpl],
-    ["use.ts", srcUseTpl],
-  ]) {
-    await renderToFile(createPath.api(file), template, {}, { overwrite });
-  }
-
-  const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
-    for (const { kind, entry } of entries) {
-      if (kind === "apiRoute") {
-        const customTemplate = customTemplates.find(([isMatch]) => {
-          return isMatch(entry.name);
-        });
-        await renderToFile(
-          createPath.api(entry.file),
-          customTemplate?.[1] || srcRouteIndexTpl,
-          { route: entry },
-          { overwrite },
-        );
-      } else if (kind === "apiUse") {
-        await renderToFile(
-          createPath.api(entry.file),
-          srcRouteUseTpl,
-          {},
-          { overwrite },
-        );
-      }
-    }
-  };
-
-  const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
-    const routesWithAliases = entries
-      .flatMap(({ kind, entry }) => {
-        if (kind !== "apiRoute") {
-          return [];
-        }
-
-        const pathVariations = entry.name
-          .split("/")
-          .reduce<Array<string>>((acc, segment) => {
-            const prev = acc[acc.length - 1];
-            acc.push(prev ? join(prev, segment) : segment);
-            return acc;
-          }, []);
-
-        const cascadingMiddleware = entries.flatMap((e) => {
-          return e.kind === "apiUse"
-            ? pathVariations.some((path) => e.entry.name === path)
-              ? [e.entry]
-              : []
-            : [];
-        });
-
-        const baseRoute = {
-          ...entry,
-          path: pathFactory(entry.pathTokens),
-          cascadingMiddleware,
-        };
-
-        const aliases: Array<
-          ApiRoute & {
-            fullpath: string;
-          }
-        > = Object.entries({ ...alias }).flatMap(([url, routeName]) => {
-          const [pathTokens, fullpath] = pathTokensFactory(url);
-          return routeName === entry.name
-            ? [
-                {
-                  ...baseRoute,
-                  name: url,
-                  id: `${baseRoute.id}_${crc(url)}`,
-                  fullpath,
-                  pathTokens,
-                },
-              ]
-            : [];
-        });
-
-        return [baseRoute, ...aliases];
-      })
-      .sort(sortRoutes);
-
-    const cascadingMiddleware = entries.flatMap(({ kind, entry }) => {
-      return kind === "apiUse" ? [entry] : [];
     });
 
-    for (const [file, template] of [
-      ["api.ts", libApiTpl],
-      ["api-factory.ts", libApiFactoryTpl],
-      ["@api/app.ts", libApiAppTpl],
-      ["@api/bodyparser.ts", libApiBodyparserTpl],
-      ["@api/dev.ts", libApiDevTpl],
-      ["@api/errors.ts", libApiErrorsTpl],
-      ["@api/router.ts", libApiRouterTpl],
-      ["@api/routes.ts", libApiRoutesTpl],
-      ["@api/server.ts", libApiServerTpl],
-    ]) {
-      await renderToFile(createPath.lib(file), template, {
-        routes: routesWithAliases,
-        cascadingMiddleware,
-      });
-    }
-  };
+    const customTemplates: Array<[Matcher, string]> = Object.entries(
+      templates || {},
+    ).map(([pattern, template]) => [picomatch(pattern), template]);
 
-  return {
-    async watch(entries, event) {
-      // fill empty src files with proper content.
-      // handle 2 cases:
-      // - event is undefined (means initial call): process all routes
-      // - `create` event given: process newly added route
-      if (!event || event.kind === "create") {
+    // by default, write only to blank files
+    const overwrite = (content: string) => content?.trim().length === 0;
+
+    for (const [file, template] of [
+      ["env.d.ts", srcEnvTpl],
+      ["app.ts", srcAppTpl],
+      ["dev.ts", srcDevTpl],
+      ["errors.ts", srcErrorsTpl],
+      ["router.ts", srcRouterTpl],
+      ["server.ts", srcServerTpl],
+      ["use.ts", srcUseTpl],
+    ]) {
+      await renderToFile(createPath.api(file), template, {}, { overwrite });
+    }
+
+    const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
+      for (const { kind, entry } of entries) {
+        if (kind === "apiRoute") {
+          const customTemplate = customTemplates.find(([isMatch]) => {
+            return isMatch(entry.name);
+          });
+          await renderToFile(
+            createPath.api(entry.file),
+            customTemplate?.[1] || srcRouteIndexTpl,
+            { route: entry },
+            { overwrite },
+          );
+        } else if (kind === "apiUse") {
+          await renderToFile(
+            createPath.api(entry.file),
+            srcRouteUseTpl,
+            {},
+            { overwrite },
+          );
+        }
+      }
+    };
+
+    const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
+      const routesWithAliases = entries
+        .flatMap(({ kind, entry }) => {
+          if (kind !== "apiRoute") {
+            return [];
+          }
+
+          const pathVariations = entry.name
+            .split("/")
+            .reduce<Array<string>>((acc, segment) => {
+              const prev = acc[acc.length - 1];
+              acc.push(prev ? join(prev, segment) : segment);
+              return acc;
+            }, []);
+
+          const cascadingMiddleware = entries.flatMap((e) => {
+            return e.kind === "apiUse"
+              ? pathVariations.some((path) => e.entry.name === path)
+                ? [e.entry]
+                : []
+              : [];
+          });
+
+          const baseRoute = {
+            ...entry,
+            path: pathFactory(entry.pathTokens),
+            cascadingMiddleware,
+          };
+
+          const aliases: Array<
+            ApiRoute & {
+              fullpath: string;
+            }
+          > = Object.entries({ ...alias }).flatMap(([url, routeName]) => {
+            const [pathTokens, fullpath] = pathTokensFactory(url);
+            return routeName === entry.name
+              ? [
+                  {
+                    ...baseRoute,
+                    name: url,
+                    id: `${baseRoute.id}_${crc(url)}`,
+                    fullpath,
+                    pathTokens,
+                  },
+                ]
+              : [];
+          });
+
+          return [baseRoute, ...aliases];
+        })
+        .sort(sortRoutes);
+
+      const cascadingMiddleware = entries.flatMap(({ kind, entry }) => {
+        return kind === "apiUse" ? [entry] : [];
+      });
+
+      for (const [file, template] of [
+        ["api.ts", libApiTpl],
+        ["api-factory.ts", libApiFactoryTpl],
+        ["@api/app.ts", libApiAppTpl],
+        ["@api/bodyparser.ts", libApiBodyparserTpl],
+        ["@api/dev.ts", libApiDevTpl],
+        ["@api/errors.ts", libApiErrorsTpl],
+        ["@api/router.ts", libApiRouterTpl],
+        ["@api/routes.ts", libApiRoutesTpl],
+        ["@api/server.ts", libApiServerTpl],
+      ]) {
+        await renderToFile(createPath.lib(file), template, {
+          routes: routesWithAliases,
+          cascadingMiddleware,
+        });
+      }
+    };
+
+    return {
+      async watch(entries, event) {
+        // fill empty src files with proper content.
+        // handle 2 cases:
+        // - event is undefined (means initial call): process all routes
+        // - `create` event given: process newly added route
+        if (!event || event.kind === "create") {
+          // always generateSrcFiles before generateLibFiles
+          await generateSrcFiles(entries);
+        }
+
+        await generateLibFiles(entries);
+
+        // TODO: handle `delete` event, cleanup lib files
+      },
+
+      async build(entries) {
         // always generateSrcFiles before generateLibFiles
         await generateSrcFiles(entries);
-      }
-
-      await generateLibFiles(entries);
-
-      // TODO: handle `delete` event, cleanup lib files
-    },
-
-    async build(entries) {
-      // always generateSrcFiles before generateLibFiles
-      await generateSrcFiles(entries);
-      await generateLibFiles(entries);
-    },
-  };
-};
+        await generateLibFiles(entries);
+      },
+    };
+  },
+);
 
 const pathFactory = (pathTokens: Array<PathToken>) => {
   const staticValue = ({ value }: PathTokenStaticPart) => {

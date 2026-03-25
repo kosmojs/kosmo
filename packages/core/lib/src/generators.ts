@@ -1,4 +1,8 @@
-import type { DefineGenerator, GeneratorMeta } from "./types";
+import type {
+  DefineGenerator,
+  DefineGeneratorFactory,
+  GeneratorMeta,
+} from "./types";
 
 export const GENERATOR_META = Symbol.for("KOSMO:GENERATOR_META");
 
@@ -82,6 +86,8 @@ export const isGenerator = (fn: Function) => {
 export const getGeneratorMeta = (fn: Function) => {
   return (fn as never)[GENERATOR_META] as GeneratorMeta | undefined;
 };
+
+export const defineGeneratorFactory: DefineGeneratorFactory = (f) => f;
 
 const deepFreeze = <T extends object>(obj: T) => {
   if (obj && typeof obj === "object" && !Object.isFrozen(obj)) {

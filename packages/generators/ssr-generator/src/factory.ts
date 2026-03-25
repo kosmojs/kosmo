@@ -5,7 +5,7 @@ import { build } from "vite";
 
 import {
   defaults,
-  type GeneratorFactory,
+  defineGeneratorFactory,
   type PageRoute,
   pathResolver,
   type ResolvedEntry,
@@ -16,7 +16,7 @@ import {
 import routesTpl from "./templates/routes.hbs";
 import serverTpl from "./templates/server.ts?as=text";
 
-export const factory: GeneratorFactory = async (sourceFolder) => {
+export default defineGeneratorFactory(async (sourceFolder) => {
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
     const { config } = sourceFolder;
     const { createPath, createImportHelper } = pathResolver(sourceFolder);
@@ -127,4 +127,4 @@ export const factory: GeneratorFactory = async (sourceFolder) => {
       await generateLibFiles(entries);
     },
   };
-};
+});
