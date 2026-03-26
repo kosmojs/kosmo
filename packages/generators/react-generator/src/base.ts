@@ -1,7 +1,5 @@
 import { styleText } from "node:util";
 
-import picomatch, { type Matcher } from "picomatch";
-
 import {
   type NestedRouteEntry,
   normalizeStaticValue,
@@ -11,15 +9,12 @@ import {
   type RouteEntry,
 } from "@kosmojs/lib";
 
-import type { Options } from "./types";
-
 export type TransformedEntry = {
   name?: string;
   path?: string;
   index?: true;
   component?: string;
   children?: Array<TransformedEntry>;
-  meta?: string | undefined;
 };
 
 export const pathFactory = (pathTokens: Array<PathToken>) => {
@@ -73,11 +68,7 @@ export const pathFactory = (pathTokens: Array<PathToken>) => {
     .join("/");
 };
 
-export const traverseFactory = (options?: Options | undefined) => {
-  const metaMatchers: Array<[Matcher, unknown]> = Object.entries({
-    ...options?.meta,
-  }).map(([pattern, meta]) => [picomatch(pattern), meta]);
-
+export const traverseFactory = () => {
   const hasSplatParam = (token: PathToken | undefined) => {
     if (token?.kind === "param") {
       const param = token.parts[0] as PathTokenParamPart;
@@ -100,9 +91,6 @@ export const traverseFactory = (options?: Options | undefined) => {
       const layoutName = `${name}:layout`;
       const path = pathFactory(pathTokens);
 
-      const metaMatch = metaMatchers.find(([isMatch]) => isMatch(name));
-      const meta = metaMatch?.[1] ? JSON.stringify(metaMatch?.[1]) : undefined;
-
       const lastToken = pathTokens.at(-1);
 
       if (hasSplatParam(lastToken)) {
@@ -116,7 +104,6 @@ export const traverseFactory = (options?: Options | undefined) => {
                 // no recursion here - splat params always goes last
                 { name, path: "*", component: index.id },
               ],
-              meta,
             },
           ];
         }
@@ -130,7 +117,6 @@ export const traverseFactory = (options?: Options | undefined) => {
                 { name, path: "*", component: index.id },
                 ...traverseEntries(children),
               ],
-              meta,
             },
           ];
         }
@@ -142,7 +128,6 @@ export const traverseFactory = (options?: Options | undefined) => {
               path,
               component: layout.id,
               children: traverseEntries(children),
-              meta,
             },
           ];
         }
@@ -160,7 +145,6 @@ export const traverseFactory = (options?: Options | undefined) => {
               { name, index: true, component: index.id },
               ...traverseEntries(children),
             ],
-            meta,
           },
         ];
       }
@@ -174,7 +158,6 @@ export const traverseFactory = (options?: Options | undefined) => {
               { name, index: true, component: index.id },
               ...traverseEntries(children),
             ],
-            meta,
           },
         ];
       }
@@ -186,7 +169,6 @@ export const traverseFactory = (options?: Options | undefined) => {
             path,
             component: layout.id,
             children: traverseEntries(children),
-            meta,
           },
         ];
       }

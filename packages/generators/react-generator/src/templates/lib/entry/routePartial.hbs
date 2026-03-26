@@ -13,12 +13,6 @@
   ...maybeLoader({{component}}_loader as never),
   {{/if}}
   {{#if children.length}}
-  children: [
-    {{#each children}}{{> routePartial}},
-    {{/each}}
-  ],
-  {{/if}}
-  {{#if meta}}
-  handle: {{meta}},
+  children: [ {{#each children}}{{> routePartial}}, {{/each}}],
   {{/if}}
 }
