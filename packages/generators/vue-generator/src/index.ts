@@ -21,6 +21,7 @@ export default defineGenerator<Options>(
     },
     devDependencies: {
       "@kosmojs/lib": self.version,
+      "@kosmojs/fetch": self.version,
       "@vitejs/plugin-vue": self.devDependencies["@vitejs/plugin-vue"],
     },
   },
