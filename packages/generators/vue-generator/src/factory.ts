@@ -84,7 +84,7 @@ export default defineGeneratorFactory<Options>(
       await renderToFile(
         createPath.src(file),
         template,
-        { defaults },
+        { entryDir: defaults.entryDir },
         {
           // For index.html: overwrite only if empty or missing "<!--app-html-->".
           // For other files: overwrite only if blank.
