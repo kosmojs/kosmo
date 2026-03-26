@@ -6,10 +6,4 @@ export type Options = {
     // template itself, not path to template file
     string
   >;
-
-  meta?: Record<
-    // route name pattern
-    string,
-    object
-  >;
 };

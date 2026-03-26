@@ -24,12 +24,12 @@ import libPageSamplesStylesTpl from "./templates/lib/pageSamples/styles.css?as=t
 import libPageSamplesWelcomeTpl from "./templates/lib/pageSamples/welcome.hbs";
 import libRouterTpl from "./templates/lib/router.hbs";
 import libUnwrapTpl from "./templates/lib/unwrap.ts?as=text";
+import libVueDTpl from "./templates/lib/vue.d.ts?as=text";
 import libVueTpl from "./templates/lib/vue.ts?as=text";
 import srcAppTpl from "./templates/src/App.hbs";
 import srcComponentsLinkTpl from "./templates/src/components/Link.hbs";
 import srcEntryClientTpl from "./templates/src/entry/client.hbs";
 import srcEntryServerTpl from "./templates/src/entry/server.hbs";
-import srcEnvDTpl from "./templates/src/env.d.ts?as=text";
 import srcIndexTpl from "./templates/src/index.html?as=text";
 import srcPageSamplesLayoutTpl from "./templates/src/pageSamples/layout.hbs";
 import srcPageSamplesPageTpl from "./templates/src/pageSamples/page.hbs";
@@ -62,9 +62,15 @@ export default defineGeneratorFactory<Options>(
       (e) => getGeneratorMeta(e)?.slot === "ssr",
     );
 
-    const entriesTraverser = traverseFactory(options);
+    const entriesTraverser = traverseFactory();
 
-    await renderToFile(createPath.lib("unwrap.ts"), libUnwrapTpl, {});
+    for (const [file, template] of [
+      ["unwrap.ts", libUnwrapTpl],
+      ["vue.d.ts", libVueDTpl],
+      ["vue.ts", libVueTpl],
+    ]) {
+      await renderToFile(createPath.lib(file), template, {});
+    }
 
     for (const [file, template] of [
       ["styles.module.css", libPageSamplesStylesTpl],
@@ -75,7 +81,6 @@ export default defineGeneratorFactory<Options>(
     }
 
     for (const [file, template] of [
-      ["env.d.ts", srcEnvDTpl],
       ["components/Link.vue", srcComponentsLinkTpl],
       ["App.vue", srcAppTpl],
       ["router.ts", srcRouterTpl],
@@ -154,8 +159,8 @@ export default defineGeneratorFactory<Options>(
       }
 
       for (const [file, template] of [
+        //
         ["router.ts", libRouterTpl],
-        ["vue.ts", libVueTpl],
       ]) {
         await renderToFile(createPath.lib(file), template, {
           indexRoutes,

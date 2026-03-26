@@ -7,12 +7,6 @@
   component: {{component}},
   {{/if}}
   {{#if children.length}}
-  children: [
-    {{#each children}}{{> routePartial}},
-    {{/each}}
-  ],
-  {{/if}}
-  {{#if meta}}
-  meta: {{meta}},
+  children: [ {{#each children}}{{> routePartial}}, {{/each}}],
   {{/if}}
 }
