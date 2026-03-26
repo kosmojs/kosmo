@@ -62,9 +62,16 @@ export default defineGeneratorFactory<Options>(
       (e) => getGeneratorMeta(e)?.slot === "ssr",
     );
 
-    const entriesTraverser = traverseFactory(options);
+    const entriesTraverser = traverseFactory();
 
     await renderToFile(createPath.lib("unwrap.ts"), libUnwrapTpl, {});
+
+    for (const [file, template] of [
+      //
+      ["solid.ts", libSolidTpl],
+    ]) {
+      await renderToFile(createPath.lib(file), template, {});
+    }
 
     for (const [file, template] of [
       ["styles.module.css", libPageSamplesStylesTpl],
@@ -153,8 +160,8 @@ export default defineGeneratorFactory<Options>(
       }
 
       for (const [file, template] of [
+        //
         ["router.ts", libRouterTpl],
-        ["solid.ts", libSolidTpl],
       ]) {
         await renderToFile(createPath.lib(file), template, {
           indexRoutes,
