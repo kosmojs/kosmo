@@ -1,5 +1,10 @@
 {
   "extends": "./tsconfig.vite.json",
+  "include": [
+    "${configDir}",
+    "${configDir}/../../lib/src/env.d.ts",
+    "${configDir}/../../lib/src/solid.d.ts"
+  ],
   "compilerOptions": {
     "jsxImportSource": "solid-js",
     "paths": {
