@@ -42,6 +42,7 @@
       },
       "suspicious": {
         "noEmptyInterface": "off",
+        "noConfusingVoidType": "off",
         "noConsole": {
           "level": "info",
           "options": {
