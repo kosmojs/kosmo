@@ -13,7 +13,7 @@ import fetchTpl from "./templates/fetch.hbs";
 import routeTpl from "./templates/route.hbs";
 import unwrapTpl from "./templates/unwrap.hbs";
 
-export default defineGeneratorFactory(async (sourceFolder) => {
+export default defineGeneratorFactory((meta, sourceFolder) => {
   const { createPath, createImportHelper } = pathResolver(sourceFolder);
 
   const { renderToFile } = renderFactory({
@@ -22,11 +22,6 @@ export default defineGeneratorFactory(async (sourceFolder) => {
       createParamsLiteral: renderHelpers.createParamsLiteral,
     },
   });
-
-  // supposed to be replaced by specialized generators, write it only at initialization.
-  // fetch generator always runs before other generators
-  // so it is safe to re-initialize this file before specialized generators update it.
-  await renderToFile(createPath.lib("unwrap.ts"), unwrapTpl, {});
 
   const generateLibFiles = async (
     entries: Array<ResolvedEntry>,
@@ -147,6 +142,16 @@ export default defineGeneratorFactory(async (sourceFolder) => {
   };
 
   return {
+    meta,
+    options: undefined,
+
+    async start() {
+      // supposed to be replaced by specialized generators, write it only at initialization.
+      // fetch generator always runs before other generators
+      // so it is safe to re-initialize this file before specialized generators update it.
+      await renderToFile(createPath.lib("unwrap.ts"), unwrapTpl, {});
+    },
+
     async watch(entries, event) {
       await generateLibFiles(
         entries,
@@ -167,8 +172,13 @@ export default defineGeneratorFactory(async (sourceFolder) => {
 
       // TODO: handle `delete` event, cleanup lib files
     },
+
     async build(entries) {
       await generateLibFiles(entries, entries);
+    },
+
+    plugins() {
+      return [];
     },
   };
 });

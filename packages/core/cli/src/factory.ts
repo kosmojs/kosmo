@@ -21,8 +21,7 @@ import {
 } from "@kosmojs/dev";
 import {
   defaults,
-  type GeneratorMeta,
-  getGeneratorMeta,
+  type GeneratorBase,
   pathExists,
   renderToFile,
 } from "@kosmojs/lib";
@@ -52,7 +51,7 @@ type Plugin = {
 type Generator = {
   name: string;
   options: string;
-  meta: GeneratorMeta | undefined;
+  base: GeneratorBase;
 };
 
 const tsconfigJson = {
@@ -162,7 +161,7 @@ export const createSourceFolder = async (
       options: opt?.frameworkOptions
         ? JSON.stringify(opt.frameworkOptions, null, 2)
         : "",
-      meta: getGeneratorMeta(solidGenerator),
+      base: solidGenerator(),
     });
 
     tsconfig = {
@@ -180,7 +179,7 @@ export const createSourceFolder = async (
       options: opt?.frameworkOptions
         ? JSON.stringify(opt.frameworkOptions, null, 2)
         : "",
-      meta: getGeneratorMeta(reactGenerator),
+      base: reactGenerator(),
     });
 
     tsconfig = {
@@ -198,7 +197,7 @@ export const createSourceFolder = async (
       options: opt?.frameworkOptions
         ? JSON.stringify(opt.frameworkOptions, null, 2)
         : "",
-      meta: getGeneratorMeta(vueGenerator),
+      base: vueGenerator(),
     });
 
     tsconfig = {
@@ -210,13 +209,13 @@ export const createSourceFolder = async (
     generators.push({
       name: "koaGenerator",
       options: "",
-      meta: getGeneratorMeta(koaGenerator),
+      base: koaGenerator(),
     });
   } else if (backendFramework === "hono") {
     generators.push({
       name: "honoGenerator",
       options: "",
-      meta: getGeneratorMeta(honoGenerator),
+      base: honoGenerator(),
     });
   }
 
@@ -224,22 +223,22 @@ export const createSourceFolder = async (
     generators.push({
       name: "ssrGenerator",
       options: "",
-      meta: getGeneratorMeta(ssrGenerator),
+      base: ssrGenerator(),
     });
   }
 
-  if (generators.some((e) => e.meta?.slot === "api")) {
+  if (generators.some(({ base }) => base.meta.slot === "api")) {
     generators.push(
       ...[
         {
           name: "fetchGenerator",
           options: "",
-          meta: getGeneratorMeta(fetchGenerator),
+          base: fetchGenerator(),
         },
         {
           name: "typeboxGenerator",
           options: "",
-          meta: getGeneratorMeta(typeboxGenerator),
+          base: typeboxGenerator(),
         },
       ],
     );
@@ -288,7 +287,7 @@ export const createSourceFolder = async (
 
   for (const generator of generators) {
     for (const key of ["dependencies", "devDependencies"] as const) {
-      packageJson[key] = { ...packageJson[key], ...generator.meta?.[key] };
+      packageJson[key] = { ...packageJson[key], ...generator.base.meta[key] };
     }
   }
 

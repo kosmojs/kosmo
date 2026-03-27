@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 import type { ResolvedType } from "tfusion";
-import type { UserConfig } from "vite";
+import type { Plugin, UserConfig } from "vite";
 
 import type { HTTPMethod, ValidationTarget } from "@kosmojs/api";
 
@@ -28,7 +28,7 @@ export type FolderConfig = Pick<
   | "resolve"
 > & {
   /** Generators to run for this source folder (validation, fetch clients, OpenAPI, etc.) */
-  generators?: Array<GeneratorFactory>;
+  generators?: Array<GeneratorBase>;
 
   /**
    * Name to use for custom runtime validation refinements.
@@ -217,46 +217,6 @@ export type WatcherEvent = {
   file: string;
 };
 
-export type WatchHandler = (
-  entries: Array<ResolvedEntry>,
-  event?: WatcherEvent,
-) => Promise<void>;
-
-type GeneratorFactoryReturn = {
-  watch: WatchHandler;
-  build: (entries: Array<ResolvedEntry>) => Promise<void>;
-};
-
-export type DefineGenerator = <
-  O extends Record<string, unknown> | undefined = undefined,
-  R extends boolean = false,
->(
-  factory: [O] extends [undefined]
-    ? () => GeneratorFactory
-    : (o: O) => GeneratorFactory<O>,
-  m?: GeneratorMeta,
-) => [O] extends [undefined]
-  ? () => GeneratorFactory
-  : [R] extends [true]
-    ? (o: O) => GeneratorFactory<O>
-    : (o?: O) => GeneratorFactory<O>;
-
-export type DefineGeneratorFactory = <
-  O extends Record<string, unknown> | undefined = undefined,
-  R extends boolean = false,
->(
-  f: GeneratorFactory<O, R>,
-) => GeneratorFactory<O, R>;
-
-export type GeneratorFactory<
-  O extends Record<string, unknown> | undefined = undefined,
-  R extends boolean = false,
-> = [O] extends [undefined]
-  ? (f: SourceFolder) => Promise<GeneratorFactoryReturn>
-  : [R] extends [true]
-    ? (f: SourceFolder, o: O) => Promise<GeneratorFactoryReturn>
-    : (f: SourceFolder, o?: O) => Promise<GeneratorFactoryReturn>;
-
 export type GeneratorMeta = {
   name: string;
 
@@ -283,21 +243,88 @@ export type GeneratorMeta = {
   resolveTypes?: boolean;
 };
 
-type RouterSetup<R> = {
-  clientRouter: () => R | Promise<R>;
-  serverRouter: (ssrOpts: { url: URL }) => R | Promise<R>;
+type GeneratorOptionsTuple = [Record<string, unknown>, boolean];
+
+type OptionsShape<T> = T extends [infer S, ...unknown[]] ? S : void;
+
+type OptionsRequired<T> = T extends [unknown, infer R extends boolean]
+  ? R
+  : false;
+
+export type GeneratorFactoryInstance = {
+  meta: GeneratorMeta;
+  options: GeneratorOptionsTuple[0] | undefined;
+  start: () => Promise<void>;
+  watch: (entries: Array<ResolvedEntry>, event?: WatcherEvent) => Promise<void>;
+  build: (entries: Array<ResolvedEntry>) => Promise<void>;
+  plugins: (command: ProjectSettings["command"]) => Array<Plugin>;
 };
 
-export type RouterFactory<AppT, RouteT, RouterT> = (
-  factory: (
-    app: AppT,
-    routes: Array<RouteT>,
-  ) => RouterSetup<RouterT> | Promise<RouterSetup<RouterT>>,
-) => (
-  app: AppT,
-  routes: Array<RouteT>,
-  ssrOpts?: { url: URL },
-) => RouterT | Promise<RouterT>;
+export type GeneratorFactory<T extends GeneratorOptionsTuple | void = void> =
+  T extends void
+    ? (m: GeneratorMeta, f: SourceFolder) => GeneratorFactoryInstance
+    : OptionsRequired<T> extends true
+      ? (
+          m: GeneratorMeta,
+          f: SourceFolder,
+          o: OptionsShape<T>,
+        ) => GeneratorFactoryInstance
+      : (
+          m: GeneratorMeta,
+          f: SourceFolder,
+          o?: OptionsShape<T>,
+        ) => GeneratorFactoryInstance;
+
+export type GeneratorBase = {
+  meta: GeneratorMeta;
+  options: GeneratorOptionsTuple[0] | undefined;
+  factory: (sourceFolder: SourceFolder) => GeneratorFactoryInstance;
+};
+
+export type DefineGenerator = <T extends GeneratorOptionsTuple | void = void>(
+  setup: (options: T extends void ? void : OptionsShape<T>) => GeneratorBase,
+) => T extends void
+  ? () => GeneratorBase
+  : OptionsRequired<T> extends true
+    ? (options: OptionsShape<T>) => GeneratorBase
+    : (options?: OptionsShape<T>) => GeneratorBase;
+
+export type DefineGeneratorFactory = <
+  T extends GeneratorOptionsTuple | void = void,
+>(
+  f: GeneratorFactory<T>,
+) => GeneratorFactory<T>;
+
+type RouterSetup<RouteT, RouterT> = [RouterT] extends [never]
+  ? {
+      routeMatcher: (
+        url: URL,
+      ) => RouteT | undefined | Promise<RouteT | undefined>;
+    }
+  : {
+      clientRouter: (url?: URL) => RouterT | Promise<RouterT>;
+      serverRouter: (url?: URL) => RouterT | Promise<RouterT>;
+    };
+
+export type RouterFactory<RouteT, RouterT = never, AppT = never> = (
+  factory?: [AppT] extends [never]
+    ? (data: {
+        routes: Array<RouteT>;
+      }) => RouterSetup<RouteT, RouterT> | Promise<RouterSetup<RouteT, RouterT>>
+    : (data: {
+        app: AppT;
+        routes: Array<RouteT>;
+      }) =>
+        | RouterSetup<RouteT, RouterT>
+        | Promise<RouterSetup<RouteT, RouterT>>,
+) => [AppT] extends [never]
+  ? (data: {
+      routes: Array<RouteT>;
+    }) => RouterSetup<RouteT, RouterT> | Promise<RouterSetup<RouteT, RouterT>>
+  : (data: {
+      app: AppT;
+      routes: Array<RouteT>;
+    }) => RouterSetup<RouteT, RouterT> | Promise<RouterSetup<RouteT, RouterT>>;
 
 type RenderSetup = {
   clientRender: () => void | Promise<void>;

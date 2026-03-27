@@ -1,14 +1,17 @@
-import { defineGenerator } from "@kosmojs/lib";
+import { defineGenerator, type GeneratorMeta } from "@kosmojs/lib";
 
 import factory from "./factory";
 import type { Options } from "./types";
 
-export default defineGenerator<Options, true>(
-  (options) => {
-    return (sourceFolder) => factory(sourceFolder, options);
-  },
-  {
+export default defineGenerator<Options>((options) => {
+  const meta: GeneratorMeta = {
     name: "OpenAPI",
     resolveTypes: true,
-  },
-);
+  };
+
+  return {
+    meta,
+    options,
+    factory: (sourceFolder) => factory(meta, sourceFolder, options),
+  };
+});

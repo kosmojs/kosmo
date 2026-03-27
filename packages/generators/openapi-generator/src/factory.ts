@@ -10,8 +10,8 @@ import {
 import openapiFactory from "./openapi";
 import type { Options } from "./types";
 
-export default defineGeneratorFactory<Options, true>(
-  async (sourceFolder, options) => {
+export default defineGeneratorFactory<Options>(
+  (meta, sourceFolder, options) => {
     const { outfile, ...baseSpec } = { ...options };
 
     const { createPath } = pathResolver(sourceFolder);
@@ -41,11 +41,17 @@ export default defineGeneratorFactory<Options, true>(
     };
 
     return {
+      meta,
+      options,
+      async start() {},
       async watch(entries) {
         await generateSchemas(entries);
       },
       async build(entries) {
         await generateSchemas(entries);
+      },
+      plugins() {
+        return [];
       },
     };
   },

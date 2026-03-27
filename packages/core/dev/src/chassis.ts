@@ -9,9 +9,9 @@ import { build, createServer, isRunnableDevEnvironment } from "vite";
 import type { DevSetup } from "@kosmojs/api";
 import {
   defaults,
-  type FolderConfig,
-  type GeneratorFactory,
-  getGeneratorMeta,
+  type GeneratorBase,
+  type GeneratorFactoryInstance,
+  type GeneratorMeta,
   type ProjectSettings,
   pathResolver,
   type ResolvedEntry,
@@ -36,7 +36,6 @@ export default async (
       const { createPath } = pathResolver(sourceFolder);
 
       const resolvedEntries = [];
-      const generators = folderGenerators(config);
 
       // resolving routes
       {
@@ -52,10 +51,14 @@ export default async (
         spinner.succeed();
       }
 
-      // running generators for resolved routes
-      for (const generator of generators) {
-        const instance = await generator(sourceFolder);
-        await instance.build(resolvedEntries);
+      const generators = folderGenerators(sourceFolder);
+      const plugins = [...(config.plugins || [])];
+
+      for (const base of generators) {
+        const factory = base.factory(sourceFolder);
+        await factory.start();
+        await factory.build(resolvedEntries);
+        plugins.push(...factory.plugins(command));
       }
 
       // build client
@@ -70,6 +73,7 @@ export default async (
           configFile: false,
           root: createPath.src(),
           base: join(baseurl, "/"),
+          plugins,
           define: {
             ...config.define,
             KOSMO_SSR_MODE: "false",
@@ -88,7 +92,7 @@ export default async (
       }
 
       // build backend
-      if (generators.find((e) => getGeneratorMeta(e)?.slot === "api")) {
+      if (generators.find((e) => e.meta.slot === "api")) {
         const dir = createPath.distDir("api");
 
         // emptyOutDir wont work cause dir is outside project root
@@ -98,7 +102,6 @@ export default async (
           configFile: false,
           root: createPath.src(),
           appType: "custom",
-          plugins: config.plugins || [],
           define: {
             ...config.define,
             KOSMO_PRODUCTION_BUILD: "true",
@@ -143,10 +146,19 @@ export default async (
     const requestMatchers = matchersFactory(sourceFolder);
     const port = await findFreePort(devPort);
 
+    const generators = folderGenerators(sourceFolder);
+    const plugins = [...(config.plugins || [])];
+
+    for (const base of generators) {
+      const factory = base.factory(sourceFolder);
+      plugins.push(...factory.plugins(command));
+    }
+
     const viteServer = await createServer({
       ...config,
       configFile: false,
       root: createPath.src(),
+      plugins,
       server: {
         ...config.server,
         middlewareMode: true,
@@ -177,9 +189,7 @@ export default async (
 
     const events = await eventFactory(sourceFolder);
 
-    if (
-      !folderGenerators(config).find((e) => getGeneratorMeta(e)?.slot === "api")
-    ) {
+    if (!folderGenerators(sourceFolder).find((e) => e.meta.slot === "api")) {
       continue;
     }
 
@@ -192,7 +202,6 @@ export default async (
       root: createPath.src(),
       appType: "custom",
       server: { middlewareMode: true },
-      plugins: config.plugins || [],
       resolve: { tsconfigPaths: true },
       define: {
         ...config?.define,
@@ -315,35 +324,38 @@ const cacheDir = (
   return resolve(root, `var/.vite/${name}/${command}/${mode}`);
 };
 
-const folderGenerators = (config: FolderConfig) => {
-  const apiGenerator = config.generators?.find(
-    (e) => getGeneratorMeta(e)?.slot === "api",
-  );
+const folderGenerators = (sourceFolder: SourceFolder): Array<GeneratorBase> => {
+  const { generators = [] } = sourceFolder.config;
 
-  const fetchGenerator = config.generators?.find(
-    (e) => getGeneratorMeta(e)?.slot === "fetch",
-  );
+  const coreGenerators: Partial<
+    Record<NonNullable<GeneratorMeta["slot"]>, GeneratorBase>
+  > = {};
 
-  const ssrGenerator = config.generators?.find(
-    (e) => getGeneratorMeta(e)?.slot === "ssr",
-  );
+  const userGenerators: Array<GeneratorBase> = [];
+
+  for (const base of generators) {
+    if (base.meta.slot) {
+      coreGenerators[base.meta.slot] = base;
+    } else {
+      userGenerators.push(base);
+    }
+  }
 
   return [
     // 1. stub generator should run first
     stubGenerator(),
     // 2. then api generator
-    ...(apiGenerator ? [apiGenerator] : []),
+    ...(coreGenerators.api ? [coreGenerators.api] : []),
     // 3. then fetch generator, only if api generator also enabled
-    ...(fetchGenerator && apiGenerator ? [fetchGenerator] : []),
-    // 4. user generators in the order they were added
-    ...(config.generators?.filter((e) => {
-      const slot = getGeneratorMeta(e)?.slot;
-      return slot //
-        ? !["api", "fetch", "ssr"].includes(slot)
-        : true;
-    }) || []),
-    // 5. ssr generator should run last
-    ...(ssrGenerator ? [ssrGenerator] : []),
+    ...(coreGenerators.fetch && coreGenerators.api
+      ? [coreGenerators.fetch]
+      : []),
+    // 4. then mdx generator
+    ...(coreGenerators.mdx ? [coreGenerators.mdx] : []),
+    // 5. user generators in the order they were added
+    ...userGenerators,
+    // 6. and ssr generator should run last
+    ...(coreGenerators.ssr ? [coreGenerators.ssr] : []),
   ];
 };
 
@@ -361,13 +373,11 @@ const eventFactory = async (
 
   const generators: Array<{
     name: string | undefined;
-    instance: Awaited<ReturnType<GeneratorFactory>>;
+    factory: GeneratorFactoryInstance;
   }> = [];
 
-  for (const generator of folderGenerators(sourceFolder.config)) {
-    const meta = getGeneratorMeta(generator);
-
-    if (!meta) {
+  for (const base of folderGenerators(sourceFolder)) {
+    if (!base.meta?.name) {
       console.error(
         styleText(
           "red",
@@ -378,13 +388,14 @@ const eventFactory = async (
     }
 
     try {
-      const instance = await generator(sourceFolder);
-      generators.push({ name: meta.name, instance });
+      const factory = base.factory(sourceFolder);
+      await factory.start();
+      generators.push({ name: base.meta.name, factory });
     } catch (error) {
       console.error(
         styleText(
           "red",
-          `${sourceFolder.name}: ${meta.name} generator failed to initialize`,
+          `${sourceFolder.name}: ${base.meta.name} generator failed to initialize`,
         ),
       );
       console.error(error);
@@ -403,9 +414,9 @@ const eventFactory = async (
      * */
     const entries = Array.from(resolvedEntries.values());
 
-    for (const { name, instance } of generators) {
+    for (const { name, factory } of generators) {
       try {
-        await instance.watch(entries, event);
+        await factory.watch(entries, event);
       } catch (error) {
         console.error(
           styleText("red", `${sourceFolder.name}: ${name} generator failed`),

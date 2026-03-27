@@ -13,7 +13,7 @@ import {
   typeboxLiteralText,
 } from "@kosmojs/lib";
 
-import type { Options } from "./types";
+import type { Options, Settings } from "./types";
 
 import customTypesTpl from "./templates/custom-types.ts?as=text";
 import errorHandlerTpl from "./templates/error-handler.ts?as=text";
@@ -21,12 +21,12 @@ import indexTpl from "./templates/index.ts?as=text";
 import schemasTpl from "./templates/schemas.hbs";
 import setupTpl from "./templates/setup.hbs";
 
-const defaultSettings: Options["settings"] = {
+const defaultSettings: Settings = {
   exactOptionalPropertyTypes: true,
 };
 
 export default defineGeneratorFactory<Options>(
-  async (sourceFolder, options) => {
+  (meta, sourceFolder, options) => {
     const {
       //
       createPath,
@@ -34,30 +34,17 @@ export default defineGeneratorFactory<Options>(
       createImportHelper,
     } = pathResolver(sourceFolder);
 
-    const {
-      validationMessages = {},
-      customTypesImport = createImport.lib("@typebox/custom-types"),
-      settings,
-    } = { ...options };
-
     const { renderToFile } = renderFactory({
       helpers: {
         createImport: createImportHelper,
       },
     });
 
-    for (const [file, template] of [
-      ["index.ts", indexTpl],
-      ["setup.ts", setupTpl],
-      ["custom-types.ts", customTypesTpl],
-      ["error-handler.ts", errorHandlerTpl],
-    ]) {
-      await renderToFile(createPath.lib("@typebox", file), template, {
-        validationMessages: JSON.stringify(validationMessages),
-        customTypesImport,
-        settings: JSON.stringify({ ...defaultSettings, ...settings }),
-      });
-    }
+    const {
+      validationMessages = {},
+      customTypesImport = createImport.lib("@typebox/custom-types"),
+      settings,
+    } = { ...options };
 
     const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
       for (const { kind, entry } of entries) {
@@ -190,6 +177,24 @@ export default defineGeneratorFactory<Options>(
     };
 
     return {
+      meta,
+      options,
+
+      async start() {
+        for (const [file, template] of [
+          ["index.ts", indexTpl],
+          ["setup.ts", setupTpl],
+          ["custom-types.ts", customTypesTpl],
+          ["error-handler.ts", errorHandlerTpl],
+        ]) {
+          await renderToFile(createPath.lib("@typebox", file), template, {
+            validationMessages: JSON.stringify(validationMessages),
+            customTypesImport,
+            settings: JSON.stringify({ ...defaultSettings, ...settings }),
+          });
+        }
+      },
+
       async watch(entries, event) {
         await generateLibFiles(
           // create/overwrite lib files with proper content.
@@ -209,8 +214,13 @@ export default defineGeneratorFactory<Options>(
 
         // TODO: handle `delete` event, cleanup lib files
       },
+
       async build(entries) {
         await generateLibFiles(entries);
+      },
+
+      plugins() {
+        return [];
       },
     };
   },

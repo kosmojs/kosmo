@@ -40,7 +40,7 @@ import srcServerTpl from "./templates/src/server.ts?as=text";
 import srcUseTpl from "./templates/src/use.ts?as=text";
 
 export default defineGeneratorFactory<Options>(
-  async (sourceFolder, options) => {
+  (meta, sourceFolder, options) => {
     const { alias, templates } = { ...options };
     const { createPath, createImportHelper } = pathResolver(sourceFolder);
 
@@ -69,18 +69,6 @@ export default defineGeneratorFactory<Options>(
 
     // by default, write only to blank files
     const overwrite = (content: string) => content?.trim().length === 0;
-
-    for (const [file, template] of [
-      ["env.d.ts", srcEnvTpl],
-      ["app.ts", srcAppTpl],
-      ["dev.ts", srcDevTpl],
-      ["errors.ts", srcErrorsTpl],
-      ["router.ts", srcRouterTpl],
-      ["server.ts", srcServerTpl],
-      ["use.ts", srcUseTpl],
-    ]) {
-      await renderToFile(createPath.api(file), template, {}, { overwrite });
-    }
 
     const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
       for (const { kind, entry } of entries) {
@@ -180,6 +168,23 @@ export default defineGeneratorFactory<Options>(
     };
 
     return {
+      meta,
+      options,
+
+      async start() {
+        for (const [file, template] of [
+          ["env.d.ts", srcEnvTpl],
+          ["app.ts", srcAppTpl],
+          ["dev.ts", srcDevTpl],
+          ["errors.ts", srcErrorsTpl],
+          ["router.ts", srcRouterTpl],
+          ["server.ts", srcServerTpl],
+          ["use.ts", srcUseTpl],
+        ]) {
+          await renderToFile(createPath.api(file), template, {}, { overwrite });
+        }
+      },
+
       async watch(entries, event) {
         // fill empty src files with proper content.
         // handle 2 cases:
@@ -196,9 +201,12 @@ export default defineGeneratorFactory<Options>(
       },
 
       async build(entries) {
-        // always generateSrcFiles before generateLibFiles
         await generateSrcFiles(entries);
         await generateLibFiles(entries);
+      },
+
+      plugins() {
+        return [];
       },
     };
   },

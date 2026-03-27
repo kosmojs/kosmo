@@ -3,7 +3,6 @@ import picomatch, { type Matcher } from "picomatch";
 import {
   defaults,
   defineGeneratorFactory,
-  getGeneratorMeta,
   nestedRoutesFactory,
   type PageRoute,
   pathResolver,
@@ -37,7 +36,7 @@ import srcPageSamplesWelcomeTpl from "./templates/src/pageSamples/welcome.hbs";
 import srcRouterTpl from "./templates/src/router.hbs";
 
 export default defineGeneratorFactory<Options>(
-  async (sourceFolder, options) => {
+  (meta, sourceFolder, options) => {
     const { generators = [] } = sourceFolder.config;
     const { createPath, createImportHelper } = pathResolver(sourceFolder);
 
@@ -58,57 +57,11 @@ export default defineGeneratorFactory<Options>(
       ...options?.templates,
     }).map(([pattern, template]) => [picomatch(pattern), template]);
 
-    const ssrGenerator = generators.some(
-      (e) => getGeneratorMeta(e)?.slot === "ssr",
-    );
+    const ssrGenerator = generators.some(({ meta }) => meta.slot === "ssr");
 
     const entriesTraverser = traverseFactory();
 
-    for (const [file, template] of [
-      ["unwrap.ts", libUnwrapTpl],
-      ["vue.d.ts", libVueDTpl],
-      ["vue.ts", libVueTpl],
-    ]) {
-      await renderToFile(createPath.lib(file), template, {});
-    }
-
-    for (const [file, template] of [
-      ["styles.module.css", libPageSamplesStylesTpl],
-      ["welcome.vue", libPageSamplesWelcomeTpl],
-      ["page.vue", libPageSamplesPageTpl],
-    ]) {
-      await renderToFile(createPath.lib("pageSamples", file), template, {});
-    }
-
-    for (const [file, template] of [
-      ["components/Link.vue", srcComponentsLinkTpl],
-      ["App.vue", srcAppTpl],
-      ["router.ts", srcRouterTpl],
-      ["index.html", srcIndexTpl],
-    ] as const) {
-      await renderToFile(
-        createPath.src(file),
-        template,
-        { entryDir: defaults.entryDir },
-        {
-          // For index.html: overwrite only if empty or missing "<!--app-html-->".
-          // For other files: overwrite only if blank.
-          overwrite:
-            file === "index.html"
-              ? (c) => !c?.trim().length || !c?.includes("<!--app-html-->")
-              : (c) => !c?.trim().length,
-        },
-      );
-    }
-
     const overwrite = (content: string) => !content?.trim().length;
-
-    for (const [file, template] of [
-      ["client.ts", srcEntryClientTpl],
-      ...(ssrGenerator ? [["server.ts", srcEntryServerTpl]] : []),
-    ]) {
-      await renderToFile(createPath.entry(file), template, {}, { overwrite });
-    }
 
     const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
       for (const { kind, entry } of entries) {
@@ -169,6 +122,60 @@ export default defineGeneratorFactory<Options>(
     };
 
     return {
+      meta,
+      options,
+
+      async start() {
+        for (const [file, template] of [
+          ["unwrap.ts", libUnwrapTpl],
+          ["../vue.d.ts", libVueDTpl],
+          ["vue.ts", libVueTpl],
+        ]) {
+          await renderToFile(createPath.lib(file), template, {});
+        }
+
+        for (const [file, template] of [
+          ["styles.module.css", libPageSamplesStylesTpl],
+          ["welcome.vue", libPageSamplesWelcomeTpl],
+          ["page.vue", libPageSamplesPageTpl],
+        ]) {
+          await renderToFile(createPath.lib("pageSamples", file), template, {});
+        }
+
+        for (const [file, template] of [
+          ["components/Link.vue", srcComponentsLinkTpl],
+          ["App.vue", srcAppTpl],
+          ["router.ts", srcRouterTpl],
+          ["index.html", srcIndexTpl],
+        ] as const) {
+          await renderToFile(
+            createPath.src(file),
+            template,
+            { entryDir: defaults.entryDir },
+            {
+              // For index.html: overwrite only if empty or missing "<!--app-html-->".
+              // For other files: overwrite only if blank.
+              overwrite:
+                file === "index.html"
+                  ? (c) => !c?.trim().length || !c?.includes("<!--app-html-->")
+                  : (c) => !c?.trim().length,
+            },
+          );
+        }
+
+        for (const [file, template] of [
+          ["client.ts", srcEntryClientTpl],
+          ...(ssrGenerator ? [["server.ts", srcEntryServerTpl]] : []),
+        ]) {
+          await renderToFile(
+            createPath.entry(file),
+            template,
+            {},
+            { overwrite },
+          );
+        }
+      },
+
       async watch(entries, event) {
         // fill empty src files with proper content.
         // handle 2 cases:
@@ -184,9 +191,14 @@ export default defineGeneratorFactory<Options>(
 
         // TODO: handle `delete` event, cleanup lib files
       },
+
       async build(entries) {
         await generateSrcFiles(entries);
         await generateLibFiles(entries);
+      },
+
+      plugins() {
+        return [];
       },
     };
   },

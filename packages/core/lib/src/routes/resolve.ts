@@ -6,7 +6,6 @@ import mimeTypes from "mime-types";
 
 import { astFactory } from "../ast";
 import { defaults } from "../defaults";
-import { getGeneratorMeta } from "../generators";
 import { pathResolver } from "../paths";
 import { render, renderToFile } from "../render";
 import type {
@@ -41,9 +40,7 @@ export const resolverFactory = (
 
   const { typeResolverFactory, resolveRouteSignature } = astFactory();
 
-  const resolveTypes = generators.some(
-    (e) => getGeneratorMeta(e)?.resolveTypes,
-  );
+  const resolveTypes = generators.some(({ meta }) => meta.resolveTypes);
 
   const {
     //

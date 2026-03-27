@@ -1,14 +1,22 @@
-import { defineGenerator } from "@kosmojs/lib";
+import { defineGenerator, type GeneratorMeta } from "@kosmojs/lib";
 
 // importing from local rather than published package
 // cause no @kosmojs/* dependencies involved.
 import self from "../package.json" with { type: "json" };
 import factory from "./factory";
 
-export default defineGenerator(() => factory, {
-  name: "SSR",
-  slot: "ssr",
-  dependencies: {
-    "path-to-regexp": self.dependencies["path-to-regexp"],
-  },
+export default defineGenerator(() => {
+  const meta: GeneratorMeta = {
+    name: "SSR",
+    slot: "ssr",
+    dependencies: {
+      "path-to-regexp": self.dependencies["path-to-regexp"],
+    },
+  };
+
+  return {
+    meta,
+    options: undefined,
+    factory: (sourceFolder) => factory(meta, sourceFolder),
+  };
 });
