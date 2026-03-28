@@ -138,19 +138,21 @@ export default async (
 
   const teardownHandlers: Array<() => Promise<unknown>> = [];
 
+  let port = await findFreePort(devPort);
+
   // bootstraping client servers
   for (const sourceFolder of projectSettings.sourceFolders) {
     const { config } = sourceFolder;
 
     const { createPath } = pathResolver(sourceFolder);
     const requestMatchers = matchersFactory(sourceFolder);
-    const port = await findFreePort(devPort);
 
     const generators = folderGenerators(sourceFolder);
     const plugins = [...(config.plugins || [])];
 
     for (const base of generators) {
       const factory = base.factory(sourceFolder);
+      await factory.start();
       plugins.push(...factory.plugins(command));
     }
 
@@ -161,8 +163,9 @@ export default async (
       plugins,
       server: {
         ...config.server,
+        port: port++,
         middlewareMode: true,
-        hmr: { port },
+        hmr: { port: port++ },
       },
       resolve: {
         ...config.resolve,
@@ -201,7 +204,11 @@ export default async (
       configFile: false,
       root: createPath.src(),
       appType: "custom",
-      server: { middlewareMode: true },
+      server: {
+        port: port++,
+        middlewareMode: true,
+        hmr: { port: port++ },
+      },
       resolve: { tsconfigPaths: true },
       define: {
         ...config?.define,
@@ -558,7 +565,7 @@ const findFreePort = async (devPort: number): Promise<number> => {
     }
   }
 
-  if (maxPort > 65000) {
+  if (maxPort >= 65000) {
     throw new Error("the devPort in package.json should be less than 64000");
   }
 
