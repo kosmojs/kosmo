@@ -20,7 +20,7 @@ pnpm dev          # all source folders
 pnpm dev front    # specific folder (front, admin, app, etc.)
 ```
 
-Default port is `4556`, configured as `devPort` in `package.json`.
+Default port is `4554`, configured as `devPort` in `package.json`.
 
 ## 🔀 What Happens on Start
 

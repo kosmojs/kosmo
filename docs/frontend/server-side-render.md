@@ -354,10 +354,10 @@ production execution.
 Test your SSR bundle before deploying:
 
 ```sh
-node dist/front/ssr/server.js -p 4557
+node dist/front/ssr/server.js -p 4553
 ```
 
-Navigate to `http://localhost:4557` to verify server-side rendering.
+Navigate to `http://localhost:4553` to verify server-side rendering.
 
 ## 🚀 Production Deployment
 
@@ -365,7 +365,7 @@ Deploy behind a reverse proxy such as Nginx or Caddy:
 
 ```nginx
 upstream ssr_backend {
-  server 127.0.0.1:4557;
+  server 127.0.0.1:4554;
   # server unix:/tmp/app.sock;
 }
 

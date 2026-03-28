@@ -208,7 +208,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ```
 :::
 
-Start the dev server and visit `http://localhost:4556/api/users/123`:
+Start the dev server and visit `http://localhost:4554/api/users/123`:
 
 ::: code-group
 ```sh [npm]
@@ -445,7 +445,7 @@ Build and run:
 
 ```sh
 pnpm build
-node dist/front/ssr/server.js -p 4557
+node dist/front/ssr/server.js -p 4553
 ```
 
 The API server and SSR server are bundled separately - deploy, scale, and run them independently.
