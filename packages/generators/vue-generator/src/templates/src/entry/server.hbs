@@ -3,15 +3,16 @@ import { renderToString } from "vue/server-renderer";
 
 import { renderFactory, createRoutes } from "{{ createImport "libEntry" "server" }}";
 import App from "{{ createImport "src" "App.vue" }}";
-import createRouter from "{{ createImport "src" "router" }}";
+import routerFactory from "{{ createImport "src" "router" }}";
 
 const routes = createRoutes();
+const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {
   return {
     async renderToString(url, { criticalCss }) {
       const app = createSSRApp(App);
-      await createRouter(app, routes, { url });
+      await serverRouter({ app, url });
       const head = criticalCss
         .map(({ text }) => `<style>${text}</style>`)
         .join("\n");

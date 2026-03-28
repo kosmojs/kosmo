@@ -295,45 +295,29 @@ export type DefineGeneratorFactory = <
   f: GeneratorFactory<T>,
 ) => GeneratorFactory<T>;
 
-type RouterSetup<RouteT, RouterT> = [RouterT] extends [never]
-  ? {
-      routeMatcher: (
-        url: URL,
-      ) => RouteT | undefined | Promise<RouteT | undefined>;
-    }
-  : {
-      clientRouter: (url?: URL) => RouterT | Promise<RouterT>;
-      serverRouter: (url?: URL) => RouterT | Promise<RouterT>;
-    };
+type RouterFactoryOptions = {
+  route: unknown;
+  router: unknown;
+  app: unknown;
+};
 
-export type RouterFactory<RouteT, RouterT = never, AppT = never> = (
-  factory?: [AppT] extends [never]
-    ? (data: {
-        routes: Array<RouteT>;
-      }) => RouterSetup<RouteT, RouterT> | Promise<RouterSetup<RouteT, RouterT>>
-    : (data: {
-        app: AppT;
-        routes: Array<RouteT>;
-      }) =>
-        | RouterSetup<RouteT, RouterT>
-        | Promise<RouterSetup<RouteT, RouterT>>,
-) => [AppT] extends [never]
-  ? (data: {
-      routes: Array<RouteT>;
-    }) => RouterSetup<RouteT, RouterT> | Promise<RouterSetup<RouteT, RouterT>>
-  : (data: {
-      app: AppT;
-      routes: Array<RouteT>;
-    }) => RouterSetup<RouteT, RouterT> | Promise<RouterSetup<RouteT, RouterT>>;
+type RouterFactorySignature<T extends RouterFactoryOptions> = {
+  clientRouter: (o: { app: T["app"]; url?: URL }) => Promise<T["router"]>;
+  serverRouter: (o: { app: T["app"]; url: URL }) => Promise<T["router"]>;
+};
 
-type RenderSetup = {
-  clientRender: () => void | Promise<void>;
-  serverRender: () => void | Promise<void>;
+export type RouterFactory<T extends RouterFactoryOptions> = (
+  factory: (routes: Array<T["route"]>) => RouterFactorySignature<T>,
+) => (routes: Array<T["route"]>) => RouterFactorySignature<T>;
+
+type RenderFactorySignature = {
+  clientRender: () => Promise<void>;
+  serverRender: () => Promise<void>;
 };
 
 export type RenderFactory = (
-  factory: () => RenderSetup | Promise<RenderSetup>,
-) => void | Promise<void>;
+  factory: () => RenderFactorySignature,
+) => Promise<void>;
 
 /**
  * Minimal shape of Vite's manifest.json entries.
@@ -471,9 +455,7 @@ export type SSRSetup = {
   serveStaticAssets?: boolean;
 };
 
-export type SSRFactory = (
-  factory: () => SSRSetup | Promise<SSRSetup>,
-) => SSRSetup | Promise<SSRSetup>;
+export type SSRFactory = (factory: () => SSRSetup) => SSRSetup;
 
 export type RouteResolverCache = {
   hash: number;

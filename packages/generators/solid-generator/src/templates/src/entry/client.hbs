@@ -1,20 +1,22 @@
 import { hydrate, render } from "solid-js/web";
 
 import { renderFactory, createRoutes } from "{{ createImport "libEntry" "client" }}";
-import App from "{{ createImport "src" "App" }}";
-import createRouter from "{{ createImport "src" "router" }}";
+import app from "{{ createImport "src" "App" }}";
+import routerFactory from "{{ createImport "src" "router" }}";
 
 const root = document.getElementById("app");
 
 if (root) {
   const routes = createRoutes({ withPreload: true });
-  renderFactory(async () => {
-    const router = await createRouter(App, routes);
+  const { clientRouter } = routerFactory(routes);
+  renderFactory(() => {
     return {
-      clientRender() {
+      async clientRender() {
+        const router = await clientRouter({ app });
         render(() => router, root);
       },
-      serverRender() {
+      async serverRender() {
+        const router = await clientRouter({ app });
         hydrate(() => router, root)
       },
     }

@@ -2,22 +2,23 @@ import { createApp, createSSRApp } from "vue";
 
 import { renderFactory, createRoutes } from "{{ createImport "libEntry" "client" }}";
 import App from "{{ createImport "src" "App.vue" }}";
-import createRouter from "{{ createImport "src" "router" }}";
+import routerFactory from "{{ createImport "src" "router" }}";
 
 const root = document.getElementById("app");
 
 if (root) {
   const routes = createRoutes();
-  renderFactory(async () => {
+  const { clientRouter } = routerFactory(routes);
+  renderFactory(() => {
     return {
       async clientRender() {
         const app = createApp(App);
-        await createRouter(app, routes);
+        await clientRouter({ app });
         app.mount(root);
       },
       async serverRender() {
         const app = createSSRApp(App);
-        await createRouter(app, routes);
+        await clientRouter({ app });
         app.mount(root, true);
       },
     }

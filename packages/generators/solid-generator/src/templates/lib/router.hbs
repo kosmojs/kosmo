@@ -22,13 +22,8 @@ export const pageMap = {
   {{/each}}
 }
 
-export const routerFactory: RouterFactory<
-  ParentComponent,
-  RouteDefinition,
-  JSX.Element
-> = (factory) => {
-  return async (app, routes, ssrProps) => {
-    const { clientRouter, serverRouter } = await factory(app, routes);
-    return ssrProps?.url ? serverRouter(ssrProps) : clientRouter();
-  };
-};
+export const routerFactory: RouterFactory<{
+  router: JSX.Element;
+  route: RouteDefinition,
+  app: ParentComponent,
+}> = (factory) => factory as never;

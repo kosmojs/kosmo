@@ -20,7 +20,7 @@ export const renderFactory: RenderFactory = async (factory) => {
   const {
     clientRender = fallbackRender("client"),
     serverRender = fallbackRender("server"),
-  } = await factory();
+  } = factory();
   if (KOSMO_SSR_MODE) {
     await serverRender();
   } else {

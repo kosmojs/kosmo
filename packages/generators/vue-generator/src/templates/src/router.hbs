@@ -7,9 +7,9 @@ import {
 import { routerFactory } from "{{ createImport "lib" "router" }}";
 import { baseurl } from "{{ createImport "config" }}";
 
-export default routerFactory((app, routes) => {
+export default routerFactory((routes) => {
   return {
-    clientRouter() {
+    async clientRouter({ app }) {
       const router = createRouter({
         history: createWebHistory(baseurl),
         routes,
@@ -18,7 +18,7 @@ export default routerFactory((app, routes) => {
       app.use(router);
       return router;
     },
-    async serverRouter({ url }) {
+    async serverRouter({ app, url }) {
       const router = createRouter({
         history: createMemoryHistory(baseurl),
         routes,
