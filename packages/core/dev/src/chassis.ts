@@ -189,7 +189,7 @@ export default async (
 
   // start client servers
   for (const sourceFolder of projectSettings.sourceFolders) {
-    const { config } = sourceFolder;
+    const { config, baseurl } = sourceFolder;
 
     const { createPath } = pathResolver(sourceFolder);
     const requestMatchers = matchersFactory(sourceFolder);
@@ -206,6 +206,7 @@ export default async (
       ...config,
       configFile: false,
       root: createPath.src(),
+      base: join(baseurl, "/"),
       plugins,
       server: {
         ...config.server,
