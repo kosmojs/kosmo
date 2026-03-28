@@ -225,6 +225,10 @@ export default async (
       cacheDir: cacheDir(sourceFolder, command, "client"),
     });
 
+    for (const [evt, handler] of Object.entries(eventMap[sourceFolder.name])) {
+      viteServer.watcher.on(evt, handler);
+    }
+
     requestHandlers[sourceFolder.name] = [
       () => requestMatchers.base,
       () => viteServer.middlewares,
@@ -424,6 +428,9 @@ const eventFactory = async (
         console.error(
           styleText("red", `${sourceFolder.name}: ${name} generator failed`),
         );
+        if (event) {
+          console.error(event);
+        }
         console.error(error);
       }
     }
