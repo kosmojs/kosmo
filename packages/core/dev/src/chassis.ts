@@ -4,7 +4,7 @@ import net from "node:net";
 import { join, resolve } from "node:path";
 import { styleText } from "node:util";
 
-import { build, createServer, isRunnableDevEnvironment } from "vite";
+import { build, createServer, type RunnableDevEnvironment } from "vite";
 
 import type { DevSetup } from "@kosmojs/api";
 import {
@@ -29,26 +29,67 @@ export default async (
 ): Promise<() => Promise<void>> => {
   const { devPort, command } = projectSettings;
 
+  // NOTE: initialize generators before anything else, regardless command
+  for (const sourceFolder of projectSettings.sourceFolders) {
+    for (const base of folderGenerators(sourceFolder)) {
+      if (!base.meta?.name || typeof base.factory !== "function") {
+        throw new Error(
+          `${sourceFolder.name}: Unrecognized generator - must be created via defineGenerator()`,
+        );
+      }
+
+      const factory = base.factory(sourceFolder);
+
+      if (!factory.meta?.name) {
+        throw new Error(
+          `${sourceFolder.name}: ${base.meta.name} generator is missing meta property`,
+        );
+      }
+
+      for (const prop of ["start", "watch", "build", "plugins"] as const) {
+        if (typeof factory[prop] !== "function") {
+          throw new Error(
+            `${sourceFolder.name}: ${base.meta.name} generator is missing ${prop} hook`,
+          );
+        }
+      }
+
+      try {
+        await factory.start();
+      } catch (error) {
+        console.error(
+          styleText(
+            "red",
+            `${sourceFolder.name}: ${base.meta.name} generator failed to initialize`,
+          ),
+        );
+        throw error;
+      }
+    }
+  }
+
   if (command === "build") {
     for (const sourceFolder of projectSettings.sourceFolders) {
       const { config, baseurl } = sourceFolder;
-      const { resolvers } = await routesFactory(sourceFolder, cacheFactory);
       const { createPath } = pathResolver(sourceFolder);
 
-      const resolvedEntries = [];
+      const resolvedRoutes = [];
 
-      // resolving routes
       {
-        const spinner = spinnerFactory("Resolving Routes");
+        const { resolvers } = await routesFactory(sourceFolder, cacheFactory);
+
+        const spinner = spinnerFactory(
+          `${sourceFolder.name}: resolving routes`,
+        );
 
         for (const { name, handler } of resolvers.values()) {
           spinner.append(
-            `[ ${resolvedEntries.length + 1} of ${resolvers.size} ] ${name}`,
+            `[ ${resolvedRoutes.length + 1} of ${resolvers.size} ] ${name}`,
           );
-          resolvedEntries.push(await handler());
+          resolvedRoutes.push(await handler());
         }
 
-        spinner.succeed();
+        spinner.succeed("ready ✨");
       }
 
       const generators = folderGenerators(sourceFolder);
@@ -56,8 +97,7 @@ export default async (
 
       for (const base of generators) {
         const factory = base.factory(sourceFolder);
-        await factory.start();
-        await factory.build(resolvedEntries);
+        await factory.build(resolvedRoutes);
         plugins.push(...factory.plugins(command));
       }
 
@@ -138,9 +178,16 @@ export default async (
 
   const teardownHandlers: Array<() => Promise<unknown>> = [];
 
+  const eventMap: Record<string, Awaited<ReturnType<typeof eventFactory>>> = {};
+
+  // WARN: call this before starting any server!
+  for (const sourceFolder of projectSettings.sourceFolders) {
+    eventMap[sourceFolder.name] = await eventFactory(sourceFolder);
+  }
+
   let port = await findFreePort(devPort);
 
-  // bootstraping client servers
+  // start client servers
   for (const sourceFolder of projectSettings.sourceFolders) {
     const { config } = sourceFolder;
 
@@ -152,7 +199,6 @@ export default async (
 
     for (const base of generators) {
       const factory = base.factory(sourceFolder);
-      await factory.start();
       plugins.push(...factory.plugins(command));
     }
 
@@ -186,11 +232,9 @@ export default async (
     teardownHandlers.push(viteServer.close);
   }
 
-  // bootstraping backend servers
+  // start backend servers
   for (const sourceFolder of projectSettings.sourceFolders) {
     const { config } = sourceFolder;
-
-    const events = await eventFactory(sourceFolder);
 
     if (!folderGenerators(sourceFolder).find((e) => e.meta.slot === "api")) {
       continue;
@@ -224,62 +268,34 @@ export default async (
       cacheDir: cacheDir(sourceFolder, command, "backend"),
     });
 
-    const env = viteServer.environments.api;
+    const env = viteServer.environments.api as RunnableDevEnvironment;
 
-    if (isRunnableDevEnvironment(env)) {
-      const load = async () => {
-        env.runner.clearCache();
-        return env.runner
-          .import<{ default: DevSetup }>(join(defaults.apiDir, "dev.ts"))
-          .then((e) => e.default);
-      };
+    const loadDevSetup = async () => {
+      env.runner.clearCache();
+      return env.runner
+        .import<{ default: DevSetup }>(join(defaults.apiDir, "dev.ts"))
+        .then((e) => e.default);
+    };
 
-      let devSetup = await load();
+    let devSetup = await loadDevSetup();
 
-      for (const [event, handler] of [
-        ["add", events.create],
-        ["unlink", events.update],
-        ["change", events.update],
-      ] as const) {
-        viteServer.watcher.on(event, async (file) => {
-          const mods = env.moduleGraph.getModulesByFile(file);
-          if (mods?.size) {
-            await handler(file);
-            await devSetup?.teardownHandler?.();
-            devSetup = await load();
-          }
-        });
-      }
-
-      requestHandlers[`${sourceFolder.name}/api`] = [
-        () => devSetup.requestMatcher || requestMatchers.api,
-        () => devSetup.requestHandler(),
-      ];
-
-      teardownHandlers.push(viteServer.close);
-    } else {
-      console.warn(
-        styleText(
-          "red",
-          `${sourceFolder.name}: api environment is not runnable`,
-        ),
-      );
-      console.warn(
-        `Ensure no custom createEnvironment override is preventing it, got "${env.constructor.name}"`,
-      );
-      console.warn();
-      try {
-        await viteServer.close();
-      } catch (
-        // biome-ignore lint: any
-        error: any
-      ) {
-        console.error(
-          styleText("red", `${sourceFolder.name}: dev server failed to close`),
-        );
-        console.error(error.message);
-      }
+    for (const [evt, handler] of Object.entries(eventMap[sourceFolder.name])) {
+      viteServer.watcher.on(evt, async (file) => {
+        const mods = env.moduleGraph.getModulesByFile(file);
+        if (mods?.size) {
+          await handler(file);
+          await devSetup?.teardownHandler?.();
+          devSetup = await loadDevSetup();
+        }
+      });
     }
+
+    requestHandlers[`${sourceFolder.name}/api`] = [
+      () => devSetup.requestMatcher || requestMatchers.api,
+      () => devSetup.requestHandler(),
+    ];
+
+    teardownHandlers.push(viteServer.close);
   }
 
   // sorting is essential to avoid matching /app before /app/admin
@@ -369,7 +385,7 @@ const folderGenerators = (sourceFolder: SourceFolder): Array<GeneratorBase> => {
 const eventFactory = async (
   sourceFolder: SourceFolder,
 ): Promise<
-  Record<"create" | "update" | "delete", (f: string) => Promise<void>>
+  Record<"add" | "change" | "unlink", (f: string) => Promise<void>>
 > => {
   const { resolvers, resolversFactory } = await routesFactory(
     sourceFolder,
@@ -384,32 +400,11 @@ const eventFactory = async (
   }> = [];
 
   for (const base of folderGenerators(sourceFolder)) {
-    if (!base.meta?.name) {
-      console.error(
-        styleText(
-          "red",
-          `${sourceFolder.name}: Unrecognized generator - must be created via defineGenerator()`,
-        ),
-      );
-      continue;
-    }
-
-    try {
-      const factory = base.factory(sourceFolder);
-      await factory.start();
-      generators.push({ name: base.meta.name, factory });
-    } catch (error) {
-      console.error(
-        styleText(
-          "red",
-          `${sourceFolder.name}: ${base.meta.name} generator failed to initialize`,
-        ),
-      );
-      console.error(error);
-    }
+    const factory = base.factory(sourceFolder);
+    generators.push({ name: base.meta.name, factory });
   }
 
-  const resolvedEntries = new Map<
+  const resolvedRoutes = new Map<
     string, // fileFullpath
     ResolvedEntry
   >();
@@ -419,7 +414,7 @@ const eventFactory = async (
      * Watch handlers receive the full list of entries
      * and should process only those whose source file or dependencies were updated.
      * */
-    const entries = Array.from(resolvedEntries.values());
+    const entries = Array.from(resolvedRoutes.values());
 
     for (const { name, factory } of generators) {
       try {
@@ -442,7 +437,7 @@ const eventFactory = async (
 
     try {
       const resolvedEntry = await resolver.handler(file);
-      resolvedEntries.set(resolvedEntry.entry.fileFullpath, resolvedEntry);
+      resolvedRoutes.set(resolvedEntry.entry.fileFullpath, resolvedEntry);
       return resolvedEntry;
     } catch (error) {
       const route = file.replace(`${createPath.api()}/`, "");
@@ -458,32 +453,22 @@ const eventFactory = async (
   };
 
   {
-    let spinner = spinnerFactory("Resolving Routes");
-
+    const spinner = spinnerFactory(`${sourceFolder.name}: resolving routes`);
     for (const { name, handler } of resolvers.values()) {
       spinner.append(
-        `${sourceFolder.name}: [ ${resolvedEntries.size + 1} of ${resolvers.size} ] ${name}`,
+        `[ ${resolvedRoutes.size + 1} of ${resolvers.size} ] ${name}`,
       );
-      try {
-        const resolvedEntry = await handler();
-        resolvedEntries.set(resolvedEntry.entry.fileFullpath, resolvedEntry);
-      } catch (
-        // biome-ignore lint: any
-        error: any
-      ) {
-        spinner.failed(error);
-        spinner = spinnerFactory("Resolving Routes");
-      }
+      const route = await handler();
+      resolvedRoutes.set(route.entry.fileFullpath, route);
     }
-
-    spinner.succeed();
+    spinner.succeed("ready ✨");
   }
 
-  // NOTE: call only after generators initialized and routes resolved
+  // NOTE: call only after routes resolved
   await runGenerators();
 
   return {
-    async create(file: string) {
+    async add(file: string) {
       const [resolver] = resolversFactory([file]).values();
 
       if (!resolver) {
@@ -500,13 +485,13 @@ const eventFactory = async (
       }
     },
 
-    async update(file: string) {
-      if (resolvedEntries.has(file)) {
+    async change(file: string) {
+      if (resolvedRoutes.has(file)) {
         // route updated
         await updateResolvedEntry(file);
       } else {
         // updating entries that are referencing updated file
-        const relatedRoutes = resolvedEntries
+        const relatedRoutes = resolvedRoutes
           .values()
           .flatMap(({ kind, entry }) => {
             return kind === "apiRoute"
@@ -524,10 +509,10 @@ const eventFactory = async (
       await runGenerators({ kind: "update", file });
     },
 
-    async delete(file) {
+    async unlink(file) {
       // route deleted
       resolvers.delete(file);
-      resolvedEntries.delete(file);
+      resolvedRoutes.delete(file);
       await runGenerators({ kind: "delete", file });
     },
   };
