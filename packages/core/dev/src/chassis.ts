@@ -22,7 +22,7 @@ import {
 } from "@kosmojs/lib";
 
 import { cacheFactory } from "./cache";
-import stubGenerator from "./stub-generator";
+import coreGenerator from "./core-generator";
 
 export default async (
   projectSettings: ProjectSettings,
@@ -371,7 +371,7 @@ const folderGenerators = (sourceFolder: SourceFolder): Array<GeneratorBase> => {
 
   return [
     // 1. stub generator should run first
-    stubGenerator(),
+    coreGenerator(),
     // 2. then api generator
     ...(coreGenerators.api ? [coreGenerators.api] : []),
     // 3. then fetch generator, only if api generator also enabled

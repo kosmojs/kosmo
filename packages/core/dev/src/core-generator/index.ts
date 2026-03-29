@@ -67,7 +67,7 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
  * even if specialized generators supposed to generate these files are not installed.
  * */
 export default defineGenerator(() => {
-  const meta: GeneratorMeta = { name: "Stub" };
+  const meta: GeneratorMeta = { name: "Core" };
   return {
     meta,
     options: undefined,
