@@ -1,8 +1,8 @@
 import { renderToString } from "react-dom/server";
 
 import { renderFactory, createRoutes } from "{{ createImport "libEntry" "server" }}";
-import app from "{{ createImport "src" "App" }}";
-import routerFactory from "{{ createImport "src" "router" }}";
+import app from "../App";
+import routerFactory from "../router";
 
 const routes = createRoutes({ withPreload: false });
 const { serverRouter } = routerFactory(routes);

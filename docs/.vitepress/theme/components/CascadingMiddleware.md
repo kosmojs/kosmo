@@ -1,5 +1,5 @@
 ```ts [api/users/use.ts]
-import { use } from "_/front/api";
+import { use } from "_/api";
 
 export default [
   use(async (ctx, next) => {

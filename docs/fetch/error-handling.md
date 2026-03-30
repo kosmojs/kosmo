@@ -14,7 +14,7 @@ The fetch client throws two distinct error types worth handling separately:
 and standard errors for network or server failures.
 
 ```ts [pages/example/index.tsx]
-import fetchMap, { ValidationError } from "_/front/fetch";
+import fetchMap, { ValidationError } from "_/fetch";
 
 const useFetch = fetchMap["users/[id]"];
 

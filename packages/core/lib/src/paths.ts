@@ -4,20 +4,12 @@ import { join, resolve } from "node:path";
 import { defaults } from "./defaults";
 import type { SourceFolder } from "./types";
 
+type Options = { origin: "src" | "lib" };
+
 type CreateImport = Record<
   "src" | "config" | "api" | "pages" | "lib" | "libApi" | "libEntry",
-  (...a: Array<string>) => string
+  (a: Array<string>, o: Options) => string
 >;
-
-export const createTsconfigPaths = (prefix: string) => {
-  return {
-    [`${defaults.appPrefix}/*`]: [`${prefix}/*`],
-    [`${defaults.srcPrefix}/*`]: [`${prefix}/${defaults.srcDir}/*`],
-    [`${defaults.libPrefix}/*`]: [
-      `${prefix}/${defaults.libDir}/${defaults.srcDir}/*`,
-    ],
-  };
-};
 
 export const pathResolver = (
   sourceFolder: Omit<SourceFolder, "root"> & { root?: string | undefined },
@@ -36,7 +28,9 @@ export const pathResolver = (
     (...a: Array<string>) => string
   >;
   createImport: CreateImport;
-  createImportHelper: (k: keyof CreateImport, ...a: Array<string>) => string;
+  createImportHelpers: (o: Options) => {
+    createImport: (k: keyof CreateImport, ...a: Array<string>) => string;
+  };
 } => {
   const createPath = (...a: Array<string>) => {
     return sourceFolder.root
@@ -45,26 +39,30 @@ export const pathResolver = (
   };
 
   const createImport: CreateImport = {
-    src(...a) {
-      return join(defaults.srcPrefix, sourceFolder.name, ...a);
+    src(a, { origin }) {
+      return origin === "src"
+        ? join(defaults.srcPrefix, ...a)
+        : join(defaults.appPrefix, defaults.srcDir, sourceFolder.name, ...a);
     },
-    config(...a) {
-      return this.src(defaults.configDir, ...a);
+    config(a, o) {
+      return this.src([defaults.configDir, ...a], o);
     },
-    api(...a) {
-      return this.src(defaults.apiDir, ...a);
+    api(a, o) {
+      return this.src([defaults.apiDir, ...a], o);
     },
-    pages(...a) {
-      return this.src(defaults.pagesDir, ...a);
+    pages(a, o) {
+      return this.src([defaults.pagesDir, ...a], o);
     },
-    lib(...a) {
-      return join(defaults.libPrefix, sourceFolder.name, ...a);
+    lib(a, { origin }) {
+      return origin === "src"
+        ? join(defaults.libPrefix, ...a)
+        : join(defaults.appPrefix, defaults.libDir, sourceFolder.name, ...a);
     },
-    libApi(...a) {
-      return this.lib(defaults.apiDir, ...a);
+    libApi(a, o) {
+      return this.lib([defaults.apiDir, ...a], o);
     },
-    libEntry(...a) {
-      return this.lib(defaults.entryDir, ...a);
+    libEntry(a, o) {
+      return this.lib([defaults.entryDir, ...a], o);
     },
   };
 
@@ -86,12 +84,7 @@ export const pathResolver = (
         return this.src(defaults.entryDir, ...a);
       },
       lib(...a) {
-        return createPath(
-          defaults.libDir,
-          defaults.srcDir,
-          sourceFolder.name,
-          ...a,
-        );
+        return createPath(defaults.libDir, sourceFolder.name, ...a);
       },
       libApi(...a) {
         return this.lib(defaults.apiDir, ...a);
@@ -107,10 +100,19 @@ export const pathResolver = (
       },
     },
     createImport,
-    createImportHelper: (key, ...a) => {
-      // Handlebars always appends an options object as the last argument,
-      // slice it off before passing args to createImport
-      return createImport[key](...a.slice(0, -1));
+    createImportHelpers(o) {
+      if (!["src", "lib"].includes(o?.origin)) {
+        throw new Error(
+          `createImportHelpers: required exactly one argument of shape { origin: "src|lib" }`,
+        );
+      }
+      return {
+        createImport(key, ...a) {
+          // Handlebars appends an options object as the last argument,
+          // slice it off before passing args to createImport
+          return createImport[key](a.slice(0, -1), o);
+        },
+      };
     },
   };
 };

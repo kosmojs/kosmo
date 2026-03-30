@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 
 import { ValidationError } from "@kosmojs/api/errors";
 
-import { errorHandlerFactory } from "{{ createImport 'lib' 'api-factory' }}";
+import { errorHandlerFactory } from "{{ createImport 'lib' 'api:factory' }}";
 
 export default errorHandlerFactory(
   async function defaultErrorHandler(error, ctx) {

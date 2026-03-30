@@ -88,7 +88,7 @@ For every API route, `KosmoJS` generates a fully-typed fetch client
 and an OpenAPI 3.1 spec - both derived from the same type definitions.
 
 ```ts
-import fetchClients from "_/front/fetch";
+import fetchClients from "_/fetch";
 
 const user = await fetchClients["users/[id]"].GET([123]);
 // fully typed, validates payload client-side before the request is sent

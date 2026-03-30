@@ -1,5 +1,5 @@
 ```ts [api/users/index.ts]
-import { defineRoute } from "_/admin/api";
+import { defineRoute } from "_/api";
 
 type Payload = {
   email: VRefine<string, { format: "email" }>;

@@ -95,7 +95,7 @@ const cliFactory = async (project: Project) => {
       }
     }
 
-    return JSON.stringify(Object.entries(snapshot).sort(), null, 2);
+    return JSON.stringify(Object.entries(snapshot).sort(), undefined, 2);
   };
 
   return {

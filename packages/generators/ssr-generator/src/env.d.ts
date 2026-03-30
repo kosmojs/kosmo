@@ -11,11 +11,3 @@ declare module "*?as=text" {
 declare module "{{ createImport 'config' }}" {
   export const baseurl: string;
 }
-
-declare module "{{ createImport 'lib' 'ssr:routes' }}" {
-  export const routeMap: Array<{
-    match: (path: string) => boolean;
-    file: string;
-    layouts: Array<string>;
-  }>;
-}

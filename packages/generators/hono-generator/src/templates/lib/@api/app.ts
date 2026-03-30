@@ -2,10 +2,7 @@ import { Hono } from "hono";
 
 import type { AppFactory } from "@kosmojs/api";
 
-import type {
-  DefaultBindings,
-  DefaultVariables,
-} from "{{ createImport 'libApi' }}";
+import type { DefaultBindings, DefaultVariables } from "../api";
 
 export type AppEnv = {
   Variables: DefaultVariables;

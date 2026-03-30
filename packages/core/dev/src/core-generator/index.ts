@@ -4,6 +4,7 @@ import {
   defineGenerator,
   defineGeneratorFactory,
   type GeneratorMeta,
+  generateTsconfig,
   pathResolver,
   type ResolvedEntry,
   renderToFile,
@@ -16,7 +17,48 @@ import schemasTpl from "./templates/schemas.hbs";
 const factory = defineGeneratorFactory((meta, sourceFolder) => {
   const { createPath } = pathResolver(sourceFolder);
 
-  const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
+  const start = async () => {
+    // deploy a tsconfig file for root tsconfig to extend from
+    await renderToFile(
+      createPath.lib("../tsconfig.base.json"),
+      JSON.stringify(generateTsconfig(), undefined, 2),
+      {},
+    );
+
+    // deploy a tsconfig file for sourceFolder tsconfig to extend from
+    {
+      const tsconfig = generateTsconfig(sourceFolder.name);
+
+      const compilerOptions: { jsxImportSource?: string | undefined } = {};
+      const types = new Set<string>(tsconfig.compilerOptions.types || []);
+
+      for (const { meta } of sourceFolder.config.generators || []) {
+        if (meta.jsxImportSource) {
+          compilerOptions.jsxImportSource = meta.jsxImportSource;
+        }
+        for (const type of meta.types || []) {
+          types.add(type);
+        }
+      }
+
+      await renderToFile(
+        createPath.lib("tsconfig.base.json"),
+        JSON.stringify(
+          {
+            ...tsconfig,
+            compilerOptions: {
+              ...tsconfig.compilerOptions,
+              ...compilerOptions,
+              types: [...types.values()],
+            },
+          },
+          undefined,
+          2,
+        ),
+        {},
+      );
+    }
+
     /**
      * expose VRefine as a global type.
      * not supposed to be overriden by generators.
@@ -33,7 +75,9 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
       {},
       { overwrite: false },
     );
+  };
 
+  const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
     for (const { kind, entry } of entries) {
       if (kind === "apiRoute") {
         // Generating stub schemas file.
@@ -52,7 +96,7 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
   return {
     meta,
     options: undefined,
-    async start() {},
+    start,
     watch: generateLibFiles,
     build: generateLibFiles,
     plugins() {

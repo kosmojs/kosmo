@@ -1,8 +1,8 @@
 import { hydrate, render } from "solid-js/web";
 
 import { renderFactory, createRoutes } from "{{ createImport "libEntry" "client" }}";
-import app from "{{ createImport "src" "App" }}";
-import routerFactory from "{{ createImport "src" "router" }}";
+import app from "../App";
+import routerFactory from "../router";
 
 const root = document.getElementById("app");
 

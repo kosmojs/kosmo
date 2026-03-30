@@ -1,4 +1,4 @@
-import type { ParameterizedMiddleware } from "{{ createImport 'libApi' }}";
+import type { ParameterizedMiddleware } from "../api";
 
 export type ErrorHandlerFactory = (
   h: ParameterizedMiddleware,

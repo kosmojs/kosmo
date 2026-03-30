@@ -21,6 +21,7 @@ export default defineGenerator<Options>((options) => {
       "@kosmojs/fetch": self.version,
       "@vitejs/plugin-vue": self.devDependencies["@vitejs/plugin-vue"],
     },
+    jsxImportSource: "vue",
   };
 
   return {

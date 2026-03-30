@@ -12,16 +12,16 @@ import {
   sortRoutes,
 } from "@kosmojs/lib";
 
-import routesTpl from "./templates/routes.hbs";
-import serverTpl from "./templates/server.ts?as=text";
+import routesTpl from "./templates/lib/routes.hbs";
+import serverTpl from "./templates/lib/server.ts?as=text";
 
 export default defineGeneratorFactory((meta, sourceFolder) => {
   const { config } = sourceFolder;
-  const { createPath, createImportHelper } = pathResolver(sourceFolder);
+  const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
-  const { renderToFile } = renderFactory({
+  const { renderToFile: deployLibFile } = renderFactory({
     helpers: {
-      createImport: createImportHelper,
+      ...createImportHelpers({ origin: "lib" }),
     },
   });
 
@@ -100,9 +100,9 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
 
       for (const [file, template] of [
         ["ssr.ts", serverTpl],
-        ["ssr:routes.ts", routesTpl],
+        ["@ssr/routes.ts", routesTpl],
       ]) {
-        await renderToFile(createPath.lib(file), template, {
+        await deployLibFile(createPath.lib(file), template, {
           sortedRoutes,
         });
       }

@@ -2,6 +2,8 @@ import { resolve } from "node:path";
 
 import { defineConfig } from "vitest/config";
 
+import { defaults } from "@kosmojs/lib";
+
 const setupFactory = (name, { alias, ...setup } = {}) => {
   return {
     extends: true,
@@ -38,15 +40,15 @@ export default defineConfig({
 
       setupFactory("generators/fetch-generator", {
         alias: {
-          "~": resolve(
+          [defaults.appPrefix]: resolve(
             import.meta.dirname,
             "packages/generators/fetch-generator/test/@fixtures/app",
           ),
-          "@": resolve(
+          [defaults.srcPrefix]: resolve(
             import.meta.dirname,
             "packages/generators/fetch-generator/test/@fixtures/app/src",
           ),
-          _: resolve(
+          [defaults.libPrefix]: resolve(
             import.meta.dirname,
             "packages/generators/fetch-generator/test/@fixtures/app/lib/src",
           ),
@@ -78,15 +80,15 @@ export default defineConfig({
           "packages/generators/typebox-generator/test/setup.global.ts",
         ],
         alias: {
-          "~": resolve(
+          [defaults.appPrefix]: resolve(
             import.meta.dirname,
             "packages/generators/typebox-generator/test/@fixtures/app",
           ),
-          "@": resolve(
+          [defaults.srcPrefix]: resolve(
             import.meta.dirname,
             "packages/generators/typebox-generator/test/@fixtures/app/src",
           ),
-          _: resolve(
+          [defaults.libPrefix]: resolve(
             import.meta.dirname,
             "packages/generators/typebox-generator/test/@fixtures/app/lib/src",
           ),

@@ -35,6 +35,7 @@
       "  solidGenerator,",
       "} from \"@kosmojs/dev\";",
       "",
+      "",
       "import solidPlugin from \"vite-plugin-solid\";",
       "",
       "export default defineConfig({",
@@ -58,7 +59,7 @@
     "with-source-folders/src/with-solid/tsconfig.json",
     [
       "{",
-      "  \"extends\": \"@kosmojs/config/tsconfig.solid.json\"",
+      "  \"extends\": \"../../lib/with-solid/tsconfig.base.json\"",
       "}"
     ]
   ]

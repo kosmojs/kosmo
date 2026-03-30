@@ -19,7 +19,8 @@ export default async () => {
   }
 
   for (const generator of sourceFolder.config.generators || []) {
-    const instance = await generator(sourceFolder);
+    const instance = generator.factory(sourceFolder);
+    await instance.start();
     await instance.build(resolvedRoutes);
   }
 

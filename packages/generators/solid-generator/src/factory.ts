@@ -18,6 +18,7 @@ import type { Options } from "./types";
 import libEntryClientTpl from "./templates/lib/entry/client.hbs";
 import libEntryRoutePartialTpl from "./templates/lib/entry/routePartial.hbs";
 import libEntryServerTpl from "./templates/lib/entry/server.hbs";
+import libEnvDTpl from "./templates/lib/env.d.ts?as=text";
 import libPageSamplesPageTpl from "./templates/lib/pageSamples/page.hbs";
 import libPageSamplesStylesTpl from "./templates/lib/pageSamples/styles.css?as=text";
 import libPageSamplesWelcomeTpl from "./templates/lib/pageSamples/welcome.hbs";
@@ -36,11 +37,11 @@ import srcRouterTpl from "./templates/src/router.hbs";
 
 export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
-    const { createPath, createImportHelper } = pathResolver(sourceFolder);
+    const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
-    const { renderToFile } = renderFactory({
+    const { renderToFile: deployLibFile } = renderFactory({
       helpers: {
-        createImport: createImportHelper,
+        ...createImportHelpers({ origin: "lib" }),
         createParamsLiteral: renderHelpers.createParamsLiteral,
         serializeRoute({ name, pathPattern, params }: PageRoute) {
           return JSON.stringify({ name, pathPattern, params });
@@ -49,6 +50,10 @@ export default defineGeneratorFactory<Options>(
       partials: {
         routePartial: libEntryRoutePartialTpl,
       },
+    });
+
+    const { renderToFile: deploySrcFile } = renderFactory({
+      helpers: createImportHelpers({ origin: "src" }),
     });
 
     const customTemplates: Array<[Matcher, string]> = Object.entries({
@@ -69,16 +74,19 @@ export default defineGeneratorFactory<Options>(
           const customTemplate = customTemplates.find(([isMatch]) => {
             return isMatch(entry.name);
           });
-          await renderToFile(
+          await deploySrcFile(
             createPath.pages(entry.file),
             entry.name === "index"
               ? srcPageSamplesWelcomeTpl
               : customTemplate?.[1] || srcPageSamplesPageTpl,
-            { route: entry, message: randomCongratMessage() },
+            {
+              route: entry,
+              message: randomCongratMessage(),
+            },
             { overwrite },
           );
         } else if (kind === "pageLayout") {
-          await renderToFile(
+          await deploySrcFile(
             createPath.pages(entry.file),
             srcPageSamplesLayoutTpl,
             { route: entry },
@@ -105,7 +113,7 @@ export default defineGeneratorFactory<Options>(
         ["client.ts", libEntryClientTpl],
         ["server.ts", libEntryServerTpl],
       ]) {
-        await renderToFile(createPath.libEntry(file), template, {
+        await deployLibFile(createPath.libEntry(file), template, {
           pageEntries,
           nestedRoutes,
         });
@@ -115,9 +123,7 @@ export default defineGeneratorFactory<Options>(
         //
         ["router.ts", libRouterTpl],
       ]) {
-        await renderToFile(createPath.lib(file), template, {
-          indexRoutes,
-        });
+        await deployLibFile(createPath.lib(file), template, { indexRoutes });
       }
     };
 
@@ -126,55 +132,57 @@ export default defineGeneratorFactory<Options>(
       options,
 
       async start() {
+        // deploy global lib files that does not change on routes updates
         for (const [file, template] of [
-          //
+          ["env.d.ts", libEnvDTpl],
           ["solid.ts", libSolidTpl],
+          ["unwrap.ts", libUnwrapTpl],
+          ["pageSamples/styles.module.css", libPageSamplesStylesTpl],
+          ["pageSamples/welcome.tsx", libPageSamplesWelcomeTpl],
+          ["pageSamples/page.tsx", libPageSamplesPageTpl],
         ]) {
-          await renderToFile(createPath.lib(file), template, {});
+          await deployLibFile(createPath.lib(file), template, {});
         }
 
-        for (const [file, template] of [
-          ["styles.module.css", libPageSamplesStylesTpl],
-          ["welcome.tsx", libPageSamplesWelcomeTpl],
-          ["page.tsx", libPageSamplesPageTpl],
-        ]) {
-          await renderToFile(createPath.lib("pageSamples", file), template, {});
-        }
-
+        // deploy global src files that does not change on routes updates
         for (const [file, template] of [
           ["components/Link.tsx", srcComponentsLinkTpl],
           ["App.tsx", srcAppTpl],
           ["router.tsx", srcRouterTpl],
-          ["index.html", srcIndexTpl],
         ]) {
-          await renderToFile(
+          await deploySrcFile(
             createPath.src(file),
             template,
             { entryDir: defaults.entryDir },
-            {
-              // For index.html: overwrite only if empty or missing "<!--app-html-->".
-              // For other files: overwrite only if blank.
-              overwrite:
-                file === "index.html"
-                  ? (c) => !c?.trim().length || !c?.includes("<!--app-html-->")
-                  : (c) => !c?.trim().length,
-            },
+            { overwrite },
           );
         }
+
+        await deploySrcFile(
+          createPath.src("index.html"),
+          srcIndexTpl,
+          { entryDir: defaults.entryDir },
+          {
+            overwrite: (c) => {
+              // override only if file is blank or contains only comments
+              return c?.trim().length
+                ? !c.replace(/<!--[\s\S]*?-->/g, "").trim().length
+                : true;
+            },
+          },
+        );
 
         for (const [file, template] of [
           ["client.tsx", srcEntryClientTpl],
           ...(ssrGenerator ? [["server.ts", srcEntryServerTpl]] : []),
         ]) {
-          await renderToFile(
+          await deploySrcFile(
             createPath.entry(file),
             template,
             {},
             { overwrite },
           );
         }
-
-        await renderToFile(createPath.lib("unwrap.ts"), libUnwrapTpl, {});
       },
 
       async watch(entries, event) {

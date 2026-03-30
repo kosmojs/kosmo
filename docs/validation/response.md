@@ -13,8 +13,8 @@ Outgoing responses can be validated too. Use the `response` property to declare 
 content type, and body schema:
 
 ```ts [api/users/index.ts]
-import type { User } from "@/front/types/api-payload";
-import { defineRoute } from "_/front/api";
+import type { User } from "~/types/api-payload";
+import { defineRoute } from "_/api";
 
 export default defineRoute<"users">(({ GET }) => [
   GET<{

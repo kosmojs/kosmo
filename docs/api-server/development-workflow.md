@@ -39,7 +39,7 @@ Returns the API request handler. Generated default:
 
 ::: code-group
 ```ts [Koa]
-import { devSetup } from "_/front/api-factory";
+import { devSetup } from "_/api:factory";
 import app from "./app";
 
 export default devSetup({
@@ -51,7 +51,7 @@ export default devSetup({
 
 ```ts [Hono]
 import { getRequestListener } from "@hono/node-server";
-import { devSetup } from "_/front/api-factory";
+import { devSetup } from "_/api:factory";
 import app from "./app";
 
 export default devSetup({
@@ -106,7 +106,7 @@ Without cleanup, frequent rebuilds during active development can exhaust databas
 Each route returned by `createRoutes` has a `debug` property. Enable it via `DEBUG=api`:
 
 ```ts [api/router.ts]
-import { routerFactory, routes } from "_/front/api";
+import { routerFactory, routes } from "_/api";
 
 const DEBUG = /\bapi\b/.test(process.env.DEBUG ?? ""); // [!code ++]
 

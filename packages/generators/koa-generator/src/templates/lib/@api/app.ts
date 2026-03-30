@@ -2,7 +2,7 @@ import Koa from "koa";
 
 import type { AppFactory } from "@kosmojs/api";
 
-import type { DefaultContext, DefaultState } from "{{ createImport 'libApi' }}";
+import type { DefaultContext, DefaultState } from "../api";
 
 export type App = Koa<DefaultState, DefaultContext>;
 

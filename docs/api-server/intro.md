@@ -25,7 +25,7 @@ The factory function receives HTTP method builders and `use` for middleware,
 and returns an array of handlers. Destructure only what you need:
 
 ```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api";
+import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {

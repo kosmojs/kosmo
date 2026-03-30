@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { defaults } from "@kosmojs/lib";
 
-import { routes, setupTestProject, sourceFolderName } from "../setup";
+import { routes, setupTestProject } from "../setup";
 
 // Generate template from test cases
 const navigationLinks = routes.map(({ id, name, params, label }) => {
@@ -18,7 +18,7 @@ const navigationLinks = routes.map(({ id, name, params, label }) => {
 });
 
 const navigationTemplate = `
-  import Link from "${defaults.srcPrefix}/${sourceFolderName}/components/Link";
+  import Link from "${defaults.srcPrefix}/components/Link";
   export default () => {
     return (
       <div data-testid="navigation-page">

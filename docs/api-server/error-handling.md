@@ -17,7 +17,7 @@ It's a regular file - customize it freely.
 ::: code-group
 ```ts [Koa: api/errors.ts]
 import { ValidationError } from "@kosmojs/api/errors";
-import { errorHandlerFactory } from "_/front/api-factory";
+import { errorHandlerFactory } from "_/api:factory";
 
 export default errorHandlerFactory(
   async function defaultErrorHandler(ctx, next) {
@@ -45,7 +45,7 @@ export default errorHandlerFactory(
 import { accepts } from "hono/accepts";
 import { HTTPException } from "hono/http-exception";
 import { ValidationError } from "@kosmojs/api/errors";
-import { errorHandlerFactory } from "_/front/api-factory";
+import { errorHandlerFactory } from "_/api:factory";
 
 export default errorHandlerFactory(
   async function defaultErrorHandler(error, ctx) {

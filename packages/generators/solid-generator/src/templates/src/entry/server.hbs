@@ -1,8 +1,8 @@
 import { renderToString, generateHydrationScript } from "solid-js/web";
 
 import { renderFactory, createRoutes } from "{{ createImport "libEntry" "server" }}";
-import app from "{{ createImport "src" "App" }}";
-import routerFactory from "{{ createImport "src" "router" }}";
+import app from "../App";
+import routerFactory from "../router";
 
 const routes = createRoutes({ withPreload: false });
 

@@ -14,7 +14,7 @@ The fetch client returns standard promises, so it fits naturally into whatever a
 ::: code-group
 ```ts [SolidJS]
 import { createResource } from "solid-js";
-import fetchClients from "_/front/fetch";
+import fetchClients from "_/fetch";
 
 const { GET } = fetchClients["users/[id]"];
 
@@ -32,7 +32,7 @@ function UserProfile(props) {
 
 ```ts [React]
 import { useState, useEffect } from "react";
-import fetchClients from "_/front/fetch";
+import fetchClients from "_/fetch";
 
 const { GET } = fetchClients["users/[id]"];
 

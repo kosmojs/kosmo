@@ -11,8 +11,6 @@ head:
 
 Starting your `KosmoJS` journey is a breeze! ✨
 
-[![asciicast](https://asciinema.org/a/kj91nc9avKDyMN4t.svg)](https://asciinema.org/a/kj91nc9avKDyMN4t)
-
 ## 🚀 Create Your Project
 
 ::: code-group
@@ -136,15 +134,15 @@ Same pattern for API and pages - learn once, use everywhere.
 Your project starts with a minimal `tsconfig.json`:
 
 ```json [tsconfig.json]
-{ "extends": "@kosmojs/config/tsconfig.vite.json" }
+{ "extends": "./lib/tsconfig.base.json" }
 ```
 
-The extended `tsconfig.vite.json` contains essential path mappings that enable your application to work properly.
+The extended `tsconfig.base.json` contains essential path mappings that enable your application to work properly.
 
 You can add additional paths, but these prefixes are reserved and must not be overridden:
 
-- `~/*` - Root-level imports
-- `@/*` - Source folder imports
+- `@/*` - Root-level imports
+- `~/*` - Source folder imports
 - `_/*` - Generated code imports
 
 
@@ -154,7 +152,7 @@ Create `api/users/[id]/index.ts` - `KosmoJS` detects the file and generates boil
 
 ::: code-group
 ```ts [Koa]
-import { defineRoute } from "_/front/api";
+import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
@@ -164,7 +162,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ```
 
 ```ts [Hono]
-import { defineRoute } from "_/front/api";
+import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
@@ -180,7 +178,7 @@ Replace with real logic:
 
 ::: code-group
 ```ts [Koa]
-import { defineRoute } from "_/front/api";
+import { defineRoute } from "_/api";
 
 type User = { id: number; name: string; email: string }
 
@@ -194,7 +192,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ```
 
 ```ts [Hono]
-import { defineRoute } from "_/front/api";
+import { defineRoute } from "_/api";
 
 type User = { id: number; name: string; email: string }
 
@@ -335,7 +333,7 @@ For anything shared across routes, use cascading middleware instead.
 Create `api/users/use.ts` - it wraps every route under `/api/users` automatically:
 
 ```ts [api/users/use.ts]
-import { use } from "_/front/api";
+import { use } from "_/api";
 
 export default [
   use(async (ctx, next) => {
@@ -359,7 +357,7 @@ Invalid requests are caught before they leave the browser:
 ::: code-group
 ```tsx [SolidJS]
 import { useParams, createAsync } from "@solidjs/router";
-import fetchClients from "_/front/fetch";
+import fetchClients from "_/fetch";
 
 const { GET } = fetchClients["users/[id]"];
 
@@ -373,7 +371,7 @@ export default function UserPage() {
 ```tsx [React]
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import fetchClients from "_/front/fetch";
+import fetchClients from "_/fetch";
 
 const { GET } = fetchClients["users/[id]"];
 
@@ -389,7 +387,7 @@ export default function UserPage() {
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import fetchClients from "_/front/fetch";
+import fetchClients from "_/fetch";
 
 const { GET } = fetchClients["users/[id]"];
 const route = useRoute();

@@ -38,7 +38,7 @@ beforeAll(async () => {
     return () => {
       if (file === "use") {
         return `
-          import { use } from "${createImport.libApi()}";
+          import { use } from "${createImport.libApi([], { origin: "src" })}";
           export default [
             use((ctx, next) => {
               if (!ctx.var.stack) {
@@ -51,7 +51,7 @@ beforeAll(async () => {
         `;
       }
       return `
-        import { defineRoute } from "${createImport.libApi()}";
+        import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
         export default defineRoute(({ GET }) => [
           GET(async (ctx) => {
             ctx.var.stack?.push("${name}/${file}");

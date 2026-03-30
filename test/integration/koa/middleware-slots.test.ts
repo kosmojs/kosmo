@@ -41,7 +41,7 @@ beforeAll(async () => {
   await writeFile(
     createPath.api("use.ts"),
     `
-      import { use } from "${createImport.libApi()}";
+      import { use } from "${createImport.libApi([], { origin: "src" })}";
       export default [
         use(
           async (ctx, next) => {
@@ -82,7 +82,7 @@ beforeAll(async () => {
     await createApiRoutes([route], async () => {
       return () => {
         return `
-          import { defineRoute } from "${createImport.libApi()}";
+          import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
           export default defineRoute(({ use, GET }) => [
             ${coreSlots.flatMap(coreSlotsMapper).join(",\n")},
             GET(() => {
@@ -113,7 +113,7 @@ beforeAll(async () => {
     await createApiRoutes([route], async () => {
       return () => {
         return `
-          import { defineRoute } from "${createImport.libApi()}";
+          import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
           export default defineRoute(({ use, GET }) => [
             ${coreSlots.map(coreSlotsMapper).join(",\n")},
             GET(async (ctx) => {

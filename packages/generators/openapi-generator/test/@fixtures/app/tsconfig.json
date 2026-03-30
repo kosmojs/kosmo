@@ -1,5 +1,5 @@
 {
-  "extends": "@kosmojs/config/tsconfig.vite.json",
+  "extends": "tsconfig/kosmo.json",
   "compilerOptions": {
     "paths": {
       "@test/*": ["../../*"]

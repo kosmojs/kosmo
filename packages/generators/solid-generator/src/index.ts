@@ -21,6 +21,7 @@ export default defineGenerator<Options>((options) => {
       "@kosmojs/fetch": self.version,
       "vite-plugin-solid": self.devDependencies["vite-plugin-solid"],
     },
+    jsxImportSource: "solid-js",
   };
 
   return {

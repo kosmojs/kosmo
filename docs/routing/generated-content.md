@@ -21,7 +21,7 @@ Creating `api/users/[id]/index.ts` generates:
 
 ::: code-group
 ```ts [Koa]
-import { defineRoute } from "_/front/api";
+import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
@@ -30,7 +30,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ]);
 ```
 ```ts [Hono]
-import { defineRoute } from "_/front/api";
+import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
@@ -40,8 +40,8 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ```
 :::
 
-The `_/` import prefix maps to `lib/src/` - generated code that provides full type definitions
-for all your routes. `_/front/api` resolves to `lib/src/front/api.ts`, where `front` is your source folder name.
+The `_/` import prefix maps to `lib/` - generated code that provides full type definitions
+for all your routes. `_/api` resolves to `lib/front/api.ts`, where `front` is your source folder name.
 
 ## 🎨 Client Pages
 

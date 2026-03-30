@@ -35,6 +35,7 @@
       "  reactGenerator,",
       "} from \"@kosmojs/dev\";",
       "",
+      "",
       "import reactPlugin from \"@vitejs/plugin-react\";",
       "",
       "export default defineConfig({",
@@ -57,7 +58,7 @@
     "with-source-folders/src/with-react/tsconfig.json",
     [
       "{",
-      "  \"extends\": \"@kosmojs/config/tsconfig.react.json\"",
+      "  \"extends\": \"../../lib/with-react/tsconfig.base.json\"",
       "}"
     ]
   ]

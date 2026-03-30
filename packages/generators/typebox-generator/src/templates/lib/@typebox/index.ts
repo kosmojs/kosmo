@@ -6,11 +6,7 @@ import type { ValidationSchema, ValidationTarget } from "@kosmojs/api";
 import { ValidationError } from "@kosmojs/api/errors";
 
 import { errorHandlerFactory } from "./error-handler";
-
-import {
-  customTypes,
-  validationMessages,
-} from "{{ createImport 'lib' '@typebox/setup' }}";
+import { customTypes, validationMessages } from "./setup";
 
 const {
   formatValidationErrors,

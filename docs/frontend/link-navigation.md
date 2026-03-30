@@ -28,7 +28,7 @@ router props passed through:
 ::: code-group
 
 ```tsx [Menu.tsx]
-import Link from "@/front/components/Link";
+import Link from "~/components/Link";
 
 export default function Menu() {
   return (
@@ -50,7 +50,7 @@ export default function Menu() {
 
 ```vue [Vue · Menu.vue]
 <script setup lang="ts">
-import Link from "@/front/components/Link.vue";
+import Link from "~/components/Link.vue";
 </script>
 
 <template>
@@ -119,8 +119,8 @@ import {
 import type { ReactNode } from "react";
 import { stringify } from "@kosmojs/fetch";
 
-import { type LinkProps, pageMap } from "_/front/router";
-import { baseurl } from "@/front/config";
+import { type LinkProps, pageMap } from "_/router";
+import { baseurl } from "../config";
 
 export default function Link(
   props: Omit<RouterLinkProps, "to"> & {
@@ -157,9 +157,9 @@ import { A, type AnchorProps, useLocation } from "@solidjs/router";
 import { type JSXElement, splitProps } from "solid-js";
 import { stringify } from "@kosmojs/fetch";
 
-import { unwrap } from "_/front/unwrap";
-import { type LinkProps, pageMap } from "_/front/router";
-import { baseurl } from "@/front/config";
+import { unwrap } from "_/unwrap";
+import { type LinkProps, pageMap } from "_/router";
+import { baseurl } from "../config";
 
 export default function Link(
   props: Omit<AnchorProps, "href"> & {
@@ -195,9 +195,9 @@ import { computed } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import { stringify } from "@kosmojs/fetch";
 
-import { unwrap } from "_/front/unwrap";
-import { type LinkProps, pageMap } from "_/front/router";
-import { baseurl } from "@/front/config";
+import { unwrap } from "_/unwrap";
+import { type LinkProps, pageMap } from "_/router";
+import { baseurl } from "../config";
 
 interface Props {
   to?: T;

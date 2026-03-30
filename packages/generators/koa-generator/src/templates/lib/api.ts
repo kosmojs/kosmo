@@ -13,8 +13,7 @@ import type {
 } from "@kosmojs/api";
 
 import type { BodyparserOptions } from "./@api/bodyparser";
-
-import type { RouteMap } from "{{ createImport 'lib' '@api/routes' }}";
+import type { RouteMap } from "./@api/routes";
 
 export interface DefaultState {}
 export interface DefaultContext {}

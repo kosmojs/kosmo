@@ -1,7 +1,7 @@
-import { rm, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-import { routesFactory } from "@kosmojs/lib";
+import { generateTsconfig, routesFactory } from "@kosmojs/lib";
 
 import { appRoot, sourceFolder } from ".";
 
@@ -9,6 +9,22 @@ const cleanup = () => rm(`${appRoot}/lib`, { force: true, recursive: true });
 
 export default async () => {
   await cleanup();
+
+  await mkdir(resolve(appRoot, `lib/${sourceFolder.name}`), {
+    recursive: true,
+  });
+
+  await writeFile(
+    resolve(appRoot, `lib/tsconfig.base.json`),
+    JSON.stringify(generateTsconfig(), undefined, 2),
+    "utf8",
+  );
+
+  await writeFile(
+    resolve(appRoot, `lib/${sourceFolder.name}/tsconfig.base.json`),
+    JSON.stringify(generateTsconfig(sourceFolder.name), undefined, 2),
+    "utf8",
+  );
 
   const { resolvers } = await routesFactory(sourceFolder);
 
@@ -19,7 +35,8 @@ export default async () => {
   }
 
   for (const generator of sourceFolder.config.generators || []) {
-    const instance = await generator(sourceFolder);
+    const instance = generator.factory(sourceFolder);
+    await instance.start();
     await instance.build(resolvedRoutes);
   }
 

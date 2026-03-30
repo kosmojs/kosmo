@@ -9,7 +9,7 @@ import type {
   DefaultContext,
   DefaultState,
   ParameterizedContext,
-} from "{{ createImport 'libApi' }}";
+} from "../api";
 
 type JsonOptions = {
   limit?: number;

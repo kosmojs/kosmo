@@ -61,7 +61,7 @@ internally:
 
 ```tsx [SolidJS]
 import { createStore } from "solid-js/store";
-import fetchClients from "_/front/fetch";
+import fetchClients from "_/fetch";
 
 export default function Page() {
   const [formData, setFormData] = createStore({ name: "", email: "" });
@@ -78,7 +78,7 @@ export default function Page() {
 ```vue [Vue]
 <script setup lang="ts">
 import { ref } from "vue";
-import fetchClients from "_/front/fetch";
+import fetchClients from "_/fetch";
 
 const json = ref({ name: "", email: "" });
 

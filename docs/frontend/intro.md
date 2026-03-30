@@ -71,34 +71,11 @@ All frameworks use `jsx: "preserve"` - `KosmoJS` delegates JSX transformation
 to Vite, not TypeScript - but differing `jsxImportSource` values cause type
 conflicts when multiple frameworks coexist in the same project.
 
-`KosmoJS` provides framework-specific TypeScript configurations to solve this.
-Each source folder extends the appropriate config:
+`KosmoJS` solves this by generating a `tsconfig.base.json` specific to each source folder,
+placed in the `lib/` directory for the source folder to extend:
 
-::: code-group
-
-```json [React · tsconfig.json]
-{
-  "extends": "@kosmojs/config/tsconfig.react.json"
-}
+```json [src/front/tsconfig.json]
+{ "extends": "../../lib/front/tsconfig.base.json" }
 ```
 
-```json [SolidJS · tsconfig.json]
-{
-  "extends": "@kosmojs/config/tsconfig.solid.json"
-}
-```
-
-```json [Vue · tsconfig.json]
-{
-  "extends": "@kosmojs/config/tsconfig.vue.json"
-}
-```
-
-:::
-
-Each config supplies the correct `jsxImportSource`, path mappings, and core
-settings from `tsconfig.vite.json` at your project root.
-
-> **Important:** Framework configs don't inherit from your root `tsconfig.json`.
-> Custom TypeScript settings added at the project root must be manually
-> replicated into any source folder that needs them.
+Each config supplies the correct `jsxImportSource`, path mappings, and core settings.

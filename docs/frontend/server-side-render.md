@@ -49,9 +49,9 @@ The SSR generator creates `entry/server.ts` with a default implementation.
 ```ts [React · entry/server.ts]
 import { renderToString } from "react-dom/server";
 
-import { renderFactory, createRoutes } from "_/front/entry/server";
-import App from "@/front/App";
-import createRouter from "@/front/router";
+import { renderFactory, createRoutes } from "_/entry/server";
+import App from "../App";
+import createRouter from "../router";
 
 const routes = createRoutes({ withPreload: false });
 
@@ -72,9 +72,9 @@ export default renderFactory(() => {
 ```ts [SolidJS · entry/server.ts]
 import { renderToString, generateHydrationScript } from "solid-js/web";
 
-import { renderFactory, createRoutes } from "_/front/entry/server";
-import App from "@/front/App";
-import createRouter from "@/front/router";
+import { renderFactory, createRoutes } from "_/entry/server";
+import App from "../App";
+import createRouter from "../router";
 
 const routes = createRoutes({ withPreload: false });
 
@@ -98,9 +98,9 @@ export default renderFactory(() => {
 import { createSSRApp } from "vue";
 import { renderToString } from "vue/server-renderer";
 
-import { renderFactory, createRoutes } from "_/front/entry/server";
-import App from "@/front/App.vue";
-import createRouter from "@/front/router";
+import { renderFactory, createRoutes } from "_/entry/server";
+import App from "../App.vue";
+import createRouter from "../router";
 
 const routes = createRoutes();
 
@@ -188,9 +188,9 @@ write the opening HTML, pipe the app stream, then finalize the response.
 ```ts [React · entry/server.ts]
 import { renderToPipeableStream } from "react-dom/server";
 
-import { renderFactory, createRoutes } from "_/front/entry/server";
-import App from "@/front/App";
-import createRouter from "@/front/router";
+import { renderFactory, createRoutes } from "_/entry/server";
+import App from "../App";
+import createRouter from "../router";
 
 const routes = createRoutes({ withPreload: false });
 
@@ -228,9 +228,9 @@ export default renderFactory(() => {
 ```ts [SolidJS · entry/server.ts]
 import { renderToStream, generateHydrationScript } from "solid-js/web";
 
-import { renderFactory, createRoutes } from "_/front/entry/server";
-import App from "@/front/App";
-import createRouter from "@/front/router";
+import { renderFactory, createRoutes } from "_/entry/server";
+import App from "../App";
+import createRouter from "../router";
 
 const routes = createRoutes({ withPreload: false });
 
@@ -268,9 +268,9 @@ export default renderFactory(() => {
 import { createSSRApp } from "vue";
 import { renderToNodeStream } from "vue/server-renderer";
 
-import { renderFactory, createRoutes } from "_/front/entry/server";
-import App from "@/front/App.vue";
-import createRouter from "@/front/router";
+import { renderFactory, createRoutes } from "_/entry/server";
+import App from "../App.vue";
+import createRouter from "../router";
 
 const routes = createRoutes();
 

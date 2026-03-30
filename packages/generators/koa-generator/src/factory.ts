@@ -22,8 +22,8 @@ import libApiErrorsTpl from "./templates/lib/@api/errors.ts?as=text";
 import libApiRouterTpl from "./templates/lib/@api/router.ts?as=text";
 import libApiRoutesTpl from "./templates/lib/@api/routes.hbs";
 import libApiServerTpl from "./templates/lib/@api/server.ts?as=text";
+import libApiFactoryTpl from "./templates/lib/api:factory.ts?as=text";
 import libApiTpl from "./templates/lib/api.ts?as=text";
-import libApiFactoryTpl from "./templates/lib/api-factory.ts?as=text";
 import srcAppTpl from "./templates/src/app.ts?as=text";
 import srcDevTpl from "./templates/src/dev.ts?as=text";
 import srcEnvTpl from "./templates/src/env.d.ts?as=text";
@@ -37,11 +37,11 @@ import srcUseTpl from "./templates/src/use.ts?as=text";
 export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
     const { alias, templates } = { ...options };
-    const { createPath, createImportHelper } = pathResolver(sourceFolder);
+    const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
-    const { renderToFile } = renderFactory({
+    const { renderToFile: deployLibFile } = renderFactory({
       helpers: {
-        createImport: createImportHelper,
+        ...createImportHelpers({ origin: "lib" }),
         paramsDefaults({ params }: ApiRoute) {
           const elements = params.schema.map(() => "unknown?");
           return `[${elements.join(", ")}]`;
@@ -53,6 +53,10 @@ export default defineGeneratorFactory<Options>(
           return `[${elements.join(", ")}]`;
         },
       },
+    });
+
+    const { renderToFile: deploySrcFile } = renderFactory({
+      helpers: createImportHelpers({ origin: "src" }),
     });
 
     const customTemplates: Array<[Matcher, string]> = Object.entries(
@@ -79,14 +83,14 @@ export default defineGeneratorFactory<Options>(
           const customTemplate = customTemplates.find(([isMatch]) => {
             return isMatch(entry.name);
           });
-          await renderToFile(
+          await deploySrcFile(
             createPath.api(entry.file),
             customTemplate?.[1] || srcRouteIndexTpl,
             { route: entry },
             { overwrite },
           );
         } else if (kind === "apiUse") {
-          await renderToFile(
+          await deploySrcFile(
             createPath.api(entry.file),
             srcRouteUseTpl,
             {},
@@ -154,17 +158,10 @@ export default defineGeneratorFactory<Options>(
       });
 
       for (const [file, template] of [
-        ["api.ts", libApiTpl],
-        ["api-factory.ts", libApiFactoryTpl],
-        ["@api/app.ts", libApiAppTpl],
-        ["@api/dev.ts", libApiDevTpl],
-        ["@api/errors.ts", libApiErrorsTpl],
-        ["@api/bodyparser.ts", libApiBodyparserTpl],
+        //
         ["@api/routes.ts", libApiRoutesTpl],
-        ["@api/router.ts", libApiRouterTpl],
-        ["@api/server.ts", libApiServerTpl],
       ]) {
-        await renderToFile(createPath.lib(file), template, {
+        await deployLibFile(createPath.lib(file), template, {
           routes: routesAndAliases,
           cascadingMiddleware,
         });
@@ -176,6 +173,21 @@ export default defineGeneratorFactory<Options>(
       options,
 
       async start() {
+        // deploy global lib files that does not change on routes updates
+        for (const [file, template] of [
+          ["api.ts", libApiTpl],
+          ["api:factory.ts", libApiFactoryTpl],
+          ["@api/app.ts", libApiAppTpl],
+          ["@api/dev.ts", libApiDevTpl],
+          ["@api/errors.ts", libApiErrorsTpl],
+          ["@api/bodyparser.ts", libApiBodyparserTpl],
+          ["@api/router.ts", libApiRouterTpl],
+          ["@api/server.ts", libApiServerTpl],
+        ]) {
+          await deployLibFile(createPath.lib(file), template, {});
+        }
+
+        // deploy global src files that does not change on routes updates
         for (const [file, template] of [
           ["env.d.ts", srcEnvTpl],
           ["app.ts", srcAppTpl],
@@ -185,7 +197,12 @@ export default defineGeneratorFactory<Options>(
           ["server.ts", srcServerTpl],
           ["use.ts", srcUseTpl],
         ]) {
-          await renderToFile(createPath.api(file), template, {}, { overwrite });
+          await deploySrcFile(
+            createPath.api(file),
+            template,
+            {},
+            { overwrite },
+          );
         }
       },
 

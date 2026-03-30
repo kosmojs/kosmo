@@ -1,5 +1,5 @@
 ```ts [api/pages/[id]/index.ts]
-import { defineRoute } from "_/admin/api";
+import { defineRoute } from "_/api";
 
 type Page = {
   id: VRefine<string, { format: "uuid" }>;

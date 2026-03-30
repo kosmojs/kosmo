@@ -4,7 +4,7 @@ import { stringify } from "@kosmojs/fetch";
 
 import { unwrap } from "{{ createImport "lib" "unwrap" }}";
 import { type LinkProps, pageMap } from "{{ createImport "lib" "router" }}";
-import { baseurl } from "{{ createImport "config" }}";
+import { baseurl } from "../config";
 
 export default function Link(
   props: Omit<AnchorProps, "href"> & {

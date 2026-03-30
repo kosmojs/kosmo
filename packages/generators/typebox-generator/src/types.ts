@@ -1,4 +1,4 @@
-import type { ValidationMessages } from "./templates/error-handler";
+import type { ValidationMessages } from "./templates/lib/@typebox/error-handler";
 
 export type Settings = Partial<{
   /**

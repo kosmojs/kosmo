@@ -22,7 +22,7 @@ Each position refines the corresponding parameter in route order.
 For a route at `api/users/[id]/index.ts`:
 
 ```ts [api/users/[id]/index.ts]
-import { defineRoute } from "_/front/api";
+import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]", [
   number // [!code hl]

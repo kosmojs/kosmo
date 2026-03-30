@@ -69,7 +69,7 @@ Invalid configurations are detected at dev time - `KosmoJS` warns and disables a
 Pass the payload type as the first type argument to your method handler:
 
 ```ts [api/posts/index.ts]
-import { defineRoute } from "_/front/api";
+import { defineRoute } from "_/api";
 
 export default defineRoute<"posts">(({ POST }) => [
   POST<{
@@ -287,8 +287,8 @@ export type Post = {
 Now you can use these types in any route by importing them:
 
 ```ts [api/users/index.ts]
-import type { User, Payload } from "@/front/types/api-payload";
-import { defineRoute } from "_/front/api";
+import type { User, Payload } from "~/types/api-payload";
+import { defineRoute } from "_/api";
 
 export default defineRoute<"users">(({ POST }) => [
   POST<{
@@ -305,7 +305,7 @@ Update a shared type and validation updates everywhere it's used.
 Different routes, same wrapper:
 
 ```ts [api/posts/index.ts]
-import type { Post, Payload } from "@/front/types/api-payload";
+import type { Post, Payload } from "~/types/api-payload";
 
 export default defineRoute<"posts">(({ POST }) => [
   POST<{

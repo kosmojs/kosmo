@@ -1,3 +1,3 @@
 {
-  "extends": "@kosmojs/config/tsconfig.kosmo-test.json"
+  "extends": "tsconfig/kosmo.test.json"
 }

@@ -15,11 +15,11 @@ import {
 
 import type { Options, Settings } from "./types";
 
-import customTypesTpl from "./templates/custom-types.ts?as=text";
-import errorHandlerTpl from "./templates/error-handler.ts?as=text";
-import indexTpl from "./templates/index.ts?as=text";
-import schemasTpl from "./templates/schemas.hbs";
-import setupTpl from "./templates/setup.hbs";
+import libTypeboxCustomTypesTpl from "./templates/lib/@typebox/custom-types.ts?as=text";
+import libTypeboxErrorHandlerTpl from "./templates/lib/@typebox/error-handler.ts?as=text";
+import libTypeboxIndexTpl from "./templates/lib/@typebox/index.ts?as=text";
+import libTypeboxSetupTpl from "./templates/lib/@typebox/setup.hbs";
+import schemasTpl from "./templates/lib/schemas.hbs";
 
 const defaultSettings: Settings = {
   exactOptionalPropertyTypes: true,
@@ -27,22 +27,20 @@ const defaultSettings: Settings = {
 
 export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
-    const {
-      //
-      createPath,
-      createImport,
-      createImportHelper,
-    } = pathResolver(sourceFolder);
+    const { createPath, createImport, createImportHelpers } =
+      pathResolver(sourceFolder);
 
-    const { renderToFile } = renderFactory({
+    const { renderToFile: deployLibFile } = renderFactory({
       helpers: {
-        createImport: createImportHelper,
+        ...createImportHelpers({ origin: "lib" }),
       },
     });
 
     const {
       validationMessages = {},
-      customTypesImport = createImport.lib("@typebox/custom-types"),
+      customTypesImport = createImport.lib(["@typebox/custom-types"], {
+        origin: "lib",
+      }),
       settings,
     } = { ...options };
 
@@ -163,7 +161,7 @@ export default defineGeneratorFactory<Options>(
             : [];
         });
 
-        await renderToFile(
+        await deployLibFile(
           createPath.libApi(entry.name, "schemas.ts"),
           schemasTpl,
           {
@@ -182,12 +180,12 @@ export default defineGeneratorFactory<Options>(
 
       async start() {
         for (const [file, template] of [
-          ["index.ts", indexTpl],
-          ["setup.ts", setupTpl],
-          ["custom-types.ts", customTypesTpl],
-          ["error-handler.ts", errorHandlerTpl],
+          ["custom-types.ts", libTypeboxCustomTypesTpl],
+          ["error-handler.ts", libTypeboxErrorHandlerTpl],
+          ["index.ts", libTypeboxIndexTpl],
+          ["setup.ts", libTypeboxSetupTpl],
         ]) {
-          await renderToFile(createPath.lib("@typebox", file), template, {
+          await deployLibFile(createPath.lib("@typebox", file), template, {
             validationMessages: JSON.stringify(validationMessages),
             customTypesImport,
             settings: JSON.stringify({ ...defaultSettings, ...settings }),

@@ -13,7 +13,7 @@ Each fetch client exposes `path` and `href` for building URLs without making a r
 useful for navigation, `<a>` tags, or passing URLs to other services.
 
 ```ts [pages/example/index.tsx]
-import fetchClients from "_/front/fetch";
+import fetchClients from "_/fetch";
 
 const useFetch = fetchClients["users/[id]"];
 

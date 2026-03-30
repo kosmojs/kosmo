@@ -36,7 +36,7 @@ router's expected format:
 // The loader is wired automatically when your page exports one.
 {
   path: "/users/:id",
-  lazy: () => import("@/front/pages/users/[id]"),
+  lazy: () => import("@/src/front/pages/users/[id]/index.tsx"),
 }
 ```
 
@@ -45,9 +45,9 @@ router's expected format:
 // The preload function is called on link hover and navigation intent.
 {
   path: "/users/[id]",
-  component: lazy(() => import("@/front/pages/users/[id]")),
+  component: lazy(() => import("@/src/front/pages/users/[id]/index.tsx")),
   preload: () =>
-    import("@/front/pages/users/[id]").then(
+    import("@/src/front/pages/users/[id]/index.tsx").then(
       (mdl) => (mdl as ComponentModule).preload?.()
     ),
 }
@@ -58,7 +58,7 @@ router's expected format:
 {
   name: "users/[id]",
   path: "/users/[id]",
-  component: () => import("@/front/pages/users/[id]/index.vue"),
+  component: () => import("@/src/front/pages/users/[id]/index.vue"),
 }
 ```
 
@@ -206,7 +206,7 @@ Layout data loading follows the same per-framework patterns as page components:
 
 ```tsx [React · dashboard/layout.tsx]
 import { Outlet, useLoaderData } from "react-router";
-import fetchClients, { type ResponseT } from "_/front/fetch";
+import fetchClients, { type ResponseT } from "_/fetch";
 
 export const loader = fetchClients["dashboard/data"].GET;
 
@@ -220,7 +220,7 @@ export default function Layout() {
 ```tsx [SolidJS · dashboard/layout.tsx]
 import type { ParentComponent } from "solid-js";
 import { createAsync } from "@solidjs/router";
-import fetchClients from "_/front/fetch";
+import fetchClients from "_/fetch";
 
 export const preload = fetchClients["dashboard/data"].GET;
 
@@ -236,7 +236,7 @@ export default Layout;
 ```vue [Vue · dashboard/layout.vue]
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import fetchClients, { type ResponseT } from "_/front/fetch";
+import fetchClients, { type ResponseT } from "_/fetch";
 
 const data = ref<ResponseT["dashboard/data"]["GET"] | null>(null);
 const loading = ref(true);

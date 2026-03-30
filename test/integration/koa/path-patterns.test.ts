@@ -25,7 +25,7 @@ beforeAll(async () => {
     async ({ name }) => {
       return () => {
         return `
-          import { defineRoute } from "${createImport.libApi()}";
+          import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
           export default defineRoute(({ GET }) => [
             GET((ctx) => {
               ctx.body = { route: "${name}", params: ctx.validated.params };

@@ -16,17 +16,17 @@ import {
   type ValidationErrorEntry,
 } from "@kosmojs/api/errors";
 
-import { type BodyparserOptions, bodyparsers } from "./bodyparser";
-
-import globalMiddleware from "{{ createImport 'api' 'use' }}";
-import { routeSources } from "{{ createImport 'lib' '@api/routes' }}";
 import {
   type DefaultContext,
   type DefaultState,
   type ParameterizedContext,
   type ParameterizedMiddleware,
   use,
-} from "{{ createImport 'libApi' }}";
+} from "../api";
+import { type BodyparserOptions, bodyparsers } from "./bodyparser";
+import { routeSources } from "./routes";
+
+import globalMiddleware from "{{ createImport 'api' 'use' }}";
 
 export type Router = import("@koa/router").Router<DefaultState, DefaultContext>;
 export type RouterOptions = import("@koa/router").RouterOptions;

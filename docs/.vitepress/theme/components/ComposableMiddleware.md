@@ -1,6 +1,6 @@
 ::: code-group
 ```ts [api/use.ts]
-import { use } from "_/admin/api";
+import { use } from "_/api";
 
 export default [
   use(
@@ -14,7 +14,7 @@ export default [
 ```
 
 ```ts [api/example/index.ts]
-import { defineRoute } from "_/front/api";
+import { defineRoute } from "_/api";
 
 export default defineRoute<"example">(({ use, GET }) => [
   use(

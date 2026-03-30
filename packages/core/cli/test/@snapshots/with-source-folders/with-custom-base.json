@@ -29,12 +29,21 @@
       "  } from \"@kosmojs/dev\";",
       "",
       "",
+      "",
       "export default defineConfig({",
       "  plugins: [",
       "      ],",
       "  generators: [",
       "      ],",
       "  });"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-custom-base/tsconfig.json",
+    [
+      "{",
+      "  \"extends\": \"../../lib/with-custom-base/tsconfig.base.json\"",
+      "}"
     ]
   ]
 ]

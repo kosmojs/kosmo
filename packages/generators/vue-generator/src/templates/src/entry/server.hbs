@@ -2,8 +2,8 @@ import { createSSRApp } from "vue";
 import { renderToString } from "vue/server-renderer";
 
 import { renderFactory, createRoutes } from "{{ createImport "libEntry" "server" }}";
-import App from "{{ createImport "src" "App.vue" }}";
-import routerFactory from "{{ createImport "src" "router" }}";
+import App from "../App.vue";
+import routerFactory from "../router";
 
 const routes = createRoutes();
 const { serverRouter } = routerFactory(routes);

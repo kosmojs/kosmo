@@ -225,7 +225,7 @@ export type GeneratorMeta = {
    * api/fetch generators always run first, ssr always run last.
    * User generators run in the order they were added.
    * */
-  slot?: "api" | "fetch" | "ssr";
+  slot?: "api" | "fetch" | "mdx" | "ssr";
 
   /**
    * Package dependencies required by this generator.
@@ -241,6 +241,22 @@ export type GeneratorMeta = {
    * generator execution, making complete type data available.
    * */
   resolveTypes?: boolean;
+
+  /**
+   * JSX transform target for this generator's source folder.
+   * Sets the `jsxImportSource` in the source folder's tsconfig,
+   * ensuring correct JSX type resolution per framework.
+   * e.g. "react", "solid-js", "preact"
+   * */
+  jsxImportSource?: string;
+
+  /**
+   * Additional TypeScript type packages to include in the source folder's
+   * tsconfig `types` array. Merged with the base types (vite/client, @types/node)
+   * to ensure framework-specific ambient types are available.
+   * e.g. ["@types/koa", "@types/formidable"]
+   * */
+  types?: Array<string>;
 };
 
 type GeneratorOptionsTuple = [Record<string, unknown>, boolean];

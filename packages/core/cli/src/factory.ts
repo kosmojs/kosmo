@@ -54,10 +54,6 @@ type Generator = {
   base: GeneratorBase;
 };
 
-const tsconfigJson = {
-  extends: "@kosmojs/config/tsconfig.vite.json",
-};
-
 const SELF_VERSION = `^${self.version}`;
 
 export const createProject = async (
@@ -82,7 +78,6 @@ export const createProject = async (
       ...assets?.dependencies,
     },
     devDependencies: {
-      "@kosmojs/config": SELF_VERSION,
       "@kosmojs/cli": SELF_VERSION,
       "@kosmojs/dev": SELF_VERSION,
       "@types/node": self.devDependencies["@types/node"],
@@ -100,8 +95,15 @@ export const createProject = async (
   }
 
   for (const [file, template] of [
-    ["package.json", JSON.stringify(packageJson, null, 2)],
-    ["tsconfig.json", JSON.stringify(tsconfigJson, null, 2)],
+    ["package.json", JSON.stringify(packageJson, undefined, 2)],
+    [
+      "tsconfig.json",
+      JSON.stringify(
+        { extends: `./${defaults.libDir}/tsconfig.base.json` },
+        undefined,
+        2,
+      ),
+    ],
   ]) {
     await renderToFile(resolve(projectPath, file), template, {
       defaults,
@@ -147,8 +149,6 @@ export const createSourceFolder = async (
   const framework = folder.framework || DEFAULT_FRAMEWORK;
   const backendFramework = folder.backend || DEFAULT_BACKEND;
 
-  let tsconfig: Record<string, unknown> | undefined;
-
   if (framework === "solid") {
     plugins.push({
       importDeclaration: `import solidPlugin from "vite-plugin-solid";`,
@@ -159,14 +159,10 @@ export const createSourceFolder = async (
     generators.push({
       name: "solidGenerator",
       options: opt?.frameworkOptions
-        ? JSON.stringify(opt.frameworkOptions, null, 2)
+        ? JSON.stringify(opt.frameworkOptions, undefined, 2)
         : "",
       base: solidGenerator(),
     });
-
-    tsconfig = {
-      extends: `@kosmojs/config/tsconfig.${framework}.json`,
-    };
   } else if (framework === "react") {
     plugins.push({
       importDeclaration: `import reactPlugin from "@vitejs/plugin-react";`,
@@ -177,14 +173,10 @@ export const createSourceFolder = async (
     generators.push({
       name: "reactGenerator",
       options: opt?.frameworkOptions
-        ? JSON.stringify(opt.frameworkOptions, null, 2)
+        ? JSON.stringify(opt.frameworkOptions, undefined, 2)
         : "",
       base: reactGenerator(),
     });
-
-    tsconfig = {
-      extends: `@kosmojs/config/tsconfig.${framework}.json`,
-    };
   } else if (framework === "vue") {
     plugins.push({
       importDeclaration: `import vuePlugin from "@vitejs/plugin-vue";`,
@@ -195,14 +187,11 @@ export const createSourceFolder = async (
     generators.push({
       name: "vueGenerator",
       options: opt?.frameworkOptions
-        ? JSON.stringify(opt.frameworkOptions, null, 2)
+        ? JSON.stringify(opt.frameworkOptions, undefined, 2)
         : "",
       base: vueGenerator(),
     });
 
-    tsconfig = {
-      extends: `@kosmojs/config/tsconfig.${framework}.json`,
-    };
   }
 
   if (backendFramework === "koa") {
@@ -277,13 +266,17 @@ export const createSourceFolder = async (
     await renderToFile(resolve(folderPath, file), template, context);
   }
 
-  if (tsconfig) {
-    await writeFile(
-      resolve(folderPath, "tsconfig.json"),
-      JSON.stringify(tsconfig, null, 2),
-      "utf8",
-    );
-  }
+  await writeFile(
+    resolve(folderPath, "tsconfig.json"),
+    JSON.stringify(
+      {
+        extends: `../../${defaults.libDir}/${folder.name}/tsconfig.base.json`,
+      },
+      undefined,
+      2,
+    ),
+    "utf8",
+  );
 
   for (const generator of generators) {
     for (const key of ["dependencies", "devDependencies"] as const) {
@@ -295,7 +288,7 @@ export const createSourceFolder = async (
     packageJson[key] = { ...packageJson[key], ...opt?.[key] };
   }
 
-  await writeFile(packageFile, JSON.stringify(packageJson, null, 2));
+  await writeFile(packageFile, JSON.stringify(packageJson, undefined, 2));
 
   return folder;
 };

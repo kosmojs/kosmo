@@ -112,7 +112,7 @@ export const setupTestProject = async (opt?: {
     templateFactory?: PageTemplateFactory,
   ) => {
     const fileExt = framework
-      ? { solid: "tsx", react: "tsx", vue: "vue" }[framework]
+      ? { solid: "tsx", react: "tsx", vue: "vue", mdx: "mdx" }[framework]
       : "ts";
 
     const filePath = createPath.pages(`${name}/${file}.${fileExt}`);
@@ -127,7 +127,7 @@ export const setupTestProject = async (opt?: {
       ? await templateFactory({
           file,
           name,
-          cssFile: createImport.src(cssFile),
+          cssFile: createImport.src([cssFile], { origin: "lib" }),
           cssText,
         })
       : () => "";
@@ -225,7 +225,6 @@ export const setupTestProject = async (opt?: {
           "@kosmojs/api": resolve(pkgsDir, "core/api"),
         },
         devDependencies: {
-          "@kosmojs/config": resolve(pkgsDir, "core/config"),
           "@kosmojs/cli": resolve(pkgsDir, "core/cli"),
           "@kosmojs/dev": resolve(pkgsDir, "core/dev"),
         },

@@ -1,5 +1,5 @@
 ```ts [api/users/[id]/{activity}/index.ts]
-import { defineRoute } from "_/front/api";
+import { defineRoute } from "_/api";
 
 export default defineRoute<
   "users/[id]/{activity}",

@@ -12,7 +12,7 @@
       ],
       [
         "devPort",
-        4556
+        4554
       ],
       [
         "scripts",
@@ -28,7 +28,7 @@
     "default-project/tsconfig.json",
     [
       "{",
-      "  \"extends\": \"@kosmojs/config/tsconfig.vite.json\"",
+      "  \"extends\": \"./lib/tsconfig.base.json\"",
       "}"
     ]
   ]

@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "name": "tsconfig",
+  "private": true,
+  "exports": {
+    "./base.json": "./base.json",
+    "./kosmo.json": "./kosmo.json",
+    "./kosmo.test.json": "./kosmo.test.json"
+  }
+}

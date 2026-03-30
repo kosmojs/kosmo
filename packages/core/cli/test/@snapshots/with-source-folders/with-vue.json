@@ -35,6 +35,7 @@
       "  vueGenerator,",
       "} from \"@kosmojs/dev\";",
       "",
+      "",
       "import vuePlugin from \"@vitejs/plugin-vue\";",
       "",
       "export default defineConfig({",
@@ -57,7 +58,7 @@
     "with-source-folders/src/with-vue/tsconfig.json",
     [
       "{",
-      "  \"extends\": \"@kosmojs/config/tsconfig.vue.json\"",
+      "  \"extends\": \"../../lib/with-vue/tsconfig.base.json\"",
       "}"
     ]
   ]

@@ -56,7 +56,7 @@ Refinements also generate runtime validation - invalid params are rejected befor
 The first type argument to each method handler defines payload and response schemas:
 
 ```ts [api/example/index.ts]
-import type { User } from "@/front/types";
+import type { User } from "~/types";
 
 export default defineRoute<"example">(({ POST }) => [
   POST<{
@@ -143,7 +143,7 @@ so every route handler picks them up automatically:
 
 ::: code-group
 ```ts [Koa: api/env.d.ts]
-export declare module "_/front/api" {
+export declare module "_/api" {
   interface DefaultState {
     permissions: Array<"read" | "write" | "admin">;
   }
@@ -154,7 +154,7 @@ export declare module "_/front/api" {
 ```
 
 ```ts [Hono: api/env.d.ts]
-export declare module "_/front/api" {
+export declare module "_/api" {
   interface DefaultVariables {
     permissions: Array<"read" | "write" | "admin">;
   }
@@ -169,7 +169,7 @@ export declare module "_/front/api" {
 the right place to set these properties so they're always available:
 
 ```ts [api/use.ts]
-import { use } from "_/front/api";
+import { use } from "_/api";
 
 export default [
   use(async (ctx, next) => {

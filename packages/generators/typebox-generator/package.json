@@ -19,6 +19,7 @@
   },
   "scripts": {
     "build": "esbuilder src/index.ts",
+    "pretest": "pnpm run build",
     "test": "vitest --root ../../.. --project generators/typebox-generator"
   },
   "dependencies": {

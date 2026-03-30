@@ -22,4 +22,4 @@ export default defineGenerator<Options>((options) => {
   };
 });
 
-export * from "./templates/error-handler";
+export * from "./templates/lib/@typebox/error-handler";

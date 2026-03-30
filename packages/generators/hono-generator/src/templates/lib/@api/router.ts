@@ -20,17 +20,17 @@ import {
   type ValidationErrorEntry,
 } from "@kosmojs/api/errors";
 
-import { type BodyparserOptions, bodyparsers } from "./bodyparser";
-
-import globalMiddleware from "{{ createImport 'api' 'use' }}";
-import { routeSources } from "{{ createImport 'lib' '@api/routes' }}";
 import {
   type DefaultBindings,
   type DefaultVariables,
   type ParameterizedContext,
   type ParameterizedMiddleware,
   use,
-} from "{{ createImport 'libApi' }}";
+} from "../api";
+import { type BodyparserOptions, bodyparsers } from "./bodyparser";
+import { routeSources } from "./routes";
+
+import globalMiddleware from "{{ createImport 'api' 'use' }}";
 
 /**
  * Create route-level middleware stack that handles:

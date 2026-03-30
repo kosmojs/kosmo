@@ -25,6 +25,7 @@ export default defineGenerator<Options>((options) => {
       "@types/koa": self.devDependencies["@types/koa"],
       "@types/formidable": self.devDependencies["@types/formidable"],
     },
+    types: ["@types/koa"],
   };
 
   return {

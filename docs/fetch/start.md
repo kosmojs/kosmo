@@ -12,7 +12,7 @@ head:
 The fetch index exports a map of route paths to their generated clients:
 
 ```ts [pages/example/index.tsx]
-import fetchClients from "_/front/fetch";
+import fetchClients from "_/fetch";
 
 const response = await fetchClients["users/[id]"].GET([123]);
 ```

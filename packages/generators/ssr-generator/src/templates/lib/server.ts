@@ -5,8 +5,9 @@ import { parseArgs } from "node:util";
 
 import type { SSRManifestEntry, SSRSetup } from "@kosmojs/lib";
 
+import { routeMap } from "./@ssr/routes";
+
 import { baseurl } from "{{ createImport 'config' }}";
-import { routeMap } from "{{ createImport 'lib' 'ssr:routes' }}";
 
 /**
  * Root directory where Vite client assets are emitted.

@@ -44,14 +44,14 @@ createPath.libApi("routes.ts")         // → "lib/src/front/api/routes.ts"
 Use `createImport` methods to generate TypeScript import paths with proper prefixes:
 
 ```ts
-// Source folder imports (@/ prefix)
-createImport.src("config")             // → "@/front/config"
-createImport.api("users/[id]")         // → "@/front/api/users/[id]"
-createImport.pages("dashboard")        // → "@/front/pages/dashboard"
+// Source folder imports (~/ prefix)
+createImport.src("config")             // → "~/config"
+createImport.api("users/[id]")         // → "~/api/users/[id]"
+createImport.pages("dashboard")        // → "~/pages/dashboard"
 
 // Generated code imports (_/ prefix)
-createImport.lib("types")              // → "_/front/types"
-createImport.libApi("routes")          // → "_/front/api/routes"
+createImport.lib("types")              // → "_/types"
+createImport.libApi("routes")          // → "_/api/routes"
 ```
 
 ### Available Methods
@@ -69,10 +69,10 @@ createImport.libApi("routes")          // → "_/front/api/routes"
 - `distDir(...paths)` - Path to source folder's output directory
 
 **createImport methods:**
-- `src(...paths)` - Source imports with `@/` prefix
-- `config(...paths)` - Config imports with `@/` prefix
-- `api(...paths)` - API imports with `@/` prefix
-- `pages(...paths)` - Page imports with `@/` prefix
+- `src(...paths)` - Source imports with `~/` prefix
+- `config(...paths)` - Config imports with `~/` prefix
+- `api(...paths)` - API imports with `~/` prefix
+- `pages(...paths)` - Page imports with `~/` prefix
 - `lib(...paths)` - Generated imports with `_/` prefix
 - `libApi(...paths)` - Generated API imports with `_/` prefix
 - `libEntry(...paths)` - Generated entry imports with `_/` prefix
@@ -88,11 +88,11 @@ Register it through `renderFactory`:
 ```ts
 import { pathResolver, renderFactory } from "@kosmojs/lib";
 
-const { createPath, createImportHelper } = pathResolver(sourceFolder);
+const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
 const { render, renderToFile } = renderFactory({
   helpers: {
-    createImport: createImportHelper,  // Register as "createImport" helper
+    createImport: createImportHelpers({ origin: "lib" }),  // Register as "createImport" helper
   },
 });
 ```
@@ -108,13 +108,13 @@ import config from "{{ createImport 'config' }}";
 Which compiles to:
 
 ```ts
-import { defineRoute } from "_/front/api";
-import config from "@/front/config";
+import { defineRoute } from "_/api";
+import config from "@/src/front/config";
 ```
 
 The helper automatically handles Handlebars' argument passing
 (Handlebars appends an options object as the last argument,
-which `createImportHelper` strips off before delegating to `createImport`).
+which `createImportHelpers` strips off before delegating to `createImport`).
 
 **Usage in templates:**
 ```handlebars

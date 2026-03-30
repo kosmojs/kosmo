@@ -16,7 +16,7 @@ import {
   type ParameterizedMiddleware,
   use,
 } from "@src/templates/lib/api";
-import { createRouteMiddleware } from "@src/templates/lib/api-factory";
+import { createRouteMiddleware } from "@src/templates/lib/api:factory";
 
 export { defineRoute, type ParameterizedMiddleware, use };
 

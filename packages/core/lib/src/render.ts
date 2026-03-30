@@ -14,12 +14,15 @@ export type RenderOptions = {
 };
 
 export type FactoryOptions = RenderOptions & {
+  partials?: Record<string, string>;
+  helpers?: Record<string, (...a: Array<never>) => unknown>;
+  outdir?: string;
   /**
    * Controls whether to overwrite an existing file.
    * - `false`: skip writing if the file already exists
    * - `true` (default): always overwrite
    * - function: custom logic to decide whether to overwrite, based on current file content
-   */
+   * */
   overwrite?: boolean | ((fileContent: string) => boolean);
 };
 
@@ -36,7 +39,7 @@ export const renderToFile = async <Context = object>(
   file: string,
   template: string,
   context: Context,
-  options?: FactoryOptions,
+  options?: RenderOptions & Pick<FactoryOptions, "overwrite">,
 ): Promise<void> => {
   const content = render(template, context, options);
 
@@ -62,18 +65,22 @@ export const renderToFile = async <Context = object>(
   await writeFile(file, content, "utf8");
 };
 
-export const renderFactory = (
-  options?: FactoryOptions & {
-    outdir?: string;
-    partials?: Record<string, string>;
-    helpers?: Record<string, (...a: Array<never>) => unknown>;
-  },
-) => {
-  const renderer = handlebars.create();
+export const renderFactory = (options?: FactoryOptions) => {
+  const createRenderer = (selfOoptions?: FactoryOptions) => {
+    const renderer = handlebars.create();
 
-  renderer.registerPartial({ ...options?.partials } as never);
+    renderer.registerPartial({
+      ...options?.partials,
+      ...selfOoptions?.partials,
+    } as never);
 
-  renderer.registerHelper({ ...options?.helpers } as never);
+    renderer.registerHelper({
+      ...options?.helpers,
+      ...selfOoptions?.helpers,
+    } as never);
+
+    return renderer;
+  };
 
   return {
     render<Context = object>(
@@ -82,9 +89,9 @@ export const renderFactory = (
       selfOoptions?: FactoryOptions,
     ) {
       return render(template, context, {
-        renderer,
         ...options,
         ...selfOoptions,
+        renderer: createRenderer(selfOoptions),
       });
     },
     async renderToFile<Context = object>(
@@ -97,7 +104,11 @@ export const renderFactory = (
         options?.outdir ? join(options.outdir, file) : file,
         template,
         context,
-        { renderer, ...options, ...selfOoptions },
+        {
+          ...options,
+          ...selfOoptions,
+          renderer: createRenderer(selfOoptions),
+        },
       );
     },
   };

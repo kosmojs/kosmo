@@ -36,6 +36,7 @@
       "ssrGenerator,",
       "} from \"@kosmojs/dev\";",
       "",
+      "",
       "import solidPlugin from \"vite-plugin-solid\";",
       "",
       "export default defineConfig({",
@@ -60,7 +61,7 @@
     "with-source-folders/src/with-solid-ssr/tsconfig.json",
     [
       "{",
-      "  \"extends\": \"@kosmojs/config/tsconfig.solid.json\"",
+      "  \"extends\": \"../../lib/with-solid-ssr/tsconfig.base.json\"",
       "}"
     ]
   ]

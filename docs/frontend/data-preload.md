@@ -22,7 +22,7 @@ Start by creating an API endpoint that provides the data. The same endpoint
 is used across all three frameworks:
 
 ```ts [api/users/data/index.ts]
-import { defineRoute } from "_/front/api";
+import { defineRoute } from "_/api";
 
 export default defineRoute<"users/data">(({ GET }) => [
   GET<{ response: [200, "json", Data] }>(async (ctx) => {
@@ -37,7 +37,7 @@ export default defineRoute<"users/data">(({ GET }) => [
 
 ```tsx [React]
 import { useLoaderData } from "react-router";
-import fetchClients, { type ResponseT } from "_/front/fetch";
+import fetchClients, { type ResponseT } from "_/fetch";
 
 const { GET } = fetchClients["users/data"];
 
@@ -59,7 +59,7 @@ export default function Page() {
 
 ```tsx [SolidJS]
 import { createAsync } from "@solidjs/router";
-import fetchClients from "_/front/fetch";
+import fetchClients from "_/fetch";
 
 const { GET } = fetchClients["users/data"];
 
@@ -83,7 +83,7 @@ export default function Page() {
 ```vue [Vue]
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import fetchClients, { type ResponseT } from "_/front/fetch";
+import fetchClients, { type ResponseT } from "_/fetch";
 
 const { GET } = fetchClients["users/data"];
 

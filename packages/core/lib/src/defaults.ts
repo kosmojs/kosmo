@@ -1,6 +1,6 @@
 export const defaults = {
-  appPrefix: "~",
-  srcPrefix: "@",
+  appPrefix: "@",
+  srcPrefix: "~",
   libPrefix: "_",
 
   coreDir: "core",

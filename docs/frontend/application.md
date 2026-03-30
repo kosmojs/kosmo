@@ -76,8 +76,8 @@ import {
   StaticRouterProvider,
 } from "react-router";
 
-import { routerFactory } from "_/front/router";
-import { baseurl } from "@/front/config";
+import { routerFactory } from "_/router";
+import { baseurl } from "./config";
 
 export default routerFactory((App, routes) => {
   const routeStack = [
@@ -111,8 +111,8 @@ export default routerFactory((App, routes) => {
 ```tsx [SolidJS · router.tsx]
 import { Router } from "@solidjs/router";
 
-import { routerFactory } from "_/front/router";
-import { baseurl } from "@/front/config";
+import { routerFactory } from "_/router";
+import { baseurl } from "./config";
 
 export default routerFactory((App, routes) => {
   return {
@@ -141,8 +141,8 @@ import {
   createWebHistory,
 } from "vue-router";
 
-import { routerFactory } from "_/front/router";
-import { baseurl } from "@/front/config";
+import { routerFactory } from "_/router";
+import { baseurl } from "./config";
 
 export default routerFactory((app, routes) => {
   return {
@@ -209,9 +209,9 @@ fresh client-only mount.
 ```tsx [React · entry/client.tsx]
 import { hydrateRoot, createRoot } from "react-dom/client";
 
-import { renderFactory, createRoutes } from "_/front/entry/client";
-import App from "@/front/App";
-import createRouter from "@/front/router";
+import { renderFactory, createRoutes } from "_/entry/client";
+import App from "../App";
+import createRouter from "../router";
 
 const root = document.getElementById("app");
 
@@ -236,9 +236,9 @@ if (root) {
 ```tsx [SolidJS · entry/client.tsx]
 import { hydrate, render } from "solid-js/web";
 
-import { renderFactory, createRoutes } from "_/front/entry/client";
-import App from "@/front/App";
-import createRouter from "@/front/router";
+import { renderFactory, createRoutes } from "_/entry/client";
+import App from "../App";
+import createRouter from "../router";
 
 const root = document.getElementById("app");
 
@@ -263,9 +263,9 @@ if (root) {
 ```ts [Vue · entry/client.ts]
 import { createApp, createSSRApp } from "vue";
 
-import { renderFactory, createRoutes } from "_/front/entry/client";
-import App from "@/front/App.vue";
-import createRouter from "@/front/router";
+import { renderFactory, createRoutes } from "_/entry/client";
+import App from "../App.vue";
+import createRouter from "../router";
 
 const root = document.getElementById("app");
 

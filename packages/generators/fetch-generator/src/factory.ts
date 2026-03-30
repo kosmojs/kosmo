@@ -8,17 +8,17 @@ import {
   sortRoutes,
 } from "@kosmojs/lib";
 
-import fetchLibTpl from "./templates/@fetch/lib.ts?as=text";
-import fetchTpl from "./templates/fetch.hbs";
-import routeTpl from "./templates/route.hbs";
-import unwrapTpl from "./templates/unwrap.hbs";
+import fetchLibTpl from "./templates/lib/@fetch/lib.ts?as=text";
+import fetchTpl from "./templates/lib/fetch.hbs";
+import routeTpl from "./templates/lib/route.hbs";
+import unwrapTpl from "./templates/lib/unwrap.hbs";
 
 export default defineGeneratorFactory((meta, sourceFolder) => {
-  const { createPath, createImportHelper } = pathResolver(sourceFolder);
+  const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
-  const { renderToFile } = renderFactory({
+  const { renderToFile: deployLibFile } = renderFactory({
     helpers: {
-      createImport: createImportHelper,
+      ...createImportHelpers({ origin: "lib" }),
       createParamsLiteral: renderHelpers.createParamsLiteral,
     },
   });
@@ -35,7 +35,7 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
       ["fetch.ts", fetchTpl],
       ["@fetch/lib.ts", fetchLibTpl],
     ]) {
-      await renderToFile(createPath.lib(file), template, {
+      await deployLibFile(createPath.lib(file), template, {
         routes,
       });
     }
@@ -125,7 +125,7 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
           }, {}),
         );
 
-        await renderToFile(
+        await deployLibFile(
           createPath.libApi(entry.name, "fetch.ts"),
           routeTpl,
           {
@@ -149,7 +149,7 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
       // supposed to be replaced by specialized generators, write it only at initialization.
       // fetch generator always runs before other generators
       // so it is safe to re-initialize this file before specialized generators update it.
-      await renderToFile(createPath.lib("unwrap.ts"), unwrapTpl, {});
+      await deployLibFile(createPath.lib("unwrap.ts"), unwrapTpl, {});
     },
 
     async watch(entries, event) {

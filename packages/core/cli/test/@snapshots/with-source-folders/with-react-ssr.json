@@ -36,6 +36,7 @@
       "ssrGenerator,",
       "} from \"@kosmojs/dev\";",
       "",
+      "",
       "import reactPlugin from \"@vitejs/plugin-react\";",
       "",
       "export default defineConfig({",
@@ -59,7 +60,7 @@
     "with-source-folders/src/with-react-ssr/tsconfig.json",
     [
       "{",
-      "  \"extends\": \"@kosmojs/config/tsconfig.react.json\"",
+      "  \"extends\": \"../../lib/with-react-ssr/tsconfig.base.json\"",
       "}"
     ]
   ]
