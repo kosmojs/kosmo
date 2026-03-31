@@ -2,22 +2,21 @@ import { Router } from "@solidjs/router";
 
 import { routerFactory } from "{{ createImport "lib" "router" }}";
 import { baseurl } from "./config";
+import app from "./App";
 
 export default routerFactory((routes) => {
   return {
-    async clientRouter({ app }) {
-      return (
-        <Router root={app} base={baseurl}>
-          {routes}
-        </Router>
-      );
+    async clientRouter() {
+      return {
+        router: <Router root={app} base={baseurl}>{routes}</Router>,
+        app,
+      };
     },
-    async serverRouter({ app, url }) {
-      return (
-        <Router root={app} base={baseurl} url={url.pathname}>
-          {routes}
-        </Router>
-      );
+    async serverRouter(url) {
+      return {
+        router: <Router root={app} base={baseurl} url={url.pathname}>{routes}</Router>,
+        app,
+      };
     },
   }
 });

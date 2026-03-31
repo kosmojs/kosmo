@@ -1,7 +1,6 @@
 import { hydrate, render } from "solid-js/web";
 
 import { renderFactory, createRoutes } from "{{ createImport "libEntry" "client" }}";
-import app from "../App";
 import routerFactory from "../router";
 
 const root = document.getElementById("app");
@@ -12,11 +11,11 @@ if (root) {
   renderFactory(() => {
     return {
       async clientRender() {
-        const router = await clientRouter({ app });
+        const { router } = await clientRouter();
         render(() => router, root);
       },
       async serverRender() {
-        const router = await clientRouter({ app });
+        const { router } = await clientRouter();
         hydrate(() => router, root)
       },
     }
