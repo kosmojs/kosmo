@@ -318,8 +318,8 @@ type RouterFactoryOptions = {
 };
 
 type RouterFactorySignature<T extends RouterFactoryOptions> = {
-  clientRouter: (o: { app: T["app"]; url?: URL }) => Promise<T["router"]>;
-  serverRouter: (o: { app: T["app"]; url: URL }) => Promise<T["router"]>;
+  clientRouter: (url?: URL) => Promise<{ router: T["router"]; app: T["app"] }>;
+  serverRouter: (url: URL) => Promise<{ router: T["router"]; app: T["app"] }>;
 };
 
 export type RouterFactory<T extends RouterFactoryOptions> = (
