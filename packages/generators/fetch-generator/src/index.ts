@@ -14,9 +14,6 @@ export default defineGenerator(() => {
     dependencies: {
       "path-to-regexp": self.devDependencies["path-to-regexp"],
     },
-    devDependencies: {
-      "@kosmojs/fetch": self.version,
-    },
   };
 
   return {

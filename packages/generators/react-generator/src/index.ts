@@ -17,8 +17,6 @@ export default defineGenerator<Options>((options) => {
       "path-to-regexp": self.devDependencies["path-to-regexp"],
     },
     devDependencies: {
-      "@kosmojs/lib": self.version,
-      "@kosmojs/fetch": self.version,
       "@vitejs/plugin-react": self.devDependencies["@vitejs/plugin-react"],
       "@types/react": self.devDependencies["@types/react"],
       "@types/react-dom": self.devDependencies["@types/react-dom"],

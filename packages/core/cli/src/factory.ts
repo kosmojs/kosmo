@@ -75,11 +75,13 @@ export const createProject = async (
     },
     dependencies: {
       "@kosmojs/api": SELF_VERSION,
+      "@kosmojs/fetch": SELF_VERSION,
       ...assets?.dependencies,
     },
     devDependencies: {
       "@kosmojs/cli": SELF_VERSION,
       "@kosmojs/dev": SELF_VERSION,
+      "@kosmojs/lib": SELF_VERSION,
       "@types/node": self.devDependencies["@types/node"],
       tslib: self.devDependencies.tslib,
       typescript: self.devDependencies.typescript,

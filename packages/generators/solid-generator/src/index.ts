@@ -12,13 +12,11 @@ export default defineGenerator<Options>((options) => {
   const meta: GeneratorMeta = {
     name: "SolidJS",
     dependencies: {
-      "@solidjs/router": self.devDependencies["@solidjs/router"],
       "solid-js": self.devDependencies["solid-js"],
+      "@solidjs/router": self.devDependencies["@solidjs/router"],
       "path-to-regexp": self.devDependencies["path-to-regexp"],
     },
     devDependencies: {
-      "@kosmojs/lib": self.version,
-      "@kosmojs/fetch": self.version,
       "vite-plugin-solid": self.devDependencies["vite-plugin-solid"],
     },
     jsxImportSource: "solid-js",

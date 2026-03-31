@@ -13,7 +13,6 @@ export default defineGenerator<Options>((options) => {
     name: "Hono",
     slot: "api",
     dependencies: {
-      "@kosmojs/api": self.version,
       hono: self.devDependencies.hono,
       "@hono/node-server": self.devDependencies["@hono/node-server"],
       "path-to-regexp": self.devDependencies["path-to-regexp"],

@@ -12,13 +12,11 @@ export default defineGenerator<Options>((options) => {
   const meta: GeneratorMeta = {
     name: "Vue",
     dependencies: {
-      "vue-router": self.devDependencies["vue-router"],
       vue: self.devDependencies.vue,
+      "vue-router": self.devDependencies["vue-router"],
       "path-to-regexp": self.devDependencies["path-to-regexp"],
     },
     devDependencies: {
-      "@kosmojs/lib": self.version,
-      "@kosmojs/fetch": self.version,
       "@vitejs/plugin-vue": self.devDependencies["@vitejs/plugin-vue"],
     },
     jsxImportSource: "vue",

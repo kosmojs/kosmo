@@ -13,7 +13,6 @@ export default defineGenerator<Options>((options) => {
     name: "Koa",
     slot: "api",
     dependencies: {
-      "@kosmojs/api": self.version,
       koa: self.devDependencies.koa,
       "@koa/router": self.devDependencies["@koa/router"],
       "path-to-regexp": self.devDependencies["path-to-regexp"],
