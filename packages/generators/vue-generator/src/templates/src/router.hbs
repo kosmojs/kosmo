@@ -1,3 +1,4 @@
+import { createApp, createSSRApp } from "vue";
 import {
   createMemoryHistory,
   createRouter,
@@ -6,19 +7,22 @@ import {
 
 import { routerFactory } from "{{ createImport "lib" "router" }}";
 import { baseurl } from "./config";
+import App from "./App.vue";
 
 export default routerFactory((routes) => {
   return {
-    async clientRouter({ app }) {
+    async clientRouter() {
+      const app = createApp(App);
       const router = createRouter({
         history: createWebHistory(baseurl),
         routes,
         strict: true,
       });
       app.use(router);
-      return router;
+      return { router, app };
     },
-    async serverRouter({ app, url }) {
+    async serverRouter(url) {
+      const app = createSSRApp(App);
       const router = createRouter({
         history: createMemoryHistory(baseurl),
         routes,
@@ -27,7 +31,7 @@ export default routerFactory((routes) => {
       await router.push(url.pathname);
       await router.isReady();
       app.use(router);
-      return router;
+      return { router, app };
     },
   };
 });

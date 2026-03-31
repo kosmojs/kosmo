@@ -1,7 +1,4 @@
-import { createApp, createSSRApp } from "vue";
-
 import { renderFactory, createRoutes } from "{{ createImport "libEntry" "client" }}";
-import App from "../App.vue";
 import routerFactory from "../router";
 
 const root = document.getElementById("app");
@@ -12,13 +9,11 @@ if (root) {
   renderFactory(() => {
     return {
       async clientRender() {
-        const app = createApp(App);
-        await clientRouter({ app });
+        const { app } = await clientRouter();
         app.mount(root);
       },
       async serverRender() {
-        const app = createSSRApp(App);
-        await clientRouter({ app });
+        const { app } = await clientRouter();
         app.mount(root, true);
       },
     }
