@@ -1,7 +1,6 @@
 import { renderToString } from "react-dom/server";
 
 import { renderFactory, createRoutes } from "{{ createImport "libEntry" "server" }}";
-import app from "../App";
 import routerFactory from "../router";
 
 const routes = createRoutes({ withPreload: false });
@@ -10,7 +9,7 @@ const { serverRouter } = routerFactory(routes);
 export default renderFactory(() => {
   return {
     async renderToString(url, { criticalCss }) {
-      const router = await serverRouter({ app, url });
+      const { router } = await serverRouter(url);
       const head = criticalCss
         .map(({ text }) => `<style>${text}</style>`)
         .join("\n");

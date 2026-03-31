@@ -8,30 +8,28 @@ import {
 
 import { routerFactory } from "{{ createImport "lib" "router" }}";
 import { baseurl } from "./config";
+import app from "./App";
 
 export default routerFactory((routes) => {
+  const routeStack = [
+    {
+      path: "/",
+      Component: app,
+      children: routes,
+    },
+  ];
+
+  const handler = createStaticHandler(routeStack, { basename: baseurl });
 
   return {
-    async clientRouter({ app }) {
-      const router = createBrowserRouter([
-        {
-          path: "/",
-          Component: app,
-          children: routes,
-        },
-      ], { basename: baseurl });
-      return <RouterProvider router={router} />;
+    async clientRouter() {
+      const router = createBrowserRouter(routeStack, { basename: baseurl });
+      return {
+        router: <RouterProvider router={router} />,
+        app,
+      };
     },
-    async serverRouter({ app, url }) {
-      const routeStack = [
-        {
-          path: "/",
-          Component: app,
-          children: routes,
-        },
-      ];
-
-      const handler = createStaticHandler(routeStack, { basename: baseurl });
+    async serverRouter(url) {
       const result = await handler.query(new Request(url.href));
 
       if (result instanceof Response) {
@@ -41,7 +39,10 @@ export default routerFactory((routes) => {
 
       const router = createStaticRouter(routeStack, result);
 
-      return <StaticRouterProvider router={router} context={result} />;
+      return {
+        router: <StaticRouterProvider router={router} context={result} />,
+        app,
+      }
     },
   };
 });
