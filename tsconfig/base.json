@@ -3,6 +3,7 @@
     "moduleResolution": "bundler",
     "module": "ESNext",
     "target": "ESNext",
+    "jsx": "preserve",
     "strict": true,
     "exactOptionalPropertyTypes": true,
     "noImplicitAny": true,
