@@ -1,6 +1,6 @@
 import { access, chmod, constants, readFile, unlink } from "node:fs/promises";
 import http, { type IncomingMessage, type ServerResponse } from "node:http";
-import { extname, join, relative, resolve } from "node:path";
+import { extname, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
 
 import type { SSRManifestEntry, SSRSetup } from "@kosmojs/core";
@@ -47,16 +47,9 @@ type ResolvedAsset = {
   use: Set<string>;
 };
 
-const criticalCssOrder: Record<"global" | "layout" | "index", number> = {
-  global: 1,
-  layout: 2,
-  index: 3,
-};
-
 export const requestHandlerFactory = ({
   template,
   ssrSetup,
-  cssAssets,
   assetCache,
   manifest,
 }: {
@@ -64,8 +57,6 @@ export const requestHandlerFactory = ({
   template: string;
   // user-provided SSR factory
   ssrSetup: SSRSetup;
-  // resolved CSS assets with guaranted `text` property for inlining
-  cssAssets: Array<ResolvedAsset & { text: string }>;
   // a map of all built assets (for serving static files)
   assetCache: Map<string, AssetInfo>;
   // raw Vite manifest.json for advanced SSR uses
@@ -75,7 +66,7 @@ export const requestHandlerFactory = ({
     // If Node's IncomingMessage somehow lacks URL, treat as a server error.
     if (request.url === undefined) {
       response.writeHead(500, { "Content-Type": "text/html" });
-      response.end("<h1>500 · Server Error</h1>");
+      response.end("<h1>500: Server Error</h1>");
       return;
     }
 
@@ -104,9 +95,14 @@ export const requestHandlerFactory = ({
       return;
     }
 
+    const url = new URL(request.url, `http://${request.headers.host}`);
+
     // Match incoming request path (e.g., "/products/123") against
     // pre-compiled route patterns (e.g., "/products/:id")
     const route = routeMap.find(({ match }) => match(path));
+
+    // Ask the user-provided SSR factory to produce rendering methods
+    const { renderToString, renderToStream } = ssrSetup;
 
     if (!route) {
       // not a static file and no route matched, return 404
@@ -121,41 +117,13 @@ export const requestHandlerFactory = ({
       "Transfer-Encoding": "chunked",
     });
 
-    // Collect critical CSS for the matched route.
-    const criticalCss = cssAssets
-      .flatMap(({ text, path, use }) => {
-        // CSS assets referenced by index.html entrypoint are always critical,
-        // regardless incoming request path
-        let kind: keyof typeof criticalCssOrder | undefined = manifest[
-          "index.html"
-        ]?.css?.includes(path)
-          ? "global"
-          : undefined;
-
-        if (use.has(route.file)) {
-          // Imported by the current route
-          kind = "index";
-        } else if (route.layouts.some((e) => use.has(e))) {
-          // Imported by any layout wrapping current route
-          kind = "layout";
-        }
-
-        return kind ? [{ text, path: join(baseurl, path), kind }] : [];
-      })
-      .sort((a, b) => criticalCssOrder[a.kind] - criticalCssOrder[b.kind]);
-
     try {
-      // Ask the user-provided SSR factory to produce rendering methods
-      const { renderToString, renderToStream } = ssrSetup;
-      const url = new URL(request.url, `http://${request.headers.host}`);
-
       if (renderToStream) {
         // Mode 1: streaming SSR.
         //
         // - renderToStream is responsible for writing HTML chunks into `response`.
         // - Provided renderer can decide when to:
         //     - start the shell,
-        //     - flush critical chunks,
         //     - hydrate with client-side routes/assets.
         // - The renderer **must call `response.end()`** when streaming is finished,
         //   otherwise the HTTP request will remain open and the client will hang.
@@ -165,7 +133,6 @@ export const requestHandlerFactory = ({
         await renderToStream(url, {
           template,
           manifest,
-          criticalCss,
           request,
           response,
         });
@@ -185,7 +152,6 @@ export const requestHandlerFactory = ({
         const { head, html } = await renderToString(url, {
           template,
           manifest,
-          criticalCss,
           request,
           response,
         });
@@ -198,7 +164,7 @@ export const requestHandlerFactory = ({
 
       // SSR factory returned neither mode
       response.writeHead(501, { "Content-Type": "text/html" });
-      response.end("<h1>501 · Not Implemented</h1>");
+      response.end("<h1>501: Not Implemented</h1>");
     } catch (error) {
       // Handle thrown Response instances as redirects.
       // Re-throw other errors for upstream handling.
@@ -207,7 +173,7 @@ export const requestHandlerFactory = ({
 
         if (!Location || !REDIRECT_CODES.includes(error.status)) {
           response.writeHead(500, { "Content-Type": "text/html" });
-          response.end("<h1>500 · Malformed redirect</h1>");
+          response.end("<h1>500: Malformed redirect</h1>");
           return;
         }
 
@@ -324,8 +290,7 @@ const resolveAssets = (manifest: Manifest): Array<ResolvedAsset> => {
  *     → Fastest per-request performance (no filesystem I/O).
  *
  *   loadIntoMemory = false
- *     → Only CSS files are read (so SSR can inline critical CSS).
- *     → All other asset URLs are still registered in the cache,
+ *     → Asset URLs are still registered in the cache,
  *       but with *no* Buffer content.
  *     → Browser requests to those asset URLs will return `404`
  *       unless served by a proxy/CDN/static host.
@@ -365,13 +330,10 @@ export const loadAssets = async (
 
   // Load files into memory at server start (unless loadIntoMemory is false).
   await Promise.all(
-    resolvedAssets.map(async ({ kind, path }) => {
+    resolvedAssets.map(async ({ path }) => {
       const filePath = resolve(STATIC_DIR, path);
 
-      const buffer =
-        loadIntoMemory || kind === "css" // css loaded anyway
-          ? await readFile(filePath)
-          : undefined;
+      const buffer = loadIntoMemory ? await readFile(filePath) : undefined;
 
       assetCache.set(path, {
         buffer,
@@ -442,15 +404,6 @@ export const createServer = async () => {
     requestHandlerFactory({
       template,
       ssrSetup,
-      // provide only css assets and only ones with a valid cache.
-      cssAssets: resolvedAssets.flatMap(({ kind, path, ...rest }) => {
-        const cache = kind === "css" ? assetCache.get(path) : undefined;
-        // Decode CSS once at startup so SSR can inline
-        // without calling toString() on every request.
-        return cache?.buffer
-          ? [{ kind, path, text: cache.buffer.toString(), ...rest }]
-          : [];
-      }),
       assetCache,
       manifest,
     }),

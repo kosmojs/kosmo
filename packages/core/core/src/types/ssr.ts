@@ -28,20 +28,6 @@ export type SSROptions = {
   // client modules, dynamic imports, and related CSS.
   manifest: Record<string, SSRManifestEntry>;
 
-  // A list of CSS chunks relevant to the requested URL,
-  // determined by resolving the manifest graph back to routes.
-  //
-  // Each entry includes:
-  //   - `text` → decoded CSS content for inline <style> usage
-  //   - `path` → the browser-loadable asset path (for <link> usage)
-  //
-  // What the SSR renderer can do with `criticalCss`:
-  //
-  //   ✓ Inline style text (<style>…</style>) for fastest first paint
-  //   ✓ Insert <link rel="stylesheet" href="..."> for cache reuse
-  //   ✓ Insert <link rel="preload" as="style"> for warm loading
-  criticalCss: Array<{ text: string; path: string }>;
-
   // The underlying Node.js HTTP request/response objects.
   //
   // These allow advanced SSR controllers to:
@@ -58,12 +44,7 @@ export type SSROptions = {
 
 /**
  * Return type for string-based SSR rendering.
- *
- * - `head` is optional, user may choose to:
- *    - insert the provided critical CSS (opt.criticalCss),
- *    - override it (e.g. remove some styles),
- *    - or supply additional <meta>/<link>/<style> tags.
- *
+ * - `head` is optional, user may choose to supply additional <meta>/<link>/<style> tags.
  * - `html` is the main server-rendered body markup for hydration.
  * */
 export type SSRStringReturn = {
@@ -91,7 +72,7 @@ export type SSRString = (
  * Writes directly to the HTTP response.
  *
  * Responsibility of the user/render function:
- * - insert head + critical CSS at the correct time (before first flush)
+ * - insert head at the correct time (before first flush)
  * - manage partial flushing, suspense boundaries, etc.
  *
  * The server will NOT modify the response body in this mode,
@@ -124,11 +105,6 @@ export type SSRSetup = {
    *   false
    *     → A reverse proxy/CDN *must* serve all static files.
    *     → Otherwise any asset URL requested from browser (JS/CSS/img) will return `404`.
-   *
-   * Notes:
-   *   - `criticalCss.text` can still be inlined regardless of this setting.
-   *   - `criticalCss.url` remains provided for `<link>` usage,
-   *     but loading that URL is the responsibility of the external static server.
    *
    * This option enables deployments where SSR and static delivery
    * are cleanly separated (e.g., Node behind nginx / cloud static hosting).
