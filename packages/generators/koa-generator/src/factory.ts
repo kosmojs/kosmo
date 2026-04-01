@@ -3,12 +3,11 @@ import { join } from "node:path";
 import crc from "crc/crc32";
 import picomatch, { type Matcher } from "picomatch";
 
+import type { ApiRoute, ResolvedEntry } from "@kosmojs/core";
 import {
-  type ApiRoute,
   defineGeneratorFactory,
   pathResolver,
   pathTokensFactory,
-  type ResolvedEntry,
   renderFactory,
   sortRoutes,
 } from "@kosmojs/lib";

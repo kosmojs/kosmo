@@ -25,18 +25,16 @@ export default defineConfig({
   reporters: ["verbose"],
   test: {
     projects: [
-      setupFactory("core/api"),
+      setupFactory("core/core", {
+        setupFiles: ["packages/core/core/test/setup.ts"],
+        globals: true,
+      }),
 
       setupFactory("core/cli", {
         setupFiles: ["packages/core/cli/test/setup.ts"],
       }),
 
       setupFactory("core/lib"),
-
-      setupFactory("core/fetch", {
-        setupFiles: ["packages/core/fetch/test/setup.ts"],
-        globals: true,
-      }),
 
       setupFactory("generators/fetch-generator", {
         alias: {

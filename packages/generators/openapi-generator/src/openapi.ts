@@ -4,14 +4,14 @@ import crc from "crc/crc32";
 import { parse, type Token } from "path-to-regexp";
 import Type from "typebox";
 
-import { type RequestBodyTarget, RequestBodyTargets } from "@kosmojs/api";
 import {
   type ApiRoute,
+  type RequestBodyTarget,
+  RequestBodyTargets,
   type ResponseValidationDefinition,
   type SourceFolder,
-  sortRoutes,
-  typeboxLiteralText,
-} from "@kosmojs/lib";
+} from "@kosmojs/core";
+import { sortRoutes, typeboxLiteralText } from "@kosmojs/lib";
 
 import type {
   JsonSchema,

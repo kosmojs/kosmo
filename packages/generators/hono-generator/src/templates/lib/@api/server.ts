@@ -5,7 +5,7 @@ import { parseArgs } from "node:util";
 
 import { serve } from "@hono/node-server";
 
-import type { ServerFactory } from "@kosmojs/api";
+import type { ServerFactory } from "@kosmojs/core/api";
 
 import type { App } from "./app";
 

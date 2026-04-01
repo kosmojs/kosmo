@@ -1,9 +1,10 @@
-import { defaults } from "../defaults";
 import type {
   RouteEntry,
   RouteResolverCacheFactory,
   SourceFolder,
-} from "../types";
+} from "@kosmojs/core";
+
+import { defaults } from "../defaults";
 import {
   createRouteEntry,
   isApiRoute,

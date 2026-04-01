@@ -1,14 +1,14 @@
 import {
+  type RequestValidationDefinition,
   type RequestValidationTarget,
   RequestValidationTargets,
+  type ResolvedEntry,
+  type ResponseValidationDefinition,
   type ValidationTarget,
-} from "@kosmojs/api";
+} from "@kosmojs/core";
 import {
   defineGeneratorFactory,
   pathResolver,
-  type RequestValidationDefinition,
-  type ResolvedEntry,
-  type ResponseValidationDefinition,
   renderFactory,
   typeboxLiteralText,
 } from "@kosmojs/lib";

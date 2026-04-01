@@ -1,8 +1,11 @@
-import { RequestValidationTargets, type ValidationTarget } from "@kosmojs/api";
+import {
+  RequestValidationTargets,
+  type ResolvedEntry,
+  type ValidationTarget,
+} from "@kosmojs/core";
 import {
   defineGeneratorFactory,
   pathResolver,
-  type ResolvedEntry,
   renderFactory,
   renderHelpers,
   sortRoutes,

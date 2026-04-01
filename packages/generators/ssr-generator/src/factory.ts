@@ -3,10 +3,10 @@ import { join } from "node:path";
 
 import { build } from "vite";
 
+import type { PageRoute } from "@kosmojs/core";
 import {
   defaults,
   defineGeneratorFactory,
-  type PageRoute,
   pathResolver,
   renderFactory,
   sortRoutes,

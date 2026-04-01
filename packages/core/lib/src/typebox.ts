@@ -1,5 +1,6 @@
+import type { SourceFolder } from "@kosmojs/core";
+
 import { defaults } from "./defaults";
-import type { SourceFolder } from "./types";
 
 export const typeboxLiteralText = (
   text: string,

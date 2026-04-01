@@ -6,19 +6,19 @@ import { SmartRouter } from "hono/router/smart-router";
 import { TrieRouter } from "hono/router/trie-router";
 import { match } from "path-to-regexp";
 
+import type {
+  RequestBodyTarget,
+  RequestValidationTarget,
+  ValidationErrorEntry,
+} from "@kosmojs/core";
 import {
   type CreateRouteMiddleware,
   createRoutes,
   type HTTPMethod,
-  type RequestBodyTarget,
-  type RequestValidationTarget,
   type RouterFactory,
   StateKey,
-} from "@kosmojs/api";
-import {
-  ValidationError,
-  type ValidationErrorEntry,
-} from "@kosmojs/api/errors";
+} from "@kosmojs/core/api";
+import { ValidationError } from "@kosmojs/core/errors";
 
 import {
   type DefaultBindings,

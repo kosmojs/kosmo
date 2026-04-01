@@ -2,7 +2,7 @@ import { writeFile } from "node:fs/promises";
 
 import { afterAll, beforeAll, describe, it } from "vitest";
 
-import type { UseSlots } from "@kosmojs/api";
+import type { UseSlots } from "@kosmojs/core/api";
 import { pathResolver } from "@kosmojs/lib";
 
 import { setupTestProject } from "../setup";

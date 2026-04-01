@@ -6,19 +6,21 @@ import { styleText } from "node:util";
 
 import { build, createServer, type RunnableDevEnvironment } from "vite";
 
-import type { DevSetup } from "@kosmojs/api";
+import type {
+  GeneratorBase,
+  GeneratorFactoryInstance,
+  GeneratorMeta,
+  ProjectSettings,
+  ResolvedEntry,
+  SourceFolder,
+  WatcherEvent,
+} from "@kosmojs/core";
+import type { DevSetup } from "@kosmojs/core/api";
 import {
   defaults,
-  type GeneratorBase,
-  type GeneratorFactoryInstance,
-  type GeneratorMeta,
-  type ProjectSettings,
   pathResolver,
-  type ResolvedEntry,
   routesFactory,
-  type SourceFolder,
   spinnerFactory,
-  type WatcherEvent,
 } from "@kosmojs/lib";
 
 import { cacheFactory } from "./cache";

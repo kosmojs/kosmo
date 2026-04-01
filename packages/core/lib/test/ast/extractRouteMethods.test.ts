@@ -1,6 +1,6 @@
 import { describe, test } from "vitest";
 
-import type { RequestBodyTarget } from "@kosmojs/api";
+import type { RequestBodyTarget } from "@kosmojs/core/api";
 
 import { astFactory } from "@src/ast";
 

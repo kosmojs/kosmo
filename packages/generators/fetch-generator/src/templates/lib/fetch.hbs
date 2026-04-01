@@ -2,7 +2,7 @@
 import * as {{id}} from "{{ createImport "libApi" name "fetch" }}";
 {{/each}}
 
-export { ValidationError } from "@kosmojs/api/errors";
+export { ValidationError } from "@kosmojs/core/errors";
 
 export type ResponseT = {
 {{#each routes}}  "{{name}}": {{id}}.ResponseT;

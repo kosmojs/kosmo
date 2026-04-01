@@ -1,6 +1,6 @@
 import mimeTypes from "mime-types";
 
-import type { HTTPMethod } from "@kosmojs/api";
+import type { HTTPMethod } from "@kosmojs/core/api";
 
 import type { RouteName } from "./@fixtures/routes";
 

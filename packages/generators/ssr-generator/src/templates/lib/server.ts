@@ -3,7 +3,7 @@ import http, { type IncomingMessage, type ServerResponse } from "node:http";
 import { extname, join, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
 
-import type { SSRManifestEntry, SSRSetup } from "@kosmojs/lib";
+import type { SSRManifestEntry, SSRSetup } from "@kosmojs/core";
 
 import { routeMap } from "./@ssr/routes";
 

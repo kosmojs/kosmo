@@ -146,7 +146,7 @@ it doesn't inherit from the middleware being replaced.
 Custom slot names, like `logger`, should be added to `api/env.d.ts`:
 
 ```ts [api/env.d.ts]
-export declare module "@kosmojs/api" {
+export declare module "@kosmojs/core/api" {
   interface UseSlots {
     logger: string; // [!code hl]
   }

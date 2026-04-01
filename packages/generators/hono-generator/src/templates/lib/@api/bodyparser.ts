@@ -1,6 +1,6 @@
 import type { Context } from "hono";
 
-import type { RequestBodyTarget } from "@kosmojs/api";
+import type { RequestBodyTarget } from "@kosmojs/core";
 
 export type BodyparserOptions = {
   json: never;

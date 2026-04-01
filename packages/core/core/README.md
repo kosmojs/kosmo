@@ -1,11 +1,11 @@
-# @kosmojs/fetch
+# @kosmojs/core
 
 TODO: Add package description
 
 ## Installation
 
 ```sh
-npm install @kosmojs/fetch
+npm install @kosmojs/core
 ```
 
 ## Documentation

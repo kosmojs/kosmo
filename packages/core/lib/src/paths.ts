@@ -1,8 +1,9 @@
 import { access, constants } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
+import type { SourceFolder } from "@kosmojs/core";
+
 import { defaults } from "./defaults";
-import type { SourceFolder } from "./types";
 
 type Options = { origin: "src" | "lib" };
 

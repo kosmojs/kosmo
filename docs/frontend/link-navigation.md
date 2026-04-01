@@ -117,7 +117,7 @@ import {
   useLocation,
 } from "react-router";
 import type { ReactNode } from "react";
-import { stringify } from "@kosmojs/fetch";
+import { stringify } from "@kosmojs/core/fetch";
 
 import { type LinkProps, pageMap } from "_/router";
 import { baseurl } from "../config";
@@ -155,7 +155,7 @@ export default function Link(
 ```tsx [SolidJS · components/Link.tsx]
 import { A, type AnchorProps, useLocation } from "@solidjs/router";
 import { type JSXElement, splitProps } from "solid-js";
-import { stringify } from "@kosmojs/fetch";
+import { stringify } from "@kosmojs/core/fetch";
 
 import { unwrap } from "_/unwrap";
 import { type LinkProps, pageMap } from "_/router";
@@ -193,7 +193,7 @@ export default function Link(
 <script setup lang="ts" generic="T extends LinkProps">
 import { computed } from "vue";
 import { RouterLink, useRoute } from "vue-router";
-import { stringify } from "@kosmojs/fetch";
+import { stringify } from "@kosmojs/core/fetch";
 
 import { unwrap } from "_/unwrap";
 import { type LinkProps, pageMap } from "_/router";

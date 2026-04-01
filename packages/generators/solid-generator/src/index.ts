@@ -1,4 +1,5 @@
-import { defineGenerator, type GeneratorMeta } from "@kosmojs/lib";
+import type { GeneratorMeta } from "@kosmojs/core";
+import { defineGenerator } from "@kosmojs/lib";
 /**
  * Import from published package to ensure correct version at runtime.
  * Local import would be bundled with pre-bump version.

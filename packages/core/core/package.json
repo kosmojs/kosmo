@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "@kosmojs/api",
+  "name": "@kosmojs/core",
   "version": "0.0.26",
   "author": "Slee Woo",
   "license": "MIT",
@@ -15,14 +15,22 @@
       "types": "./pkg/index.d.ts",
       "default": "./pkg/index.js"
     },
+    "./api": {
+      "types": "./pkg/api/index.d.ts",
+      "default": "./pkg/api/index.js"
+    },
+    "./fetch": {
+      "types": "./pkg/fetch/index.d.ts",
+      "default": "./pkg/fetch/index.js"
+    },
     "./errors": {
       "types": "./pkg/errors/index.d.ts",
       "default": "./pkg/errors/index.js"
     }
   },
   "scripts": {
-    "build": "esbuilder src/index.ts src/errors/index.ts",
-    "test": "vitest --root ../../.. --project core/api"
+    "build": "esbuilder src/index.ts src/api/index.ts src/fetch/index.ts src/errors/index.ts",
+    "test": "vitest --root ../../.. --project core/core"
   },
   "dependencies": {
     "@koa/router": "^15.4.0",
@@ -37,8 +45,10 @@
     "@types/formidable": "^3.5.0",
     "@types/koa": "^3.0.2",
     "@types/koa-compose": "^3.2.9",
+    "@types/node": "^25.5.0",
     "@types/picomatch": "^4.0.2",
     "@types/qs": "^6.15.0",
-    "koa-compose": "^4.1.0"
+    "koa-compose": "^4.1.0",
+    "tfusion": "^0.0.23"
   }
 }

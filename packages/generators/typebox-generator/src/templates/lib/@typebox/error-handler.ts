@@ -1,6 +1,6 @@
 import type { TValidationError } from "typebox/error";
 
-import type { ValidationErrorEntry } from "@kosmojs/api/errors";
+import type { ValidationErrorEntry } from "@kosmojs/core";
 
 /**
  * Message codes for i18n/l10n support
@@ -1033,7 +1033,7 @@ export const errorHandlerFactory = (
       groupByField?: boolean;
       singleError?: boolean;
     } = {},
-  ): ValidationErrorEntry[] {
+  ): Array<ValidationErrorEntry> {
     if (!errors?.length) {
       return [];
     }

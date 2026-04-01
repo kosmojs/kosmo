@@ -1,6 +1,7 @@
 import { test } from "vitest";
 
-import { type HTTPMethod, RequestBodyTargets } from "@kosmojs/api";
+import { RequestBodyTargets } from "@kosmojs/core";
+import type { HTTPMethod } from "@kosmojs/core/api";
 
 import { importFetchClient, serializeFormData, typedEntries } from ".";
 import type { RouteName } from "./@fixtures/routes";

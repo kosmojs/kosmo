@@ -1,8 +1,9 @@
 import { resolve } from "node:path";
 
-import type { HTTPMethod, RequestValidationTarget } from "@kosmojs/api";
-import type { Options } from "@kosmojs/fetch";
-import { pathResolver, type SourceFolder } from "@kosmojs/lib";
+import type { RequestValidationTarget, SourceFolder } from "@kosmojs/core";
+import type { HTTPMethod } from "@kosmojs/core/api";
+import type { Options } from "@kosmojs/core/fetch";
+import { pathResolver } from "@kosmojs/lib";
 
 import typeboxGenerator from "@kosmojs/typebox-generator";
 

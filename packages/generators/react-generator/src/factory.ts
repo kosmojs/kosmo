@@ -1,12 +1,11 @@
 import picomatch, { type Matcher } from "picomatch";
 
+import type { PageRoute, ResolvedEntry } from "@kosmojs/core";
 import {
   defaults,
   defineGeneratorFactory,
   nestedRoutesFactory,
-  type PageRoute,
   pathResolver,
-  type ResolvedEntry,
   renderFactory,
   renderHelpers,
   sortRoutes,

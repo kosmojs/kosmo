@@ -14,18 +14,14 @@ import {
 } from "ts-morph";
 
 import {
-  type HTTPMethod,
-  HTTPMethods,
+  type ApiRoute,
   RequestValidationTargets,
+  type SourceFolder,
+  type TypeDeclaration,
+  type ValidationDefinition,
   type ValidationTarget,
-} from "@kosmojs/api";
-
-import type {
-  ApiRoute,
-  SourceFolder,
-  TypeDeclaration,
-  ValidationDefinition,
-} from "./types";
+} from "@kosmojs/core";
+import { type HTTPMethod, HTTPMethods } from "@kosmojs/core/api";
 
 type PathResolver = (path: string) => string;
 

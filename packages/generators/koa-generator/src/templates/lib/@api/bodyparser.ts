@@ -3,7 +3,7 @@ import zlib from "node:zlib";
 import Formidable, { type Options as FormidableOptions } from "formidable";
 import rawParser from "raw-body";
 
-import type { RequestBodyTarget } from "@kosmojs/api";
+import type { RequestBodyTarget } from "@kosmojs/core";
 
 import type {
   DefaultContext,

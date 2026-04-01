@@ -1,6 +1,6 @@
 import Koa from "koa";
 
-import type { AppFactory } from "@kosmojs/api";
+import type { AppFactory } from "@kosmojs/core/api";
 
 import type { DefaultContext, DefaultState } from "../api";
 

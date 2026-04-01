@@ -3,18 +3,17 @@ import { dirname, resolve } from "node:path";
 
 import crc from "crc/crc32";
 
+import type {
+  RouteResolverCache,
+  RouteResolverCacheFactory,
+} from "@kosmojs/core";
 /**
  * Import from published package to ensure correct version at runtime.
  * Local import would be bundled with pre-bump version; this external
  * import resolves to the actual published package.json.
  * */
 import self from "@kosmojs/dev/package.json" with { type: "json" };
-import {
-  pathExists,
-  pathResolver,
-  type RouteResolverCache,
-  type RouteResolverCacheFactory,
-} from "@kosmojs/lib";
+import { pathExists, pathResolver } from "@kosmojs/lib";
 
 export const cacheFactory: RouteResolverCacheFactory = (
   route,

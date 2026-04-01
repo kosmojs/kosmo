@@ -4,7 +4,7 @@ import {
   type HTTPMethod,
   HTTPMethods,
   type MiddlewareDefinition,
-} from "@kosmojs/api";
+} from "@kosmojs/core/api";
 
 import { defineRoute, type ParameterizedMiddleware } from ".";
 

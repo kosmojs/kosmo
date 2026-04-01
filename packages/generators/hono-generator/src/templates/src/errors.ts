@@ -1,7 +1,7 @@
 import { accepts } from "hono/accepts";
 import { HTTPException } from "hono/http-exception";
 
-import { ValidationError } from "@kosmojs/api/errors";
+import { ValidationError } from "@kosmojs/core/errors";
 
 import { errorHandlerFactory } from "{{ createImport 'lib' 'api:factory' }}";
 

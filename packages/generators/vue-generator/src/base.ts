@@ -1,13 +1,13 @@
 import { join } from "node:path";
 
-import {
-  type NestedRouteEntry,
-  normalizeStaticValue,
-  type PathToken,
-  type PathTokenParamPart,
-  type PathTokenStaticPart,
-  type RouteEntry,
-} from "@kosmojs/lib";
+import type {
+  NestedRouteEntry,
+  PathToken,
+  PathTokenParamPart,
+  PathTokenStaticPart,
+  RouteEntry,
+} from "@kosmojs/core";
+import { normalizeStaticValue } from "@kosmojs/lib";
 
 export type TransformedEntry = {
   name?: string;

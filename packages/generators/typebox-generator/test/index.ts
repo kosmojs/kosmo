@@ -1,11 +1,12 @@
 import { resolve } from "node:path";
 
 import type {
+  SourceFolder,
   ValidationSchema,
   ValidationSchemas,
   ValidationTarget,
-} from "@kosmojs/api";
-import { pathResolver, type SourceFolder } from "@kosmojs/lib";
+} from "@kosmojs/core";
+import { pathResolver } from "@kosmojs/lib";
 
 import typeboxGenerator from "@kosmojs/typebox-generator";
 

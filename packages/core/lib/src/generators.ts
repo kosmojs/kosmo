@@ -1,4 +1,4 @@
-import type { DefineGenerator, DefineGeneratorFactory } from "./types";
+import type { DefineGenerator, DefineGeneratorFactory } from "@kosmojs/core";
 
 export const defineGenerator: DefineGenerator = (f) => f as never;
 

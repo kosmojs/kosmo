@@ -8,13 +8,9 @@ import { createJiti } from "jiti";
 import prompts, { type PromptObject } from "prompts";
 import { glob } from "tinyglobby";
 
+import type { FolderConfig, ProjectSettings } from "@kosmojs/core";
 import chassis from "@kosmojs/dev/chassis";
-import {
-  defaults,
-  type FolderConfig,
-  type ProjectSettings,
-  pathExists,
-} from "@kosmojs/lib";
+import { defaults, pathExists } from "@kosmojs/lib";
 
 import {
   assertNoError,

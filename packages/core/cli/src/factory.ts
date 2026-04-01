@@ -9,6 +9,7 @@ import { resolve } from "node:path";
  * to keep versions fully synchronized across the project.
  * */
 import self from "@kosmojs/cli/package.json" with { type: "json" };
+import type { GeneratorBase } from "@kosmojs/core";
 import {
   fetchGenerator,
   honoGenerator,
@@ -19,12 +20,7 @@ import {
   typeboxGenerator,
   vueGenerator,
 } from "@kosmojs/dev";
-import {
-  defaults,
-  type GeneratorBase,
-  pathExists,
-  renderToFile,
-} from "@kosmojs/lib";
+import { defaults, pathExists, renderToFile } from "@kosmojs/lib";
 
 import {
   copyFiles,
@@ -74,14 +70,12 @@ export const createProject = async (
       "+folder": "kosmo folder",
     },
     dependencies: {
-      "@kosmojs/api": SELF_VERSION,
-      "@kosmojs/fetch": SELF_VERSION,
+      "@kosmojs/core": SELF_VERSION,
       ...assets?.dependencies,
     },
     devDependencies: {
       "@kosmojs/cli": SELF_VERSION,
       "@kosmojs/dev": SELF_VERSION,
-      "@kosmojs/lib": SELF_VERSION,
       "@types/node": self.devDependencies["@types/node"],
       tslib: self.devDependencies.tslib,
       typescript: self.devDependencies.typescript,

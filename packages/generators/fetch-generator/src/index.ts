@@ -2,8 +2,10 @@
  * Import from published package to ensure correct version at runtime.
  * Local import would be bundled with pre-bump version.
  * */
+
+import type { GeneratorMeta } from "@kosmojs/core";
 import self from "@kosmojs/fetch-generator/package.json" with { type: "json" };
-import { defineGenerator, type GeneratorMeta } from "@kosmojs/lib";
+import { defineGenerator } from "@kosmojs/lib";
 
 import factory from "./factory";
 

@@ -1,12 +1,11 @@
 import { dirname } from "node:path";
 
+import type { GeneratorMeta, ResolvedEntry } from "@kosmojs/core";
 import {
   defineGenerator,
   defineGeneratorFactory,
-  type GeneratorMeta,
   generateTsconfig,
   pathResolver,
-  type ResolvedEntry,
   renderToFile,
 } from "@kosmojs/lib";
 

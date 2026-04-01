@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 
-import type { AppFactory } from "@kosmojs/api";
+import type { AppFactory } from "@kosmojs/core/api";
 
 import type { DefaultBindings, DefaultVariables } from "../api";
 

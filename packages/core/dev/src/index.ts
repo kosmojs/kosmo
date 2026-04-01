@@ -1,4 +1,4 @@
-import type { FolderConfig } from "@kosmojs/lib";
+import type { FolderConfig } from "@kosmojs/core";
 
 export { default as fetchGenerator } from "@kosmojs/fetch-generator";
 export { default as honoGenerator } from "@kosmojs/hono-generator";

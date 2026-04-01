@@ -1,7 +1,8 @@
-import type { ValidationTarget } from "../types";
-import type { ValidationErrorData, ValidationErrorEntry } from "./types";
-
-export * from "./types";
+import type {
+  ValidationErrorData,
+  ValidationErrorEntry,
+  ValidationTarget,
+} from "../types/validation";
 
 /**
  * Standardized error wrapper used by validation generators.

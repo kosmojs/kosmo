@@ -6,8 +6,6 @@ import { parse, type Token } from "path-to-regexp";
 import picomatch from "picomatch";
 import { glob } from "tinyglobby";
 
-import { defaults } from "../defaults";
-import { pathResolver } from "../paths";
 import type {
   PathToken,
   PathTokenParamPart,
@@ -15,7 +13,10 @@ import type {
   ResolvedEntry,
   RouteEntry,
   SourceFolder,
-} from "../types";
+} from "@kosmojs/core";
+
+import { defaults } from "../defaults";
+import { pathResolver } from "../paths";
 
 export type ResolverSignature = {
   name: string;

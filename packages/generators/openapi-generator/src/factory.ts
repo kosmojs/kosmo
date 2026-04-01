@@ -1,9 +1,9 @@
 import YAML from "yaml";
 
+import type { ResolvedEntry } from "@kosmojs/core";
 import {
   defineGeneratorFactory,
   pathResolver,
-  type ResolvedEntry,
   renderToFile,
 } from "@kosmojs/lib";
 

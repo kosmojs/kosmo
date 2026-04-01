@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 
-import type { SourceFolder } from "@kosmojs/lib";
+import type { SourceFolder } from "@kosmojs/core";
 
 import openapiGenerator from "@src/index";
 

@@ -1,5 +1,6 @@
 import type { Context, Next } from "hono";
 
+import type { ValidationDefmap, ValidationOptmap } from "@kosmojs/core";
 import type {
   ExtendContext,
   HandlerDefinition,
@@ -7,9 +8,7 @@ import type {
   MiddlewareDefinition,
   RouteDefinitionItem,
   UseOptions,
-  ValidationDefmap,
-  ValidationOptmap,
-} from "@kosmojs/api";
+} from "@kosmojs/core/api";
 
 import type { BodyparserOptions } from "./@api/bodyparser";
 import type { RouteMap } from "./@api/routes";

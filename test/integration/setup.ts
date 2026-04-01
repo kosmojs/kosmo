@@ -18,14 +18,13 @@ import {
   createSourceFolder,
   type FRAMEWORKS,
 } from "@kosmojs/cli";
+import type {
+  FolderConfig,
+  ProjectSettings,
+  SourceFolder,
+} from "@kosmojs/core";
 import chassis from "@kosmojs/dev/chassis";
-import {
-  type FolderConfig,
-  type ProjectSettings,
-  pathResolver,
-  pathTokensFactory,
-  type SourceFolder,
-} from "@kosmojs/lib";
+import { pathResolver, pathTokensFactory } from "@kosmojs/lib";
 
 import type { RouteName } from "./routes";
 
@@ -222,7 +221,7 @@ export const setupTestProject = async (opt?: {
       { name: "app", ...projectSettings },
       {
         dependencies: {
-          "@kosmojs/api": resolve(pkgsDir, "core/api"),
+          "@kosmojs/core": resolve(pkgsDir, "core/core"),
         },
         devDependencies: {
           "@kosmojs/cli": resolve(pkgsDir, "core/cli"),
@@ -241,10 +240,6 @@ export const setupTestProject = async (opt?: {
       },
       {
         ...(frameworkOptions ? { frameworkOptions } : {}),
-        devDependencies: {
-          "@kosmojs/fetch": resolve(pkgsDir, "core/fetch"),
-          "@kosmojs/lib": resolve(pkgsDir, "core/lib"),
-        },
       },
     );
   };

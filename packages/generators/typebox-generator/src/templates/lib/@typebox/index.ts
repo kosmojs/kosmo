@@ -2,8 +2,8 @@ import Type from "typebox";
 import { Compile } from "typebox/compile";
 import Value from "typebox/value";
 
-import type { ValidationSchema, ValidationTarget } from "@kosmojs/api";
-import { ValidationError } from "@kosmojs/api/errors";
+import type { ValidationSchema, ValidationTarget } from "@kosmojs/core";
+import { ValidationError } from "@kosmojs/core/errors";
 
 import { errorHandlerFactory } from "./error-handler";
 import { customTypes, validationMessages } from "./setup";

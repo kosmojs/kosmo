@@ -3,7 +3,7 @@ import fetchFactory, {
   join,
   stringify,
   createHost,
-} from "@kosmojs/fetch";
+} from "@kosmojs/core/fetch";
 
 import { baseurl, apiurl } from "{{ createImport "config" }}";
 
@@ -20,7 +20,7 @@ import type { {{id}} } from "./types";
 
 import { validationSchemas } from "./schemas";
 
-export { ValidationError } from "@kosmojs/api/errors";
+export { ValidationError } from "@kosmojs/core/errors";
 
 export { validationSchemas };
 

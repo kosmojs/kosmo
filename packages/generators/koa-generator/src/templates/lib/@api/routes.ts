@@ -1,4 +1,4 @@
-import type { RouteSource } from "@kosmojs/api";
+import type { RouteSource } from "@kosmojs/core/api";
 
 export type RouteMap = Record<
   string,

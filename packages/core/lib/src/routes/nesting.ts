@@ -1,6 +1,7 @@
 import { basename } from "node:path";
 
-import type { NestedRouteEntry, RouteEntry } from "../types";
+import type { NestedRouteEntry, RouteEntry } from "@kosmojs/core";
+
 import { PAGE_INDEX_BASENAME, PAGE_LAYOUT_BASENAME, sortRoutes } from "./base";
 
 export const nestedRoutesFactory = (routeEntries: Array<RouteEntry>) => {

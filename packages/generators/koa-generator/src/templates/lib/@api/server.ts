@@ -2,7 +2,7 @@ import { chmod, unlink } from "node:fs/promises";
 import type { Server } from "node:http";
 import { parseArgs } from "node:util";
 
-import type { ServerFactory } from "@kosmojs/api";
+import type { ServerFactory } from "@kosmojs/core/api";
 
 import type { App } from "./app";
 

@@ -4,16 +4,18 @@ import crc from "crc/crc32";
 import { parse, type Token } from "path-to-regexp";
 import picomatch, { type Matcher } from "picomatch";
 
+import type {
+  ApiRoute,
+  PathToken,
+  PathTokenParamPart,
+  PathTokenStaticPart,
+  ResolvedEntry,
+} from "@kosmojs/core";
 import {
-  type ApiRoute,
   defineGeneratorFactory,
   normalizeStaticValue,
-  type PathToken,
-  type PathTokenParamPart,
-  type PathTokenStaticPart,
   pathResolver,
   pathTokensFactory,
-  type ResolvedEntry,
   renderFactory,
   sortRoutes,
 } from "@kosmojs/lib";

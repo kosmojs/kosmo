@@ -1,4 +1,4 @@
-import type { RenderFactory } from "@kosmojs/lib";
+import type { RenderFactory } from "@kosmojs/core";
 
 {{#each pageEntries}}
 const {{id}} = () => import("{{ createImport "pages" file }}");
