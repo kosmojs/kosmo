@@ -1,6 +1,6 @@
 import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import { createServer as createNodeServer } from "node:net";
+import net from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
 
@@ -24,7 +24,11 @@ import type {
   SourceFolder,
 } from "@kosmojs/core";
 import chassis from "@kosmojs/dev/chassis";
-import { pathResolver, pathTokensFactory } from "@kosmojs/lib";
+import {
+  createPathPattern,
+  pathResolver,
+  pathTokensFactory,
+} from "@kosmojs/lib";
 
 import type { RouteName } from "./routes";
 
@@ -160,23 +164,21 @@ export const setupTestProject = async (opt?: {
     routeName: string,
     params: Record<string, unknown> | undefined,
   ) => {
-    const [, pathPattern] = pathTokensFactory(routeName);
+    const pathTokens = pathTokensFactory(routeName);
+    const pathPattern = createPathPattern(pathTokens);
     const toPath = compile(pathPattern);
     return toPath({ ...params } as never);
   };
 
   const createDevServer = async () => {
     if (ssr) {
-      const { createServer } = await import(
-        createPath.distDir("ssr/server.js")
-      );
+      const { createApp } = await import(createPath.distDir("ssr/server.js"));
 
-      const server = await createServer();
-
-      server.listen(devPort);
+      const app = await createApp();
+      const server = serve({ fetch: app.fetch, port: devPort });
 
       return async () => {
-        await server.close();
+        server.close();
       };
     }
 
@@ -437,7 +439,7 @@ const findFreePort = async (): Promise<number> => {
 
 const isPortFree = (port: number): Promise<boolean> => {
   return new Promise((resolve) => {
-    const server = createNodeServer();
+    const server = net.createServer();
 
     server.once("error", () => resolve(false));
 

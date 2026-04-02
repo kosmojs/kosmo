@@ -28,5 +28,6 @@
       ]
     }
   ],
-  "pathPattern": ":category.:ext"
+  "pathPattern": ":category.:ext",
+  "honoPattern": ":_0{[^/]+\\.[^/]+}"
 }

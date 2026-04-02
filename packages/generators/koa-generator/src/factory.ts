@@ -5,6 +5,7 @@ import picomatch, { type Matcher } from "picomatch";
 
 import type { ApiRoute, ResolvedEntry } from "@kosmojs/core";
 import {
+  createPathPattern,
   defineGeneratorFactory,
   pathResolver,
   pathTokensFactory,
@@ -133,20 +134,22 @@ export default defineGeneratorFactory<Options>(
             ApiRoute & {
               fullpath: string;
             }
-          > = Object.entries({ ...alias }).flatMap(([url, routeName]) => {
-            const [pathTokens, fullpath] = pathTokensFactory(url);
-            return routeName === entry.name
-              ? [
-                  {
-                    ...baseRoute,
-                    name: url,
-                    id: `${baseRoute.id}_${crc(url)}`,
-                    fullpath,
-                    pathTokens,
-                  },
-                ]
-              : [];
-          });
+          > = Object.entries({ ...options?.alias }).flatMap(
+            ([url, routeName]) => {
+              const pathTokens = pathTokensFactory(url);
+              return routeName === entry.name
+                ? [
+                    {
+                      ...baseRoute,
+                      name: url,
+                      id: `${baseRoute.id}_${crc(url)}`,
+                      fullpath: createPathPattern(pathTokens),
+                      pathTokens,
+                    },
+                  ]
+                : [];
+            },
+          );
 
           return [baseRoute, ...aliases];
         })

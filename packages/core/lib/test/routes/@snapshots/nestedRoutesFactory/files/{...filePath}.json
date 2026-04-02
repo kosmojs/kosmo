@@ -30,7 +30,8 @@
         ]
       }
     ],
-    "pathPattern": "files{/*filePath}"
+    "pathPattern": "files{/*filePath}",
+    "honoPattern": "files/*"
   },
   "layout": {
     "id": "files_filePath_layout_tsx_3517107166",
@@ -63,7 +64,8 @@
         ]
       }
     ],
-    "pathPattern": "files{/*filePath}"
+    "pathPattern": "files{/*filePath}",
+    "honoPattern": "files/*"
   },
   "children": []
 }

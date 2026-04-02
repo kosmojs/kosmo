@@ -18,5 +18,6 @@
       ]
     }
   ],
-  "pathPattern": ":format"
+  "pathPattern": ":format",
+  "honoPattern": ":format"
 }

@@ -40,5 +40,6 @@
       ]
     }
   ],
-  "pathPattern": "projects/:projectId/tasks"
+  "pathPattern": "projects/:projectId/tasks",
+  "honoPattern": "projects/:projectId/tasks"
 }

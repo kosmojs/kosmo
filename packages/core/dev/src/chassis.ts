@@ -116,10 +116,6 @@ export default async (
           root: createPath.src(),
           base: join(baseurl, "/"),
           plugins,
-          define: {
-            ...config.define,
-            KOSMO_SSR_MODE: "false",
-          },
           resolve: {
             ...config.resolve,
             tsconfigPaths: true,
@@ -222,7 +218,6 @@ export default async (
       },
       define: {
         ...config.define,
-        KOSMO_SSR_MODE: "false",
       },
       cacheDir: cacheDir(sourceFolder, command, "client"),
     });

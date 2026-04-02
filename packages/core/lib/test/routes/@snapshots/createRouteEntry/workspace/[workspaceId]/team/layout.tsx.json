@@ -40,5 +40,6 @@
       ]
     }
   ],
-  "pathPattern": "workspace/:workspaceId/team"
+  "pathPattern": "workspace/:workspaceId/team",
+  "honoPattern": "workspace/:workspaceId/team"
 }

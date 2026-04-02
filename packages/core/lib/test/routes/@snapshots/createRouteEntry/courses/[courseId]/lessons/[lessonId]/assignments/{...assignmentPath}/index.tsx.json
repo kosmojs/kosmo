@@ -77,5 +77,6 @@
       ]
     }
   ],
-  "pathPattern": "courses/:courseId/lessons/:lessonId/assignments{/*assignmentPath}"
+  "pathPattern": "courses/:courseId/lessons/:lessonId/assignments{/*assignmentPath}",
+  "honoPattern": "courses/:courseId/lessons/:lessonId/assignments/*"
 }

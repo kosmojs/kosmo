@@ -3,11 +3,11 @@ import {
   type ResolvedEntry,
   type ValidationTarget,
 } from "@kosmojs/core";
+import { pageRouteMapperHelpers } from "@kosmojs/core/generators";
 import {
   defineGeneratorFactory,
   pathResolver,
   renderFactory,
-  renderHelpers,
   sortRoutes,
 } from "@kosmojs/lib";
 
@@ -22,7 +22,7 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
   const { renderToFile: deployLibFile } = renderFactory({
     helpers: {
       ...createImportHelpers({ origin: "lib" }),
-      createParamsLiteral: renderHelpers.createParamsLiteral,
+      ...pageRouteMapperHelpers(),
     },
   });
 

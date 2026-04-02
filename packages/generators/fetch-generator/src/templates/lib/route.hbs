@@ -25,7 +25,7 @@ export { ValidationError } from "@kosmojs/core/errors";
 export { validationSchemas };
 
 export type ParamsT = [
-  {{createParamsLiteral route.params}}
+  {{serializeParamsTupleElements route}}
 ];
 
 {{#each payloadTypes}}

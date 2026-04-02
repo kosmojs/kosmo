@@ -1,0 +1,41 @@
+/* @jsxImportSource solid-js */
+
+import styles from "./styles.module.css";
+
+export default function PageSample(props: {
+  headline?: string;
+}) {
+  return (
+    <div class={styles.container}>
+      <div class={styles.card}>
+
+        <h2 class={styles.title}>
+          {props.headline || "404: Not Found"}
+        </h2>
+        <br />
+
+        <div class={styles.stepsBox}>
+          <h2 class={styles.stepsTitle}>
+            Something went wrong...
+          </h2>
+          🚧 No page found here
+        </div>
+
+        <div class={styles.footer}>
+          <p class={styles.footerText}>
+            Built for reliability and developer experience
+          </p>
+          <br />
+          <a
+            href="https://kosmojs.dev/"
+            class={styles.docsLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            KosmoJS Documentation ➜
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}

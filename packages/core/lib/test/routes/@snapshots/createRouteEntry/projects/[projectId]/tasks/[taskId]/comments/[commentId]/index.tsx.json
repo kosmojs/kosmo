@@ -77,5 +77,6 @@
       ]
     }
   ],
-  "pathPattern": "projects/:projectId/tasks/:taskId/comments/:commentId"
+  "pathPattern": "projects/:projectId/tasks/:taskId/comments/:commentId",
+  "honoPattern": "projects/:projectId/tasks/:taskId/comments/:commentId"
 }

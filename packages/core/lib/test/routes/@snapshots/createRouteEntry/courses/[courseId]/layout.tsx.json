@@ -29,5 +29,6 @@
       ]
     }
   ],
-  "pathPattern": "courses/:courseId"
+  "pathPattern": "courses/:courseId",
+  "honoPattern": "courses/:courseId"
 }

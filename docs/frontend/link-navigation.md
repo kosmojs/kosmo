@@ -21,7 +21,7 @@ source folder.
 
 ## 🔗 Usage
 
-The API is consistent across all three frameworks - a `to` prop accepting a
+The API is consistent across all frameworks - a `to` prop accepting a
 typed tuple, an optional `query` prop for search parameters, and standard
 router props passed through:
 
@@ -48,7 +48,7 @@ export default function Menu() {
 }
 ```
 
-```vue [Vue · Menu.vue]
+```vue [Menu.vue]
 <script setup lang="ts">
 import Link from "~/components/Link.vue";
 </script>
@@ -80,7 +80,7 @@ query parameters without triggering navigation:
 <Link query={{ filter: "active" }}>Filter Active Items</Link>
 ```
 
-```vue [Vue · Menu.vue]
+```vue [Menu.vue]
 <Link :query="{ filter: 'active' }">Filter Active Items</Link>
 ```
 
@@ -105,144 +105,3 @@ parameters as subsequent array elements - the type system enforces this.
 
 Renaming a route directory produces TypeScript errors at every `Link`
 referencing the old name, turning refactors into an automated checklist.
-
-## 🧱 Component Implementation
-
-::: code-group
-
-```tsx [React · components/Link.tsx]
-import {
-  type LinkProps as RouterLinkProps,
-  Link as RouterLink,
-  useLocation,
-} from "react-router";
-import type { ReactNode } from "react";
-import { stringify } from "@kosmojs/core/fetch";
-
-import { type LinkProps, pageMap } from "_/router";
-import { baseurl } from "../config";
-
-export default function Link(
-  props: Omit<RouterLinkProps, "to"> & {
-    to?: LinkProps;
-    query?: Record<string | number, unknown>;
-    children: ReactNode;
-  },
-) {
-  const { to, query, children, ...restProps } = props;
-  const location = useLocation();
-
-  const href = () => {
-    if (to) {
-      const [key, ...params] = to;
-      return pageMap[key]?.base(params as never, query);
-    }
-    const path = location.pathname.replace(
-      new RegExp(`^${baseurl.replace(/\/+$/, "")}/`),
-      "/",
-    );
-    return query ? [path, stringify(query)].join("?") : path;
-  };
-
-  return (
-    <RouterLink {...restProps} to={href()}>
-      {children}
-    </RouterLink>
-  );
-}
-```
-
-```tsx [SolidJS · components/Link.tsx]
-import { A, type AnchorProps, useLocation } from "@solidjs/router";
-import { type JSXElement, splitProps } from "solid-js";
-import { stringify } from "@kosmojs/core/fetch";
-
-import { unwrap } from "_/unwrap";
-import { type LinkProps, pageMap } from "_/router";
-import { baseurl } from "../config";
-
-export default function Link(
-  props: Omit<AnchorProps, "href"> & {
-    to?: LinkProps;
-    query?: Record<string | number, unknown>;
-    children: JSXElement;
-  },
-) {
-  const [knownProps, restProps] = splitProps(props, ["to", "query", "children"]);
-  const location = useLocation();
-
-  const href = () => {
-    if (knownProps.to) {
-      const [key, ...params] = knownProps.to;
-      return pageMap[key]?.base(params as never, knownProps.query);
-    }
-    const path = location.pathname.replace(
-      new RegExp(`^${baseurl.replace(/\/+$/, "")}/`),
-      "/",
-    );
-    return knownProps.query
-      ? [path, stringify(unwrap(knownProps.query))].join("?")
-      : path;
-  };
-
-  return <A {...{ ...restProps, href: href() }}>{knownProps.children}</A>;
-}
-```
-
-```vue [Vue · components/Link.vue]
-<script setup lang="ts" generic="T extends LinkProps">
-import { computed } from "vue";
-import { RouterLink, useRoute } from "vue-router";
-import { stringify } from "@kosmojs/core/fetch";
-
-import { unwrap } from "_/unwrap";
-import { type LinkProps, pageMap } from "_/router";
-import { baseurl } from "../config";
-
-interface Props {
-  to?: T;
-  query?: Record<string | number, unknown>;
-  replace?: boolean;
-  activeClass?: string;
-  exactActiveClass?: string;
-}
-
-const props = defineProps<Props>();
-const route = useRoute();
-
-const href = computed(() => {
-  if (props.to) {
-    const [key, ...params] = props.to;
-    return pageMap[key]?.base(params as never, props.query);
-  }
-  const path = route.path.replace(
-    new RegExp(`^${baseurl.replace(/\/+$/, "")}/`),
-    "/",
-  );
-  return props.query ? [path, stringify(unwrap(props.query))].join("?") : path;
-});
-</script>
-
-<template>
-  <RouterLink
-    :to="href"
-    :replace="replace"
-    :active-class="activeClass"
-    :exact-active-class="exactActiveClass"
-  >
-    <slot />
-  </RouterLink>
-</template>
-```
-
-:::
-
-A few implementation differences worth noting:
-
-- **SolidJS** uses `splitProps` for reactive-safe prop destructuring, and passes `query` through `unwrap` to handle reactive stores transparently.
-- **Vue** uses `unwrap` on `props.query` for the same reason - `Ref`-wrapped query objects are automatically unwrapped before serialization.
-- **React** destructures props directly; no unwrapping needed since React state is always plain values.
-
-Each component extends its framework's native router link - passing through
-all standard props (`replace`, `state`, `activeClass`, etc.) alongside the
-typed `to` and `query` additions.

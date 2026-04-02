@@ -1,64 +1,7 @@
 import type { ResolvedType } from "tfusion";
-import type { UserConfig } from "vite";
 
-import type { HostOpt } from "@kosmojs/core/fetch";
-
-import type { GeneratorBase } from "./generators";
+import type { SourceFolder } from "./project";
 import type { ValidationDefinition } from "./validation";
-
-export type FolderConfig = Pick<
-  UserConfig,
-  | "publicDir"
-  | "plugins"
-  | "html"
-  | "css"
-  | "json"
-  | "oxc"
-  | "assetsInclude"
-  | "server"
-  | "logLevel"
-  | "customLogger"
-  | "clearScreen"
-  | "envDir"
-  | "envPrefix"
-  | "optimizeDeps"
-  | "ssr"
-  | "dev"
-  | "build"
-  | "define"
-  | "resolve"
-> & {
-  /** Generators to run for this source folder (validation, fetch clients, OpenAPI, etc.) */
-  generators?: Array<GeneratorBase>;
-
-  /**
-   * Name to use for custom runtime validation refinements.
-   * @default "VRefine"
-   * */
-  refineTypeName?: string;
-};
-
-export type SourceFolder = {
-  /** Source folder name, e.g. "front", "admin", "app" */
-  name: string;
-  /** Resolved folder configuration */
-  config: FolderConfig;
-  /** Absolute path to the project root */
-  root: string;
-  /** Base URL this source folder is served from, e.g. "/" or "/admin" */
-  baseurl: string;
-  /** Base URL for API routes, e.g. "/api" */
-  apiurl: string;
-  /** output directory name, configured as `distDir` in package.json */
-  distDir: string;
-};
-
-export type ProjectSettings = {
-  root: string;
-  sourceFolders: Array<SourceFolder>;
-  command: "serve" | "build";
-  devPort: number;
-};
 
 export type PathTokenStaticPart = {
   type: "static";
@@ -106,6 +49,8 @@ export type RouteEntry = {
   pathTokens: Array<PathToken>;
   // path-to-regexp pattern
   pathPattern: string;
+  // hono path pattern
+  honoPattern: string;
 };
 
 export type NestedRouteEntry = {
@@ -139,24 +84,6 @@ export type PageRoute = RouteEntry & {
 };
 
 export type PageLayout = RouteEntry;
-
-export type PageRouteMapperEntry = Pick<
-  PageRoute,
-  "name" | "pathPattern" | "params"
-> & {
-  layouts: Array<string>;
-};
-
-export type PageRouteMapper = <ParamsT extends Array<unknown>>(
-  route: PageRouteMapperEntry,
-) => {
-  match(url: URL): string | undefined;
-  parametrize(params: ParamsT): string;
-  base(params: ParamsT, query?: Record<string, unknown>): string;
-  path(params: ParamsT, query?: Record<string, unknown>): string;
-  href(host: HostOpt, params: ParamsT, query?: Record<string, unknown>): string;
-  layouts(): Array<string>;
-};
 
 export type ResolvedEntry =
   | { kind: "apiRoute"; entry: ApiRoute }
@@ -194,36 +121,6 @@ export type PathParams = {
   text: string;
   properties: Array<{ name: string; type: string }>;
 };
-
-export type WatcherEvent = {
-  kind: "create" | "update" | "delete";
-  file: string;
-};
-
-type RouterFactoryOptions = {
-  route: unknown;
-  router: unknown;
-  app: unknown;
-};
-
-type RouterFactorySignature<T extends RouterFactoryOptions> = {
-  clientRouter: (url?: URL) => Promise<{ router: T["router"]; app: T["app"] }>;
-  serverRouter: (url: URL) => Promise<{ router: T["router"]; app: T["app"] }>;
-};
-
-export type RouterFactory<T extends RouterFactoryOptions> = (
-  factory: (routes: Array<T["route"]>) => RouterFactorySignature<T>,
-) => (routes: Array<T["route"]>) => RouterFactorySignature<T>;
-
-type RenderFactorySignature = {
-  clientRender: () => Promise<void>;
-  serverRender: () => Promise<void>;
-  notFound: () => Promise<void>;
-};
-
-export type RenderFactory = (
-  factory: () => RenderFactorySignature,
-) => Promise<void>;
 
 export type RouteResolverCache = {
   hash: number;

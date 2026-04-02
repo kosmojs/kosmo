@@ -1,30 +1,22 @@
-import type { RenderFactory } from "@kosmojs/core";
+import { clientRenderFactory } from "@kosmojs/core/generators";
 
 {{#each pageEntries}}
 const {{id}} = () => import("{{ createImport "pages" file }}");
 {{/each}}
 
+const NotFound = () => import("{{ createImport "pages" "404.vue" }}");
+
 export const createRoutes = () => {
   return [
     {{#each nestedRoutes}}{{> routePartial}},
     {{/each}}
+    // catch-all 404 - always last
+    {
+      path: "/:catchAll(.*)*",
+      name: "NotFound",
+      component: NotFound,
+    },
   ];
 }
 
-export const renderFactory: RenderFactory = async (factory) => {
-  const {
-    clientRender = fallbackRender("client"),
-    serverRender = fallbackRender("server"),
-  } = factory();
-  if (KOSMO_SSR_MODE) {
-    await serverRender();
-  } else {
-    await clientRender();
-  }
-}
-
-const fallbackRender = (scope: "client" | "server") => {
-  return () => {
-    throw new Error(`${scope}Render not implemented`);
-  }
-}
+export default clientRenderFactory();

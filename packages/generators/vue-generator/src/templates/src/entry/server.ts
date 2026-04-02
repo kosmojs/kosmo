@@ -1,6 +1,6 @@
 import { renderToString } from "vue/server-renderer";
 
-import { renderFactory, createRoutes } from "{{ createImport "libEntry" "server" }}";
+import renderFactory, { createRoutes } from "{{ createImport 'libEntry' 'server' }}";
 import routerFactory from "../router";
 
 const routes = createRoutes();
@@ -8,11 +8,9 @@ const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {
   return {
-    async renderToString(url, { criticalCss }) {
+    async renderToString(url, { assets }) {
       const { app } = await serverRouter(url);
-      const head = criticalCss
-        .map(({ text }) => `<style>${text}</style>`)
-        .join("\n");
+      const head = assets.reduce((a, { tag }) => a + tag, "");
       const html = await renderToString(app);
       return { head, html };
     },

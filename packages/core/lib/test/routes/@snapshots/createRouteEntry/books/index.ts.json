@@ -16,5 +16,6 @@
       ]
     }
   ],
-  "pathPattern": "books"
+  "pathPattern": "books",
+  "honoPattern": "books"
 }

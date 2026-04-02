@@ -18,6 +18,7 @@ import { resolverFactory } from "./resolve";
 
 export * from "./base";
 export * from "./nesting";
+export * from "./paths";
 
 export const routesFactory = async (
   sourceFolder: SourceFolder,

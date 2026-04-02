@@ -29,5 +29,6 @@
       ]
     }
   ],
-  "pathPattern": "projects/:projectId"
+  "pathPattern": "projects/:projectId",
+  "honoPattern": "projects/:projectId"
 }

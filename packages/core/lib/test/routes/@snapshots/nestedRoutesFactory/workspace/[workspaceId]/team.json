@@ -41,7 +41,8 @@
         ]
       }
     ],
-    "pathPattern": "workspace/:workspaceId/team"
+    "pathPattern": "workspace/:workspaceId/team",
+    "honoPattern": "workspace/:workspaceId/team"
   },
   "children": [
     {
@@ -89,7 +90,8 @@
             ]
           }
         ],
-        "pathPattern": "workspace/:workspaceId/team/:memberId/permissions{/*permissionPath}"
+        "pathPattern": "workspace/:workspaceId/team/:memberId/permissions{/*permissionPath}",
+        "honoPattern": "workspace/:workspaceId/team/:memberId/permissions/*"
       },
       "parent": "workspace/[workspaceId]/team",
       "children": []

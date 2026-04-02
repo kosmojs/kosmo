@@ -16,5 +16,6 @@
       ]
     }
   ],
-  "pathPattern": "about"
+  "pathPattern": "about",
+  "honoPattern": "about"
 }

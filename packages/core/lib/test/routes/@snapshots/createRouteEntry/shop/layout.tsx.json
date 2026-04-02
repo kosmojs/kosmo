@@ -16,5 +16,6 @@
       ]
     }
   ],
-  "pathPattern": "shop"
+  "pathPattern": "shop",
+  "honoPattern": "shop"
 }

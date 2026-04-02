@@ -30,7 +30,8 @@
         ]
       }
     ],
-    "pathPattern": "courses/:courseId"
+    "pathPattern": "courses/:courseId",
+    "honoPattern": "courses/:courseId"
   },
   "children": [
     {
@@ -89,7 +90,8 @@
             ]
           }
         ],
-        "pathPattern": "courses/:courseId/lessons/:lessonId/assignments{/*assignmentPath}"
+        "pathPattern": "courses/:courseId/lessons/:lessonId/assignments{/*assignmentPath}",
+        "honoPattern": "courses/:courseId/lessons/:lessonId/assignments/*"
       },
       "parent": "courses/[courseId]",
       "children": []

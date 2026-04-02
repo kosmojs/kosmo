@@ -1,12 +1,12 @@
 import type { ComponentType, PropsWithChildren, JSX } from "react";
 import type { RouteObject } from "react-router";
-import type { RouterFactory } from "@kosmojs/core";
+import { pageRouteMapper, createRouterFactory } from "@kosmojs/core/generators";
 
-import { pagePathFactory } from "./react";
+import { baseurl } from "{{ createImport 'config' }}";
 
 export type LinkProps ={{#unless indexRoutes.length}} never{{/unless}}
   {{#each indexRoutes}}
-  | [ "{{name}}", {{createParamsLiteral params}} ]
+  | [ "{{name}}", {{serializeParamsTupleElements .}} ]
   {{/each}};
 
 export type RouteName ={{#unless indexRoutes.length}} never{{/unless}}
@@ -14,16 +14,16 @@ export type RouteName ={{#unless indexRoutes.length}} never{{/unless}}
   | "{{name}}"
   {{/each}};
 
-export const pageMap = {
+export const routeMap = {
   {{#each indexRoutes}}
-  "{{name}}": pagePathFactory<[ {{createParamsLiteral params}} ]>(
-    {{serializeRoute .}},
-  ),
+  "{{name}}": pageRouteMapper<[
+    {{serializeParamsTupleElements .}}
+  ]>({{serializeRoute .}}, { baseurl }),
   {{/each}}
 };
 
-export const routerFactory: RouterFactory<{
+export const routerFactory = createRouterFactory<{
   app: ComponentType<PropsWithChildren>
   router: JSX.Element,
   route: RouteObject,
-}> = (factory) => factory as never;
+}>();

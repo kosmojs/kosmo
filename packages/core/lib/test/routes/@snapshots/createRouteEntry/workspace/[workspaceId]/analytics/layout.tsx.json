@@ -40,5 +40,6 @@
       ]
     }
   ],
-  "pathPattern": "workspace/:workspaceId/analytics"
+  "pathPattern": "workspace/:workspaceId/analytics",
+  "honoPattern": "workspace/:workspaceId/analytics"
 }

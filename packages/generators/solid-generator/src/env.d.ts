@@ -11,3 +11,41 @@ declare module "*?as=text" {
 declare module "{{ createImport 'config' }}" {
   export const baseurl: string;
 }
+
+declare module "{{ createImport 'lib' 'unwrap' }}" {
+  export const unwrap: Function;
+}
+
+declare module "{{ createImport 'lib' 'router' }}" {
+  import type { JSX, ParentComponent } from "solid-js";
+  import type { RouteDefinition } from "@solidjs/router";
+  import {
+    createRouterFactory,
+    type MappedPageRouteSignature,
+  } from "@kosmojs/core/generators";
+  export type LinkProps = [""];
+  export const routeMap: Record<string, MappedPageRouteSignature>;
+  export const routerFactory = createRouterFactory<{
+    router: JSX.Element;
+    route: RouteDefinition;
+    app: ParentComponent;
+  }>();
+}
+
+declare module "{{ createImport 'libEntry' 'client' }}" {
+  import { clientRenderFactory } from "@kosmojs/core/generators";
+  export const createRoutes: (opt?: { withPreload?: boolean }) => [];
+  export default clientRenderFactory();
+}
+
+declare module "{{ createImport 'libEntry' 'server' }}" {
+  import { serverRenderFactory } from "@kosmojs/core/generators";
+  export const createRoutes: (opt?: { withPreload?: boolean }) => [];
+  export default serverRenderFactory();
+}
+
+declare module "{{ createImport 'lib' 'pageSamples/404.tsx' }}" {
+  import type { Component } from "solid-js";
+  const component: Component;
+  export default component;
+}

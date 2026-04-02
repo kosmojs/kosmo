@@ -17,7 +17,8 @@
         ]
       }
     ],
-    "pathPattern": "products"
+    "pathPattern": "products",
+    "honoPattern": "products"
   },
   "children": [
     {
@@ -41,7 +42,8 @@
             ]
           }
         ],
-        "pathPattern": "products/:id"
+        "pathPattern": "products/:id",
+        "honoPattern": "products/:id"
       },
       "parent": "products",
       "children": []

@@ -53,5 +53,6 @@
       ]
     }
   ],
-  "pathPattern": "properties/:city/filters{/*filters}"
+  "pathPattern": "properties/:city/filters{/*filters}",
+  "honoPattern": "properties/:city/filters/*"
 }

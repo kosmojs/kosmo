@@ -22,5 +22,6 @@
       ]
     }
   ],
-  "pathPattern": "v:version"
+  "pathPattern": "v:version",
+  "honoPattern": ":_0{v[^/]+}"
 }

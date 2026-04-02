@@ -27,5 +27,6 @@
       ]
     }
   ],
-  "pathPattern": "shop/checkout"
+  "pathPattern": "shop/checkout",
+  "honoPattern": "shop/checkout"
 }

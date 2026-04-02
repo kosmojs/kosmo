@@ -6,9 +6,10 @@ import {
   StaticRouterProvider,
 } from "react-router";
 
-import { routerFactory } from "{{ createImport "lib" "router" }}";
-import { baseurl } from "./config";
 import app from "./App";
+
+import { baseurl } from "{{ createImport 'config' }}";
+import { routerFactory } from "{{ createImport 'lib' 'router' }}";
 
 export default routerFactory((routes) => {
   const routeStack = [
@@ -30,19 +31,19 @@ export default routerFactory((routes) => {
       };
     },
     async serverRouter(url) {
-      const result = await handler.query(new Request(url.href));
+      const context = await handler.query(new Request(url.href));
 
-      if (result instanceof Response) {
+      if (context instanceof Response) {
         // handled by SSR server
-        throw result;
+        throw context;
       }
 
-      const router = createStaticRouter(routeStack, result);
+      const router = createStaticRouter(routeStack, context);
 
       return {
-        router: <StaticRouterProvider router={router} context={result} />,
+        router: <StaticRouterProvider router={router} context={context} />,
         app,
-      }
+      };
     },
   };
 });

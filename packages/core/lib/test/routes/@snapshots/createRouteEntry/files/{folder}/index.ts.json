@@ -29,5 +29,6 @@
       ]
     }
   ],
-  "pathPattern": "files{/:folder}"
+  "pathPattern": "files{/:folder}",
+  "honoPattern": "files/:folder?"
 }

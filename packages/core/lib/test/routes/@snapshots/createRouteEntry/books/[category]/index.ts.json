@@ -29,5 +29,6 @@
       ]
     }
   ],
-  "pathPattern": "books/:category"
+  "pathPattern": "books/:category",
+  "honoPattern": "books/:category"
 }

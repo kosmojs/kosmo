@@ -17,7 +17,8 @@
         ]
       }
     ],
-    "pathPattern": "about"
+    "pathPattern": "about",
+    "honoPattern": "about"
   },
   "layout": {
     "id": "about_layout_tsx_2396405898",
@@ -37,7 +38,8 @@
         ]
       }
     ],
-    "pathPattern": "about"
+    "pathPattern": "about",
+    "honoPattern": "about"
   },
   "children": [
     {
@@ -59,7 +61,8 @@
             ]
           }
         ],
-        "pathPattern": "about/careers"
+        "pathPattern": "about/careers",
+        "honoPattern": "about/careers"
       },
       "parent": "about",
       "children": [
@@ -84,7 +87,8 @@
                 ]
               }
             ],
-            "pathPattern": "about/careers{/:jobId}"
+            "pathPattern": "about/careers{/:jobId}",
+            "honoPattern": "about/careers/:jobId?"
           },
           "parent": "about/careers",
           "children": []
@@ -110,7 +114,8 @@
             ]
           }
         ],
-        "pathPattern": "about/team"
+        "pathPattern": "about/team",
+        "honoPattern": "about/team"
       },
       "parent": "about",
       "children": []

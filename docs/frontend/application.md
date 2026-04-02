@@ -54,16 +54,13 @@ export default App;
 ## 🛣️ Router Configuration
 
 The `routerFactory` function connects your root App component and generated
-routes to the framework's native router. It accepts a callback receiving:
-
-- `App` - your root component
-- `routes` - auto-generated route definitions from `KosmoJS`
+routes to the framework's native router.
+It accepts a callback receiving auto-generated route definitions from `KosmoJS`.
 
 The callback must return two functions:
 
 - `clientRouter()` - browser-based routing for client-side navigation
-- `serverRouter({ url })` - server-side routing for SSR, receiving the
-  requested URL
+- `serverRouter(url)` - server-side routing for SSR, receiving the requested URL
 
 ::: code-group
 
@@ -76,33 +73,44 @@ import {
   StaticRouterProvider,
 } from "react-router";
 
-import { routerFactory } from "_/router";
-import { baseurl } from "./config";
+import app from "./App";
 
-export default routerFactory((App, routes) => {
+import { baseurl } from "~/config";
+import { routerFactory } from "_/router";
+
+export default routerFactory((routes) => {
   const routeStack = [
     {
       path: "/",
-      Component: App,
+      Component: app,
       children: routes,
     },
   ];
 
-  return {
-    clientRouter() {
-      const router = createBrowserRouter(routeStack, { basename: baseurl });
-      return <RouterProvider router={router} />;
-    },
-    async serverRouter({ url }) {
-      const handler = createStaticHandler(routeStack, { basename: baseurl });
-      const result = await handler.query(new Request(url.href));
+  const handler = createStaticHandler(routeStack, { basename: baseurl });
 
-      if (result instanceof Response) {
-        throw result; // handled by SSR server
+  return {
+    async clientRouter() {
+      const router = createBrowserRouter(routeStack, { basename: baseurl });
+      return {
+        router: <RouterProvider router={router} />,
+        app,
+      };
+    },
+    async serverRouter(url) {
+      const context = await handler.query(new Request(url.href));
+
+      if (context instanceof Response) {
+        // handled by SSR server
+        throw context;
       }
 
-      const router = createStaticRouter(routeStack, result);
-      return <StaticRouterProvider router={router} context={result} />;
+      const router = createStaticRouter(routeStack, context);
+
+      return {
+        router: <StaticRouterProvider router={router} context={context} />,
+        app,
+      };
     },
   };
 });
@@ -112,50 +120,54 @@ export default routerFactory((App, routes) => {
 import { Router } from "@solidjs/router";
 
 import { routerFactory } from "_/router";
-import { baseurl } from "./config";
+import { baseurl } from "~/config";
+import app from "./App";
 
-export default routerFactory((App, routes) => {
+export default routerFactory((routes) => {
   return {
-    clientRouter() {
-      return (
-        <Router root={App} base={baseurl}>
-          {routes}
-        </Router>
-      );
+    async clientRouter() {
+      return {
+        router: <Router root={app} base={baseurl}>{routes}</Router>,
+        app,
+      };
     },
-    serverRouter({ url }) {
-      return (
-        <Router root={App} base={baseurl} url={url.pathname}>
-          {routes}
-        </Router>
-      );
+    async serverRouter(url) {
+      return {
+        router: <Router root={app} base={baseurl} url={url.pathname}>{routes}</Router>,
+        app,
+      };
     },
-  };
+  }
 });
 ```
 
 ```ts [Vue · router.ts]
+import { createApp, createSSRApp } from "vue";
 import {
   createMemoryHistory,
   createRouter,
   createWebHistory,
 } from "vue-router";
 
-import { routerFactory } from "_/router";
-import { baseurl } from "./config";
+import App from "./App.vue";
 
-export default routerFactory((app, routes) => {
+import { baseurl } from "~/config";
+import { routerFactory } from "_/router";
+
+export default routerFactory((routes) => {
   return {
-    clientRouter() {
+    async clientRouter() {
+      const app = createApp(App);
       const router = createRouter({
         history: createWebHistory(baseurl),
         routes,
         strict: true,
       });
       app.use(router);
-      return router;
+      return { router, app };
     },
-    async serverRouter({ url }) {
+    async serverRouter(url) {
+      const app = createSSRApp(App);
       const router = createRouter({
         history: createMemoryHistory(baseurl),
         routes,
@@ -164,7 +176,7 @@ export default routerFactory((app, routes) => {
       await router.push(url.pathname);
       await router.isReady();
       app.use(router);
-      return router;
+      return { router, app };
     },
   };
 });
@@ -172,7 +184,7 @@ export default routerFactory((app, routes) => {
 
 :::
 
-All three use your source folder's `baseurl` config for correct path-based
+All use your source folder's `baseurl` config for correct path-based
 routing. The generated `routes` are always wrapped inside your `App` component,
 establishing the layout hierarchy.
 
@@ -183,7 +195,7 @@ awaits `router.isReady()` before rendering.
 
 ## 🎯 Application Entry
 
-The `entry/client` file is your application's DOM rendering entry point,
+The `entry/client.tsx` file is your application's DOM rendering entry point,
 referenced from `index.html`:
 
 ```html
@@ -199,32 +211,38 @@ that must return:
 - `clientRender()` - mounts the application fresh in the browser
 - `serverRender()` - hydrates pre-rendered server HTML for interactivity
 
-During SSR builds, the generator embeds an `ssrMode` flag directly into the
-client bundle. On page load, `renderFactory` reads this flag to select the
+During SSR builds, the generator embeds a flag into the client bundle.
+On page load, `renderFactory` reads this flag to select the
 correct path: `serverRender()` for SSR hydration, `clientRender()` for a
 fresh client-only mount.
 
 ::: code-group
 
 ```tsx [React · entry/client.tsx]
-import { hydrateRoot, createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 
-import { renderFactory, createRoutes } from "_/entry/client";
-import App from "../App";
-import createRouter from "../router";
+import { createRoutes, renderFactory } from "_/entry/client";
+
+import NotFound from "../components/404";
+import routerFactory from "../router";
 
 const root = document.getElementById("app");
 
 if (root) {
   const routes = createRoutes({ withPreload: true });
-  renderFactory(async () => {
-    const router = await createRouter(App, routes);
+  const { clientRouter } = routerFactory(routes);
+  renderFactory(() => {
     return {
-      clientRender() {
+      async clientRender() {
+        const { router } = await clientRouter();
         createRoot(root).render(router);
       },
-      serverRender() {
+      async serverRender() {
+        const { router } = await clientRouter();
         hydrateRoot(root, router);
+      },
+      async notFound() {
+        createRoot(root).render(<NotFound />);
       },
     };
   });
@@ -236,52 +254,61 @@ if (root) {
 ```tsx [SolidJS · entry/client.tsx]
 import { hydrate, render } from "solid-js/web";
 
-import { renderFactory, createRoutes } from "_/entry/client";
-import App from "../App";
-import createRouter from "../router";
+import { createRoutes, renderFactory } from "_/entry/client";
+
+import routerFactory from "../router";
+import NotFound from "../components/404";
 
 const root = document.getElementById("app");
 
 if (root) {
   const routes = createRoutes({ withPreload: true });
-  renderFactory(async () => {
-    const router = await createRouter(App, routes);
+  const { clientRouter } = routerFactory(routes);
+  renderFactory(() => {
     return {
-      clientRender() {
+      async clientRender() {
+        const { router } = await clientRouter();
         render(() => router, root);
       },
-      serverRender() {
-        hydrate(() => router, root);
+      async serverRender() {
+        const { router } = await clientRouter();
+        hydrate(() => router, root)
       },
-    };
+      async notFound() {
+        render(NotFound, root);
+      }
+    }
   });
 } else {
-  console.error("Root element not found!");
+  console.error("❗Root element not found!");
 }
 ```
 
 ```ts [Vue · entry/client.ts]
-import { createApp, createSSRApp } from "vue";
+import { createApp } from "vue";
 
-import { renderFactory, createRoutes } from "_/entry/client";
-import App from "../App.vue";
-import createRouter from "../router";
+import { createRoutes, renderFactory } from "_/entry/client";
+
+import NotFound from "../components/404.vue";
+import routerFactory from "../router";
 
 const root = document.getElementById("app");
 
 if (root) {
   const routes = createRoutes();
-  renderFactory(async () => {
+  const { clientRouter } = routerFactory(routes);
+  renderFactory(() => {
     return {
       async clientRender() {
-        const app = createApp(App);
-        await createRouter(app, routes);
+        const { app } = await clientRouter();
         app.mount(root);
       },
       async serverRender() {
-        const app = createSSRApp(App);
-        await createRouter(app, routes);
+        const { app } = await clientRouter();
         app.mount(root, true);
+      },
+      async notFound() {
+        createApp(NotFound).mount(root);
       },
     };
   });
@@ -289,10 +316,8 @@ if (root) {
   console.error("Root element not found!");
 }
 ```
-
 :::
 
-React uses `createRoot`/`hydrateRoot` from `react-dom/client`. SolidJS uses
-`render`/`hydrate` from `solid-js/web`. Vue constructs separate app instances
-via `createApp` and `createSSRApp`, mounting with the hydration flag on the
-SSR path.
+- React uses `createRoot`/`hydrateRoot` from `react-dom/client`.
+- SolidJS uses `render`/`hydrate` from `solid-js/web`.
+- Vue constructs separate app instances via `createApp` and `createSSRApp`, mounting with the hydration flag on the SSR path.

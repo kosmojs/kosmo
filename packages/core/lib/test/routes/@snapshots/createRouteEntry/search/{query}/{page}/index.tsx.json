@@ -42,5 +42,6 @@
       ]
     }
   ],
-  "pathPattern": "search{/:query}{/:page}"
+  "pathPattern": "search{/:query}{/:page}",
+  "honoPattern": "search/:query?/:page?"
 }

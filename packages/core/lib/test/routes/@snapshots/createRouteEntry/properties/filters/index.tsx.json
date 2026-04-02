@@ -27,5 +27,6 @@
       ]
     }
   ],
-  "pathPattern": "properties/filters"
+  "pathPattern": "properties/filters",
+  "honoPattern": "properties/filters"
 }

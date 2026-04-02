@@ -40,5 +40,6 @@
       ]
     }
   ],
-  "pathPattern": "users/:username/followers"
+  "pathPattern": "users/:username/followers",
+  "honoPattern": "users/:username/followers"
 }

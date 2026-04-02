@@ -16,5 +16,6 @@
       ]
     }
   ],
-  "pathPattern": "docs"
+  "pathPattern": "docs",
+  "honoPattern": "docs"
 }

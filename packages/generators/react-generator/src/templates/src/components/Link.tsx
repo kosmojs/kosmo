@@ -6,8 +6,8 @@ import {
 import type { ReactNode } from "react";
 import { stringify } from "@kosmojs/core/fetch";
 
-import { type LinkProps, pageMap } from "{{ createImport "lib" "router" }}";
-import { baseurl } from "../config";
+import { type LinkProps, routeMap } from "{{ createImport 'lib' 'router' }}";
+import { baseurl } from "{{ createImport 'config' }}";
 
 export default function Link(
   props: Omit<RouterLinkProps, "to"> & {
@@ -22,7 +22,7 @@ export default function Link(
   const href = () => {
     if (to) {
       const [key, ...params] = to;
-      return pageMap[key]?.base(params as never, query);
+      return routeMap[key]?.base(params as never, query);
     }
     const path = location.pathname.replace(
       new RegExp(`^${baseurl.replace(/\/+$/, "")}/`),

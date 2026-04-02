@@ -40,5 +40,6 @@
       ]
     }
   ],
-  "pathPattern": "shop/product/:id"
+  "pathPattern": "shop/product/:id",
+  "honoPattern": "shop/product/:id"
 }

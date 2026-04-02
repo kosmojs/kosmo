@@ -66,5 +66,6 @@
       ]
     }
   ],
-  "pathPattern": "admin/:tenant/resources/:type{/*path}"
+  "pathPattern": "admin/:tenant/resources/:type{/*path}",
+  "honoPattern": "admin/:tenant/resources/:type/*"
 }

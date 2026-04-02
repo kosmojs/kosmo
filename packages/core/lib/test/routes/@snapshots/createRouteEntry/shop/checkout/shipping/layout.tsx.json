@@ -38,5 +38,6 @@
       ]
     }
   ],
-  "pathPattern": "shop/checkout/shipping"
+  "pathPattern": "shop/checkout/shipping",
+  "honoPattern": "shop/checkout/shipping"
 }

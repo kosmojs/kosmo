@@ -29,5 +29,6 @@
       ]
     }
   ],
-  "pathPattern": "users/:username"
+  "pathPattern": "users/:username",
+  "honoPattern": "users/:username"
 }

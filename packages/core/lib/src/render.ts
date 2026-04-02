@@ -4,8 +4,6 @@ import { dirname, join } from "node:path";
 import crc from "crc/crc32";
 import handlebars from "handlebars";
 
-import type { PageRoute } from "@kosmojs/core";
-
 import { pathExists } from "./paths";
 
 export type RenderOptions = {
@@ -113,18 +111,4 @@ export const renderFactory = (options?: FactoryOptions) => {
       );
     },
   };
-};
-
-export const renderHelpers = {
-  createParamsLiteral: (params: PageRoute["params"]) => {
-    return params.schema
-      .map((p) => {
-        return p.kind === "splat"
-          ? `${p.const}?: Array<string | number>`
-          : p.kind === "optional"
-            ? `${p.const}?: string | number`
-            : `${p.const}: string | number`;
-      })
-      .join(", ");
-  },
 };

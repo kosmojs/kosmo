@@ -17,7 +17,8 @@
         ]
       }
     ],
-    "pathPattern": "portal"
+    "pathPattern": "portal",
+    "honoPattern": "portal"
   },
   "children": [
     {
@@ -41,7 +42,8 @@
             ]
           }
         ],
-        "pathPattern": "portal/:clientId"
+        "pathPattern": "portal/:clientId",
+        "honoPattern": "portal/:clientId"
       },
       "parent": "portal",
       "children": [
@@ -64,7 +66,8 @@
                 ]
               }
             ],
-            "pathPattern": "portal/:clientId/reports"
+            "pathPattern": "portal/:clientId/reports",
+            "honoPattern": "portal/:clientId/reports"
           },
           "parent": "portal/[clientId]",
           "children": [
@@ -89,7 +92,8 @@
                     ]
                   }
                 ],
-                "pathPattern": "portal/:clientId/reports/:reportType"
+                "pathPattern": "portal/:clientId/reports/:reportType",
+                "honoPattern": "portal/:clientId/reports/:reportType"
               },
               "parent": "portal/[clientId]/reports",
               "children": [
@@ -125,7 +129,8 @@
                         ]
                       }
                     ],
-                    "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView"
+                    "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView",
+                    "honoPattern": "portal/:clientId/reports/:reportType/data/:dataView"
                   },
                   "layout": {
                     "id": "portal_clientId_reports_reportType_data_dataView_layout_tsx_520811149",
@@ -158,7 +163,8 @@
                         ]
                       }
                     ],
-                    "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView"
+                    "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView",
+                    "honoPattern": "portal/:clientId/reports/:reportType/data/:dataView"
                   },
                   "parent": "portal/[clientId]/reports/[reportType]",
                   "children": []

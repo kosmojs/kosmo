@@ -1,7 +1,7 @@
 import { match } from "path-to-regexp";
 import { describe, test } from "vitest";
 
-import { pathTokensFactory } from "@src/routes";
+import { createPathPattern, pathTokensFactory } from "@src/routes";
 
 const map = {
   commonSyntax: {
@@ -107,7 +107,8 @@ describe("pathTokensFactory", () => {
   for (const [group, variants] of Object.entries(map)) {
     describe(group, () => {
       for (const [testName, [original, paths]] of Object.entries(variants)) {
-        const [pathTokens, pathPattern] = pathTokensFactory(original);
+        const pathTokens = pathTokensFactory(original);
+        const pathPattern = createPathPattern(pathTokens);
         const matchFn = match(pathPattern);
         test(testName, async ({ expect }) => {
           await expect(JSON.stringify(pathTokens, null, 2)).toMatchFileSnapshot(

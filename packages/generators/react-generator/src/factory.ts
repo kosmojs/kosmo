@@ -1,13 +1,13 @@
 import picomatch, { type Matcher } from "picomatch";
 
-import type { PageRoute, ResolvedEntry } from "@kosmojs/core";
+import type { ResolvedEntry } from "@kosmojs/core";
+import { pageRouteMapperHelpers } from "@kosmojs/core/generators";
 import {
   defaults,
   defineGeneratorFactory,
   nestedRoutesFactory,
   pathResolver,
   renderFactory,
-  renderHelpers,
   sortRoutes,
 } from "@kosmojs/lib";
 
@@ -18,20 +18,22 @@ import libEntryClientTpl from "./templates/lib/entry/client.hbs";
 import libEntryRoutePartialTpl from "./templates/lib/entry/routePartial.hbs";
 import libEntryServerTpl from "./templates/lib/entry/server.hbs";
 import libEnvDTpl from "./templates/lib/env.d.ts?as=text";
+import libPageSamples404Tpl from "./templates/lib/pageSamples/404.hbs";
 import libPageSamplesPageTpl from "./templates/lib/pageSamples/page.hbs";
 import libPageSamplesStylesTpl from "./templates/lib/pageSamples/styles.css?as=text";
 import libPageSamplesWelcomeTpl from "./templates/lib/pageSamples/welcome.hbs";
 import libReactTpl from "./templates/lib/react.ts?as=text";
 import libRouterTpl from "./templates/lib/router.hbs";
-import srcAppTpl from "./templates/src/App.hbs";
-import srcComponentsLinkTpl from "./templates/src/components/Link.hbs";
-import srcEntryClientTpl from "./templates/src/entry/client.hbs";
-import srcEntryServerTpl from "./templates/src/entry/server.hbs";
+import srcAppTpl from "./templates/src/App.tsx?as=text";
+import srcComponents404Tpl from "./templates/src/components/404.tsx?as=text";
+import srcComponentsLinkTpl from "./templates/src/components/Link.tsx?as=text";
+import srcEntryClientTpl from "./templates/src/entry/client.tsx?as=text";
+import srcEntryServerTpl from "./templates/src/entry/server.tsx?as=text";
 import srcIndexTpl from "./templates/src/index.html?as=text";
 import srcPageSamplesLayoutTpl from "./templates/src/pageSamples/layout.hbs";
 import srcPageSamplesPageTpl from "./templates/src/pageSamples/page.hbs";
 import srcPageSamplesWelcomeTpl from "./templates/src/pageSamples/welcome.hbs";
-import srcRouterTpl from "./templates/src/router.hbs";
+import srcRouterTpl from "./templates/src/router.tsx?as=text";
 
 export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
@@ -40,10 +42,7 @@ export default defineGeneratorFactory<Options>(
     const { renderToFile: deployLibFile } = renderFactory({
       helpers: {
         ...createImportHelpers({ origin: "lib" }),
-        createParamsLiteral: renderHelpers.createParamsLiteral,
-        serializeRoute({ name, pathPattern, params }: PageRoute) {
-          return JSON.stringify({ name, pathPattern, params });
-        },
+        ...pageRouteMapperHelpers(),
       },
       partials: {
         routePartial: libEntryRoutePartialTpl,
@@ -57,10 +56,6 @@ export default defineGeneratorFactory<Options>(
     const customTemplates: Array<[Matcher, string]> = Object.entries({
       ...options?.templates,
     }).map(([pattern, template]) => [picomatch(pattern), template]);
-
-    const { generators = [] } = sourceFolder.config;
-
-    const ssrGenerator = generators.some(({ meta }) => meta.slot === "ssr");
 
     const entriesTraverser = traverseFactory();
 
@@ -117,12 +112,10 @@ export default defineGeneratorFactory<Options>(
         });
       }
 
-      for (const [file, template] of [
-        //
-        ["router.ts", libRouterTpl],
-      ]) {
-        await deployLibFile(createPath.lib(file), template, { indexRoutes });
-      }
+      await deployLibFile(createPath.lib("router.ts"), libRouterTpl, {
+        entries,
+        indexRoutes,
+      });
     };
 
     return {
@@ -137,12 +130,14 @@ export default defineGeneratorFactory<Options>(
           ["pageSamples/styles.module.css", libPageSamplesStylesTpl],
           ["pageSamples/welcome.tsx", libPageSamplesWelcomeTpl],
           ["pageSamples/page.tsx", libPageSamplesPageTpl],
+          ["pageSamples/404.tsx", libPageSamples404Tpl],
         ]) {
           await deployLibFile(createPath.lib(file), template, {});
         }
 
         // deploy global src files that does not change when routes updates
         for (const [file, template] of [
+          ["components/404.tsx", srcComponents404Tpl],
           ["components/Link.tsx", srcComponentsLinkTpl],
           ["App.tsx", srcAppTpl],
           ["router.tsx", srcRouterTpl],
@@ -171,7 +166,7 @@ export default defineGeneratorFactory<Options>(
 
         for (const [file, template] of [
           ["client.tsx", srcEntryClientTpl],
-          ...(ssrGenerator ? [["server.ts", srcEntryServerTpl]] : []),
+          ["server.tsx", srcEntryServerTpl],
         ]) {
           await deploySrcFile(
             createPath.entry(file),

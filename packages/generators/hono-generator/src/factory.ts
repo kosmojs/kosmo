@@ -12,8 +12,8 @@ import type {
   ResolvedEntry,
 } from "@kosmojs/core";
 import {
+  createHonoPattern,
   defineGeneratorFactory,
-  normalizeStaticValue,
   pathResolver,
   pathTokensFactory,
   renderFactory,
@@ -121,7 +121,7 @@ export default defineGeneratorFactory<Options>(
 
           const baseRoute = {
             ...entry,
-            path: pathFactory(entry.pathTokens),
+            path: entry.honoPattern,
             cascadingMiddleware,
           };
 
@@ -129,20 +129,22 @@ export default defineGeneratorFactory<Options>(
             ApiRoute & {
               fullpath: string;
             }
-          > = Object.entries({ ...alias }).flatMap(([url, routeName]) => {
-            const [pathTokens, fullpath] = pathTokensFactory(url);
-            return routeName === entry.name
-              ? [
-                  {
-                    ...baseRoute,
-                    name: url,
-                    id: `${baseRoute.id}_${crc(url)}`,
-                    fullpath,
-                    pathTokens,
-                  },
-                ]
-              : [];
-          });
+          > = Object.entries({ ...options?.alias }).flatMap(
+            ([url, routeName]) => {
+              const pathTokens = pathTokensFactory(url);
+              return routeName === entry.name
+                ? [
+                    {
+                      ...baseRoute,
+                      name: url,
+                      id: `${baseRoute.id}_${crc(url)}`,
+                      fullpath: createHonoPattern(pathTokens),
+                      pathTokens,
+                    },
+                  ]
+                : [];
+            },
+          );
 
           return [baseRoute, ...aliases];
         })
@@ -227,60 +229,3 @@ export default defineGeneratorFactory<Options>(
     };
   },
 );
-
-const pathFactory = (pathTokens: Array<PathToken>) => {
-  const staticValue = ({ value }: PathTokenStaticPart) => {
-    return normalizeStaticValue(value);
-  };
-
-  const paramValue = (p: PathTokenParamPart) => {
-    if (p.kind === "splat") {
-      return `*`;
-    }
-    if (p.kind === "optional") {
-      return `:${p.name}?`;
-    }
-    return `:${p.name}`;
-  };
-
-  return pathTokens
-    .flatMap((token, i) => {
-      if (token.kind === "static") {
-        return [staticValue(token.parts[0] as PathTokenStaticPart)];
-      }
-
-      if (token.kind === "param") {
-        return [paramValue(token.parts[0] as PathTokenParamPart)];
-      }
-
-      // mixed → parse pattern, build regex, emit disposable param
-      const { tokens } = parse(token.pattern.replace(/\//g, ""));
-
-      const regex = tokensToRegex(tokens);
-
-      return [`:_${i}{${regex}}`];
-    })
-    .join("/");
-};
-
-const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-const tokensToRegex = (tokens: Array<Token>): string => {
-  return tokens
-    .flatMap((t) => {
-      if (t.type === "text") {
-        return t.value === "/" ? [] : [escapeRegex(t.value)];
-      }
-      if (t.type === "wildcard") {
-        return [".+"];
-      }
-      if (t.type === "param") {
-        return ["[^/]+"];
-      }
-      if (t.type === "group") {
-        return [`(?:${tokensToRegex(t.tokens)})?`];
-      }
-      return [];
-    })
-    .join("");
-};

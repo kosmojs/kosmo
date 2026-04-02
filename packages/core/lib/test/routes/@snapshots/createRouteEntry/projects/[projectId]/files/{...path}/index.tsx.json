@@ -53,5 +53,6 @@
       ]
     }
   ],
-  "pathPattern": "projects/:projectId/files{/*path}"
+  "pathPattern": "projects/:projectId/files{/*path}",
+  "honoPattern": "projects/:projectId/files/*"
 }

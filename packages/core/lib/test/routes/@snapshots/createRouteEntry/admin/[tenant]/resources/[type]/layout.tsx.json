@@ -53,5 +53,6 @@
       ]
     }
   ],
-  "pathPattern": "admin/:tenant/resources/:type"
+  "pathPattern": "admin/:tenant/resources/:type",
+  "honoPattern": "admin/:tenant/resources/:type"
 }

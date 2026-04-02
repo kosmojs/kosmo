@@ -29,5 +29,6 @@
       ]
     }
   ],
-  "pathPattern": "docs{/*path}"
+  "pathPattern": "docs{/*path}",
+  "honoPattern": "docs/*"
 }

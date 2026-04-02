@@ -17,7 +17,8 @@
         ]
       }
     ],
-    "pathPattern": "search"
+    "pathPattern": "search",
+    "honoPattern": "search"
   },
   "children": [
     {
@@ -41,7 +42,8 @@
             ]
           }
         ],
-        "pathPattern": "search{/:query}"
+        "pathPattern": "search{/:query}",
+        "honoPattern": "search/:query?"
       },
       "parent": "search",
       "children": [
@@ -66,7 +68,8 @@
                 ]
               }
             ],
-            "pathPattern": "search{/:query}{/:page}"
+            "pathPattern": "search{/:query}{/:page}",
+            "honoPattern": "search/:query?/:page?"
           },
           "parent": "search/{query}",
           "children": []

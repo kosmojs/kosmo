@@ -33,5 +33,6 @@
       ]
     }
   ],
-  "pathPattern": "users/:id.json"
+  "pathPattern": "users/:id.json",
+  "honoPattern": "users/:_1{[^/]+\\.json}"
 }

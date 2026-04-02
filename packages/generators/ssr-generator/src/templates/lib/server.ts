@@ -1,19 +1,34 @@
-import { access, chmod, constants, readFile, unlink } from "node:fs/promises";
-import http, { type IncomingMessage, type ServerResponse } from "node:http";
-import { extname, relative, resolve } from "node:path";
-import { parseArgs } from "node:util";
+import { chmod, readFile, unlink } from "node:fs/promises";
+import { extname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { parseArgs, styleText } from "node:util";
 
-import type { SSRManifestEntry, SSRSetup } from "@kosmojs/core";
+import { createAdaptorServer } from "@hono/node-server";
+import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
+import { stream } from "hono/streaming";
+import { glob } from "tinyglobby";
 
-import { routeMap } from "./@ssr/routes";
+import type { SSROptions, SSRSetup } from "@kosmojs/core";
+
+import { routeMap } from "./router";
 
 import { baseurl } from "{{ createImport 'config' }}";
+
+const CWD = import.meta.dirname;
 
 /**
  * Root directory where Vite client assets are emitted.
  * This is used both for serving static files and for reading index.html + manifest.
  * */
-const STATIC_DIR = resolve(import.meta.dirname, "../client");
+const CLIENT_ASSETS_DIR = "../client";
+
+/**
+ * Vite also emits server-related assets that should be embeded into page.
+ * */
+const SERVER_ASSETS_DIR = ".";
+
+const SERVE_STATIC_ASSETS = JSON.parse("{{serveStaticAssets}}");
 
 const REDIRECT_CODES = [
   // Moved Permanently
@@ -29,278 +44,198 @@ const REDIRECT_CODES = [
 ];
 
 type AssetInfo = {
+  file: string;
   // Raw file contents kept in memory for fast, zero-I/O responses.
   // Can be undefined if `serveStaticAssets` option is false.
-  buffer: Buffer | undefined;
+  buffer: Uint8Array | undefined;
   // HTTP Content-Type header for this asset (derived from extension).
   contentType: string;
   // Cached size to set Content-Length without re-measuring the buffer.
-  size: number;
+  size: number | undefined;
 };
 
-type Manifest = Record<string, SSRManifestEntry>;
+export const createApp = async () => {
+  console.log("\n  ➜ Loading Assets");
 
-type ResolvedAsset = {
-  kind: "js" | "css" | "asset";
-  path: string;
-  // All manifest paths that uses this asset
-  use: Set<string>;
-};
-
-export const requestHandlerFactory = ({
-  template,
-  ssrSetup,
-  assetCache,
-  manifest,
-}: {
-  // index.html from client build (contains <!--app-head--> and <!--app-html-->)
-  template: string;
-  // user-provided SSR factory
-  ssrSetup: SSRSetup;
-  // a map of all built assets (for serving static files)
-  assetCache: Map<string, AssetInfo>;
-  // raw Vite manifest.json for advanced SSR uses
-  manifest: Manifest;
-}) => {
-  return async (request: IncomingMessage, response: ServerResponse) => {
-    // If Node's IncomingMessage somehow lacks URL, treat as a server error.
-    if (request.url === undefined) {
-      response.writeHead(500, { "Content-Type": "text/html" });
-      response.end("<h1>500: Server Error</h1>");
-      return;
-    }
-
-    // Normalize the request URL into a pathname to match against routes.
-    const { pathname } = new URL(request.url, `http://${request.headers.host}`);
-
-    // Strip baseurl to get the internal route path.
-    const path = relative(baseurl, pathname);
-
-    // If incoming request path matches something cached at startup, serve it directly.
-    // This covers JS, CSS, images, fonts, etc., including their .map siblings.
-    const asset = assetCache.get(path);
-
-    if (asset) {
-      if (asset.buffer) {
-        response.writeHead(200, {
-          "Content-Type": asset.contentType,
-          "Content-Length": asset.size,
-        });
-        response.end(asset.buffer);
-      } else {
-        // file could not be read or `serveStaticAssets` option is false
-        response.writeHead(404, { "Content-Type": "text/html" });
-        response.end("<h1>404: Not Found</h1>");
-      }
-      return;
-    }
-
-    const url = new URL(request.url, `http://${request.headers.host}`);
-
-    // Match incoming request path (e.g., "/products/123") against
-    // pre-compiled route patterns (e.g., "/products/:id")
-    const route = routeMap.find(({ match }) => match(path));
-
-    // Ask the user-provided SSR factory to produce rendering methods
-    const { renderToString, renderToStream } = ssrSetup;
-
-    if (!route) {
-      // not a static file and no route matched, return 404
-      response.writeHead(404, { "Content-Type": "text/html" });
-      response.end("<h1>404: Not Found</h1>");
-      return;
-    }
-
-    // There is a route matched, prepare response for SSR pipelines.
-    response.writeHead(200, {
-      "Content-Type": "text/html",
-      "Transfer-Encoding": "chunked",
-    });
-
-    try {
-      if (renderToStream) {
-        // Mode 1: streaming SSR.
-        //
-        // - renderToStream is responsible for writing HTML chunks into `response`.
-        // - Provided renderer can decide when to:
-        //     - start the shell,
-        //     - hydrate with client-side routes/assets.
-        // - The renderer **must call `response.end()`** when streaming is finished,
-        //   otherwise the HTTP request will remain open and the client will hang.
-        //
-        // This gives frameworks full control for advanced streaming strategies
-        // (e.g., suspense boundaries, progressive hydration, selective re-render).
-        await renderToStream(url, {
-          template,
-          manifest,
-          request,
-          response,
-        });
-        return;
-      }
-
-      if (renderToString) {
-        // Mode 2: string-based SSR.
-        //
-        // - renderToString() returns { head, html } for the current route.
-        // - Splice that into the Vite-generated index.html template by replacing:
-        //   - <!--app-head--> with collected head tags (CSS + optional user head)
-        //   - <!--app-html--> with the app HTML markup
-        //
-        // This mode is simple and works well when you don't need streaming.
-        const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
-        const { head, html } = await renderToString(url, {
-          template,
-          manifest,
-          request,
-          response,
-        });
-        response.write(htmlStart.replace("<!--app-head-->", head ?? ""));
-        response.write(html);
-        response.write(htmlEnd);
-        response.end();
-        return;
-      }
-
-      // SSR factory returned neither mode
-      response.writeHead(501, { "Content-Type": "text/html" });
-      response.end("<h1>501: Not Implemented</h1>");
-    } catch (error) {
-      // Handle thrown Response instances as redirects.
-      // Re-throw other errors for upstream handling.
-      if (error instanceof Response) {
-        const Location = error.headers.get("Location");
-
-        if (!Location || !REDIRECT_CODES.includes(error.status)) {
-          response.writeHead(500, { "Content-Type": "text/html" });
-          response.end("<h1>500: Malformed redirect</h1>");
-          return;
-        }
-
-        response.writeHead(error.status, { Location });
-        response.end();
-        return;
-      }
-      throw error;
-    }
-  };
-};
-
-/**
- * Traverse Vite's manifest graph and build a plain asset list.
- * */
-const resolveAssets = (manifest: Manifest): Array<ResolvedAsset> => {
-  const traverse = (
-    key: string,
-    entry: SSRManifestEntry,
-    data: {
-      resolvedAssets: Record<string, ResolvedAsset>;
-      visiting: Set<string>;
-      use: Set<string>;
-    },
-  ): Record<string, ResolvedAsset> => {
-    // Protect against cyclic graphs (just in case Rollup creates loops).
-    if (data.visiting.has(key)) {
-      return data.resolvedAssets;
-    }
-
-    const visiting = new Set(data.visiting).add(key);
-
-    // Start with a copy of resolvedAssets
-    const resolvedAssets = { ...data.resolvedAssets };
-
-    const use = new Set([...data.use, key]);
-
-    const createAsset = (path: string, kind: ResolvedAsset["kind"]) => {
-      return {
-        kind,
-        path,
-        // Each step extends the list of manifest paths that "use" this entry
-        use: new Set([...(resolvedAssets[path]?.use || []), ...use]),
-      };
-    };
-
-    // Register JS assets produced by this manifest entry.
-    if (entry.file?.endsWith(".js")) {
-      resolvedAssets[entry.file] = createAsset(entry.file, "js");
-    }
-
-    // Register any CSS chunks associated with this entry.
-    for (const path of entry.css || []) {
-      resolvedAssets[path] = createAsset(path, "css");
-    }
-
-    // Register any additional assets (images, fonts, etc.).
-    for (const path of entry.assets || []) {
-      resolvedAssets[path] = createAsset(path, "asset");
-    }
-
-    // Recursively traverse both static and dynamic imports to propagate ancestry.
-    for (const key of [
-      ...(entry.imports || []),
-      ...(entry.dynamicImports || []),
-    ]) {
-      // Skip Vite's synthetic index.html key; it's not a real module.
-      const entry = key === "index.html" ? undefined : manifest[key];
-      if (entry) {
-        Object.assign(
-          resolvedAssets,
-          traverse(key, entry, {
-            resolvedAssets,
-            visiting,
-            use,
-          }),
-        );
-      }
-    }
-
-    return resolvedAssets;
-  };
-
-  const resolvedAssets = Object.entries(manifest).reduce(
-    (resolvedAssets: Record<string, ResolvedAsset>, [key, entry]) => {
-      return traverse(key, entry, {
-        resolvedAssets,
-        visiting: new Set(),
-        use: new Set(),
-      });
-    },
-    {},
+  // Read the client index.html that includes <!--app-head--> and <!--app-html-->
+  // placeholders used for SSR injection.
+  const template = await readFile(
+    resolve(CWD, `${CLIENT_ASSETS_DIR}/index.html`),
+    "utf8",
   );
 
-  return Object.values(resolvedAssets);
+  // Import the SSR entry produced by Vite's ssr build.
+  const { renderToString, renderToStream }: SSRSetup = await import(
+    resolve(CWD, "app.js")
+  ).then((e) => e.default);
+
+  // Load the Vite manifest
+  const manifest = await import(
+    resolve(CWD, `${CLIENT_ASSETS_DIR}/.vite/manifest.json`),
+    { with: { type: "json" } }
+  ).then((e) => e.default);
+
+  // Read all assets into an in-memory cache, optionally with content.
+  const assetCache = await loadAssets();
+
+  const app = new Hono({ strict: false });
+
+  const ssrOptions = (): SSROptions => {
+    return {
+      template,
+      manifest,
+      assets: [...assetCache.entries()].flatMap(
+        ([path, { file, buffer, size }]) => {
+          if (file.startsWith(CLIENT_ASSETS_DIR)) {
+            return [];
+          }
+
+          const kind = path.endsWith(".js")
+            ? "js"
+            : path.endsWith(".css")
+              ? "css"
+              : undefined;
+
+          if (!kind) {
+            return [];
+          }
+
+          const tag =
+            kind === "js"
+              ? `<script type="module" crossorigin src="${path}"></script>`
+              : `<link rel="stylesheet" crossorigin href="${path}" />`;
+
+          return {
+            tag,
+            kind,
+            path,
+            content: buffer ? new TextDecoder().decode(buffer) : undefined,
+            size,
+          };
+        },
+      ),
+    };
+  };
+
+  const renderPage = async (url: URL) => {
+    const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
+
+    const { head, html } = await renderToString(url, ssrOptions());
+
+    return [
+      htmlStart.replace("<!--app-head-->", head ?? ""),
+      html ?? "",
+      htmlEnd,
+    ].join("\n");
+  };
+
+  for (const { honoPattern } of Object.values(routeMap)) {
+    app.get(join(baseurl, honoPattern), async (ctx) => {
+      try {
+        const url = new URL(ctx.req.url);
+
+        if (typeof renderToStream === "function") {
+          // Mode 1: streaming SSR.
+          //
+          // - renderToStream is responsible for writing HTML chunks into `response`.
+          // - Provided renderer can decide when to:
+          //     - start the shell,
+          //     - hydrate with client-side routes/assets.
+          //
+          // This gives frameworks full control for advanced streaming strategies
+          // (e.g., suspense boundaries, progressive hydration, selective re-render).
+          return stream(ctx, async (stream) => {
+            await renderToStream(url, ssrOptions(), stream);
+          });
+        }
+
+        if (typeof renderToString === "function") {
+          // Mode 2: string-based SSR.
+          //
+          // - renderToString() returns { head, html } for the current route.
+          // - Splice that into the Vite-generated index.html template by replacing:
+          //   - <!--app-head--> with collected head tags (CSS + optional user head)
+          //   - <!--app-html--> with the app HTML markup
+          //
+          // This mode is simple and works well when you don't need streaming.
+          const page = await renderPage(url);
+          return ctx.html(page);
+        }
+
+        // SSR factory returned neither mode
+        ctx.status(501);
+        return ctx.html("<h1>501: Not Implemented</h1>");
+      } catch (error: any) {
+        // Handle thrown Response instances as redirects.
+        // Re-throw other errors for upstream handling.
+        if (error instanceof Response) {
+          const Location = error.headers.get("Location");
+
+          if (!Location || !REDIRECT_CODES.includes(error.status)) {
+            ctx.status(500);
+            return ctx.html("<h1>500: Malformed redirect</h1>");
+          }
+
+          return ctx.redirect(Location, error.status as never);
+        }
+        throw new HTTPException(500, { message: error.message, cause: error });
+      }
+    });
+  }
+
+  app.get("/*", async (ctx) => {
+    // If incoming request path matches something cached at startup, serve it directly.
+    // This covers JS, CSS, images, fonts, etc., including their .map siblings.
+    const asset = assetCache.get(ctx.req.path);
+
+    if (asset) {
+      return asset.buffer
+        ? new Response(asset.buffer as never, {
+            headers: {
+              "Content-Type": asset.contentType,
+              "Content-Length": String(asset.size),
+            },
+          })
+        : ctx.notFound();
+    }
+
+    if (typeof renderToString === "function") {
+      const url = new URL(ctx.req.url);
+      const page = await renderPage(url);
+      ctx.status(404);
+      return ctx.html(page);
+    }
+
+    return ctx.notFound();
+  });
+
+  return app;
 };
 
 /**
- * Build an in-memory asset graph from the resolved Vite manifest entries,
- * optionally loading asset content into memory depending on deployment mode.
+ * Build an in-memory asset graph,
+ * optionally loading asset content into memory,
+ * depending on deployment mode.
  *
  * The asset graph always includes every built asset URL so the SSR server
- * can correctly:
- *   • recognize static asset requests,
- *   • return 404 when `serveStaticAssets === false`,
- *   • and support inline CSS even when other assets are externally served.
+ * can correctly recognize static asset requests
+ * and return 404 when `serveStaticAssets` explicitly set to false.
  *
- * Behavior depends on `loadIntoMemory` (mirrors SSR option `serveStaticAssets`):
+ * Behavior depends on `serveStaticAssets` option:
  *
- *   loadIntoMemory = true   (default)
- *     → All assets produced by the build (JS, CSS, images, fonts, …)
+ *   when true (default)
+ *     → All assets produced by the build (JS, CSS, images, fonts, etc.)
  *       are read into memory as Buffers at server startup.
  *     → The SSR server is fully responsible for serving static assets.
- *     → Fastest per-request performance (no filesystem I/O).
  *
- *   loadIntoMemory = false
+ *   when false
  *     → Asset URLs are still registered in the cache,
  *       but with *no* Buffer content.
- *     → Browser requests to those asset URLs will return `404`
- *       unless served by a proxy/CDN/static host.
- *     → Ideal when a reverse proxy is expected to serve static assets.
+ *     → Browser requests to those asset URLs will return `404` when hitting SSR server.
  *
+ * Set `serveStaticAssets` to false when a reverse proxy or CDN is expected to serve static assets.
  * */
-export const loadAssets = async (
-  resolvedAssets: Array<ResolvedAsset>,
-  loadIntoMemory: boolean,
-) => {
+export const loadAssets = async () => {
   const mimeTypeMap: Record<string, string> = {
     ".js": "application/javascript",
     ".mjs": "application/javascript",
@@ -328,113 +263,69 @@ export const loadAssets = async (
   // Map from URL path (as used in requests) to asset metadata.
   const assetCache = new Map<string, AssetInfo>();
 
-  // Load files into memory at server start (unless loadIntoMemory is false).
-  await Promise.all(
-    resolvedAssets.map(async ({ path }) => {
-      const filePath = resolve(STATIC_DIR, path);
-
-      const buffer = loadIntoMemory ? await readFile(filePath) : undefined;
-
-      assetCache.set(path, {
-        buffer,
-        contentType: contentTypeResolver(filePath),
-        size: buffer?.length || 0,
-      });
-
-      // Attempt to preload sourcemaps for JS/CSS as well (if they exist).
-      if (/.(m?js|css)$/i.test(filePath)) {
-        try {
-          await access(`${filePath}.map`, constants.F_OK);
-          const buffer = loadIntoMemory //
-            ? await readFile(`${filePath}.map`)
-            : undefined;
-          assetCache.set(`${path}.map`, {
-            buffer,
-            contentType: "application/json",
-            size: buffer?.length || 0,
-          });
-        } catch {
-          return;
-        }
-      }
-    }),
+  const files = await glob(
+    [CLIENT_ASSETS_DIR, SERVER_ASSETS_DIR].map((e) => `${e}/assets/**`),
+    {
+      cwd: CWD,
+      onlyFiles: true,
+      absolute: false,
+    },
   );
+
+  for (const file of files) {
+    const path = resolve(CWD, file);
+
+    const buffer = SERVE_STATIC_ASSETS
+      ? new Uint8Array(await readFile(path))
+      : undefined;
+
+    const key = resolve(
+      baseurl,
+      file.startsWith(CLIENT_ASSETS_DIR)
+        ? file.replace(CLIENT_ASSETS_DIR, "")
+        : file,
+    );
+
+    assetCache.set(key, {
+      file,
+      buffer,
+      contentType: contentTypeResolver(path),
+      size: buffer?.length,
+    });
+  }
 
   return assetCache;
 };
 
-/**
- * Bootstraps the HTTP server:
- * - reads the HTML template (Vite client index.html)
- * - loads the SSR bundle (app.js)
- * - imports Vite's manifest.json
- * - resolves assets
- * - wires everything into an http.createServer handler
- *
- * Export the server factory so tests or higher-level tools can use it if needed.
- * */
-export const createServer = async () => {
-  // Read the client index.html that includes <!--app-head--> and <!--app-html-->
-  // placeholders used for SSR injection.
-  const template = await readFile(resolve(STATIC_DIR, "index.html"), "utf8");
+const isMain = fileURLToPath(import.meta.url) === resolve(process.argv[1]);
 
-  // Import the SSR entry produced by Vite's ssr build.
-  const ssrSetup: SSRSetup = await import(
-    resolve(import.meta.dirname, "app.js")
-  ).then((e) => e.default);
-
-  // Load the Vite manifest so we can understand the final asset graph.
-  const manifest: Manifest = await import(
-    resolve(STATIC_DIR, ".vite/manifest.json"),
-    { with: { type: "json" } }
-  ).then((e) => e.default);
-
-  // Turn the manifest into ResolvedAsset records with dependency paths.
-  const resolvedAssets = resolveAssets(manifest);
-
-  // Read all assets from disk into an in-memory cache (Buffers).
-  const assetCache = await loadAssets(
-    resolvedAssets,
-    "serveStaticAssets" in ssrSetup ? ssrSetup.serveStaticAssets : true,
-  );
-
-  // Create the HTTP server using the factory configured above.
-  // For CSS assets also precompute their text form for inlining.
-  const server = http.createServer(
-    requestHandlerFactory({
-      template,
-      ssrSetup,
-      assetCache,
-      manifest,
-    }),
-  );
-
-  return server;
-};
-
-/**
- * Parse CLI arguments so this file can be used both as a module
- * and a standalone executable
- * */
-const {
-  values: { port, sock },
-} = parseArgs({
-  options: {
-    port: {
-      type: "string",
-      short: "p",
+if (isMain) {
+  /**
+   * Parse CLI arguments so this file can be used both as a module
+   * and a standalone executable
+   * */
+  const {
+    values: { port, sock },
+  } = parseArgs({
+    options: {
+      port: {
+        type: "string",
+        short: "p",
+      },
+      sock: {
+        type: "string",
+        short: "s",
+      },
     },
-    sock: {
-      type: "string",
-      short: "s",
-    },
-  },
-});
+  });
 
-/**
- * If either a TCP port or a Unix socket is provided, start listening.
- * */
-if (port || sock) {
+  if (![sock, port].some(Boolean)) {
+    console.error(
+      styleText("red", "✗ Please provide either -p/--port or -s/--sock"),
+    );
+    process.exit(1);
+  }
+
   if (sock) {
     // Clean up any stale socket file before binding.
     await unlink(sock).catch((error) => {
@@ -446,18 +337,35 @@ if (port || sock) {
     });
   }
 
-  console.log("\n  ➜ Loading Assets");
+  const app = await createApp();
 
-  const server = await createServer();
+  console.log(
+    `\n  ➜ Starting Server ${styleText(["dim"], "[ %s ]")}`,
+    sock ? `sock: ${sock}` : `port: ${port}`,
+  );
 
-  console.log("\n  ➜ Starting Server", { port, sock });
-
-  server.listen(port || sock, async () => {
+  const onListen = async () => {
     if (sock) {
-      // Make Unix socket world-writable so other processes (e.g. a parent runner)
+      // Make Unix socket world-writable so other processes (e.g. a reverse proxy)
       // can connect without permission issues.
       await chmod(sock, 0o777);
     }
     console.log("\n  ➜ Server Started ✨");
-  });
+  };
+
+  if (typeof Bun !== "undefined") {
+    Bun.serve(
+      sock
+        ? { unix: sock, fetch: app.fetch }
+        : { port: Number(port), fetch: app.fetch },
+    );
+    await onListen();
+  } else if (typeof Deno !== "undefined") {
+    sock
+      ? Deno.serve({ path: sock, onListen }, app.fetch)
+      : Deno.serve({ port: Number(port), onListen }, app.fetch);
+  } else {
+    const server = createAdaptorServer(app);
+    server.listen(sock || port, onListen);
+  }
 }

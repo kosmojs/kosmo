@@ -41,7 +41,8 @@
         ]
       }
     ],
-    "pathPattern": "workspace/:workspaceId/analytics"
+    "pathPattern": "workspace/:workspaceId/analytics",
+    "honoPattern": "workspace/:workspaceId/analytics"
   },
   "layout": {
     "id": "workspace_workspaceId_analytics_layout_tsx_2018023528",
@@ -85,7 +86,8 @@
         ]
       }
     ],
-    "pathPattern": "workspace/:workspaceId/analytics"
+    "pathPattern": "workspace/:workspaceId/analytics",
+    "honoPattern": "workspace/:workspaceId/analytics"
   },
   "children": [
     {
@@ -109,7 +111,8 @@
             ]
           }
         ],
-        "pathPattern": "workspace/:workspaceId/analytics/:range"
+        "pathPattern": "workspace/:workspaceId/analytics/:range",
+        "honoPattern": "workspace/:workspaceId/analytics/:range"
       },
       "layout": {
         "id": "workspace_workspaceId_analytics_range_layout_tsx_2317889146",
@@ -131,7 +134,8 @@
             ]
           }
         ],
-        "pathPattern": "workspace/:workspaceId/analytics/:range"
+        "pathPattern": "workspace/:workspaceId/analytics/:range",
+        "honoPattern": "workspace/:workspaceId/analytics/:range"
       },
       "parent": "workspace/[workspaceId]/analytics",
       "children": []

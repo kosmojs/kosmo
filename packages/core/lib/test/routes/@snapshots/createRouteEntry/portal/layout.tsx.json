@@ -16,5 +16,6 @@
       ]
     }
   ],
-  "pathPattern": "portal"
+  "pathPattern": "portal",
+  "honoPattern": "portal"
 }

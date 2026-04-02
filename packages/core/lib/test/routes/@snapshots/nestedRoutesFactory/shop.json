@@ -17,7 +17,8 @@
         ]
       }
     ],
-    "pathPattern": "shop"
+    "pathPattern": "shop",
+    "honoPattern": "shop"
   },
   "layout": {
     "id": "shop_layout_tsx_933036490",
@@ -37,7 +38,8 @@
         ]
       }
     ],
-    "pathPattern": "shop"
+    "pathPattern": "shop",
+    "honoPattern": "shop"
   },
   "children": [
     {
@@ -72,7 +74,8 @@
             ]
           }
         ],
-        "pathPattern": "shop/product/:id"
+        "pathPattern": "shop/product/:id",
+        "honoPattern": "shop/product/:id"
       },
       "layout": {
         "id": "shop_product_id_layout_tsx_2232356331",
@@ -105,7 +108,8 @@
             ]
           }
         ],
-        "pathPattern": "shop/product/:id"
+        "pathPattern": "shop/product/:id",
+        "honoPattern": "shop/product/:id"
       },
       "parent": "shop",
       "children": [
@@ -128,7 +132,8 @@
                 ]
               }
             ],
-            "pathPattern": "shop/product/:id/reviews"
+            "pathPattern": "shop/product/:id/reviews",
+            "honoPattern": "shop/product/:id/reviews"
           },
           "parent": "shop/product/[id]",
           "children": []
@@ -154,7 +159,8 @@
             ]
           }
         ],
-        "pathPattern": "shop/cart"
+        "pathPattern": "shop/cart",
+        "honoPattern": "shop/cart"
       },
       "parent": "shop",
       "children": []
@@ -178,7 +184,8 @@
             ]
           }
         ],
-        "pathPattern": "shop/checkout"
+        "pathPattern": "shop/checkout",
+        "honoPattern": "shop/checkout"
       },
       "parent": "shop",
       "children": [
@@ -201,7 +208,8 @@
                 ]
               }
             ],
-            "pathPattern": "shop/checkout/confirm"
+            "pathPattern": "shop/checkout/confirm",
+            "honoPattern": "shop/checkout/confirm"
           },
           "parent": "shop/checkout",
           "children": []
@@ -225,7 +233,8 @@
                 ]
               }
             ],
-            "pathPattern": "shop/checkout/payment"
+            "pathPattern": "shop/checkout/payment",
+            "honoPattern": "shop/checkout/payment"
           },
           "parent": "shop/checkout",
           "children": []
@@ -249,7 +258,8 @@
                 ]
               }
             ],
-            "pathPattern": "shop/checkout/shipping"
+            "pathPattern": "shop/checkout/shipping",
+            "honoPattern": "shop/checkout/shipping"
           },
           "layout": {
             "id": "shop_checkout_shipping_layout_tsx_1955886922",
@@ -269,7 +279,8 @@
                 ]
               }
             ],
-            "pathPattern": "shop/checkout/shipping"
+            "pathPattern": "shop/checkout/shipping",
+            "honoPattern": "shop/checkout/shipping"
           },
           "parent": "shop/checkout",
           "children": []
@@ -295,7 +306,8 @@
             ]
           }
         ],
-        "pathPattern": "shop/orders"
+        "pathPattern": "shop/orders",
+        "honoPattern": "shop/orders"
       },
       "layout": {
         "id": "shop_orders_layout_tsx_1560526654",
@@ -315,7 +327,8 @@
             ]
           }
         ],
-        "pathPattern": "shop/orders"
+        "pathPattern": "shop/orders",
+        "honoPattern": "shop/orders"
       },
       "parent": "shop",
       "children": [
@@ -340,7 +353,8 @@
                 ]
               }
             ],
-            "pathPattern": "shop/orders/:orderId"
+            "pathPattern": "shop/orders/:orderId",
+            "honoPattern": "shop/orders/:orderId"
           },
           "parent": "shop/orders",
           "children": []
@@ -366,7 +380,8 @@
             ]
           }
         ],
-        "pathPattern": "shop/products"
+        "pathPattern": "shop/products",
+        "honoPattern": "shop/products"
       },
       "layout": {
         "id": "shop_products_layout_tsx_3463733314",
@@ -386,7 +401,8 @@
             ]
           }
         ],
-        "pathPattern": "shop/products"
+        "pathPattern": "shop/products",
+        "honoPattern": "shop/products"
       },
       "parent": "shop",
       "children": [
@@ -411,7 +427,8 @@
                 ]
               }
             ],
-            "pathPattern": "shop/products{/:category}"
+            "pathPattern": "shop/products{/:category}",
+            "honoPattern": "shop/products/:category?"
           },
           "parent": "shop/products",
           "children": []
@@ -452,7 +469,8 @@
             ]
           }
         ],
-        "pathPattern": "shop/:category/:productId"
+        "pathPattern": "shop/:category/:productId",
+        "honoPattern": "shop/:category/:productId"
       },
       "layout": {
         "id": "shop_category_productId_layout_tsx_2723777336",
@@ -487,7 +505,8 @@
             ]
           }
         ],
-        "pathPattern": "shop/:category/:productId"
+        "pathPattern": "shop/:category/:productId",
+        "honoPattern": "shop/:category/:productId"
       },
       "parent": "shop",
       "children": []

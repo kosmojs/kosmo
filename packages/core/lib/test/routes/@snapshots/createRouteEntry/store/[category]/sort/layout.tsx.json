@@ -40,5 +40,6 @@
       ]
     }
   ],
-  "pathPattern": "store/:category/sort"
+  "pathPattern": "store/:category/sort",
+  "honoPattern": "store/:category/sort"
 }

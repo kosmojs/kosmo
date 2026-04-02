@@ -16,5 +16,6 @@
       ]
     }
   ],
-  "pathPattern": "users"
+  "pathPattern": "users",
+  "honoPattern": "users"
 }

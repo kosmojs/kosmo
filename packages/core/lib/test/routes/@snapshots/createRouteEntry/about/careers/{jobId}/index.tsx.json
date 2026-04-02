@@ -40,5 +40,6 @@
       ]
     }
   ],
-  "pathPattern": "about/careers{/:jobId}"
+  "pathPattern": "about/careers{/:jobId}",
+  "honoPattern": "about/careers/:jobId?"
 }

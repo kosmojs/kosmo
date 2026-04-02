@@ -40,5 +40,6 @@
       ]
     }
   ],
-  "pathPattern": "shop/products{/:category}"
+  "pathPattern": "shop/products{/:category}",
+  "honoPattern": "shop/products/:category?"
 }

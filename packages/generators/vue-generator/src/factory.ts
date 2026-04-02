@@ -1,17 +1,13 @@
 import picomatch, { type Matcher } from "picomatch";
 
-import type {
-  PageRoute,
-  PageRouteMapperEntry,
-  ResolvedEntry,
-} from "@kosmojs/core";
+import type { ResolvedEntry } from "@kosmojs/core";
+import { pageRouteMapperHelpers } from "@kosmojs/core/generators";
 import {
   defaults,
   defineGeneratorFactory,
   nestedRoutesFactory,
   pathResolver,
   renderFactory,
-  renderHelpers,
   sortRoutes,
 } from "@kosmojs/lib";
 
@@ -22,34 +18,31 @@ import libEntryClientTpl from "./templates/lib/entry/client.hbs";
 import libEntryRoutePartialTpl from "./templates/lib/entry/routePartial.hbs";
 import libEntryServerTpl from "./templates/lib/entry/server.hbs";
 import libEnvDTpl from "./templates/lib/env.d.ts?as=text";
+import libPageSamples404Tpl from "./templates/lib/pageSamples/404.hbs";
 import libPageSamplesPageTpl from "./templates/lib/pageSamples/page.hbs";
 import libPageSamplesStylesTpl from "./templates/lib/pageSamples/styles.css?as=text";
 import libPageSamplesWelcomeTpl from "./templates/lib/pageSamples/welcome.hbs";
 import libRouterTpl from "./templates/lib/router.hbs";
 import libUnwrapTpl from "./templates/lib/unwrap.ts?as=text";
-import libVueTpl from "./templates/lib/vue.ts?as=text";
 import srcAppTpl from "./templates/src/App.hbs";
-import srcComponentsLinkTpl from "./templates/src/components/Link.hbs";
-import srcEntryClientTpl from "./templates/src/entry/client.hbs";
-import srcEntryServerTpl from "./templates/src/entry/server.hbs";
+import srcPageComponents404Tpl from "./templates/src/components/404.vue?as=text";
+import srcComponentsLinkTpl from "./templates/src/components/Link.vue?as=text";
+import srcEntryClientTpl from "./templates/src/entry/client.ts?as=text";
+import srcEntryServerTpl from "./templates/src/entry/server.ts?as=text";
 import srcIndexTpl from "./templates/src/index.html?as=text";
 import srcPageSamplesLayoutTpl from "./templates/src/pageSamples/layout.hbs";
 import srcPageSamplesPageTpl from "./templates/src/pageSamples/page.hbs";
 import srcPageSamplesWelcomeTpl from "./templates/src/pageSamples/welcome.hbs";
-import srcRouterTpl from "./templates/src/router.hbs";
+import srcRouterTpl from "./templates/src/router.ts?as=text";
 
 export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
-    const { generators = [] } = sourceFolder.config;
     const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
     const { renderToFile: deployLibFile } = renderFactory({
       helpers: {
         ...createImportHelpers({ origin: "lib" }),
-        createParamsLiteral: renderHelpers.createParamsLiteral,
-        serializeRoute({ name, pathPattern, params }: PageRoute) {
-          return JSON.stringify({ name, pathPattern, params });
-        },
+        ...pageRouteMapperHelpers(),
       },
       partials: {
         routePartial: libEntryRoutePartialTpl,
@@ -63,8 +56,6 @@ export default defineGeneratorFactory<Options>(
     const customTemplates: Array<[Matcher, string]> = Object.entries({
       ...options?.templates,
     }).map(([pattern, template]) => [picomatch(pattern), template]);
-
-    const ssrGenerator = generators.some(({ meta }) => meta.slot === "ssr");
 
     const entriesTraverser = traverseFactory();
 
@@ -118,12 +109,10 @@ export default defineGeneratorFactory<Options>(
         });
       }
 
-      for (const [file, template] of [
-        //
-        ["router.ts", libRouterTpl],
-      ]) {
-        await deployLibFile(createPath.lib(file), template, { indexRoutes });
-      }
+      await deployLibFile(createPath.lib("router.ts"), libRouterTpl, {
+        entries,
+        indexRoutes,
+      });
     };
 
     return {
@@ -134,17 +123,18 @@ export default defineGeneratorFactory<Options>(
         // deploy global lib files that does not change on routes updates
         for (const [file, template] of [
           ["env.d.ts", libEnvDTpl],
-          ["vue.ts", libVueTpl],
           ["unwrap.ts", libUnwrapTpl],
           ["pageSamples/styles.module.css", libPageSamplesStylesTpl],
           ["pageSamples/welcome.vue", libPageSamplesWelcomeTpl],
           ["pageSamples/page.vue", libPageSamplesPageTpl],
+          ["pageSamples/404.vue", libPageSamples404Tpl],
         ]) {
           await deployLibFile(createPath.lib(file), template, {});
         }
 
         // deploy global src files that does not change on routes updates
         for (const [file, template] of [
+          ["components/404.vue", srcPageComponents404Tpl],
           ["components/Link.vue", srcComponentsLinkTpl],
           ["App.vue", srcAppTpl],
           ["router.ts", srcRouterTpl],
@@ -173,7 +163,7 @@ export default defineGeneratorFactory<Options>(
 
         for (const [file, template] of [
           ["client.ts", srcEntryClientTpl],
-          ...(ssrGenerator ? [["server.ts", srcEntryServerTpl]] : []),
+          ["server.ts", srcEntryServerTpl],
         ]) {
           await deploySrcFile(
             createPath.entry(file),

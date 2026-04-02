@@ -17,7 +17,8 @@
         ]
       }
     ],
-    "pathPattern": "projects"
+    "pathPattern": "projects",
+    "honoPattern": "projects"
   },
   "layout": {
     "id": "projects_layout_tsx_4216421654",
@@ -37,7 +38,8 @@
         ]
       }
     ],
-    "pathPattern": "projects"
+    "pathPattern": "projects",
+    "honoPattern": "projects"
   },
   "children": [
     {
@@ -61,7 +63,8 @@
             ]
           }
         ],
-        "pathPattern": "projects/:projectId"
+        "pathPattern": "projects/:projectId",
+        "honoPattern": "projects/:projectId"
       },
       "layout": {
         "id": "projects_projectId_layout_tsx_2457576455",
@@ -83,7 +86,8 @@
             ]
           }
         ],
-        "pathPattern": "projects/:projectId"
+        "pathPattern": "projects/:projectId",
+        "honoPattern": "projects/:projectId"
       },
       "parent": "projects",
       "children": [
@@ -106,7 +110,8 @@
                 ]
               }
             ],
-            "pathPattern": "projects/:projectId/files"
+            "pathPattern": "projects/:projectId/files",
+            "honoPattern": "projects/:projectId/files"
           },
           "layout": {
             "id": "projects_projectId_files_layout_tsx_1843012014",
@@ -126,7 +131,8 @@
                 ]
               }
             ],
-            "pathPattern": "projects/:projectId/files"
+            "pathPattern": "projects/:projectId/files",
+            "honoPattern": "projects/:projectId/files"
           },
           "parent": "projects/[projectId]",
           "children": [
@@ -151,7 +157,8 @@
                     ]
                   }
                 ],
-                "pathPattern": "projects/:projectId/files{/*path}"
+                "pathPattern": "projects/:projectId/files{/*path}",
+                "honoPattern": "projects/:projectId/files/*"
               },
               "parent": "projects/[projectId]/files",
               "children": []
@@ -177,7 +184,8 @@
                 ]
               }
             ],
-            "pathPattern": "projects/:projectId/tasks"
+            "pathPattern": "projects/:projectId/tasks",
+            "honoPattern": "projects/:projectId/tasks"
           },
           "layout": {
             "id": "projects_projectId_tasks_layout_tsx_152335102",
@@ -197,7 +205,8 @@
                 ]
               }
             ],
-            "pathPattern": "projects/:projectId/tasks"
+            "pathPattern": "projects/:projectId/tasks",
+            "honoPattern": "projects/:projectId/tasks"
           },
           "parent": "projects/[projectId]",
           "children": [
@@ -222,7 +231,8 @@
                     ]
                   }
                 ],
-                "pathPattern": "projects/:projectId/tasks/:taskId"
+                "pathPattern": "projects/:projectId/tasks/:taskId",
+                "honoPattern": "projects/:projectId/tasks/:taskId"
               },
               "layout": {
                 "id": "projects_projectId_tasks_taskId_layout_tsx_2537048726",
@@ -244,7 +254,8 @@
                     ]
                   }
                 ],
-                "pathPattern": "projects/:projectId/tasks/:taskId"
+                "pathPattern": "projects/:projectId/tasks/:taskId",
+                "honoPattern": "projects/:projectId/tasks/:taskId"
               },
               "parent": "projects/[projectId]/tasks",
               "children": [
@@ -267,7 +278,8 @@
                         ]
                       }
                     ],
-                    "pathPattern": "projects/:projectId/tasks/:taskId/comments"
+                    "pathPattern": "projects/:projectId/tasks/:taskId/comments",
+                    "honoPattern": "projects/:projectId/tasks/:taskId/comments"
                   },
                   "layout": {
                     "id": "projects_projectId_tasks_taskId_comments_layout_tsx_3047800545",
@@ -287,7 +299,8 @@
                         ]
                       }
                     ],
-                    "pathPattern": "projects/:projectId/tasks/:taskId/comments"
+                    "pathPattern": "projects/:projectId/tasks/:taskId/comments",
+                    "honoPattern": "projects/:projectId/tasks/:taskId/comments"
                   },
                   "parent": "projects/[projectId]/tasks/[taskId]",
                   "children": [
@@ -312,7 +325,8 @@
                             ]
                           }
                         ],
-                        "pathPattern": "projects/:projectId/tasks/:taskId/comments/:commentId"
+                        "pathPattern": "projects/:projectId/tasks/:taskId/comments/:commentId",
+                        "honoPattern": "projects/:projectId/tasks/:taskId/comments/:commentId"
                       },
                       "parent": "projects/[projectId]/tasks/[taskId]/comments",
                       "children": []
@@ -342,7 +356,8 @@
                 ]
               }
             ],
-            "pathPattern": "projects/:projectId/team"
+            "pathPattern": "projects/:projectId/team",
+            "honoPattern": "projects/:projectId/team"
           },
           "layout": {
             "id": "projects_projectId_team_layout_tsx_1351420135",
@@ -362,7 +377,8 @@
                 ]
               }
             ],
-            "pathPattern": "projects/:projectId/team"
+            "pathPattern": "projects/:projectId/team",
+            "honoPattern": "projects/:projectId/team"
           },
           "parent": "projects/[projectId]",
           "children": [
@@ -387,7 +403,8 @@
                     ]
                   }
                 ],
-                "pathPattern": "projects/:projectId/team/:userId"
+                "pathPattern": "projects/:projectId/team/:userId",
+                "honoPattern": "projects/:projectId/team/:userId"
               },
               "parent": "projects/[projectId]/team",
               "children": []

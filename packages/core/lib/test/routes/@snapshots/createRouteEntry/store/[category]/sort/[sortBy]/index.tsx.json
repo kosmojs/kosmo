@@ -53,5 +53,6 @@
       ]
     }
   ],
-  "pathPattern": "store/:category/sort/:sortBy"
+  "pathPattern": "store/:category/sort/:sortBy",
+  "honoPattern": "store/:category/sort/:sortBy"
 }

@@ -17,7 +17,8 @@
         ]
       }
     ],
-    "pathPattern": "users"
+    "pathPattern": "users",
+    "honoPattern": "users"
   },
   "layout": {
     "id": "users_layout_tsx_2592424824",
@@ -37,7 +38,8 @@
         ]
       }
     ],
-    "pathPattern": "users"
+    "pathPattern": "users",
+    "honoPattern": "users"
   },
   "children": [
     {
@@ -61,7 +63,8 @@
             ]
           }
         ],
-        "pathPattern": "users/:username"
+        "pathPattern": "users/:username",
+        "honoPattern": "users/:username"
       },
       "layout": {
         "id": "users_username_layout_tsx_165316489",
@@ -83,7 +86,8 @@
             ]
           }
         ],
-        "pathPattern": "users/:username"
+        "pathPattern": "users/:username",
+        "honoPattern": "users/:username"
       },
       "parent": "users",
       "children": [
@@ -106,7 +110,8 @@
                 ]
               }
             ],
-            "pathPattern": "users/:username/followers"
+            "pathPattern": "users/:username/followers",
+            "honoPattern": "users/:username/followers"
           },
           "parent": "users/[username]",
           "children": []
@@ -130,7 +135,8 @@
                 ]
               }
             ],
-            "pathPattern": "users/:username/following"
+            "pathPattern": "users/:username/following",
+            "honoPattern": "users/:username/following"
           },
           "parent": "users/[username]",
           "children": []
@@ -154,7 +160,8 @@
                 ]
               }
             ],
-            "pathPattern": "users/:username/posts"
+            "pathPattern": "users/:username/posts",
+            "honoPattern": "users/:username/posts"
           },
           "layout": {
             "id": "users_username_posts_layout_tsx_90922222",
@@ -174,7 +181,8 @@
                 ]
               }
             ],
-            "pathPattern": "users/:username/posts"
+            "pathPattern": "users/:username/posts",
+            "honoPattern": "users/:username/posts"
           },
           "parent": "users/[username]",
           "children": [
@@ -199,7 +207,8 @@
                     ]
                   }
                 ],
-                "pathPattern": "users/:username/posts/:postId"
+                "pathPattern": "users/:username/posts/:postId",
+                "honoPattern": "users/:username/posts/:postId"
               },
               "layout": {
                 "id": "users_username_posts_postId_layout_tsx_3766512504",
@@ -221,7 +230,8 @@
                     ]
                   }
                 ],
-                "pathPattern": "users/:username/posts/:postId"
+                "pathPattern": "users/:username/posts/:postId",
+                "honoPattern": "users/:username/posts/:postId"
               },
               "parent": "users/[username]/posts",
               "children": []

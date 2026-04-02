@@ -27,5 +27,6 @@
       ]
     }
   ],
-  "pathPattern": "account/profile"
+  "pathPattern": "account/profile",
+  "honoPattern": "account/profile"
 }

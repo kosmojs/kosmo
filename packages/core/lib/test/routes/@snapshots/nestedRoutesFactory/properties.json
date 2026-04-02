@@ -17,7 +17,8 @@
         ]
       }
     ],
-    "pathPattern": "properties"
+    "pathPattern": "properties",
+    "honoPattern": "properties"
   },
   "children": [
     {
@@ -65,7 +66,8 @@
             ]
           }
         ],
-        "pathPattern": "properties/:city/filters{/*filters}"
+        "pathPattern": "properties/:city/filters{/*filters}",
+        "honoPattern": "properties/:city/filters/*"
       },
       "parent": "properties",
       "children": []
@@ -89,7 +91,8 @@
             ]
           }
         ],
-        "pathPattern": "properties/filters"
+        "pathPattern": "properties/filters",
+        "honoPattern": "properties/filters"
       },
       "parent": "properties",
       "children": []

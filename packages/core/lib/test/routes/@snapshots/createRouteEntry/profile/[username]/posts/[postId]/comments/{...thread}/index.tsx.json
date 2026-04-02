@@ -77,5 +77,6 @@
       ]
     }
   ],
-  "pathPattern": "profile/:username/posts/:postId/comments{/*thread}"
+  "pathPattern": "profile/:username/posts/:postId/comments{/*thread}",
+  "honoPattern": "profile/:username/posts/:postId/comments/*"
 }

@@ -77,5 +77,6 @@
       ]
     }
   ],
-  "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView"
+  "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView",
+  "honoPattern": "portal/:clientId/reports/:reportType/data/:dataView"
 }

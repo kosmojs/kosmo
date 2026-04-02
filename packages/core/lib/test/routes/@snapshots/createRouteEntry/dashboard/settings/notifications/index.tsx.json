@@ -38,5 +38,6 @@
       ]
     }
   ],
-  "pathPattern": "dashboard/settings/notifications"
+  "pathPattern": "dashboard/settings/notifications",
+  "honoPattern": "dashboard/settings/notifications"
 }

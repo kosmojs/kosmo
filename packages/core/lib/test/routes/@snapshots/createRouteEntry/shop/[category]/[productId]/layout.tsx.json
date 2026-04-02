@@ -42,5 +42,6 @@
       ]
     }
   ],
-  "pathPattern": "shop/:category/:productId"
+  "pathPattern": "shop/:category/:productId",
+  "honoPattern": "shop/:category/:productId"
 }

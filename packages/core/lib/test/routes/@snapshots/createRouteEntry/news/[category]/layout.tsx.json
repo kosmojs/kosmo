@@ -29,5 +29,6 @@
       ]
     }
   ],
-  "pathPattern": "news/:category"
+  "pathPattern": "news/:category",
+  "honoPattern": "news/:category"
 }

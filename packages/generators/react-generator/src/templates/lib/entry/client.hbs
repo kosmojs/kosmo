@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import type { RenderFactory } from "@kosmojs/core";
+import { clientRenderFactory } from "@kosmojs/core/generators";
 
 import { loaderFactory } from "../react";
 
@@ -8,28 +8,19 @@ const {{id}}_component = lazy(() => import("{{ createImport "pages" file }}"));
 const {{id}}_loader = () => import("{{ createImport "pages" file }}");
 {{/each}}
 
+const NotFound = lazy(() => import("{{ createImport "pages" "404.tsx" }}"));
+
 export const createRoutes = (opt?: { withPreload?: boolean }) => {
   const maybeLoader = loaderFactory(opt);
   return [
     {{#each nestedRoutes}}{{> routePartial}},
     {{/each}}
+    // catch-all 404 - always last
+    {
+      path: "*",
+      Component: NotFound,
+    },
   ];
 }
 
-export const renderFactory: RenderFactory = async (factory) => {
-  const {
-    clientRender = fallbackRender("client"),
-    serverRender = fallbackRender("server"),
-  } = factory();
-  if (KOSMO_SSR_MODE) {
-    await serverRender();
-  } else {
-    await clientRender();
-  }
-}
-
-const fallbackRender = (scope: "client" | "server") => {
-  return () => {
-    throw new Error(`${scope}Render not implemented`);
-  }
-}
+export default clientRenderFactory();

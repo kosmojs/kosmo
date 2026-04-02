@@ -42,5 +42,6 @@
       ]
     }
   ],
-  "pathPattern": "blog{/:category}{/:tag}"
+  "pathPattern": "blog{/:category}{/:tag}",
+  "honoPattern": "blog/:category?/:tag?"
 }

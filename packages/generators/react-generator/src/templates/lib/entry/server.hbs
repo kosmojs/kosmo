@@ -1,4 +1,4 @@
-import type { SSRFactory } from "@kosmojs/core";
+import { serverRenderFactory } from "@kosmojs/core/generators";
 
 import { loaderFactory } from "../react";
 
@@ -8,14 +8,19 @@ const {{id}}_component = {{id}}.default;
 const {{id}}_loader = async () => {{id}};
 {{/each}}
 
+import NotFound from "{{ createImport "pages" "404.tsx" }}";
+
 export const createRoutes = (opt?: { withPreload?: boolean }) => {
   const maybeLoader = loaderFactory(opt);
   return [
     {{#each nestedRoutes}}{{> routePartial}},
     {{/each}}
+    // catch-all 404 - always last
+    {
+      path: "*",
+      Component: NotFound,
+    },
   ];
 }
 
-export const renderFactory: SSRFactory = (factory) => {
-  return factory();
-};
+export default serverRenderFactory();

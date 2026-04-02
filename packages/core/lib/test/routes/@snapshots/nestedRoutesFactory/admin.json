@@ -17,7 +17,8 @@
         ]
       }
     ],
-    "pathPattern": "admin"
+    "pathPattern": "admin",
+    "honoPattern": "admin"
   },
   "layout": {
     "id": "admin_layout_tsx_2245020265",
@@ -37,7 +38,8 @@
         ]
       }
     ],
-    "pathPattern": "admin"
+    "pathPattern": "admin",
+    "honoPattern": "admin"
   },
   "children": [
     {
@@ -61,7 +63,8 @@
             ]
           }
         ],
-        "pathPattern": "admin/:tenant"
+        "pathPattern": "admin/:tenant",
+        "honoPattern": "admin/:tenant"
       },
       "parent": "admin",
       "children": [
@@ -84,7 +87,8 @@
                 ]
               }
             ],
-            "pathPattern": "admin/:tenant/resources"
+            "pathPattern": "admin/:tenant/resources",
+            "honoPattern": "admin/:tenant/resources"
           },
           "layout": {
             "id": "admin_tenant_resources_layout_tsx_1331315044",
@@ -104,7 +108,8 @@
                 ]
               }
             ],
-            "pathPattern": "admin/:tenant/resources"
+            "pathPattern": "admin/:tenant/resources",
+            "honoPattern": "admin/:tenant/resources"
           },
           "parent": "admin/[tenant]",
           "children": [
@@ -129,7 +134,8 @@
                     ]
                   }
                 ],
-                "pathPattern": "admin/:tenant/resources/:type"
+                "pathPattern": "admin/:tenant/resources/:type",
+                "honoPattern": "admin/:tenant/resources/:type"
               },
               "layout": {
                 "id": "admin_tenant_resources_type_layout_tsx_3407041363",
@@ -151,7 +157,8 @@
                     ]
                   }
                 ],
-                "pathPattern": "admin/:tenant/resources/:type"
+                "pathPattern": "admin/:tenant/resources/:type",
+                "honoPattern": "admin/:tenant/resources/:type"
               },
               "parent": "admin/[tenant]/resources",
               "children": [
@@ -176,7 +183,8 @@
                         ]
                       }
                     ],
-                    "pathPattern": "admin/:tenant/resources/:type{/*path}"
+                    "pathPattern": "admin/:tenant/resources/:type{/*path}",
+                    "honoPattern": "admin/:tenant/resources/:type/*"
                   },
                   "parent": "admin/[tenant]/resources/[type]",
                   "children": []
@@ -204,7 +212,8 @@
                 ]
               }
             ],
-            "pathPattern": "admin/:tenant/settings"
+            "pathPattern": "admin/:tenant/settings",
+            "honoPattern": "admin/:tenant/settings"
           },
           "layout": {
             "id": "admin_tenant_settings_layout_tsx_1879736946",
@@ -224,7 +233,8 @@
                 ]
               }
             ],
-            "pathPattern": "admin/:tenant/settings"
+            "pathPattern": "admin/:tenant/settings",
+            "honoPattern": "admin/:tenant/settings"
           },
           "parent": "admin/[tenant]",
           "children": [
@@ -247,7 +257,8 @@
                     ]
                   }
                 ],
-                "pathPattern": "admin/:tenant/settings/general"
+                "pathPattern": "admin/:tenant/settings/general",
+                "honoPattern": "admin/:tenant/settings/general"
               },
               "parent": "admin/[tenant]/settings",
               "children": []
@@ -271,7 +282,8 @@
                     ]
                   }
                 ],
-                "pathPattern": "admin/:tenant/settings/permissions"
+                "pathPattern": "admin/:tenant/settings/permissions",
+                "honoPattern": "admin/:tenant/settings/permissions"
               },
               "parent": "admin/[tenant]/settings",
               "children": []
@@ -297,7 +309,8 @@
                 ]
               }
             ],
-            "pathPattern": "admin/:tenant/users"
+            "pathPattern": "admin/:tenant/users",
+            "honoPattern": "admin/:tenant/users"
           },
           "layout": {
             "id": "admin_tenant_users_layout_tsx_3952846485",
@@ -317,7 +330,8 @@
                 ]
               }
             ],
-            "pathPattern": "admin/:tenant/users"
+            "pathPattern": "admin/:tenant/users",
+            "honoPattern": "admin/:tenant/users"
           },
           "parent": "admin/[tenant]",
           "children": [
@@ -342,7 +356,8 @@
                     ]
                   }
                 ],
-                "pathPattern": "admin/:tenant/users/:userId"
+                "pathPattern": "admin/:tenant/users/:userId",
+                "honoPattern": "admin/:tenant/users/:userId"
               },
               "parent": "admin/[tenant]/users",
               "children": []

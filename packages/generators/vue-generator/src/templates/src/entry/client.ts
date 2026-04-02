@@ -1,23 +1,25 @@
-import { renderFactory, createRoutes } from "{{ createImport "libEntry" "client" }}";
+import renderFactory, { createRoutes } from "{{ createImport 'libEntry' 'client' }}";
+
 import routerFactory from "../router";
+
+const routes = createRoutes();
+const { clientRouter } = routerFactory(routes);
 
 const root = document.getElementById("app");
 
 if (root) {
-  const routes = createRoutes();
-  const { clientRouter } = routerFactory(routes);
   renderFactory(() => {
     return {
-      async clientRender() {
+      async mount() {
         const { app } = await clientRouter();
         app.mount(root);
       },
-      async serverRender() {
+      async hydrate() {
         const { app } = await clientRouter();
         app.mount(root, true);
       },
-    }
+    };
   });
 } else {
-  console.error("Root element not found!");
+  console.error("❌ Root element not found!");
 }

@@ -27,5 +27,6 @@
       ]
     }
   ],
-  "pathPattern": "dashboard/analytics"
+  "pathPattern": "dashboard/analytics",
+  "honoPattern": "dashboard/analytics"
 }

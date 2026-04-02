@@ -16,5 +16,6 @@
       ]
     }
   ],
-  "pathPattern": "account"
+  "pathPattern": "account",
+  "honoPattern": "account"
 }

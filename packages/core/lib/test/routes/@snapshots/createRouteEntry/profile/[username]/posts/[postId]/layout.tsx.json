@@ -53,5 +53,6 @@
       ]
     }
   ],
-  "pathPattern": "profile/:username/posts/:postId"
+  "pathPattern": "profile/:username/posts/:postId",
+  "honoPattern": "profile/:username/posts/:postId"
 }

@@ -53,5 +53,6 @@
       ]
     }
   ],
-  "pathPattern": "news/:category/articles{/*articlePath}"
+  "pathPattern": "news/:category/articles{/*articlePath}",
+  "honoPattern": "news/:category/articles/*"
 }

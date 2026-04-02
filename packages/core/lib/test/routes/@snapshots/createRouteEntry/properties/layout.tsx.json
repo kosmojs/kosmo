@@ -16,5 +16,6 @@
       ]
     }
   ],
-  "pathPattern": "properties"
+  "pathPattern": "properties",
+  "honoPattern": "properties"
 }

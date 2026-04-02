@@ -5,9 +5,10 @@ import {
   createWebHistory,
 } from "vue-router";
 
-import { routerFactory } from "{{ createImport "lib" "router" }}";
-import { baseurl } from "./config";
 import App from "./App.vue";
+
+import { baseurl } from "{{ createImport 'config' }}";
+import { routerFactory } from "{{ createImport 'lib' 'router' }}";
 
 export default routerFactory((routes) => {
   return {
@@ -28,7 +29,7 @@ export default routerFactory((routes) => {
         routes,
         strict: true,
       });
-      await router.push(url.pathname);
+      await router.push(url.pathname.replace(baseurl, ""));
       await router.isReady();
       app.use(router);
       return { router, app };

@@ -42,5 +42,6 @@
       ]
     }
   ],
-  "pathPattern": "books/:category{/:author}"
+  "pathPattern": "books/:category{/:author}",
+  "honoPattern": "books/:category/:author?"
 }

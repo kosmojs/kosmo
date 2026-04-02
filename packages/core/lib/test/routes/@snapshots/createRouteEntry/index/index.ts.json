@@ -4,5 +4,6 @@
   "folder": "api",
   "file": "index/index.ts",
   "pathTokens": [],
-  "pathPattern": ""
+  "pathPattern": "",
+  "honoPattern": ""
 }

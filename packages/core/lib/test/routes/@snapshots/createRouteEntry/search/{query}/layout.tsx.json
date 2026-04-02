@@ -29,5 +29,6 @@
       ]
     }
   ],
-  "pathPattern": "search{/:query}"
+  "pathPattern": "search{/:query}",
+  "honoPattern": "search/:query?"
 }

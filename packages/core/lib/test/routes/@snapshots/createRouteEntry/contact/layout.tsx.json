@@ -16,5 +16,6 @@
       ]
     }
   ],
-  "pathPattern": "contact"
+  "pathPattern": "contact",
+  "honoPattern": "contact"
 }

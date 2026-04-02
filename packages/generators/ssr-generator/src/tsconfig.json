@@ -1,3 +1,6 @@
 {
-  "extends": "tsconfig/kosmo.json"
+  "extends": "tsconfig/kosmo.json",
+  "compilerOptions": {
+    "types": ["@types/node", "@types/deno", "@types/bun"]
+  }
 }

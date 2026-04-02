@@ -29,5 +29,6 @@
       ]
     }
   ],
-  "pathPattern": "portal/:clientId"
+  "pathPattern": "portal/:clientId",
+  "honoPattern": "portal/:clientId"
 }

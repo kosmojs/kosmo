@@ -17,7 +17,8 @@
         ]
       }
     ],
-    "pathPattern": "legal"
+    "pathPattern": "legal",
+    "honoPattern": "legal"
   },
   "children": [
     {
@@ -39,7 +40,8 @@
             ]
           }
         ],
-        "pathPattern": "legal/privacy"
+        "pathPattern": "legal/privacy",
+        "honoPattern": "legal/privacy"
       },
       "parent": "legal",
       "children": []
@@ -63,7 +65,8 @@
             ]
           }
         ],
-        "pathPattern": "legal/terms"
+        "pathPattern": "legal/terms",
+        "honoPattern": "legal/terms"
       },
       "parent": "legal",
       "children": []

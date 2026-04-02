@@ -51,5 +51,6 @@
       ]
     }
   ],
-  "pathPattern": "admin/:tenant/settings/permissions"
+  "pathPattern": "admin/:tenant/settings/permissions",
+  "honoPattern": "admin/:tenant/settings/permissions"
 }

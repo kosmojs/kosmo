@@ -38,5 +38,6 @@
       ]
     }
   ],
-  "pathPattern": "dashboard/settings/billing"
+  "pathPattern": "dashboard/settings/billing",
+  "honoPattern": "dashboard/settings/billing"
 }

@@ -29,5 +29,6 @@
       ]
     }
   ],
-  "pathPattern": "products/:id"
+  "pathPattern": "products/:id",
+  "honoPattern": "products/:id"
 }

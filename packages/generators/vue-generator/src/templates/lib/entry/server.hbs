@@ -1,16 +1,22 @@
-import type { SSRFactory } from "@kosmojs/core";
+import { serverRenderFactory } from "@kosmojs/core/generators";
 
 {{#each pageEntries}}
 import {{id}} from "{{ createImport "pages" file }}";
 {{/each}}
 
+import NotFound from "{{ createImport "pages" "404.vue" }}";
+
 export const createRoutes = () => {
   return [
     {{#each nestedRoutes}}{{> routePartial}},
     {{/each}}
+    // catch-all 404 - always last
+    {
+      path: "/:catchAll(.*)*",
+      name: "NotFound",
+      component: NotFound,
+    },
   ];
 }
 
-export const renderFactory: SSRFactory = (factory) => {
-  return factory();
-};
+export default serverRenderFactory();

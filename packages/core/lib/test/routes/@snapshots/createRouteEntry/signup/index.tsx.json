@@ -16,5 +16,6 @@
       ]
     }
   ],
-  "pathPattern": "signup"
+  "pathPattern": "signup",
+  "honoPattern": "signup"
 }

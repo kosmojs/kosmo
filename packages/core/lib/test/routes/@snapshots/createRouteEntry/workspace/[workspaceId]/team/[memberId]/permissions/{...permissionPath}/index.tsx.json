@@ -77,5 +77,6 @@
       ]
     }
   ],
-  "pathPattern": "workspace/:workspaceId/team/:memberId/permissions{/*permissionPath}"
+  "pathPattern": "workspace/:workspaceId/team/:memberId/permissions{/*permissionPath}",
+  "honoPattern": "workspace/:workspaceId/team/:memberId/permissions/*"
 }

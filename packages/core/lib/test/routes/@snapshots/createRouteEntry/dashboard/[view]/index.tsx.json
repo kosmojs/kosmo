@@ -29,5 +29,6 @@
       ]
     }
   ],
-  "pathPattern": "dashboard/:view"
+  "pathPattern": "dashboard/:view",
+  "honoPattern": "dashboard/:view"
 }

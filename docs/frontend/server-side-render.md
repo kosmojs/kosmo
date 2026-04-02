@@ -38,7 +38,7 @@ export default defineConfig({
 
 ## 📄 Server Entry Point
 
-The SSR generator creates `entry/server.ts` with a default implementation.
+The SSR generator creates `entry/server.tsx` with a default implementation.
 `renderFactory` accepts a callback returning an object with rendering methods:
 
 - `renderToString(url, SSROptions)` - renders the complete page before transmission. Provided by default.
@@ -46,49 +46,42 @@ The SSR generator creates `entry/server.ts` with a default implementation.
 
 ::: code-group
 
-```ts [React · entry/server.ts]
+```ts [React · entry/server.tsx]
 import { renderToString } from "react-dom/server";
 
-import { renderFactory, createRoutes } from "_/entry/server";
-import App from "../App";
-import createRouter from "../router";
+import { createRoutes, renderFactory} from "_/entry/server";
+import routerFactory from "../router";
 
 const routes = createRoutes({ withPreload: false });
+const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {
   return {
-    async renderToString(url, { criticalCss }) {
-      const router = await createRouter(App, routes, { url });
-      const head = criticalCss
-        .map(({ text }) => `<style>${text}</style>`)
-        .join("\n");
+    async renderToString(url) {
+      const { router } = await serverRouter(url);
       const html = renderToString(router);
-      return { head, html };
+      return { html };
     },
   };
 });
 ```
 
-```ts [SolidJS · entry/server.ts]
+```ts [SolidJS · entry/server.tsx]
 import { renderToString, generateHydrationScript } from "solid-js/web";
 
 import { renderFactory, createRoutes } from "_/entry/server";
-import App from "../App";
-import createRouter from "../router";
+import routerFactory from "../router";
 
 const routes = createRoutes({ withPreload: false });
+const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {
   const hydrationScript = generateHydrationScript();
   return {
-    async renderToString(url, { criticalCss }) {
-      const router = await createRouter(App, routes, { url });
-      const head = criticalCss.reduce(
-        (head, { text }) => `${head}\n<style>${text}</style>`,
-        hydrationScript,
-      );
+    async renderToString(url, ) {
+      const { router } = await serverRouter(url);
       const html = renderToString(() => router);
-      return { head, html };
+      return { head: hydrationScript, html };
     },
   };
 });
@@ -98,50 +91,39 @@ export default renderFactory(() => {
 import { createSSRApp } from "vue";
 import { renderToString } from "vue/server-renderer";
 
-import { renderFactory, createRoutes } from "_/entry/server";
-import App from "../App.vue";
-import createRouter from "../router";
+import { createRoutes, renderFactory } from "_/entry/server";
+import routerFactory from "../router";
 
 const routes = createRoutes();
+const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {
   return {
-    async renderToString(url, { criticalCss }) {
-      const app = createSSRApp(App);
-      await createRouter(app, routes, { url });
-      const head = criticalCss
-        .map(({ text }) => `<style>${text}</style>`)
-        .join("\n");
+    async renderToString(url) {
+      const { app } = await serverRouter(url);
       const html = await renderToString(app);
-      return { head, html };
+      return { html };
     },
   };
 });
 ```
-
 :::
 
-`renderToString` receives:
-- `url` - the URL being requested
-- `criticalCss` - route-specific CSS extracted from the manifest graph
-
-It must return:
-- `head` - HTML to inject into `<head>` (typically critical CSS)
+`renderToString` receives the URL being requested and must return:
 - `html` - the rendered application markup
+- `head` - HTML to inject into `<head>` (optional)
 
-SolidJS additionally requires a hydration script in `<head>` via
-`generateHydrationScript()`, which bootstraps client-side reactivity during
-hydration.
+SolidJS inject a hydration script in `<head>` via `generateHydrationScript()`,
+which bootstraps client-side reactivity during hydration.
 
 ## 🎛️ Render Factory Arguments
 
-Both `renderToString` and `renderToStream` receive the same arguments:
+Both `renderToString` and `renderToStream` receive the same arguments - the URL and SSROptions:
 
 ```ts
 type SSROptions = {
   template: string;
   manifest: Record<string, SSRManifestEntry>;
-  criticalCss: Array<{ text: string; path: string }>;
   request: IncomingMessage;
   response: ServerResponse;
 };
@@ -149,25 +131,10 @@ type SSROptions = {
 
 | Property | Description |
 |----------|-------------|
-| `template` | Client `index.html` from the Vite build, containing `<!--app-head-->` and `<!--app-html-->` placeholders for SSR injection |
-| `manifest` | Vite's `manifest.json` - the full dependency graph for client modules, dynamic imports, and associated CSS |
-| `criticalCss` | Route-specific CSS chunks resolved by traversing the manifest graph |
+| `template` | Client `index.html` from the Vite build, with <code style="white-space: nowrap">\<!--app-head--></code> and <code style="white-space: nowrap">\<!--app-html--></code> placeholders for SSR injection |
+| `manifest` | Vite's `manifest.json` - the full dependency graph for client modules |
 | `request` | Node.js `IncomingMessage` for reading headers, cookies, locale, etc. |
 | `response` | Node.js `ServerResponse` for setting headers, caching, redirects, or flushing streamed HTML |
-
-### Critical CSS
-
-Each `criticalCss` entry exposes:
-- `text` - decoded CSS content
-- `path` - browser-loadable asset path
-
-Choose a delivery strategy based on your performance goals:
-
-| Strategy | Benefit |
-|----------|---------|
-| `<style>${text}</style>` | Fastest first paint - no extra requests |
-| `<link rel="stylesheet" href="${path}">` | Better cache reuse across pages |
-| `<link rel="preload" as="style" href="${path}">` | Warm loading for deferred styles |
 
 ### Request / Response Access
 
@@ -185,23 +152,14 @@ write the opening HTML, pipe the app stream, then finalize the response.
 
 ::: code-group
 
-```ts [React · entry/server.ts]
-import { renderToPipeableStream } from "react-dom/server";
-
-import { renderFactory, createRoutes } from "_/entry/server";
-import App from "../App";
-import createRouter from "../router";
-
-const routes = createRoutes({ withPreload: false });
-
+```ts [React · entry/server.tsx]
 export default renderFactory(() => {
   return {
-    async renderToStream(url, { response, template, criticalCss }) {
-      const router = await createRouter(App, routes, { url });
+    // ...
+    async renderToStream(url, { response, template }) {
+      const { router } = await serverRouter(url);
 
-      const head = criticalCss
-        .map(({ text }) => `<style>${text}</style>`)
-        .join("\n");
+      const head = "...";
 
       const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
       response.write(htmlStart.replace("<!--app-head-->", head));
@@ -225,25 +183,15 @@ export default renderFactory(() => {
 });
 ```
 
-```ts [SolidJS · entry/server.ts]
-import { renderToStream, generateHydrationScript } from "solid-js/web";
-
-import { renderFactory, createRoutes } from "_/entry/server";
-import App from "../App";
-import createRouter from "../router";
-
-const routes = createRoutes({ withPreload: false });
-
+```ts [SolidJS · entry/server.tsx]
 export default renderFactory(() => {
   const hydrationScript = generateHydrationScript();
   return {
-    async renderToStream(url, { response, template, criticalCss }) {
-      const router = await createRouter(App, routes, { url });
+    // ...
+    async renderToStream(url, { response, template }) {
+      const { router } = await serverRouter(url);
 
-      const head = criticalCss.reduce(
-        (head, { text }) => `${head}\n<style>${text}</style>`,
-        hydrationScript,
-      );
+      const head = hydrationScript;
 
       const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
       response.write(htmlStart.replace("<!--app-head-->", head));
@@ -265,24 +213,13 @@ export default renderFactory(() => {
 ```
 
 ```ts [Vue · entry/server.ts]
-import { createSSRApp } from "vue";
-import { renderToNodeStream } from "vue/server-renderer";
-
-import { renderFactory, createRoutes } from "_/entry/server";
-import App from "../App.vue";
-import createRouter from "../router";
-
-const routes = createRoutes();
-
 export default renderFactory(() => {
   return {
-    async renderToStream(url, { response, template, criticalCss }) {
-      const app = createSSRApp(App);
-      await createRouter(app, routes, { url });
+    // ...
+    async renderToStream(url, { response, template }) {
+      const { app } = await serverRouter(url);
 
-      const head = criticalCss
-        .map(({ text }) => `<style>${text}</style>`)
-        .join("\n");
+      const head = "...";
 
       const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
       response.write(htmlStart.replace("<!--app-head-->", head));
@@ -303,12 +240,11 @@ export default renderFactory(() => {
   };
 });
 ```
-
 :::
 
-React uses `renderToPipeableStream` with `onShellReady`/`onAllReady` callbacks.
-SolidJS uses `renderToStream` with `onCompleteShell`/`onCompleteAll`.
-Vue uses `renderToNodeStream` with Node.js stream events.
+- React uses `renderToPipeableStream` with `onShellReady`/`onAllReady` callbacks.
+- SolidJS uses `renderToStream` with `onCompleteShell`/`onCompleteAll`.
+- Vue uses `renderToNodeStream` with Node.js stream events.
 
 **Always call `response.end()`** after streaming completes. Omitting it leaves
 clients waiting indefinitely.
@@ -316,15 +252,17 @@ clients waiting indefinitely.
 ## 📦 Static Asset Handling
 
 By default the SSR server loads client assets into memory at startup and serves
-them on request. Disable this when running behind a reverse proxy that handles
-static file delivery:
+them on request. Disable this when running behind a reverse proxy or CDN:
 
-```ts [entry/server.ts]
-export default renderFactory(() => {
-  return {
-    serveStaticAssets: false, // [!code ++]
+```ts [kosmo.config.ts]
+export default defineConfig({
+  // ...
+  generators: [
     // ...
-  };
+    ssrGenerator({
+      serveStaticAssets: false, // [!code ++]
+    }),
+  ],
 });
 ```
 
@@ -358,6 +296,29 @@ node dist/front/ssr/server.js -p 4553
 ```
 
 Navigate to `http://localhost:4553` to verify server-side rendering.
+
+## 🖥️ Runtime
+
+The SSR server uses `node:http` which is natively supported by Node, Bun, and Deno.
+Same bundle, same behavior, just pick your runtime:
+
+::: code-group
+```sh [Node]
+node dist/front/ssr/server.js -p 4553
+```
+```sh [Bun]
+bun dist/front/ssr/server.js -p 4553
+```
+```sh [Deno]
+deno run -A dist/front/ssr/server.js -p 4553
+```
+:::
+
+Also Unix sockets are supported across all three runtimes:
+
+```sh
+node dist/front/ssr/server.js -s /tmp/app.sock
+```
 
 ## 🚀 Production Deployment
 
@@ -398,7 +359,7 @@ SSR activates exclusively in production builds. During development:
 
 ## ⚠️ Technical Considerations
 
-- **Browser APIs unavailable during SSR.** Code executing server-side cannot access `window`, `document`, or browser-exclusive APIs. Use `isServer` checks or client-only lifecycle hooks.
+- **Browser APIs unavailable during SSR.** Code executing server-side cannot access `window`, `document`, or browser-exclusive APIs.
 - **Coordinate async data loading.** Suspense and resources work in SSR contexts, but complex async patterns require careful attention to ensure data is ready before rendering.
 - **Bundle size still matters.** In SSR, initial bundle size affects server memory and startup time. The hydration bundle still downloads to clients, so optimization remains important.
 - **Plan state serialization.** Applications with complex state require proper serialization for hydration. Each framework handles standard cases automatically, but custom stores or non-serializable data need special attention.

@@ -17,7 +17,8 @@
         ]
       }
     ],
-    "pathPattern": "account"
+    "pathPattern": "account",
+    "honoPattern": "account"
   },
   "children": [
     {
@@ -39,7 +40,8 @@
             ]
           }
         ],
-        "pathPattern": "account/profile"
+        "pathPattern": "account/profile",
+        "honoPattern": "account/profile"
       },
       "parent": "account",
       "children": []

@@ -30,7 +30,8 @@
         ]
       }
     ],
-    "pathPattern": "news/:category"
+    "pathPattern": "news/:category",
+    "honoPattern": "news/:category"
   },
   "children": [
     {
@@ -65,7 +66,8 @@
             ]
           }
         ],
-        "pathPattern": "news/:category/articles{/*articlePath}"
+        "pathPattern": "news/:category/articles{/*articlePath}",
+        "honoPattern": "news/:category/articles/*"
       },
       "parent": "news/[category]",
       "children": []

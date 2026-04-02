@@ -16,5 +16,6 @@
       ]
     }
   ],
-  "pathPattern": "blog"
+  "pathPattern": "blog",
+  "honoPattern": "blog"
 }
