@@ -1,7 +1,4 @@
 import { execFile } from "node:child_process";
-import { readFile } from "node:fs/promises";
-import { createRequire } from "node:module";
-import { resolve } from "node:path";
 import { parseArgs, styleText } from "node:util";
 
 import { build } from "esbuild";
@@ -43,31 +40,6 @@ const root = await workspaceRoot();
 if (!root) {
   throw styleText("red", "Could not detect workspace root");
 }
-
-const loadAsTextPlugin = () => {
-  const namespace = "load-as-text";
-  const filter = /\?as=text$/;
-  return {
-    name: namespace,
-    setup(build) {
-      // Intercept imports that end with ?as=text
-      build.onResolve({ filter }, (args) => {
-        return {
-          path: resolve(args.resolveDir, args.path.replace(filter, "")),
-          namespace,
-        };
-      });
-
-      // Load the file contents as text
-      build.onLoad({ filter: /.*/, namespace }, async (args) => {
-        return {
-          contents: await readFile(args.path, "utf8"),
-          loader: "text",
-        };
-      });
-    },
-  };
-};
 
 const scriptPatternsMapper = (pattern) => {
   if (pattern.startsWith("@/")) {
@@ -124,29 +96,31 @@ for (const pattern of values.scripts.map(scriptPatternsMapper)) {
 
 const spinner = ora().start(positionals.join("; "));
 
-const plugins = [loadAsTextPlugin()];
-
-if (values["external-exclude"]?.length) {
-  const require = createRequire(import.meta.url);
-  plugins.push({
-    name: "external-exclude",
+const plugins = [
+  {
+    // Resolves extensionless #templates/* imports to actual files.
+    // Imports must omit the extension so TS matches the ambient
+    // `declare module "#templates/*"` instead of treating it as a real module.
+    name: "templateLoader",
     setup(build) {
-      build.onResolve({ filter: /.*/ }, (args) => {
-        if (values["external-exclude"].includes(args.path)) {
-          const resolved = require.resolve(args.path, {
-            paths: [args.resolveDir],
-          });
-          if (resolved) {
-            return {
-              path: resolved,
-              external: false,
-            };
-          }
-        }
+      build.onResolve({ filter: /^#templates\// }, async (args) => {
+        const base = args.path.replace("#templates/", "src/templates/");
+        const [path] = await glob(
+          [
+            // files with extension takes priority
+            base,
+            `${base}.{ts,tsx}`,
+          ],
+          {
+            absolute: true,
+            onlyFiles: true,
+          },
+        );
+        return { path };
       });
     },
-  });
-}
+  },
+];
 
 try {
   await build({
@@ -158,7 +132,6 @@ try {
     packages: "external",
     sourcemap: "linked",
     logLevel: "error",
-    loader: { ".hbs": "text" },
     entryPoints: positionals,
     outdir: "./pkg",
     legalComments: "inline",

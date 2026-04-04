@@ -9,9 +9,7 @@ import {
   renderToFile,
 } from "@kosmojs/lib";
 
-import envTpl from "./templates/env.d.ts?as=text";
-import gitignoreTpl from "./templates/gitignore.hbs";
-import schemasTpl from "./templates/schemas.hbs";
+import * as templates from "./templates";
 
 const factory = defineGeneratorFactory((meta, sourceFolder) => {
   const { createPath } = pathResolver(sourceFolder);
@@ -62,7 +60,7 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
      * expose VRefine as a global type.
      * not supposed to be overriden by generators.
      * */
-    await renderToFile(createPath.lib("../env.d.ts"), envTpl, {});
+    await renderToFile(createPath.lib("../env.d.ts"), templates.env, {});
 
     /**
      * deploy a default gitignore file that ignore everything,
@@ -70,7 +68,7 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
      * */
     await renderToFile(
       createPath.lib("../.gitignore"),
-      gitignoreTpl,
+      templates.gitignore,
       {},
       { overwrite: false },
     );
@@ -84,7 +82,7 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
         // Specialized generators (e.g. typebox-generator) may override this later.
         await renderToFile(
           createPath.libApi(dirname(entry.file), "schemas.ts"),
-          schemasTpl,
+          templates.schemas,
           { route: entry },
           { overwrite: false },
         );

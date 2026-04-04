@@ -19,9 +19,7 @@ import { defaults } from "../defaults";
 import { pathResolver } from "../paths";
 import { render, renderToFile } from "../render";
 import type { ResolverSignature } from "./base";
-
-import resolvedTypesTpl from "./templates/resolved-types.hbs";
-import typesFileTpl from "./templates/types.hbs";
+import * as templates from "./templates";
 
 export const resolverFactory = (
   sourceFolder: SourceFolder,
@@ -65,8 +63,16 @@ export const resolverFactory = (
     },
 
     pageRouteResolver(entry) {
-      const { id, name, folder, file, fileFullpath, pathTokens, pathPattern } =
-        entry;
+      const {
+        id,
+        name,
+        folder,
+        file,
+        fileFullpath,
+        pathTokens,
+        pathPattern,
+        honoPattern,
+      } = entry;
 
       const handler: ResolverSignature["handler"] = async () => {
         const entry: PageRoute = {
@@ -74,6 +80,7 @@ export const resolverFactory = (
           name,
           pathTokens,
           pathPattern,
+          honoPattern,
           params: {
             schema: pathTokens.flatMap((e) => {
               return e.parts.filter((p) => p.type === "param");
@@ -108,7 +115,6 @@ export const resolverFactory = (
 
     apiRouteResolver(entry) {
       const {
-        //
         id,
         name,
         file,
@@ -116,6 +122,7 @@ export const resolverFactory = (
         fileFullpath,
         pathTokens,
         pathPattern,
+        honoPattern,
       } = entry;
 
       const handler: ResolverSignature["handler"] = async (updatedFile) => {
@@ -200,7 +207,7 @@ export const resolverFactory = (
             resolvedType: undefined,
           };
 
-          const typesFileContent = render(typesFileTpl, {
+          const typesFileContent = render(templates.typesFile, {
             params,
             paramsSchema: paramsSchema.map((param, index) => {
               return {
@@ -232,7 +239,7 @@ export const resolverFactory = (
            * */
           await renderToFile(
             typesFile,
-            resolvedTypes ? resolvedTypesTpl : typesFileContent,
+            resolvedTypes ? templates.resolvedTypes : typesFileContent,
             { resolvedTypes },
           );
 
@@ -352,6 +359,7 @@ export const resolverFactory = (
           name,
           pathTokens,
           pathPattern,
+          honoPattern,
           params: cache.params,
           numericParams: cache.numericParams,
           optionalParams,

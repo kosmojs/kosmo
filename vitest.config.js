@@ -1,5 +1,6 @@
 import { resolve } from "node:path";
 
+import { glob } from "tinyglobby";
 import { defineConfig } from "vitest/config";
 
 import { defaults } from "@kosmojs/lib";
@@ -120,14 +121,25 @@ export default defineConfig({
   },
   plugins: [
     {
-      name: "vite:load-as-text",
+      name: "vite:load-templates",
       enforce: "pre",
-      transform(src, id) {
-        if (id.endsWith(".hbs") || id.endsWith("?as=text")) {
-          return {
-            code: `export default ${JSON.stringify(src)}`,
-            map: null,
-          };
+      async resolveId(src) {
+        if (src.startsWith("#templates/")) {
+          const base = src.replace("#templates/", "src/templates/");
+          const [path] = await glob(
+            [
+              // files with extension takes priority
+              base,
+              `${base}.{ts,tsx}`,
+            ],
+            {
+              absolute: true,
+              onlyFiles: true,
+            },
+          );
+          if (path) {
+            return `${path}?raw`;
+          }
         }
       },
     },

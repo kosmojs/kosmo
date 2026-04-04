@@ -11,10 +11,7 @@ import {
   sortRoutes,
 } from "@kosmojs/lib";
 
-import fetchLibTpl from "./templates/lib/@fetch/lib.ts?as=text";
-import fetchTpl from "./templates/lib/fetch.hbs";
-import routeTpl from "./templates/lib/route.hbs";
-import unwrapTpl from "./templates/lib/unwrap.hbs";
+import * as templates from "./templates";
 
 export default defineGeneratorFactory((meta, sourceFolder) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
@@ -35,8 +32,8 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
       .sort(sortRoutes);
 
     for (const [file, template] of [
-      ["fetch.ts", fetchTpl],
-      ["@fetch/lib.ts", fetchLibTpl],
+      ["fetch.ts", templates.fetch],
+      ["@fetch/lib.ts", templates.fetchLib],
     ]) {
       await deployLibFile(createPath.lib(file), template, {
         routes,
@@ -130,7 +127,7 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
 
         await deployLibFile(
           createPath.libApi(entry.name, "fetch.ts"),
-          routeTpl,
+          templates.route,
           {
             route: entry,
             validationTypes,
@@ -152,7 +149,7 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
       // supposed to be replaced by specialized generators, write it only at initialization.
       // fetch generator always runs before other generators
       // so it is safe to re-initialize this file before specialized generators update it.
-      await deployLibFile(createPath.lib("unwrap.ts"), unwrapTpl, {});
+      await deployLibFile(createPath.lib("unwrap.ts"), templates.unwrap, {});
     },
 
     async watch(entries, event) {

@@ -10,6 +10,9 @@
   "files": [
     "pkg/*"
   ],
+  "imports": {
+    "#templates/*": "./src/templates/*"
+  },
   "exports": {
     ".": {
       "types": "./pkg/index.d.ts",

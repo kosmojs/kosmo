@@ -13,13 +13,8 @@ import {
   typeboxLiteralText,
 } from "@kosmojs/lib";
 
+import * as templates from "./templates";
 import type { Options, Settings } from "./types";
-
-import libTypeboxCustomTypesTpl from "./templates/lib/@typebox/custom-types.ts?as=text";
-import libTypeboxErrorHandlerTpl from "./templates/lib/@typebox/error-handler.ts?as=text";
-import libTypeboxIndexTpl from "./templates/lib/@typebox/index.ts?as=text";
-import libTypeboxSetupTpl from "./templates/lib/@typebox/setup.hbs";
-import schemasTpl from "./templates/lib/schemas.hbs";
 
 const defaultSettings: Settings = {
   exactOptionalPropertyTypes: true,
@@ -163,7 +158,7 @@ export default defineGeneratorFactory<Options>(
 
         await deployLibFile(
           createPath.libApi(entry.name, "schemas.ts"),
-          schemasTpl,
+          templates.schemas,
           {
             route: entry,
             resolvedTypes,
@@ -180,10 +175,10 @@ export default defineGeneratorFactory<Options>(
 
       async start() {
         for (const [file, template] of [
-          ["custom-types.ts", libTypeboxCustomTypesTpl],
-          ["error-handler.ts", libTypeboxErrorHandlerTpl],
-          ["index.ts", libTypeboxIndexTpl],
-          ["setup.ts", libTypeboxSetupTpl],
+          ["custom-types.ts", templates.libTypeboxCustomTypes],
+          ["error-handler.ts", templates.libTypeboxErrorHandler],
+          ["index.ts", templates.libTypeboxIndex],
+          ["setup.ts", templates.libTypeboxSetup],
         ]) {
           await deployLibFile(createPath.lib("@typebox", file), template, {
             validationMessages: JSON.stringify(validationMessages),

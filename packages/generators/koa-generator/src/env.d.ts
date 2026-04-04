@@ -1,11 +1,6 @@
 declare const KOSMO_PRODUCTION_BUILD: boolean;
 
-declare module "*.hbs" {
-  const src: string;
-  export default src;
-}
-
-declare module "*?as=text" {
+declare module "#templates/*" {
   const content: string;
   export default content;
 }

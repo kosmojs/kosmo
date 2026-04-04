@@ -1,11 +1,6 @@
-declare module "*.hbs" {
+declare module "#templates/*" {
   const src: string;
   export default src;
-}
-
-declare module "*?as=text" {
-  const content: string;
-  export default content;
 }
 
 declare module "{{ createImport 'config' }}" {

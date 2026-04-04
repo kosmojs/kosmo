@@ -12,28 +12,8 @@ import {
 } from "@kosmojs/lib";
 
 import { randomCongratMessage, traverseFactory } from "./base";
+import * as templates from "./templates";
 import type { Options } from "./types";
-
-import libEntryClientTpl from "./templates/lib/entry/client.hbs";
-import libEntryRoutePartialTpl from "./templates/lib/entry/routePartial.hbs";
-import libEntryServerTpl from "./templates/lib/entry/server.hbs";
-import libEnvDTpl from "./templates/lib/env.d.ts?as=text";
-import libPageSamples404Tpl from "./templates/lib/pageSamples/404.hbs";
-import libPageSamplesPageTpl from "./templates/lib/pageSamples/page.hbs";
-import libPageSamplesStylesTpl from "./templates/lib/pageSamples/styles.css?as=text";
-import libPageSamplesWelcomeTpl from "./templates/lib/pageSamples/welcome.hbs";
-import libReactTpl from "./templates/lib/react.ts?as=text";
-import libRouterTpl from "./templates/lib/router.hbs";
-import srcAppTpl from "./templates/src/App.tsx?as=text";
-import srcComponents404Tpl from "./templates/src/components/404.tsx?as=text";
-import srcComponentsLinkTpl from "./templates/src/components/Link.tsx?as=text";
-import srcEntryClientTpl from "./templates/src/entry/client.tsx?as=text";
-import srcEntryServerTpl from "./templates/src/entry/server.tsx?as=text";
-import srcIndexTpl from "./templates/src/index.html?as=text";
-import srcPageSamplesLayoutTpl from "./templates/src/pageSamples/layout.hbs";
-import srcPageSamplesPageTpl from "./templates/src/pageSamples/page.hbs";
-import srcPageSamplesWelcomeTpl from "./templates/src/pageSamples/welcome.hbs";
-import srcRouterTpl from "./templates/src/router.tsx?as=text";
 
 export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
@@ -45,7 +25,7 @@ export default defineGeneratorFactory<Options>(
         ...pageRouteMapperHelpers(),
       },
       partials: {
-        routePartial: libEntryRoutePartialTpl,
+        routePartial: templates.libEntryRoutePartial,
       },
     });
 
@@ -70,8 +50,8 @@ export default defineGeneratorFactory<Options>(
           await deploySrcFile(
             createPath.pages(entry.file),
             entry.name === "index"
-              ? srcPageSamplesWelcomeTpl
-              : customTemplate?.[1] || srcPageSamplesPageTpl,
+              ? templates.srcPageSamplesWelcome
+              : customTemplate?.[1] || templates.srcPageSamplesPage,
             {
               route: entry,
               message: randomCongratMessage(),
@@ -81,7 +61,7 @@ export default defineGeneratorFactory<Options>(
         } else if (kind === "pageLayout") {
           await deploySrcFile(
             createPath.pages(entry.file),
-            srcPageSamplesLayoutTpl,
+            templates.srcPageSamplesLayout,
             { route: entry },
             { overwrite },
           );
@@ -103,8 +83,8 @@ export default defineGeneratorFactory<Options>(
       const nestedRoutes = entriesTraverser(nestedRoutesFactory(pageEntries));
 
       for (const [file, template] of [
-        ["client.ts", libEntryClientTpl],
-        ["server.ts", libEntryServerTpl],
+        ["client.ts", templates.libEntryClient],
+        ["server.ts", templates.libEntryServer],
       ]) {
         await deployLibFile(createPath.libEntry(file), template, {
           pageEntries,
@@ -112,7 +92,7 @@ export default defineGeneratorFactory<Options>(
         });
       }
 
-      await deployLibFile(createPath.lib("router.ts"), libRouterTpl, {
+      await deployLibFile(createPath.lib("router.ts"), templates.libRouter, {
         entries,
         indexRoutes,
       });
@@ -125,22 +105,22 @@ export default defineGeneratorFactory<Options>(
       async start() {
         // deploy global lib files that does not change on routes updates
         for (const [file, template] of [
-          ["env.d.ts", libEnvDTpl],
-          ["react.ts", libReactTpl],
-          ["pageSamples/styles.module.css", libPageSamplesStylesTpl],
-          ["pageSamples/welcome.tsx", libPageSamplesWelcomeTpl],
-          ["pageSamples/page.tsx", libPageSamplesPageTpl],
-          ["pageSamples/404.tsx", libPageSamples404Tpl],
+          ["env.d.ts", templates.libEnvD],
+          ["react.ts", templates.libReact],
+          ["pageSamples/styles.module.css", templates.libPageSamplesStyles],
+          ["pageSamples/welcome.tsx", templates.libPageSamplesWelcome],
+          ["pageSamples/page.tsx", templates.libPageSamplesPage],
+          ["pageSamples/404.tsx", templates.libPageSamples404],
         ]) {
           await deployLibFile(createPath.lib(file), template, {});
         }
 
         // deploy global src files that does not change when routes updates
         for (const [file, template] of [
-          ["components/404.tsx", srcComponents404Tpl],
-          ["components/Link.tsx", srcComponentsLinkTpl],
-          ["App.tsx", srcAppTpl],
-          ["router.tsx", srcRouterTpl],
+          ["pages/404.tsx", templates.srcPageSamples404],
+          ["components/Link.tsx", templates.srcComponentsLink],
+          ["App.tsx", templates.srcApp],
+          ["router.tsx", templates.srcRouter],
         ]) {
           await deploySrcFile(
             createPath.src(file),
@@ -152,7 +132,7 @@ export default defineGeneratorFactory<Options>(
 
         await deploySrcFile(
           createPath.src("index.html"),
-          srcIndexTpl,
+          templates.srcIndex,
           { entryDir: defaults.entryDir },
           {
             overwrite: (c) => {
@@ -165,8 +145,8 @@ export default defineGeneratorFactory<Options>(
         );
 
         for (const [file, template] of [
-          ["client.tsx", srcEntryClientTpl],
-          ["server.tsx", srcEntryServerTpl],
+          ["client.tsx", templates.srcEntryClient],
+          ["server.tsx", templates.srcEntryServer],
         ]) {
           await deploySrcFile(
             createPath.entry(file),

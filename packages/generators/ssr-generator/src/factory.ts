@@ -9,8 +9,7 @@ import {
 } from "@kosmojs/lib";
 
 import type { Options } from "./options";
-
-import serverTpl from "./templates/lib/server.ts?as=text";
+import * as templates from "./templates";
 
 export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
@@ -35,7 +34,7 @@ export default defineGeneratorFactory<Options>(
       async watch() {},
 
       async build() {
-        await deployLibFile(createPath.lib("ssr.ts"), serverTpl, {
+        await deployLibFile(createPath.lib("ssr.ts"), templates.server, {
           serveStaticAssets: JSON.stringify(
             typeof options?.serveStaticAssets === "boolean"
               ? options.serveStaticAssets

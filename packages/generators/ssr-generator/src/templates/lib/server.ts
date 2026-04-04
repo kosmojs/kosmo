@@ -235,7 +235,7 @@ export const createApp = async () => {
  *
  * Set `serveStaticAssets` to false when a reverse proxy or CDN is expected to serve static assets.
  * */
-export const loadAssets = async () => {
+const loadAssets = async () => {
   const mimeTypeMap: Record<string, string> = {
     ".js": "application/javascript",
     ".mjs": "application/javascript",

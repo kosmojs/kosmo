@@ -32,9 +32,7 @@ import {
   type Project,
   type SourceFolder,
 } from "./base";
-
-import configTpl from "./templates/src/config/index.hbs";
-import kosmoConfigTpl from "./templates/src/kosmo.config.hbs";
+import * as templates from "./templates";
 
 const TPL_DIR = resolve(import.meta.dirname, "templates");
 
@@ -241,8 +239,8 @@ export const createSourceFolder = async (
   };
 
   for (const [file, template] of [
-    ["config/index.ts", configTpl],
-    ["kosmo.config.ts", kosmoConfigTpl],
+    ["config/index.ts", templates.config],
+    ["kosmo.config.ts", templates.kosmoConfig],
     // stub files for initial build to pass;
     // generators will fill them with appropriate content.
     [`${defaults.apiDir}/index/index.ts`, ""],
