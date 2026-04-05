@@ -287,47 +287,8 @@ export default defineConfig({
           ],
         },
         {
-          text: "More Generators",
-          collapsed: false,
-          items: [
-            {
-              text: "📋 OpenAPI",
-              docFooterText: "📋 OpenAPI Generator",
-              link: "/openapi",
-            },
-          ],
-        },
-        {
-          text: "Authoring Generators",
-          collapsed: false,
-          items: [
-            {
-              text: "🏗 Architecture",
-              docFooterText: "🏗 Generators Architecture",
-              link: "/generators/intro",
-            },
-            {
-              text: `${icons.gear} User Options`,
-              link: "/generators/user-options",
-            },
-            {
-              text: "🏭 Factory",
-              link: "/generators/factory",
-            },
-            {
-              text: "🔄 Incremental Updates",
-              link: "/generators/incremental-updates",
-            },
-            {
-              text: "🗂 Route Entries",
-              link: "/generators/route-entries",
-            },
-            {
-              text: "🧭 Path Resolver",
-              docFooterText: "🧭 Generators - Path Resolver",
-              link: "/generators/path-resolver",
-            },
-          ],
+          text: "📋 OpenAPI",
+          link: "/openapi",
         },
       ],
     },

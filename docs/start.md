@@ -71,7 +71,14 @@ yarn +folder
 :::
 
 You'll be prompted for folder name, base URL, framework, backend, and SSR.
-For non-interactive mode:
+
+Also non-interactive mode supported with following options:
+
+- `--name`
+- `--base`
+- `--framework solid|react|vue`
+- `--backend koa|hono`
+- `--ssr`
 
 ::: code-group
 ```sh [npm]
@@ -87,7 +94,6 @@ yarn +folder --name front --base / --framework solid --backend koa --ssr
 ```
 :::
 
-Options: `--name` (required) · `--base` · `--framework solid|react|vue` · `--backend koa|hono` · `--ssr`
 
 The source folder may add new dependencies - run install again:
 

@@ -49,7 +49,7 @@ The SSR generator creates `entry/server.tsx` with a default implementation.
 ```ts [React · entry/server.tsx]
 import { renderToString } from "react-dom/server";
 
-import { createRoutes, renderFactory} from "_/entry/server";
+import renderFactory, { createRoutes } from "_/entry/server";
 import routerFactory from "../router";
 
 const routes = createRoutes({ withPreload: false });
@@ -57,19 +57,21 @@ const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {
   return {
-    async renderToString(url) {
+    async renderToString(url, { assets }) {
       const { router } = await serverRouter(url);
+      const head = assets.map(({ tag }) => tag).join("\n");
       const html = renderToString(router);
-      return { html };
+      return { head, html };
     },
   };
 });
+
 ```
 
 ```ts [SolidJS · entry/server.tsx]
 import { renderToString, generateHydrationScript } from "solid-js/web";
 
-import { renderFactory, createRoutes } from "_/entry/server";
+import renderFactory, { createRoutes } from "_/entry/server";
 import routerFactory from "../router";
 
 const routes = createRoutes({ withPreload: false });
@@ -78,20 +80,23 @@ const { serverRouter } = routerFactory(routes);
 export default renderFactory(() => {
   const hydrationScript = generateHydrationScript();
   return {
-    async renderToString(url, ) {
+    async renderToString(url, {assets}) {
       const { router } = await serverRouter(url);
+      const head = assets.reduce(
+        (head, { tag }) => `${head}\n${tag}`,
+        hydrationScript,
+      );
       const html = renderToString(() => router);
-      return { head: hydrationScript, html };
+      return { head, html };
     },
   };
 });
 ```
 
 ```ts [Vue · entry/server.ts]
-import { createSSRApp } from "vue";
 import { renderToString } from "vue/server-renderer";
 
-import { createRoutes, renderFactory } from "_/entry/server";
+import renderFactory, { createRoutes } from "_/entry/server";
 import routerFactory from "../router";
 
 const routes = createRoutes();
@@ -99,10 +104,11 @@ const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {
   return {
-    async renderToString(url) {
+    async renderToString(url, { assets }) {
       const { app } = await serverRouter(url);
+      const head = assets.map(({ tag }) => tag).join("\n");
       const html = await renderToString(app);
-      return { html };
+      return { head, html };
     },
   };
 });
@@ -118,14 +124,32 @@ which bootstraps client-side reactivity during hydration.
 
 ## 🎛️ Render Factory Arguments
 
-Both `renderToString` and `renderToStream` receive the same arguments - the URL and SSROptions:
+`renderToString` receive two arguments - the URL and SSROptions:
 
 ```ts
-type SSROptions = {
+export type SSROptions = {
+  // The original client index.html output from Vite build.
+  // Contains <!--app-head--> and <!--app-html--> placeholders
+  // where SSR content should be injected.
   template: string;
-  manifest: Record<string, SSRManifestEntry>;
-  request: IncomingMessage;
-  response: ServerResponse;
+
+  // Vite's final manifest.json - the full dependency graph for
+  // client modules, dynamic imports, and related CSS.
+  manifest: Manifest;
+
+  // SSR-related assets, must be injected manually (unlike CSR assets that are injected by Vite).
+  // Each entry provides three ways to consume the asset:
+  //   - `tag`: ready-to-use HTML tag (<script> or <link>) for direct injection
+  //   - `path`: asset URL for building custom tags with additional attributes
+  //   - `content`: raw file contents for inlining as <style> or inline <script>
+  // `size` is included for Content-Length or preload hints.
+  assets: Array<{
+    tag: string;
+    kind: "js" | "css";
+    path: string;
+    content: string | undefined;
+    size: number | undefined;
+  }>;
 };
 ```
 
@@ -133,121 +157,124 @@ type SSROptions = {
 |----------|-------------|
 | `template` | Client `index.html` from the Vite build, with <code style="white-space: nowrap">\<!--app-head--></code> and <code style="white-space: nowrap">\<!--app-html--></code> placeholders for SSR injection |
 | `manifest` | Vite's `manifest.json` - the full dependency graph for client modules |
-| `request` | Node.js `IncomingMessage` for reading headers, cookies, locale, etc. |
-| `response` | Node.js `ServerResponse` for setting headers, caching, redirects, or flushing streamed HTML |
-
-### Request / Response Access
-
-Direct access to `request` and `response` enables advanced SSR control:
-
-- Inspect headers (User-Agent, cookies, locale)
-- Set custom response headers (caching, redirects)
-- Flush HTML progressively in streaming mode
+| `assets` | SSR-related assets, must be injected manually
 
 ## 🌊 Stream Rendering
 
-For progressive HTML delivery, implement `renderToStream`. The streaming API
-differs per framework but follows the same pattern: split the template,
-write the opening HTML, pipe the app stream, then finalize the response.
+When both provided, `renderToStream` takes precedence over `renderToString`,
+enabling earlier flushing and improved Time-to-First-Byte (TTFB).
+
+`renderToStream` receives the request URL, SSR options, and a Hono `StreamingApi`
+instance. The SSR server creates the stream and passes it to your renderer:
+
+```ts
+import { stream } from "hono/streaming";
+
+// renderToStream receives full control over the response stream.
+// The renderer decides when to flush the shell, inject assets,
+// and finalize the response.
+return stream(ctx, async (stream) => {
+  await renderToStream(url, ssrOptions, stream);
+});
+```
+
+The pattern is the same across frameworks: split the HTML template at
+`<!--app-html-->`, write the opening HTML with head content, pipe the
+framework's rendered stream, then write the closing HTML.
+
+Frameworks provide a web-standard `ReadableStream` renderer,
+which pipes directly into Hono's `stream.pipe()` - no Node.js stream
+adapters needed, works identically on Node, Bun, and Deno.
 
 ::: code-group
+```tsx [React · entry/server.tsx]
+import { renderToReadableStream } from "react-dom/server";
 
-```ts [React · entry/server.tsx]
 export default renderFactory(() => {
   return {
     // ...
-    async renderToStream(url, { response, template }) {
+    async renderToStream(url, { template, assets }, stream) {
       const { router } = await serverRouter(url);
 
-      const head = "...";
+      const head = assets
+        .map(({ tag }) => tag)
+        .join("\n");
 
       const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
-      response.write(htmlStart.replace("<!--app-head-->", head));
 
-      const { pipe } = renderToPipeableStream(router, {
-        onShellReady() {
-          pipe(response);
-        },
-        onShellError(error) {
-          console.error("Shell error:", error);
-          response.statusCode = 500;
-          response.end();
-        },
-        onAllReady() {
-          response.write(htmlEnd);
-          response.end();
-        },
-      });
+      await stream.write(htmlStart.replace("<!--app-head-->", head));
+
+      const reactStream = await renderToReadableStream(router);
+      await stream.pipe(reactStream);
+
+      await stream.write(htmlEnd);
     },
   };
 });
 ```
+```tsx [SolidJS · entry/server.tsx]
+import { renderToStream } from "solid-js/web";
 
-```ts [SolidJS · entry/server.tsx]
 export default renderFactory(() => {
   const hydrationScript = generateHydrationScript();
   return {
     // ...
-    async renderToStream(url, { response, template }) {
+    async renderToStream(url, { template, assets }, stream) {
       const { router } = await serverRouter(url);
 
-      const head = hydrationScript;
+      const head = assets.reduce(
+        (head, { tag }) => `${head}\n${tag}`,
+        hydrationScript,
+      );
 
       const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
-      response.write(htmlStart.replace("<!--app-head-->", head));
 
-      const { pipe } = renderToStream(() => router);
+      await stream.write(htmlStart.replace("<!--app-head-->", head));
 
-      pipe(response, {
-        onCompleteShell() {
-          // shell ready - streaming begins
-        },
-        onCompleteAll() {
-          response.write(htmlEnd);
-          response.end();
-        },
-      });
+      const { readable } = renderToStream(() => router);
+      await stream.pipe(readable);
+
+      await stream.write(htmlEnd);
     },
   };
 });
 ```
-
 ```ts [Vue · entry/server.ts]
+import { createSSRApp } from "vue";
+import { renderToWebStream } from "vue/server-renderer";
+
 export default renderFactory(() => {
   return {
     // ...
-    async renderToStream(url, { response, template }) {
+    async renderToStream(url, { template, assets }, stream) {
       const { app } = await serverRouter(url);
 
-      const head = "...";
+      const head = assets
+        .map(({ tag }) => tag)
+        .join("\n");
 
       const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
-      response.write(htmlStart.replace("<!--app-head-->", head));
 
-      const stream = renderToNodeStream(app);
+      await stream.write(htmlStart.replace("<!--app-head-->", head));
 
-      stream.on("data", (chunk) => response.write(chunk));
-      stream.on("end", () => {
-        response.write(htmlEnd);
-        response.end();
-      });
-      stream.on("error", (err) => {
-        console.error("SSR stream error:", err);
-        response.statusCode = 500;
-        response.end();
-      });
+      const vueStream = renderToWebStream(app);
+      await stream.pipe(vueStream);
+
+      await stream.write(htmlEnd);
     },
   };
 });
 ```
 :::
 
-- React uses `renderToPipeableStream` with `onShellReady`/`onAllReady` callbacks.
-- SolidJS uses `renderToStream` with `onCompleteShell`/`onCompleteAll`.
-- Vue uses `renderToNodeStream` with Node.js stream events.
+Same web-standard `ReadableStream` used across all frameworks:
 
-**Always call `response.end()`** after streaming completes. Omitting it leaves
-clients waiting indefinitely.
+- **React** - `renderToReadableStream` returns a `ReadableStream` directly. Cross-runtime, replaces the Node-only `renderToPipeableStream`.
+- **SolidJS** - `renderToStream` returns `{ readable }`, a web `ReadableStream`.
+- **Vue** - `renderToWebStream` returns a `ReadableStream`, replacing the Node-only `renderToNodeStream`.
+
+Hono's `stream.pipe(readableStream)` consumes each framework's output
+identically - no runtime-specific adapters or Node.js stream conversions.
 
 ## 📦 Static Asset Handling
 

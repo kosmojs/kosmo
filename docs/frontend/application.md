@@ -73,10 +73,9 @@ import {
   StaticRouterProvider,
 } from "react-router";
 
-import app from "./App";
-
 import { baseurl } from "~/config";
 import { routerFactory } from "_/router";
+import app from "./App";
 
 export default routerFactory((routes) => {
   const routeStack = [
@@ -149,10 +148,9 @@ import {
   createWebHistory,
 } from "vue-router";
 
-import App from "./App.vue";
-
 import { baseurl } from "~/config";
 import { routerFactory } from "_/router";
+import App from "./App.vue";
 
 export default routerFactory((routes) => {
   return {
@@ -173,7 +171,7 @@ export default routerFactory((routes) => {
         routes,
         strict: true,
       });
-      await router.push(url.pathname);
+      await router.push(url.pathname.replace(baseurl, ""));
       await router.isReady();
       app.use(router);
       return { router, app };
@@ -208,112 +206,96 @@ constructs the complete application dependency graph from there.
 The `renderFactory` function orchestrates two rendering modes via a callback
 that must return:
 
-- `clientRender()` - mounts the application fresh in the browser
-- `serverRender()` - hydrates pre-rendered server HTML for interactivity
+- `mount()` - mounts the application fresh in the browser
+- `hydrate()` - hydrates pre-rendered server HTML for interactivity
 
-During SSR builds, the generator embeds a flag into the client bundle.
-On page load, `renderFactory` reads this flag to select the
-correct path: `serverRender()` for SSR hydration, `clientRender()` for a
-fresh client-only mount.
+On page load, `renderFactory` reads Vite's `import.meta.env.SSR` flag to select the
+correct method: `hydrate()` for SSR hydration, `mount()` for a fresh client-only mount.
 
 ::: code-group
 
 ```tsx [React · entry/client.tsx]
 import { createRoot, hydrateRoot } from "react-dom/client";
 
-import { createRoutes, renderFactory } from "_/entry/client";
-
-import NotFound from "../components/404";
+import renderFactory, { createRoutes } from "_/entry/client";
 import routerFactory from "../router";
+
+const routes = createRoutes({ withPreload: true });
+const { clientRouter } = routerFactory(routes);
 
 const root = document.getElementById("app");
 
 if (root) {
-  const routes = createRoutes({ withPreload: true });
-  const { clientRouter } = routerFactory(routes);
   renderFactory(() => {
     return {
-      async clientRender() {
+      async mount() {
         const { router } = await clientRouter();
         createRoot(root).render(router);
       },
-      async serverRender() {
+      async hydrate() {
         const { router } = await clientRouter();
         hydrateRoot(root, router);
-      },
-      async notFound() {
-        createRoot(root).render(<NotFound />);
       },
     };
   });
 } else {
-  console.error("Root element not found!");
+  console.error("❌ Root element not found!");
 }
 ```
 
 ```tsx [SolidJS · entry/client.tsx]
 import { hydrate, render } from "solid-js/web";
 
-import { createRoutes, renderFactory } from "_/entry/client";
-
+import renderFactory, { createRoutes } from "_/entry/client";
 import routerFactory from "../router";
-import NotFound from "../components/404";
+
+const routes = createRoutes({ withPreload: true });
+const { clientRouter } = routerFactory(routes);
 
 const root = document.getElementById("app");
 
 if (root) {
-  const routes = createRoutes({ withPreload: true });
-  const { clientRouter } = routerFactory(routes);
   renderFactory(() => {
     return {
-      async clientRender() {
+      async mount() {
         const { router } = await clientRouter();
         render(() => router, root);
       },
-      async serverRender() {
+      async hydrate() {
         const { router } = await clientRouter();
         hydrate(() => router, root)
       },
-      async notFound() {
-        render(NotFound, root);
-      }
     }
   });
 } else {
-  console.error("❗Root element not found!");
+  console.error("❌ Root element not found!");
 }
 ```
 
 ```ts [Vue · entry/client.ts]
-import { createApp } from "vue";
-
-import { createRoutes, renderFactory } from "_/entry/client";
-
-import NotFound from "../components/404.vue";
+import renderFactory, { createRoutes } from "_/entry/client";
 import routerFactory from "../router";
+
+const routes = createRoutes();
+const { clientRouter } = routerFactory(routes);
 
 const root = document.getElementById("app");
 
 if (root) {
-  const routes = createRoutes();
-  const { clientRouter } = routerFactory(routes);
   renderFactory(() => {
     return {
-      async clientRender() {
+      async mount() {
         const { app } = await clientRouter();
         app.mount(root);
       },
-      async serverRender() {
+      async hydrate() {
         const { app } = await clientRouter();
         app.mount(root, true);
-      },
-      async notFound() {
-        createApp(NotFound).mount(root);
       },
     };
   });
 } else {
-  console.error("Root element not found!");
+  console.error("❌ Root element not found!");
 }
 ```
 :::
