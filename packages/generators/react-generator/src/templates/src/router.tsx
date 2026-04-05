@@ -6,10 +6,9 @@ import {
   StaticRouterProvider,
 } from "react-router";
 
-import app from "./App";
-
 import { baseurl } from "{{ createImport 'config' }}";
 import { routerFactory } from "{{ createImport 'lib' 'router' }}";
+import app from "./App";
 
 export default routerFactory((routes) => {
   const routeStack = [

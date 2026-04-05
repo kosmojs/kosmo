@@ -1,7 +1,6 @@
 import { createRoot, hydrateRoot } from "react-dom/client";
 
 import renderFactory, { createRoutes } from "{{ createImport 'libEntry' 'client' }}";
-
 import routerFactory from "../router";
 
 const routes = createRoutes({ withPreload: true });

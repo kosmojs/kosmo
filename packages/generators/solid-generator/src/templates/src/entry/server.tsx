@@ -11,7 +11,10 @@ export default renderFactory(() => {
   return {
     async renderToString(url, {assets}) {
       const { router } = await serverRouter(url);
-      const head = assets.reduce((a, { tag }) => a + tag, hydrationScript)
+      const head = assets.reduce(
+        (head, { tag }) => `${head}\n${tag}`,
+        hydrationScript,
+      );
       const html = renderToString(() => router);
       return { head, html };
     },

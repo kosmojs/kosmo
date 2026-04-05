@@ -10,7 +10,7 @@ export default renderFactory(() => {
   return {
     async renderToString(url, { assets }) {
       const { router } = await serverRouter(url);
-      const head = assets.reduce((a, { tag }) => a + tag, "");
+      const head = assets.map(({ tag }) => tag).join("\n");
       const html = renderToString(router);
       return { head, html };
     },

@@ -150,7 +150,7 @@ export type SSROptions = {
   // client modules, dynamic imports, and related CSS.
   manifest: Manifest;
 
-  // SSR-related assets, must be embeded manually (unlike CSR assets that are injected by Vite).
+  // SSR-related assets, must be injected manually (unlike CSR assets that are injected by Vite).
   // Each entry provides three ways to consume the asset:
   //   - `tag`: ready-to-use HTML tag (<script> or <link>) for direct injection
   //   - `path`: asset URL for building custom tags with additional attributes

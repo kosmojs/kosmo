@@ -5,10 +5,9 @@ import {
   createWebHistory,
 } from "vue-router";
 
-import App from "./App.vue";
-
 import { baseurl } from "{{ createImport 'config' }}";
 import { routerFactory } from "{{ createImport 'lib' 'router' }}";
+import App from "./App.vue";
 
 export default routerFactory((routes) => {
   return {
