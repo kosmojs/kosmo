@@ -1,4 +1,4 @@
-import type { ComponentType, PropsWithChildren, JSX } from "react";
+import type { JSX } from "react";
 import type { RouteObject } from "react-router";
 import { pageRouteMapper, createRouterFactory } from "@kosmojs/core/generators";
 
@@ -22,8 +22,4 @@ export const routeMap = {
   {{/each}}
 };
 
-export default createRouterFactory<{
-  app: ComponentType<PropsWithChildren>
-  router: JSX.Element,
-  route: RouteObject,
-}>();
+export default createRouterFactory<RouteObject, JSX.Element>();

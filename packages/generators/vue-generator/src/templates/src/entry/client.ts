@@ -10,12 +10,12 @@ if (root) {
   renderFactory(() => {
     return {
       async mount() {
-        const { app } = await clientRouter();
-        app.mount(root);
+        const page = await clientRouter();
+        page.mount(root);
       },
       async hydrate() {
-        const { app } = await clientRouter();
-        app.mount(root, true);
+        const page = await clientRouter();
+        page.mount(root, true);
       },
     };
   });

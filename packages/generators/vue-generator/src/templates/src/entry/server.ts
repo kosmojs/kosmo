@@ -9,9 +9,9 @@ const { serverRouter } = routerFactory(routes);
 export default renderFactory(() => {
   return {
     async renderToString(url, { assets }) {
-      const { app } = await serverRouter(url);
+      const page = await serverRouter(url);
       const head = assets.map(({ tag }) => tag).join("\n");
-      const html = await renderToString(app);
+      const html = await renderToString(page);
       return { head, html };
     },
   };

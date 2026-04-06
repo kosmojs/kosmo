@@ -13,18 +13,14 @@ declare module "{{ createImport 'lib' 'unwrap' }}" {
 
 declare module "{{ createImport 'lib' 'router' }}" {
   import type { App } from "vue";
-  import type { RouteRecordRaw, Router } from "vue-router";
+  import type { RouteRecordRaw } from "vue-router";
   import {
     createRouterFactory,
     type MappedPageRouteSignature,
   } from "@kosmojs/core/generators";
   export type LinkProps = [""];
   export const routeMap: Record<string, MappedPageRouteSignature>;
-  export default createRouterFactory<{
-    route: RouteRecordRaw;
-    router: Router;
-    app: App;
-  }>();
+  export default createRouterFactory<RouteRecordRaw, App>();
 }
 
 declare module "{{ createImport 'libEntry' 'client' }}" {

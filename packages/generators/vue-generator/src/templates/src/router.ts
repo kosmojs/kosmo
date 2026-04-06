@@ -19,7 +19,7 @@ export default routerFactory((routes) => {
         strict: true,
       });
       app.use(router);
-      return { router, app };
+      return app;
     },
     async serverRouter(url) {
       const app = createSSRApp(App);
@@ -31,7 +31,7 @@ export default routerFactory((routes) => {
       await router.push(url.pathname.replace(baseurl, ""));
       await router.isReady();
       app.use(router);
-      return { router, app };
+      return app;
     },
   };
 });

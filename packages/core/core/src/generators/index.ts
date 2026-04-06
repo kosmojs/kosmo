@@ -1,4 +1,4 @@
-import { compile, match } from "path-to-regexp";
+import { compile } from "path-to-regexp";
 
 import { createHost, join, stringify } from "../fetch";
 import type {
@@ -6,8 +6,6 @@ import type {
   MappedPageRouteSignature,
   MappedPageRouteSource,
   PageRoute,
-  RouterFactoryOptions,
-  RouterFactorySignature,
   SSRFactory,
 } from "../types";
 
@@ -53,10 +51,6 @@ export function pageRouteMapper<
 ): MappedPageRouteSignature<ParamsT, ExtendT> {
   const { baseurl, ...extend } = options;
 
-  const pathPattern = `${baseurl}/${route.pathPattern}`.replace(/\/+/g, "/");
-
-  const matcher = match<Record<string, string>>(pathPattern);
-
   const toPath = compile(route.pathPattern);
 
   const paramsMapper = (value: Array<unknown>) => {
@@ -78,14 +72,6 @@ export function pageRouteMapper<
   return {
     ...extend,
     ...route,
-
-    match(url) {
-      if (url.pathname === pathPattern) {
-        return { params: {} };
-      }
-      const match = matcher(url.pathname);
-      return match ? { params: match.params } : undefined;
-    },
 
     parametrize(params) {
       try {
@@ -115,12 +101,13 @@ export function pageRouteMapper<
   } as MappedPageRouteSignature<ParamsT, ExtendT>;
 }
 
-export const createRouterFactory = <T extends RouterFactoryOptions>() => {
+export const createRouterFactory = <RouteT, ReturnT>() => {
   return (
-    factory: (routes: Array<T["route"]>) => RouterFactorySignature<T>,
-  ) => {
-    return factory;
-  };
+    factory: (routes: Array<RouteT>) => {
+      clientRouter: (url?: URL) => Promise<ReturnT>;
+      serverRouter: (url: URL) => Promise<ReturnT>;
+    },
+  ) => factory;
 };
 
 export const serverRenderFactory: () => SSRFactory = () => {

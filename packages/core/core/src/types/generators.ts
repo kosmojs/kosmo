@@ -116,25 +116,11 @@ export type MappedPageRouteSignature<
   ExtendT extends object = {},
 > = ExtendT &
   MappedPageRouteSource & {
-    match(
-      url: URL,
-    ): { params: Record<string, string | Array<string>> } | undefined;
     parametrize(params: ParamsT): string;
     base(params: ParamsT, query?: QueryT): string;
     path(params: ParamsT, query?: QueryT): string;
     href(host: HostOpt, params: ParamsT, query?: QueryT): string;
   };
-
-export type RouterFactoryOptions = {
-  route: unknown;
-  router: unknown;
-  app: unknown;
-};
-
-export type RouterFactorySignature<T extends RouterFactoryOptions> = {
-  clientRouter: (url?: URL) => Promise<{ router: T["router"]; app: T["app"] }>;
-  serverRouter: (url: URL) => Promise<{ router: T["router"]; app: T["app"] }>;
-};
 
 /**
  * SSR environment options passed to user-defined

@@ -8,7 +8,7 @@ declare module "{{ createImport 'config' }}" {
 }
 
 declare module "{{ createImport 'lib' 'router' }}" {
-  import type { ComponentType, PropsWithChildren, JSX } from "react";
+  import type { JSX } from "react";
   import type { RouteObject } from "react-router";
   import {
     createRouterFactory,
@@ -16,11 +16,7 @@ declare module "{{ createImport 'lib' 'router' }}" {
   } from "@kosmojs/core/generators";
   export type LinkProps = [""];
   export const routeMap: Record<string, MappedPageRouteSignature>;
-  export default createRouterFactory<{
-    app: ComponentType<PropsWithChildren>;
-    router: JSX.Element;
-    route: RouteObject;
-  }>();
+  export default createRouterFactory<RouteObject, JSX.Element>();
 }
 
 declare module "{{ createImport 'libEntry' 'client' }}" {

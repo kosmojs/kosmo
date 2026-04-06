@@ -12,12 +12,12 @@ if (root) {
   renderFactory(() => {
     return {
       async mount() {
-        const { router } = await clientRouter();
-        createRoot(root).render(router);
+        const page = await clientRouter();
+        createRoot(root).render(page);
       },
       async hydrate() {
-        const { router } = await clientRouter();
-        hydrateRoot(root, router);
+        const page = await clientRouter();
+        hydrateRoot(root, page);
       },
     };
   });

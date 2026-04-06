@@ -74,13 +74,13 @@ import {
 
 import { baseurl } from "~/config";
 import routerFactory from "_/router";
-import app from "./App";
+import App from "./App";
 
 export default routerFactory((routes) => {
   const routeStack = [
     {
       path: "/",
-      Component: app,
+      Component: App,
       children: routes,
     },
   ];
@@ -90,10 +90,7 @@ export default routerFactory((routes) => {
   return {
     async clientRouter() {
       const router = createBrowserRouter(routeStack, { basename: baseurl });
-      return {
-        router: <RouterProvider router={router} />,
-        app,
-      };
+      return <RouterProvider router={router} />;
     },
     async serverRouter(url) {
       const context = await handler.query(new Request(url.href));
@@ -105,10 +102,7 @@ export default routerFactory((routes) => {
 
       const router = createStaticRouter(routeStack, context);
 
-      return {
-        router: <StaticRouterProvider router={router} context={context} />,
-        app,
-      };
+      return <StaticRouterProvider router={router} context={context} />;
     },
   };
 });
@@ -119,21 +113,17 @@ import { Router } from "@solidjs/router";
 
 import { baseurl } from "~/config";
 import routerFactory from "_/router";
-import app from "./App";
+import App from "./App";
 
 export default routerFactory((routes) => {
   return {
     async clientRouter() {
-      return {
-        router: <Router root={app} base={baseurl}>{routes}</Router>,
-        app,
-      };
+      return <Router root={App} base={baseurl}>{routes}</Router>;
     },
     async serverRouter(url) {
-      return {
-        router: <Router root={app} base={baseurl} url={url.pathname}>{routes}</Router>,
-        app,
-      };
+      return <Router root={App} base={baseurl} url={url.pathname}>
+        {routes}
+      </Router>;
     },
   }
 });
@@ -161,7 +151,7 @@ export default routerFactory((routes) => {
         strict: true,
       });
       app.use(router);
-      return { router, app };
+      return app;
     },
     async serverRouter(url) {
       const app = createSSRApp(App);
@@ -173,7 +163,7 @@ export default routerFactory((routes) => {
       await router.push(url.pathname.replace(baseurl, ""));
       await router.isReady();
       app.use(router);
-      return { router, app };
+      return app;
     },
   };
 });
@@ -228,12 +218,12 @@ if (root) {
   renderFactory(() => {
     return {
       async mount() {
-        const { router } = await clientRouter();
-        createRoot(root).render(router);
+        const page = await clientRouter();
+        createRoot(root).render(page);
       },
       async hydrate() {
-        const { router } = await clientRouter();
-        hydrateRoot(root, router);
+        const page = await clientRouter();
+        hydrateRoot(root, page);
       },
     };
   });
@@ -257,12 +247,12 @@ if (root) {
   renderFactory(() => {
     return {
       async mount() {
-        const { router } = await clientRouter();
-        render(() => router, root);
+        const page = await clientRouter();
+        render(() => page, root);
       },
       async hydrate() {
-        const { router } = await clientRouter();
-        hydrate(() => router, root)
+        const page = await clientRouter();
+        hydrate(() => page, root)
       },
     }
   });
@@ -284,12 +274,12 @@ if (root) {
   renderFactory(() => {
     return {
       async mount() {
-        const { app } = await clientRouter();
-        app.mount(root);
+        const page = await clientRouter();
+        page.mount(root);
       },
       async hydrate() {
-        const { app } = await clientRouter();
-        app.mount(root, true);
+        const page = await clientRouter();
+        page.mount(root, true);
       },
     };
   });

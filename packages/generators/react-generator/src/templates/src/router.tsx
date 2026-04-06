@@ -8,13 +8,13 @@ import {
 
 import { baseurl } from "{{ createImport 'config' }}";
 import routerFactory from "{{ createImport 'lib' 'router' }}";
-import app from "./App";
+import App from "./App";
 
 export default routerFactory((routes) => {
   const routeStack = [
     {
       path: "/",
-      Component: app,
+      Component: App,
       children: routes,
     },
   ];
@@ -24,10 +24,7 @@ export default routerFactory((routes) => {
   return {
     async clientRouter() {
       const router = createBrowserRouter(routeStack, { basename: baseurl });
-      return {
-        router: <RouterProvider router={router} />,
-        app,
-      };
+      return <RouterProvider router={router} />;
     },
     async serverRouter(url) {
       const context = await handler.query(new Request(url.href));
@@ -39,10 +36,7 @@ export default routerFactory((routes) => {
 
       const router = createStaticRouter(routeStack, context);
 
-      return {
-        router: <StaticRouterProvider router={router} context={context} />,
-        app,
-      };
+      return <StaticRouterProvider router={router} context={context} />;
     },
   };
 });

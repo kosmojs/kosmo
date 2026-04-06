@@ -12,7 +12,7 @@ declare module "{{ createImport 'lib' 'unwrap' }}" {
 }
 
 declare module "{{ createImport 'lib' 'router' }}" {
-  import type { JSX, ParentComponent } from "solid-js";
+  import type { JSX } from "solid-js";
   import type { RouteDefinition } from "@solidjs/router";
   import {
     createRouterFactory,
@@ -20,11 +20,7 @@ declare module "{{ createImport 'lib' 'router' }}" {
   } from "@kosmojs/core/generators";
   export type LinkProps = [""];
   export const routeMap: Record<string, MappedPageRouteSignature>;
-  export default createRouterFactory<{
-    router: JSX.Element;
-    route: RouteDefinition;
-    app: ParentComponent;
-  }>();
+  export default createRouterFactory<RouteDefinition, JSX.Element>();
 }
 
 declare module "{{ createImport 'libEntry' 'client' }}" {
