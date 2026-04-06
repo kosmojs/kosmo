@@ -6,6 +6,7 @@ import {
   defineGeneratorFactory,
   pathResolver,
   renderFactory,
+  sortRoutes,
 } from "@kosmojs/lib";
 
 import type { Options } from "./options";
@@ -38,9 +39,9 @@ export default defineGeneratorFactory<Options>(
           createPath.lib("ssr:routes.ts"),
           templates.ssrRotues,
           {
-            pageRoutes: entries.flatMap(({ kind, entry }) => {
-              return kind === "pageRoute" ? [entry] : [];
-            }),
+            pageRoutes: entries
+              .flatMap((e) => (e.kind === "pageRoute" ? [e.entry] : []))
+              .sort(sortRoutes),
           },
         );
 
