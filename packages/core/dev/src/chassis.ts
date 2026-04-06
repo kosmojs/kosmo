@@ -169,10 +169,13 @@ export default async (
   type RequestMatcher = (req: IncomingMessage) => boolean;
   type RequestHandler = (req: IncomingMessage, res: ServerResponse) => void;
 
-  const requestHandlers: Record<
-    string,
-    [matcherFactory: () => RequestMatcher, handlerFactory: () => RequestHandler]
-  > = {};
+  const requestHandlers: Array<
+    [
+      segments: [base: string, api?: string],
+      matcherFactory: () => RequestMatcher,
+      handlerFactory: () => RequestHandler,
+    ]
+  > = [];
 
   const teardownHandlers: Array<() => Promise<unknown>> = [];
 
@@ -226,10 +229,11 @@ export default async (
       viteServer.watcher.on(evt, handler);
     }
 
-    requestHandlers[sourceFolder.name] = [
+    requestHandlers.push([
+      [sourceFolder.baseurl],
       () => requestMatchers.base,
       () => viteServer.middlewares,
-    ];
+    ]);
 
     teardownHandlers.push(viteServer.close);
   }
@@ -292,21 +296,47 @@ export default async (
       });
     }
 
-    requestHandlers[`${sourceFolder.name}/api`] = [
+    requestHandlers.push([
+      [sourceFolder.baseurl, sourceFolder.apiurl],
       () => devSetup.requestMatcher || requestMatchers.api,
       () => devSetup.requestHandler(),
-    ];
+    ]);
 
     teardownHandlers.push(viteServer.close);
   }
 
-  // sorting is essential to avoid matching /app before /app/admin
-  const handlers = Object.entries(requestHandlers)
-    .sort(([a], [b]) => b.split("/").length - a.split("/").length)
-    .map(([, factories]) => factories);
+  /**
+   * Sorting is essential to ensure more specific paths are matched before broader ones.
+   *
+   * Given source folders:
+   *   - main app:  baseurl=/  apiurl=/api
+   *   - admin app: baseurl=/admin  apiurl=/admin/api
+   *
+   * Correct sort order:
+   *   1. /admin/api  — most specific
+   *   2. /api
+   *   3. /admin
+   *   4. /
+   * */
+  const requestHandlerWeight = ([
+    segments,
+  ]: (typeof requestHandlers)[number]) => {
+    const [base, api] = segments;
+    /**
+     * set weight to number of non-empty segments:
+     * "/" weight is 0
+     * "/admin" weight is 1
+     * */
+    const weight = base.split("/").filter(Boolean).length;
+    return api ? weight + 5 : weight;
+  };
+
+  const handlers = requestHandlers.sort(
+    (a, b) => requestHandlerWeight(b) - requestHandlerWeight(a),
+  );
 
   const httpServer = http.createServer((req, res) => {
-    for (const [matcherFactory, handlerFactory] of handlers) {
+    for (const [, matcherFactory, handlerFactory] of handlers) {
       // should be called on every request
       const [matcher, handler] = [matcherFactory(), handlerFactory()];
       if (matcher(req)) {
