@@ -6,7 +6,7 @@ import {
 } from "vue-router";
 
 import { baseurl } from "{{ createImport 'config' }}";
-import { routerFactory } from "{{ createImport 'lib' 'router' }}";
+import routerFactory from "{{ createImport 'lib' 'router' }}";
 import App from "./App.vue";
 
 export default routerFactory((routes) => {

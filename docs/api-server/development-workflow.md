@@ -106,7 +106,7 @@ Without cleanup, frequent rebuilds during active development can exhaust databas
 Each route returned by `createRoutes` has a `debug` property. Enable it via `DEBUG=api`:
 
 ```ts [api/router.ts]
-import { routerFactory, routes } from "_/api";
+import { routerFactory, routes } from "_/api:factory";
 
 const DEBUG = /\bapi\b/.test(process.env.DEBUG ?? ""); // [!code ++]
 

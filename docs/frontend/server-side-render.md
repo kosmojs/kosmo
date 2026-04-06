@@ -80,7 +80,7 @@ const { serverRouter } = routerFactory(routes);
 export default renderFactory(() => {
   const hydrationScript = generateHydrationScript();
   return {
-    async renderToString(url, {assets}) {
+    async renderToString(url, { assets }) {
       const { router } = await serverRouter(url);
       const head = assets.reduce(
         (head, { tag }) => `${head}\n${tag}`,
@@ -297,18 +297,17 @@ export default defineConfig({
 
 ::: code-group
 
-```sh [pnpm]
-pnpm build
-```
-
 ```sh [npm]
 npm run build
+```
+
+```sh [pnpm]
+pnpm build
 ```
 
 ```sh [yarn]
 yarn build
 ```
-
 :::
 
 Produces an SSR bundle at `dist/SOURCE_FOLDER/ssr/server.js`, ready for

@@ -22,7 +22,7 @@ export const routeMap = {
   {{/each}}
 };
 
-export const routerFactory = createRouterFactory<{
+export default createRouterFactory<{
   app: ComponentType<PropsWithChildren>
   router: JSX.Element,
   route: RouteObject,

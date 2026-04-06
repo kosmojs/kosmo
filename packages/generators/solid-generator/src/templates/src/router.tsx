@@ -1,7 +1,7 @@
 import { Router } from "@solidjs/router";
 
-import { routerFactory } from "{{ createImport 'lib' 'router' }}";
 import { baseurl } from "{{ createImport 'config' }}";
+import routerFactory from "{{ createImport 'lib' 'router' }}";
 import app from "./App";
 
 export default routerFactory((routes) => {

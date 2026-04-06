@@ -20,7 +20,7 @@ declare module "{{ createImport 'lib' 'router' }}" {
   } from "@kosmojs/core/generators";
   export type LinkProps = [""];
   export const routeMap: Record<string, MappedPageRouteSignature>;
-  export const routerFactory = createRouterFactory<{
+  export default createRouterFactory<{
     router: JSX.Element;
     route: RouteDefinition;
     app: ParentComponent;

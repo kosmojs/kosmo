@@ -9,7 +9,7 @@ const { serverRouter } = routerFactory(routes);
 export default renderFactory(() => {
   const hydrationScript = generateHydrationScript();
   return {
-    async renderToString(url, {assets}) {
+    async renderToString(url, { assets }) {
       const { router } = await serverRouter(url);
       const head = assets.reduce(
         (head, { tag }) => `${head}\n${tag}`,

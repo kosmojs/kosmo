@@ -1,13 +1,12 @@
 ---
 title: Application Structure
 description: Generator-produced foundation files for React, SolidJS, and Vue applications -
-  root App component, router configuration via routerFactory, and client entry
-  point with SSR hydration support via renderFactory.
+  root App component, router configuration, and client entry point with SSR hydration support.
 head:
   - - meta
     - name: keywords
       content: react app foundation, solidjs app structure, vue application structure,
-        routerFactory, renderFactory, suspense setup, router integration, createRoot
+        suspense setup, router integration, createRoot
         hydration, app entry point, vite entry, strictmode setup, solidjs router,
         vue router, react router, kosmojs framework
 ---
@@ -74,7 +73,7 @@ import {
 } from "react-router";
 
 import { baseurl } from "~/config";
-import { routerFactory } from "_/router";
+import routerFactory from "_/router";
 import app from "./App";
 
 export default routerFactory((routes) => {
@@ -118,8 +117,8 @@ export default routerFactory((routes) => {
 ```tsx [SolidJS · router.tsx]
 import { Router } from "@solidjs/router";
 
-import { routerFactory } from "_/router";
 import { baseurl } from "~/config";
+import routerFactory from "_/router";
 import app from "./App";
 
 export default routerFactory((routes) => {
@@ -149,7 +148,7 @@ import {
 } from "vue-router";
 
 import { baseurl } from "~/config";
-import { routerFactory } from "_/router";
+import routerFactory from "_/router";
 import App from "./App.vue";
 
 export default routerFactory((routes) => {
