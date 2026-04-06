@@ -3,21 +3,20 @@ import { compile } from "path-to-regexp";
 import { createHost, join, stringify } from "../fetch";
 import type {
   CSRFactory,
-  MappedPageRouteSignature,
-  MappedPageRouteSource,
+  PageLink,
+  PageLinkBase,
   PageRoute,
   SSRFactory,
 } from "../types";
 
-export const pageRouteMapperHelpers = () => {
+export const pageRouteRenderHelpers = () => {
   return {
-    serializeRoute({ name, pathPattern, honoPattern, params }: PageRoute) {
+    pageLinkBase({ name, pathPattern, params }: PageRoute) {
       return JSON.stringify({
         name,
         pathPattern,
-        honoPattern,
         params,
-      });
+      } satisfies PageLinkBase);
     },
     serializeParamsTupleElements: (route: PageRoute) => {
       return route.params.schema
@@ -42,14 +41,11 @@ export const pageRouteMapperHelpers = () => {
   };
 };
 
-export function pageRouteMapper<
-  ParamsT extends Array<unknown>,
-  ExtendT extends object = {},
->(
-  route: MappedPageRouteSource,
-  options: { baseurl: string } & ExtendT,
-): MappedPageRouteSignature<ParamsT, ExtendT> {
-  const { baseurl, ...extend } = options;
+export function createPageLink<ParamsT extends Array<unknown>>(
+  route: PageLinkBase,
+  options: { baseurl: string },
+): PageLink<ParamsT> {
+  const { baseurl } = options;
 
   const toPath = compile(route.pathPattern);
 
@@ -70,7 +66,6 @@ export function pageRouteMapper<
   };
 
   return {
-    ...extend,
     ...route,
 
     parametrize(params) {
@@ -98,7 +93,7 @@ export function pageRouteMapper<
     href(host, params, query) {
       return createHost(host) + this.path(params, query);
     },
-  } as MappedPageRouteSignature<ParamsT, ExtendT>;
+  };
 }
 
 export const createRouterFactory = <RouteT, ReturnT>() => {

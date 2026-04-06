@@ -3,7 +3,7 @@ import { type JSXElement, splitProps } from "solid-js";
 import { stringify } from "@kosmojs/core/fetch";
 
 import { unwrap } from "{{ createImport 'lib' 'unwrap' }}";
-import { type LinkProps, routeMap } from "{{ createImport 'lib' 'router' }}";
+import { type LinkProps, linkMap } from "{{ createImport 'lib' 'router' }}";
 import { baseurl } from "{{ createImport 'config' }}";
 
 export default function Link(
@@ -24,7 +24,7 @@ export default function Link(
   const href = () => {
     if (knownProps.to) {
       const [key, ...params] = knownProps.to;
-      return routeMap[key]?.base(params as never, knownProps.query);
+      return linkMap[key]?.base(params as never, knownProps.query);
     }
     const path = location.pathname.replace(
       new RegExp(`^${baseurl.replace(/\/+$/, "")}/`),

@@ -33,8 +33,18 @@ export default defineGeneratorFactory<Options>(
       async start() {},
       async watch() {},
 
-      async build() {
-        await deployLibFile(createPath.lib("ssr.ts"), templates.server, {
+      async build(entries) {
+        await deployLibFile(
+          createPath.lib("ssr:routes.ts"),
+          templates.ssrRotues,
+          {
+            pageRoutes: entries.flatMap(({ kind, entry }) => {
+              return kind === "pageRoute" ? [entry] : [];
+            }),
+          },
+        );
+
+        await deployLibFile(createPath.lib("ssr.ts"), templates.ssr, {
           serveStaticAssets: JSON.stringify(
             typeof options?.serveStaticAssets === "boolean"
               ? options.serveStaticAssets

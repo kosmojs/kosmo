@@ -14,12 +14,9 @@ declare module "{{ createImport 'lib' 'unwrap' }}" {
 declare module "{{ createImport 'lib' 'router' }}" {
   import type { JSX } from "solid-js";
   import type { RouteDefinition } from "@solidjs/router";
-  import {
-    createRouterFactory,
-    type MappedPageRouteSignature,
-  } from "@kosmojs/core/generators";
+  import { createRouterFactory, type PageLink } from "@kosmojs/core/generators";
   export type LinkProps = [""];
-  export const routeMap: Record<string, MappedPageRouteSignature>;
+  export const linkMap: Record<string, PageLink>;
   export default createRouterFactory<RouteDefinition, JSX.Element>();
 }
 

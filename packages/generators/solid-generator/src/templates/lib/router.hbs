@@ -1,6 +1,6 @@
 import type { JSX } from "solid-js";
 import type { RouteDefinition } from "@solidjs/router";
-import { pageRouteMapper, createRouterFactory } from "@kosmojs/core/generators";
+import { createPageLink, createRouterFactory } from "@kosmojs/core/generators";
 
 import { baseurl } from "{{ createImport 'config' }}";
 
@@ -9,16 +9,11 @@ export type LinkProps ={{#unless indexRoutes.length}} never{{/unless}}
   | [ "{{name}}", {{serializeParamsTupleElements .}} ]
   {{/each}};
 
-export type RouteName ={{#unless indexRoutes.length}} never{{/unless}}
+export const linkMap = {
   {{#each indexRoutes}}
-  | "{{name}}"
-  {{/each}};
-
-export const routeMap = {
-  {{#each indexRoutes}}
-  "{{name}}": pageRouteMapper<[
+  "{{name}}": createPageLink<[
     {{serializeParamsTupleElements .}}
-  ]>({{serializeRoute .}}, { baseurl }),
+  ]>({{pageLinkBase .}}, { baseurl }),
   {{/each}}
 };
 

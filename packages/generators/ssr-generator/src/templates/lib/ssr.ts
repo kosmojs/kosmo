@@ -11,9 +11,8 @@ import { glob } from "tinyglobby";
 
 import type { SSROptions, SSRSetup } from "@kosmojs/core";
 
-import { routeMap } from "./router";
-
 import { baseurl } from "{{ createImport 'config' }}";
+import { pathPatterns } from "{{ createImport 'lib' 'ssr:routes' }}";
 
 const CWD = import.meta.dirname;
 
@@ -129,8 +128,8 @@ export const createApp = async () => {
     ].join("\n");
   };
 
-  for (const { honoPattern } of Object.values(routeMap)) {
-    app.get(join(baseurl, honoPattern), async (ctx) => {
+  for (const pathPattern of pathPatterns) {
+    app.get(join(baseurl, pathPattern), async (ctx) => {
       try {
         const url = new URL(ctx.req.url);
 

@@ -6,3 +6,7 @@ declare module "#templates/*" {
 declare module "{{ createImport 'config' }}" {
   export const baseurl: string;
 }
+
+declare module "{{ createImport 'lib' 'ssr:routes' }}" {
+  export const pathPatterns: Array<string>;
+}

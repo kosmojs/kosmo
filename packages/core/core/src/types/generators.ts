@@ -104,24 +104,6 @@ export type DefineGeneratorFactory = <
   f: GeneratorFactory<T>,
 ) => GeneratorFactory<T>;
 
-type QueryT = Record<string, unknown>;
-
-export type MappedPageRouteSource = Pick<
-  PageRoute,
-  "name" | "pathPattern" | "honoPattern" | "params"
->;
-
-export type MappedPageRouteSignature<
-  ParamsT extends Array<unknown> = [],
-  ExtendT extends object = {},
-> = ExtendT &
-  MappedPageRouteSource & {
-    parametrize(params: ParamsT): string;
-    base(params: ParamsT, query?: QueryT): string;
-    path(params: ParamsT, query?: QueryT): string;
-    href(host: HostOpt, params: ParamsT, query?: QueryT): string;
-  };
-
 /**
  * SSR environment options passed to user-defined
  * renderToString / renderToStream functions.
@@ -222,3 +204,14 @@ type CSRSetup = {
 };
 
 export type CSRFactory = (factory: () => CSRSetup) => void;
+
+type QueryT = Record<string, unknown>;
+
+export type PageLinkBase = Pick<PageRoute, "name" | "pathPattern" | "params">;
+
+export type PageLink<ParamsT> = PageLinkBase & {
+  parametrize(params: ParamsT): string;
+  base(params: ParamsT, query?: QueryT): string;
+  path(params: ParamsT, query?: QueryT): string;
+  href(host: HostOpt, params: ParamsT, query?: QueryT): string;
+};

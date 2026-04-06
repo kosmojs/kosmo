@@ -14,12 +14,9 @@ declare module "{{ createImport 'lib' 'unwrap' }}" {
 declare module "{{ createImport 'lib' 'router' }}" {
   import type { App } from "vue";
   import type { RouteRecordRaw } from "vue-router";
-  import {
-    createRouterFactory,
-    type MappedPageRouteSignature,
-  } from "@kosmojs/core/generators";
+  import { createRouterFactory, type PageLink } from "@kosmojs/core/generators";
   export type LinkProps = [""];
-  export const routeMap: Record<string, MappedPageRouteSignature>;
+  export const linkMap: Record<string, PageLink>;
   export default createRouterFactory<RouteRecordRaw, App>();
 }
 

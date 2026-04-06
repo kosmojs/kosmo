@@ -10,12 +10,9 @@ declare module "{{ createImport 'config' }}" {
 declare module "{{ createImport 'lib' 'router' }}" {
   import type { JSX } from "react";
   import type { RouteObject } from "react-router";
-  import {
-    createRouterFactory,
-    type MappedPageRouteSignature,
-  } from "@kosmojs/core/generators";
+  import { createRouterFactory, type PageLink } from "@kosmojs/core/generators";
   export type LinkProps = [""];
-  export const routeMap: Record<string, MappedPageRouteSignature>;
+  export const linkMap: Record<string, PageLink>;
   export default createRouterFactory<RouteObject, JSX.Element>();
 }
 

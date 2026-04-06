@@ -1,7 +1,7 @@
 import picomatch, { type Matcher } from "picomatch";
 
 import type { ResolvedEntry } from "@kosmojs/core";
-import { pageRouteMapperHelpers } from "@kosmojs/core/generators";
+import { pageRouteRenderHelpers } from "@kosmojs/core/generators";
 import {
   defaults,
   defineGeneratorFactory,
@@ -22,7 +22,7 @@ export default defineGeneratorFactory<Options>(
     const { renderToFile: deployLibFile } = renderFactory({
       helpers: {
         ...createImportHelpers({ origin: "lib" }),
-        ...pageRouteMapperHelpers(),
+        ...pageRouteRenderHelpers(),
       },
       partials: {
         routePartial: templates.libEntryRoutePartial,
