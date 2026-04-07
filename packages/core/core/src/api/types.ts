@@ -129,7 +129,7 @@ export type CreateRouteMiddleware<MiddlewareT> = (
   routeSource: RouteSource<MiddlewareT>,
 ) => Array<MiddlewareDefinition<MiddlewareT>>;
 
-export type CreateServer<App, Server> = (
+type CreateServer<App> = <Server>(
   app: App,
   opt?: {
     port?: number;
@@ -138,9 +138,10 @@ export type CreateServer<App, Server> = (
   },
 ) => Promise<Server>;
 
-export type ServerFactory<App, Server> = (
-  factory: (a: { createServer: CreateServer<App, Server> }) => void,
+export type ServerFactory<App> = (
+  factory: (a: { createServer: CreateServer<App> }) => void,
 ) => void;
+
 export const StateKey: unique symbol = Symbol("kosmo.state");
 
 export type ExtendContext<

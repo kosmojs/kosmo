@@ -1,17 +1,13 @@
 import { chmod, unlink } from "node:fs/promises";
-import type { Server } from "node:http";
-import type { Http2Server } from "node:http2";
-import { parseArgs } from "node:util";
+import { parseArgs, styleText } from "node:util";
 
-import { serve } from "@hono/node-server";
+import { createAdaptorServer } from "@hono/node-server";
 
 import type { ServerFactory } from "@kosmojs/core/api";
 
 import type { App } from "./app";
 
-export const serverFactory: ServerFactory<App, Server | Http2Server> = (
-  factory,
-) => {
+export const serverFactory: ServerFactory<App> = (factory) => {
   const { values } = parseArgs({
     options: {
       port: {
@@ -29,16 +25,15 @@ export const serverFactory: ServerFactory<App, Server | Http2Server> = (
     async createServer(app, opt) {
       const { port, sock, callback } = { ...values, ...opt };
 
-      if (![port, sock].some((e) => e)) {
+      if (![sock, port].some(Boolean)) {
         console.error(
-          "Please provide either -p/--port number or -s/--sock path",
+          styleText("red", "✗ Please provide either -p/--port or -s/--sock"),
         );
         process.exit(1);
       }
 
-      console.log("\n  ➜ Starting Server", { port, sock });
-
       if (sock) {
+        // Clean up any stale socket file before binding.
         await unlink(sock).catch((error) => {
           if (error.code === "ENOENT") {
             return;
@@ -48,22 +43,44 @@ export const serverFactory: ServerFactory<App, Server | Http2Server> = (
         });
       }
 
-      const server = serve(
-        {
-          fetch: app.fetch,
-          ...(port ? { port: Number(port) } : {}),
-          ...(sock ? { sock } : {}),
-        },
-        async () => {
-          if (sock) {
-            await chmod(sock, 0o777);
-          }
-          await callback?.();
-          console.log("\n  ➜ Server Started ✨\n");
-        },
+      console.log(
+        `\n  ➜ Starting Server ${styleText(["dim"], "[ %s ]")}`,
+        sock ? `sock: ${sock}` : `port: ${port}`,
       );
 
-      return server;
+      const onListen = async () => {
+        if (sock) {
+          // Make Unix socket world-writable so other processes (e.g. a reverse proxy)
+          // can connect without permission issues.
+          await chmod(sock, 0o777);
+        }
+        if (callback) {
+          await callback();
+        }
+        console.log("\n  ➜ Server Started ✨");
+      };
+
+      if (typeof Bun !== "undefined") {
+        const server = Bun.serve(
+          sock
+            ? { unix: sock, fetch: app.fetch }
+            : { port: Number(port), fetch: app.fetch },
+        );
+        await onListen();
+        return server as never;
+      }
+
+      if (typeof Deno !== "undefined") {
+        const server = sock
+          ? Deno.serve({ path: sock, onListen }, app.fetch)
+          : Deno.serve({ port: Number(port), onListen }, app.fetch);
+        return server as never;
+      }
+
+      const server = createAdaptorServer(app);
+      server.listen(sock || port, onListen);
+
+      return server as never;
     },
   });
 };
