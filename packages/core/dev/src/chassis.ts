@@ -21,6 +21,7 @@ import {
   pathResolver,
   routesFactory,
   spinnerFactory,
+  vitePlugins,
 } from "@kosmojs/lib";
 
 import { cacheFactory } from "./cache";
@@ -151,6 +152,7 @@ export default async (
           configFile: false,
           root: createPath.src(),
           appType: "custom",
+          plugins: vitePlugins.api(),
           define: {
             ...config.define,
             KOSMO_PRODUCTION_BUILD: "true",

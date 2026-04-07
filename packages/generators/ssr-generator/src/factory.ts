@@ -7,6 +7,7 @@ import {
   pathResolver,
   renderFactory,
   sortRoutes,
+  vitePlugins,
 } from "@kosmojs/lib";
 
 import type { Options } from "./options";
@@ -69,7 +70,7 @@ export default defineGeneratorFactory<Options>(
           // emptyOutDir wont work cause dir is outside project root
           await rm(outDir, { recursive: true, force: true });
 
-          const plugins = [...(config.plugins || [])];
+          const plugins = [...(config?.plugins || []), ...vitePlugins.ssr()];
 
           for (const base of generators) {
             const factory = base.factory(sourceFolder);
@@ -108,9 +109,8 @@ export default defineGeneratorFactory<Options>(
           configFile: false,
           root: createPath.lib(),
           appType: "custom",
-          define: {
-            ...config.define,
-          },
+          plugins: vitePlugins.ssr(),
+          define: { ...config.define },
           ssr: { noExternal },
           resolve: {
             ...config.resolve,
