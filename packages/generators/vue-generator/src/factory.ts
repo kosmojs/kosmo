@@ -174,10 +174,6 @@ export default defineGeneratorFactory<Options>(
         await generateSrcFiles(entries);
         await generateLibFiles(entries);
       },
-
-      plugins() {
-        return [];
-      },
     };
   },
 );

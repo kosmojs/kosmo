@@ -15,6 +15,5 @@ const nodePrefix = (): Plugin => {
 };
 
 export const vitePlugins = {
-  api: () => [nodePrefix()],
-  ssr: () => [nodePrefix()],
+  nodePrefix,
 };

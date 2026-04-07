@@ -141,7 +141,6 @@ export default defineGeneratorFactory<Options>(
       });
 
       for (const [file, template] of [
-        //
         ["@api/routes.ts", templates.libApiRoutes],
       ]) {
         await deployLibFile(createPath.lib(file), template, {
@@ -207,10 +206,6 @@ export default defineGeneratorFactory<Options>(
       async build(entries) {
         await generateSrcFiles(entries);
         await generateLibFiles(entries);
-      },
-
-      plugins() {
-        return [];
       },
     };
   },

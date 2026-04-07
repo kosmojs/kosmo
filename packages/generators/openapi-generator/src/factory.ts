@@ -50,9 +50,6 @@ export default defineGeneratorFactory<Options>(
       async build(entries) {
         await generateSchemas(entries);
       },
-      plugins() {
-        return [];
-      },
     };
   },
 );

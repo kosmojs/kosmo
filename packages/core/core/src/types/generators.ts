@@ -66,7 +66,6 @@ export type GeneratorFactoryInstance = {
   start: () => Promise<void>;
   watch: (entries: Array<ResolvedEntry>, event?: WatcherEvent) => Promise<void>;
   build: (entries: Array<ResolvedEntry>) => Promise<void>;
-  plugins: (command: ProjectSettings["command"]) => Array<Plugin>;
 };
 
 export type GeneratorFactory<T extends GeneratorOptionsTuple | void = void> =
@@ -88,6 +87,10 @@ export type GeneratorBase = {
   meta: GeneratorMeta;
   options: GeneratorOptionsTuple[0] | undefined;
   factory: (sourceFolder: SourceFolder) => GeneratorFactoryInstance;
+  plugins?: (
+    sourceFolder: SourceFolder,
+    command: ProjectSettings["command"],
+  ) => Array<Plugin>;
 };
 
 export type DefineGenerator = <T extends GeneratorOptionsTuple | void = void>(

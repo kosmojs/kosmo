@@ -70,11 +70,13 @@ export default defineGeneratorFactory<Options>(
           // emptyOutDir wont work cause dir is outside project root
           await rm(outDir, { recursive: true, force: true });
 
-          const plugins = [...(config?.plugins || []), ...vitePlugins.ssr()];
+          const plugins = [
+            vitePlugins.nodePrefix(),
+            ...(config?.plugins || []),
+          ];
 
           for (const base of generators) {
-            const factory = base.factory(sourceFolder);
-            plugins.push(...factory.plugins("build"));
+            plugins.push(...(base.plugins?.(sourceFolder, "build") || []));
           }
 
           await build({
@@ -109,7 +111,7 @@ export default defineGeneratorFactory<Options>(
           configFile: false,
           root: createPath.lib(),
           appType: "custom",
-          plugins: vitePlugins.ssr(),
+          plugins: [vitePlugins.nodePrefix()],
           define: { ...config.define },
           ssr: { noExternal },
           resolve: {
@@ -131,10 +133,6 @@ export default defineGeneratorFactory<Options>(
             },
           },
         });
-      },
-
-      plugins() {
-        return [];
       },
     };
   },

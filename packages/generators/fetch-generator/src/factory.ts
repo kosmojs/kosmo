@@ -176,9 +176,5 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
     async build(entries) {
       await generateLibFiles(entries, entries);
     },
-
-    plugins() {
-      return [];
-    },
   };
 });

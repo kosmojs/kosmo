@@ -21,7 +21,6 @@ import {
   pathResolver,
   routesFactory,
   spinnerFactory,
-  vitePlugins,
 } from "@kosmojs/lib";
 
 import { cacheFactory } from "./cache";
@@ -49,7 +48,7 @@ export default async (
         );
       }
 
-      for (const prop of ["start", "watch", "build", "plugins"] as const) {
+      for (const prop of ["start", "watch", "build"] as const) {
         if (typeof factory[prop] !== "function") {
           throw new Error(
             `${sourceFolder.name}: ${base.meta.name} generator is missing ${prop} hook`,
@@ -101,7 +100,7 @@ export default async (
       for (const base of generators) {
         const factory = base.factory(sourceFolder);
         await factory.build(resolvedRoutes);
-        plugins.push(...factory.plugins(command));
+        plugins.push(...(base.plugins?.(sourceFolder, command) || []));
       }
 
       // build client
@@ -152,7 +151,7 @@ export default async (
           configFile: false,
           root: createPath.src(),
           appType: "custom",
-          plugins: vitePlugins.api(),
+          plugins: [...(apiGenerator.plugins?.(sourceFolder, command) || [])],
           define: {
             ...config.define,
             KOSMO_PRODUCTION_BUILD: "true",
@@ -213,8 +212,7 @@ export default async (
     const plugins = [...(config.plugins || [])];
 
     for (const base of generators) {
-      const factory = base.factory(sourceFolder);
-      plugins.push(...factory.plugins(command));
+      plugins.push(...(base.plugins?.(sourceFolder, command) || []));
     }
 
     const viteServer = await createServer({

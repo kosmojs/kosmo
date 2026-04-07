@@ -5,7 +5,7 @@
 
 import type { GeneratorMeta } from "@kosmojs/core";
 import self from "@kosmojs/koa-generator/package.json" with { type: "json" };
-import { defineGenerator } from "@kosmojs/lib";
+import { defineGenerator, vitePlugins } from "@kosmojs/lib";
 
 import factory from "./factory";
 import type { Options } from "./types";
@@ -33,5 +33,6 @@ export default defineGenerator<Options>((options) => {
     meta,
     options,
     factory: (sourceFolder) => factory(meta, sourceFolder, options),
+    plugins: () => [vitePlugins.nodePrefix()],
   };
 });

@@ -211,10 +211,6 @@ export default defineGeneratorFactory<Options>(
       async build(entries) {
         await generateLibFiles(entries);
       },
-
-      plugins() {
-        return [];
-      },
     };
   },
 );
