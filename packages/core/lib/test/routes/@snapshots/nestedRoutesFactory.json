@@ -2383,6 +2383,31 @@
     "children": [
       {
         "index": {
+          "id": "properties_filters_index_tsx_1571931483",
+          "name": "properties/filters",
+          "folder": "pages",
+          "file": "properties/filters/index.tsx",
+          "pathTokens": [
+            {
+              "kind": "static",
+              "orig": "filters",
+              "pattern": "filters",
+              "parts": [
+                {
+                  "type": "static",
+                  "value": "filters"
+                }
+              ]
+            }
+          ],
+          "pathPattern": "properties/filters",
+          "honoPattern": "properties/filters"
+        },
+        "parent": "properties",
+        "children": []
+      },
+      {
+        "index": {
           "id": "properties_city_filters_filters_index_tsx_1192904431",
           "name": "properties/[city]/filters/{...filters}",
           "folder": "pages",
@@ -2428,31 +2453,6 @@
           ],
           "pathPattern": "properties/:city/filters{/*filters}",
           "honoPattern": "properties/:city/filters/*"
-        },
-        "parent": "properties",
-        "children": []
-      },
-      {
-        "index": {
-          "id": "properties_filters_index_tsx_1571931483",
-          "name": "properties/filters",
-          "folder": "pages",
-          "file": "properties/filters/index.tsx",
-          "pathTokens": [
-            {
-              "kind": "static",
-              "orig": "filters",
-              "pattern": "filters",
-              "parts": [
-                {
-                  "type": "static",
-                  "value": "filters"
-                }
-              ]
-            }
-          ],
-          "pathPattern": "properties/filters",
-          "honoPattern": "properties/filters"
         },
         "parent": "properties",
         "children": []

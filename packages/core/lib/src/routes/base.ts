@@ -160,84 +160,97 @@ export const createRouteEntry = (
 };
 
 /**
- * Sort routes so that more specific (static) paths come before dynamic ones.
- *
- * This is important because dynamic segments are more general,
- * and can match values that should be routed to more specific static paths.
- *
- * For example, given:
- *   - `/users/account`
- *   - `/users/[id]`
- *
- * If `/users/[id]` comes first, visiting `/users/account` would incorrectly match it,
- * treating "account" as an `id`. So static routes must take precedence.
- *
- * Specificity is calculated per segment with fixed weights:
- *   - static segment:   4 (most specific, exact match)
- *   - mixed segment:    3 (has both static and dynamic parts)
- *   - required param:   2 (matches any single segment)
- *   - optional param:   1 (may or may not match)
- *   - splat param:      0 (matches anything, least specific)
- *
- * Fixed per-segment weights ensure that deeply nested mixed segments
- * never outscore multiple static segments.
- * */
-export const sortRoutes = (
-  a: Pick<RouteEntry, "name" | "pathTokens">,
-  b: Pick<RouteEntry, "name" | "pathTokens">,
-): number => {
-  const aSpecificity = routeSpecificity(a.pathTokens);
-  const bSpecificity = routeSpecificity(b.pathTokens);
-
-  // higher specificity = higher priority
-  if (aSpecificity !== bSpecificity) {
-    return bSpecificity - aSpecificity;
-  }
-
-  // at equal specificity, shallower = higher priority
-  if (a.pathTokens.length !== b.pathTokens.length) {
-    return a.pathTokens.length - b.pathTokens.length;
-  }
-
-  // deterministic tiebreaker
-  return a.name.localeCompare(b.name);
-};
-
-/**
- * Weight of a single param part, used for pure param segments.
- * */
-const paramWeight = (part: PathTokenParamPart): number => {
-  return {
-    required: 2,
-    optional: 1,
-    splat: 0,
-  }[part.kind];
-};
-
-const mixedSegmentWeight = (parts: PathToken["parts"]): number => {
-  const hasSplat = parts.some((p) => {
-    return p.type === "param" ? p.kind === "splat" : false;
-  });
-  return hasSplat ? 0.5 : 3;
-};
-
-/**
  * Weight of a single path segment.
  *
- * Uses fixed values per segment kind to prevent
- * complex mixed segments from outscoring multiple statics.
+ * Fixed values per kind prevent complex mixed segments
+ * from outscoring multiple statics.
+ *
+ *   static:   4  (exact match, most specific)
+ *   mixed:    3+ (static + param parts; more statics = slightly higher)
+ *   required: 2  (matches any single segment)
+ *   optional: 1  (may or may not match)
+ *   splat:    0  (matches anything, least specific)
  * */
 const segmentWeight = (token: PathToken): number => {
-  return {
-    static: 4,
-    mixed: mixedSegmentWeight(token.parts),
-    param: paramWeight(token.parts[0] as PathTokenParamPart),
-  }[token.kind];
+  if (token.kind === "static") {
+    return 4;
+  }
+
+  if (token.kind === "mixed") {
+    let statics = 0;
+    let optionals = 0;
+
+    for (const part of token.parts) {
+      if (part.type === "static") {
+        statics += 1;
+      } else if (part.kind === "optional" || part.kind === "splat") {
+        optionals += 1;
+      }
+    }
+
+    // unconditional statics contribute positively,
+    // optionals penalize to avoid beating fully-static mixed routes
+    return 3 + statics * 0.01 - optionals * 0.005;
+  }
+
+  const part = token.parts[0] as PathTokenParamPart;
+
+  switch (part.kind) {
+    case "required":
+      return 2;
+    case "optional":
+      return 1;
+    case "splat":
+      return 0;
+  }
 };
 
 /**
- * Total route specificity: sum of all segment weights.
+ * Compare two route entries for registration order.
+ *
+ * More specific routes sort first (higher priority).
+ * Segments are compared left-to-right; first difference wins.
+ *
+ * When one route is a prefix of the other, the trailing segment
+ * determines order: a trailing splat loses (shorter sibling first),
+ * anything else wins (longer route is more specific).
+ *
+ * At equal weight and length, lexicographic tiebreak ensures
+ * deterministic ordering across JS engines.
  * */
-const routeSpecificity = (pathTokens: Array<PathToken>): number => {
-  return pathTokens.reduce((sum, token) => sum + segmentWeight(token), 0);
+export const sortRoutes = (a: RouteEntry, b: RouteEntry): number => {
+  const pairs = Array.from(
+    { length: Math.max(a.pathTokens.length, b.pathTokens.length) },
+    (_, i) => [a.pathTokens[i], b.pathTokens[i]] as const,
+  );
+
+  for (const [at, bt] of pairs) {
+    if (!at || !bt) {
+      // one route ran out of segments - check what the extra segment is
+      const extra = at ?? bt;
+
+      const isSplat =
+        extra?.kind === "param"
+          ? (extra.parts[0] as PathTokenParamPart).kind === "splat"
+          : false;
+
+      if (isSplat) {
+        // trailing splat: shorter sibling registers first
+        return at ? 1 : -1;
+      }
+
+      // trailing non-splat: longer route is more specific, registers first
+      return at ? -1 : 1;
+    }
+
+    const aw = segmentWeight(at);
+    const bw = segmentWeight(bt);
+
+    if (aw !== bw) {
+      return bw - aw;
+    }
+  }
+
+  // same weight profile, same length: deterministic tiebreak
+  return a.pathPattern.localeCompare(b.pathPattern);
 };

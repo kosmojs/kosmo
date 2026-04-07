@@ -1,5 +1,1431 @@
 [
   {
+    "id": "dashboard_settings_billing_index_tsx_3947003682",
+    "name": "dashboard/settings/billing",
+    "folder": "pages",
+    "file": "dashboard/settings/billing/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "dashboard",
+        "pattern": "dashboard",
+        "parts": [
+          {
+            "type": "static",
+            "value": "dashboard"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "settings",
+        "pattern": "settings",
+        "parts": [
+          {
+            "type": "static",
+            "value": "settings"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "billing",
+        "pattern": "billing",
+        "parts": [
+          {
+            "type": "static",
+            "value": "billing"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "dashboard/settings/billing",
+    "honoPattern": "dashboard/settings/billing"
+  },
+  {
+    "id": "dashboard_settings_notifications_index_tsx_3109498012",
+    "name": "dashboard/settings/notifications",
+    "folder": "pages",
+    "file": "dashboard/settings/notifications/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "dashboard",
+        "pattern": "dashboard",
+        "parts": [
+          {
+            "type": "static",
+            "value": "dashboard"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "settings",
+        "pattern": "settings",
+        "parts": [
+          {
+            "type": "static",
+            "value": "settings"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "notifications",
+        "pattern": "notifications",
+        "parts": [
+          {
+            "type": "static",
+            "value": "notifications"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "dashboard/settings/notifications",
+    "honoPattern": "dashboard/settings/notifications"
+  },
+  {
+    "id": "dashboard_settings_profile_index_tsx_3821990919",
+    "name": "dashboard/settings/profile",
+    "folder": "pages",
+    "file": "dashboard/settings/profile/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "dashboard",
+        "pattern": "dashboard",
+        "parts": [
+          {
+            "type": "static",
+            "value": "dashboard"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "settings",
+        "pattern": "settings",
+        "parts": [
+          {
+            "type": "static",
+            "value": "settings"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "profile",
+        "pattern": "profile",
+        "parts": [
+          {
+            "type": "static",
+            "value": "profile"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "dashboard/settings/profile",
+    "honoPattern": "dashboard/settings/profile"
+  },
+  {
+    "id": "dashboard_settings_security_index_tsx_2219988972",
+    "name": "dashboard/settings/security",
+    "folder": "pages",
+    "file": "dashboard/settings/security/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "dashboard",
+        "pattern": "dashboard",
+        "parts": [
+          {
+            "type": "static",
+            "value": "dashboard"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "settings",
+        "pattern": "settings",
+        "parts": [
+          {
+            "type": "static",
+            "value": "settings"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "security",
+        "pattern": "security",
+        "parts": [
+          {
+            "type": "static",
+            "value": "security"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "dashboard/settings/security",
+    "honoPattern": "dashboard/settings/security"
+  },
+  {
+    "id": "dashboard_settings_security_layout_tsx_3549196698",
+    "name": "dashboard/settings/security",
+    "folder": "pages",
+    "file": "dashboard/settings/security/layout.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "dashboard",
+        "pattern": "dashboard",
+        "parts": [
+          {
+            "type": "static",
+            "value": "dashboard"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "settings",
+        "pattern": "settings",
+        "parts": [
+          {
+            "type": "static",
+            "value": "settings"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "security",
+        "pattern": "security",
+        "parts": [
+          {
+            "type": "static",
+            "value": "security"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "dashboard/settings/security",
+    "honoPattern": "dashboard/settings/security"
+  },
+  {
+    "id": "shop_checkout_confirm_index_tsx_457300039",
+    "name": "shop/checkout/confirm",
+    "folder": "pages",
+    "file": "shop/checkout/confirm/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "checkout",
+        "pattern": "checkout",
+        "parts": [
+          {
+            "type": "static",
+            "value": "checkout"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "confirm",
+        "pattern": "confirm",
+        "parts": [
+          {
+            "type": "static",
+            "value": "confirm"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/checkout/confirm",
+    "honoPattern": "shop/checkout/confirm"
+  },
+  {
+    "id": "shop_checkout_payment_index_tsx_2839585893",
+    "name": "shop/checkout/payment",
+    "folder": "pages",
+    "file": "shop/checkout/payment/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "checkout",
+        "pattern": "checkout",
+        "parts": [
+          {
+            "type": "static",
+            "value": "checkout"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "payment",
+        "pattern": "payment",
+        "parts": [
+          {
+            "type": "static",
+            "value": "payment"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/checkout/payment",
+    "honoPattern": "shop/checkout/payment"
+  },
+  {
+    "id": "shop_checkout_shipping_index_tsx_4218611208",
+    "name": "shop/checkout/shipping",
+    "folder": "pages",
+    "file": "shop/checkout/shipping/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "checkout",
+        "pattern": "checkout",
+        "parts": [
+          {
+            "type": "static",
+            "value": "checkout"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "shipping",
+        "pattern": "shipping",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shipping"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/checkout/shipping",
+    "honoPattern": "shop/checkout/shipping"
+  },
+  {
+    "id": "shop_checkout_shipping_layout_tsx_1955886922",
+    "name": "shop/checkout/shipping",
+    "folder": "pages",
+    "file": "shop/checkout/shipping/layout.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "checkout",
+        "pattern": "checkout",
+        "parts": [
+          {
+            "type": "static",
+            "value": "checkout"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "shipping",
+        "pattern": "shipping",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shipping"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/checkout/shipping",
+    "honoPattern": "shop/checkout/shipping"
+  },
+  {
+    "id": "shop_product_id_reviews_index_tsx_1128969612",
+    "name": "shop/product/[id]/reviews",
+    "folder": "pages",
+    "file": "shop/product/[id]/reviews/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "product",
+        "pattern": "product",
+        "parts": [
+          {
+            "type": "static",
+            "value": "product"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": "[id]",
+        "pattern": ":id",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "required",
+            "name": "id",
+            "const": "id"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "reviews",
+        "pattern": "reviews",
+        "parts": [
+          {
+            "type": "static",
+            "value": "reviews"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/product/:id/reviews",
+    "honoPattern": "shop/product/:id/reviews"
+  },
+  {
+    "id": "blog_post_slug_index_tsx_4265829785",
+    "name": "blog/post/[slug]",
+    "folder": "pages",
+    "file": "blog/post/[slug]/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "blog",
+        "pattern": "blog",
+        "parts": [
+          {
+            "type": "static",
+            "value": "blog"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "post",
+        "pattern": "post",
+        "parts": [
+          {
+            "type": "static",
+            "value": "post"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": "[slug]",
+        "pattern": ":slug",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "required",
+            "name": "slug",
+            "const": "slug"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "blog/post/:slug",
+    "honoPattern": "blog/post/:slug"
+  },
+  {
+    "id": "blog_post_slug_layout_tsx_4086949147",
+    "name": "blog/post/[slug]",
+    "folder": "pages",
+    "file": "blog/post/[slug]/layout.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "blog",
+        "pattern": "blog",
+        "parts": [
+          {
+            "type": "static",
+            "value": "blog"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "post",
+        "pattern": "post",
+        "parts": [
+          {
+            "type": "static",
+            "value": "post"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": "[slug]",
+        "pattern": ":slug",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "required",
+            "name": "slug",
+            "const": "slug"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "blog/post/:slug",
+    "honoPattern": "blog/post/:slug"
+  },
+  {
+    "id": "shop_orders_orderId_index_tsx_3645959700",
+    "name": "shop/orders/[orderId]",
+    "folder": "pages",
+    "file": "shop/orders/[orderId]/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "orders",
+        "pattern": "orders",
+        "parts": [
+          {
+            "type": "static",
+            "value": "orders"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": "[orderId]",
+        "pattern": ":orderId",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "required",
+            "name": "orderId",
+            "const": "orderId"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/orders/:orderId",
+    "honoPattern": "shop/orders/:orderId"
+  },
+  {
+    "id": "shop_product_id_index_tsx_3035235801",
+    "name": "shop/product/[id]",
+    "folder": "pages",
+    "file": "shop/product/[id]/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "product",
+        "pattern": "product",
+        "parts": [
+          {
+            "type": "static",
+            "value": "product"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": "[id]",
+        "pattern": ":id",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "required",
+            "name": "id",
+            "const": "id"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/product/:id",
+    "honoPattern": "shop/product/:id"
+  },
+  {
+    "id": "shop_product_id_layout_tsx_2232356331",
+    "name": "shop/product/[id]",
+    "folder": "pages",
+    "file": "shop/product/[id]/layout.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "product",
+        "pattern": "product",
+        "parts": [
+          {
+            "type": "static",
+            "value": "product"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": "[id]",
+        "pattern": ":id",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "required",
+            "name": "id",
+            "const": "id"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/product/:id",
+    "honoPattern": "shop/product/:id"
+  },
+  {
+    "id": "about_careers_jobId_index_tsx_125723793",
+    "name": "about/careers/{jobId}",
+    "folder": "pages",
+    "file": "about/careers/{jobId}/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "about",
+        "pattern": "about",
+        "parts": [
+          {
+            "type": "static",
+            "value": "about"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "careers",
+        "pattern": "careers",
+        "parts": [
+          {
+            "type": "static",
+            "value": "careers"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": "{jobId}",
+        "pattern": "{/:jobId}",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "optional",
+            "name": "jobId",
+            "const": "jobId"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "about/careers{/:jobId}",
+    "honoPattern": "about/careers/:jobId?"
+  },
+  {
+    "id": "shop_products_category_index_tsx_130432150",
+    "name": "shop/products/{category}",
+    "folder": "pages",
+    "file": "shop/products/{category}/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "products",
+        "pattern": "products",
+        "parts": [
+          {
+            "type": "static",
+            "value": "products"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": "{category}",
+        "pattern": "{/:category}",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "optional",
+            "name": "category",
+            "const": "category"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/products{/:category}",
+    "honoPattern": "shop/products/:category?"
+  },
+  {
+    "id": "about_careers_layout_tsx_3684129548",
+    "name": "about/careers",
+    "folder": "pages",
+    "file": "about/careers/layout.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "about",
+        "pattern": "about",
+        "parts": [
+          {
+            "type": "static",
+            "value": "about"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "careers",
+        "pattern": "careers",
+        "parts": [
+          {
+            "type": "static",
+            "value": "careers"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "about/careers",
+    "honoPattern": "about/careers"
+  },
+  {
+    "id": "about_team_index_tsx_3906889098",
+    "name": "about/team",
+    "folder": "pages",
+    "file": "about/team/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "about",
+        "pattern": "about",
+        "parts": [
+          {
+            "type": "static",
+            "value": "about"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "team",
+        "pattern": "team",
+        "parts": [
+          {
+            "type": "static",
+            "value": "team"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "about/team",
+    "honoPattern": "about/team"
+  },
+  {
+    "id": "account_profile_index_tsx_1987383209",
+    "name": "account/profile",
+    "folder": "pages",
+    "file": "account/profile/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "account",
+        "pattern": "account",
+        "parts": [
+          {
+            "type": "static",
+            "value": "account"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "profile",
+        "pattern": "profile",
+        "parts": [
+          {
+            "type": "static",
+            "value": "profile"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "account/profile",
+    "honoPattern": "account/profile"
+  },
+  {
+    "id": "dashboard_analytics_index_tsx_2467463920",
+    "name": "dashboard/analytics",
+    "folder": "pages",
+    "file": "dashboard/analytics/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "dashboard",
+        "pattern": "dashboard",
+        "parts": [
+          {
+            "type": "static",
+            "value": "dashboard"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "analytics",
+        "pattern": "analytics",
+        "parts": [
+          {
+            "type": "static",
+            "value": "analytics"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "dashboard/analytics",
+    "honoPattern": "dashboard/analytics"
+  },
+  {
+    "id": "dashboard_settings_index_tsx_2528451466",
+    "name": "dashboard/settings",
+    "folder": "pages",
+    "file": "dashboard/settings/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "dashboard",
+        "pattern": "dashboard",
+        "parts": [
+          {
+            "type": "static",
+            "value": "dashboard"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "settings",
+        "pattern": "settings",
+        "parts": [
+          {
+            "type": "static",
+            "value": "settings"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "dashboard/settings",
+    "honoPattern": "dashboard/settings"
+  },
+  {
+    "id": "dashboard_settings_layout_tsx_2001687227",
+    "name": "dashboard/settings",
+    "folder": "pages",
+    "file": "dashboard/settings/layout.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "dashboard",
+        "pattern": "dashboard",
+        "parts": [
+          {
+            "type": "static",
+            "value": "dashboard"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "settings",
+        "pattern": "settings",
+        "parts": [
+          {
+            "type": "static",
+            "value": "settings"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "dashboard/settings",
+    "honoPattern": "dashboard/settings"
+  },
+  {
+    "id": "legal_privacy_index_tsx_603606551",
+    "name": "legal/privacy",
+    "folder": "pages",
+    "file": "legal/privacy/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "legal",
+        "pattern": "legal",
+        "parts": [
+          {
+            "type": "static",
+            "value": "legal"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "privacy",
+        "pattern": "privacy",
+        "parts": [
+          {
+            "type": "static",
+            "value": "privacy"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "legal/privacy",
+    "honoPattern": "legal/privacy"
+  },
+  {
+    "id": "legal_terms_index_tsx_3828107619",
+    "name": "legal/terms",
+    "folder": "pages",
+    "file": "legal/terms/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "legal",
+        "pattern": "legal",
+        "parts": [
+          {
+            "type": "static",
+            "value": "legal"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "terms",
+        "pattern": "terms",
+        "parts": [
+          {
+            "type": "static",
+            "value": "terms"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "legal/terms",
+    "honoPattern": "legal/terms"
+  },
+  {
+    "id": "properties_filters_index_tsx_1571931483",
+    "name": "properties/filters",
+    "folder": "pages",
+    "file": "properties/filters/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "properties",
+        "pattern": "properties",
+        "parts": [
+          {
+            "type": "static",
+            "value": "properties"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "filters",
+        "pattern": "filters",
+        "parts": [
+          {
+            "type": "static",
+            "value": "filters"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "properties/filters",
+    "honoPattern": "properties/filters"
+  },
+  {
+    "id": "shop_cart_index_tsx_3461971678",
+    "name": "shop/cart",
+    "folder": "pages",
+    "file": "shop/cart/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "cart",
+        "pattern": "cart",
+        "parts": [
+          {
+            "type": "static",
+            "value": "cart"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/cart",
+    "honoPattern": "shop/cart"
+  },
+  {
+    "id": "shop_checkout_layout_tsx_2809742663",
+    "name": "shop/checkout",
+    "folder": "pages",
+    "file": "shop/checkout/layout.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "checkout",
+        "pattern": "checkout",
+        "parts": [
+          {
+            "type": "static",
+            "value": "checkout"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/checkout",
+    "honoPattern": "shop/checkout"
+  },
+  {
+    "id": "shop_orders_index_tsx_3044215409",
+    "name": "shop/orders",
+    "folder": "pages",
+    "file": "shop/orders/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "orders",
+        "pattern": "orders",
+        "parts": [
+          {
+            "type": "static",
+            "value": "orders"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/orders",
+    "honoPattern": "shop/orders"
+  },
+  {
+    "id": "shop_orders_layout_tsx_1560526654",
+    "name": "shop/orders",
+    "folder": "pages",
+    "file": "shop/orders/layout.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "orders",
+        "pattern": "orders",
+        "parts": [
+          {
+            "type": "static",
+            "value": "orders"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/orders",
+    "honoPattern": "shop/orders"
+  },
+  {
+    "id": "shop_products_index_tsx_3411274748",
+    "name": "shop/products",
+    "folder": "pages",
+    "file": "shop/products/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "products",
+        "pattern": "products",
+        "parts": [
+          {
+            "type": "static",
+            "value": "products"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/products",
+    "honoPattern": "shop/products"
+  },
+  {
+    "id": "shop_products_layout_tsx_3463733314",
+    "name": "shop/products",
+    "folder": "pages",
+    "file": "shop/products/layout.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "shop",
+        "pattern": "shop",
+        "parts": [
+          {
+            "type": "static",
+            "value": "shop"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "products",
+        "pattern": "products",
+        "parts": [
+          {
+            "type": "static",
+            "value": "products"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "shop/products",
+    "honoPattern": "shop/products"
+  },
+  {
+    "id": "users_id_json_index_ts_1074228995",
+    "name": "users/[id].json",
+    "folder": "api",
+    "file": "users/[id].json/index.ts",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "users",
+        "pattern": "users",
+        "parts": [
+          {
+            "type": "static",
+            "value": "users"
+          }
+        ]
+      },
+      {
+        "kind": "mixed",
+        "orig": "[id].json",
+        "pattern": ":id.json",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "required",
+            "name": "id",
+            "const": "id"
+          },
+          {
+            "type": "static",
+            "value": ".json"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "users/:id.json",
+    "honoPattern": "users/:_1{[^/]+\\.json}"
+  },
+  {
+    "id": "pages_path_html_index_ts_1431473415",
+    "name": "pages/{...path}.html",
+    "folder": "api",
+    "file": "pages/{...path}.html/index.ts",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "pages",
+        "pattern": "pages",
+        "parts": [
+          {
+            "type": "static",
+            "value": "pages"
+          }
+        ]
+      },
+      {
+        "kind": "mixed",
+        "orig": "{...path}.html",
+        "pattern": "{/*path}.html",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "splat",
+            "name": "path",
+            "const": "path"
+          },
+          {
+            "type": "static",
+            "value": ".html"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "pages{/*path}.html",
+    "honoPattern": "pages/:_1{(?:.+)?\\.html}"
+  },
+  {
+    "id": "admin_tenant_settings_general_index_tsx_4196017676",
+    "name": "admin/[tenant]/settings/general",
+    "folder": "pages",
+    "file": "admin/[tenant]/settings/general/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "admin",
+        "pattern": "admin",
+        "parts": [
+          {
+            "type": "static",
+            "value": "admin"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": "[tenant]",
+        "pattern": ":tenant",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "required",
+            "name": "tenant",
+            "const": "tenant"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "settings",
+        "pattern": "settings",
+        "parts": [
+          {
+            "type": "static",
+            "value": "settings"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "general",
+        "pattern": "general",
+        "parts": [
+          {
+            "type": "static",
+            "value": "general"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "admin/:tenant/settings/general",
+    "honoPattern": "admin/:tenant/settings/general"
+  },
+  {
+    "id": "admin_tenant_settings_permissions_index_tsx_3508365092",
+    "name": "admin/[tenant]/settings/permissions",
+    "folder": "pages",
+    "file": "admin/[tenant]/settings/permissions/index.tsx",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "admin",
+        "pattern": "admin",
+        "parts": [
+          {
+            "type": "static",
+            "value": "admin"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": "[tenant]",
+        "pattern": ":tenant",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "required",
+            "name": "tenant",
+            "const": "tenant"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "settings",
+        "pattern": "settings",
+        "parts": [
+          {
+            "type": "static",
+            "value": "settings"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "orig": "permissions",
+        "pattern": "permissions",
+        "parts": [
+          {
+            "type": "static",
+            "value": "permissions"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "admin/:tenant/settings/permissions",
+    "honoPattern": "admin/:tenant/settings/permissions"
+  },
+  {
     "id": "portal_clientId_reports_reportType_data_dataView_index_tsx_245814616",
     "name": "portal/[clientId]/reports/[reportType]/data/[dataView]",
     "folder": "pages",
@@ -628,561 +2054,6 @@
     ],
     "pathPattern": "workspace/:workspaceId/team/:memberId/permissions{/*permissionPath}",
     "honoPattern": "workspace/:workspaceId/team/:memberId/permissions/*"
-  },
-  {
-    "id": "admin_tenant_settings_general_index_tsx_4196017676",
-    "name": "admin/[tenant]/settings/general",
-    "folder": "pages",
-    "file": "admin/[tenant]/settings/general/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "admin",
-        "pattern": "admin",
-        "parts": [
-          {
-            "type": "static",
-            "value": "admin"
-          }
-        ]
-      },
-      {
-        "kind": "param",
-        "orig": "[tenant]",
-        "pattern": ":tenant",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "required",
-            "name": "tenant",
-            "const": "tenant"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "settings",
-        "pattern": "settings",
-        "parts": [
-          {
-            "type": "static",
-            "value": "settings"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "general",
-        "pattern": "general",
-        "parts": [
-          {
-            "type": "static",
-            "value": "general"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "admin/:tenant/settings/general",
-    "honoPattern": "admin/:tenant/settings/general"
-  },
-  {
-    "id": "admin_tenant_settings_permissions_index_tsx_3508365092",
-    "name": "admin/[tenant]/settings/permissions",
-    "folder": "pages",
-    "file": "admin/[tenant]/settings/permissions/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "admin",
-        "pattern": "admin",
-        "parts": [
-          {
-            "type": "static",
-            "value": "admin"
-          }
-        ]
-      },
-      {
-        "kind": "param",
-        "orig": "[tenant]",
-        "pattern": ":tenant",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "required",
-            "name": "tenant",
-            "const": "tenant"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "settings",
-        "pattern": "settings",
-        "parts": [
-          {
-            "type": "static",
-            "value": "settings"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "permissions",
-        "pattern": "permissions",
-        "parts": [
-          {
-            "type": "static",
-            "value": "permissions"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "admin/:tenant/settings/permissions",
-    "honoPattern": "admin/:tenant/settings/permissions"
-  },
-  {
-    "id": "shop_product_id_reviews_index_tsx_1128969612",
-    "name": "shop/product/[id]/reviews",
-    "folder": "pages",
-    "file": "shop/product/[id]/reviews/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "product",
-        "pattern": "product",
-        "parts": [
-          {
-            "type": "static",
-            "value": "product"
-          }
-        ]
-      },
-      {
-        "kind": "param",
-        "orig": "[id]",
-        "pattern": ":id",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "required",
-            "name": "id",
-            "const": "id"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "reviews",
-        "pattern": "reviews",
-        "parts": [
-          {
-            "type": "static",
-            "value": "reviews"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/product/:id/reviews",
-    "honoPattern": "shop/product/:id/reviews"
-  },
-  {
-    "id": "dashboard_settings_billing_index_tsx_3947003682",
-    "name": "dashboard/settings/billing",
-    "folder": "pages",
-    "file": "dashboard/settings/billing/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "dashboard",
-        "pattern": "dashboard",
-        "parts": [
-          {
-            "type": "static",
-            "value": "dashboard"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "settings",
-        "pattern": "settings",
-        "parts": [
-          {
-            "type": "static",
-            "value": "settings"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "billing",
-        "pattern": "billing",
-        "parts": [
-          {
-            "type": "static",
-            "value": "billing"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "dashboard/settings/billing",
-    "honoPattern": "dashboard/settings/billing"
-  },
-  {
-    "id": "dashboard_settings_notifications_index_tsx_3109498012",
-    "name": "dashboard/settings/notifications",
-    "folder": "pages",
-    "file": "dashboard/settings/notifications/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "dashboard",
-        "pattern": "dashboard",
-        "parts": [
-          {
-            "type": "static",
-            "value": "dashboard"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "settings",
-        "pattern": "settings",
-        "parts": [
-          {
-            "type": "static",
-            "value": "settings"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "notifications",
-        "pattern": "notifications",
-        "parts": [
-          {
-            "type": "static",
-            "value": "notifications"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "dashboard/settings/notifications",
-    "honoPattern": "dashboard/settings/notifications"
-  },
-  {
-    "id": "dashboard_settings_profile_index_tsx_3821990919",
-    "name": "dashboard/settings/profile",
-    "folder": "pages",
-    "file": "dashboard/settings/profile/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "dashboard",
-        "pattern": "dashboard",
-        "parts": [
-          {
-            "type": "static",
-            "value": "dashboard"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "settings",
-        "pattern": "settings",
-        "parts": [
-          {
-            "type": "static",
-            "value": "settings"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "profile",
-        "pattern": "profile",
-        "parts": [
-          {
-            "type": "static",
-            "value": "profile"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "dashboard/settings/profile",
-    "honoPattern": "dashboard/settings/profile"
-  },
-  {
-    "id": "dashboard_settings_security_index_tsx_2219988972",
-    "name": "dashboard/settings/security",
-    "folder": "pages",
-    "file": "dashboard/settings/security/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "dashboard",
-        "pattern": "dashboard",
-        "parts": [
-          {
-            "type": "static",
-            "value": "dashboard"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "settings",
-        "pattern": "settings",
-        "parts": [
-          {
-            "type": "static",
-            "value": "settings"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "security",
-        "pattern": "security",
-        "parts": [
-          {
-            "type": "static",
-            "value": "security"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "dashboard/settings/security",
-    "honoPattern": "dashboard/settings/security"
-  },
-  {
-    "id": "dashboard_settings_security_layout_tsx_3549196698",
-    "name": "dashboard/settings/security",
-    "folder": "pages",
-    "file": "dashboard/settings/security/layout.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "dashboard",
-        "pattern": "dashboard",
-        "parts": [
-          {
-            "type": "static",
-            "value": "dashboard"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "settings",
-        "pattern": "settings",
-        "parts": [
-          {
-            "type": "static",
-            "value": "settings"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "security",
-        "pattern": "security",
-        "parts": [
-          {
-            "type": "static",
-            "value": "security"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "dashboard/settings/security",
-    "honoPattern": "dashboard/settings/security"
-  },
-  {
-    "id": "shop_checkout_confirm_index_tsx_457300039",
-    "name": "shop/checkout/confirm",
-    "folder": "pages",
-    "file": "shop/checkout/confirm/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "checkout",
-        "pattern": "checkout",
-        "parts": [
-          {
-            "type": "static",
-            "value": "checkout"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "confirm",
-        "pattern": "confirm",
-        "parts": [
-          {
-            "type": "static",
-            "value": "confirm"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/checkout/confirm",
-    "honoPattern": "shop/checkout/confirm"
-  },
-  {
-    "id": "shop_checkout_payment_index_tsx_2839585893",
-    "name": "shop/checkout/payment",
-    "folder": "pages",
-    "file": "shop/checkout/payment/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "checkout",
-        "pattern": "checkout",
-        "parts": [
-          {
-            "type": "static",
-            "value": "checkout"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "payment",
-        "pattern": "payment",
-        "parts": [
-          {
-            "type": "static",
-            "value": "payment"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/checkout/payment",
-    "honoPattern": "shop/checkout/payment"
-  },
-  {
-    "id": "shop_checkout_shipping_index_tsx_4218611208",
-    "name": "shop/checkout/shipping",
-    "folder": "pages",
-    "file": "shop/checkout/shipping/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "checkout",
-        "pattern": "checkout",
-        "parts": [
-          {
-            "type": "static",
-            "value": "checkout"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "shipping",
-        "pattern": "shipping",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shipping"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/checkout/shipping",
-    "honoPattern": "shop/checkout/shipping"
-  },
-  {
-    "id": "shop_checkout_shipping_layout_tsx_1955886922",
-    "name": "shop/checkout/shipping",
-    "folder": "pages",
-    "file": "shop/checkout/shipping/layout.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "checkout",
-        "pattern": "checkout",
-        "parts": [
-          {
-            "type": "static",
-            "value": "checkout"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "shipping",
-        "pattern": "shipping",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shipping"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/checkout/shipping",
-    "honoPattern": "shop/checkout/shipping"
   },
   {
     "id": "admin_tenant_resources_type_index_tsx_2889345339",
@@ -2280,96 +3151,6 @@
     "honoPattern": "admin/:tenant/users"
   },
   {
-    "id": "blog_post_slug_index_tsx_4265829785",
-    "name": "blog/post/[slug]",
-    "folder": "pages",
-    "file": "blog/post/[slug]/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "blog",
-        "pattern": "blog",
-        "parts": [
-          {
-            "type": "static",
-            "value": "blog"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "post",
-        "pattern": "post",
-        "parts": [
-          {
-            "type": "static",
-            "value": "post"
-          }
-        ]
-      },
-      {
-        "kind": "param",
-        "orig": "[slug]",
-        "pattern": ":slug",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "required",
-            "name": "slug",
-            "const": "slug"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "blog/post/:slug",
-    "honoPattern": "blog/post/:slug"
-  },
-  {
-    "id": "blog_post_slug_layout_tsx_4086949147",
-    "name": "blog/post/[slug]",
-    "folder": "pages",
-    "file": "blog/post/[slug]/layout.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "blog",
-        "pattern": "blog",
-        "parts": [
-          {
-            "type": "static",
-            "value": "blog"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "post",
-        "pattern": "post",
-        "parts": [
-          {
-            "type": "static",
-            "value": "post"
-          }
-        ]
-      },
-      {
-        "kind": "param",
-        "orig": "[slug]",
-        "pattern": ":slug",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "required",
-            "name": "slug",
-            "const": "slug"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "blog/post/:slug",
-    "honoPattern": "blog/post/:slug"
-  },
-  {
     "id": "portal_clientId_reports_layout_tsx_1980481456",
     "name": "portal/[clientId]/reports",
     "folder": "pages",
@@ -2683,141 +3464,6 @@
     ],
     "pathPattern": "projects/:projectId/team",
     "honoPattern": "projects/:projectId/team"
-  },
-  {
-    "id": "shop_orders_orderId_index_tsx_3645959700",
-    "name": "shop/orders/[orderId]",
-    "folder": "pages",
-    "file": "shop/orders/[orderId]/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "orders",
-        "pattern": "orders",
-        "parts": [
-          {
-            "type": "static",
-            "value": "orders"
-          }
-        ]
-      },
-      {
-        "kind": "param",
-        "orig": "[orderId]",
-        "pattern": ":orderId",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "required",
-            "name": "orderId",
-            "const": "orderId"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/orders/:orderId",
-    "honoPattern": "shop/orders/:orderId"
-  },
-  {
-    "id": "shop_product_id_index_tsx_3035235801",
-    "name": "shop/product/[id]",
-    "folder": "pages",
-    "file": "shop/product/[id]/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "product",
-        "pattern": "product",
-        "parts": [
-          {
-            "type": "static",
-            "value": "product"
-          }
-        ]
-      },
-      {
-        "kind": "param",
-        "orig": "[id]",
-        "pattern": ":id",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "required",
-            "name": "id",
-            "const": "id"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/product/:id",
-    "honoPattern": "shop/product/:id"
-  },
-  {
-    "id": "shop_product_id_layout_tsx_2232356331",
-    "name": "shop/product/[id]",
-    "folder": "pages",
-    "file": "shop/product/[id]/layout.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "product",
-        "pattern": "product",
-        "parts": [
-          {
-            "type": "static",
-            "value": "product"
-          }
-        ]
-      },
-      {
-        "kind": "param",
-        "orig": "[id]",
-        "pattern": ":id",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "required",
-            "name": "id",
-            "const": "id"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/product/:id",
-    "honoPattern": "shop/product/:id"
   },
   {
     "id": "store_category_sort_layout_tsx_1255246087",
@@ -3412,627 +4058,6 @@
     "honoPattern": "store/:category/filters/*"
   },
   {
-    "id": "about_careers_jobId_index_tsx_125723793",
-    "name": "about/careers/{jobId}",
-    "folder": "pages",
-    "file": "about/careers/{jobId}/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "about",
-        "pattern": "about",
-        "parts": [
-          {
-            "type": "static",
-            "value": "about"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "careers",
-        "pattern": "careers",
-        "parts": [
-          {
-            "type": "static",
-            "value": "careers"
-          }
-        ]
-      },
-      {
-        "kind": "param",
-        "orig": "{jobId}",
-        "pattern": "{/:jobId}",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "optional",
-            "name": "jobId",
-            "const": "jobId"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "about/careers{/:jobId}",
-    "honoPattern": "about/careers/:jobId?"
-  },
-  {
-    "id": "shop_products_category_index_tsx_130432150",
-    "name": "shop/products/{category}",
-    "folder": "pages",
-    "file": "shop/products/{category}/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "products",
-        "pattern": "products",
-        "parts": [
-          {
-            "type": "static",
-            "value": "products"
-          }
-        ]
-      },
-      {
-        "kind": "param",
-        "orig": "{category}",
-        "pattern": "{/:category}",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "optional",
-            "name": "category",
-            "const": "category"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/products{/:category}",
-    "honoPattern": "shop/products/:category?"
-  },
-  {
-    "id": "about_careers_layout_tsx_3684129548",
-    "name": "about/careers",
-    "folder": "pages",
-    "file": "about/careers/layout.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "about",
-        "pattern": "about",
-        "parts": [
-          {
-            "type": "static",
-            "value": "about"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "careers",
-        "pattern": "careers",
-        "parts": [
-          {
-            "type": "static",
-            "value": "careers"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "about/careers",
-    "honoPattern": "about/careers"
-  },
-  {
-    "id": "about_team_index_tsx_3906889098",
-    "name": "about/team",
-    "folder": "pages",
-    "file": "about/team/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "about",
-        "pattern": "about",
-        "parts": [
-          {
-            "type": "static",
-            "value": "about"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "team",
-        "pattern": "team",
-        "parts": [
-          {
-            "type": "static",
-            "value": "team"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "about/team",
-    "honoPattern": "about/team"
-  },
-  {
-    "id": "account_profile_index_tsx_1987383209",
-    "name": "account/profile",
-    "folder": "pages",
-    "file": "account/profile/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "account",
-        "pattern": "account",
-        "parts": [
-          {
-            "type": "static",
-            "value": "account"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "profile",
-        "pattern": "profile",
-        "parts": [
-          {
-            "type": "static",
-            "value": "profile"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "account/profile",
-    "honoPattern": "account/profile"
-  },
-  {
-    "id": "dashboard_analytics_index_tsx_2467463920",
-    "name": "dashboard/analytics",
-    "folder": "pages",
-    "file": "dashboard/analytics/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "dashboard",
-        "pattern": "dashboard",
-        "parts": [
-          {
-            "type": "static",
-            "value": "dashboard"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "analytics",
-        "pattern": "analytics",
-        "parts": [
-          {
-            "type": "static",
-            "value": "analytics"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "dashboard/analytics",
-    "honoPattern": "dashboard/analytics"
-  },
-  {
-    "id": "dashboard_settings_index_tsx_2528451466",
-    "name": "dashboard/settings",
-    "folder": "pages",
-    "file": "dashboard/settings/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "dashboard",
-        "pattern": "dashboard",
-        "parts": [
-          {
-            "type": "static",
-            "value": "dashboard"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "settings",
-        "pattern": "settings",
-        "parts": [
-          {
-            "type": "static",
-            "value": "settings"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "dashboard/settings",
-    "honoPattern": "dashboard/settings"
-  },
-  {
-    "id": "dashboard_settings_layout_tsx_2001687227",
-    "name": "dashboard/settings",
-    "folder": "pages",
-    "file": "dashboard/settings/layout.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "dashboard",
-        "pattern": "dashboard",
-        "parts": [
-          {
-            "type": "static",
-            "value": "dashboard"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "settings",
-        "pattern": "settings",
-        "parts": [
-          {
-            "type": "static",
-            "value": "settings"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "dashboard/settings",
-    "honoPattern": "dashboard/settings"
-  },
-  {
-    "id": "legal_privacy_index_tsx_603606551",
-    "name": "legal/privacy",
-    "folder": "pages",
-    "file": "legal/privacy/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "legal",
-        "pattern": "legal",
-        "parts": [
-          {
-            "type": "static",
-            "value": "legal"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "privacy",
-        "pattern": "privacy",
-        "parts": [
-          {
-            "type": "static",
-            "value": "privacy"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "legal/privacy",
-    "honoPattern": "legal/privacy"
-  },
-  {
-    "id": "legal_terms_index_tsx_3828107619",
-    "name": "legal/terms",
-    "folder": "pages",
-    "file": "legal/terms/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "legal",
-        "pattern": "legal",
-        "parts": [
-          {
-            "type": "static",
-            "value": "legal"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "terms",
-        "pattern": "terms",
-        "parts": [
-          {
-            "type": "static",
-            "value": "terms"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "legal/terms",
-    "honoPattern": "legal/terms"
-  },
-  {
-    "id": "properties_filters_index_tsx_1571931483",
-    "name": "properties/filters",
-    "folder": "pages",
-    "file": "properties/filters/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "properties",
-        "pattern": "properties",
-        "parts": [
-          {
-            "type": "static",
-            "value": "properties"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "filters",
-        "pattern": "filters",
-        "parts": [
-          {
-            "type": "static",
-            "value": "filters"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "properties/filters",
-    "honoPattern": "properties/filters"
-  },
-  {
-    "id": "shop_cart_index_tsx_3461971678",
-    "name": "shop/cart",
-    "folder": "pages",
-    "file": "shop/cart/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "cart",
-        "pattern": "cart",
-        "parts": [
-          {
-            "type": "static",
-            "value": "cart"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/cart",
-    "honoPattern": "shop/cart"
-  },
-  {
-    "id": "shop_checkout_layout_tsx_2809742663",
-    "name": "shop/checkout",
-    "folder": "pages",
-    "file": "shop/checkout/layout.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "checkout",
-        "pattern": "checkout",
-        "parts": [
-          {
-            "type": "static",
-            "value": "checkout"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/checkout",
-    "honoPattern": "shop/checkout"
-  },
-  {
-    "id": "shop_orders_index_tsx_3044215409",
-    "name": "shop/orders",
-    "folder": "pages",
-    "file": "shop/orders/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "orders",
-        "pattern": "orders",
-        "parts": [
-          {
-            "type": "static",
-            "value": "orders"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/orders",
-    "honoPattern": "shop/orders"
-  },
-  {
-    "id": "shop_orders_layout_tsx_1560526654",
-    "name": "shop/orders",
-    "folder": "pages",
-    "file": "shop/orders/layout.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "orders",
-        "pattern": "orders",
-        "parts": [
-          {
-            "type": "static",
-            "value": "orders"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/orders",
-    "honoPattern": "shop/orders"
-  },
-  {
-    "id": "shop_products_index_tsx_3411274748",
-    "name": "shop/products",
-    "folder": "pages",
-    "file": "shop/products/index.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "products",
-        "pattern": "products",
-        "parts": [
-          {
-            "type": "static",
-            "value": "products"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/products",
-    "honoPattern": "shop/products"
-  },
-  {
-    "id": "shop_products_layout_tsx_3463733314",
-    "name": "shop/products",
-    "folder": "pages",
-    "file": "shop/products/layout.tsx",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "shop",
-        "pattern": "shop",
-        "parts": [
-          {
-            "type": "static",
-            "value": "shop"
-          }
-        ]
-      },
-      {
-        "kind": "static",
-        "orig": "products",
-        "pattern": "products",
-        "parts": [
-          {
-            "type": "static",
-            "value": "products"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "shop/products",
-    "honoPattern": "shop/products"
-  },
-  {
-    "id": "files_folder_id_json_index_ts_1018240434",
-    "name": "files/{folder}/{id}.json",
-    "folder": "api",
-    "file": "files/{folder}/{id}.json/index.ts",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "files",
-        "pattern": "files",
-        "parts": [
-          {
-            "type": "static",
-            "value": "files"
-          }
-        ]
-      },
-      {
-        "kind": "param",
-        "orig": "{folder}",
-        "pattern": "{/:folder}",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "optional",
-            "name": "folder",
-            "const": "folder"
-          }
-        ]
-      },
-      {
-        "kind": "mixed",
-        "orig": "{id}.json",
-        "pattern": "{/:id}.json",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "optional",
-            "name": "id",
-            "const": "id"
-          },
-          {
-            "type": "static",
-            "value": ".json"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "files{/:folder}{/:id}.json",
-    "honoPattern": "files/:folder?/:_2{(?:[^/]+)?\\.json}"
-  },
-  {
     "id": "shop_category_productId_index_tsx_3761077416",
     "name": "shop/[category]/[productId]",
     "folder": "pages",
@@ -4125,44 +4150,6 @@
     ],
     "pathPattern": "shop/:category/:productId",
     "honoPattern": "shop/:category/:productId"
-  },
-  {
-    "id": "users_id_json_index_ts_1074228995",
-    "name": "users/[id].json",
-    "folder": "api",
-    "file": "users/[id].json/index.ts",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "users",
-        "pattern": "users",
-        "parts": [
-          {
-            "type": "static",
-            "value": "users"
-          }
-        ]
-      },
-      {
-        "kind": "mixed",
-        "orig": "[id].json",
-        "pattern": ":id.json",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "required",
-            "name": "id",
-            "const": "id"
-          },
-          {
-            "type": "static",
-            "value": ".json"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "users/:id.json",
-    "honoPattern": "users/:_1{[^/]+\\.json}"
   },
   {
     "id": "books_category_author_index_ts_938545357",
@@ -4620,6 +4607,57 @@
     "honoPattern": "users/:username"
   },
   {
+    "id": "files_folder_id_json_index_ts_1018240434",
+    "name": "files/{folder}/{id}.json",
+    "folder": "api",
+    "file": "files/{folder}/{id}.json/index.ts",
+    "pathTokens": [
+      {
+        "kind": "static",
+        "orig": "files",
+        "pattern": "files",
+        "parts": [
+          {
+            "type": "static",
+            "value": "files"
+          }
+        ]
+      },
+      {
+        "kind": "param",
+        "orig": "{folder}",
+        "pattern": "{/:folder}",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "optional",
+            "name": "folder",
+            "const": "folder"
+          }
+        ]
+      },
+      {
+        "kind": "mixed",
+        "orig": "{id}.json",
+        "pattern": "{/:id}.json",
+        "parts": [
+          {
+            "type": "param",
+            "kind": "optional",
+            "name": "id",
+            "const": "id"
+          },
+          {
+            "type": "static",
+            "value": ".json"
+          }
+        ]
+      }
+    ],
+    "pathPattern": "files{/:folder}{/:id}.json",
+    "honoPattern": "files/:folder?/:_2{(?:[^/]+)?\\.json}"
+  },
+  {
     "id": "blog_category_tag_index_tsx_1530717925",
     "name": "blog/{category}/{tag}",
     "folder": "pages",
@@ -4814,44 +4852,6 @@
     ],
     "pathPattern": "search{/:query}",
     "honoPattern": "search/:query?"
-  },
-  {
-    "id": "pages_path_html_index_ts_1431473415",
-    "name": "pages/{...path}.html",
-    "folder": "api",
-    "file": "pages/{...path}.html/index.ts",
-    "pathTokens": [
-      {
-        "kind": "static",
-        "orig": "pages",
-        "pattern": "pages",
-        "parts": [
-          {
-            "type": "static",
-            "value": "pages"
-          }
-        ]
-      },
-      {
-        "kind": "mixed",
-        "orig": "{...path}.html",
-        "pattern": "{/*path}.html",
-        "parts": [
-          {
-            "type": "param",
-            "kind": "splat",
-            "name": "path",
-            "const": "path"
-          },
-          {
-            "type": "static",
-            "value": ".html"
-          }
-        ]
-      }
-    ],
-    "pathPattern": "pages{/*path}.html",
-    "honoPattern": "pages/:_1{(?:.+)?\\.html}"
   },
   {
     "id": "about_index_tsx_3061335318",

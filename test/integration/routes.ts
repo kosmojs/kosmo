@@ -869,7 +869,6 @@ export const apiRoutes = {
     { category: "world" },
   ],
 
-  "products/{category}": [{ category: "electronics" }, {}],
   "products/{...path}.[ext]": [
     { path: ["electronics", "phones"], ext: "json" },
   ],
