@@ -27,6 +27,15 @@ export default defineGeneratorFactory<Options>(
       },
     });
 
+    const noExternal = Array.isArray(options?.noExternal)
+      ? options.noExternal
+      : [...generators, { meta }].flatMap(({ meta }) => {
+          return Object.keys({
+            ...meta.dependencies,
+            ...meta.devDependencies,
+          });
+        });
+
     return {
       meta,
       options: undefined,
@@ -72,6 +81,7 @@ export default defineGeneratorFactory<Options>(
             configFile: false,
             root: createPath.src(),
             plugins,
+            ssr: { noExternal },
             resolve: {
               ...config.resolve,
               tsconfigPaths: true,
@@ -101,6 +111,7 @@ export default defineGeneratorFactory<Options>(
           define: {
             ...config.define,
           },
+          ssr: { noExternal },
           resolve: {
             ...config.resolve,
             tsconfigPaths: true,

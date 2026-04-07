@@ -130,11 +130,22 @@ export default async (
       }
 
       // build backend
-      if (generators.find((e) => e.meta.slot === "api")) {
+      const apiGenerator = generators.find((e) => e.meta.slot === "api");
+
+      if (apiGenerator) {
         const dir = createPath.distDir("api");
 
         // emptyOutDir wont work cause dir is outside project root
         await rm(dir, { recursive: true, force: true });
+
+        const noExternal = Array.isArray(apiGenerator.options?.noExternal)
+          ? apiGenerator.options.noExternal
+          : generators.flatMap(({ meta }) => {
+              return Object.keys({
+                ...meta.dependencies,
+                ...meta.devDependencies,
+              });
+            });
 
         await build({
           configFile: false,
@@ -144,6 +155,7 @@ export default async (
             ...config.define,
             KOSMO_PRODUCTION_BUILD: "true",
           },
+          ssr: { noExternal },
           resolve: {
             ...config.resolve,
             tsconfigPaths: true,
