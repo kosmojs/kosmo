@@ -18,7 +18,7 @@ export type GeneratorMeta = {
    * api/fetch generators always run first, ssr always run last.
    * User generators run in the order they were added.
    * */
-  slot?: "api" | "fetch" | "mdx" | "ssr";
+  slot?: "api" | "fetch" | "ssr" | "ssg";
 
   /**
    * Package dependencies required by this generator.
@@ -62,10 +62,16 @@ type OptionsRequired<T> = T extends [unknown, infer R extends boolean]
 
 export type GeneratorFactoryInstance = {
   meta: GeneratorMeta;
-  options: GeneratorOptionsTuple[0] | undefined;
-  start: () => Promise<void>;
-  watch: (entries: Array<ResolvedEntry>, event?: WatcherEvent) => Promise<void>;
-  build: (entries: Array<ResolvedEntry>) => Promise<void>;
+  options?: GeneratorOptionsTuple[0] | undefined;
+  start?: () => Promise<void>;
+  watch?: (
+    entries: Array<ResolvedEntry>,
+    event?: WatcherEvent,
+  ) => Promise<void>;
+  // runs before Vite build
+  build?: (entries: Array<ResolvedEntry>) => Promise<void>;
+  // runs after Vite build
+  postBuild?: (entries: Array<ResolvedEntry>) => Promise<void>;
 };
 
 export type GeneratorFactory<T extends GeneratorOptionsTuple | void = void> =
@@ -85,7 +91,7 @@ export type GeneratorFactory<T extends GeneratorOptionsTuple | void = void> =
 
 export type GeneratorBase = {
   meta: GeneratorMeta;
-  options: GeneratorOptionsTuple[0] | undefined;
+  options?: GeneratorOptionsTuple[0] | undefined;
   factory: (sourceFolder: SourceFolder) => GeneratorFactoryInstance;
   plugins?: (
     sourceFolder: SourceFolder,

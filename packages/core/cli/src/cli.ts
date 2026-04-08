@@ -32,6 +32,7 @@ const options = parseArgs({
     backend: { type: "string" },
     framework: { type: "string" },
     ssr: { type: "boolean" },
+    ssg: { type: "boolean" },
     quiet: { type: "boolean", short: "q" },
     help: { type: "boolean", short: "h" },
   },

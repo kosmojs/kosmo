@@ -43,7 +43,6 @@ export default defineGeneratorFactory<Options>(
     return {
       meta,
       options,
-      async start() {},
       async watch(entries) {
         await generateSchemas(entries);
       },

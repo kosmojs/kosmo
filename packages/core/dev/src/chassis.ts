@@ -1,4 +1,3 @@
-import { rm } from "node:fs/promises";
 import http, { type IncomingMessage, type ServerResponse } from "node:http";
 import net from "node:net";
 import { join, resolve } from "node:path";
@@ -48,16 +47,8 @@ export default async (
         );
       }
 
-      for (const prop of ["start", "watch", "build"] as const) {
-        if (typeof factory[prop] !== "function") {
-          throw new Error(
-            `${sourceFolder.name}: ${base.meta.name} generator is missing ${prop} hook`,
-          );
-        }
-      }
-
       try {
-        await factory.start();
+        await factory.start?.();
       } catch (error) {
         console.error(
           styleText(
@@ -98,17 +89,13 @@ export default async (
       const plugins = [...(config.plugins || [])];
 
       for (const base of generators) {
-        const factory = base.factory(sourceFolder);
-        await factory.build(resolvedRoutes);
+        await base.factory(sourceFolder).build?.(resolvedRoutes);
         plugins.push(...(base.plugins?.(sourceFolder, command) || []));
       }
 
       // build client
       {
         const outDir = createPath.distDir("client");
-
-        // emptyOutDir wont work cause outDir is outside project root
-        await rm(outDir, { recursive: true, force: true });
 
         await build({
           ...config,
@@ -124,6 +111,7 @@ export default async (
             ...config?.build,
             outDir,
             manifest: true,
+            emptyOutDir: true,
           },
           cacheDir: cacheDir(sourceFolder, command, "client"),
         });
@@ -134,9 +122,6 @@ export default async (
 
       if (apiGenerator) {
         const dir = createPath.distDir("api");
-
-        // emptyOutDir wont work cause dir is outside project root
-        await rm(dir, { recursive: true, force: true });
 
         const noExternal = Array.isArray(apiGenerator.options?.noExternal)
           ? apiGenerator.options.noExternal
@@ -166,13 +151,21 @@ export default async (
             ssr: true,
             target: "esnext",
             sourcemap: true,
+            emptyOutDir: true,
             rolldownOptions: {
               input: [createPath.api("app.ts"), createPath.api("server.ts")],
-              output: { dir, format: "esm" },
+              output: {
+                dir,
+                format: "esm",
+              },
             },
           },
           cacheDir: cacheDir(sourceFolder, command, "backend"),
         });
+      }
+
+      for (const base of generators) {
+        await base.factory(sourceFolder).postBuild?.(resolvedRoutes);
       }
     }
 
@@ -409,20 +402,20 @@ const folderGenerators = (sourceFolder: SourceFolder): Array<GeneratorBase> => {
   }
 
   return [
-    // 1. stub generator should run first
+    // core generator should run first
     coreGenerator(),
-    // 2. then api generator
+    // then api generator
     ...(coreGenerators.api ? [coreGenerators.api] : []),
-    // 3. then fetch generator, only if api generator also enabled
+    // then fetch generator, only if api generator also enabled
     ...(coreGenerators.fetch && coreGenerators.api
       ? [coreGenerators.fetch]
       : []),
-    // 4. then mdx generator
-    ...(coreGenerators.mdx ? [coreGenerators.mdx] : []),
-    // 5. user generators in the order they were added
+    // then user generators in the order they were added
     ...userGenerators,
-    // 6. and ssr generator should run last
+    // then ssr generator should run after user generators
     ...(coreGenerators.ssr ? [coreGenerators.ssr] : []),
+    // and ssg generator should run last
+    ...(coreGenerators.ssg ? [coreGenerators.ssg] : []),
   ];
 };
 
@@ -462,7 +455,7 @@ const eventFactory = async (
 
     for (const { name, factory } of generators) {
       try {
-        await factory.watch(entries, event);
+        await factory.watch?.(entries, event);
       } catch (error) {
         console.error(
           styleText("red", `${sourceFolder.name}: ${name} generator failed`),

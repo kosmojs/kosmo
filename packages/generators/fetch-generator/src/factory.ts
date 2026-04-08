@@ -143,7 +143,6 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
 
   return {
     meta,
-    options: undefined,
 
     async start() {
       // supposed to be replaced by specialized generators, write it only at initialization.

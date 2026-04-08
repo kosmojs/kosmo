@@ -72,6 +72,13 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
       {},
       { overwrite: false },
     );
+
+    /**
+     * deploy a stub SSG file.
+     * generators that support SSG will override it as needed.
+     * then SSG generator will import it and generate static files for exported routes.
+     * */
+    await renderToFile(createPath.lib("ssg.ts"), "export default [];", {});
   };
 
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
@@ -96,9 +103,6 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
     start,
     watch: generateLibFiles,
     build: generateLibFiles,
-    plugins() {
-      return [];
-    },
   };
 });
 

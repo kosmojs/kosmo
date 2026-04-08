@@ -20,7 +20,6 @@ export default defineGenerator(() => {
 
   return {
     meta,
-    options: undefined,
     factory: (sourceFolder) => factory(meta, sourceFolder),
   };
 });
