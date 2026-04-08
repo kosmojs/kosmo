@@ -90,7 +90,7 @@ user management, billing, and analytics.`,
     },
   },
   servers: [
-    { url: "http://localhost:4554", description: "Development server" },
+    { url: "http://localhost:4556", description: "Development server" },
     { url: "https://staging-api.myapp.com", description: "Staging environment" },
     { url: "https://api.myapp.com", description: "Production server" },
   ],

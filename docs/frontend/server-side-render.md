@@ -318,10 +318,10 @@ production execution.
 Test your SSR bundle before deploying:
 
 ```sh
-node dist/front/ssr/server.js -p 4553
+node dist/front/ssr/server.js -p 4556
 ```
 
-Navigate to `http://localhost:4553` to verify server-side rendering.
+Navigate to `http://localhost:4556` to verify server-side rendering.
 
 ## 🖥️ Runtime
 
@@ -330,13 +330,13 @@ Same bundle, same behavior, just pick your runtime:
 
 ::: code-group
 ```sh [Node]
-node dist/front/ssr/server.js -p 4553
+node dist/front/ssr/server.js -p 4556
 ```
 ```sh [Bun]
-bun dist/front/ssr/server.js -p 4553
+bun dist/front/ssr/server.js -p 4556
 ```
 ```sh [Deno]
-deno run -A dist/front/ssr/server.js -p 4553
+deno run -A dist/front/ssr/server.js -p 4556
 ```
 :::
 
@@ -352,7 +352,7 @@ Deploy behind a reverse proxy such as Nginx or Caddy:
 
 ```nginx
 upstream ssr_backend {
-  server 127.0.0.1:4554;
+  server 127.0.0.1:4556;
   # server unix:/tmp/app.sock;
 }
 
