@@ -1,4 +1,5 @@
-import { rm } from "node:fs/promises";
+import { cp, rm } from "node:fs/promises";
+import { join, resolve } from "node:path";
 
 import { build } from "vite";
 
@@ -40,10 +41,7 @@ export default defineGeneratorFactory<Options>(
 
     return {
       meta,
-      options: undefined,
-
-      async start() {},
-      async watch() {},
+      options,
 
       async build(entries) {
         await deployLibFile(
@@ -63,51 +61,45 @@ export default defineGeneratorFactory<Options>(
               : true,
           ),
         });
+      },
 
-        // build the SSR bundle using `entry/server.ts` as the entry point.
-        {
-          const outDir = createPath.distDir("ssr");
+      async postBuild() {
+        const dir = createPath.distDir("ssr");
 
-          // emptyOutDir wont work cause dir is outside project root
-          await rm(outDir, { recursive: true, force: true });
+        const plugins = [vitePlugins.nodePrefix(), ...(config?.plugins || [])];
 
-          const plugins = [
-            vitePlugins.nodePrefix(),
-            ...(config?.plugins || []),
-          ];
-
-          for (const base of generators) {
-            plugins.push(...(base.plugins?.(sourceFolder, "build") || []));
-          }
-
-          await build({
-            ...config,
-            configFile: false,
-            root: createPath.src(),
-            plugins,
-            ssr: { noExternal },
-            resolve: {
-              ...config.resolve,
-              tsconfigPaths: true,
-            },
-            build: {
-              // do not use extension here, it may vary by framework
-              ssr: createPath.entry("server"),
-              ssrEmitAssets: true,
-              outDir,
-              sourcemap: true,
-              rolldownOptions: {
-                output: {
-                  entryFileNames: "app.js",
-                  format: "esm",
-                },
-              },
-            },
-          });
+        for (const base of generators) {
+          plugins.push(...(base.plugins?.(sourceFolder, "build") || []));
         }
 
-        // Build default server for SSR. It is using node:http server.
-        // For custom deployment, use the app factory directly and discard the built server.
+        // build the SSR bundle using `entry/server` as the entry point.
+        await build({
+          ...config,
+          configFile: false,
+          root: createPath.src(),
+          plugins,
+          ssr: { noExternal },
+          resolve: {
+            ...config.resolve,
+            tsconfigPaths: true,
+          },
+          build: {
+            // do not use extension here, it may vary by framework
+            ssr: createPath.entry("server"),
+            ssrEmitAssets: true,
+            sourcemap: true,
+            emptyOutDir: true,
+            rolldownOptions: {
+              output: {
+                dir,
+                entryFileNames: "app.js",
+                format: "esm",
+              },
+            },
+          },
+        });
+
+        // Build the SSR server using `lib/ssr.ts`
         await build({
           configFile: false,
           root: createPath.lib(),
@@ -121,19 +113,31 @@ export default defineGeneratorFactory<Options>(
             conditions: ["node"],
           },
           build: {
-            ssr: true,
+            ssr: createPath.lib("ssr.ts"),
             target: "esnext",
             sourcemap: true,
+            emptyOutDir: true,
             rolldownOptions: {
-              input: [createPath.lib("ssr.ts")],
               output: {
-                dir: createPath.distDir("ssr"),
+                // emit to a subdir for emptyOutDir to not wipe built client
+                dir: join(dir, "server"),
                 entryFileNames: "server.js",
                 format: "esm",
               },
             },
           },
         });
+
+        // copy client files into ssr dir, merging assets
+        await cp(resolve(dir, "../client"), dir, {
+          recursive: true,
+        });
+
+        for (const file of ["server.js", "server.js.map"]) {
+          await cp(`${dir}/server/${file}`, `${dir}/${file}`);
+        }
+
+        await rm(`${dir}/server`, { recursive: true, force: true });
       },
     };
   },

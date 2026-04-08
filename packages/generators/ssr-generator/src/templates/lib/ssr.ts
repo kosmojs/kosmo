@@ -14,19 +14,6 @@ import type { SSROptions, SSRSetup } from "@kosmojs/core";
 import { baseurl } from "{{ createImport 'config' }}";
 import { pathPatterns } from "{{ createImport 'lib' 'ssr:routes' }}";
 
-const CWD = import.meta.dirname;
-
-/**
- * Root directory where Vite client assets are emitted.
- * This is used both for serving static files and for reading index.html + manifest.
- * */
-const CLIENT_ASSETS_DIR = "../client";
-
-/**
- * Vite also emits server-related assets that should be embeded into page.
- * */
-const SERVER_ASSETS_DIR = ".";
-
 const SERVE_STATIC_ASSETS = JSON.parse("{{serveStaticAssets}}");
 
 const REDIRECT_CODES = [
@@ -54,28 +41,24 @@ type AssetInfo = {
 };
 
 export const createApp = async () => {
-  console.log("\n  ➜ Loading Assets");
+  const root = import.meta.dirname;
 
   // Read the client index.html that includes <!--app-head--> and <!--app-html-->
   // placeholders used for SSR injection.
-  const template = await readFile(
-    resolve(CWD, `${CLIENT_ASSETS_DIR}/index.html`),
-    "utf8",
-  );
+  const template = await readFile(`${root}/index.html`, "utf8");
 
   // Import the SSR entry produced by Vite's ssr build.
   const { renderToString, renderToStream }: SSRSetup = await import(
-    resolve(CWD, "app.js")
+    `${root}/app.js`
   ).then((e) => e.default);
 
   // Load the Vite manifest
-  const manifest = await import(
-    resolve(CWD, `${CLIENT_ASSETS_DIR}/.vite/manifest.json`),
-    { with: { type: "json" } }
-  ).then((e) => e.default);
+  const manifest = await import(`${root}/.vite/manifest.json`, {
+    with: { type: "json" },
+  }).then((e) => e.default);
 
   // Read all assets into an in-memory cache, optionally with content.
-  const assetCache = await loadAssets();
+  const assetCache = await loadAssets(root);
 
   const app = new Hono({ strict: false });
 
@@ -85,7 +68,7 @@ export const createApp = async () => {
       manifest,
       assets: [...assetCache.entries()].flatMap(
         ([path, { file, buffer, size }]) => {
-          if (file.startsWith(CLIENT_ASSETS_DIR)) {
+          if (template.includes(file)) {
             return [];
           }
 
@@ -234,7 +217,7 @@ export const createApp = async () => {
  *
  * Set `serveStaticAssets` to false when a reverse proxy or CDN is expected to serve static assets.
  * */
-const loadAssets = async () => {
+const loadAssets = async (root: string) => {
   const mimeTypeMap: Record<string, string> = {
     ".js": "application/javascript",
     ".mjs": "application/javascript",
@@ -262,28 +245,20 @@ const loadAssets = async () => {
   // Map from URL path (as used in requests) to asset metadata.
   const assetCache = new Map<string, AssetInfo>();
 
-  const files = await glob(
-    [CLIENT_ASSETS_DIR, SERVER_ASSETS_DIR].map((e) => `${e}/assets/**`),
-    {
-      cwd: CWD,
-      onlyFiles: true,
-      absolute: false,
-    },
-  );
+  const files = await glob(`${root}/assets/**`, {
+    cwd: root,
+    onlyFiles: true,
+    absolute: false,
+  });
 
   for (const file of files) {
-    const path = resolve(CWD, file);
+    const path = resolve(root, file);
 
     const buffer = SERVE_STATIC_ASSETS
       ? new Uint8Array(await readFile(path))
       : undefined;
 
-    const key = resolve(
-      baseurl,
-      file.startsWith(CLIENT_ASSETS_DIR)
-        ? file.replace(CLIENT_ASSETS_DIR, "")
-        : file,
-    );
+    const key = resolve(baseurl, file);
 
     assetCache.set(key, {
       file,
@@ -294,6 +269,93 @@ const loadAssets = async () => {
   }
 
   return assetCache;
+};
+
+export const createServer = async ({
+  sock,
+  port,
+}: {
+  sock?: string | undefined;
+  port?: string | number | undefined;
+}) => {
+  if (![sock, port].some(Boolean)) {
+    throw new Error("Please provide either -p/--port or -s/--sock");
+  }
+
+  if (sock) {
+    // Clean up any stale socket file before binding.
+    await unlink(sock).catch((error) => {
+      if (error.code === "ENOENT") {
+        return;
+      }
+      console.error(error.message);
+      process.exit(1);
+    });
+  }
+
+  console.log("\n  ➜ Loading Assets");
+
+  const app = await createApp();
+
+  console.log(
+    `\n  ➜ Starting SSR Server ${styleText(["dim"], "[ %s ]")}`,
+    sock ? `sock: ${sock}` : `port: ${port}`,
+  );
+
+  const onListen = async () => {
+    if (sock) {
+      // Make Unix socket world-writable so other processes (e.g. a reverse proxy)
+      // can connect without permission issues.
+      await chmod(sock, 0o777);
+    }
+    console.log("\n  ➜ Server Started ✨");
+  };
+
+  if (typeof Bun !== "undefined") {
+    const server = Bun.serve(
+      sock
+        ? { unix: sock, fetch: app.fetch }
+        : { port: Number(port), fetch: app.fetch },
+    );
+    await onListen();
+    return async () => {
+      await server.stop();
+    };
+  }
+
+  if (typeof Deno !== "undefined") {
+    const server = sock
+      ? Deno.serve({ path: sock, onListen }, app.fetch)
+      : Deno.serve({ port: Number(port), onListen }, app.fetch);
+    return async () => {
+      await server.shutdown();
+    };
+  }
+
+  const server = createAdaptorServer(app);
+  server.listen(sock || port, onListen);
+
+  return async () => {
+    server.close();
+  };
+};
+
+export const createDisposableServer = async (
+  callback: (port: number) => Promise<void>,
+) => {
+  const app = await createApp();
+  const server = createAdaptorServer(app).listen(0); // OS picks a free port
+  const address = server.address();
+
+  if (!address || typeof address === "string") {
+    throw new Error("SSR: Failed starting disposable server on a free port");
+  }
+
+  try {
+    await callback(address.port);
+  } finally {
+    server.close();
+  }
 };
 
 const isMain = fileURLToPath(import.meta.url) === resolve(process.argv[1]);
@@ -318,53 +380,12 @@ if (isMain) {
     },
   });
 
-  if (![sock, port].some(Boolean)) {
+  try {
+    await createServer({ sock, port });
+  } catch (error: any) {
     console.error(
-      styleText("red", "✗ Please provide either -p/--port or -s/--sock"),
+      styleText("red", `✗ Failed starting SSR server: ${error.message}`),
     );
     process.exit(1);
-  }
-
-  if (sock) {
-    // Clean up any stale socket file before binding.
-    await unlink(sock).catch((error) => {
-      if (error.code === "ENOENT") {
-        return;
-      }
-      console.error(error.message);
-      process.exit(1);
-    });
-  }
-
-  const app = await createApp();
-
-  console.log(
-    `\n  ➜ Starting Server ${styleText(["dim"], "[ %s ]")}`,
-    sock ? `sock: ${sock}` : `port: ${port}`,
-  );
-
-  const onListen = async () => {
-    if (sock) {
-      // Make Unix socket world-writable so other processes (e.g. a reverse proxy)
-      // can connect without permission issues.
-      await chmod(sock, 0o777);
-    }
-    console.log("\n  ➜ Server Started ✨");
-  };
-
-  if (typeof Bun !== "undefined") {
-    Bun.serve(
-      sock
-        ? { unix: sock, fetch: app.fetch }
-        : { port: Number(port), fetch: app.fetch },
-    );
-    await onListen();
-  } else if (typeof Deno !== "undefined") {
-    sock
-      ? Deno.serve({ path: sock, onListen }, app.fetch)
-      : Deno.serve({ port: Number(port), onListen }, app.fetch);
-  } else {
-    const server = createAdaptorServer(app);
-    server.listen(sock || port, onListen);
   }
 }
