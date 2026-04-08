@@ -55,6 +55,15 @@
 
   "overrides": [
     {
+      "includes": ["packages/generators/*/src/templates/src/**/*"],
+      "formatter": {
+        "enabled": false
+      },
+      "assist": {
+        "enabled": false
+      }
+    },
+    {
       "includes": ["packages/core/config/index.js"],
       "linter": {
         "rules": {
