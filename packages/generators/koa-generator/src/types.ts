@@ -1,7 +1,7 @@
 export type Options = [
   {
     /**
-     * Controls which dependencies are bundled into the SSR output.
+     * Controls which dependencies are bundled into the output.
      *
      * By default, all dependencies declared by active generators are bundled,
      * producing a single self-contained file that runs without node_modules.

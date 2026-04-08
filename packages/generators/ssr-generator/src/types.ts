@@ -24,6 +24,11 @@ export type Options = [
      *     → Otherwise any asset URL requested from browser (JS/CSS/img) will return `404`.
      * */
     serveStaticAssets?: boolean;
+
+    /**
+     * SSG disabled by default, set this to true to enable
+     * */
+    ssg?: boolean;
   },
   false,
 ];

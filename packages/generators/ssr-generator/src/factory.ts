@@ -10,8 +10,8 @@ import {
   vitePlugins,
 } from "@kosmojs/lib";
 
-import type { Options } from "./options";
 import * as templates from "./templates";
+import type { Options } from "./types";
 
 export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
