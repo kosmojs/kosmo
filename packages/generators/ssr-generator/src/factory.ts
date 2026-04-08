@@ -20,6 +20,7 @@ export default defineGeneratorFactory<Options>(
       refineTypeName,
       ...config
     } = { ...sourceFolder.config };
+
     const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
     const { renderToFile: deployLibFile } = renderFactory({
