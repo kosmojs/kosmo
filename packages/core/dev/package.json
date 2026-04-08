@@ -38,6 +38,7 @@
     "@kosmojs/react-generator": "workspace:^",
     "@kosmojs/solid-generator": "workspace:^",
     "@kosmojs/ssr-generator": "workspace:^",
+    "@kosmojs/ssg-generator": "workspace:^",
     "@kosmojs/typebox-generator": "workspace:^",
     "@kosmojs/vue-generator": "workspace:^",
     "crc": "^4.3.2"

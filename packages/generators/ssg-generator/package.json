@@ -1,0 +1,32 @@
+{
+  "type": "module",
+  "name": "@kosmojs/ssg-generator",
+  "version": "0.0.26",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "pkg/*"
+  ],
+  "imports": {
+    "#templates/*": "./src/templates/*"
+  },
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    }
+  },
+  "scripts": {
+    "build": "esbuilder src/index.ts"
+  },
+  "dependencies": {
+    "@kosmojs/lib": "workspace:^"
+  },
+  "devDependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@types/node": "^25.5.0"
+  }
+}
