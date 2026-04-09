@@ -1,5 +1,149 @@
 {
   "paths": {
+    "/auth/login": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/auth_login_index_ts_1750344579_ResponseTPOST1842364566"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/auth_login_index_ts_1750344579_FormTPOST2274346999"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/auth_login_index_ts_1750344579_FormTPOST2274346999"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/static/nested": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/static_nested_index_ts_3607084481_ResponseTGET2451562508"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/static_nested_index_ts_3607084481_JsonTGET3829860480"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhooks/stripe": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/webhooks_stripe_index_ts_2600860173_ResponseTPOST395818918"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/webhooks_stripe_index_ts_2600860173_JsonTPOST3039697861"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/files": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/files/x-{path*}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/files_x_path_ext_index_ts_1377340925_ParamsT2195664104_path190089999"
+          }
+        ]
+      }
+    },
+    "/files/x-{path*}.{ext}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/files_x_path_ext_index_ts_1377340925_ParamsT2195664104_path190089999"
+          },
+          {
+            "$ref": "#/components/parameters/files_x_path_ext_index_ts_1377340925_ParamsT2195664104_ext30643714"
+          }
+        ]
+      }
+    },
     "/shop/{storeId}/products/{productId}/reviews": {
       "get": {
         "responses": {
@@ -321,89 +465,6 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/users_id_posts_page_index_ts_4088075965_JsonTGET4108423306"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/auth_login_index_ts_1750344579_ResponseTPOST1842364566"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/auth_login_index_ts_1750344579_FormTPOST2274346999"
-              }
-            },
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/auth_login_index_ts_1750344579_FormTPOST2274346999"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/static/nested": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/static_nested_index_ts_3607084481_ResponseTGET2451562508"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/static_nested_index_ts_3607084481_JsonTGET3829860480"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/webhooks/stripe": {
-      "post": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/webhooks_stripe_index_ts_2600860173_ResponseTPOST395818918"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/webhooks_stripe_index_ts_2600860173_JsonTPOST3039697861"
               }
             }
           }
@@ -1401,67 +1462,6 @@
         }
       }
     },
-    "/files": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/files/x-{path*}": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/files_x_path_ext_index_ts_1377340925_ParamsT2195664104_path190089999"
-          }
-        ]
-      }
-    },
-    "/files/x-{path*}.{ext}": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/files_x_path_ext_index_ts_1377340925_ParamsT2195664104_path190089999"
-          },
-          {
-            "$ref": "#/components/parameters/files_x_path_ext_index_ts_1377340925_ParamsT2195664104_ext30643714"
-          }
-        ]
-      }
-    },
     "/health": {
       "get": {
         "responses": {
@@ -1725,6 +1725,22 @@
   },
   "components": {
     "parameters": {
+      "files_x_path_ext_index_ts_1377340925_ParamsT2195664104_path190089999": {
+        "name": "path",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      },
+      "files_x_path_ext_index_ts_1377340925_ParamsT2195664104_ext30643714": {
+        "name": "ext",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
       "shop_storeId_products_productId_reviews_page_index_ts_3187720489_ParamsT3478293396_storeId796101202": {
         "name": "storeId",
         "in": "path",
@@ -2139,22 +2155,6 @@
           ]
         }
       },
-      "files_x_path_ext_index_ts_1377340925_ParamsT2195664104_path190089999": {
-        "name": "path",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "type": "number"
-        }
-      },
-      "files_x_path_ext_index_ts_1377340925_ParamsT2195664104_ext30643714": {
-        "name": "ext",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
       "documentation_path_index_ts_2996280108_ParamsT2159777917_path190089999": {
         "name": "path",
         "in": "path",
@@ -2178,6 +2178,185 @@
       }
     },
     "schemas": {
+      "auth_login_index_ts_1750344579_FormTPOST2274346999": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8
+          },
+          "rememberMe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "auth_login_index_ts_1750344579_ResponseTPOST1842364566": {
+        "type": "object",
+        "required": [
+          "token",
+          "user",
+          "expiresIn"
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "email",
+              "role"
+            ],
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              }
+            }
+          },
+          "expiresIn": {
+            "type": "number"
+          }
+        }
+      },
+      "static_nested_index_ts_3607084481_JsonTGET3829860480": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "full"
+              },
+              {
+                "type": "string",
+                "const": "minimal"
+              }
+            ]
+          },
+          "includeMetadata": {
+            "type": "boolean"
+          }
+        }
+      },
+      "static_nested_index_ts_3607084481_ResponseTGET2451562508": {
+        "type": "object",
+        "required": [
+          "message",
+          "level",
+          "data"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "level": {
+            "type": "number"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "items",
+              "count"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "count": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "webhooks_stripe_index_ts_2600860173_JsonTPOST3039697861": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "data",
+          "created"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "object"
+            ],
+            "properties": {
+              "object": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "amount",
+                  "currency"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "amount": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "created": {
+            "type": "number"
+          }
+        }
+      },
+      "webhooks_stripe_index_ts_2600860173_ResponseTPOST395818918": {
+        "type": "object",
+        "required": [
+          "received",
+          "processed",
+          "timestamp"
+        ],
+        "properties": {
+          "received": {
+            "type": "boolean"
+          },
+          "processed": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
       "shop_storeId_products_productId_reviews_page_index_ts_3187720489_JsonTGET2492540032": {
         "type": "object",
         "properties": {
@@ -2617,185 +2796,6 @@
           },
           "total": {
             "type": "number"
-          }
-        }
-      },
-      "auth_login_index_ts_1750344579_FormTPOST2274346999": {
-        "type": "object",
-        "required": [
-          "email",
-          "password"
-        ],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "password": {
-            "type": "string",
-            "minLength": 8
-          },
-          "rememberMe": {
-            "type": "boolean"
-          }
-        }
-      },
-      "auth_login_index_ts_1750344579_ResponseTPOST1842364566": {
-        "type": "object",
-        "required": [
-          "token",
-          "user",
-          "expiresIn"
-        ],
-        "properties": {
-          "token": {
-            "type": "string"
-          },
-          "user": {
-            "type": "object",
-            "required": [
-              "id",
-              "name",
-              "email",
-              "role"
-            ],
-            "properties": {
-              "id": {
-                "type": "number"
-              },
-              "name": {
-                "type": "string"
-              },
-              "email": {
-                "type": "string"
-              },
-              "role": {
-                "type": "string"
-              }
-            }
-          },
-          "expiresIn": {
-            "type": "number"
-          }
-        }
-      },
-      "static_nested_index_ts_3607084481_JsonTGET3829860480": {
-        "type": "object",
-        "properties": {
-          "format": {
-            "anyOf": [
-              {
-                "type": "string",
-                "const": "full"
-              },
-              {
-                "type": "string",
-                "const": "minimal"
-              }
-            ]
-          },
-          "includeMetadata": {
-            "type": "boolean"
-          }
-        }
-      },
-      "static_nested_index_ts_3607084481_ResponseTGET2451562508": {
-        "type": "object",
-        "required": [
-          "message",
-          "level",
-          "data"
-        ],
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "level": {
-            "type": "number"
-          },
-          "data": {
-            "type": "object",
-            "required": [
-              "items",
-              "count"
-            ],
-            "properties": {
-              "items": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "count": {
-                "type": "number"
-              }
-            }
-          }
-        }
-      },
-      "webhooks_stripe_index_ts_2600860173_JsonTPOST3039697861": {
-        "type": "object",
-        "required": [
-          "id",
-          "type",
-          "data",
-          "created"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string"
-          },
-          "data": {
-            "type": "object",
-            "required": [
-              "object"
-            ],
-            "properties": {
-              "object": {
-                "type": "object",
-                "required": [
-                  "id",
-                  "amount",
-                  "currency"
-                ],
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "amount": {
-                    "type": "number"
-                  },
-                  "currency": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "created": {
-            "type": "number"
-          }
-        }
-      },
-      "webhooks_stripe_index_ts_2600860173_ResponseTPOST395818918": {
-        "type": "object",
-        "required": [
-          "received",
-          "processed",
-          "timestamp"
-        ],
-        "properties": {
-          "received": {
-            "type": "boolean"
-          },
-          "processed": {
-            "type": "string"
-          },
-          "timestamp": {
-            "type": "string"
           }
         }
       },
