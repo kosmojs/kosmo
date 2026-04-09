@@ -3,7 +3,7 @@
 Multiple source folders. Directory-based routing.
 Cascading middleware. Nested layouts.
 End-to-end validation. Fetch clients. OpenAPI spec.
-Koa, Hono, SolidJS, React, Vue and more.
+Koa, Hono, SolidJS, React, Vue, MDX and more.
 
 📘 [Documentation ➜ kosmojs.dev](https://kosmojs.dev)
 
@@ -88,9 +88,9 @@ Each source folder runs its own set of frameworks with its own base URL, config 
 
 - **🌊 Cascading Middleware** - place a `use.ts` in any folder and its middleware automatically wraps all routes in that folder and its subfolders. No imports or wiring needed.
 
-- **🎨 Multiple Frameworks** - `Koa` or `Hono` for backend, `React`, `Vue`, or `SolidJS` for frontend. Different source folders can use different combinations.
+- **🎨 Multiple Frameworks** - `Koa` or `Hono` for backend, `React`, `Vue`, `SolidJS` or `MDX` for frontend. Different source folders can use different combinations.
 
-- **🔧 Built on Proven Tools** - `Koa`/`Hono` · `React`/`Vue`/`Solid` · `Vite` · `TypeScript`. No proprietary abstractions.
+- **🔧 Built on Proven Tools** - `Koa`/`Hono` · `React`/`Vue`/`Solid`/`MDX` · `Vite` · `TypeScript`. No proprietary abstractions.
 
 📘 [Learn more](https://kosmojs.dev/features.html)
 
