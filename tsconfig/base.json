@@ -4,7 +4,7 @@
     "module": "ESNext",
     "target": "ESNext",
     "jsx": "preserve",
-    "types": ["@types/node", "vite/client"],
+    "types": ["@types/node", "@types/deno", "@types/bun", "vite/client"],
     "strict": true,
     "exactOptionalPropertyTypes": true,
     "noImplicitAny": true,

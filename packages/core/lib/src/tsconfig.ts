@@ -5,6 +5,7 @@ export const generateTsconfig = (sourceFolder?: string) => {
   const rootDir = "${configDir}";
 
   const compilerOptions = {
+    types: ["@types/node", "@types/deno", "@types/bun"],
     moduleResolution: "bundler",
     module: "ESNext",
     target: "ESNext",
@@ -40,7 +41,7 @@ export const generateTsconfig = (sourceFolder?: string) => {
       compilerOptions: {
         ...compilerOptions,
         jsx: "preserve",
-        types: ["@types/node", "vite/client"],
+        types: [...compilerOptions.types, "vite/client"],
         paths: {
           [`${defaults.appPrefix}/*`]: [`${rootDir}/../../*`],
           [`${defaults.srcPrefix}/*`]: [`${rootDir}/*`],
@@ -60,7 +61,6 @@ export const generateTsconfig = (sourceFolder?: string) => {
     ],
     compilerOptions: {
       ...compilerOptions,
-      types: ["@types/node"],
       paths: {
         [`${defaults.appPrefix}/*`]: [`${rootDir}/*`],
       },
