@@ -5,10 +5,6 @@ import {
 } from "vitepress-plugin-group-icons";
 import llmstxt from "vitepress-plugin-llms";
 
-const icons = {
-  gear: "\u2699\uFE0F",
-};
-
 const redirects: Array<[string, string]> = [];
 
 export default defineConfig({
@@ -204,9 +200,6 @@ export default defineConfig({
               link: "/frontend/custom-templates",
             },
             {
-              text: "🔧 Utilities",
-              docFooterText: "🔧 Frontend - Utilities",
-              link: "/frontend/utilities",
             },
           ],
         },
