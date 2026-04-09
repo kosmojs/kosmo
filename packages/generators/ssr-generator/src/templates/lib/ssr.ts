@@ -136,7 +136,7 @@ export const createApp = async () => {
           // This gives frameworks full control for advanced streaming strategies
           // (e.g., suspense boundaries, progressive hydration, selective re-render).
           return stream(ctx, async (stream) => {
-            await renderToStream(url, ssrOptions(), stream);
+            await renderToStream(url, ssrOptions(), stream as never);
           });
         }
 
