@@ -1,7 +1,7 @@
 import { match } from "path-to-regexp";
 import { describe, test } from "vitest";
 
-import { createPathPattern, pathTokensFactory } from "@src/routes";
+import { createPathPattern, pathTokensFactory } from "@kosmojs/lib";
 
 const map = {
   commonSyntax: {

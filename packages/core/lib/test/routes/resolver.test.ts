@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
 
-import { sourceFolder } from ".";
+import { createRouteEntry, scanRoutes, sortRoutes } from "@kosmojs/lib";
 
-import { createRouteEntry, scanRoutes, sortRoutes } from "@src/routes";
+import { sourceFolder } from ".";
 
 describe("Routes Resolver", async () => {
   const routeFiles = await scanRoutes(sourceFolder);
