@@ -73,7 +73,7 @@ export const createApp = async () => {
             return [];
           }
 
-          if (template.includes(file.replace("server-", ""))) {
+          if (template.includes(file.replace(/^server\b/, ""))) {
             // skip if template contains a file with same hash;
             // Vite use same hash for client and server assets:
             // client asset: index-D-m1j8Sq.css
