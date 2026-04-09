@@ -68,7 +68,16 @@ export const createApp = async () => {
       manifest,
       assets: [...assetCache.entries()].flatMap(
         ([path, { file, buffer, size }]) => {
-          if (template.includes(file)) {
+          if (!file.startsWith("server-")) {
+            // skip if not an ssr asset
+            return [];
+          }
+
+          if (template.includes(file.replace("server-", ""))) {
+            // skip if template contains a file with same hash;
+            // Vite use same hash for client and server assets:
+            // client asset: index-D-m1j8Sq.css
+            // server asset: server-D-m1j8Sq.css
             return [];
           }
 
@@ -245,25 +254,23 @@ const loadAssets = async (root: string) => {
   // Map from URL path (as used in requests) to asset metadata.
   const assetCache = new Map<string, AssetInfo>();
 
-  const files = await glob(`${root}/assets/**`, {
-    cwd: root,
+  const folder = "assets";
+
+  const files = await glob("**", {
+    cwd: join(root, folder),
     onlyFiles: true,
     absolute: false,
   });
 
   for (const file of files) {
-    const path = resolve(root, file);
-
     const buffer = SERVE_STATIC_ASSETS
-      ? new Uint8Array(await readFile(path))
+      ? new Uint8Array(await readFile(join(root, folder, file)))
       : undefined;
 
-    const key = resolve(baseurl, file);
-
-    assetCache.set(key, {
+    assetCache.set(join(baseurl, folder, file), {
       file,
       buffer,
-      contentType: contentTypeResolver(path),
+      contentType: contentTypeResolver(file),
       size: buffer?.length,
     });
   }
