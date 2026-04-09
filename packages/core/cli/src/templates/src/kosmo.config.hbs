@@ -4,6 +4,9 @@ import {
   {{/each}}
 } from "@kosmojs/dev";
 
+{{#each imports}}{{.}}
+{{/each}}
+
 {{#each plugins}}{{importDeclaration}}
 {{/each}}
 

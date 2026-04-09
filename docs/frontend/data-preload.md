@@ -1,8 +1,8 @@
 ---
 title: Data Preloading
 description: Prefetch route data before components render using React Router's
-  loader pattern, SolidJS Router's preload pattern, and Vue Router's navigation
-  guards. Type-safe data availability derived from API endpoint definitions.
+    loader pattern, SolidJS Router's preload pattern, and Vue Router's navigation guards.
+    Type-safe data availability derived from API endpoint definitions.
 head:
   - - meta
     - name: keywords

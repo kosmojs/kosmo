@@ -14,8 +14,10 @@ import {
   fetchGenerator,
   honoGenerator,
   koaGenerator,
+  mdxGenerator,
   reactGenerator,
   solidGenerator,
+  ssgGenerator,
   ssrGenerator,
   typeboxGenerator,
   vueGenerator,
@@ -136,8 +138,8 @@ export const createSourceFolder = async (
 
   const { base = DEFAULT_BASE } = folder;
 
+  const imports: Array<string> = [];
   const plugins: Array<Plugin> = [];
-
   const generators: Array<Generator> = [];
 
   const framework = folder.framework || DEFAULT_FRAMEWORK;
@@ -185,7 +187,21 @@ export const createSourceFolder = async (
         : "",
       base: vueGenerator(),
     });
+  } else if (framework === "mdx") {
+    imports.push(
+      ...[
+        `import frontmatterPlugin from "remark-frontmatter";`,
+        `import mdxFrontmatterPlugin from "remark-mdx-frontmatter";`,
+      ],
+    );
 
+    generators.push({
+      name: "mdxGenerator",
+      options: opt?.frameworkOptions
+        ? JSON.stringify(opt.frameworkOptions, undefined, 2)
+        : `{ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }`,
+      base: mdxGenerator(),
+    });
   }
 
   if (backendFramework === "koa") {
@@ -202,11 +218,19 @@ export const createSourceFolder = async (
     });
   }
 
-  if (folder.ssr) {
+  if (folder.ssr || folder.ssg) {
     generators.push({
       name: "ssrGenerator",
       options: "",
       base: ssrGenerator(),
+    });
+  }
+
+  if (folder.ssg) {
+    generators.push({
+      name: "ssgGenerator",
+      options: "",
+      base: ssgGenerator(),
     });
   }
 
@@ -230,6 +254,7 @@ export const createSourceFolder = async (
   const context = {
     base,
     plugins,
+    imports,
     generators,
     frameworkSpecificOptions: [
       ...(framework === "solid"

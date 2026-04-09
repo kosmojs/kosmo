@@ -220,14 +220,26 @@ const createFolder = async () => {
     },
 
     {
-      // NOTE: this should follow framework prompt!
       type: (prev: SourceFolder["framework"]) => {
-        return prev === "none" // skip if no framework
+        return ["none", "mdx"].includes(prev as never) // skip if...
           ? undefined
           : "toggle";
       },
       name: "ssr",
       message: "Enable server-side rendering (SSR)?",
+      initial: false,
+      active: "yes",
+      inactive: "no",
+    },
+
+    {
+      type: (prev: SourceFolder["framework"]) => {
+        return ["mdx"].includes(prev as never) // only if...
+          ? "toggle"
+          : undefined;
+      },
+      name: "ssg",
+      message: "Enable server-side generation (SSG)?",
       initial: false,
       active: "yes",
       inactive: "no",

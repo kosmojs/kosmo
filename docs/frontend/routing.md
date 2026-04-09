@@ -1,12 +1,11 @@
 ---
 title: Routing
 description: Watch-based route generation, lazy-loaded components, data loading
-  integration, and nested layout patterns for React, SolidJS, and Vue applications
-  in KosmoJS.
+  integration, and nested layout patterns for React, SolidJS, Vue and MDX applications.
 head:
   - - meta
     - name: keywords
-      content: react route generation, solidjs routing, vue routing, automatic routing,
+      content: react route generation, solidjs routing, vue routing, mdx routing,
         lazy components, loader integration, preload function, route parameters,
         code splitting, dynamic imports, nested routes, layout components,
         route hierarchy, outlet pattern, router view, kosmojs routing
@@ -129,6 +128,7 @@ Only the lowercase form is recognized as a special file. `Layout.tsx`,
 |-----------|----------------|
 | React / SolidJS | `layout.tsx` |
 | Vue | `layout.vue` |
+| MDX | `layout.mdx` |
 
 Each source folder runs a single framework and ignores files belonging to
 others: React/SolidJS folders ignore `.vue` files, Vue folders ignore `.tsx`.
@@ -143,7 +143,7 @@ Each framework renders child routes differently:
 
 ::: code-group
 
-```tsx [React · dashboard/layout.tsx]
+```tsx [React · layout.tsx]
 import { Outlet } from "react-router";
 
 export default function Layout() {
@@ -159,7 +159,7 @@ export default function Layout() {
 }
 ```
 
-```tsx [SolidJS · dashboard/layout.tsx]
+```tsx [SolidJS · layout.tsx]
 import type { ParentComponent } from "solid-js";
 
 const Layout: ParentComponent = (props) => {
@@ -177,7 +177,7 @@ const Layout: ParentComponent = (props) => {
 export default Layout;
 ```
 
-```vue [Vue · dashboard/layout.vue]
+```vue [Vue · layout.vue]
 <script setup lang="ts">
 // layout-specific logic
 </script>
@@ -193,9 +193,23 @@ export default Layout;
 </template>
 ```
 
+```mdx [MDX · layout.mdx]
+<nav>
+  <a href="/">Home</a>
+  <a href="/docs">Docs</a>
+</nav>
+
+<main>
+  {props.children}
+</main>
+
+<footer>
+  Built with KosmoJS
+</footer>
+```
 :::
 
-React renders child routes via `<Outlet />`. SolidJS uses `props.children`.
+React renders child routes via `<Outlet />`. SolidJS and MDX uses `props.children`.
 Vue uses `<RouterView />`.
 
 ### Data Loading in Layouts
@@ -204,7 +218,7 @@ Layout data loading follows the same per-framework patterns as page components:
 
 ::: code-group
 
-```tsx [React · dashboard/layout.tsx]
+```tsx [React · layout.tsx]
 import { Outlet, useLoaderData } from "react-router";
 import fetchClients, { type ResponseT } from "_/fetch";
 
@@ -217,7 +231,7 @@ export default function Layout() {
 }
 ```
 
-```tsx [SolidJS · dashboard/layout.tsx]
+```tsx [SolidJS · layout.tsx]
 import type { ParentComponent } from "solid-js";
 import { createAsync } from "@solidjs/router";
 import fetchClients from "_/fetch";
@@ -233,7 +247,7 @@ const Layout: ParentComponent = (props) => {
 export default Layout;
 ```
 
-```vue [Vue · dashboard/layout.vue]
+```vue [Vue · layout.vue]
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import fetchClients, { type ResponseT } from "_/fetch";
@@ -257,7 +271,6 @@ onMounted(fetchData);
   ...
 </template>
 ```
-
 :::
 
 React and SolidJS loaders/preloads run before the layout renders - data is

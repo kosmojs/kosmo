@@ -22,10 +22,11 @@ Each source folder is a separate app - its own choice of backend and frontend fr
 base URL, build pipeline, and deploy strategy -
 yet all sharing the same infrastructure within a monorepo-like project.
 
-Backend: **Koa** or **Hono**. Frontend: **React**, **Vue**, or **SolidJS**.
+Backend: `Koa` or `Hono`. Frontend: `React`, `Vue`, `SolidJS` or `MDX`.
 Same routing architecture and type safety across all combinations.
 
-`KosmoJS` acts as a universal chassis - providing the same consistent way to define routes for all source folders, regardless of framework, backend or frontend.
+`KosmoJS` acts as a universal chassis - providing the same consistent way to define routes for all source folders,
+regardless of framework, backend or frontend.
 
 **That's the unified routing pattern.**
 

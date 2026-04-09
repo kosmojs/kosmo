@@ -6,7 +6,7 @@ head:
   - - meta
     - name: keywords
       content: vite setup, typescript project setup, create vite app, multi-folder vite,
-        hono api, koa api, solidjs setup, react setup, vue setup, vite dev server
+        hono api, koa api, solidjs setup, react setup, vue setup, mdx content
 ---
 
 Starting your `KosmoJS` journey is a breeze! ✨
@@ -70,27 +70,28 @@ yarn +folder
 ```
 :::
 
-You'll be prompted for folder name, base URL, framework, backend, and SSR.
+You'll be prompted for folder name, base URL, framework, backend, and SSR/SSG.
 
 Also non-interactive mode supported with following options:
 
 - `--name`
 - `--base`
-- `--framework solid|react|vue`
+- `--framework solid|react|vue|mdx`
 - `--backend koa|hono`
 - `--ssr`
+- `--ssg`
 
 ::: code-group
 ```sh [npm]
-npm run +folder -- --name front --base / --framework solid --backend koa --ssr
+npm run +folder -- --name front --base / --framework solid --backend koa
 ```
 
 ```sh [pnpm]
-pnpm +folder --name front --base / --framework solid --backend koa --ssr
+pnpm +folder --name front --base / --framework solid --backend koa
 ```
 
 ```sh [yarn]
-yarn +folder --name front --base / --framework solid --backend koa --ssr
+yarn +folder --name front --base / --framework solid --backend koa
 ```
 :::
 

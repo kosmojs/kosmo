@@ -28,6 +28,7 @@ export enum FRAMEWORKS {
   react = "React",
   vue = "Vue",
   solid = "SolidJS",
+  mdx = "MDX",
 }
 
 export enum BACKEND_FRAMEWORKS {

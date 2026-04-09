@@ -200,6 +200,9 @@ export default defineConfig({
               link: "/frontend/custom-templates",
             },
             {
+              text: "📄 MDX Content",
+              docFooterText: "📄 Frontend - MDX Content",
+              link: "/frontend/mdx",
             },
           ],
         },

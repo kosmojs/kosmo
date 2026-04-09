@@ -1,0 +1,24 @@
+import type { PageRoute } from "@kosmojs/core";
+
+{{#each pageRoutes}}
+import * as {{id}} from "{{ createImport "pages" file }}";
+{{/each}}
+
+const routeMap: Record<
+  string,
+  {
+    frontmatter?: { staticParams?: Array<Array<string | Array<string>>> };
+    pathPattern: string;
+    params: PageRoute["params"];
+  }
+> = {
+{{#each pageRoutes}}
+  "{{name}}": {
+    frontmatter: {{id}}.frontmatter,
+    pathPattern: "{{pathPattern}}",
+    params: {{serializeParams .}},
+  },
+{{/each}}
+}
+
+export default routeMap;

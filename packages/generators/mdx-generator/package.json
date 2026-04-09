@@ -1,0 +1,42 @@
+{
+  "type": "module",
+  "name": "@kosmojs/mdx-generator",
+  "version": "0.0.26",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "pkg/*"
+  ],
+  "imports": {
+    "#templates/*": "./src/templates/*"
+  },
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "esbuilder src/index.ts"
+  },
+  "dependencies": {
+    "@kosmojs/lib": "workspace:^",
+    "@mdx-js/rollup": "^3.1.1",
+    "picomatch": "^4.0.4"
+  },
+  "devDependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@mdx-js/mdx": "^3.1.1",
+    "@mdx-js/preact": "^3.1.1",
+    "@types/picomatch": "^4.0.3",
+    "path-to-regexp": "^8.4.2",
+    "preact": "^10.29.1",
+    "preact-render-to-string": "^6.6.7",
+    "remark-frontmatter": "^5.0.0",
+    "remark-mdx-frontmatter": "^5.2.0"
+  }
+}

@@ -2,13 +2,12 @@
 title: Type-Safe Navigation
 description: Generated Link component wrapping each framework's native router
   with compile-time route validation. Autocomplete navigation targets, parameter
-  enforcement, and query string handling for React, SolidJS, and Vue.
+  enforcement, and query string handling for React, SolidJS, Vue and MDX.
 head:
   - - meta
     - name: keywords
-      content: react navigation, solidjs link, vue router link, type-safe links,
-        route autocomplete, parameter validation, query strings, typed navigation,
-        LinkProps, kosmojs navigation
+      content: react navigation, solidjs link, vue router link, mdx link component,
+        type-safe links, route autocomplete, parameter validation, typed navigation.
 ---
 
 The generator produces a `Link` component that wraps each framework's native
@@ -68,7 +67,6 @@ import Link from "~/components/Link.vue";
   </nav>
 </template>
 ```
-
 :::
 
 Omitting `to` targets the current location - useful for adding or updating

@@ -1,0 +1,25 @@
+import { createPageLink, createRouterFactory } from "@kosmojs/core/generators";
+
+import { baseurl } from "{{ createImport "config" }}";
+import type { RawRoute, RouterInstance } from "./mdx";
+
+export type ParamsMap = {
+  {{#each pageRoutes}}
+  "{{name}}": {{serializeParamsLiteral .}};
+  {{/each}}
+};
+
+export type LinkProps ={{#unless pageRoutes.length}} never{{/unless}}
+  {{#each pageRoutes}}
+  | [ "{{name}}", {{serializeParamsTupleElements .}} ]
+  {{/each}};
+
+export const linkMap = {
+  {{#each pageRoutes}}
+  "{{name}}": createPageLink<[
+    {{serializeParamsTupleElements .}}
+  ]>({{pageLinkBase .}}, { baseurl }),
+  {{/each}}
+};
+
+export default createRouterFactory<RawRoute, RouterInstance>();

@@ -34,6 +34,7 @@
     "@kosmojs/hono-generator": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
     "@kosmojs/lib": "workspace:^",
+    "@kosmojs/mdx-generator": "workspace:^",
     "@kosmojs/openapi-generator": "workspace:^",
     "@kosmojs/react-generator": "workspace:^",
     "@kosmojs/solid-generator": "workspace:^",

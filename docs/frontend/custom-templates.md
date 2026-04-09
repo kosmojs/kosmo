@@ -2,13 +2,12 @@
 title: Custom Page Templates
 description: Override default generated page components for specific routes using
   glob pattern matching. Create specialized scaffolding for landing pages, admin
-  dashboards, and marketing sections in React, SolidJS, and Vue applications.
+  dashboards, and marketing sections in React, SolidJS, Vue and MDX source folders.
 head:
   - - meta
     - name: keywords
-      content: react templates, solidjs templates, vue custom templates, custom page
-        templates, route patterns, glob matching, template configuration, landing page
-        templates, route customization, kosmojs scaffolding
+      content: react templates, solidjs templates, vue templates, mdx templates,
+        route patterns, glob matching, template configuration, landing page templates
 ---
 
 Each framework generator supports template overrides for specific routes through
@@ -25,8 +24,7 @@ writing the same skeleton N times by hand.
 
 ## ⚙️ Configuration
 
-Pass custom templates via generator options in your source folder's
-`kosmo.config.ts`:
+Pass custom templates via generator options in your source folder's `kosmo.config.ts`:
 
 ```ts [kosmo.config.ts]
 import { defineConfig, reactGenerator } from "@kosmojs/dev";
@@ -171,6 +169,13 @@ const route = useRoute();
 `;
 ```
 
+```mdx [MDX]
+import { useParams } from "_/use";
+
+# Custom Template
+
+Route params: {JSON.stringify(useParams())}
+```
 :::
 
 > **Vue templates** use Handlebars syntax for any dynamic content injected

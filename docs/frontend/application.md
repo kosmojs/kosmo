@@ -1,14 +1,13 @@
 ---
 title: Application Structure
-description: Generator-produced foundation files for React, SolidJS, and Vue applications -
+description: Generator-produced foundation files for React, SolidJS, Vue and MDX applications -
   root App component, router configuration, and client entry point with SSR hydration support.
 head:
   - - meta
     - name: keywords
-      content: react app foundation, solidjs app structure, vue application structure,
-        suspense setup, router integration, createRoot
-        hydration, app entry point, vite entry, strictmode setup, solidjs router,
-        vue router, react router, kosmojs framework
+      content: react app foundation, solidjs app structure, vue app, mdx app,
+        suspense setup, router integration, createRoot, hydration, app entry point,
+        vite entry, strictmode setup, solidjs router, vue router, react router.
 ---
 
 Each framework generator produces a small set of foundation files that wire up
@@ -48,6 +47,9 @@ export default App;
 </template>
 ```
 
+```mdx [MDX · App.mdx]
+{props.children}
+```
 :::
 
 ## 🛣️ Router Configuration
@@ -169,16 +171,30 @@ export default routerFactory((routes) => {
 });
 ```
 
+```tsx [MDX · router.tsx]
+import { createRouter } from "_/mdx";
+import routerFactory from "_/router";
+
+import App from "./App.mdx";
+import { components } from "./components/mdx"
+
+export default routerFactory((routes) => {
+  const router = createRouter(routes, App, { components });
+  return {
+    async clientRouter() {
+      return router.resolve();
+    },
+    async serverRouter(url) {
+      return router.resolve(url);
+    },
+  };
+});
+```
 :::
 
 All use your source folder's `baseurl` config for correct path-based
 routing. The generated `routes` are always wrapped inside your `App` component,
 establishing the layout hierarchy.
-
-React uses `createStaticHandler` and `createStaticRouter` for server rendering.
-SolidJS simply passes the `url.pathname` prop to the shared `<Router>`.
-Vue switches from `createWebHistory` to `createMemoryHistory` for SSR and
-awaits `router.isReady()` before rendering.
 
 ## 🎯 Application Entry
 
@@ -287,8 +303,38 @@ if (root) {
   console.error("❌ Root element not found!");
 }
 ```
+
+```tsx [MDX · entry/client.tsx]
+import { hydrate, render } from "preact";
+
+import renderFactory, { createRoutes } from "_/entry/client";
+import routerFactory from "../router";
+
+const routes = createRoutes();
+const { clientRouter } = routerFactory(routes);
+
+const root = document.getElementById("app");
+
+if (root) {
+  renderFactory(() => {
+    return {
+      async mount() {
+        const page = await clientRouter();
+        render(page.component, root);
+      },
+      async hydrate() {
+        const page = await clientRouter();
+        hydrate(page.component, root);
+      },
+    };
+  });
+} else {
+  console.error("❌ Root element not found!");
+}
+```
 :::
 
 - React uses `createRoot`/`hydrateRoot` from `react-dom/client`.
 - SolidJS uses `render`/`hydrate` from `solid-js/web`.
-- Vue constructs separate app instances via `createApp` and `createSSRApp`, mounting with the hydration flag on the SSR path.
+- Vue constructs separate app instances via `createApp` and `createSSRApp`.
+- MDX uses `render`/`hydrate` from `preact`.

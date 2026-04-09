@@ -1,12 +1,12 @@
 ---
 title: Server-Side Rendering
-description: Add SSR capabilities to React, SolidJS, and Vue applications using
+description: Add SSR capabilities to React, SolidJS, Vue and MDX applications using
   the KosmoJS SSR generator. String and stream rendering patterns, production
   builds, and deployment configurations for server-rendered applications.
 head:
   - - meta
     - name: keywords
-      content: react ssr, solidjs ssr, vue ssr, server rendering, hydration,
+      content: react ssr, solidjs ssr, vue ssr, mdx ssr, server rendering, hydration,
         renderToString, renderToStream, react router ssr, solidjs ssr, vue router ssr,
         production rendering, stream rendering, kosmojs ssr
 ---
@@ -38,7 +38,7 @@ export default defineConfig({
 
 ## 📄 Server Entry Point
 
-The SSR generator creates `entry/server.tsx` with a default implementation.
+The SSR generator creates `entry/server.tsx` (or `.vue`) with a default implementation.
 `renderFactory` accepts a callback returning an object with rendering methods:
 
 - `renderToString(url, SSROptions)` - renders the complete page before transmission. Provided by default.
@@ -46,7 +46,7 @@ The SSR generator creates `entry/server.tsx` with a default implementation.
 
 ::: code-group
 
-```ts [React · entry/server.tsx]
+```ts [React]
 import { renderToString } from "react-dom/server";
 
 import renderFactory, { createRoutes } from "_/entry/server";
@@ -68,7 +68,7 @@ export default renderFactory(() => {
 
 ```
 
-```ts [SolidJS · entry/server.tsx]
+```ts [SolidJS]
 import { renderToString, generateHydrationScript } from "solid-js/web";
 
 import renderFactory, { createRoutes } from "_/entry/server";
@@ -93,7 +93,7 @@ export default renderFactory(() => {
 });
 ```
 
-```ts [Vue · entry/server.ts]
+```ts [Vue]
 import { renderToString } from "vue/server-renderer";
 
 import renderFactory, { createRoutes } from "_/entry/server";
@@ -109,6 +109,34 @@ export default renderFactory(() => {
       const head = assets.map(({ tag }) => tag).join("\n");
       const html = await renderToString(page);
       return { head, html };
+    },
+  };
+});
+```
+
+```tsx [MDX]
+import { renderToString } from "preact-render-to-string";
+
+import renderFactory, { createRoutes } from "_/entry/server";
+import { renderHead } from "_/mdx";
+import routerFactory from "../router";
+
+const routes = createRoutes();
+const { serverRouter } = routerFactory(routes);
+
+export default renderFactory(() => {
+  return {
+    async renderToString(url, { assets }) {
+      const page = await serverRouter(url);
+
+      const head = assets.reduce(
+        (head, { tag }) => `${head}\n${tag}`,
+        renderHead(page?.frontmatter),
+      );
+
+      const html = page ? renderToString(page.component) : "";
+
+      return { html, head };
     },
   };
 });
@@ -212,6 +240,7 @@ export default renderFactory(() => {
   };
 });
 ```
+
 ```tsx [SolidJS · entry/server.tsx]
 import { renderToStream } from "solid-js/web";
 
@@ -239,6 +268,7 @@ export default renderFactory(() => {
   };
 });
 ```
+
 ```ts [Vue · entry/server.ts]
 import { createSSRApp } from "vue";
 import { renderToWebStream } from "vue/server-renderer";

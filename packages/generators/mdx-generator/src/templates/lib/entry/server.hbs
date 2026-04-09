@@ -1,0 +1,22 @@
+import { serverRenderFactory } from "@kosmojs/core/generators";
+
+import { createRoute } from "../mdx";
+
+{{#each pageRoutes}}
+import * as {{id}} from "{{ createImport "pages" file }}";
+{{/each}}
+{{#each layouts}}
+import * as {{id}} from "{{ createImport "pages" file }}";
+{{/each}}
+
+export const createRoutes = () => {
+  return [
+    {{#each pageRoutes}}
+    createRoute("{{name}}", "{{pathPattern}}", async () => {{id}}, [
+      {{#each layouts}}{{id}}.default, {{/each}}
+    ]),
+    {{/each}}
+  ];
+};
+
+export default serverRenderFactory();

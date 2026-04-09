@@ -1,17 +1,16 @@
 ---
 title: Framework Integration
-description: Integrate KosmoJS directory-based routing with React, SolidJS, or Vue 3.
+description: Integrate KosmoJS directory-based routing with React, SolidJS, Vue, or MDX.
   Automatic route configuration, type-safe navigation, and optimized lazy loading
   for modern frontend applications.
 head:
   - - meta
     - name: keywords
-      content: react integration, solidjs generator, vue generator, react router setup,
-        solidjs router, vue router 4, automated routing, code splitting, type-safe
-        navigation, lazy loading, vite plugin, kosmojs framework
+      content: react integration, solidjs generator, vue generator, mdx content,
+        automated routing, code splitting, type-safe navigation, lazy loading
 ---
 
-`KosmoJS` provides dedicated generators for `React`, `SolidJS`, and `Vue` -
+`KosmoJS` provides dedicated generators for `React`, `SolidJS`, `Vue` and `MDX` -
 each bridging directory-based routing with the framework's native router and
 reactive model. Your page components automatically become navigable routes
 with full type safety and efficient code-splitting, while generated utilities
@@ -66,6 +65,7 @@ configuration. Each framework has its own JSX import source requirement:
 | React | `"react"` |
 | SolidJS | `"solid-js"` |
 | Vue | `"vue"` *(only when using JSX)* |
+| MDX | `"preact"` |
 
 All frameworks use `jsx: "preserve"` - `KosmoJS` delegates JSX transformation
 to Vite, not TypeScript - but differing `jsxImportSource` values cause type

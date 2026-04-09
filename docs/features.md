@@ -2,13 +2,12 @@
 title: Features
 description: Explore KosmoJS features including multiple source folders,
     directory-based routing, end-to-end type safety, generated fetch clients,
-    OpenAPI specs, and framework freedom - Koa, Hono, React, Solid, Vue.
+    OpenAPI specs, and framework freedom - Koa, Hono, React, Solid, Vue, MDX.
 head:
   - - meta
     - name: keywords
-      content: typescript validation, vite multi-app, type-safe routing, fetch client generator,
-        openapi 3.1, solidjs vite, react vite, vue vite, koa middleware, hono middleware,
-        cascading middleware, middleware slots, power syntax routing
+      content: typescript validation, vite multi-app, type-safe routing,
+        fetch client generator, openapi 3.1, solidjs, react, vue, mdx, koa, hono
 ---
 
 Production-ready features, right out of the box.
@@ -151,7 +150,7 @@ pages/
 ## 🎨 Multiple Frameworks
 
 **Backend:** `Koa` or `Hono` - same routing architecture, same type safety.
-**Frontend:** `React`, `Vue`, or `SolidJS` - same routing conventions.
+**Frontend:** `React`, `Vue`, `SolidJS`, `MDX` - same routing/layout/SSR conventions.
 
 Different source folders can use different framework combinations.
 When you add a source folder, `KosmoJS` generates a ready-to-go setup for your chosen stack.
@@ -160,7 +159,7 @@ When you add a source folder, `KosmoJS` generates a ready-to-go setup for your c
 
 ## 🔧 Built on Proven Tools
 
-`Koa`/`Hono`  · `React`/`Vue`/`Solid` · `Vite` · `TypeScript`.
+`Koa`/`Hono`  · `React`/`Vue`/`Solid`/`MDX` · `Vite` · `TypeScript`.
 No proprietary abstractions - just structure on top of tools you already know.
 
 ---

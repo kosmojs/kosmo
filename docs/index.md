@@ -9,7 +9,7 @@ hero:
       <span>Multiple source folders. Directory-based routing.</span>
       <span>Cascading middleware. Nested layouts.</span>
       <span>End-to-end validation. Fetch clients. OpenAPI spec.</span>
-      <span>Koa, Hono, SolidJS, React, Vue and more.</span>
+      <span>Koa, Hono, SolidJS, React, Vue, MDX and more.</span>
     </span>
   # image:
   #   src: /KosmoJS.svg
@@ -64,7 +64,7 @@ features:
 
   - icon: 🎨
     title: Multiple Frameworks
-    details: Koa or Hono for backend, React, Vue, or SolidJS for frontend. Different source folders can use different combinations.
+    details: Koa or Hono for backend, React, Vue, SolidJS or MDX for frontend. Different source folders can use different combinations.
     link: /start
 
 ---
