@@ -34,8 +34,8 @@
     "@types/mime-types": "^3.0.1",
     "@types/qs": "^6.15.0",
     "mime-types": "^3.0.2",
-    "path-to-regexp": "^8.3.0",
-    "qs": "^6.15.0",
-    "typebox": "^1.1.6"
+    "path-to-regexp": "^8.4.2",
+    "qs": "^6.15.1",
+    "typebox": "^1.1.20"
   }
 }

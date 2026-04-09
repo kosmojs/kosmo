@@ -44,7 +44,6 @@
     "crc": "^4.3.2"
   },
   "devDependencies": {
-    "@kosmojs/core": "workspace:^",
-    "vite": "^8.0.2"
+    "@kosmojs/core": "workspace:^"
   }
 }

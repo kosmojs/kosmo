@@ -26,17 +26,17 @@
   "dependencies": {
     "@topcli/spinner": "^4.2.1",
     "crc": "^4.3.2",
-    "handlebars": "^4.7.8",
+    "handlebars": "^4.7.9",
     "mime-types": "^3.0.2",
-    "path-to-regexp": "^8.3.0",
+    "path-to-regexp": "^8.4.2",
     "picomatch": "^4.0.4",
     "tfusion": "^0.0.23",
+    "tinyglobby": "^0.2.16",
     "ts-morph": "^27.0.2"
   },
   "devDependencies": {
     "@kosmojs/core": "workspace:^",
     "@types/mime-types": "^3.0.1",
-    "@types/picomatch": "^4.0.2",
-    "vite": "^8.0.2"
+    "@types/picomatch": "^4.0.3"
   }
 }

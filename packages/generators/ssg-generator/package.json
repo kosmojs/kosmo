@@ -26,7 +26,6 @@
     "@kosmojs/lib": "workspace:^"
   },
   "devDependencies": {
-    "@kosmojs/core": "workspace:^",
-    "@types/node": "^25.5.0"
+    "@kosmojs/core": "workspace:^"
   }
 }

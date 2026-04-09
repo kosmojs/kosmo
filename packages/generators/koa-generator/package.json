@@ -39,13 +39,13 @@
     "@types/formidable": "^3.5.0",
     "@types/koa": "^3.0.2",
     "@types/koa-compose": "^3.2.9",
-    "@types/picomatch": "^4.0.2",
+    "@types/picomatch": "^4.0.3",
     "cookie": "^1.1.1",
     "formidable": "^3.5.4",
-    "koa": "^3.1.2",
+    "koa": "^3.2.0",
     "koa-compose": "^4.1.0",
     "light-my-request": "^6.6.0",
-    "path-to-regexp": "^8.3.0",
+    "path-to-regexp": "^8.4.2",
     "raw-body": "^3.0.2"
   }
 }
