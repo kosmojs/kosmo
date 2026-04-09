@@ -1,13 +1,14 @@
 import { describe, expect, test } from "vitest";
 
-import { pathTokensFactory } from "@kosmojs/lib";
+import { createPathPattern, pathTokensFactory } from "@kosmojs/lib";
 
 import { defineRoute, middlewareStackBuilder, runMiddleware } from "..";
 
 describe("createRouterRoutes", () => {
   describe("params", () => {
     test("splat params", async () => {
-      const [, pathPattern] = pathTokensFactory("{...path}");
+      const pathTokens = pathTokensFactory("{...path}");
+      const pathPattern = createPathPattern(pathTokens);
 
       const stack = middlewareStackBuilder(
         [
@@ -35,7 +36,8 @@ describe("createRouterRoutes", () => {
     });
 
     test("numeric params", async () => {
-      const [, pathPattern] = pathTokensFactory("[id]/[name]");
+      const pathTokens = pathTokensFactory("[id]/[name]");
+      const pathPattern = createPathPattern(pathTokens);
 
       const stack = middlewareStackBuilder(
         [
@@ -64,7 +66,8 @@ describe("createRouterRoutes", () => {
     });
 
     test("splat numeric params", async () => {
-      const [, pathPattern] = pathTokensFactory("{...ids}");
+      const pathTokens = pathTokensFactory("{...ids}");
+      const pathPattern = createPathPattern(pathTokens);
 
       const stack = middlewareStackBuilder(
         [
