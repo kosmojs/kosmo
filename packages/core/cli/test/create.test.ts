@@ -5,8 +5,12 @@ import { relative, resolve } from "node:path";
 import { glob } from "tinyglobby";
 import { describe, expect, it, test } from "vitest";
 
-import type { Project, SourceFolder } from "@src/base";
-import { createProject, createSourceFolder } from "@src/factory";
+import {
+  createProject,
+  createSourceFolder,
+  type Project,
+  type SourceFolder,
+} from "@kosmojs/cli";
 
 describe("Create API", () => {
   it("should create default project", async (ctx) => {
