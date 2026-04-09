@@ -5,7 +5,8 @@ import { pathTokensFactory } from "@kosmojs/lib";
 import { pathFactory } from "../src/base";
 
 const createPathPattern = (path: string) => {
-  return pathFactory(pathTokensFactory(path)[0]);
+  const pathTokens = pathTokensFactory(path);
+  return pathFactory(pathTokens);
 };
 
 describe("pathFactory", () => {
