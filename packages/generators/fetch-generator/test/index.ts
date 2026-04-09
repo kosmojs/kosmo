@@ -5,11 +5,10 @@ import type { HTTPMethod } from "@kosmojs/core/api";
 import type { Options } from "@kosmojs/core/fetch";
 import { pathResolver } from "@kosmojs/lib";
 
+import fetchGenerator from "@kosmojs/fetch-generator";
 import typeboxGenerator from "@kosmojs/typebox-generator";
 
-import type { RouteName } from "./@fixtures//routes";
-
-import fetchGenerator from "@src/index";
+import type { RouteName } from "./@fixtures/routes";
 
 export { defineRoute } from "@kosmojs/koa-generator/lib";
 
@@ -59,8 +58,9 @@ export const typedEntries = <T extends Readonly<Record<string, unknown>>>(
 ) => Object.entries(obj) as Array<[keyof T, T[keyof T]]>;
 
 export const serializeFormData = async (formData: FormData) => {
+  const entries = formData.entries() as unknown as Array<[string, unknown]>;
   const result: Record<string, unknown> = {};
-  for (const [key, value] of formData.entries()) {
+  for (const [key, value] of entries) {
     if (value instanceof File) {
       const buffer = await value.arrayBuffer();
       result[key] = {
