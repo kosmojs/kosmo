@@ -1,11 +1,7 @@
 import type { GeneratorMeta } from "@kosmojs/core";
 import { defineGenerator } from "@kosmojs/lib";
-/**
- * Import from published package to ensure correct version at runtime.
- * Local import would be bundled with pre-bump version.
- * */
-import self from "@kosmojs/react-generator/package.json" with { type: "json" };
 
+import self from "../package.json" with { type: "json" };
 import factory from "./factory";
 import type { Options } from "./types";
 

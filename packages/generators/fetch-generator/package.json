@@ -17,8 +17,7 @@
     ".": {
       "types": "./pkg/index.d.ts",
       "default": "./pkg/index.js"
-    },
-    "./package.json": "./package.json"
+    }
   },
   "scripts": {
     "build": "esbuilder src/index.ts",

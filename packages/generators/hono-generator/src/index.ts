@@ -1,12 +1,7 @@
-/**
- * Import from published package to ensure correct version at runtime.
- * Local import would be bundled with pre-bump version.
- * */
-
 import type { GeneratorMeta } from "@kosmojs/core";
-import self from "@kosmojs/hono-generator/package.json" with { type: "json" };
 import { defineGenerator, vitePlugins } from "@kosmojs/lib";
 
+import self from "../package.json" with { type: "json" };
 import factory from "./factory";
 import type { Options } from "./types";
 

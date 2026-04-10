@@ -10,7 +10,7 @@ npm install -D @kosmojs/koa-generator
 
 ## Documentation
 
-See [kosmojs.dev](https://kosmojs.dev/generators/intro.html)
+See [kosmojs.dev](https://kosmojs.dev/)
 
 ## License
 
