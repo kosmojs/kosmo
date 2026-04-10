@@ -7,13 +7,17 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@catppuccin/vitepress':
+        specifier: ^0.1.2
+        version: 0.1.2(typescript@5.9.3)
     devDependencies:
       vite:
         specifier: ^8.0.2
         version: 8.0.2(esbuild@0.27.4)
       vitepress:
         specifier: 2.0.0-alpha.17
-        version: 2.0.0-alpha.17(lightningcss@1.32.0)(postcss@8.5.8)
+        version: 2.0.0-alpha.17(lightningcss@1.32.0)(postcss@8.5.8)(typescript@5.9.3)
       vitepress-plugin-group-icons:
         specifier: ^1.7.1
         version: 1.7.1(vite@8.0.2(esbuild@0.27.4))
@@ -22,7 +26,7 @@ importers:
         version: 1.12.0
       vue:
         specifier: ^3.5.30
-        version: 3.5.31
+        version: 3.5.31(typescript@5.9.3)
 
 packages:
 
@@ -45,6 +49,11 @@ packages:
   '@babel/types@7.29.0':
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
+
+  '@catppuccin/vitepress@0.1.2':
+    resolution: {integrity: sha512-dqhgo6U6GWbgh3McAgwemUC8Y2Aj48rRcQx/9iuPzBPAgo7NA3yi7ZcR0wolAENMmoOMAHBV+rz/5DfiGxtZLA==}
+    peerDependencies:
+      typescript: ^5.0.0
 
   '@docsearch/css@4.6.1':
     resolution: {integrity: sha512-rA+ql4MLDgUpPs3YlVuqJt8GtujXzOFdYSV/OzCO4NxXKwLgASR+/nX7qFmnJCy3g0MVthEZS2IeZzJjYzWuGg==}
@@ -1170,6 +1179,11 @@ packages:
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   uc.micro@2.1.0:
     resolution: {integrity: sha512-ARDJmphmdvUk6Glw7y9DQ2bFkKBHwQHLi2lsaH6PPmz/Ka9sFOBsBluozhDltWmnv9u/cF6Rt87znRTPV+yp/A==}
 
@@ -1359,6 +1373,10 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
+
+  '@catppuccin/vitepress@0.1.2(typescript@5.9.3)':
+    dependencies:
+      typescript: 5.9.3
 
   '@docsearch/css@4.6.1': {}
 
@@ -1691,11 +1709,11 @@ snapshots:
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@vitejs/plugin-vue@6.0.5(vite@7.3.1(lightningcss@1.32.0))(vue@3.5.31)':
+  '@vitejs/plugin-vue@6.0.5(vite@7.3.1(lightningcss@1.32.0))(vue@3.5.31(typescript@5.9.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.2
       vite: 7.3.1(lightningcss@1.32.0)
-      vue: 3.5.31
+      vue: 3.5.31(typescript@5.9.3)
 
   '@vue/compiler-core@3.5.31':
     dependencies:
@@ -1756,34 +1774,34 @@ snapshots:
       '@vue/shared': 3.5.31
       csstype: 3.2.3
 
-  '@vue/server-renderer@3.5.31(vue@3.5.31)':
+  '@vue/server-renderer@3.5.31(vue@3.5.31(typescript@5.9.3))':
     dependencies:
       '@vue/compiler-ssr': 3.5.31
       '@vue/shared': 3.5.31
-      vue: 3.5.31
+      vue: 3.5.31(typescript@5.9.3)
 
   '@vue/shared@3.5.31': {}
 
-  '@vueuse/core@14.2.1(vue@3.5.31)':
+  '@vueuse/core@14.2.1(vue@3.5.31(typescript@5.9.3))':
     dependencies:
       '@types/web-bluetooth': 0.0.21
       '@vueuse/metadata': 14.2.1
-      '@vueuse/shared': 14.2.1(vue@3.5.31)
-      vue: 3.5.31
+      '@vueuse/shared': 14.2.1(vue@3.5.31(typescript@5.9.3))
+      vue: 3.5.31(typescript@5.9.3)
 
-  '@vueuse/integrations@14.2.1(focus-trap@8.0.1)(vue@3.5.31)':
+  '@vueuse/integrations@14.2.1(focus-trap@8.0.1)(vue@3.5.31(typescript@5.9.3))':
     dependencies:
-      '@vueuse/core': 14.2.1(vue@3.5.31)
-      '@vueuse/shared': 14.2.1(vue@3.5.31)
-      vue: 3.5.31
+      '@vueuse/core': 14.2.1(vue@3.5.31(typescript@5.9.3))
+      '@vueuse/shared': 14.2.1(vue@3.5.31(typescript@5.9.3))
+      vue: 3.5.31(typescript@5.9.3)
     optionalDependencies:
       focus-trap: 8.0.1
 
   '@vueuse/metadata@14.2.1': {}
 
-  '@vueuse/shared@14.2.1(vue@3.5.31)':
+  '@vueuse/shared@14.2.1(vue@3.5.31(typescript@5.9.3))':
     dependencies:
-      vue: 3.5.31
+      vue: 3.5.31(typescript@5.9.3)
 
   acorn@8.16.0: {}
 
@@ -2449,6 +2467,8 @@ snapshots:
   tslib@2.8.1:
     optional: true
 
+  typescript@5.9.3: {}
+
   uc.micro@2.1.0: {}
 
   ufo@1.6.3: {}
@@ -2552,7 +2572,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vitepress@2.0.0-alpha.17(lightningcss@1.32.0)(postcss@8.5.8):
+  vitepress@2.0.0-alpha.17(lightningcss@1.32.0)(postcss@8.5.8)(typescript@5.9.3):
     dependencies:
       '@docsearch/css': 4.6.1
       '@docsearch/js': 4.6.1
@@ -2562,17 +2582,17 @@ snapshots:
       '@shikijs/transformers': 3.23.0
       '@shikijs/types': 3.23.0
       '@types/markdown-it': 14.1.2
-      '@vitejs/plugin-vue': 6.0.5(vite@7.3.1(lightningcss@1.32.0))(vue@3.5.31)
+      '@vitejs/plugin-vue': 6.0.5(vite@7.3.1(lightningcss@1.32.0))(vue@3.5.31(typescript@5.9.3))
       '@vue/devtools-api': 8.1.1
       '@vue/shared': 3.5.31
-      '@vueuse/core': 14.2.1(vue@3.5.31)
-      '@vueuse/integrations': 14.2.1(focus-trap@8.0.1)(vue@3.5.31)
+      '@vueuse/core': 14.2.1(vue@3.5.31(typescript@5.9.3))
+      '@vueuse/integrations': 14.2.1(focus-trap@8.0.1)(vue@3.5.31(typescript@5.9.3))
       focus-trap: 8.0.1
       mark.js: 8.11.1
       minisearch: 7.2.0
       shiki: 3.23.0
       vite: 7.3.1(lightningcss@1.32.0)
-      vue: 3.5.31
+      vue: 3.5.31(typescript@5.9.3)
     optionalDependencies:
       postcss: 8.5.8
     transitivePeerDependencies:
@@ -2600,13 +2620,15 @@ snapshots:
       - universal-cookie
       - yaml
 
-  vue@3.5.31:
+  vue@3.5.31(typescript@5.9.3):
     dependencies:
       '@vue/compiler-dom': 3.5.31
       '@vue/compiler-sfc': 3.5.31
       '@vue/runtime-dom': 3.5.31
-      '@vue/server-renderer': 3.5.31(vue@3.5.31)
+      '@vue/server-renderer': 3.5.31(vue@3.5.31(typescript@5.9.3))
       '@vue/shared': 3.5.31
+    optionalDependencies:
+      typescript: 5.9.3
 
   wrap-ansi@7.0.0:
     dependencies:

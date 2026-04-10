@@ -1,4 +1,5 @@
 import DefaultTheme from "vitepress/theme";
+import "@catppuccin/vitepress/theme/mocha/lavender.css";
 import "virtual:group-icons.css";
 
 import CodeSamples from "./components/CodeSamples.vue";

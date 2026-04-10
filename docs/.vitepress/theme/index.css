@@ -1,5 +1,24 @@
-pre, code {
-  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "SF Mono", "Consolas", "Monaco", monospace;
+
+/* === GLOW BG === */
+.glow-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.glow-bg .orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+}
+.glow-bg .orb-1 { width: 600px; height: 600px; background: #4a5ba0; top: -200px; left: -100px; }
+.glow-bg .orb-2 { width: 500px; height: 500px; background: #764ba2; top: 30%; right: -150px; opacity: 0.1; }
+.glow-bg .orb-3 { width: 400px; height: 400px; background: #a78bfa; bottom: 10%; left: 20%; opacity: 0.08; }
+
+.k {
+  font-weight: 800;
 }
 
 .text-start {
@@ -53,7 +72,6 @@ pre, code {
 .VPHero .tagline-container > .headline {
   font-size: 150%;
   font-style: italic;
-  color:var(--vp-c-white);
   margin-bottom: 0.8rem;;
 }
 

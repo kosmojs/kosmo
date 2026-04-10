@@ -3,9 +3,9 @@ layout: home
 description: KosmoJS - the composable meta-framework
 
 hero:
-  name: KosmoJS
+  name: <span class="k">Kosmo</span>JS
   tagline: <span class="tagline-container">
-      <span class="headline">the composable meta-framework</span>
+      <span class="headline text-nowrap">the composable meta-framework</span>
       <span>Multiple source folders. Directory-based routing.</span>
       <span>Cascading middleware. Nested layouts.</span>
       <span>End-to-end validation. Fetch clients. OpenAPI spec.</span>
@@ -68,6 +68,12 @@ features:
     link: /start
 
 ---
+
+<div class="glow-bg">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
 
 <CodeSamples />
 

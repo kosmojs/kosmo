@@ -65,6 +65,10 @@ export default defineConfig({
     config(md) {
       md.use(groupIconMdPlugin);
     },
+    theme: {
+      light: "catppuccin-latte",
+      dark: "catppuccin-mocha",
+    },
   },
 
   themeConfig: {
@@ -75,7 +79,27 @@ export default defineConfig({
       {
         text: "Guide",
         link: "/start",
-        activeMatch: "^/(?!generators/|plugins/).+",
+        activeMatch: "^/(?!features|routing|api-server|about).+",
+      },
+      {
+        text: "Features",
+        link: "/features",
+        activeMatch: "^/features(.html)?",
+      },
+      {
+        text: "Routing",
+        link: "/routing/intro",
+        activeMatch: "^/routing\\/.+",
+      },
+      {
+        text: "API",
+        link: "/api-server/intro",
+        activeMatch: "^/api-server\\/.+",
+      },
+      {
+        text: "About",
+        link: "/about",
+        activeMatch: "^/about(.html)?",
       },
     ],
 
