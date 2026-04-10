@@ -49,10 +49,11 @@ Creating `pages/users/[id]/index.tsx` generates a minimal framework component:
 
 ```tsx [pages/users/[id]/index.tsx]
 export default function Page() {
-  return <div>Automatically generated Solid Page: [ users/[id] ]</div>;
+  return <div>Automatically generated Page: [ users/[id] ]</div>;
 }
 ```
 
+The placeholder text includes your framework name and route path.
 The component is named `Page` by default - rename it to something meaningful as you build it out.
 
 > Avoid anonymous arrow functions for default exports - they can break Vite's HMR.

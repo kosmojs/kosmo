@@ -9,7 +9,7 @@ head:
         multiple ports, teardown handler, development middleware, file watching
 ---
 
-Each source folder serve a specific concern - marketing site, customer app, admin, etc.
+Each source folder serves a specific concern - marketing site, customer app, admin, etc.
 
 Yet, development workflow is identical.
 

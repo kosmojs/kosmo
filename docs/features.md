@@ -10,7 +10,7 @@ head:
         fetch client generator, openapi 3.1, solidjs, react, vue, mdx, koa, hono
 ---
 
-Production-ready features, right out of the box.
+Everything `KosmoJS` provides, at a glance.
 
 ## 🗂️ Multiple Source Folders
 
@@ -32,7 +32,7 @@ pages/users/[id]/index.tsx ➜ /users/:id
 Dynamic parameters: `[id]` required · `{id}` optional · `{...path}` splat.
 No separate routing config to maintain - restructure files and routes update automatically.
 
-Also mixed sections supported for backend routes (and some frontend integrations):
+Mixed segments are also supported for backend routes (and some frontend integrations):
 
 ```
 products/[category].html/index.ts   ➜ products/electronics.html
@@ -112,7 +112,7 @@ Slots give you surgical control over middleware composition:
 replace only what needs replacing, inherit everything else.
 Custom slot names are supported by extending the `UseSlots` interface.
 
-[Read more ➜](/api-server/middleware)
+[Read more ➜](/backend/middleware)
 
 ## 🌊 Cascading Middleware
 
@@ -127,7 +127,7 @@ api/admin/users/use.ts → wraps only routes under /api/admin/users
 Parent middleware always runs before child middleware.
 Combine with slots to override globals for entire route subtrees.
 
-[Read more ➜](/api-server/cascading-middleware)
+[Read more ➜](/backend/cascading-middleware)
 
 ## 🪆 Nested Layouts
 
@@ -153,14 +153,16 @@ pages/
 **Frontend:** `React`, `Vue`, `SolidJS`, `MDX` - same routing/layout/SSR conventions.
 
 Different source folders can use different framework combinations.
-When you add a source folder, `KosmoJS` generates a ready-to-go setup for your chosen stack.
+When you add a source folder, `KosmoJS` generates a ready-to-go setup for your chosen stack -
+router config, entry points, TypeScript settings, and all the wiring between them.
+Switch frameworks per folder without learning a new set of conventions.
 
 [Read more ➜](/frontend/intro)
 
 ## 🔧 Built on Proven Tools
 
-`Koa`/`Hono`  · `React`/`Vue`/`Solid`/`MDX` · `Vite` · `TypeScript`.
-No proprietary abstractions - just structure on top of tools you already know.
+No proprietary runtime, no custom bundler, no framework lock-in.
+Every layer is a tool you can use, debug, and replace independently.
 
 ---
 

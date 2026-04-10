@@ -20,7 +20,7 @@ export default defineRoute<"users">(({ GET }) => [
   GET<{
     response: [200, "json", User], // [!code hl]
   }>(async (ctx) => {
-    // response must comply to defined schema
+    // response must comply with the defined schema
   }),
 ]);
 ```

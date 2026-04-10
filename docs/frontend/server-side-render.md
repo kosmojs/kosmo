@@ -147,12 +147,12 @@ export default renderFactory(() => {
 - `html` - the rendered application markup
 - `head` - HTML to inject into `<head>` (optional)
 
-SolidJS inject a hydration script in `<head>` via `generateHydrationScript()`,
+SolidJS injects a hydration script in `<head>` via `generateHydrationScript()`,
 which bootstraps client-side reactivity during hydration.
 
 ## 🎛️ Render Factory Arguments
 
-`renderToString` receive two arguments - the URL and SSROptions:
+`renderToString` receives two arguments - the URL and SSROptions:
 
 ```ts
 export type SSROptions = {
@@ -370,7 +370,7 @@ deno run -A dist/front/ssr/server.js -p 4556
 ```
 :::
 
-Also Unix sockets are supported across all three runtimes:
+Unix sockets are also supported across all three runtimes:
 
 ```sh
 node dist/front/ssr/server.js -s /tmp/app.sock

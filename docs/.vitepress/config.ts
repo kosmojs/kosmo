@@ -77,9 +77,10 @@ export default defineConfig({
     },
     nav: [
       {
-        text: "Guide",
+        text: "Quick Start",
         link: "/start",
-        activeMatch: "^/(?!features|routing|api-server|about).+",
+        activeMatch:
+          "^/(?!features|about|tutorial|routing|frontend|backend|validation).+",
       },
       {
         text: "Features",
@@ -92,14 +93,9 @@ export default defineConfig({
         activeMatch: "^/routing\\/.+",
       },
       {
-        text: "API",
-        link: "/api-server/intro",
-        activeMatch: "^/api-server\\/.+",
-      },
-      {
-        text: "About",
-        link: "/about",
-        activeMatch: "^/about(.html)?",
+        text: "Validation",
+        link: "/validation/intro",
+        activeMatch: "^/validation\\/.+",
       },
     ],
 
@@ -118,8 +114,12 @@ export default defineConfig({
               link: "/features",
             },
             {
-              text: "🚀 Getting Started",
+              text: "🚀 Quick Start",
               link: "/start",
+            },
+            {
+              text: "🎓 Tutorial",
+              link: "/tutorial",
             },
           ],
         },
@@ -148,45 +148,45 @@ export default defineConfig({
           ],
         },
         {
-          text: "API Server",
+          text: "Backend",
           collapsed: false,
           items: [
             {
               text: "🔰 Intro",
               docFooterText: "🧩 API Intro",
-              link: "/api-server/intro",
+              link: "/backend/intro",
             },
             {
               text: "📋 Request Context",
-              link: "/api-server/context",
+              link: "/backend/context",
             },
             {
               text: "🛡 Type Safety",
               collapsed: false,
-              link: "/api-server/type-safety",
+              link: "/backend/type-safety",
             },
             {
               text: "▶️ Middleware",
               collapsed: false,
-              link: "/api-server/middleware",
+              link: "/backend/middleware",
             },
             {
               text: "🔽 Cascading Middleware",
               collapsed: false,
-              link: "/api-server/cascading-middleware",
+              link: "/backend/cascading-middleware",
             },
             {
               text: "🚨 Error Handling",
               collapsed: false,
-              link: "/api-server/error-handling",
+              link: "/backend/error-handling",
             },
             {
               text: "💻 Development Workflow",
-              link: "/api-server/development-workflow",
+              link: "/backend/development-workflow",
             },
             {
               text: "🌐 Building for Production",
-              link: "/api-server/building-for-production",
+              link: "/backend/building-for-production",
             },
           ],
         },

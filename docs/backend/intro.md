@@ -50,18 +50,18 @@ Undefined methods return `405 Method Not Allowed` automatically.
 
 Available builders: `HEAD`, `OPTIONS`, `GET`, `POST`, `PUT`, `PATCH`, `DELETE`.
 
+This method-based routing style draws inspiration from [Sinatra](https://sinatrarb.com/) -
+the Ruby framework that pioneered it back in 2007.
+
 ## 🛡️ Type Safety
 
 Parameters, payloads, and responses are all typed through `TypeScript` type arguments -
 the same definitions drive both compile-time checking and runtime validation.
 No separate schema language, no DSL switching.
-([Details ➜ ](/api-server/type-safety))
+([Details ➜ ](/backend/type-safety))
 
 ## ▶️ Middleware
 
 The `use` function gives you fine-grained middleware control at the route level,
 complementing global and cascading middleware.
-([Details ➜ ](/api-server/middleware))
-
-`KosmoJS`'s HTTP method mapper draws inspiration from [Sinatra](https://sinatrarb.com/) -
-the Ruby framework that pioneered this minimalist routing style back in 2007.
+([Details ➜ ](/backend/middleware))

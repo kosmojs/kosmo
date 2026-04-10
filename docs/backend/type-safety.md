@@ -67,7 +67,7 @@ export default defineRoute<"example">(({ POST }) => [
     const user = await createUser({ name, email, status });
 
     ctx.body = user;     // Koa
-    ctx.json(user);      // Hono
+    // ctx.json(user);   // Hono
   }),
 ]);
 ```

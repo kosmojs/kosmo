@@ -209,7 +209,7 @@ export default Layout;
 ```
 :::
 
-React renders child routes via `<Outlet />`. SolidJS and MDX uses `props.children`.
+React renders child routes via `<Outlet />`. SolidJS and MDX use `props.children`.
 Vue uses `<RouterView />`.
 
 ### Data Loading in Layouts

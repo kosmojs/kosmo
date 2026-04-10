@@ -28,7 +28,7 @@ api/
 ```
 
 Which files are route handlers? Which are helpers? Is `schema.ts` a route at `/users/schema`
-or a shared validation file? You can't tell without opening files or relying on team conventions.
+or a shared validation file? You can't tell without opening each file or relying on team conventions.
 
 ## 🏆 Directory-Based Clarity
 

@@ -89,6 +89,9 @@ docs/{...path}/index.ts   ➜ /docs/getting-started
 The matched segments are provided as an array - useful for doc sites, file browsers,
 or anything with arbitrarily nested paths.
 
+A request to `/docs/guides/deployment/production` gives you
+`params.path` as `["guides", "deployment", "production"]`.
+
 ## 🔗 Mixed Segments
 
 Segments can combine static text with parameters:

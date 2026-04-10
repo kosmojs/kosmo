@@ -55,16 +55,16 @@ features:
   - icon: 🎛️
     title: Composable Middleware (Slots)
     details: Override global middleware per-route or per-subtree using named slots. Replace only what needs replacing, inherit everything else.
-    link: /api-server/middleware
+    link: /backend/middleware
 
   - icon: 🌊
     title: Cascading Middleware
     details: Place a use.ts in any folder and its middleware automatically wraps all routes in that subtree. No imports or wiring needed.
-    link: /api-server/cascading-middleware
+    link: /backend/cascading-middleware
 
   - icon: 🎨
     title: Multiple Frameworks
-    details: Koa or Hono for backend, React, Vue, SolidJS or MDX for frontend. Different source folders can use different combinations.
+    details: Mix and match backend and frontend frameworks across source folders. Each folder gets its own stack, all sharing the same routing and validation architecture.
     link: /start
 
 ---
@@ -81,13 +81,18 @@ features:
 <LinkButton href="/start">Get Started</LinkButton>
 </div>
 
-## 🎯 What is KosmoJS?
+---
 
-`KosmoJS` is a composable **meta-framework** that integrates `TypeScript`, `Vite`, `Koa`/`Hono`,
-and your frontend framework into a clear organizational pattern.
-Separation of concerns isn't something you have to remember - it's built into the structure.
+`KosmoJS` is opinionated about organization, unopinionated about implementation.
 
-No proprietary abstractions. No new paradigms. Just thoughtful structure around tools you already know.
+It gives your full-stack project a consistent structure - multiple source folders,
+directory-based routing, end-to-end validation, cascading middleware, nested layouts, fetch clients etc.
+Everything works the same consistent way across every framework combination, backend or frontend.
+
+Separation of concerns isn't something you have to remember; it's built into the core.
+
+No proprietary abstractions. No new paradigms.
+Just structure on top of tools you already know.
 
 📘 [Learn more](/about)
 
@@ -95,15 +100,14 @@ No proprietary abstractions. No new paradigms. Just thoughtful structure around 
 
 ## 💡 Why Source Folders?
 
-Applications often include multiple distinct concerns - each with different routing, auth, and config:
+Most projects start as one app and quietly become three -
+a marketing site, a customer app, an admin dashboard -
+each needing different routing, auth, and deploy strategies.
 
-🔹 Public marketing site at `/`<br>
-🔹 Customer application at `/app`<br>
-🔹 Admin dashboard at `/admin`<br>
-
-Each lives in its own source folder with independent `api/` and `pages/` directories,
-sharing types and validation logic across a single project.
-The directory structure enforces boundaries that code review can't.
+Source folders make this explicit from the start.
+Each gets its own `api/` and `pages/` directories, its own framework stack, its own base URL -
+while sharing types, validation logic, and infrastructure across a single project.
+The directory structure enforces boundaries that code review alone can't.
 
 📘 [Getting started](/start) · [Directory-based routing](/routing/intro)
 
@@ -115,36 +119,40 @@ The directory structure enforces boundaries that code review can't.
 client-side validation, and OpenAPI schemas - all from the same definitions.
 No duplication, no drift.
 
-📘 [Type safety](/api-server/type-safety) · [Validation](/validation/intro) · [Fetch clients](/fetch/intro)
+📘 [Type safety](/backend/type-safety) · [Validation](/validation/intro) · [Fetch clients](/fetch/intro)
 
 ---
 
 ## ⚙️ API Development
 
-Build APIs inside Vite's dev server with hot-reload. Slot-based middleware gives you
-fine-grained control - override globals per-route or per-subtree, compose request handling precisely.
 What you build locally is what deploys.
 
-📘 [Dev workflow](/api-server/development-workflow) · [Middleware](/api-server/middleware)
+APIs run inside Vite's dev server with full hot-reload.
+Slot-based middleware gives you surgical control - override globals per-route
+or per-subtree, compose request handling without the usual middleware spaghetti.
+
+📘 [Dev workflow](/backend/development-workflow) · [Middleware](/backend/middleware)
 
 ---
 
 ## 🚀 Production Ready
 
 `pnpm build` produces a bundled API server, optimized frontend assets,
-and an optional SSR bundle. Deploy to Node.js, Deno, Bun, containers, serverless, or edge.
+and an optional SSR bundle - each deployable independently.
+Node.js, Deno, Bun, containers, serverless, or edge. Same build output, pick your runtime.
 
-📘 [Production build](/api-server/building-for-production)
+📘 [Production build](/backend/building-for-production)
 
 ---
 
 ## 🧠 Philosophy
 
-**Structure without constraints.**
+**Structure that scales. Choices that stay yours.**
 
-Opinionated about organization, unopinionated about implementation.
-You choose your frontend framework, state management, styling, database - everything else.
-The structure scales; your choices remain free.
+You pick the frontend framework, state management, styling, database, deploy target - everything.
+`KosmoJS` provides the organizational layer: routing conventions, validation pipeline,
+middleware composition, build orchestration. The kind of structure
+that's tedious to set up yourself and easy to let erode over time.
 
 📘 [About KosmoJS](/about) · [Features](/features)
 

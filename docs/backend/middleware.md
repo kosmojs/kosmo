@@ -18,7 +18,7 @@ logging, or data transformation.
 
 KosmoJS provides the `use` function for applying middleware,
 with the same API for both `Koa` and `Hono` routes.
-By default, middleware applied to all HTTP methods:
+By default, middleware is applied to all HTTP methods:
 
 ```ts [api/example/index.ts]
 export default defineRoute<"example">(({ GET, POST, use }) => [
@@ -58,7 +58,7 @@ export default defineRoute<"example">(({ POST, use }) => [
   POST(async (ctx) => {
     console.log("POST handler");
     ctx.body = { success: true }; // for Koa
-    ctx.json({ success: true }); // for Hono
+    // ctx.json({ success: true }); // for Hono
   }),
 ]);
 ```

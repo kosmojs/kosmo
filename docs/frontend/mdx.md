@@ -21,7 +21,7 @@ used by React, SolidJS, and Vue source folders apply for MDX as well.
 
 ## 🛠️ Enabling the Generator
 
-MDX generator automatically enabled when creating a source folder and
+MDX generator is automatically enabled when creating a source folder and
 selecting MDX as the framework. To add one to an existing folder:
 
 ```ts [kosmo.config.ts]
@@ -361,9 +361,9 @@ export default routerFactory((routes) => {
 
 ### Client/Server Entry
 
-Both client and server entries follows the same `renderFactory` pattern as React/Solid/Vue.
-- Client entry either render the whole page on dev or hydrate the rendered SSR page.
-- Server entry factory return `renderToString` with `{ head, html }`.
+Both client and server entries follow the same `renderFactory` pattern as React/Solid/Vue.
+- Client entry either renders the whole page on dev or hydrates the rendered SSR page.
+- Server entry factory returns `renderToString` with `{ head, html }`.
 
 :::code-group
 

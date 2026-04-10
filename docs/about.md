@@ -15,26 +15,39 @@ reflecting the focus on organized, structured project architecture.
 
 ### 🎯 What is KosmoJS?
 
-A `Vite` template evolved into a composable meta-framework.<br/>
+A `Vite` template evolved into a composable meta-framework.
 It is built around a specific approach to organizing full-stack applications.
 
 Each source folder is a separate app - its own choice of backend and frontend framework,
 base URL, build pipeline, and deploy strategy -
-yet all sharing the same infrastructure within a monorepo-like project.
+yet all sharing the same infrastructure within a single project.
 
 Backend: `Koa` or `Hono`. Frontend: `React`, `Vue`, `SolidJS` or `MDX`.
 Same routing architecture and type safety across all combinations.
 
-`KosmoJS` acts as a universal chassis - providing the same consistent way to define routes for all source folders,
-regardless of framework, backend or frontend.
+`KosmoJS` acts as a universal chassis - providing the same consistent way to define routes
+for all source folders, regardless of framework, backend or frontend.
 
 **That's the unified routing pattern.**
 
-And a way to define validation rules directly in TypeScript, without using yet another lib.
+And a way to define validation rules directly in TypeScript, without reaching for a separate schema library.
 
 **That's the unified validation pattern.**
 
-Also a unified development workflow and a unified build pipeline.
+Also a single development workflow and build pipeline that works identically across every source folder.
+
+**That's the unified dev experience.**
+
+### 🔀 How it differs
+
+Most meta-frameworks bind you to one frontend framework and one deployment model.
+`KosmoJS` doesn't pick your stack - it provides the organizational layer
+that makes any combination of frameworks work the same way.
+
+You keep full control over your backend framework, frontend framework,
+state management, styling, database, and deploy target.
+`KosmoJS` handles routing conventions, validation pipeline,
+middleware composition, and build orchestration.
 
 ---
 

@@ -96,7 +96,7 @@ import CascadingMiddleware from './CascadingMiddleware.md'
             </div>
           </div>
         </div>
-        <a href="/api-server/middleware" class="details-button">Details ➜</a>
+        <a href="/backend/middleware" class="details-button">Details ➜</a>
       </div>
       <div>
         <ComposableMiddleware />
@@ -115,7 +115,7 @@ import CascadingMiddleware from './CascadingMiddleware.md'
             and its subfolders - no imports or manual wiring required.
           </div>
         </div>
-        <a href="/api-server/cascading-middleware" class="details-button">Details ➜</a>
+        <a href="/backend/cascading-middleware" class="details-button">Details ➜</a>
       </div>
       <div>
         <CascadingMiddleware />

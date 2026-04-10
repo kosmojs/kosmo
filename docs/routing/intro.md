@@ -46,8 +46,8 @@ This consistency means no special cases: every route is a folder with an `index`
 API routes export a route definition (HTTP methods + handlers).
 Client pages export a component function.
 
-The [auto-generation feature](/routing/generated-content) creates the correct boilerplate
-for you when you create a new file, so you rarely need to write it from scratch.
+The [auto-generation feature](/routing/generated-content) produces the correct boilerplate
+when you create a new file, so you rarely write it from scratch.
 
 The folder-per-route pattern gives each route its own namespace for colocating related files -
 utilities, types, tests - without cluttering parent directories.
@@ -55,7 +55,8 @@ utilities, types, tests - without cluttering parent directories.
 ## 🏗️ Nested Routes
 
 Nesting works by nesting folders. `api/users/[id]/posts/index.ts` maps to `/api/users/:id/posts`,
-and can go as deep as needed.
+and can go as deep as your domain requires. Each level can colocate its own helpers,
+types, and tests without affecting siblings.
 
 For client pages, nested routes support layout components that wrap child routes
 with shared UI like navigation or headers.
