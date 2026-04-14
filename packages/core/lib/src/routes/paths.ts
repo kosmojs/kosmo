@@ -148,7 +148,9 @@ export const pathTokensFactory = (
 
       const pattern = patternTransforms.reduce((src, fn) => fn(src), orig);
 
-      const { tokens } = parse(pattern);
+      const { tokens } = parse(
+        pattern.replace(/\{[^}]*\}|(\+)/g, (m, p1) => (p1 ? "\\+" : m)),
+      );
 
       const parts = extractParts(tokens, (val) => {
         // Sanitize param name into a valid JS identifier
