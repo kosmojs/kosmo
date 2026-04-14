@@ -37,6 +37,7 @@ export const generateTsconfig = (sourceFolder?: string) => {
         `${rootDir}/`,
         `${rootDir}/../../${defaults.libDir}/${sourceFolder}/`,
         `${rootDir}/../../${defaults.libDir}/env.d.ts`,
+        `${rootDir}/../../**/*.d.ts`,
       ],
       compilerOptions: {
         ...compilerOptions,
@@ -54,7 +55,7 @@ export const generateTsconfig = (sourceFolder?: string) => {
   }
 
   return {
-    include: [`${rootDir}/`, `${rootDir}/${defaults.libDir}/env.d.ts`],
+    include: [`${rootDir}/`, `${rootDir}/${defaults.libDir}/**/*.d.ts`],
     exclude: [
       `${rootDir}/${defaults.srcDir}/`,
       `${rootDir}/${defaults.libDir}/`,
