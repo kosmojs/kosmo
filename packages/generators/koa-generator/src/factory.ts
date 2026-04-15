@@ -1,11 +1,11 @@
 import { join } from "node:path";
 
 import crc from "crc/crc32";
-import picomatch, { type Matcher } from "picomatch";
 
 import type { ApiRoute, ResolvedEntry } from "@kosmojs/core";
 import {
   createPathPattern,
+  createTemplateResolver,
   defineGeneratorFactory,
   pathResolver,
   pathTokensFactory,
@@ -40,33 +40,20 @@ export default defineGeneratorFactory<Options>(
       helpers: createImportHelpers({ origin: "src" }),
     });
 
-    const customTemplates: Array<[Matcher, string]> = Object.entries({
-      ...options?.templates,
-    }).map(([pattern, template]) => [picomatch(pattern), template]);
-
-    const metaMatchers: Array<[Matcher, unknown]> = Object.entries({
-      ...options?.meta,
-    }).map(([pattern, meta]) => [picomatch(pattern), meta]);
-
-    const resolveMeta = ({ name }: ApiRoute) => {
-      const match = metaMatchers.find(([isMatch]) => isMatch(name));
-      return Object.prototype.toString.call(match?.[1]) === "[object Object]"
-        ? JSON.stringify(match?.[1])
-        : undefined;
-    };
-
     // by default, write only to blank files
     const overwrite = (content: string) => content?.trim().length === 0;
+
+    const templateResolver = createTemplateResolver(
+      options?.templates,
+      templates.srcRouteIndex,
+    );
 
     const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
       for (const { kind, entry } of entries) {
         if (kind === "apiRoute") {
-          const customTemplate = customTemplates.find(([isMatch]) => {
-            return isMatch(entry.name);
-          });
           await deploySrcFile(
             createPath.api(entry.file),
-            customTemplate?.[1] || templates.srcRouteIndex,
+            templateResolver(entry.name, entry),
             { route: entry },
             { overwrite },
           );
@@ -107,7 +94,6 @@ export default defineGeneratorFactory<Options>(
           const baseRoute = {
             ...entry,
             path: entry.pathPattern,
-            meta: resolveMeta(entry),
             cascadingMiddleware,
           };
 

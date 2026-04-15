@@ -1,11 +1,11 @@
 import { join } from "node:path";
 
 import crc from "crc/crc32";
-import picomatch, { type Matcher } from "picomatch";
 
 import type { ApiRoute, ResolvedEntry } from "@kosmojs/core";
 import {
   createHonoPattern,
+  createTemplateResolver,
   defineGeneratorFactory,
   pathResolver,
   pathTokensFactory,
@@ -40,22 +40,20 @@ export default defineGeneratorFactory<Options>(
       helpers: createImportHelpers({ origin: "src" }),
     });
 
-    const customTemplates: Array<[Matcher, string]> = Object.entries({
-      ...options?.templates,
-    }).map(([pattern, template]) => [picomatch(pattern), template]);
-
     // by default, write only to blank files
     const overwrite = (content: string) => content?.trim().length === 0;
+
+    const templateResolver = createTemplateResolver(
+      options?.templates,
+      templates.srcRouteIndex,
+    );
 
     const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
       for (const { kind, entry } of entries) {
         if (kind === "apiRoute") {
-          const customTemplate = customTemplates.find(([isMatch]) => {
-            return isMatch(entry.name);
-          });
           await deploySrcFile(
             createPath.api(entry.file),
-            customTemplate?.[1] || templates.srcRouteIndex,
+            templateResolver(entry.name, entry),
             { route: entry },
             { overwrite },
           );

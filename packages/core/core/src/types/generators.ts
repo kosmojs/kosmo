@@ -52,6 +52,11 @@ export type GeneratorMeta = {
   types?: Array<string>;
 };
 
+export type GeneratorCustomTemplates<T> = Record<
+  string,
+  string | ((r: T) => string)
+>;
+
 type GeneratorOptionsTuple = [Record<string, unknown>, boolean];
 
 type OptionsShape<T> = T extends [infer S, ...unknown[]] ? S : void;

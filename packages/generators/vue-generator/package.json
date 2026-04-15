@@ -24,12 +24,10 @@
     "test": "vitest --root ../../.. --project generators/vue-generator"
   },
   "dependencies": {
-    "@kosmojs/lib": "workspace:^",
-    "picomatch": "^4.0.4"
+    "@kosmojs/lib": "workspace:^"
   },
   "devDependencies": {
     "@kosmojs/core": "workspace:^",
-    "@types/picomatch": "^4.0.3",
     "@vitejs/plugin-vue": "^6.0.5",
     "path-to-regexp": "^8.4.2",
     "vue": "^3.5.32",

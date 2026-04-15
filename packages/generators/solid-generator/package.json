@@ -24,13 +24,11 @@
     "test": "vitest --root ../../.. --project generators/solid-generator"
   },
   "dependencies": {
-    "@kosmojs/lib": "workspace:^",
-    "picomatch": "^4.0.4"
+    "@kosmojs/lib": "workspace:^"
   },
   "devDependencies": {
     "@kosmojs/core": "workspace:^",
     "@solidjs/router": "^0.16.1",
-    "@types/picomatch": "^4.0.3",
     "path-to-regexp": "^8.4.2",
     "solid-js": "^1.9.12",
     "vite-plugin-solid": "^2.11.12"

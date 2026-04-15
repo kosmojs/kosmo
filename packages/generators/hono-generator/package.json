@@ -25,13 +25,11 @@
   },
   "dependencies": {
     "@kosmojs/lib": "workspace:^",
-    "crc": "^4.3.2",
-    "picomatch": "^4.0.4"
+    "crc": "^4.3.2"
   },
   "devDependencies": {
     "@hono/node-server": "^1.19.13",
     "@kosmojs/core": "workspace:^",
-    "@types/picomatch": "^4.0.3",
     "hono": "^4.12.12",
     "path-to-regexp": "^8.4.2"
   }

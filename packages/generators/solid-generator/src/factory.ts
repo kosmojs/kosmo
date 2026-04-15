@@ -1,8 +1,7 @@
-import picomatch, { type Matcher } from "picomatch";
-
 import type { ResolvedEntry } from "@kosmojs/core";
 import { pageRouteRenderHelpers } from "@kosmojs/core/generators";
 import {
+  createTemplateResolver,
   defaults,
   defineGeneratorFactory,
   nestedRoutesFactory,
@@ -33,25 +32,23 @@ export default defineGeneratorFactory<Options>(
       helpers: createImportHelpers({ origin: "src" }),
     });
 
-    const customTemplates: Array<[Matcher, string]> = Object.entries({
-      ...options?.templates,
-    }).map(([pattern, template]) => [picomatch(pattern), template]);
-
     const entriesTraverser = traverseFactory();
 
     const overwrite = (content: string) => !content?.trim().length;
 
+    const templateResolver = createTemplateResolver(
+      options?.templates,
+      templates.srcPageSamplesPage,
+    );
+
     const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
       for (const { kind, entry } of entries) {
         if (kind === "pageRoute") {
-          const customTemplate = customTemplates.find(([isMatch]) => {
-            return isMatch(entry.name);
-          });
           await deploySrcFile(
             createPath.pages(entry.file),
             entry.name === "index"
               ? templates.srcPageSamplesWelcome
-              : customTemplate?.[1] || templates.srcPageSamplesPage,
+              : templateResolver(entry.name, entry),
             {
               route: entry,
               message: randomCongratMessage(),

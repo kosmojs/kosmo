@@ -29,8 +29,7 @@
   },
   "dependencies": {
     "@kosmojs/lib": "workspace:^",
-    "crc": "^4.3.2",
-    "picomatch": "^4.0.4"
+    "crc": "^4.3.2"
   },
   "devDependencies": {
     "@koa/router": "^15.4.0",
@@ -38,7 +37,6 @@
     "@types/formidable": "^3.5.0",
     "@types/koa": "^3.0.2",
     "@types/koa-compose": "^3.2.9",
-    "@types/picomatch": "^4.0.3",
     "cookie": "^1.1.1",
     "formidable": "^3.5.4",
     "koa": "^3.2.0",

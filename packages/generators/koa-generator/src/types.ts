@@ -1,3 +1,5 @@
+import type { ApiRoute, GeneratorCustomTemplates } from "@kosmojs/core";
+
 export type Options = [
   {
     /**
@@ -33,18 +35,7 @@ export type Options = [
       string // Name of the route to handle the URL
     >;
 
-    templates?: Record<
-      // route name pattern
-      string,
-      // template itself, not path to template file
-      string
-    >;
-
-    meta?: Record<
-      // route name pattern
-      string,
-      object
-    >;
+    templates?: GeneratorCustomTemplates<ApiRoute>;
   },
   false,
 ];

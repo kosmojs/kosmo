@@ -326,9 +326,6 @@ importers:
       crc:
         specifier: ^4.3.2
         version: 4.3.2
-      picomatch:
-        specifier: ^4.0.4
-        version: 4.0.4
     devDependencies:
       '@hono/node-server':
         specifier: ^1.19.13
@@ -336,9 +333,6 @@ importers:
       '@kosmojs/core':
         specifier: workspace:^
         version: link:../../core/core
-      '@types/picomatch':
-        specifier: ^4.0.3
-        version: 4.0.3
       hono:
         specifier: ^4.12.12
         version: 4.12.12
@@ -354,9 +348,6 @@ importers:
       crc:
         specifier: ^4.3.2
         version: 4.3.2
-      picomatch:
-        specifier: ^4.0.4
-        version: 4.0.4
     devDependencies:
       '@koa/router':
         specifier: ^15.4.0
@@ -373,9 +364,6 @@ importers:
       '@types/koa-compose':
         specifier: ^3.2.9
         version: 3.2.9
-      '@types/picomatch':
-        specifier: ^4.0.3
-        version: 4.0.3
       cookie:
         specifier: ^1.1.1
         version: 1.1.1
@@ -406,9 +394,6 @@ importers:
       '@mdx-js/rollup':
         specifier: ^3.1.1
         version: 3.1.1(rollup@4.60.0)
-      picomatch:
-        specifier: ^4.0.4
-        version: 4.0.4
     devDependencies:
       '@kosmojs/core':
         specifier: workspace:^
@@ -419,9 +404,6 @@ importers:
       '@mdx-js/preact':
         specifier: ^3.1.1
         version: 3.1.1(preact@10.29.1)
-      '@types/picomatch':
-        specifier: ^4.0.3
-        version: 4.0.3
       path-to-regexp:
         specifier: ^8.4.2
         version: 8.4.2
@@ -474,16 +456,10 @@ importers:
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
-      picomatch:
-        specifier: ^4.0.4
-        version: 4.0.4
     devDependencies:
       '@kosmojs/core':
         specifier: workspace:^
         version: link:../../core/core
-      '@types/picomatch':
-        specifier: ^4.0.3
-        version: 4.0.3
       '@types/react':
         specifier: ^19.2.14
         version: 19.2.14
@@ -511,9 +487,6 @@ importers:
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
-      picomatch:
-        specifier: ^4.0.4
-        version: 4.0.4
     devDependencies:
       '@kosmojs/core':
         specifier: workspace:^
@@ -521,9 +494,6 @@ importers:
       '@solidjs/router':
         specifier: ^0.16.1
         version: 0.16.1(solid-js@1.9.12)
-      '@types/picomatch':
-        specifier: ^4.0.3
-        version: 4.0.3
       path-to-regexp:
         specifier: ^8.4.2
         version: 8.4.2
@@ -584,16 +554,10 @@ importers:
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
-      picomatch:
-        specifier: ^4.0.4
-        version: 4.0.4
     devDependencies:
       '@kosmojs/core':
         specifier: workspace:^
         version: link:../../core/core
-      '@types/picomatch':
-        specifier: ^4.0.3
-        version: 4.0.3
       '@vitejs/plugin-vue':
         specifier: ^6.0.5
         version: 6.0.5(vite@8.0.7(@types/node@25.5.2)(esbuild@0.28.0)(jiti@2.6.1)(yaml@2.8.3))(vue@3.5.32(typescript@6.0.2))
