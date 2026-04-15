@@ -1,4 +1,4 @@
-import { resolve } from "node:path";
+import { join, resolve } from "node:path";
 import { styleText } from "node:util";
 
 import crc from "crc/crc32";
@@ -22,6 +22,8 @@ import {
   type ValidationTarget,
 } from "@kosmojs/core";
 import { type HTTPMethod, HTTPMethods } from "@kosmojs/core/api";
+
+import { defaults } from "./defaults";
 
 type PathResolver = (path: string) => string;
 
@@ -422,6 +424,25 @@ export const astFactory = () => {
         }
       }
 
+      const namespaceImport = typeOnlyDeclaration
+        ? declaration.getNamespaceImport()
+        : undefined;
+
+      if (namespaceImport) {
+        const name = namespaceImport.getText();
+        const text = `import type * as ${name} from "${path}";`;
+        declarations.push({
+          importDeclaration: {
+            name,
+            path,
+          },
+          text,
+        });
+        if (referencedFiles) {
+          referencedFiles.push(...getReferencedFiles(namespaceImport));
+        }
+      }
+
       for (const namedImport of declaration.getNamedImports()) {
         if (namedImport.isTypeOnly() || typeOnlyDeclaration) {
           const nameNode = namedImport.getNameNode();
@@ -539,9 +560,12 @@ export const astFactory = () => {
     return callExpression.getTypeArguments();
   };
 
-  const typeResolverFactory = ({ root }: SourceFolder) => {
+  const typeResolverFactory = ({ root, name }: SourceFolder) => {
     const project = createProject({
-      tsConfigFilePath: resolve(root, "tsconfig.json"),
+      tsConfigFilePath: resolve(
+        root,
+        join(defaults.srcDir, name, "tsconfig.json"),
+      ),
       skipAddingFilesFromTsConfig: true,
     });
 
