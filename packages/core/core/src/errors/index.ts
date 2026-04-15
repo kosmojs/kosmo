@@ -32,3 +32,14 @@ export class ValidationError extends Error {
     this.data = data;
   }
 }
+
+export class HTTPError extends Error {
+  public status: number;
+  public override message: string;
+
+  constructor([status, message]: [status: number, message: string]) {
+    super(`${status}: ${message}`);
+    this.status = status;
+    this.message = message;
+  }
+}

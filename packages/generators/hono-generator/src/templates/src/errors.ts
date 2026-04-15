@@ -1,7 +1,7 @@
 import { accepts } from "hono/accepts";
 import { HTTPException } from "hono/http-exception";
 
-import { ValidationError } from "@kosmojs/core/errors";
+import { ValidationError, HTTPError } from "@kosmojs/core/errors";
 
 import { errorHandlerFactory } from "{{ createImport 'lib' 'api:factory' }}";
 
@@ -15,7 +15,9 @@ export default errorHandlerFactory(
     const [message, status] =
       error instanceof ValidationError
         ? [`${error.target}: ${error.errorMessage}`, 400]
-        : [error.message, error.statusCode || 500];
+        : error instanceof HTTPError
+          ? [error.message, error.status]
+          : [error.message, error.statusCode || 500];
 
     // Respond based on what the client accepts
     const type = accepts(ctx, {
