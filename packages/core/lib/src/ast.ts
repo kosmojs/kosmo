@@ -15,6 +15,7 @@ import {
 
 import {
   type ApiRoute,
+  defaults,
   RequestValidationTargets,
   type SourceFolder,
   type TypeDeclaration,
@@ -22,8 +23,6 @@ import {
   type ValidationTarget,
 } from "@kosmojs/core";
 import { type HTTPMethod, HTTPMethods } from "@kosmojs/core/api";
-
-import { defaults } from "./defaults";
 
 type PathResolver = (path: string) => string;
 

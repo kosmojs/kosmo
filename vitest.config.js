@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { glob } from "tinyglobby";
 import { defineConfig } from "vitest/config";
 
-import { defaults } from "@kosmojs/lib";
+import { defaults } from "@kosmojs/core";
 
 const setupFactory = (name, { alias, ...setup } = {}) => {
   return {

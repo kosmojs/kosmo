@@ -4,18 +4,18 @@ import { styleText } from "node:util";
 import crc from "crc/crc32";
 import mimeTypes from "mime-types";
 
-import type {
-  ApiRoute,
-  PageRoute,
-  PathTokenParamPart,
-  RouteEntry,
-  RouteResolverCacheFactory,
-  SourceFolder,
-  ValidationDefinition,
+import {
+  type ApiRoute,
+  defaults,
+  type PageRoute,
+  type PathTokenParamPart,
+  type RouteEntry,
+  type RouteResolverCacheFactory,
+  type SourceFolder,
+  type ValidationDefinition,
 } from "@kosmojs/core";
 
 import { astFactory } from "../ast";
-import { defaults } from "../defaults";
 import { pathResolver } from "../paths";
 import { render, renderToFile } from "../render";
 import type { ResolverSignature } from "./base";

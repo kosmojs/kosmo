@@ -5,15 +5,15 @@ import crc from "crc/crc32";
 import picomatch from "picomatch";
 import { glob } from "tinyglobby";
 
-import type {
-  PathToken,
-  PathTokenParamPart,
-  ResolvedEntry,
-  RouteEntry,
-  SourceFolder,
+import {
+  defaults,
+  type PathToken,
+  type PathTokenParamPart,
+  type ResolvedEntry,
+  type RouteEntry,
+  type SourceFolder,
 } from "@kosmojs/core";
 
-import { defaults } from "../defaults";
 import { pathResolver } from "../paths";
 import {
   createHonoPattern,

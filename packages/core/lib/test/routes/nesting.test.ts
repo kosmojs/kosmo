@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import type { NestedRouteEntry } from "@kosmojs/core";
+import { defaults, type NestedRouteEntry } from "@kosmojs/core";
 import {
   createRouteEntry,
   nestedRoutesFactory,
@@ -8,8 +8,6 @@ import {
 } from "@kosmojs/lib";
 
 import { sourceFolder } from ".";
-
-import { defaults } from "@src/defaults";
 
 describe("Nested Routes", async () => {
   const routeFiles = await scanRoutes(sourceFolder);

@@ -5,22 +5,19 @@ import { styleText } from "node:util";
 
 import { build, createServer, type RunnableDevEnvironment } from "vite";
 
-import type {
-  GeneratorBase,
-  GeneratorFactoryInstance,
-  GeneratorMeta,
-  ProjectSettings,
-  ResolvedEntry,
-  SourceFolder,
-  WatcherEvent,
-} from "@kosmojs/core";
-import type { DevSetup } from "@kosmojs/core/api";
 import {
   defaults,
-  pathResolver,
-  routesFactory,
-  spinnerFactory,
-} from "@kosmojs/lib";
+  type GeneratorBase,
+  type GeneratorFactoryInstance,
+  type GeneratorMeta,
+  type ProjectSettings,
+  type ResolvedEntry,
+  type SourceFolder,
+  type WatcherEvent,
+} from "@kosmojs/core";
+import type { DevSetup } from "@kosmojs/core/api";
+import { pathResolver, routesFactory, spinnerFactory } from "@kosmojs/lib";
+
 
 import { cacheFactory } from "./cache";
 import coreGenerator from "./core-generator";

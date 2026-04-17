@@ -1,5 +1,4 @@
 export * from "./ast";
-export * from "./defaults";
 export * from "./generators";
 export * from "./paths";
 export * from "./render";

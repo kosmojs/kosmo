@@ -1,8 +1,11 @@
 import createMdxPlugin from "@mdx-js/rollup";
 import { createFilter, type Plugin } from "vite";
 
-import type { ProjectSettings, SourceFolder } from "@kosmojs/core";
-import { defaults } from "@kosmojs/lib";
+import {
+  defaults,
+  type ProjectSettings,
+  type SourceFolder,
+} from "@kosmojs/core";
 
 import type { Options } from "./types";
 

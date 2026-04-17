@@ -9,7 +9,7 @@ import { resolve } from "node:path";
  * to keep versions fully synchronized across the project.
  * */
 import self from "@kosmojs/cli/package.json" with { type: "json" };
-import type { GeneratorBase } from "@kosmojs/core";
+import { defaults, type GeneratorBase } from "@kosmojs/core";
 import {
   fetchGenerator,
   honoGenerator,
@@ -22,7 +22,7 @@ import {
   typeboxGenerator,
   vueGenerator,
 } from "@kosmojs/dev";
-import { defaults, pathExists, renderToFile } from "@kosmojs/lib";
+import { pathExists, renderToFile } from "@kosmojs/lib";
 
 import {
   copyFiles,

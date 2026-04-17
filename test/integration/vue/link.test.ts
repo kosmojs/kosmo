@@ -1,7 +1,7 @@
 import { load } from "cheerio";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { defaults } from "@kosmojs/lib";
+import { defaults } from "@kosmojs/core";
 
 import { routes, setupTestProject } from "../setup";
 
