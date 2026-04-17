@@ -1,4 +1,4 @@
-import { defaults } from "./defaults";
+import { defaults } from "@kosmojs/core";
 
 export const generateTsconfig = (sourceFolder?: string) => {
   // biome-ignore lint: noTemplateCurlyInString
@@ -9,7 +9,6 @@ export const generateTsconfig = (sourceFolder?: string) => {
     moduleResolution: "bundler",
     module: "ESNext",
     target: "ESNext",
-    jsx: "preserve",
     strict: true,
     exactOptionalPropertyTypes: true,
     noImplicitAny: true,
@@ -49,6 +48,9 @@ export const generateTsconfig = (sourceFolder?: string) => {
             `${rootDir}/../../${defaults.libDir}/${sourceFolder}/*`,
           ],
         },
+        // NOTE: do not set jsx for root tsconfig.json;
+        // only add it to source folder's tsconfig.json!
+        jsx: "preserve",
       },
     };
   }

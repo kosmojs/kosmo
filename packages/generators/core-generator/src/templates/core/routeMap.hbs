@@ -1,0 +1,27 @@
+{{> pathFactory}}
+
+import { apiurl, baseurl } from "{{ createImport "config" }}";
+
+export const apiRouteMap = {
+  {{#each apiRoutes}}
+  "{{name}}": pathFactory<[{{serializeParamsTupleElements .}}]>(
+    join(baseurl, apiurl),
+    "{{name}}",
+    "{{pathPattern}}",
+    [{{#each params.schema}}["{{name}}", "{{kind}}"], {{/each}}],
+    [{{#each numericParams}}"{{.}}", {{/each}}],
+  ),
+  {{/each}}
+};
+
+export const pageRouteMap = {
+  {{#each pageRoutes}}
+  "{{name}}": pathFactory<[{{serializeParamsTupleElements .}}]>(
+    baseurl,
+    "{{name}}",
+    "{{pathPattern}}",
+    [{{#each params.schema}}["{{name}}", "{{kind}}"], {{/each}}],
+    [{{#each numericParams}}"{{.}}", {{/each}}],
+  ),
+  {{/each}}
+};

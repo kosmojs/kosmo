@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@kosmojs/core": "workspace:^",
+    "@kosmojs/core-generator": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
     "@stoplight/spectral-core": "^1.21.0",
     "@stoplight/spectral-rulesets": "^1.22.0"

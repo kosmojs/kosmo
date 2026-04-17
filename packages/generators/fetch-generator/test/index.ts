@@ -5,6 +5,7 @@ import type { HTTPMethod } from "@kosmojs/core/api";
 import type { Options } from "@kosmojs/core/fetch";
 import { pathResolver } from "@kosmojs/lib";
 
+import coreGenerator from "@kosmojs/core-generator";
 import fetchGenerator from "@kosmojs/fetch-generator";
 import typeboxGenerator from "@kosmojs/typebox-generator";
 
@@ -17,7 +18,7 @@ export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 export const sourceFolder: SourceFolder = {
   name: "test",
   config: {
-    generators: [fetchGenerator(), typeboxGenerator()],
+    generators: [coreGenerator(), fetchGenerator(), typeboxGenerator()],
   },
   root: appRoot,
   baseurl: "",

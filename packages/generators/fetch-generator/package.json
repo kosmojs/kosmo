@@ -29,6 +29,7 @@
   "devDependencies": {
     "@kosmojs/core": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
+    "@kosmojs/core-generator": "workspace:^",
     "@kosmojs/typebox-generator": "workspace:^",
     "@types/mime-types": "^3.0.1",
     "@types/qs": "^6.15.0",

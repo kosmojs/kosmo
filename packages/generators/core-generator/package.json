@@ -1,8 +1,7 @@
 {
   "type": "module",
-  "name": "@kosmojs/typebox-generator",
+  "name": "@kosmojs/core-generator",
   "version": "0.0.27",
-  "cacheVersion": "1",
   "author": "Slee Woo",
   "license": "MIT",
   "publishConfig": {
@@ -21,17 +20,13 @@
     }
   },
   "scripts": {
-    "build": "esbuilder src/index.ts",
-    "pretest": "pnpm run build",
-    "test": "vitest --root ../../.. --project generators/typebox-generator"
+    "build": "esbuilder src/index.ts"
   },
   "dependencies": {
     "@kosmojs/lib": "workspace:^"
   },
   "devDependencies": {
     "@kosmojs/core": "workspace:^",
-    "@kosmojs/core-generator": "workspace:^",
-    "@kosmojs/koa-generator": "workspace:^",
-    "typebox": "^1.1.10"
+    "path-to-regexp": "^8.4.2"
   }
 }

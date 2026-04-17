@@ -4,6 +4,5 @@ export * from "./paths";
 export * from "./render";
 export * from "./routes";
 export * from "./spinner";
-export * from "./tsconfig";
 export * from "./typebox";
 export * from "./vite";

@@ -18,9 +18,9 @@ import {
 import type { DevSetup } from "@kosmojs/core/api";
 import { pathResolver, routesFactory, spinnerFactory } from "@kosmojs/lib";
 
+import coreGenerator from "@kosmojs/core-generator";
 
 import { cacheFactory } from "./cache";
-import coreGenerator from "./core-generator";
 
 export default async (
   projectSettings: ProjectSettings,

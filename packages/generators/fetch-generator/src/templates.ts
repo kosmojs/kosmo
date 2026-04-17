@@ -1,6 +1,3 @@
-export { default as fetchLib } from "#templates/lib/@fetch/lib" with {
-  type: "text",
-};
 export { default as fetch } from "#templates/lib/fetch.hbs" with {
   type: "text",
 };

@@ -11,9 +11,6 @@
   "files": [
     "pkg/*"
   ],
-  "imports": {
-    "#templates/*": "./src/templates/*"
-  },
   "exports": {
     ".": {
       "types": "./pkg/index.d.ts",
@@ -30,6 +27,7 @@
     "test": "vitest --root ../../.. --project core/dev"
   },
   "dependencies": {
+    "@kosmojs/core-generator": "workspace:^",
     "@kosmojs/fetch-generator": "workspace:^",
     "@kosmojs/hono-generator": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
@@ -38,8 +36,8 @@
     "@kosmojs/openapi-generator": "workspace:^",
     "@kosmojs/react-generator": "workspace:^",
     "@kosmojs/solid-generator": "workspace:^",
-    "@kosmojs/ssr-generator": "workspace:^",
     "@kosmojs/ssg-generator": "workspace:^",
+    "@kosmojs/ssr-generator": "workspace:^",
     "@kosmojs/typebox-generator": "workspace:^",
     "@kosmojs/vue-generator": "workspace:^",
     "crc": "^4.3.2"

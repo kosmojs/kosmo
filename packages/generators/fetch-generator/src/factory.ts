@@ -31,14 +31,9 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
       .flatMap(({ kind, entry }) => (kind === "apiRoute" ? [entry] : []))
       .sort(sortRoutes);
 
-    for (const [file, template] of [
-      ["fetch.ts", templates.fetch],
-      ["@fetch/lib.ts", templates.fetchLib],
-    ]) {
-      await deployLibFile(createPath.lib(file), template, {
-        routes,
-      });
-    }
+    await deployLibFile(createPath.lib("fetch.ts"), templates.fetch, {
+      routes,
+    });
 
     for (const { kind, entry } of updatedEntries) {
       if (kind === "apiRoute") {

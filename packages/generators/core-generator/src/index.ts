@@ -1,18 +1,21 @@
 import { dirname } from "node:path";
 
 import type { GeneratorMeta, ResolvedEntry } from "@kosmojs/core";
+import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   defineGenerator,
   defineGeneratorFactory,
-  generateTsconfig,
   pathResolver,
+  renderFactory,
   renderToFile,
 } from "@kosmojs/lib";
 
+import self from "../package.json" with { type: "json" };
 import * as templates from "./templates";
+import { generateTsconfig } from "./tsconfig";
 
 const factory = defineGeneratorFactory((meta, sourceFolder) => {
-  const { createPath } = pathResolver(sourceFolder);
+  const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
   const start = async () => {
     // deploy a tsconfig file for root tsconfig to extend from
@@ -82,6 +85,31 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
   };
 
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
+    const { renderToFile } = renderFactory({
+      helpers: {
+        ...createImportHelpers({ origin: "lib" }),
+        ...routeRenderHelpers(),
+      },
+      partials: {
+        pathFactory: templates.corePathFactory,
+      },
+    });
+
+    await renderToFile(
+      createPath.libCore("routeMap.ts"),
+      templates.coreRouteMap,
+      {
+        apiRoutes: entries.flatMap(({ kind, entry }) => {
+          return kind === "apiRoute" ? [entry] : [];
+        }),
+        pageRoutes: entries.flatMap(({ kind, entry }) => {
+          return kind === "pageRoute" ? [entry] : [];
+        }),
+      },
+    );
+
+    await renderToFile(createPath.libCore("index.ts"), templates.coreIndex, {});
+
     for (const { kind, entry } of entries) {
       if (kind === "apiRoute") {
         // Generating stub schemas file.
@@ -112,7 +140,12 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
  * even if specialized generators supposed to generate these files are not installed.
  * */
 export default defineGenerator(() => {
-  const meta: GeneratorMeta = { name: "Core" };
+  const meta: GeneratorMeta = {
+    name: "Core",
+    dependencies: {
+      "path-to-regexp": self.devDependencies["path-to-regexp"],
+    },
+  };
   return {
     meta,
     options: undefined,

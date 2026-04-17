@@ -8,6 +8,7 @@ import type {
 } from "@kosmojs/core";
 import { pathResolver } from "@kosmojs/lib";
 
+import coreGenerator from "@kosmojs/core-generator";
 import typeboxGenerator from "@kosmojs/typebox-generator";
 
 export { MESSAGE_CODES } from "@kosmojs/typebox-generator";
@@ -21,7 +22,7 @@ export { defineRoute } from "@kosmojs/koa-generator/lib";
 export const sourceFolder: SourceFolder = {
   name: "test",
   config: {
-    generators: [typeboxGenerator()],
+    generators: [coreGenerator(), typeboxGenerator()],
   },
   root: appRoot,
   baseurl: "",

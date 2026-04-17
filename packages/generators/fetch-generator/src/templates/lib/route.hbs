@@ -1,18 +1,16 @@
 import fetchFactory, {
-  type HostOpt,
   join,
   stringify,
-  createHost,
+  payloadResolver,
 } from "@kosmojs/core/fetch";
 
 import { baseurl, apiurl } from "{{ createImport "config" }}";
+import { apiRouteMap } from "{{ createImport "libCore" }}";
 
 import {
   type MaybeWrapped,
   unwrap,
 } from "{{ createImport "lib" "unwrap" }}";
-
-import { fetchClientFactory } from "{{ createImport "lib" "@fetch/lib" }}";
 
 {{#each validationTypes}}
 import type { {{id}} } from "./types";
@@ -44,13 +42,9 @@ export type ResponseT = {
 const {
   paramsMapper,
   parametrize,
-  resolvePayload,
-} = fetchClientFactory(
-  "{{route.name}}",
-  "{{route.pathPattern}}",
-  [{{#each route.params.schema}}["{{name}}", "{{kind}}"], {{/each}}],
-  [{{#each route.numericParams}}"{{.}}", {{/each}}],
-);
+  path,
+  href,
+} = apiRouteMap["{{route.name}}"];
 
 const fetchApi = fetchFactory(join(baseurl, apiurl), { stringify });
 
@@ -87,33 +81,13 @@ export const {{method}} = (
   {{#each ../payloadTypes}}
   if (validationSchemas.{{target}}?.{{../method}}) {
     validationSchemas.{{target}}.{{../method}}.validate(
-      resolvePayload(payload, "{{target}}")
+      payloadResolver(payload, "{{target}}")
     );
   }
   {{/each}}
   return fetchApi.{{method}}(parametrize(params as never), payload as never);
 };
 {{/each}}
-
-export const path = (
-  params: ParamsT,
-  query?: Record<string, unknown>,
-) => {
-  const path = join(
-    baseurl,
-    {{#if route.base}}"{{route.base}}"{{else}}apiurl{{/if}},
-    parametrize(params)
-  );
-  return query
-    ? [ path, stringify(query) ].join("?")
-    : path;
-}
-
-export const href = (
-  host: HostOpt,
-  params: ParamsT,
-  query?: Record<string, unknown>,
-) => createHost(host) + path(params, query);
 
 export default {
   {{#each routeMethods}}
