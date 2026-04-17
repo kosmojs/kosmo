@@ -41,3 +41,19 @@ export const createHost = (host: HostOpt): string => {
     "Expected host to be a string or an object like { hostname: string; port?: number; secure?: boolean }",
   );
 };
+
+export const payloadResolver = (payload: unknown, target: string) => {
+  const data = payload?.[target as never] as unknown;
+  return data instanceof FormData
+    ? [...data].reduce<
+        Record<string, FormDataEntryValue | Array<FormDataEntryValue>>
+      >((map, [key, val]) => {
+        if (key in map) {
+          map[key] = [map[key]].flat().concat(val);
+        } else {
+          map[key] = val;
+        }
+        return map;
+      }, {})
+    : data;
+};
