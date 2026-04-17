@@ -2,13 +2,14 @@ import type { RouterContext } from "@koa/router";
 import type { Next } from "koa";
 
 import type { ValidationDefmap, ValidationOptmap } from "@kosmojs/core";
-import type {
-  ExtendContext,
-  HandlerDefinition,
-  HTTPMethod,
-  MiddlewareDefinition,
-  RouteDefinitionItem,
-  UseOptions,
+import {
+  use as createUse,
+  type ExtendContext,
+  type HandlerDefinition,
+  type HTTPMethod,
+  type MiddlewareDefinition,
+  type RouteDefinitionItem,
+  type UseOptions,
 } from "@kosmojs/core/api";
 
 import type { BodyparserOptions } from "./@api/bodyparser";
@@ -47,15 +48,6 @@ export type ParameterizedMiddleware<
   ctx: ParameterizedContext<ParamsT, StateT, ContextT>,
   next: Next,
 ) => Promise<void> | void;
-
-export type Use = <StateT = DefaultState, ContextT = DefaultContext>(
-  middleware:
-    | ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
-    | Array<ParameterizedMiddleware<Record<string, string>, StateT, ContextT>>,
-  options?: UseOptions,
-) => MiddlewareDefinition<
-  ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
->;
 
 export type RouteHandler<
   ParamsT,
@@ -115,12 +107,15 @@ type ParamsMap<
       : never;
 };
 
-export const use: Use = (middleware, options) => {
-  return {
-    kind: "middleware",
-    middleware: [middleware].flat() as never,
-    options,
-  };
+export const use = <StateT = DefaultState, ContextT = DefaultContext>(
+  middleware:
+    | ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
+    | Array<ParameterizedMiddleware<Record<string, string>, StateT, ContextT>>,
+  options?: UseOptions,
+) => {
+  return createUse<
+    ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
+  >(middleware, options);
 };
 
 export const defineRoute: <

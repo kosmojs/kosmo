@@ -1,13 +1,14 @@
 import type { Context, Next } from "hono";
 
 import type { ValidationDefmap, ValidationOptmap } from "@kosmojs/core";
-import type {
-  ExtendContext,
-  HandlerDefinition,
-  HTTPMethod,
-  MiddlewareDefinition,
-  RouteDefinitionItem,
-  UseOptions,
+import {
+  use as createUse,
+  type ExtendContext,
+  type HandlerDefinition,
+  type HTTPMethod,
+  type MiddlewareDefinition,
+  type RouteDefinitionItem,
+  type UseOptions,
 } from "@kosmojs/core/api";
 
 import type { BodyparserOptions } from "./@api/bodyparser";
@@ -67,23 +68,17 @@ export type ParameterizedMiddleware<
   next: Next,
 ) => Promise<unknown> | unknown;
 
-export type Use = <VariablesT = DefaultVariables, BindingsT = DefaultBindings>(
+export const use = <VariablesT = DefaultVariables, BindingsT = DefaultBindings>(
   middleware:
     | ParameterizedMiddleware<Record<string, string>, VariablesT, BindingsT>
     | Array<
         ParameterizedMiddleware<Record<string, string>, VariablesT, BindingsT>
       >,
   options?: UseOptions,
-) => MiddlewareDefinition<
-  ParameterizedMiddleware<Record<string, string>, VariablesT, BindingsT>
->;
-
-export const use: Use = (middleware, options) => {
-  return {
-    kind: "middleware",
-    middleware: [middleware].flat() as never,
-    options,
-  };
+) => {
+  return createUse<
+    ParameterizedMiddleware<Record<string, string>, VariablesT, BindingsT>
+  >(middleware, options);
 };
 
 export type RouteHandler<
