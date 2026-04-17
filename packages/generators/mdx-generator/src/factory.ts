@@ -1,8 +1,7 @@
-import type { PageRoute, ResolvedEntry } from "@kosmojs/core";
-import { pageRouteRenderHelpers } from "@kosmojs/core/generators";
+import { defaults, type PageRoute, type ResolvedEntry } from "@kosmojs/core";
+import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   createTemplateResolver,
-  defaults,
   defineGeneratorFactory,
   pathResolver,
   renderFactory,
@@ -20,7 +19,7 @@ export default defineGeneratorFactory<Options>(
     const { renderToFile: deployLibFile } = renderFactory({
       helpers: {
         ...createImportHelpers({ origin: "lib" }),
-        ...pageRouteRenderHelpers(),
+        ...routeRenderHelpers(),
         serializeParams(route: PageRoute) {
           return JSON.stringify(route.params);
         },

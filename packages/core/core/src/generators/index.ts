@@ -9,7 +9,7 @@ import type {
   SSRFactory,
 } from "../types";
 
-export const pageRouteRenderHelpers = () => {
+export const routeRenderHelpers = () => {
   return {
     pageLinkBase({ name, pathPattern, params }: PageRoute) {
       return JSON.stringify({

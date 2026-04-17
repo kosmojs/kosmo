@@ -1,8 +1,7 @@
-import type { ResolvedEntry } from "@kosmojs/core";
-import { pageRouteRenderHelpers } from "@kosmojs/core/generators";
+import { defaults, type ResolvedEntry } from "@kosmojs/core";
+import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   createTemplateResolver,
-  defaults,
   defineGeneratorFactory,
   nestedRoutesFactory,
   pathResolver,
@@ -21,7 +20,7 @@ export default defineGeneratorFactory<Options>(
     const { renderToFile: deployLibFile } = renderFactory({
       helpers: {
         ...createImportHelpers({ origin: "lib" }),
-        ...pageRouteRenderHelpers(),
+        ...routeRenderHelpers(),
       },
       partials: {
         routePartial: templates.libEntryRoutePartial,
