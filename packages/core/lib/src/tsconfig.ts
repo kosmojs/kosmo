@@ -9,6 +9,7 @@ export const generateTsconfig = (sourceFolder?: string) => {
     moduleResolution: "bundler",
     module: "ESNext",
     target: "ESNext",
+    jsx: "preserve",
     strict: true,
     exactOptionalPropertyTypes: true,
     noImplicitAny: true,
@@ -40,7 +41,6 @@ export const generateTsconfig = (sourceFolder?: string) => {
       ],
       compilerOptions: {
         ...compilerOptions,
-        jsx: "preserve",
         types: [...compilerOptions.types, "vite/client"],
         paths: {
           [`${defaults.appPrefix}/*`]: [`${rootDir}/../../*`],
