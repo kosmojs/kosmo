@@ -7,18 +7,20 @@ export default errorHandlerFactory(
     try {
       await next();
     } catch (error: any) {
-      const [errorMessage, status] =
-        error instanceof ValidationError
-          ? [`${error.target}: ${error.errorMessage}`, 400]
-          : error instanceof HTTPError
-            ? [error.message, error.status]
-            : [error.message, error.statusCode || 500];
+      const [status, message] = Array.isArray(error)
+        ? error
+        : error instanceof HTTPError
+          ? [error.status, error.message]
+          : error instanceof ValidationError
+            ? [400, `${error.target}: ${error.errorMessage}`]
+            : [error.statusCode || 500, error.message];
+
+      ctx.status = status;
+
       if (ctx.accepts("json")) {
-        ctx.status = 400;
-        ctx.body = { error: errorMessage };
+        ctx.body = { error: message };
       } else {
-        ctx.status = status;
-        ctx.body = errorMessage;
+        ctx.body = message;
       }
     }
   },
