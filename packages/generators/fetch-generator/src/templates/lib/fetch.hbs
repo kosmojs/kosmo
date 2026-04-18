@@ -1,11 +1,12 @@
 {{#each routes}}
-import * as {{id}} from "{{ createImport "libApi" name "fetch" }}";
+import {{id}} from "{{ createImport "libApi" name "fetch" }}";
 {{/each}}
 
 export { ValidationError } from "@kosmojs/core/errors";
 
 export type ResponseT = {
-{{#each routes}}  "{{name}}": {{id}}.ResponseT;
+{{#each routes}}
+  "{{name}}": import("{{ createImport "libApi" name "fetch" }}").ResponseT;
 {{/each}}
 }
 
