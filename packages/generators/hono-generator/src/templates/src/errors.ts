@@ -12,12 +12,13 @@ export default errorHandlerFactory(
       return error.getResponse();
     }
 
-    const [message, status] =
-      error instanceof ValidationError
-        ? [`${error.target}: ${error.errorMessage}`, 400]
-        : error instanceof HTTPError
-          ? [error.message, error.status]
-          : [error.message, error.statusCode || 500];
+    const [status, message] = Array.isArray(error)
+      ? error
+      : error instanceof HTTPError
+        ? [error.status, error.message]
+        : error instanceof ValidationError
+          ? [400, `${error.target}: ${error.errorMessage}`]
+          : [error.statusCode || 500, error.message];
 
     // Respond based on what the client accepts
     const type = accepts(ctx, {
