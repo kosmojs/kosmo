@@ -77,15 +77,16 @@ export default defineConfig({
     },
     nav: [
       {
+        text: "About",
+        link: "/about",
+        activeMatch:
+          "^/(?!features|start|tutorial|routing|frontend|backend|validation).+",
+      },
+      {
         text: "Quick Start",
         link: "/start",
         activeMatch:
           "^/(?!features|about|tutorial|routing|frontend|backend|validation).+",
-      },
-      {
-        text: "Features",
-        link: "/features",
-        activeMatch: "^/features(.html)?",
       },
       {
         text: "Routing",
@@ -206,6 +207,10 @@ export default defineConfig({
             {
               text: "🛣 Routing",
               link: "/frontend/routing",
+            },
+            {
+              text: "🪆 Layouts",
+              link: "/frontend/layouts",
             },
             {
               text: "🧭 Link Navigation",

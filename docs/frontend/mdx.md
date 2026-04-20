@@ -132,7 +132,7 @@ export const components = {
 These overrides apply to all MDX pages via the `MDXProvider`.
 Individual pages can still import and use additional components directly.
 
-## 🍀 Nested Layouts
+## 🪆 Layouts
 
 Layouts work identically to other frameworks -
 a `layout.mdx` file wraps all pages and nested layouts within its folder:

@@ -7,7 +7,7 @@ head:
       content: vite setup, kosmojs quickstart, create kosmo, typescript api
 ---
 
-Zero to a working API route in under five minutes.
+Zero to a working route in under five minutes.
 
 ## 🚀 Create & install
 
