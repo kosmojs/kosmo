@@ -39,8 +39,9 @@ beforeAll(async () => {
       if (file === "use") {
         return `
           import { use } from "${createImport.libApi([], { origin: "src" })}";
+          export type ExtendT = { stack: Array<string> };
           export default [
-            use((ctx, next) => {
+            use<ExtendT>((ctx, next) => {
               if (!ctx.var.stack) {
                 ctx.set("stack", []);
               }
@@ -52,7 +53,7 @@ beforeAll(async () => {
       }
       return `
         import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
-        export default defineRoute(({ GET }) => [
+        export default defineRoute<"${name}">(({ GET }) => [
           GET(async (ctx) => {
             ctx.var.stack?.push("${name}/${file}");
             return ctx.json(ctx.var.stack || [ "${name}/${file}" ]);

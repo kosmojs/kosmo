@@ -10,14 +10,17 @@ import { validationSchemas as {{id}}_schemas } from "{{ createImport "libApi" na
 {{/each}}
 
 {{#each cascadingMiddleware}}
-import {{id}} from "{{ createImport "api" file }}";
+import {{id}}, { type ExtendT as ExtendT{{id}} } from "{{ createImport "api" file }}";
 {{/each}}
+
+type Override<A, B> = Omit<A, keyof B> & B;
 
 export type RouteMap = {
 {{#each routes}}
   "{{name}}": {
     paramsDefaults: {{paramsDefaults .}},
     paramsMappings: {{paramsMappings .}},
+    cascadingState: {{cascadingState .}},
   },
 {{/each}}
 }
@@ -34,7 +37,7 @@ export const routeSources: Array<RouteSource<never>> = [
     pathPattern: join(baseurl, apiurl, "{{pathPattern}}"),
     {{/if}}
     file: "{{file}}",
-    cascadingMiddleware: [{{#each cascadingMiddleware}}...{{id}}, {{/each}}] as Array<never>,
+    cascadingMiddleware: [ {{#each cascadingMiddleware}}{{id}}, {{/each}}].flat() as Array<never>,
     definitionItems: {{id}} as never,
     params: [ {{#each params.schema}}"{{name}}", {{/each}}],
     numericParams: [ {{#each numericParams}}"{{.}}", {{/each}}],

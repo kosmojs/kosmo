@@ -5,6 +5,7 @@ export type RouteMap = Record<
   {
     paramsDefaults: Array<unknown>;
     paramsMappings: Array<[string, unknown, boolean]>;
+    cascadingState: {};
   }
 >;
 

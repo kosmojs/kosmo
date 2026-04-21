@@ -107,15 +107,16 @@ type ParamsMap<
       : never;
 };
 
-export const use = <StateT = DefaultState, ContextT = DefaultContext>(
+export const use = <StateT = DefaultState>(
   middleware:
-    | ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
-    | Array<ParameterizedMiddleware<Record<string, string>, StateT, ContextT>>,
+    | ParameterizedMiddleware<Record<string, string>, StateT>
+    | Array<ParameterizedMiddleware<Record<string, string>, StateT>>,
   options?: UseOptions,
 ) => {
-  return createUse<
-    ParameterizedMiddleware<Record<string, string>, StateT, ContextT>
-  >(middleware, options);
+  return createUse<ParameterizedMiddleware<Record<string, string>, StateT>>(
+    middleware,
+    options,
+  );
 };
 
 export const defineRoute: <
@@ -126,14 +127,14 @@ export const defineRoute: <
 >(
   factory: DefineRouteFactory<
     ParamsMap<RouteMap[R]["paramsMappings"], ParamsD>,
-    StateT,
+    StateT & RouteMap[R]["cascadingState"],
     ContextT
   >,
 ) => Array<
   RouteDefinitionItem<
     ParameterizedMiddleware<
       ParamsMap<RouteMap[R]["paramsMappings"], ParamsD>,
-      StateT,
+      StateT & RouteMap[R]["cascadingState"],
       ContextT
     >
   >

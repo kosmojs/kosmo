@@ -336,7 +336,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
             ...validationSchemas[target]?.[ctx.method],
           };
           if (schema.validate && schema.runtimeValidation !== false) {
-            schema.validate(await loadData(ctx));
+            schema.validate(await loadData(ctx as never));
           }
           return next();
         },

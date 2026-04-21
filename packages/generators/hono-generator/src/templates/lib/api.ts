@@ -68,17 +68,16 @@ export type ParameterizedMiddleware<
   next: Next,
 ) => Promise<unknown> | unknown;
 
-export const use = <VariablesT = DefaultVariables, BindingsT = DefaultBindings>(
+export const use = <VariablesT = DefaultVariables>(
   middleware:
-    | ParameterizedMiddleware<Record<string, string>, VariablesT, BindingsT>
-    | Array<
-        ParameterizedMiddleware<Record<string, string>, VariablesT, BindingsT>
-      >,
+    | ParameterizedMiddleware<Record<string, string>, VariablesT>
+    | Array<ParameterizedMiddleware<Record<string, string>, VariablesT>>,
   options?: UseOptions,
 ) => {
-  return createUse<
-    ParameterizedMiddleware<Record<string, string>, VariablesT, BindingsT>
-  >(middleware, options);
+  return createUse<ParameterizedMiddleware<Record<string, string>, VariablesT>>(
+    middleware,
+    options,
+  );
 };
 
 export type RouteHandler<
@@ -149,14 +148,14 @@ export const defineRoute: <
 >(
   factory: DefineRouteFactory<
     ParamsMap<RouteMap[R]["paramsMappings"], ParamsD>,
-    VariablesT,
+    VariablesT & RouteMap[R]["cascadingState"],
     BindingsT
   >,
 ) => Array<
   RouteDefinitionItem<
     ParameterizedMiddleware<
       ParamsMap<RouteMap[R]["paramsMappings"], ParamsD>,
-      VariablesT,
+      VariablesT & RouteMap[R]["cascadingState"],
       BindingsT
     >
   >

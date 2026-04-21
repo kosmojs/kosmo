@@ -2,7 +2,7 @@ import { join } from "node:path";
 
 import crc from "crc/crc32";
 
-import type { ApiRoute, ResolvedEntry } from "@kosmojs/core";
+import type { ApiRoute, ResolvedEntry, RouteEntry } from "@kosmojs/core";
 import {
   createHonoPattern,
   createTemplateResolver,
@@ -20,6 +20,16 @@ export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
     const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
+    const cascadingState = (ids: Array<string>): string => {
+      if (ids.length === 0) {
+        return "{}";
+      }
+      if (ids.length === 1) {
+        return ids[0];
+      }
+      return `Override<${ids[0]}, ${cascadingState(ids.slice(1))}>`;
+    };
+
     const { renderToFile: deployLibFile } = renderFactory({
       helpers: {
         ...createImportHelpers({ origin: "lib" }),
@@ -32,6 +42,15 @@ export default defineGeneratorFactory<Options>(
             return `["${name}", unknown, ${kind === "required" ? "true" : "false"}]`;
           });
           return `[${elements.join(", ")}]`;
+        },
+        cascadingState({
+          cascadingMiddleware,
+        }: ApiRoute & {
+          cascadingMiddleware: Array<RouteEntry>;
+        }) {
+          return cascadingState(
+            cascadingMiddleware.map(({ id }) => `ExtendT${id}`),
+          );
         },
       },
     });
@@ -69,6 +88,10 @@ export default defineGeneratorFactory<Options>(
     };
 
     const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
+      const cascadingMiddleware = entries.flatMap(({ kind, entry }) => {
+        return kind === "apiUse" ? [entry] : [];
+      });
+
       const routesWithAliases = entries
         .flatMap(({ kind, entry }) => {
           if (kind !== "apiRoute") {
@@ -83,18 +106,12 @@ export default defineGeneratorFactory<Options>(
               return acc;
             }, []);
 
-          const cascadingMiddleware = entries.flatMap((e) => {
-            return e.kind === "apiUse"
-              ? pathVariations.some((path) => e.entry.name === path)
-                ? [e.entry]
-                : []
-              : [];
-          });
-
           const baseRoute = {
             ...entry,
             path: entry.honoPattern,
-            cascadingMiddleware,
+            cascadingMiddleware: cascadingMiddleware.flatMap((e) => {
+              return pathVariations.some((path) => e.name === path) ? [e] : [];
+            }),
           };
 
           const aliases: Array<
@@ -121,10 +138,6 @@ export default defineGeneratorFactory<Options>(
           return [baseRoute, ...aliases];
         })
         .sort(sortRoutes);
-
-      const cascadingMiddleware = entries.flatMap(({ kind, entry }) => {
-        return kind === "apiUse" ? [entry] : [];
-      });
 
       for (const [file, template] of [
         ["@api/routes.ts", templates.libApiRoutes],
