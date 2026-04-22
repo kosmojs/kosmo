@@ -5,9 +5,6 @@
   "cacheVersion": "1",
   "author": "Slee Woo",
   "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
   "files": [
     "pkg/*"
   ],
