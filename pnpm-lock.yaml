@@ -101,6 +101,9 @@ importers:
 
   packages/core/cli:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../core
       '@kosmojs/dev':
         specifier: workspace:^
         version: link:../dev
@@ -117,9 +120,6 @@ importers:
         specifier: ^0.2.16
         version: 0.2.16
     devDependencies:
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../core
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -200,6 +200,9 @@ importers:
 
   packages/core/dev:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../core
       '@kosmojs/core-generator':
         specifier: workspace:^
         version: link:../../generators/core-generator
@@ -242,13 +245,12 @@ importers:
       crc:
         specifier: ^4.3.2
         version: 4.3.2
-    devDependencies:
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../core
 
   packages/core/lib:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../core
       '@topcli/spinner':
         specifier: ^4.2.1
         version: 4.2.1
@@ -277,9 +279,6 @@ importers:
         specifier: ^28.0.0
         version: 28.0.0
     devDependencies:
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../core
       '@types/mime-types':
         specifier: ^3.0.1
         version: 3.0.1
@@ -289,26 +288,26 @@ importers:
 
   packages/generators/core-generator:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../../core/core
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
     devDependencies:
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../../core/core
       path-to-regexp:
         specifier: ^8.4.2
         version: 8.4.2
 
   packages/generators/fetch-generator:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../../core/core
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
     devDependencies:
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../../core/core
       '@kosmojs/core-generator':
         specifier: workspace:^
         version: link:../core-generator
@@ -339,6 +338,9 @@ importers:
 
   packages/generators/hono-generator:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../../core/core
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
@@ -349,9 +351,6 @@ importers:
       '@hono/node-server':
         specifier: ^2.0.0
         version: 2.0.0(hono@4.12.14)
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../../core/core
       hono:
         specifier: ^4.12.14
         version: 4.12.14
@@ -361,6 +360,9 @@ importers:
 
   packages/generators/koa-generator:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../../core/core
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
@@ -371,9 +373,6 @@ importers:
       '@koa/router':
         specifier: ^15.4.0
         version: 15.4.0(koa@3.2.0)
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../../core/core
       '@types/formidable':
         specifier: ^3.5.1
         version: 3.5.1
@@ -407,6 +406,9 @@ importers:
 
   packages/generators/mdx-generator:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../../core/core
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
@@ -414,9 +416,6 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1(rollup@4.60.2)
     devDependencies:
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../../core/core
       '@mdx-js/mdx':
         specifier: ^3.1.1
         version: 3.1.1
@@ -441,6 +440,9 @@ importers:
 
   packages/generators/openapi-generator:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../../core/core
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
@@ -457,9 +459,6 @@ importers:
         specifier: ^2.8.3
         version: 2.8.3
     devDependencies:
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../../core/core
       '@kosmojs/core-generator':
         specifier: workspace:^
         version: link:../core-generator
@@ -475,13 +474,13 @@ importers:
 
   packages/generators/react-generator:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../../core/core
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
     devDependencies:
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../../core/core
       '@types/react':
         specifier: ^19.2.14
         version: 19.2.14
@@ -506,13 +505,13 @@ importers:
 
   packages/generators/solid-generator:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../../core/core
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
     devDependencies:
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../../core/core
       '@solidjs/router':
         specifier: ^0.16.1
         version: 0.16.1(solid-js@1.9.12)
@@ -528,16 +527,18 @@ importers:
 
   packages/generators/ssg-generator:
     dependencies:
-      '@kosmojs/lib':
-        specifier: workspace:^
-        version: link:../../core/lib
-    devDependencies:
       '@kosmojs/core':
         specifier: workspace:^
         version: link:../../core/core
+      '@kosmojs/lib':
+        specifier: workspace:^
+        version: link:../../core/lib
 
   packages/generators/ssr-generator:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../../core/core
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
@@ -545,9 +546,6 @@ importers:
       '@hono/node-server':
         specifier: ^2.0.0
         version: 2.0.0(hono@4.12.14)
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../../core/core
       hono:
         specifier: ^4.12.14
         version: 4.12.14
@@ -557,13 +555,13 @@ importers:
 
   packages/generators/typebox-generator:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../../core/core
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
     devDependencies:
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../../core/core
       '@kosmojs/core-generator':
         specifier: workspace:^
         version: link:../core-generator
@@ -576,13 +574,13 @@ importers:
 
   packages/generators/vue-generator:
     dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../../core/core
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../core/lib
     devDependencies:
-      '@kosmojs/core':
-        specifier: workspace:^
-        version: link:../../core/core
       '@vitejs/plugin-vue':
         specifier: ^6.0.6
         version: 6.0.6(vite@8.0.9(@types/node@25.6.0)(esbuild@0.28.0)(jiti@2.6.1)(yaml@2.8.3))(vue@3.5.32(typescript@6.0.3))

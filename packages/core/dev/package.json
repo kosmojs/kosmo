@@ -24,6 +24,7 @@
     "test": "vitest --root ../../.. --project core/dev"
   },
   "dependencies": {
+    "@kosmojs/core": "workspace:^",
     "@kosmojs/core-generator": "workspace:^",
     "@kosmojs/fetch-generator": "workspace:^",
     "@kosmojs/hono-generator": "workspace:^",
@@ -38,8 +39,5 @@
     "@kosmojs/typebox-generator": "workspace:^",
     "@kosmojs/vue-generator": "workspace:^",
     "crc": "^4.3.2"
-  },
-  "devDependencies": {
-    "@kosmojs/core": "workspace:^"
   }
 }

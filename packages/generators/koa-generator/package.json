@@ -25,12 +25,12 @@
     "test": "vitest --root ../../.. --project generators/koa-generator"
   },
   "dependencies": {
+    "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^",
     "crc": "^4.3.2"
   },
   "devDependencies": {
     "@koa/router": "^15.4.0",
-    "@kosmojs/core": "workspace:^",
     "@types/formidable": "^3.5.1",
     "@types/koa": "^3.0.2",
     "@types/koa-compose": "^3.2.9",

@@ -21,10 +21,10 @@
     "test": "vitest --root ../../.. --project generators/fetch-generator"
   },
   "dependencies": {
+    "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^"
   },
   "devDependencies": {
-    "@kosmojs/core": "workspace:^",
     "@kosmojs/core-generator": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
     "@kosmojs/typebox-generator": "workspace:^",

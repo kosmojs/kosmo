@@ -20,9 +20,7 @@
     "build": "esbuilder src/index.ts"
   },
   "dependencies": {
+    "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^"
-  },
-  "devDependencies": {
-    "@kosmojs/core": "workspace:^"
   }
 }

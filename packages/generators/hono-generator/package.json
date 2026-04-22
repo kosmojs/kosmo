@@ -21,12 +21,12 @@
     "test": "vitest --root ../../.. --project generators/hono-generator"
   },
   "dependencies": {
+    "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^",
     "crc": "^4.3.2"
   },
   "devDependencies": {
     "@hono/node-server": "^2.0.0",
-    "@kosmojs/core": "workspace:^",
     "hono": "^4.12.14",
     "path-to-regexp": "^8.4.2"
   }
