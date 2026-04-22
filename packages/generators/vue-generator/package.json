@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@kosmojs/core": "workspace:^",
-    "@vitejs/plugin-vue": "^6.0.5",
+    "@vitejs/plugin-vue": "^6.0.6",
     "path-to-regexp": "^8.4.2",
     "vue": "^3.5.32",
     "vue-router": "^5.0.4"

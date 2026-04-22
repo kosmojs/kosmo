@@ -23,9 +23,9 @@
     "@kosmojs/lib": "workspace:^"
   },
   "devDependencies": {
-    "@hono/node-server": "^1.19.13",
+    "@hono/node-server": "^2.0.0",
     "@kosmojs/core": "workspace:^",
-    "hono": "^4.12.12",
+    "hono": "^4.12.14",
     "tinyglobby": "^0.2.16"
   }
 }

@@ -42,12 +42,12 @@
     "string-width": "^8.2.0"
   },
   "devDependencies": {
-    "@types/formidable": "^3.5.0",
+    "@types/formidable": "^3.5.1",
     "@types/koa": "^3.0.2",
     "@types/koa-compose": "^3.2.9",
     "@types/picomatch": "^4.0.3",
     "@types/qs": "^6.15.0",
-    "hono": "^4.12.12",
+    "hono": "^4.12.14",
     "koa-compose": "^4.1.0",
     "path-to-regexp": "^8.4.2",
     "tfusion": "^0.0.23"

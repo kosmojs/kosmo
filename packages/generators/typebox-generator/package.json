@@ -29,6 +29,6 @@
     "@kosmojs/core": "workspace:^",
     "@kosmojs/core-generator": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
-    "typebox": "^1.1.10"
+    "typebox": "^1.1.31"
   }
 }
