@@ -337,18 +337,26 @@ export const setupTestProject = async (opt?: {
         return;
       }
 
+      const { npm_config_minimum_release_age, ...env } = process.env;
+
       for (const args of [
-        ["--dir", projectRoot, "--store-dir", pnpmDir, "install"],
-        ["--dir", projectRoot, "build"],
+        //
+        ["--store-dir", pnpmDir, "install"],
+        ["build"],
       ]) {
         await new Promise((resolve, reject) => {
-          execFile("pnpm", args, (error, stdout, stderr) => {
-            console.log(stdout);
-            console.error(stderr);
-            error //
-              ? reject(error)
-              : resolve(true);
-          });
+          execFile(
+            "pnpm",
+            args,
+            { cwd: projectRoot, env },
+            (error, stdout, stderr) => {
+              console.log(stdout);
+              console.error(stderr);
+              error //
+                ? reject(error)
+                : resolve(true);
+            },
+          );
         });
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
