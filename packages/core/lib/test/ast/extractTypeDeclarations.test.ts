@@ -7,7 +7,11 @@ import { astFactory } from "@src/ast";
 describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
   const { createProject, extractTypeDeclarations } = astFactory();
 
-  const project = createProject();
+  const project = createProject({
+    compilerOptions: {
+      types: ["@types/node"],
+    },
+  });
 
   describe("imports", () => {
     test("typeOnly imports", ({ task }) => {
