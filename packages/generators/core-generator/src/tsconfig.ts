@@ -5,7 +5,7 @@ export const generateTsconfig = (sourceFolder?: string) => {
   const rootDir = "${configDir}";
 
   const compilerOptions = {
-    types: ["@types/node", "@types/deno", "@types/bun"],
+    types: ["@types/node"],
     moduleResolution: "bundler",
     module: "ESNext",
     target: "ESNext",
