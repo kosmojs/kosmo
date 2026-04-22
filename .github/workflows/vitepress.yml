@@ -28,6 +28,8 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v5
+        with:
+          version: 10.33.0
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
@@ -54,4 +56,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
