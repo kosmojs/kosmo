@@ -10,9 +10,11 @@ const setupFactory = (name, { alias, ...setup } = {}) => {
     extends: true,
     test: {
       name,
-      root: resolve(import.meta.dirname, `packages/${name}`),
+      root: name.startsWith("integration:")
+        ? "."
+        : resolve(import.meta.dirname, `packages/${name}`),
       include: ["test/**/*.test.ts"],
-      hookTimeout: 90_000,
+      hookTimeout: name.startsWith("integration:") ? 180_000 : 60_000,
       alias: {
         ...alias,
         "@src": "src",
@@ -58,7 +60,7 @@ export default defineConfig({
       }),
 
       setupFactory("generators/openapi-generator", {
-        testTimeout: 30_000,
+        testTimeout: 60_000,
         globalSetup: ["test/setup.global.ts"],
       }),
 
@@ -76,12 +78,12 @@ export default defineConfig({
       setupFactory("generators/vue-generator"),
 
       setupFactory("integration:api", {
-        root: ".",
+        globalSetup: ["test/integration/setup.global.ts"],
         include: ["test/integration/{koa,hono}/*.test.ts"],
       }),
 
       setupFactory("integration:csr", {
-        root: ".",
+        globalSetup: ["test/integration/setup.global.ts"],
         include: ["test/integration/{react,solid,vue,mdx}/*.test.ts"],
         fileParallelism: false,
         provide: {
@@ -90,7 +92,7 @@ export default defineConfig({
       }),
 
       setupFactory("integration:ssr", {
-        root: ".",
+        globalSetup: ["test/integration/setup.global.ts"],
         include: ["test/integration/{react,solid,vue,mdx}/*.test.ts"],
         provide: {
           SSR: "true",

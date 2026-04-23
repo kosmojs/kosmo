@@ -20,7 +20,8 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "test": "vitest run",
+    "test:unit": "vitest run --project=core/* --project=generators/*",
+    "test:integration": "vitest run --project=integration:*",
     "prepub": "./scripts/publish/prepare",
     "pub": "changeset publish",
     "pub:tags": "git push --follow-tags"

@@ -7,7 +7,7 @@
   "files": [
     "pkg/*"
   ],
-  "bin": "./pkg/cli.js",
+  "bin": { "create-kosmo": "./pkg/cli.js" },
   "scripts": {
     "build": "esbuilder src/cli.ts",
     "postbuild": "chmod +x pkg/cli.js"

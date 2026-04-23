@@ -1,5 +1,4 @@
-import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import net from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
@@ -12,12 +11,7 @@ import { compile } from "path-to-regexp";
 import { chromium } from "playwright";
 import { inject } from "vitest";
 
-import {
-  type BACKEND_FRAMEWORKS,
-  createProject,
-  createSourceFolder,
-  type FRAMEWORKS,
-} from "@kosmojs/cli";
+import type { BACKEND_FRAMEWORKS, FRAMEWORKS } from "@kosmojs/cli";
 import type {
   FolderConfig,
   ProjectSettings,
@@ -30,10 +24,8 @@ import {
   pathTokensFactory,
 } from "@kosmojs/lib";
 
+import { exec, pnpmDir } from ".";
 import type { RouteName } from "./routes";
-
-const pkgsDir = resolve(import.meta.dirname, "../../packages");
-const pnpmDir = resolve(tmpdir(), ".kosmojs/pnpm-store");
 
 const csr = inject("CSR");
 const ssr = inject("SSR");
@@ -51,11 +43,11 @@ const apiClient = got.extend({
   },
 });
 
-const PORT_RANGE = [40_600, 40_800];
+const PORT_RANGE = [40_000, 60_000];
+
+const { npm_config_minimum_release_age, ...env } = process.env;
 
 export * from "./routes";
-
-export const sourceFolderName = "test";
 
 export const setupTestProject = async (opt?: {
   framework?: keyof typeof FRAMEWORKS;
@@ -73,10 +65,12 @@ export const setupTestProject = async (opt?: {
   const baseURL = `http://localhost:${devPort}`;
 
   const tempDir = skip ? "" : await mkdtemp(resolve(tmpdir(), ".kosmojs-"));
-  const projectRoot = resolve(tempDir, "app");
+
+  const projectName = "app";
+  const projectRoot = resolve(tempDir, projectName);
 
   const sourceFolder: SourceFolder = {
-    name: sourceFolderName,
+    name: "test",
     config: {},
     root: projectRoot,
     baseurl: "/",
@@ -211,6 +205,14 @@ export const setupTestProject = async (opt?: {
     return teardown;
   };
 
+  const installDependencies = async () => {
+    await exec(
+      "pnpm",
+      ["--store-dir", pnpmDir, "--no-frozen-lockfile", "install"],
+      { cwd: projectRoot, env },
+    );
+  };
+
   const bootstrapProject = async () => {
     if (skip) {
       return;
@@ -218,32 +220,90 @@ export const setupTestProject = async (opt?: {
 
     await cleanup();
 
-    await createProject(
-      tempDir,
-      { name: "app", ...projectSettings },
-      {
-        dependencies: {
-          "@kosmojs/core": resolve(pkgsDir, "core/core"),
-        },
-        devDependencies: {
-          "@kosmojs/cli": resolve(pkgsDir, "core/cli"),
-          "@kosmojs/dev": resolve(pkgsDir, "core/dev"),
-        },
-      },
+    await mkdir(tempDir, { recursive: true });
+
+    const packages: Array<{
+      name: string;
+      version: string;
+      filename: string;
+      files: Array<{ path: string }>;
+    }> = await import(`${pnpmDir}/packages.json`, {
+      with: { type: "json" },
+    }).then((e) => e.default);
+
+    await exec(
+      "pnpm",
+      [
+        "dlx",
+        ...packages.flatMap((e) => ["--package", e.filename]),
+        "create-kosmo",
+        "--name",
+        projectName,
+      ],
+      { cwd: tempDir, env },
     );
 
-    await createSourceFolder(
-      projectRoot,
-      {
-        name: sourceFolder.name,
-        ...(backend ? { backend } : {}),
-        ...(framework ? { framework } : {}),
-        ...(ssr ? { ssr: true } : {}),
-      },
-      {
-        ...(frameworkOptions ? { frameworkOptions } : {}),
-      },
+    const packageJsonFile = resolve(projectRoot, "package.json");
+
+    const packageJson = JSON.parse(await readFile(packageJsonFile, "utf8"));
+
+    packageJson.devPort = devPort;
+
+    for (const key of ["dependencies", "devDependencies"]) {
+      for (const pkg of Object.keys(packageJson[key]) as Array<string>) {
+        if (pkg.startsWith("@kosmojs/")) {
+          packageJson[key][pkg] = resolve(
+            pnpmDir,
+            `${pkg.replace("@kosmojs/", "kosmojs-")}.tgz`,
+          );
+        }
+      }
+    }
+
+    await writeFile(
+      packageJsonFile,
+      JSON.stringify(packageJson, undefined, 2),
+      "utf8",
     );
+
+    await installDependencies();
+
+    await exec(
+      "pnpm",
+      [
+        "+folder",
+        "--name",
+        sourceFolder.name,
+        "--base",
+        "/",
+        ...(framework ? ["--framework", framework] : []),
+        ...(backend ? ["--backend", backend] : []),
+        ...(ssr ? ["--ssr"] : []),
+      ],
+      { cwd: projectRoot, env },
+    );
+
+    if (frameworkOptions) {
+      const cli = await import(`${projectRoot}/node_modules/@kosmojs/cli`);
+
+      const [kosmoConfig] = cli.createKosmoConfig(
+        {
+          name: sourceFolder.name,
+          ...(backend ? { backend } : {}),
+          ...(framework ? { framework } : {}),
+          ...(ssr ? { ssr: true } : {}),
+        },
+        {
+          ...(frameworkOptions
+            ? { [framework as never]: frameworkOptions }
+            : {}),
+        },
+      );
+
+      await writeFile(createPath.src("kosmo.config.ts"), kosmoConfig, "utf8");
+    }
+
+    await installDependencies();
   };
 
   const defaultContentPatternFor = (route: string) => {
@@ -337,32 +397,13 @@ export const setupTestProject = async (opt?: {
         return;
       }
 
-      const { npm_config_minimum_release_age, ...env } = process.env;
+      await installDependencies();
 
-      for (const args of [
-        //
-        ["--store-dir", pnpmDir, "install"],
-        ["build"],
-      ]) {
-        await new Promise((resolve, reject) => {
-          execFile(
-            "pnpm",
-            args,
-            { cwd: projectRoot, env },
-            (error, stdout, stderr) => {
-              console.log(stdout);
-              console.error(stderr);
-              error //
-                ? reject(error)
-                : resolve(true);
-            },
-          );
-        });
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
+      await exec("pnpm", ["build"], { cwd: projectRoot, env });
 
       closeServer = await createDevServer();
-      await new Promise((resolve) => setTimeout(resolve, 1_000));
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       if (browser) {
         // Initial warmup navigation
