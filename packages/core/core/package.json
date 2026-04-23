@@ -50,6 +50,6 @@
     "hono": "^4.12.14",
     "koa-compose": "^4.1.0",
     "path-to-regexp": "^8.4.2",
-    "tfusion": "^0.0.23"
+    "tfusion": "^0.0.24"
   }
 }
