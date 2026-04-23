@@ -1,13 +1,15 @@
 {
   "type": "module",
   "name": "create-kosmo",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [
     "pkg/*"
   ],
-  "bin": { "create-kosmo": "./pkg/cli.js" },
+  "bin": {
+    "create-kosmo": "./pkg/cli.js"
+  },
   "scripts": {
     "build": "esbuilder src/cli.ts",
     "postbuild": "chmod +x pkg/cli.js"
