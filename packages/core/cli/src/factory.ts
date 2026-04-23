@@ -9,7 +9,7 @@ import { resolve } from "node:path";
  * to keep versions fully synchronized across the project.
  * */
 import self from "@kosmojs/cli/package.json" with { type: "json" };
-import { defaults, type GeneratorBase } from "@kosmojs/core";
+import { defaults, type GeneratorMeta } from "@kosmojs/core";
 import {
   fetchGenerator,
   honoGenerator,
@@ -22,33 +22,23 @@ import {
   typeboxGenerator,
   vueGenerator,
 } from "@kosmojs/dev";
-import { pathExists, renderToFile } from "@kosmojs/lib";
+import { pathExists, render, renderToFile } from "@kosmojs/lib";
 
 import {
+  type BACKEND_FRAMEWORKS,
   copyFiles,
   DEFAULT_BACKEND,
   DEFAULT_BASE,
   DEFAULT_DIST,
   DEFAULT_FRAMEWORK,
   DEFAULT_PORT,
+  type FRAMEWORKS,
   type Project,
   type SourceFolder,
 } from "./base";
 import * as templates from "./templates";
 
 const TPL_DIR = resolve(import.meta.dirname, "templates");
-
-type Plugin = {
-  importDeclaration: string;
-  importName: string;
-  options: string;
-};
-
-type Generator = {
-  name: string;
-  options: string;
-  base: GeneratorBase;
-};
 
 const SELF_VERSION = `^${self.version}`;
 
@@ -111,11 +101,6 @@ export const createProject = async (
 export const createSourceFolder = async (
   projectRoot: string,
   folder: SourceFolder,
-  opt?: {
-    frameworkOptions?: Record<string, unknown>;
-    dependencies?: Record<string, string>;
-    devDependencies?: Record<string, string>;
-  },
 ) => {
   const folderPath = resolve(projectRoot, defaults.srcDir, folder.name);
 
@@ -138,12 +123,94 @@ export const createSourceFolder = async (
 
   const { base = DEFAULT_BASE } = folder;
 
+  const framework = folder.framework || DEFAULT_FRAMEWORK;
+
+  const [kosmoConfig, { generators }] = createKosmoConfig(folder);
+
+  await writeFile(resolve(folderPath, "kosmo.config.ts"), kosmoConfig, "utf8");
+
+  await renderToFile(resolve(folderPath, "config/index.ts"), templates.config, {
+    base,
+  });
+
+  for (const file of [
+    // stub files for initial build to pass;
+    // generators will fill them with appropriate content.
+    `${defaults.apiDir}/index/index.ts`,
+    ...(["solid", "react"].includes(framework as never)
+      ? [
+          `${defaults.pagesDir}/index/index.tsx`,
+          `${defaults.entryDir}/client.tsx`,
+        ]
+      : []),
+    ...(["vue"].includes(framework as never)
+      ? [
+          `${defaults.pagesDir}/index/index.vue`,
+          `${defaults.entryDir}/client.ts`,
+        ]
+      : []),
+    ...(["mdx"].includes(framework as never)
+      ? [
+          `${defaults.pagesDir}/index/index.mdx`,
+          `${defaults.entryDir}/client.tsx`,
+        ]
+      : []),
+  ] as const) {
+    await renderToFile(resolve(folderPath, file), "", {});
+  }
+
+  await writeFile(
+    resolve(folderPath, "tsconfig.json"),
+    JSON.stringify(
+      { extends: `../../${defaults.libDir}/${folder.name}/tsconfig.base.json` },
+      undefined,
+      2,
+    ),
+    "utf8",
+  );
+
+  for (const generator of generators) {
+    for (const key of ["dependencies", "devDependencies"] as const) {
+      packageJson[key] = { ...packageJson[key], ...generator.meta[key] };
+    }
+  }
+
+  await writeFile(packageFile, JSON.stringify(packageJson, undefined, 2));
+
+  return folder;
+};
+
+export const createKosmoConfig = (
+  folder: SourceFolder,
+  options?: Record<
+    keyof typeof FRAMEWORKS | keyof typeof BACKEND_FRAMEWORKS,
+    Record<string, unknown>
+  >,
+) => {
   const imports: Array<string> = [];
-  const plugins: Array<Plugin> = [];
-  const generators: Array<Generator> = [];
+
+  const plugins: Array<{
+    importDeclaration: string;
+    importName: string;
+    options: string;
+  }> = [];
+
+  const generators: Array<{
+    name: string;
+    options: string;
+    meta: GeneratorMeta;
+  }> = [];
 
   const framework = folder.framework || DEFAULT_FRAMEWORK;
   const backendFramework = folder.backend || DEFAULT_BACKEND;
+
+  const generatorOptions = options?.[(framework as never) || backendFramework]
+    ? JSON.stringify(
+        options[(framework as never) || backendFramework],
+        undefined,
+        2,
+      )
+    : "";
 
   if (framework === "solid") {
     plugins.push({
@@ -154,10 +221,8 @@ export const createSourceFolder = async (
 
     generators.push({
       name: "solidGenerator",
-      options: opt?.frameworkOptions
-        ? JSON.stringify(opt.frameworkOptions, undefined, 2)
-        : "",
-      base: solidGenerator(),
+      options: generatorOptions,
+      meta: solidGenerator().meta,
     });
   } else if (framework === "react") {
     plugins.push({
@@ -168,10 +233,8 @@ export const createSourceFolder = async (
 
     generators.push({
       name: "reactGenerator",
-      options: opt?.frameworkOptions
-        ? JSON.stringify(opt.frameworkOptions, undefined, 2)
-        : "",
-      base: reactGenerator(),
+      options: generatorOptions,
+      meta: reactGenerator().meta,
     });
   } else if (framework === "vue") {
     plugins.push({
@@ -182,10 +245,8 @@ export const createSourceFolder = async (
 
     generators.push({
       name: "vueGenerator",
-      options: opt?.frameworkOptions
-        ? JSON.stringify(opt.frameworkOptions, undefined, 2)
-        : "",
-      base: vueGenerator(),
+      options: generatorOptions,
+      meta: vueGenerator().meta,
     });
   } else if (framework === "mdx") {
     imports.push(
@@ -197,24 +258,24 @@ export const createSourceFolder = async (
 
     generators.push({
       name: "mdxGenerator",
-      options: opt?.frameworkOptions
-        ? JSON.stringify(opt.frameworkOptions, undefined, 2)
+      options: generatorOptions.length
+        ? generatorOptions
         : `{ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }`,
-      base: mdxGenerator(),
+      meta: mdxGenerator().meta,
     });
   }
 
   if (backendFramework === "koa") {
     generators.push({
       name: "koaGenerator",
-      options: "",
-      base: koaGenerator(),
+      options: generatorOptions,
+      meta: koaGenerator().meta,
     });
   } else if (backendFramework === "hono") {
     generators.push({
       name: "honoGenerator",
-      options: "",
-      base: honoGenerator(),
+      options: generatorOptions,
+      meta: honoGenerator().meta,
     });
   }
 
@@ -222,7 +283,7 @@ export const createSourceFolder = async (
     generators.push({
       name: "ssrGenerator",
       options: "",
-      base: ssrGenerator(),
+      meta: ssrGenerator().meta,
     });
   }
 
@@ -230,29 +291,28 @@ export const createSourceFolder = async (
     generators.push({
       name: "ssgGenerator",
       options: "",
-      base: ssgGenerator(),
+      meta: ssgGenerator().meta,
     });
   }
 
-  if (generators.some(({ base }) => base.meta.slot === "api")) {
+  if (generators.some(({ meta }) => meta.slot === "api")) {
     generators.push(
       ...[
         {
           name: "fetchGenerator",
           options: "",
-          base: fetchGenerator(),
+          meta: fetchGenerator().meta,
         },
         {
           name: "typeboxGenerator",
           options: "",
-          base: typeboxGenerator(),
+          meta: typeboxGenerator().meta,
         },
       ],
     );
   }
 
   const context = {
-    base,
     plugins,
     imports,
     generators,
@@ -263,51 +323,5 @@ export const createSourceFolder = async (
     ],
   };
 
-  for (const [file, template] of [
-    ["config/index.ts", templates.config],
-    ["kosmo.config.ts", templates.kosmoConfig],
-    // stub files for initial build to pass;
-    // generators will fill them with appropriate content.
-    [`${defaults.apiDir}/index/index.ts`, ""],
-    ...(["solid", "react"].includes(framework as never)
-      ? [
-          [`${defaults.pagesDir}/index/index.tsx`, ""],
-          [`${defaults.entryDir}/client.tsx`, ""],
-        ]
-      : []),
-    ...(["vue"].includes(framework as never)
-      ? [
-          [`${defaults.pagesDir}/index/index.vue`, ""],
-          [`${defaults.entryDir}/client.ts`, ""],
-        ]
-      : []),
-  ]) {
-    await renderToFile(resolve(folderPath, file), template, context);
-  }
-
-  await writeFile(
-    resolve(folderPath, "tsconfig.json"),
-    JSON.stringify(
-      {
-        extends: `../../${defaults.libDir}/${folder.name}/tsconfig.base.json`,
-      },
-      undefined,
-      2,
-    ),
-    "utf8",
-  );
-
-  for (const generator of generators) {
-    for (const key of ["dependencies", "devDependencies"] as const) {
-      packageJson[key] = { ...packageJson[key], ...generator.base.meta[key] };
-    }
-  }
-
-  for (const key of ["dependencies", "devDependencies"] as const) {
-    packageJson[key] = { ...packageJson[key], ...opt?.[key] };
-  }
-
-  await writeFile(packageFile, JSON.stringify(packageJson, undefined, 2));
-
-  return folder;
+  return [render(templates.kosmoConfig, context), { generators }] as const;
 };
