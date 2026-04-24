@@ -49,7 +49,7 @@ export const messageFactory = (logger?: (...lines: Array<unknown>) => void) => {
           "✨ Well Done! Your new KosmoJS app is ready",
           "💫 Excellent! Your new KosmoJS project is all set",
           "🌟 Nice work! Your KosmoJS setup is ready to perform",
-          "🚀 Success! Your KosmoJS project is ready for exploration",
+          "🏆 Success! Your KosmoJS project is ready for exploration",
           "✅ All Set! Your KosmoJS project is configured and ready",
         ]),
         "",
