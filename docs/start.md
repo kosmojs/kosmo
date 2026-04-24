@@ -7,9 +7,9 @@ head:
       content: vite setup, kosmojs quickstart, create kosmo, typescript api
 ---
 
-Zero to a working route in under five minutes.
+Zero to a working route in under five minutes. [StackBlitz Playground](https://stackblitz.com/edit/stackblitz-starters-jlxz7lzc?file=README.md)
 
-[StackBlitz Playground](https://stackblitz.com/edit/stackblitz-starters-jlxz7lzc?file=README.md)
+[![asciicast](https://asciinema.org/a/968086.svg)](https://asciinema.org/a/968086)
 
 ## 🚀 Create & install
 
