@@ -38,7 +38,7 @@ export const messageFactory = (logger?: (...lines: Array<unknown>) => void) => {
     preamble() {
       return messageHandler([
         "",
-        greetText(["🚀 Great! Let's create a new KosmoJS project"]),
+        greetText(["Great! Let's create a new KosmoJS project 🚀"]),
         "",
       ]);
     },

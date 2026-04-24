@@ -60,6 +60,8 @@ let { name } = values;
 const messages = messageFactory(name || values.quiet ? () => {} : console.log);
 
 if (!name) {
+  messages.preamble();
+
   const onState: PromptObject["onState"] = (state) => {
     if (state.aborted) {
       process.nextTick(() => process.exit(1));
@@ -95,8 +97,6 @@ try {
   const project: Project = {
     name: name as string,
   };
-
-  messages.preamble();
 
   await createProject(cwd, project);
 
