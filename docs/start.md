@@ -9,6 +9,8 @@ head:
 
 Zero to a working route in under five minutes.
 
+[StackBlitz Playground](https://stackblitz.com/edit/stackblitz-starters-jlxz7lzc?file=README.md)
+
 ## 🚀 Create & install
 
 ::: code-group

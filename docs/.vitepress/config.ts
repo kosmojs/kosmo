@@ -315,6 +315,20 @@ export default defineConfig({
           text: "📋 OpenAPI",
           link: "/openapi",
         },
+        {
+          text: "LLMs",
+          collapsed: true,
+          items: [
+            {
+              text: "Docs List",
+              link: "/llms.txt",
+            },
+            {
+              text: "Full Docs",
+              link: "/llms-full.txt",
+            },
+          ],
+        },
       ],
     },
 
