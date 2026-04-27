@@ -1,0 +1,5 @@
+import type { App } from "vue";
+import type { RouteRecordRaw } from "vue-router";
+import { createRouterFactory } from "@kosmojs/core/generators";
+
+export default createRouterFactory<RouteRecordRaw, App>();

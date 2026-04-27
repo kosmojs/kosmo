@@ -1,0 +1,38 @@
+{
+  "type": "module",
+  "name": "@kosmojs/lib",
+  "version": "0.1.0",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "files": [
+    "pkg/*"
+  ],
+  "imports": {
+    "#templates/*": "./src/templates/*"
+  },
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    }
+  },
+  "scripts": {
+    "build": "wsbuild src/index.ts",
+    "test": "vitest --root ../.. --project packages/lib"
+  },
+  "dependencies": {
+    "@topcli/spinner": "^4.2.1",
+    "crc": "^4.3.2",
+    "handlebars": "^4.7.9",
+    "mime-types": "^3.0.2",
+    "path-to-regexp": "^8.4.2",
+    "picomatch": "^4.0.4",
+    "tfusion": "^0.0.24",
+    "tinyglobby": "^0.2.16",
+    "ts-morph": "^28.0.0"
+  },
+  "devDependencies": {
+    "@types/mime-types": "^3.0.1",
+    "@types/picomatch": "^4.0.3"
+  }
+}

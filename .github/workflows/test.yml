@@ -32,6 +32,6 @@ jobs:
 
       - run: pnpm install
       - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm -r build
+      - run: pnpm build
       - run: pnpm test:unit
       - run: pnpm test:integration

@@ -1,0 +1,23 @@
+{
+  "type": "module",
+  "name": "create-kosmo",
+  "version": "0.1.0",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "files": [
+    "pkg/*"
+  ],
+  "bin": {
+    "create-kosmo": "./pkg/cli.js"
+  },
+  "scripts": {
+    "build": "wsbuild src/cli.ts",
+    "postbuild": "chmod +x pkg/cli.js"
+  },
+  "dependencies": {
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/prompts": "^2.4.9"
+  }
+}

@@ -1,0 +1,36 @@
+{{> pathMapper}}
+
+import { base, apiBase } from "./config";
+
+{{#if pageRoutes.length}}
+export type LinkProps =
+  {{#each pageRoutes}}
+  | [ "{{name}}", {{serializeParamsTupleElements .}} ]
+  {{/each}};
+{{else}}
+export type LinkProps = never;
+{{/if}}
+
+export const apiRouteMap = {
+  {{#each apiRoutes}}
+  "{{name}}": pathMapper<[{{serializeParamsTupleElements .}}]>(
+    apiBase,
+    "{{name}}",
+    "{{pathPattern}}",
+    [{{#each params.schema}}["{{name}}", "{{kind}}"], {{/each}}],
+    [{{#each numericParams}}"{{.}}", {{/each}}],
+  ),
+  {{/each}}
+};
+
+export const pageRouteMap = {
+  {{#each pageRoutes}}
+  "{{name}}": pathMapper<[{{serializeParamsTupleElements .}}]>(
+    base,
+    "{{name}}",
+    "{{pathPattern}}",
+    [{{#each params.schema}}["{{name}}", "{{kind}}"], {{/each}}],
+    [{{#each numericParams}}"{{.}}", {{/each}}],
+  ),
+  {{/each}}
+};

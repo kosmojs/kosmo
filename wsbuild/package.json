@@ -1,0 +1,8 @@
+{
+  "type": "module",
+  "name": "wsbuild",
+  "private": true,
+  "bin": {
+    "wsbuild": "./index.js"
+  }
+}

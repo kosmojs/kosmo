@@ -3,5 +3,5 @@ minimumReleaseAgeExclude:
   - typebox
   - tfusion
 packages:
-  - "packages/core/*"
-  - "packages/generators/*"
+  - "generators/*"
+  - "packages/*"

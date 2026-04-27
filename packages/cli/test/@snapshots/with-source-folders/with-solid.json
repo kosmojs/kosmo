@@ -1,0 +1,62 @@
+[
+  [
+    "with-source-folders/src/with-solid/api/index/index.ts",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/src/with-solid/entry/client.tsx",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/src/with-solid/index.html",
+    [
+      "<!--",
+      "Do not remove! Build process requires this file for framework-less source folders.",
+      "Framework generators will override this stub with their own setup.",
+      "-->"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-solid/kosmo.config.ts",
+    [
+      "import {",
+      "  defineConfig,",
+      "  solidGenerator,",
+      "} from \"@kosmojs/dev\";",
+      "",
+      "",
+      "import solidPlugin from \"vite-plugin-solid\";",
+      "",
+      "export default defineConfig({",
+      "  base: {",
+      "    development: \"/\",",
+      "  },",
+      "  plugins: [",
+      "    solidPlugin(),",
+      "  ],",
+      "  generators: [",
+      "    solidGenerator(),",
+      "  ],",
+      "  oxc: { jsx: { importSource: \"solid-js\" } }",
+      "});"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-solid/pages/index/index.tsx",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/src/with-solid/tsconfig.json",
+    [
+      "{",
+      "  \"extends\": \"../../lib/with-solid/tsconfig.base.json\"",
+      "}"
+    ]
+  ]
+]

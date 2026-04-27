@@ -1,0 +1,31 @@
+{
+  "type": "module",
+  "private": true,
+  "name": "@kosmojs/openapi-generator",
+  "version": "0.1.0",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "files": [
+    "pkg/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    }
+  },
+  "scripts": {
+    "build": "wsbuild src/index.ts",
+    "test": "vitest --root ../.. --project generators/openapi-generator"
+  },
+  "dependencies": {
+    "crc": "^4.3.2",
+    "path-to-regexp": "^8.4.2",
+    "typebox": "^1.1.31",
+    "yaml": "^2.8.3"
+  },
+  "devDependencies": {
+    "@stoplight/spectral-core": "^1.22.0",
+    "@stoplight/spectral-rulesets": "^1.22.1"
+  }
+}

@@ -1,0 +1,45 @@
+[
+  [
+    "with-source-folders/src/with-defaults/api/index/index.ts",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/src/with-defaults/index.html",
+    [
+      "<!--",
+      "Do not remove! Build process requires this file for framework-less source folders.",
+      "Framework generators will override this stub with their own setup.",
+      "-->"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-defaults/kosmo.config.ts",
+    [
+      "import {",
+      "  defineConfig,",
+      "  } from \"@kosmojs/dev\";",
+      "",
+      "",
+      "",
+      "export default defineConfig({",
+      "  base: {",
+      "    development: \"/\",",
+      "  },",
+      "  plugins: [",
+      "      ],",
+      "  generators: [",
+      "      ],",
+      "  });"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-defaults/tsconfig.json",
+    [
+      "{",
+      "  \"extends\": \"../../lib/with-defaults/tsconfig.base.json\"",
+      "}"
+    ]
+  ]
+]

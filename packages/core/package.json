@@ -1,0 +1,55 @@
+{
+  "type": "module",
+  "name": "@kosmojs/core",
+  "version": "0.1.0",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "files": [
+    "pkg/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    },
+    "./api": {
+      "types": "./pkg/api/index.d.ts",
+      "default": "./pkg/api/index.js"
+    },
+    "./fetch": {
+      "types": "./pkg/fetch/index.d.ts",
+      "default": "./pkg/fetch/index.js"
+    },
+    "./errors": {
+      "types": "./pkg/errors/index.d.ts",
+      "default": "./pkg/errors/index.js"
+    },
+    "./generators": {
+      "types": "./pkg/generators/index.d.ts",
+      "default": "./pkg/generators/index.js"
+    }
+  },
+  "scripts": {
+    "build": "wsbuild src/index.ts src/api/index.ts src/fetch/index.ts src/errors/index.ts src/generators/index.ts",
+    "test": "vitest --root ../.. --project packages/core"
+  },
+  "dependencies": {
+    "@koa/router": "^15.4.0",
+    "formidable": "^3.5.4",
+    "koa": "^3.2.0",
+    "qs": "^6.15.1",
+    "raw-body": "^3.0.2",
+    "string-width": "^8.2.0"
+  },
+  "devDependencies": {
+    "@types/formidable": "^3.5.1",
+    "@types/koa": "^3.0.2",
+    "@types/koa-compose": "^3.2.9",
+    "@types/picomatch": "^4.0.3",
+    "@types/qs": "^6.15.0",
+    "hono": "^4.12.14",
+    "koa-compose": "^4.1.0",
+    "path-to-regexp": "^8.4.2",
+    "tfusion": "^0.0.24"
+  }
+}

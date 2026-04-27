@@ -1,0 +1,26 @@
+import { lazy } from "react";
+import { clientRenderFactory } from "@kosmojs/core/generators";
+
+import { loaderFactory } from "../react";
+
+{{#each pageEntries}}
+const {{id}}_component = lazy(() => import("{{ createImport "pages" file }}"));
+const {{id}}_loader = () => import("{{ createImport "pages" file }}");
+{{/each}}
+
+const NotFound = lazy(() => import("{{ createImport "pages" "404.tsx" }}"));
+
+export const createRoutes = (opt?: { withPreload?: boolean }) => {
+  const maybeLoader = loaderFactory(opt);
+  return [
+    {{#each nestedRoutes}}{{> routePartial}},
+    {{/each}}
+    // catch-all 404 - always last
+    {
+      path: "*",
+      Component: NotFound,
+    },
+  ];
+}
+
+export default clientRenderFactory(import.meta.env.SSR);

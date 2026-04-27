@@ -1,0 +1,32 @@
+{
+  "type": "module",
+  "private": true,
+  "name": "@kosmojs/fetch-generator",
+  "version": "0.1.0",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "files": [
+    "pkg/*"
+  ],
+  "imports": {
+    "#templates/*": "./src/templates/*"
+  },
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    }
+  },
+  "scripts": {
+    "build": "wsbuild src/index.ts",
+    "test": "vitest --root ../.. --project generators/fetch-generator"
+  },
+  "devDependencies": {
+    "@types/mime-types": "^3.0.1",
+    "@types/qs": "^6.15.0",
+    "mime-types": "^3.0.2",
+    "path-to-regexp": "^8.4.2",
+    "qs": "^6.15.1",
+    "typebox": "^1.1.31"
+  }
+}

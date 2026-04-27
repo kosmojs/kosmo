@@ -1,0 +1,29 @@
+{
+  "type": "module",
+  "private": true,
+  "name": "@kosmojs/typebox-generator",
+  "version": "0.1.0",
+  "cacheVersion": "1",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "files": [
+    "pkg/*"
+  ],
+  "imports": {
+    "#templates/*": "./src/templates/*"
+  },
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    }
+  },
+  "scripts": {
+    "build": "wsbuild src/index.ts",
+    "pretest": "pnpm run build",
+    "test": "vitest --root ../.. --project generators/typebox-generator"
+  },
+  "devDependencies": {
+    "typebox": "^1.1.31"
+  }
+}

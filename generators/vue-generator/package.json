@@ -1,0 +1,30 @@
+{
+  "type": "module",
+  "private": true,
+  "name": "@kosmojs/vue-generator",
+  "version": "0.1.0",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "files": [
+    "pkg/*"
+  ],
+  "imports": {
+    "#templates/*": "./src/templates/*"
+  },
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    }
+  },
+  "scripts": {
+    "build": "wsbuild src/index.ts",
+    "test": "vitest --root ../.. --project generators/vue-generator"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "path-to-regexp": "^8.4.2",
+    "vue": "^3.5.33",
+    "vue-router": "^5.0.6"
+  }
+}

@@ -1,0 +1,51 @@
+[
+  [
+    "with-source-folders/src/with-koa-backend/api/index/index.ts",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/src/with-koa-backend/index.html",
+    [
+      "<!--",
+      "Do not remove! Build process requires this file for framework-less source folders.",
+      "Framework generators will override this stub with their own setup.",
+      "-->"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-koa-backend/kosmo.config.ts",
+    [
+      "import {",
+      "  defineConfig,",
+      "  koaGenerator,",
+      "fetchGenerator,",
+      "typeboxGenerator,",
+      "} from \"@kosmojs/dev\";",
+      "",
+      "",
+      "",
+      "export default defineConfig({",
+      "  base: {",
+      "    development: \"/\",",
+      "  },",
+      "  plugins: [",
+      "      ],",
+      "  generators: [",
+      "    koaGenerator(),",
+      "fetchGenerator(),",
+      "typeboxGenerator(),",
+      "  ],",
+      "  });"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-koa-backend/tsconfig.json",
+    [
+      "{",
+      "  \"extends\": \"../../lib/with-koa-backend/tsconfig.base.json\"",
+      "}"
+    ]
+  ]
+]

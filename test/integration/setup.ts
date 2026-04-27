@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import net from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
@@ -11,9 +11,10 @@ import { compile } from "path-to-regexp";
 import { chromium } from "playwright";
 import { inject } from "vitest";
 
-import type { BACKEND_FRAMEWORKS, FRAMEWORKS } from "@kosmojs/cli";
+import { createProject, createSourceFolder } from "@kosmojs/cli";
 import type {
-  FolderConfig,
+  BACKEND_FRAMEWORKS,
+  FRAMEWORKS,
   ProjectSettings,
   SourceFolder,
 } from "@kosmojs/core";
@@ -71,10 +72,11 @@ export const setupTestProject = async (opt?: {
 
   const sourceFolder: SourceFolder = {
     name: "test",
-    config: {},
+    config: {
+      base: "/",
+      apiBase: "/api",
+    },
     root: projectRoot,
-    baseurl: "/",
-    apiurl: "/api",
     distDir: "dist",
   };
 
@@ -192,14 +194,19 @@ export const setupTestProject = async (opt?: {
       };
     }
 
-    const config = await jiti.import<FolderConfig>(
+    const config = await jiti.import<SourceFolder["config"]>(
       createPath.src("kosmo.config.ts"),
       { default: true },
     );
 
     const teardown = await chassis({
       ...projectSettings,
-      sourceFolders: [{ ...sourceFolder, config }],
+      sourceFolders: [
+        {
+          ...sourceFolder,
+          config,
+        },
+      ],
     });
 
     return teardown;
@@ -220,88 +227,32 @@ export const setupTestProject = async (opt?: {
 
     await cleanup();
 
-    await mkdir(tempDir, { recursive: true });
+    const pkgsDir = resolve(import.meta.dirname, "../../packages");
 
-    const packages: Array<{
-      name: string;
-      version: string;
-      filename: string;
-      files: Array<{ path: string }>;
-    }> = await import(`${pnpmDir}/packages.json`, {
-      with: { type: "json" },
-    }).then((e) => e.default);
-
-    await exec(
-      "pnpm",
-      [
-        "dlx",
-        ...packages.flatMap((e) => ["--package", e.filename]),
-        "create-kosmo",
-        "--name",
-        projectName,
-      ],
-      { cwd: tempDir, env },
-    );
-
-    const packageJsonFile = resolve(projectRoot, "package.json");
-
-    const packageJson = JSON.parse(await readFile(packageJsonFile, "utf8"));
-
-    packageJson.devPort = devPort;
-
-    for (const key of ["dependencies", "devDependencies"]) {
-      for (const pkg of Object.keys(packageJson[key]) as Array<string>) {
-        if (pkg.startsWith("@kosmojs/")) {
-          packageJson[key][pkg] = resolve(
-            pnpmDir,
-            `${pkg.replace("@kosmojs/", "kosmojs-")}.tgz`,
-          );
-        }
-      }
-    }
-
-    await writeFile(
-      packageJsonFile,
-      JSON.stringify(packageJson, undefined, 2),
-      "utf8",
-    );
-
-    await installDependencies();
-
-    await exec(
-      "pnpm",
-      [
-        "+folder",
-        "--name",
-        sourceFolder.name,
-        "--base",
-        "/",
-        ...(framework ? ["--framework", framework] : []),
-        ...(backend ? ["--backend", backend] : []),
-        ...(ssr ? ["--ssr"] : []),
-      ],
-      { cwd: projectRoot, env },
-    );
-
-    if (frameworkOptions) {
-      const cli = await import(`${projectRoot}/node_modules/@kosmojs/cli`);
-
-      const [kosmoConfig] = cli.createKosmoConfig(
-        {
-          name: sourceFolder.name,
-          ...(backend ? { backend } : {}),
-          ...(framework ? { framework } : {}),
-          ...(ssr ? { ssr: true } : {}),
+    await createProject(
+      tempDir,
+      { name: projectName, devPort },
+      {
+        dependencies: {
+          "@kosmojs/core": `${pkgsDir}/core`,
         },
-        {
-          ...(frameworkOptions
-            ? { [framework as never]: frameworkOptions }
-            : {}),
+        devDependencies: {
+          "@kosmojs/dev": `${pkgsDir}/dev`,
+          "@kosmojs/cli": `${pkgsDir}/cli`,
         },
-      );
+      },
+    );
 
-      await writeFile(createPath.src("kosmo.config.ts"), kosmoConfig, "utf8");
-    }
+    createSourceFolder(
+      projectRoot,
+      {
+        name: sourceFolder.name,
+        ...(backend ? { backend } : {}),
+        ...(framework ? { framework } : {}),
+        ...(ssr ? { ssr: true } : {}),
+      },
+      frameworkOptions ? { [framework as never]: frameworkOptions } : {},
+    );
 
     await installDependencies();
   };

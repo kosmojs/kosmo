@@ -1,0 +1,28 @@
+{
+  "type": "module",
+  "name": "@kosmojs/dev",
+  "version": "0.1.0",
+  "cacheVersion": "001",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "files": [
+    "pkg/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    },
+    "./chassis": {
+      "types": "./pkg/chassis.d.ts",
+      "default": "./pkg/chassis.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "wsbuild src/index.ts src/chassis.ts"
+  },
+  "dependencies": {
+    "crc": "^4.3.2"
+  }
+}

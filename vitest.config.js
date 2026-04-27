@@ -1,9 +1,10 @@
 import { resolve } from "node:path";
 
-import { glob } from "tinyglobby";
 import { defineConfig } from "vitest/config";
 
 import { defaults } from "@kosmojs/core";
+
+import plugins from "./plugins/index.js";
 
 const setupFactory = (name, { alias, ...setup } = {}) => {
   return {
@@ -12,7 +13,7 @@ const setupFactory = (name, { alias, ...setup } = {}) => {
       name,
       root: name.startsWith("integration:")
         ? "."
-        : resolve(import.meta.dirname, `packages/${name}`),
+        : resolve(import.meta.dirname, name),
       include: ["test/**/*.test.ts"],
       hookTimeout: name.startsWith("integration:") ? 180_000 : 60_000,
       alias: {
@@ -26,19 +27,20 @@ const setupFactory = (name, { alias, ...setup } = {}) => {
 };
 
 export default defineConfig({
+  plugins,
   reporters: ["verbose"],
   test: {
     projects: [
-      setupFactory("core/core", {
+      setupFactory("packages/core", {
         setupFiles: ["test/setup.ts"],
         globals: true,
       }),
 
-      setupFactory("core/cli", {
+      setupFactory("packages/cli", {
         setupFiles: ["test/setup.ts"],
       }),
 
-      setupFactory("core/lib"),
+      setupFactory("packages/lib"),
 
       setupFactory("generators/fetch-generator", {
         alias: {
@@ -78,12 +80,10 @@ export default defineConfig({
       setupFactory("generators/vue-generator"),
 
       setupFactory("integration:api", {
-        globalSetup: ["test/integration/setup.global.ts"],
         include: ["test/integration/{koa,hono}/*.test.ts"],
       }),
 
       setupFactory("integration:csr", {
-        globalSetup: ["test/integration/setup.global.ts"],
         include: ["test/integration/{react,solid,vue,mdx}/*.test.ts"],
         fileParallelism: false,
         provide: {
@@ -92,7 +92,6 @@ export default defineConfig({
       }),
 
       setupFactory("integration:ssr", {
-        globalSetup: ["test/integration/setup.global.ts"],
         include: ["test/integration/{react,solid,vue,mdx}/*.test.ts"],
         provide: {
           SSR: "true",
@@ -100,29 +99,4 @@ export default defineConfig({
       }),
     ],
   },
-  plugins: [
-    {
-      name: "vite:load-templates",
-      enforce: "pre",
-      async resolveId(src) {
-        if (src.startsWith("#templates/")) {
-          const base = src.replace("#templates/", "src/templates/");
-          const [path] = await glob(
-            [
-              // files with extension takes priority
-              base,
-              `${base}.{ts,tsx}`,
-            ],
-            {
-              absolute: true,
-              onlyFiles: true,
-            },
-          );
-          if (path) {
-            return `${path}?raw`;
-          }
-        }
-      },
-    },
-  ],
 });

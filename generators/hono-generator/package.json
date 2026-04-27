@@ -1,0 +1,32 @@
+{
+  "type": "module",
+  "private": true,
+  "name": "@kosmojs/hono-generator",
+  "version": "0.1.0",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "files": [
+    "pkg/*"
+  ],
+  "imports": {
+    "#templates/*": "./src/templates/*"
+  },
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    }
+  },
+  "scripts": {
+    "build": "wsbuild src/index.ts",
+    "test": "vitest --root ../.. --project generators/hono-generator"
+  },
+  "dependencies": {
+    "crc": "^4.3.2"
+  },
+  "devDependencies": {
+    "@hono/node-server": "^2.0.0",
+    "hono": "^4.12.14",
+    "path-to-regexp": "^8.4.2"
+  }
+}

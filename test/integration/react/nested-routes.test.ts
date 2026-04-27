@@ -50,7 +50,8 @@ describe("React - Nested Routes", async () => {
         $("#app")
           .html()
           ?.trim()
-          ?.replace(/<script>.+<\/script>$/m, ""),
+          ?.replace(/<script>.+<\/script>$/m, "")
+          ?.replace("<!--app-html-->", ""),
       ).toMatchFileSnapshot(`../@snapshots/nested-routes/${snapshotName}.html`);
     });
   }

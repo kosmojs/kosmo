@@ -4,12 +4,12 @@
   "files": {
     "includes": [
       "vitest.config.js",
-      "esbuilder/esbuilder.js",
-      "docs/**/*.ts",
-      "test/**/*.ts",
-      "packages/**/{src,test}/**/*.ts",
-      "packages/**/*.js",
-      "!packages/*/*/test/**/@fixtures/**/*"
+      "plugins/*",
+      "wsbuild/*",
+      "docs/**/*",
+      "test/**/*",
+      "{packages,generators}/*/{src,test}/**/*.ts",
+      "!{packages,generators}/*/test/**/@{fixtures,snapshots}/**/*"
     ]
   },
 
@@ -55,7 +55,7 @@
 
   "overrides": [
     {
-      "includes": ["packages/generators/*/src/templates/src/**/*"],
+      "includes": ["{packages,generators}/*/src/templates/src/**/*"],
       "formatter": {
         "enabled": false
       },
@@ -64,17 +64,10 @@
       }
     },
     {
-      "includes": ["packages/core/config/index.js"],
-      "linter": {
-        "rules": {
-          "suspicious": {
-            "noTemplateCurlyInString": "off"
-          }
-        }
-      }
-    },
-    {
-      "includes": ["**/test/**/*.ts", "./packages/**/src/templates/**/*.ts"],
+      "includes": [
+        "**/test/**/*.ts",
+        "./{packages,generators}/*/src/templates/**/*.ts"
+      ],
       "linter": {
         "rules": {
           "suspicious": {
@@ -90,11 +83,10 @@
     {
       "includes": [
         "**/test/**/*.ts",
-        "./esbuilder/esbuilder.js",
-        "./packages/*/*/src/templates/**/*.ts",
-        "./packages/build/esbuilder/src/index.ts",
-        "./packages/core/cli/src/**/*.ts",
-        "./packages/core/create/**/*.ts"
+        "./wsbuild/**/*",
+        "./{packages,generators}/*/src/templates/**/*.ts",
+        "./packages/cli/src/**/*.ts",
+        "./packages/create/**/*.ts"
       ],
       "linter": {
         "rules": {
