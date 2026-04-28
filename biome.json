@@ -9,7 +9,8 @@
       "docs/**/*",
       "test/**/*",
       "{packages,generators}/*/{src,test}/**/*.ts",
-      "!{packages,generators}/*/test/**/@{fixtures,snapshots}/**/*"
+      "!{packages,generators}/*/test/**/@{fixtures,snapshots}/**/*",
+      "!test/**/@{fixtures,snapshots}/**/*"
     ]
   },
 
@@ -55,7 +56,10 @@
 
   "overrides": [
     {
-      "includes": ["{packages,generators}/*/src/templates/src/**/*"],
+      "includes": [
+        "{packages,generators}/*/src/templates/src/**/*",
+        "{packages,generators}/*/**/env.d.ts"
+      ],
       "formatter": {
         "enabled": false
       },

@@ -1,9 +1,9 @@
 <script setup>
-import ParamsValidation001 from './ParamsValidation.md'
-import PayloadValidation from './PayloadValidation.md'
-import ResponseValidation from './ResponseValidation.md'
-import ComposableMiddleware from './ComposableMiddleware.md'
-import CascadingMiddleware from './CascadingMiddleware.md'
+import ParamsValidation001 from "./ParamsValidation.md";
+import PayloadValidation from "./PayloadValidation.md";
+import ResponseValidation from "./ResponseValidation.md";
+import ComposableMiddleware from "./ComposableMiddleware.md";
+import CascadingMiddleware from "./CascadingMiddleware.md";
 </script>
 <template>
   <div class="hero-sections">
