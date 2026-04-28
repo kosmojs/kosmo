@@ -12,7 +12,7 @@ head:
 
 Everything `KosmoJS` provides, at a glance.
 
-## 🗂️ Multiple Source Folders
+## Multiple Source Folders
 
 Organize distinct concerns - public site, customer app, admin dashboard -
 as independent source folders within a single `Vite` project.
@@ -20,7 +20,7 @@ Each gets its own set of frameworks, base URL, development workflow and build pi
 
 [Read more ➜](/start#📁-create-your-first-source-folder)
 
-## 🛣️ Directory-Based Routing
+## Directory-Based Routing
 
 Your folder structure defines your routes - for both API and client pages.
 
@@ -41,7 +41,7 @@ files/[name].[ext]/index.ts         ➜ files/document.pdf, /files/logo.png
 
 [Read more ➜](/routing/intro)
 
-## ⚡ Power Syntax for Params
+## Power Syntax for Params
 
 When standard named parameters aren't enough, use raw [path-to-regexp v8](https://github.com/pillarjs/path-to-regexp)
 patterns directly in your folder names:
@@ -58,7 +58,7 @@ without sacrificing the directory-based routing model.
 
 [Read more ➜](/routing/params#power-syntax)
 
-## 🛡️ End-to-End Type Safety
+## End-to-End Type Safety
 
 Write `TypeScript` types once - `KosmoJS` generates runtime validators automatically.
 The same definition drives compile-time checking, runtime validation, type-safe fetch clients, and OpenAPI specs.
@@ -81,7 +81,7 @@ export default defineRoute(({ POST }) => [
 
 [Read more ➜](/validation/intro)
 
-## 🔗 Generated Fetch Clients + OpenAPI
+## Generated Fetch Clients + OpenAPI
 
 For every API route, `KosmoJS` generates a fully-typed fetch client
 and an OpenAPI 3.1 spec - both derived from the same type definitions.
@@ -95,7 +95,7 @@ const user = await fetchClients["users/[id]"].GET([123]);
 
 [Fetch Clients ➜](/fetch/intro) · [OpenAPI ➜](/openapi)
 
-## 🎛️ Composable Middleware (Slots)
+## Composable Middleware (Slots)
 
 Global middleware defined in `api/use.ts` can be overridden per-route or per-subtree
 using named slots - without removing or bypassing parent middleware entirely.
@@ -114,7 +114,7 @@ Custom slot names are supported by extending the `UseSlots` interface.
 
 [Read more ➜](/backend/middleware)
 
-## 🌊 Cascading Middleware
+## Cascading Middleware
 
 Place a `use.ts` file in any folder and its middleware automatically wraps
 all routes in that folder and its subfolders - no imports or wiring needed.
@@ -129,7 +129,7 @@ Combine with slots to override globals for entire route subtrees.
 
 [Read more ➜](/backend/cascading-middleware)
 
-## 🪆 Nested Layouts
+## Nested Layouts
 
 Frontend pages support nested layout components that wrap child routes -
 compose shared UI (nav, sidebars, auth shells) at any level of the route hierarchy.
@@ -147,7 +147,7 @@ pages/
 
 [Read more ➜](/frontend/routing)
 
-## 🎨 Multiple Frameworks
+## Multiple Frameworks
 
 **Backend:** `Koa` or `Hono` - same routing architecture, same type safety.
 **Frontend:** `React`, `Vue`, `SolidJS`, `MDX` - same routing/layout/SSR conventions.
@@ -159,7 +159,7 @@ Switch frameworks per folder without learning a new set of conventions.
 
 [Read more ➜](/frontend/intro)
 
-## 🔧 Built on Proven Tools
+## Built on Proven Tools
 
 No proprietary runtime, no custom bundler, no framework lock-in.
 Every layer is a tool you can use, debug, and replace independently.

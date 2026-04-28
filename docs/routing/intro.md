@@ -13,7 +13,7 @@ and `index` files define the actual endpoints or components.
 
 No separate routing configuration - your file structure is your route definition.
 
-## 🛣️ How It Works
+## How It Works
 
 The same pattern applies to both API routes and client pages:
 
@@ -41,7 +41,7 @@ if you have a `/users/[id]` page, the corresponding `/api/users/[id]` endpoint i
 Every route lives in a folder, including the root - the base route uses a folder named `index`.
 This consistency means no special cases: every route is a folder with an `index` file inside.
 
-## 📄 Route File Requirements
+## Route File Requirements
 
 API routes export a route definition (HTTP methods + handlers).
 Client pages export a component function.
@@ -52,7 +52,7 @@ when you create a new file, so you rarely write it from scratch.
 The folder-per-route pattern gives each route its own namespace for colocating related files -
 utilities, types, tests - without cluttering parent directories.
 
-## 🏗️ Nested Routes
+## Nested Routes
 
 Nesting works by nesting folders. `api/users/[id]/posts/index.ts` maps to `/api/users/:id/posts`,
 and can go as deep as your domain requires. Each level can colocate its own helpers,

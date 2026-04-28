@@ -16,7 +16,7 @@ loading spinners for route-level data and creating seamless navigation
 experiences. Each framework has its own mechanism - all integrate naturally
 with `KosmoJS`'s generated fetch clients.
 
-## 📡 API Endpoint
+## API Endpoint
 
 Start by creating an API endpoint that provides the data. The same endpoint
 is used across all three frameworks:
@@ -31,7 +31,7 @@ export default defineRoute<"users/data">(({ GET }) => [
 ]);
 ```
 
-## 🔌 Page Integration
+## Page Integration
 
 ::: code-group
 
@@ -105,7 +105,7 @@ onMounted(async () => {
 
 :::
 
-## 🔍 How It Works
+## How It Works
 
 **React** - the `loader` export tells React Router what function to call
 before rendering. `useLoaderData` retrieves the result that was already

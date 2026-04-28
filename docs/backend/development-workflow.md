@@ -13,7 +13,7 @@ Each source folder serves a specific concern - marketing site, customer app, adm
 
 Yet, development workflow is identical.
 
-## 🚀 Starting the Dev Server
+## Starting the Dev Server
 
 ```sh
 pnpm dev          # all source folders
@@ -22,14 +22,14 @@ pnpm dev front    # specific folder (front, admin, app, etc.)
 
 Default port is `4556`, configured as `devPort` in `package.json`.
 
-## 🔀 What Happens on Start
+## What Happens on Start
 
 1. `Vite` compiles `api/app.ts`
 2. Dev server starts, serving both client pages and your API routes
 3. Requests are routed between Vite and your API
 4. File watcher monitors API files for changes
 
-## ⚙️ api/dev.ts
+## api/dev.ts
 
 `api/dev.ts` exposes three hooks for customizing the dev experience.
 
@@ -101,7 +101,7 @@ export default devSetup({
 
 Without cleanup, frequent rebuilds during active development can exhaust database connections.
 
-## 👀 Inspecting Routes
+## Inspecting Routes
 
 Each route returned by `createRoutes` has a `debug` property. Enable it via `DEBUG=api`:
 

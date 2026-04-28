@@ -14,7 +14,7 @@ Beyond the standard HTTP method handlers, you often need to run custom middlewar
 code that executes before your main handler to perform tasks like authentication,
 logging, or data transformation.
 
-## 🔧 Basic Usage
+## Basic Usage
 
 KosmoJS provides the `use` function for applying middleware,
 with the same API for both `Koa` and `Hono` routes.
@@ -35,7 +35,7 @@ export default defineRoute<"example">(({ GET, POST, use }) => [
 Middleware must call `next()` to pass control to the next layer.
 Skipping `next()` short-circuits the chain - useful for early rejections.
 
-## 🔄 Execution Order (Onion Model)
+## Execution Order (Onion Model)
 
 Middleware runs in definition order going in, then unwinds in reverse after the handler.
 
@@ -87,7 +87,7 @@ export default defineRoute(({ use, GET, POST }) => [
 ]);
 ```
 
-## 🎯 Method-Specific Middleware
+## Method-Specific Middleware
 
 Use the `on` option to restrict middleware to specific HTTP methods:
 
@@ -110,7 +110,7 @@ export default defineRoute<"example">(({ GET, POST, PUT, DELETE, use }) => [
 ]);
 ```
 
-## 🎛️ Slot Composition
+## Slot Composition
 
 Slots are named positions in the middleware chain. Middleware with the same slot name
 replaces earlier middleware at that position - useful for overriding global defaults per-route.

@@ -18,7 +18,7 @@ navigation code.
 The component is available at `components/Link.tsx` (or `Link.vue`) in your
 source folder.
 
-## 🔗 Usage
+## Usage
 
 The API is consistent across all frameworks - a `to` prop accepting a
 typed tuple, an optional `query` prop for search parameters, and standard
@@ -69,22 +69,7 @@ import Link from "~/components/Link.vue";
 ```
 :::
 
-Omitting `to` targets the current location - useful for adding or updating
-query parameters without triggering navigation:
-
-::: code-group
-
-```tsx [Menu.tsx]
-<Link query={{ filter: "active" }}>Filter Active Items</Link>
-```
-
-```vue [Menu.vue]
-<Link :query="{ filter: 'active' }">Filter Active Items</Link>
-```
-
-:::
-
-## 🏷️ LinkProps Type
+## LinkProps Type
 
 The `to` prop is typed as `LinkProps` - a discriminated union generated from
 your route structure:

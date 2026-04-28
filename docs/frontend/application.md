@@ -15,7 +15,7 @@ routing, navigation, and application bootstrap. The structure is consistent
 across frameworks: a root App component, a router configuration, and a client
 entry point.
 
-## 🎨 Root Application Component
+## Root Application Component
 
 The generator creates a minimal root component as your application shell.
 Extend it with global layouts, error boundaries, authentication providers, or
@@ -52,7 +52,7 @@ export default App;
 ```
 :::
 
-## 🛣️ Router Configuration
+## Router Configuration
 
 The `routerFactory` function connects your root App component and generated
 routes to the framework's native router.
@@ -196,7 +196,7 @@ All use your source folder's `baseurl` config for correct path-based
 routing. The generated `routes` are always wrapped inside your `App` component,
 establishing the layout hierarchy.
 
-## 🎯 Application Entry
+## Application Entry
 
 The `entry/client.tsx` file is your application's DOM rendering entry point,
 referenced from `index.html`:

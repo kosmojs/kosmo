@@ -13,7 +13,7 @@ At first glance, directory-based routing looks more verbose than file-based alte
 `api/users/[id]/index.ts` vs `api/users/[id].ts` - the extra folder seems unnecessary.
 It isn't, and the reason becomes obvious as your project grows.
 
-## ⚠️ The File-Based Routing Problem
+## The File-Based Routing Problem
 
 In file-based routing, route handlers and helper files live side by side:
 
@@ -30,7 +30,7 @@ api/
 Which files are route handlers? Which are helpers? Is `schema.ts` a route at `/users/schema`
 or a shared validation file? You can't tell without opening each file or relying on team conventions.
 
-## 🏆 Directory-Based Clarity
+## Directory-Based Clarity
 
 With directory-based routing, the rule is simple: **only `index.ts` is a route handler**.
 Everything else in the folder is a helper for that route.
@@ -75,7 +75,7 @@ Each route's complexity is isolated in its own folder.
 New developers understand the structure immediately.
 Six months later, you can still navigate it without re-reading the codebase.
 
-## ⚖️ The Trade-off
+## The Trade-off
 
 You create a folder even when it only contains `index.ts`. That's the entire cost.
 

@@ -11,7 +11,7 @@ head:
 
 A step-by-step walkthrough covering everything `KosmoJS` provides.
 
-## 🚀 Create Your Project
+## Create Your Project
 
 ::: code-group
 ```sh [npm]
@@ -34,7 +34,7 @@ yarn create kosmo
 cd ./my-app
 ```
 
-## 📦 Install Dependencies
+## Install Dependencies
 
 ::: code-group
 ```sh [npm]
@@ -50,7 +50,7 @@ yarn install
 ```
 :::
 
-## 📁 Create a Source Folder
+## Create a Source Folder
 
 `KosmoJS` doesn't create a source folder automatically - you add them as needed,
 one per distinct concern (main app, admin panel, marketing site, etc.).
@@ -112,7 +112,7 @@ yarn install
 ```
 :::
 
-## 🛣️ Directory-Based Routing
+## Directory-Based Routing
 
 Folder names become URL segments. Each route requires an `index` file:
 
@@ -135,7 +135,7 @@ Same pattern for API and pages - learn once, use everywhere.
 
 [Read more ➜](/routing/intro)
 
-## 💡 Path Mappings
+## Path Mappings
 
 Your project starts with a minimal `tsconfig.json`:
 
@@ -151,7 +151,7 @@ You can add your own paths, but these prefixes are reserved:
 - `_/*` - Generated code imports
 
 
-## ✅ Create Your First API Route
+## Create Your First API Route
 
 Create `api/users/[id]/index.ts` - `KosmoJS` detects the file and generates boilerplate:
 
@@ -229,7 +229,7 @@ yarn dev
 
 [Read more ➜](/backend/intro)
 
-## 🛡️ Add Validation
+## Add Validation
 
 ### Parameter Validation
 
@@ -321,7 +321,7 @@ Payload is validated before your handler runs. Response is validated before it's
 
 [Read more ➜](/validation/intro)
 
-## ▶️ Add Middleware
+## Add Middleware
 
 For simple cases, wire middleware inline with `use`:
 
@@ -352,7 +352,7 @@ No imports in route files, no repetition. Parent `use.ts` files wrap child route
 
 [Read more ➜](/backend/middleware)
 
-## 📥 Fetch Clients
+## Fetch Clients
 
 Fetch clients are fully typed and validated client-side using the same high-performance
 TypeBox validators as the server - identical results, no duplication, no drift.
@@ -406,7 +406,7 @@ Server-side validation still runs even when endpoints are called directly - clie
 
 [Read more ➜](/fetch/intro)
 
-## 🎨 Create Client Pages
+## Create Client Pages
 
 Pages live in `pages/` and follow the same directory-based routing as API routes.
 Create `pages/users/index.tsx` - `KosmoJS` generates framework-specific boilerplate.
@@ -424,7 +424,7 @@ Layouts can be nested - deeper layouts wrap inner layouts, matching your route h
 
 [Read more ➜](/frontend/routing)
 
-## ⚡ Server-Side Rendering
+## Server-Side Rendering
 
 Enable when creating a source folder (`--ssr`), or add it later in `kosmo.config.ts`:
 
@@ -455,7 +455,7 @@ The API server and SSR server are bundled separately - deploy, scale, and run th
 
 [Read more ➜](/frontend/server-side-render)
 
-## 🗂️ Multiple Source Folders
+## Multiple Source Folders
 
 Add more source folders as your project grows - each with its own framework stack,
 base URL, and build output. They develop and deploy independently

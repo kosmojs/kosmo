@@ -12,7 +12,7 @@ head:
 Avoid naming your types after TypeScript/JavaScript built-ins like `Event`, `Response`, `Request`, or `Error`.
 These names compile fine, but cause silent failures during runtime validation.
 
-## ⚠️ Why This Matters
+## Why This Matters
 
 When `KosmoJS` flattens types for schema generation, built-in names are referenced as-is
 rather than resolved to your custom definition. The validator sees the built-in, not your type,
@@ -30,7 +30,7 @@ type TEvent = { id: number; name: string; timestamp: string }; // also fine
 Use a consistent `T` suffix (`EventT`, `ResponseT`) or prefix (`TEvent`, `TResponse`) throughout your project.
 If validation fails unexpectedly despite correct type definitions, a naming conflict is the first thing to check.
 
-## 📋 Common Built-ins to Avoid
+## Common Built-ins to Avoid
 
 **DOM:** `Event`, `Element`, `Document`, `Window`, `Node`, `HTMLElement`, `EventTarget`, `CustomEvent`
 

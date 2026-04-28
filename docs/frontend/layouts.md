@@ -14,7 +14,7 @@ head:
 Layout files wrap groups of routes with shared UI - without duplicating
 components across every page.
 
-## 🎨 Define a Layout
+## Define a Layout
 
 Create a `layout.tsx` (or `.vue` / `.mdx`) in any folder under `pages/`,
 and it automatically wraps every route in that folder and its subfolders.
@@ -47,7 +47,7 @@ Child routes cannot escape parent layouts. Once a layout is established at a
 folder level, all routes beneath it inherit it - keeping the UI hierarchy
 predictable.
 
-## 📁 Layout File Naming
+## Layout File Naming
 
 Only the lowercase form is recognized as a special file. `Layout.tsx`,
 `LAYOUT.vue`, and other variations are treated as regular components.
@@ -65,7 +65,7 @@ When you create a new layout file, `KosmoJS` generates framework-appropriate
 boilerplate immediately. Some editors may require a brief unfocus/refocus to
 load the generated content.
 
-## 🛠 Layout Implementation
+## Layout Implementation
 
 Each framework renders child routes differently:
 
@@ -140,7 +140,7 @@ export default Layout;
 React renders child routes via `<Outlet />`. SolidJS and MDX use `props.children`.
 Vue uses `<RouterView />`.
 
-## 📥 Data Loading in Layouts
+## Data Loading in Layouts
 
 Layout data loading follows the same per-framework patterns as page components:
 
@@ -208,7 +208,7 @@ guards; see the
 [Vue Router documentation](https://router.vuejs.org/guide/advanced/data-fetching.html)
 for advanced patterns.
 
-## 🌐 Global Layout via App File
+## Global Layout via App File
 
 The `App.{tsx,vue,mdx}` at the source folder root wraps every route - the right
 place for truly global concerns like authentication checks, analytics tracking
@@ -224,7 +224,7 @@ front/
         └── index.tsx
 ```
 
-## 📊 Layout Hierarchy Example
+## Layout Hierarchy Example
 
 For a deeply nested route like `/dashboard/settings/security`:
 
@@ -251,7 +251,7 @@ App
             └── Security Page
 ```
 
-## 💡 Best Practices
+## Best Practices
 
 - **Keep layouts focused.** Each layout handles concerns for its own scope - dashboard navigation in the dashboard layout, not global auth state.
 - **Fetch shared data at the right level.** If multiple child routes need the same data, load it in their common parent layout rather than duplicating the fetch.
@@ -259,7 +259,7 @@ App
 - **Avoid deep nesting without purpose.** Three or four levels is reasonable. Beyond that, consider whether the hierarchy reflects genuine UI structure or accidental complexity.
 - **Handle loading states explicitly.** Layout data loading can delay rendering - show appropriate fallbacks, especially in Vue where loading is managed manually.
 
-## ⚠️ Common Pitfalls
+## Common Pitfalls
 
 - **Case sensitivity.** Only `layout.{tsx,vue,mdx}` are recognized as layout files.
 - **Framework file isolation.** `.vue` files in a React/SolidJS/MDX folder are ignored, and `.tsx/.mdx` files in a Vue folder are ignored.

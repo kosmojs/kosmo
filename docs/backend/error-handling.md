@@ -12,7 +12,7 @@ head:
 `KosmoJS` generates `api/errors.ts` file with a working default error handler when you create a source folder.
 It's a regular file - customize it freely.
 
-## 📦 Default Error Handler
+## Default Error Handler
 
 ::: code-group
 ```ts [Koa: api/errors.ts]
@@ -76,7 +76,7 @@ export default errorHandlerFactory(
 The Koa handler is wired into global middleware at `api/use.ts` via `errorHandler` slot.
 The Hono handler is wired into `app.onError()` in the `api/app.ts`.
 
-## 🎨 Customization
+## Customization
 
 Add logging, monitoring, or structured error responses directly in `api/errors.ts`:
 
@@ -118,7 +118,7 @@ export default appFactory(({ createApp }) => {
 });
 ```
 
-## 🎯 Route-Level Overrides (Koa)
+## Route-Level Overrides (Koa)
 
 Koa supports overriding the error handler per-route or per-subtree via `errorHandler` slot:
 
@@ -156,7 +156,7 @@ export default [
 Hono has a single `app.onError()` for the entire application - branch on `ctx.req.path`
 inside the handler if you need route-specific behavior.
 
-## 🔄 Let Handlers Fail
+## Let Handlers Fail
 
 Don't wrap handler logic in try-catch. Let errors propagate to the error handler:
 
@@ -201,7 +201,7 @@ GET(async (ctx) => {
 ```
 :::
 
-## ⚡ Koa vs Hono - Key Differences
+## Koa vs Hono - Key Differences
 
 | | Koa | Hono |
 |---|---|---|

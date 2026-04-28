@@ -11,7 +11,7 @@ Zero to a working route in under five minutes. [StackBlitz Playground](https://s
 
 [![asciicast](https://asciinema.org/a/968086.svg)](https://asciinema.org/a/968086)
 
-## 🚀 Create & install
+## Create & install
 
 ::: code-group
 ```sh [pnpm]
@@ -33,7 +33,7 @@ yarn install
 ```
 :::
 
-## 📁 Add a source folder
+## Add a source folder
 
 ::: code-group
 ```sh [pnpm]
@@ -55,7 +55,7 @@ yarn install
 You'll be prompted for a folder name, base URL, framework, and backend.
 The second install pulls in framework-specific dependencies.
 
-## ✅ Create a route
+## Create a route
 
 Create the file `api/users/[id]/index.ts` - `KosmoJS` detects it
 and generates starter code automatically.
@@ -90,7 +90,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ```
 :::
 
-## ⚡ Start the dev server
+## Start the dev server
 
 ::: code-group
 ```sh [pnpm]
@@ -108,7 +108,7 @@ yarn dev
 
 Visit `http://localhost:4556/api/users/123`. You should see JSON.
 
-## 🎨 Create a page
+## Create a page
 
 With the dev server still running, create `pages/users/[id]/index.tsx` (or `.vue`).
 `KosmoJS` generates a placeholder component - replace it with a page that fetches from your API route:
@@ -175,7 +175,7 @@ Visit `http://localhost:4556/users/123`. Your page renders with data from the AP
 The fetch client is fully typed - `user.name` and `user.email` autocomplete in your editor,
 and invalid parameters are caught before the request leaves the browser.
 
-## ✨ What just happened
+## What just happened
 
 Your folder structure became your routes:
 

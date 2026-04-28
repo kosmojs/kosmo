@@ -17,7 +17,7 @@ import fetchClients from "_/fetch";
 const response = await fetchClients["users/[id]"].GET([123]);
 ```
 
-## 🚀 Method Signatures
+## Method Signatures
 
 Each client exposes methods for the HTTP verbs your route handles.
 The signature reflects your route definition directly:
@@ -45,7 +45,7 @@ const response = await useFetch.GET([123], { query: { name: "John" } });
 // response is typed as { id: number; name: string; email: string }
 ```
 
-## 📭 Routes Without Parameters or Payloads
+## Routes Without Parameters or Payloads
 
 No parameters, no array:
 

@@ -22,7 +22,7 @@ One type definition becomes the source of truth for:
   <LinkButton href="/validation/payload">Get Started</LinkButton>
 </div>
 
-## 🛡️ Understanding Runtype Validation
+## Understanding Runtype Validation
 
 When you provide type annotations to your route parameters, payloads, and responses,
 `TypeScript` gives you compile-time checking - autocomplete, refactoring safety, and error detection before you run your code.
@@ -36,7 +36,7 @@ The same type definitions that give you compile-time safety
 also generate validation logic that runs when requests arrive,
 ensuring that incoming data actually matches what your types promise.
 
-## 🔄 End-to-End Validation
+## End-to-End Validation
 
 Runtype validation happens at both ends:
 the client validates before sending requests,
@@ -56,7 +56,7 @@ Users also get instant feedback instead of waiting for a server response.
   <LinkButton href="/validation/payload">Get Started</LinkButton>
 </div>
 
-## 🔍 How Generation Works
+## How Generation Works
 
 `KosmoJS` uses AST parsing to extract types from your route files,
 then AOT compilation to generate high-performance validation routines in your `lib` directory.

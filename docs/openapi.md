@@ -13,7 +13,7 @@ head:
 Route structure, `TypeScript` types, `VRefine` constraints, parameters, responses -
 all reflected in the spec automatically. No manual schema authoring, no annotation layers.
 
-## 🔧 Enable the generator
+## Enable the generator
 
 Simply add it to your source folder's `kosmo.config.ts`:
 
@@ -36,7 +36,7 @@ export default defineConfig({
 });
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 ### Required Options
 
@@ -97,7 +97,7 @@ user management, billing, and analytics.`,
 };
 ```
 
-## 📄 Generated Specification
+## Generated Specification
 
 The output is a complete `OpenAPI 3.1` document covering:
 

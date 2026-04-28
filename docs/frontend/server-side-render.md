@@ -15,7 +15,7 @@ Source folders default to client-side rendering with Vite's dev server and HMR.
 The SSR generator adds production-ready server rendering while keeping your
 development workflow unchanged.
 
-## 🛠️ Adding SSR Support
+## Adding SSR Support
 
 SSR is automatically enabled if selected during source folder creation.
 To add it to an existing folder, register `ssrGenerator` in your source
@@ -36,7 +36,7 @@ export default defineConfig({
 });
 ```
 
-## 📄 Server Entry Point
+## Server Entry Point
 
 The SSR generator creates `entry/server.tsx` (or `.vue`) with a default implementation.
 `renderFactory` accepts a callback returning an object with rendering methods:
@@ -150,7 +150,7 @@ export default renderFactory(() => {
 SolidJS injects a hydration script in `<head>` via `generateHydrationScript()`,
 which bootstraps client-side reactivity during hydration.
 
-## 🎛️ Render Factory Arguments
+## Render Factory Arguments
 
 `renderToString` receives two arguments - the URL and SSROptions:
 
@@ -187,7 +187,7 @@ export type SSROptions = {
 | `manifest` | Vite's `manifest.json` - the full dependency graph for client modules |
 | `assets` | SSR-related assets, must be injected manually
 
-## 🌊 Stream Rendering
+## Stream Rendering
 
 When both provided, `renderToStream` takes precedence over `renderToString`,
 enabling earlier flushing and improved Time-to-First-Byte (TTFB).
@@ -306,7 +306,7 @@ Same web-standard `ReadableStream` used across all frameworks:
 Hono's `stream.pipe(readableStream)` consumes each framework's output
 identically - no runtime-specific adapters or Node.js stream conversions.
 
-## 📦 Static Asset Handling
+## Static Asset Handling
 
 By default the SSR server loads client assets into memory at startup and serves
 them on request. Disable this when running behind a reverse proxy or CDN:
@@ -323,7 +323,7 @@ export default defineConfig({
 });
 ```
 
-## 🏗️ Production Build
+## Production Build
 
 ::: code-group
 
@@ -343,7 +343,7 @@ yarn build
 Produces an SSR bundle at `dist/SOURCE_FOLDER/ssr/server.js`, ready for
 production execution.
 
-## 🧪 Local Testing
+## Local Testing
 
 Test your SSR bundle before deploying:
 
@@ -353,7 +353,7 @@ node dist/front/ssr/server.js -p 4556
 
 Navigate to `http://localhost:4556` to verify server-side rendering.
 
-## 🖥️ Runtime
+## Runtime
 
 The SSR server uses `node:http` which is natively supported by Node, Bun, and Deno.
 Same bundle, same behavior, just pick your runtime:
@@ -376,7 +376,7 @@ Unix sockets are also supported across all three runtimes:
 node dist/front/ssr/server.js -s /tmp/app.sock
 ```
 
-## 🚀 Production Deployment
+## Production Deployment
 
 Deploy behind a reverse proxy such as Nginx or Caddy:
 
@@ -396,7 +396,7 @@ server {
 }
 ```
 
-## 🔄 Development Experience
+## Development Experience
 
 SSR activates exclusively in production builds. During development:
 
@@ -404,7 +404,7 @@ SSR activates exclusively in production builds. During development:
 - Vite handles all requests with HMR
 - Client-side rendering provides immediate feedback
 
-## 💡 Production Guidelines
+## Production Guidelines
 
 - **Test locally before deploying.** Always verify your production bundle renders correctly before pushing to live servers.
 - **Use streaming for large pages.** Applications with substantial HTML or complex data-fetching chains benefit from `renderToStream` - users see content faster as it arrives progressively.
@@ -413,7 +413,7 @@ SSR activates exclusively in production builds. During development:
 - **Implement error boundaries.** Add error boundaries throughout your application and handle errors in server entry points. Server errors shouldn't terminate the entire process.
 - **Separate SSR and CSR concerns via source folders.** Rather than complex route-level SSR/CSR switching within a single folder, use `KosmoJS`'s architectural strength: deploy an SSR source folder for marketing content and a CSR source folder for your application. Cleaner codebases, straightforward maintenance.
 
-## ⚠️ Technical Considerations
+## Technical Considerations
 
 - **Browser APIs unavailable during SSR.** Code executing server-side cannot access `window`, `document`, or browser-exclusive APIs.
 - **Coordinate async data loading.** Suspense and resources work in SSR contexts, but complex async patterns require careful attention to ensure data is ready before rendering.

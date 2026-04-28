@@ -16,7 +16,7 @@ The result is a fully-typed client that mirrors your route definition exactly.
 Parameters, payload shape, response type - all derived from the same source.
 Change your API, and the client updates with it. No manual sync required.
 
-## 🤖 What Gets Generated
+## What Gets Generated
 
 Each route's client module exports:
 
@@ -33,7 +33,7 @@ exposed for client-side form validation with `check`, `errors`, `errorMessage`,
 `errorSummary`, and `validate` methods.
 ([Details ➜ ](/fetch/validation))
 
-## 🏗️ Using the Generated Client
+## Using the Generated Client
 
 Import the fetch map and pick the client for your route by path:
 

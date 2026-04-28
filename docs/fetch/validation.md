@@ -12,7 +12,7 @@ head:
 Fetch clients validate parameters and payload before making any network request -
 using the exact same schemas as the server. Invalid data throws immediately, no round trip needed.
 
-## 📋 Validation Schemas
+## Validation Schemas
 
 Beyond automatic fetch validation, each client exposes `validationSchemas` for use directly in your UI -
 ideal for real-time form feedback:
@@ -33,7 +33,7 @@ Each schema has four methods:
 
 `check` is cheap. `errors`, `errorMessage`, and `errorSummary` are heavier - gate them behind `check`.
 
-## 🪆 Field Paths
+## Field Paths
 
 Nested field errors use arrow notation: `"customer ➜ address ➜ city"`.
 Match them with word-boundary regex to avoid false positives:
@@ -42,7 +42,7 @@ Match them with word-boundary regex to avoid false positives:
 const emailError = errors.find(({ path }) => /\bemail\b/.test(path));
 ```
 
-## ⚡ Per-Field Validation Performance
+## Per-Field Validation Performance
 
 Schemas validate entire objects, not individual fields. This creates a subtle issue
 when validating fields as users type: on a partially-filled form, `check` returns false

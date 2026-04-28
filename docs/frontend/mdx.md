@@ -19,7 +19,7 @@ server with Preact, and delivered with minimal client-side JavaScript by default
 The same directory-based routing, nested layouts, and type-safe navigation
 used by React, SolidJS, and Vue source folders apply for MDX as well.
 
-## 🛠️ Enabling the Generator
+## Enabling the Generator
 
 MDX generator is automatically enabled when creating a source folder and
 selecting MDX as the framework. To add one to an existing folder:
@@ -44,7 +44,7 @@ export default defineConfig({
 });
 ```
 
-## 📄 Writing Pages
+## Writing Pages
 
 Pages are `.mdx` or `.md` files in your `pages/` directory.
 Standard markdown syntax works alongside JSX components:
@@ -75,7 +75,7 @@ Regular markdown works as expected - **bold**, *italic*, `code`,
 Frontmatter is defined in YAML between `---` fences.
 It drives `<head>` injection and is accessible to layouts via props.
 
-## 🧩 Using Components
+## Using Components
 
 Import Preact components directly into MDX files. TypeScript, props, hooks -
 everything works in the `.tsx` file. The MDX file stays focused on content:
@@ -132,7 +132,7 @@ export const components = {
 These overrides apply to all MDX pages via the `MDXProvider`.
 Individual pages can still import and use additional components directly.
 
-## 🪆 Layouts
+## Layouts
 
 Layouts work identically to other frameworks -
 a `layout.mdx` file wraps all pages and nested layouts within its folder:
@@ -210,7 +210,7 @@ src/content/
         └── index.mdx
 ```
 
-## 🛣️ Route Parameters
+## Route Parameters
 
 MDX pages support the same parameter syntax as other source folders:
 
@@ -264,7 +264,7 @@ export default function Breadcrumb() {
 > not at module scope. `export const params = useParams()` in an MDX file
 > runs on import and will fail.
 
-## 🔗 Type-Safe Navigation
+## Type-Safe Navigation
 
 The generator produces a typed `Link` component at `components/Link.tsx`:
 
@@ -282,7 +282,7 @@ compile time.
 > **Tip:** When `Link` is enabled in `components/mdx.tsx` (the default),
 > it can be used in pages without import - it is a global component provided via `MDXProvider`.
 
-## 📥 Frontmatter & Head Injection
+## Frontmatter & Head Injection
 
 Frontmatter drives `<head>` content automatically. The SSR server reads
 `title`, `description`, and the `head` array from frontmatter and injects
@@ -315,7 +315,7 @@ Produces:
 
 This follows the same convention used by VitePress - no new syntax to learn.
 
-## 🏗️ Application Structure
+## Application Structure
 
 The MDX generator produces the same foundational files as other frameworks,
 maintaining a consistent project structure:
@@ -425,7 +425,7 @@ export default renderFactory(() => {
 ```
 :::
 
-## 📦 Static Site Generation
+## Static Site Generation
 
 MDX source folders support SSG for deploying to CDNs without a running server.
 The build process renders every route to static HTML files.
@@ -464,7 +464,7 @@ Static routes (no parameters) render automatically with no additional configurat
 > that's it, no static files generated for dynamic routes without `staticParams`.
 
 
-## 💡 When to Use MDX vs Frameworks
+## When to Use MDX vs Frameworks
 
 | Use Case | MDX | React / SolidJS / Vue |
 |---|---|---|
@@ -479,7 +479,7 @@ The rule is simple: if the source folder is primarily content with occasional
 interactive components, use MDX. If it is primarily interactive
 with occasional content, use React/Vue/Solid.
 
-## ⚠️ Common Pitfalls
+## Common Pitfalls
 
 - **No TypeScript in MDX.** Keep typed code in `.tsx` files and import into MDX. MDX only supports plain JavaScript expressions.
 - **Hooks at module scope.** `export const x = useHook()` runs on import, not during render. Always call hooks inside component functions.

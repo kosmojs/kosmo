@@ -22,7 +22,7 @@ one template capturing the standard boilerplate, define your routes, and each
 generated file starts with the right structure ready to adapt - instead of
 writing the same skeleton N times by hand.
 
-## ⚙️ Configuration
+## Configuration
 
 Pass custom templates via generator options in your source folder's `kosmo.config.ts`:
 
@@ -51,7 +51,7 @@ export default defineConfig({
 });
 ```
 
-## 🎯 Pattern Syntax
+## Pattern Syntax
 
 Templates use glob-style patterns to match routes:
 
@@ -85,7 +85,7 @@ Targets a single specific route:
 { "products/list": template }
 ```
 
-## 📊 Resolution Priority
+## Resolution Priority
 
 When multiple patterns match, the first matching pattern wins:
 
@@ -99,7 +99,7 @@ generator({
 })
 ```
 
-## 🔀 Parameter Compatibility
+## Parameter Compatibility
 
 Templates work with all parameter types:
 
@@ -112,7 +112,7 @@ Templates work with all parameter types:
 }
 ```
 
-## 📝 Template Format
+## Template Format
 
 Templates are plain strings written to disk as component files. Each framework
 has its own component structure:
@@ -183,7 +183,7 @@ Route params: {JSON.stringify(useParams())}
 > strings - wrap in quotes or escape as needed to prevent accidental
 > Handlebars evaluation.
 
-## ✨ Common Use Cases
+## Common Use Cases
 
 ### Landing & Marketing Pages
 
@@ -207,7 +207,7 @@ generator({
 })
 ```
 
-## 📄 Default Template Override
+## Default Template Override
 
 Routes without a matching pattern use the generator's built-in default, which
 displays the route name as a placeholder. Replace it globally with:

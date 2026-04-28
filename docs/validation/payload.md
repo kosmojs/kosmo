@@ -19,7 +19,7 @@ directly through `TypeScript` types.
 You write the type once, and it serves both as compile-time safety
 and runtime validation enforcement.
 
-## 🎯 Validation Targets
+## Validation Targets
 
 Each target maps to a part of the incoming HTTP request.
 
@@ -64,7 +64,7 @@ GET<{
 
 Invalid configurations are detected at dev time - `KosmoJS` warns and disables affected schemas automatically.
 
-## 📦 Basic Payload Validation
+## Basic Payload Validation
 
 Pass the payload type as the first type argument to your method handler:
 
@@ -100,7 +100,7 @@ an array must be an array, but no additional constraints apply.
 
 [More on VRefine ➜ ](/validation/refine)
 
-## 🏗️ Complex Nested Structures
+## Complex Nested Structures
 
 Since validation rules are just `TypeScript` types, nested objects, union types,
 conditional fields, referenced types - all work naturally:
@@ -140,7 +140,7 @@ export default defineRoute(({ POST }) => [
 ]);
 ```
 
-## 🎨 Combining Multiple Targets
+## Combining Multiple Targets
 
 You can validate multiple parts of the request simultaneously by specifying multiple targets.
 This is particularly useful for endpoints that need to validate query parameters, headers, and request body together:
@@ -181,7 +181,7 @@ export default defineRoute<"posts/search">(({ POST }) => [
 
 Each target is validated independently. All must pass before your handler executes.
 
-## 📝 Body Formats
+## Body Formats
 
 ### JSON
 ```ts
@@ -232,7 +232,7 @@ POST<{
 **Worth noting:** you can only specify **one body target** per handler (`json`, `form` or `raw`),
 but you can combine it with any number of metadata targets (`query`, `headers`, `cookies`).
 
-## 🔗 Referenced Types
+## Referenced Types
 
 As your application grows, defining complex types inline becomes unwieldy.
 You'll want to define types once and reuse them across multiple routes.

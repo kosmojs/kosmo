@@ -15,7 +15,7 @@ with detailed information about what went wrong and where.
 Your `api/errors.ts` is the central place to handle it. The generated file gives you a working default;
 customize it freely to add logging, change response formats, or handle specific error types differently.
 
-## 📦 Default Error Handler
+## Default Error Handler
 
 ::: code-group
 ```ts [Koa: api/errors.ts]
@@ -74,7 +74,7 @@ export default errorHandlerFactory(
 ```
 :::
 
-## 🔧 ValidationError Properties
+## ValidationError Properties
 
 ```ts
 export class ValidationError extends Error {
@@ -125,7 +125,7 @@ if (error instanceof ValidationError) {
 }
 ```
 
-## 🎨 Custom Error Messages
+## Custom Error Messages
 
 The second type argument to your handler also accepts custom error messages per target.
 Use `error` as a fallback and `error.fieldName` for field-specific overrides:

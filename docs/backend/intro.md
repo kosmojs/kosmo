@@ -18,7 +18,7 @@ head:
 Route organization, middleware patterns, and validation are identical between the two.
 The difference is the context API inside handlers - each framework has its own.
 
-## 🔧 Defining Endpoints
+## Defining Endpoints
 
 Every API route exports a `defineRoute` definition as its default export.
 The factory function receives HTTP method builders and `use` for middleware,
@@ -53,14 +53,14 @@ Available builders: `HEAD`, `OPTIONS`, `GET`, `POST`, `PUT`, `PATCH`, `DELETE`.
 This method-based routing style draws inspiration from [Sinatra](https://sinatrarb.com/) -
 the Ruby framework that pioneered it back in 2007.
 
-## 🛡️ Type Safety
+## Type Safety
 
 Parameters, payloads, and responses are all typed through `TypeScript` type arguments -
 the same definitions drive both compile-time checking and runtime validation.
 No separate schema language, no DSL switching.
 ([Details ➜ ](/backend/type-safety))
 
-## ▶️ Middleware
+## Middleware
 
 The `use` function gives you fine-grained middleware control at the route level,
 complementing global and cascading middleware.

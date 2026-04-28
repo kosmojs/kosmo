@@ -16,7 +16,7 @@ page component is created, the generator analyzes its filesystem location,
 produces a corresponding route configuration, and writes it to your `lib`
 directory for the router to consume - without any manual wiring.
 
-## 🛣️ Same routing, both sides
+## Same routing, both sides
 
 Frontend routing follows the exact same directory-based pattern as API routing.
 If you know how `api/` routes work, you already know how `pages/` routes work:
@@ -39,7 +39,7 @@ Static routes always take priority over dynamic ones.
 Optional parameters followed by static segments can cause ambiguity -
 see [parameter details](/routing/params) for gotchas and solutions.
 
-## 🪆 Layouts
+## Layouts
 
 Layout files wrap groups of pages with shared UI - navigation, sidebars, auth shells -
 at any level of the route hierarchy:
@@ -57,14 +57,14 @@ pages/
 Layouts stack outward-in and cannot be escaped by child routes.
 [More on Layouts ➜](/frontend/layouts)
 
-## 📦 Lazy Loading
+## Lazy Loading
 
 All page components are lazy-loaded by default. Route code is excluded from
 the initial JavaScript bundle and fetched on demand when a user navigates to
 that path. This keeps initial payloads small, accelerates application startup,
 and ensures users download only the code for routes they actually visit.
 
-## 🗺️ Generated Route Shape
+## Generated Route Shape
 
 The route object written to `lib` differs slightly per framework to match each
 router's expected format:
@@ -104,7 +104,7 @@ router's expected format:
 
 :::
 
-## 🔄 Data Loading on Navigation
+## Data Loading on Navigation
 
 React and SolidJS integrate data fetching directly into the route lifecycle.
 

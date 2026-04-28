@@ -14,7 +14,7 @@ But you often need more than a string: a numeric ID, a positive integer, a value
 
 `KosmoJS` lets you express these requirements directly in the type system.
 
-## 🎯 Params Refinements
+## Params Refinements
 
 Pass a tuple as the second type argument to `defineRoute`.
 Each position refines the corresponding parameter in route order.
@@ -51,7 +51,7 @@ export default defineRoute<"users/[id]", [
 
 [More on VRefine ➜ ](/validation/refine)
 
-## 🚥 Multiple Parameters
+## Multiple Parameters
 
 For routes with multiple parameters, each tuple position maps to the corresponding param.
 Positions are optional - omit any you don't need to refine.

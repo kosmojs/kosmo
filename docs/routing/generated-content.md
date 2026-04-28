@@ -15,7 +15,7 @@ The output differs based on whether the file is an API route or a client page, a
 > Some editors load generated content instantly, others may require you to briefly unfocus
 > and refocus the file to see the new content.
 
-## ⚙️ API Routes
+## API Routes
 
 Creating `api/users/[id]/index.ts` generates:
 
@@ -43,7 +43,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 The `_/` import prefix maps to `lib/` - generated code that provides full type definitions
 for all your routes. `_/api` resolves to `lib/front/api.ts`, where `front` is your source folder name.
 
-## 🎨 Client Pages
+## Client Pages
 
 Creating `pages/users/[id]/index.tsx` generates a minimal framework component:
 

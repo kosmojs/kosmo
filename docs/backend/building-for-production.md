@@ -16,7 +16,7 @@ pnpm build          # all source folders
 pnpm build front    # specific folder
 ```
 
-## 📦 Build Output
+## Build Output
 
 ```txt
 dist/
@@ -34,7 +34,7 @@ dist/
 
 The SSR output is only present when [SSR is enabled](/frontend/server-side-render).
 
-## 🚀 Running in Production
+## Running in Production
 
 The simplest deployment - just run the bundled server directly:
 

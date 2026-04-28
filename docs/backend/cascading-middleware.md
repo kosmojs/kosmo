@@ -13,7 +13,7 @@ head:
 Place a `use.ts` file in any folder, and its middleware automatically wraps all routes
 in that folder and its subfolders - no imports or wiring required.
 
-## 🎯 How it Works
+## How it Works
 
 ```txt
 api/users/
@@ -60,7 +60,7 @@ Beside the default exported middleware, every `use.ts` exports an `ExtendT` type
 This type extends the context for all routes underneath, giving you
 automatic type safety for anything the middleware adds.
 
-## 🔗 Type-Safe Context Extension
+## Type-Safe Context Extension
 
 The whole point of cascading middleware is to avoid manual wiring.
 That applies to types too - if your auth middleware adds `user` to the context,
@@ -149,7 +149,7 @@ alongside the middleware itself.
 > };
 > ```
 
-## 💼 Common Use Cases
+## Common Use Cases
 
 ### Authentication
 
@@ -289,7 +289,7 @@ export default [
 ```
 :::
 
-## ⚠️ Parameter Availability
+## Parameter Availability
 
 Cascading middleware runs for all routes in the hierarchy, including ones that don't
 define the parameters you might expect:
@@ -304,7 +304,7 @@ api/users/
 `ctx.params.id` is undefined for `/users`. Keep cascading middleware generic -
 authentication, logging, rate limiting. Parameter-specific logic belongs in the route handler.
 
-## 🎨 Multiple Middleware + Method Filtering
+## Multiple Middleware + Method Filtering
 
 A single `use.ts` can define multiple functions, and each supports the `on` option:
 

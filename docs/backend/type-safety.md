@@ -13,7 +13,7 @@ Type safety in `KosmoJS` covers the full request-response cycle:
 path parameters, payloads, responses, and context/state properties -
 all driving both compile-time checking and runtime validation from the same type definitions.
 
-## 🔗 Typing Params
+## Typing Params
 
 Parameters are strings by default. Refine them via the second type argument to `defineRoute`
 by providing a tuple where each position maps to the corresponding parameter in the path:
@@ -51,7 +51,7 @@ defineRoute<"[id]/[action]", Params>
 Refinements also generate runtime validation - invalid params are rejected before your handler runs.
 ([Details ➜ ](/validation/params))
 
-## 🔋 Typing Payload & Response
+## Typing Payload & Response
 
 The first type argument to each method handler defines payload and response schemas:
 
@@ -75,7 +75,7 @@ export default defineRoute<"example">(({ POST }) => [
 Both payload and response are validated at runtime, not just at compile time.
 ([Details ➜ ](/validation/payload))
 
-## 📋 Typing State & Context
+## Typing State & Context
 
 `defineRoute` accepts four type arguments:
 
@@ -136,7 +136,7 @@ export default defineRoute<
 If you find yourself declaring the same properties across many routes,
 move them to the global declarations in `api/env.d.ts` instead.
 
-## ⚙️ Global Context Types - `api/env.d.ts`
+## Global Context Types - `api/env.d.ts`
 
 `api/env.d.ts` extends the default context and state interfaces globally,
 so every route handler picks them up automatically:

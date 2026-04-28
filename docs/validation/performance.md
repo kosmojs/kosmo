@@ -20,7 +20,7 @@ and results are cached per file. Schemas only regenerate when the route file or 
 
 By the time you've saved a file and switched to the browser, the schema is ready.
 
-## 🔄 When It Becomes Noticeable
+## When It Becomes Noticeable
 
 Full rebuilds happen in a few specific situations:
 
@@ -31,7 +31,7 @@ For large projects with many routes, a full rebuild can take several minutes.
 This is the same category of thing as clearing `node_modules` or regenerating a Prisma client -
 infrequent and expected, not part of the normal edit-test cycle.
 
-## ⚖️ Machine Time vs Human Time
+## Machine Time vs Human Time
 
 Zod, Yup etc. have zero generation overhead - because you write the schemas yourself.
 That eliminates generation time but adds an ongoing maintenance cost.

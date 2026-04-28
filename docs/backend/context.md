@@ -12,7 +12,7 @@ head:
 `KosmoJS` extends the standard Koa/Hono context with two additions:
 a unified bodyparser API and `ctx.validated` for type-safe access to validated request data.
 
-## 🔋 Unified Bodyparser
+## Unified Bodyparser
 
 `ctx.bodyparser` works the same regardless of framework:
 
@@ -27,7 +27,7 @@ Results are cached - calling the same parser multiple times doesn't re-parse the
 In practice you rarely call this directly. Define a validation schema in your handler
 and the appropriate parser runs automatically, placing the result in `ctx.validated`.
 
-## ☔ Validated Data Access
+## Validated Data Access
 
 `ctx.validated` holds the validated, typed result for each target you defined:
 
@@ -45,7 +45,7 @@ export default defineRoute(({ POST }) => [
 ]);
 ```
 
-## 🔗 Route Parameters
+## Route Parameters
 
 Validated params are available at `ctx.validated.params`, typed according to your refinements:
 

@@ -17,7 +17,7 @@ head:
 | `{id}` | Optional | One segment or nothing |
 | `{...path}` | Splat | Any number of segments |
 
-## [] Required Parameters
+## Required Parameters
 
 ```
 users/[id]/index.ts   ➜ /users/123, /users/abc
@@ -26,7 +26,7 @@ users/[id]/index.ts   ➜ /users/123, /users/abc
 The parameter name becomes the key in `ctx.validated.params` (or your framework's equivalent).
 `[id]` gives you `params.id`, `[userId]` gives you `params.userId`.
 
-## {} Optional Parameters
+## Optional Parameters
 
 ```
 users/{id}/index.ts   ➜ /users and /users/123
@@ -78,7 +78,7 @@ careers/
 When a parent `index` exists, `[jobId]` is effectively optional - there's a fallback to render.
 In this case, `{jobId}` communicates intent more clearly and both notations work identically.
 
-## {...} Splat Parameters
+## Splat Parameters
 
 ```
 docs/{...path}/index.ts   ➜ /docs/getting-started
@@ -92,7 +92,7 @@ or anything with arbitrarily nested paths.
 A request to `/docs/guides/deployment/production` gives you
 `params.path` as `["guides", "deployment", "production"]`.
 
-## 🔗 Mixed Segments
+## Mixed Segments
 
 Segments can combine static text with parameters:
 
@@ -111,7 +111,7 @@ Mixed segments work fully for backend routes (Koa/Hono). Frontend support varies
 
 Prefer simple segments for frontend routes.
 
-## ⚡ Power Syntax
+## Power Syntax
 
 For advanced cases, `KosmoJS` passes `path-to-regexp v8` patterns through directly.
 **The rule:** if the param name contains non-alphanumeric characters, it's treated as a raw pattern.
