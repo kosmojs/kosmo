@@ -2,6 +2,7 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/typebox-generator",
+  "version": "0.1.0",
   "cacheVersion": "1",
   "author": "Slee Woo",
   "license": "MIT",
