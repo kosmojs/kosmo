@@ -18,6 +18,7 @@
     "prompts": "^2.4.2"
   },
   "devDependencies": {
+    "@kosmojs/cli": "workspace:^",
     "@types/prompts": "^2.4.9"
   }
 }

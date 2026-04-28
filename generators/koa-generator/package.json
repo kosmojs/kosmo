@@ -2,7 +2,6 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/koa-generator",
-  "version": "0.1.0",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [
@@ -29,6 +28,8 @@
     "crc": "^4.3.2"
   },
   "devDependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@kosmojs/lib": "workspace:^",
     "@koa/router": "^15.4.0",
     "@types/formidable": "^3.5.1",
     "@types/koa": "^3.0.2",

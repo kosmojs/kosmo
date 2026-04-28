@@ -2,7 +2,6 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/solid-generator",
-  "version": "0.1.0",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [
@@ -22,6 +21,8 @@
     "test": "vitest --root ../.. --project generators/solid-generator"
   },
   "devDependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@kosmojs/lib": "workspace:^",
     "@solidjs/router": "^0.16.1",
     "path-to-regexp": "^8.4.2",
     "solid-js": "^1.9.12",

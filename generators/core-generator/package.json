@@ -2,7 +2,6 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/core-generator",
-  "version": "0.1.0",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [
@@ -21,6 +20,8 @@
     "build": "wsbuild src/index.ts"
   },
   "devDependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@kosmojs/lib": "workspace:^",
     "path-to-regexp": "^8.4.2"
   }
 }

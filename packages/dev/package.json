@@ -24,5 +24,21 @@
   },
   "dependencies": {
     "crc": "^4.3.2"
+  },
+  "devDependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@kosmojs/core-generator": "workspace:^",
+    "@kosmojs/fetch-generator": "workspace:^",
+    "@kosmojs/hono-generator": "workspace:^",
+    "@kosmojs/koa-generator": "workspace:^",
+    "@kosmojs/lib": "workspace:^",
+    "@kosmojs/mdx-generator": "workspace:^",
+    "@kosmojs/openapi-generator": "workspace:^",
+    "@kosmojs/react-generator": "workspace:^",
+    "@kosmojs/solid-generator": "workspace:^",
+    "@kosmojs/ssg-generator": "workspace:^",
+    "@kosmojs/ssr-generator": "workspace:^",
+    "@kosmojs/typebox-generator": "workspace:^",
+    "@kosmojs/vue-generator": "workspace:^"
   }
 }

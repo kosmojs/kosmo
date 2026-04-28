@@ -2,7 +2,6 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/ssg-generator",
-  "version": "0.1.0",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [
@@ -19,5 +18,9 @@
   },
   "scripts": {
     "build": "wsbuild src/index.ts"
+  },
+  "devDependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@kosmojs/lib": "workspace:^"
   }
 }

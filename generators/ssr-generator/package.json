@@ -2,7 +2,6 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/ssr-generator",
-  "version": "0.1.0",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [
@@ -21,8 +20,10 @@
     "build": "wsbuild src/index.ts"
   },
   "devDependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@kosmojs/lib": "workspace:^",
     "@hono/node-server": "^2.0.0",
-    "hono": "^4.12.14",
+    "hono": "^4.12.15",
     "tinyglobby": "^0.2.16"
   }
 }

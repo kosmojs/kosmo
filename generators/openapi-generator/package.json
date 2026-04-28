@@ -2,7 +2,6 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/openapi-generator",
-  "version": "0.1.0",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [
@@ -21,10 +20,14 @@
   "dependencies": {
     "crc": "^4.3.2",
     "path-to-regexp": "^8.4.2",
-    "typebox": "^1.1.31",
+    "typebox": "^1.1.34",
     "yaml": "^2.8.3"
   },
   "devDependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@kosmojs/lib": "workspace:^",
+    "@kosmojs/core-generator": "workspace:^",
+    "@kosmojs/koa-generator": "workspace:^",
     "@stoplight/spectral-core": "^1.22.0",
     "@stoplight/spectral-rulesets": "^1.22.1"
   }

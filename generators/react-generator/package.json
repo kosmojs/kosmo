@@ -2,7 +2,6 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/react-generator",
-  "version": "0.1.0",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [
@@ -22,6 +21,8 @@
     "test": "vitest --root ../.. --project generators/react-generator"
   },
   "devDependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@kosmojs/lib": "workspace:^",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",

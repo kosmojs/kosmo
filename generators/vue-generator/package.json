@@ -2,7 +2,6 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/vue-generator",
-  "version": "0.1.0",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [
@@ -22,6 +21,8 @@
     "test": "vitest --root ../.. --project generators/vue-generator"
   },
   "devDependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@kosmojs/lib": "workspace:^",
     "@vitejs/plugin-vue": "^6.0.6",
     "path-to-regexp": "^8.4.2",
     "vue": "^3.5.33",
