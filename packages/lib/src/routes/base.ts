@@ -154,7 +154,7 @@ export const createRouteEntry = (
     console.error(
       `❗${styleText("red", "ERROR")}: Failed parsing path for "${styleText("cyan", file)}"`,
     );
-    console.error(error);
+    console.error(error.message);
     return;
   }
 };

@@ -7,7 +7,6 @@ import type {
   PathTokenStaticPart,
   RouteEntry,
 } from "@kosmojs/core";
-import { normalizeStaticValue } from "@kosmojs/lib";
 
 export type TransformedEntry = {
   name?: string;
@@ -19,10 +18,6 @@ export type TransformedEntry = {
 
 export const pathFactory = (pathTokens: Array<PathToken>) => {
   const routeName = pathTokens.map((e) => e.orig).join("/");
-
-  const staticValue = ({ value }: PathTokenStaticPart) => {
-    return normalizeStaticValue(value);
-  };
 
   const paramValue = (p: PathTokenParamPart) => {
     if (p.kind === "splat") {
@@ -38,7 +33,7 @@ export const pathFactory = (pathTokens: Array<PathToken>) => {
   return pathTokens
     .flatMap((token) => {
       if (token.kind === "static") {
-        return [staticValue(token.parts[0] as PathTokenStaticPart)];
+        return [(token.parts[0] as PathTokenStaticPart).value];
       }
 
       if (token.kind === "param") {
@@ -57,10 +52,8 @@ export const pathFactory = (pathTokens: Array<PathToken>) => {
 
       return [
         token.parts
-          .map((part) => {
-            return part.type === "static"
-              ? staticValue(part)
-              : paramValue(part);
+          .map((part): string => {
+            return part.type === "static" ? part.value : paramValue(part);
           })
           .join(""),
       ];

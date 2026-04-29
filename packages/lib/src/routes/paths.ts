@@ -1,5 +1,5 @@
 import crc from "crc/crc32";
-import { parse, type Token } from "path-to-regexp";
+import { compile, parse, type Token } from "path-to-regexp";
 
 import type {
   PathToken,
@@ -18,6 +18,8 @@ import type {
  * Direct :param syntax is prohibited outside {} to avoid ambiguity.
  * Inside {} it is treated as path-to-regexp power syntax and used as-is.
  *
+ * Throw error if path can not be compiled into path-to-regexp pattern.
+ *
  * Examples:
  *   Required:       [id], [name]
  *   Optional:       {name}, {format}
@@ -25,14 +27,7 @@ import type {
  *   Mixed segments: shop/[id]-{name}
  *   Power syntax:   {-v:version{-:pre}}, :name{@:version{.:min}}.js
  * */
-export const pathTokensFactory = (
-  path: string,
-  {
-    transformStaticValue = normalizeStaticValue,
-  }: {
-    transformStaticValue?: (v: string) => string;
-  } = {},
-): Array<PathToken> => {
+export const pathTokensFactory = (path: string): Array<PathToken> => {
   /**
    * Recursively extract parts from path-to-regexp AST tokens.
    * A param inside a group is optional; top-level params are required.
@@ -53,7 +48,7 @@ export const pathTokensFactory = (
           if (token.value !== "/") {
             parts.push({
               type: "static",
-              value: transformStaticValue(token.value),
+              value: token.value,
             });
           }
           break;
@@ -178,6 +173,9 @@ export const pathTokensFactory = (
       ];
     });
 
+  // final path should compile, throw otherwise
+  compile(tokens.map((e) => e.pattern).join("/"));
+
   return tokens;
 };
 
@@ -202,10 +200,6 @@ export const createPathPattern = (tokens: Array<PathToken>) => {
 };
 
 export const createHonoPattern = (tokens: Array<PathToken>) => {
-  const staticValue = ({ value }: PathTokenStaticPart) => {
-    return normalizeStaticValue(value);
-  };
-
   const paramValue = (p: PathTokenParamPart) => {
     if (p.kind === "splat") {
       return `*`;
@@ -241,14 +235,14 @@ export const createHonoPattern = (tokens: Array<PathToken>) => {
   return tokens
     .flatMap((token, i) => {
       if (token.kind === "static") {
-        return [staticValue(token.parts[0] as PathTokenStaticPart)];
+        return [(token.parts[0] as PathTokenStaticPart).value];
       }
 
       if (token.kind === "param") {
         return [paramValue(token.parts[0] as PathTokenParamPart)];
       }
 
-      // mixed → parse pattern, build regex, emit disposable param
+      // mixed segment - parse pattern, build regex, emit disposable param
       const { tokens } = parse(token.pattern.replace(/\//g, ""));
 
       const regex = tokensToRegex(tokens);
@@ -256,8 +250,4 @@ export const createHonoPattern = (tokens: Array<PathToken>) => {
       return [`:_${i}{${regex}}`];
     })
     .join("/");
-};
-
-export const normalizeStaticValue = (value: string) => {
-  return value.replace(/\+/g, "\\\\+");
 };
