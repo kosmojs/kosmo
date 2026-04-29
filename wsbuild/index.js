@@ -43,30 +43,12 @@ const input = Object.fromEntries(
   }),
 );
 
-const external = [];
-
-const packages = await glob("packages/*/*/package.json", {
-  cwd: root,
-  absolute: true,
-});
-
-for (const pkg of packages) {
-  const pkgJson = await import(pkg, {
-    with: { type: "json" },
-  }).then((e) => e.default);
-  external.push(
-    ...Object.keys(pkgJson.dependencies || {}),
-    ...Object.keys(pkgJson.peerDependencies || {}),
-  );
-}
-
 await build({
   configFile: false,
   appType: "custom",
   plugins,
   ssr: {
-    external: external.filter((dep) => !dep.startsWith("@kosmojs/")),
-    noExternal: [/^@kosmojs\//],
+    external: true,
   },
   resolve: {
     tsconfigPaths: true,

@@ -1,6 +1,5 @@
 {
   "type": "module",
-  "private": true,
   "name": "@kosmojs/koa-generator",
   "version": "0.1.0",
   "author": "Slee Woo",

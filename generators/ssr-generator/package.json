@@ -1,6 +1,5 @@
 {
   "type": "module",
-  "private": true,
   "name": "@kosmojs/ssr-generator",
   "version": "0.1.0",
   "author": "Slee Woo",
