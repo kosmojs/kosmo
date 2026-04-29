@@ -129,17 +129,15 @@ export type CreateRouteMiddleware<MiddlewareT> = (
   routeSource: RouteSource<MiddlewareT>,
 ) => Array<MiddlewareDefinition<MiddlewareT>>;
 
-type CreateServer<App> = <Server>(
-  app: App,
-  opt?: {
-    port?: number;
-    sock?: string;
-    callback?: () => void | Promise<void>;
-  },
-) => Promise<Server>;
-
 export type ServerFactory<App> = (
-  factory: (a: { createServer: CreateServer<App> }) => void,
+  factory: (a: {
+    createServer: <Server>(app: App) => Promise<Server>;
+    getListenHandles: () => Promise<{
+      port?: string | undefined;
+      sock?: string | undefined;
+    }>;
+    onListen: () => Promise<void>;
+  }) => void,
 ) => void;
 
 export const StateKey: unique symbol = Symbol("kosmo.state");
