@@ -30,14 +30,11 @@ export default defineGeneratorFactory<Options>(
       },
     });
 
-    const noExternal = Array.isArray(options?.noExternal)
-      ? options.noExternal
-      : [...generators, { meta }].flatMap(({ meta }) => {
-          return Object.keys({
-            ...meta.dependencies,
-            ...meta.devDependencies,
-          });
-        });
+    const externalizeOptions = options
+      ? Object.entries(options).flatMap(([k, v]) => {
+          return k === "external" || k === "noExternal" ? [[k, v]] : [];
+        })
+      : [];
 
     return {
       meta,
@@ -78,7 +75,9 @@ export default defineGeneratorFactory<Options>(
           configFile: false,
           root: createPath.src(),
           plugins,
-          ssr: { noExternal },
+          ssr: externalizeOptions.length
+            ? Object.fromEntries(externalizeOptions)
+            : { external: true },
           resolve: {
             ...config.resolve,
             tsconfigPaths: true,
@@ -106,7 +105,9 @@ export default defineGeneratorFactory<Options>(
           appType: "custom",
           plugins: [vitePlugins.nodePrefix()],
           define: { ...config.define },
-          ssr: { noExternal },
+          ssr: externalizeOptions.length
+            ? Object.fromEntries(externalizeOptions)
+            : { external: true },
           resolve: {
             ...config.resolve,
             tsconfigPaths: true,

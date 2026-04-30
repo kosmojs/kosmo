@@ -120,14 +120,11 @@ export default async (
       if (apiGenerator) {
         const dir = createPath.distDir("api");
 
-        const noExternal = Array.isArray(apiGenerator.options?.noExternal)
-          ? apiGenerator.options.noExternal
-          : generators.flatMap(({ meta }) => {
-              return Object.keys({
-                ...meta.dependencies,
-                ...meta.devDependencies,
-              });
-            });
+        const externalizeOptions = apiGenerator.options
+          ? Object.entries(apiGenerator.options).flatMap(([k, v]) => {
+              return k === "external" || k === "noExternal" ? [[k, v]] : [];
+            })
+          : [];
 
         await build({
           configFile: false,
@@ -138,7 +135,9 @@ export default async (
             ...config.define,
             KOSMO_PRODUCTION_BUILD: "true",
           },
-          ssr: { noExternal },
+          ssr: externalizeOptions.length
+            ? Object.fromEntries(externalizeOptions)
+            : { external: true },
           resolve: {
             ...config.resolve,
             tsconfigPaths: true,

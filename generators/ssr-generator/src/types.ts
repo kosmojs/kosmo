@@ -1,16 +1,12 @@
 export type Options = [
   {
     /**
-     * Controls which dependencies are bundled into the SSR output.
-     *
-     * By default, all dependencies declared by active generators are bundled,
-     * producing a single self-contained file that runs without node_modules.
-     *
-     * Override this to reduce bundle size at the cost of requiring node_modules at runtime:
-     * - `[]` - bundle nothing, all dependencies resolved from node_modules
-     * - `["preact", "hono"]` - bundle only the specified packages
+     * Controls which dependencies are bundled into the output.
+     * By default, all dependencies are externalized.
+     * Use `noExternal: true` to bundle all dependencies.
      * */
-    noExternal?: Array<string>;
+    external?: true | Array<string>;
+    noExternal?: true | string | RegExp | Array<string | RegExp>;
 
     /**
      * Controls whether the SSR server should handle static asset requests (JS, CSS, images, fonts, etc.)
