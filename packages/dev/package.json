@@ -23,9 +23,6 @@
     "build": "wsbuild src/index.ts src/chassis.ts"
   },
   "dependencies": {
-    "crc": "^4.3.2"
-  },
-  "devDependencies": {
     "@kosmojs/core": "workspace:^",
     "@kosmojs/core-generator": "workspace:^",
     "@kosmojs/fetch-generator": "workspace:^",
@@ -39,6 +36,8 @@
     "@kosmojs/ssg-generator": "workspace:^",
     "@kosmojs/ssr-generator": "workspace:^",
     "@kosmojs/typebox-generator": "workspace:^",
-    "@kosmojs/vue-generator": "workspace:^"
+    "@kosmojs/vue-generator": "workspace:^",
+    "crc": "^4.3.2",
+    "vite": "^8.0.10"
   }
 }

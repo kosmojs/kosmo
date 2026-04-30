@@ -4,6 +4,7 @@
   "files": {
     "includes": [
       "vitest.config.js",
+      ".pnpmfile.cjs",
       "plugins/*",
       "wsbuild/*",
       "docs/**/*",

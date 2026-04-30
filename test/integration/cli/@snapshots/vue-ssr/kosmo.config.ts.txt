@@ -1,0 +1,11 @@
+import { defineConfig, vueGenerator, ssrGenerator } from "@kosmojs/dev";
+
+import vuePlugin from "@vitejs/plugin-vue";
+
+export default defineConfig({
+  base: {
+    development: "/vue-ssr",
+  },
+  plugins: [vuePlugin()],
+  generators: [vueGenerator(), ssrGenerator()],
+});

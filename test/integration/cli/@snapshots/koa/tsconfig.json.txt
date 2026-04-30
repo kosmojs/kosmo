@@ -1,0 +1,3 @@
+{
+  "extends": "../../lib/koa/tsconfig.base.json"
+}

@@ -1,0 +1,17 @@
+import {
+  defineConfig,
+  reactGenerator,
+  honoGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+import reactPlugin from "@vitejs/plugin-react";
+
+export default defineConfig({
+  base: {
+    development: "/react-hono",
+  },
+  plugins: [reactPlugin()],
+  generators: [reactGenerator(), honoGenerator(), fetchGenerator(), typeboxGenerator()],
+});

@@ -1,0 +1,11 @@
+import { defineConfig, vueGenerator } from "@kosmojs/dev";
+
+import vuePlugin from "@vitejs/plugin-vue";
+
+export default defineConfig({
+  base: {
+    development: "/vue",
+  },
+  plugins: [vuePlugin()],
+  generators: [vueGenerator()],
+});

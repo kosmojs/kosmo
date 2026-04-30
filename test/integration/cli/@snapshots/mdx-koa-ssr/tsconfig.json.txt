@@ -1,0 +1,3 @@
+{
+  "extends": "../../lib/mdx-koa-ssr/tsconfig.base.json"
+}

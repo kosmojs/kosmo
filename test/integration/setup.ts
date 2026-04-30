@@ -25,7 +25,7 @@ import {
   pathTokensFactory,
 } from "@kosmojs/lib";
 
-import { exec, pnpmDir } from ".";
+import { env, exec, installDependencies } from ".";
 import type { RouteName } from "./routes";
 
 const csr = inject("CSR");
@@ -45,8 +45,6 @@ const apiClient = got.extend({
 });
 
 const PORT_RANGE = [40_000, 60_000];
-
-const { npm_config_minimum_release_age, ...env } = process.env;
 
 export * from "./routes";
 
@@ -212,14 +210,6 @@ export const setupTestProject = async (opt?: {
     return teardown;
   };
 
-  const installDependencies = async () => {
-    await exec(
-      "pnpm",
-      ["--store-dir", pnpmDir, "--no-frozen-lockfile", "install"],
-      { cwd: projectRoot, env },
-    );
-  };
-
   const bootstrapProject = async () => {
     if (skip) {
       return;
@@ -254,7 +244,7 @@ export const setupTestProject = async (opt?: {
       frameworkOptions ? { [framework as never]: frameworkOptions } : {},
     );
 
-    await installDependencies();
+    await installDependencies(projectRoot);
   };
 
   const defaultContentPatternFor = (route: string) => {
@@ -348,7 +338,7 @@ export const setupTestProject = async (opt?: {
         return;
       }
 
-      await installDependencies();
+      await installDependencies(projectRoot);
 
       await exec("pnpm", ["build"], { cwd: projectRoot, env });
 

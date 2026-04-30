@@ -1,0 +1,3 @@
+{
+  "extends": "../../lib/mdx/tsconfig.base.json"
+}

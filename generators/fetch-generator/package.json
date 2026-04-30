@@ -20,9 +20,11 @@
     "build": "wsbuild src/index.ts",
     "test": "vitest --root ../.. --project generators/fetch-generator"
   },
-  "devDependencies": {
+  "dependencies": {
     "@kosmojs/core": "workspace:^",
-    "@kosmojs/lib": "workspace:^",
+    "@kosmojs/lib": "workspace:^"
+  },
+  "devDependencies": {
     "@kosmojs/core-generator": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
     "@kosmojs/typebox-generator": "workspace:^",

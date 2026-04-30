@@ -1,0 +1,3 @@
+{
+  "extends": "../../lib/solid-hono-ssr/tsconfig.base.json"
+}

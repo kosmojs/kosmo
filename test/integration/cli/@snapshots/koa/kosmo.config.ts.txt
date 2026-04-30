@@ -1,0 +1,9 @@
+import { defineConfig, koaGenerator, fetchGenerator, typeboxGenerator } from "@kosmojs/dev";
+
+export default defineConfig({
+  base: {
+    development: "/koa",
+  },
+  plugins: [],
+  generators: [koaGenerator(), fetchGenerator(), typeboxGenerator()],
+});

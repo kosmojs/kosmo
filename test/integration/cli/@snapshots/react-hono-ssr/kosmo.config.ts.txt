@@ -1,0 +1,24 @@
+import {
+  defineConfig,
+  reactGenerator,
+  honoGenerator,
+  ssrGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+import reactPlugin from "@vitejs/plugin-react";
+
+export default defineConfig({
+  base: {
+    development: "/react-hono-ssr",
+  },
+  plugins: [reactPlugin()],
+  generators: [
+    reactGenerator(),
+    honoGenerator(),
+    ssrGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

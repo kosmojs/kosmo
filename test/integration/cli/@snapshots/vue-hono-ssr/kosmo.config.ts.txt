@@ -1,0 +1,24 @@
+import {
+  defineConfig,
+  vueGenerator,
+  honoGenerator,
+  ssrGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+import vuePlugin from "@vitejs/plugin-vue";
+
+export default defineConfig({
+  base: {
+    development: "/vue-hono-ssr",
+  },
+  plugins: [vuePlugin()],
+  generators: [
+    vueGenerator(),
+    honoGenerator(),
+    ssrGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

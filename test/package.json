@@ -1,0 +1,28 @@
+{
+  "type": "module",
+  "private": true,
+  "pnpm": {
+    "requiredScripts": [
+      "build"
+    ],
+    "onlyBuiltDependencies": [
+      "msw"
+    ]
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.0.0",
+    "@kosmojs/cli": "../packages/cli",
+    "@kosmojs/core": "../packages/core",
+    "@kosmojs/dev": "../packages/dev",
+    "@kosmojs/lib": "../packages/lib",
+    "cheerio": "^1.2.0",
+    "crc": "^4.3.2",
+    "got": "^15.0.3",
+    "jiti": "^2.6.1",
+    "oxfmt": "^0.47.0",
+    "path-to-regexp": "^8.4.2",
+    "playwright": "^1.59.1",
+    "tar": "^7.5.13",
+    "yaml": "^2.8.3"
+  }
+}

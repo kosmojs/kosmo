@@ -1,0 +1,12 @@
+import { defineConfig, solidGenerator } from "@kosmojs/dev";
+
+import solidPlugin from "vite-plugin-solid";
+
+export default defineConfig({
+  base: {
+    development: "/solid",
+  },
+  plugins: [solidPlugin()],
+  generators: [solidGenerator()],
+  oxc: { jsx: { importSource: "solid-js" } },
+});

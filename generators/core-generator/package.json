@@ -19,9 +19,11 @@
   "scripts": {
     "build": "wsbuild src/index.ts"
   },
-  "devDependencies": {
+  "dependencies": {
     "@kosmojs/core": "workspace:^",
-    "@kosmojs/lib": "workspace:^",
+    "@kosmojs/lib": "workspace:^"
+  },
+  "devDependencies": {
     "path-to-regexp": "^8.4.2"
   }
 }

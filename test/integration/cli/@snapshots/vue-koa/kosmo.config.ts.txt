@@ -1,0 +1,17 @@
+import {
+  defineConfig,
+  vueGenerator,
+  koaGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+import vuePlugin from "@vitejs/plugin-vue";
+
+export default defineConfig({
+  base: {
+    development: "/vue-koa",
+  },
+  plugins: [vuePlugin()],
+  generators: [vueGenerator(), koaGenerator(), fetchGenerator(), typeboxGenerator()],
+});

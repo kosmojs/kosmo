@@ -1,0 +1,11 @@
+import { defineConfig, reactGenerator } from "@kosmojs/dev";
+
+import reactPlugin from "@vitejs/plugin-react";
+
+export default defineConfig({
+  base: {
+    development: "/react",
+  },
+  plugins: [reactPlugin()],
+  generators: [reactGenerator()],
+});

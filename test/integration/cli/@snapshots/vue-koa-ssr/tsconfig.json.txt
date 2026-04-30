@@ -1,0 +1,3 @@
+{
+  "extends": "../../lib/vue-koa-ssr/tsconfig.base.json"
+}

@@ -2,8 +2,7 @@ import { resolve } from "node:path";
 
 import { defineConfig } from "vitest/config";
 
-import { defaults } from "@kosmojs/core";
-
+import { defaults } from "./packages/core/pkg/index.js";
 import plugins from "./plugins/index.js";
 
 const setupFactory = (name, { alias, ...setup } = {}) => {
@@ -11,16 +10,21 @@ const setupFactory = (name, { alias, ...setup } = {}) => {
     extends: true,
     test: {
       name,
-      root: name.startsWith("integration:")
-        ? "."
-        : resolve(import.meta.dirname, name),
-      include: ["test/**/*.test.ts"],
-      hookTimeout: name.startsWith("integration:") ? 180_000 : 60_000,
       alias: {
         ...alias,
         "@src": "src",
         "@test": "test",
       },
+      ...(name.startsWith("integration:")
+        ? {
+            root: "./test",
+            hookTimeout: 180_000,
+          }
+        : {
+            root: resolve(import.meta.dirname, name),
+            include: ["test/**/*.test.ts"],
+            hookTimeout: 60_000,
+          }),
       ...setup,
     },
   };
@@ -80,11 +84,11 @@ export default defineConfig({
       setupFactory("generators/vue-generator"),
 
       setupFactory("integration:api", {
-        include: ["test/integration/{koa,hono}/*.test.ts"],
+        include: ["integration/{koa,hono}/*.test.ts"],
       }),
 
       setupFactory("integration:csr", {
-        include: ["test/integration/{react,solid,vue,mdx}/*.test.ts"],
+        include: ["integration/{react,solid,vue,mdx}/*.test.ts"],
         fileParallelism: false,
         provide: {
           CSR: "true",
@@ -92,10 +96,16 @@ export default defineConfig({
       }),
 
       setupFactory("integration:ssr", {
-        include: ["test/integration/{react,solid,vue,mdx}/*.test.ts"],
+        include: ["integration/{react,solid,vue,mdx}/*.test.ts"],
         provide: {
           SSR: "true",
         },
+      }),
+
+      setupFactory("integration:cli", {
+        globalSetup: ["integration/cli/setup.global.ts"],
+        include: ["integration/cli/*.test.ts"],
+        testTimeout: 60_000,
       }),
     ],
   },

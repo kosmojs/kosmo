@@ -19,8 +19,9 @@
   "scripts": {
     "build": "wsbuild src/index.ts"
   },
-  "devDependencies": {
+  "dependencies": {
     "@kosmojs/core": "workspace:^",
-    "@kosmojs/lib": "workspace:^"
+    "@kosmojs/lib": "workspace:^",
+    "vite": "^8.0.10"
   }
 }

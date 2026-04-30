@@ -1,0 +1,3 @@
+{
+  "extends": "../../lib/mdx-hono/tsconfig.base.json"
+}

@@ -1,0 +1,9 @@
+import { defineConfig, honoGenerator, fetchGenerator, typeboxGenerator } from "@kosmojs/dev";
+
+export default defineConfig({
+  base: {
+    development: "/hono",
+  },
+  plugins: [],
+  generators: [honoGenerator(), fetchGenerator(), typeboxGenerator()],
+});

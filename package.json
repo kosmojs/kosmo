@@ -21,42 +21,29 @@
     "preinstall": "npx only-allow pnpm",
     "test": "vitest run",
     "test:unit": "vitest run --project=packages/* --project=generators/*",
+    "test:unit:generators": "vitest run --project=generators/*",
+    "test:unit:packages": "vitest run --project=packages/*",
     "test:integration": "vitest run --project=integration:*",
     "test:integration:api": "vitest run --project=integration:api",
     "test:integration:csr": "vitest run --project=integration:csr",
     "test:integration:ssr": "vitest run --project=integration:ssr",
+    "test:integration:cli": "vitest run --project=integration:cli",
     "prepub": "./scripts/publish/prepare",
     "pub": "changeset publish",
     "pub:tags": "git push --follow-tags"
   },
-  "devDependencies": {
+  "dependencies": {
     "@biomejs/biome": "^2.4.13",
     "@changesets/cli": "^2.31.0",
-    "@hono/node-server": "^2.0.0",
-    "@kosmojs/cli": "workspace:^",
-    "@kosmojs/core": "workspace:^",
-    "@kosmojs/dev": "workspace:^",
-    "@kosmojs/lib": "workspace:^",
     "@types/bun": "^1.3.13",
     "@types/deno": "^2.5.0",
     "@types/node": "^25.6.0",
-    "cheerio": "^1.2.0",
-    "crc": "^4.3.2",
-    "got": "^15.0.3",
-    "jiti": "^2.6.1",
-    "msw": "^2.13.6",
-    "playwright": "^1.59.1",
+    "msw": "^2.14.2",
     "resolve-tspaths": "^0.8.23",
-    "tinyglobby": "^0.2.16",
     "tsconfig": "link:tsconfig",
-    "typescript": "^6.0.3",
     "vite": "^8.0.10",
     "vitest": "^4.1.5",
-    "workspace-root": "^3.3.1",
-    "wsbuild": "link:wsbuild",
-    "yaml": "^2.8.3"
+    "wsbuild": "link:wsbuild"
   },
-  "dependencies": {
-    "path-to-regexp": "^8.4.2"
-  }
+  "devDependencies": {}
 }

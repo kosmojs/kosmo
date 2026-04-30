@@ -1,4 +1,4 @@
-import { glob } from "tinyglobby";
+import { glob } from "node:fs/promises";
 
 export default [
   {
@@ -7,18 +7,12 @@ export default [
     async resolveId(src) {
       if (src.startsWith("#templates/")) {
         const base = src.replace("#templates/", "src/templates/");
-        const [path] = await glob(
-          [
-            // files with explicit extension takes priority
-            base,
-            `${base}.{ts,tsx}`,
-          ],
-          {
-            absolute: true,
-            onlyFiles: true,
-          },
-        );
-        if (path) {
+        const patterns = [
+          // files with explicit extension takes priority
+          base,
+          `${base}.{ts,tsx}`,
+        ];
+        for await (const path of glob(patterns)) {
           return `${path}?raw`;
         }
       }

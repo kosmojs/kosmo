@@ -19,12 +19,13 @@
   },
   "scripts": {
     "build": "wsbuild src/index.ts",
-    "pretest": "pnpm run build",
     "test": "vitest --root ../.. --project generators/typebox-generator"
   },
-  "devDependencies": {
+  "dependencies": {
     "@kosmojs/core": "workspace:^",
-    "@kosmojs/lib": "workspace:^",
+    "@kosmojs/lib": "workspace:^"
+  },
+  "devDependencies": {
     "@kosmojs/core-generator": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
     "typebox": "^1.1.34"

@@ -1,0 +1,3 @@
+{
+  "extends": "../../lib/solid/tsconfig.base.json"
+}

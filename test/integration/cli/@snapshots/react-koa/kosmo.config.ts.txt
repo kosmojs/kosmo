@@ -1,0 +1,17 @@
+import {
+  defineConfig,
+  reactGenerator,
+  koaGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+import reactPlugin from "@vitejs/plugin-react";
+
+export default defineConfig({
+  base: {
+    development: "/react-koa",
+  },
+  plugins: [reactPlugin()],
+  generators: [reactGenerator(), koaGenerator(), fetchGenerator(), typeboxGenerator()],
+});

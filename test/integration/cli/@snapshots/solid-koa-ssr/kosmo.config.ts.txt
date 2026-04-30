@@ -1,0 +1,25 @@
+import {
+  defineConfig,
+  solidGenerator,
+  koaGenerator,
+  ssrGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+import solidPlugin from "vite-plugin-solid";
+
+export default defineConfig({
+  base: {
+    development: "/solid-koa-ssr",
+  },
+  plugins: [solidPlugin({ ssr: true })],
+  generators: [
+    solidGenerator(),
+    koaGenerator(),
+    ssrGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+  oxc: { jsx: { importSource: "solid-js" } },
+});

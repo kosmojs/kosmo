@@ -20,9 +20,11 @@
     "build": "wsbuild src/index.ts",
     "test": "vitest --root ../.. --project generators/react-generator"
   },
-  "devDependencies": {
+  "dependencies": {
     "@kosmojs/core": "workspace:^",
-    "@kosmojs/lib": "workspace:^",
+    "@kosmojs/lib": "workspace:^"
+  },
+  "devDependencies": {
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
