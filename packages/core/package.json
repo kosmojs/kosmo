@@ -34,21 +34,12 @@
     "test": "vitest --root ../.. --project packages/core"
   },
   "dependencies": {
-    "@koa/router": "^15.4.0",
-    "formidable": "^3.5.4",
-    "koa": "^3.2.0",
     "qs": "^6.15.1",
-    "raw-body": "^3.0.2",
     "string-width": "^8.2.1"
   },
   "devDependencies": {
-    "@types/formidable": "^3.5.1",
-    "@types/koa": "^3.0.2",
-    "@types/koa-compose": "^3.2.9",
-    "@types/picomatch": "^4.0.3",
     "@types/qs": "^6.15.0",
     "hono": "^4.12.15",
-    "koa-compose": "^4.1.0",
     "path-to-regexp": "^8.4.2",
     "tfusion": "^0.0.24"
   }
