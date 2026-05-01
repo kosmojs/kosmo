@@ -1,14 +1,8 @@
+import { readFileSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { resolve } from "node:path";
 
-/**
- * Import from published package to ensure correct version at runtime.
- * Local import would be bundled with pre-bump version.
- * INFO: For best compatibility, all packages should share the same version.
- * When bumping the version (even a patch) for a single package, bump it for all packages
- * to keep versions fully synchronized across the project.
- * */
-import self from "@kosmojs/cli/package.json" with { type: "json" };
 import {
   type BACKEND_FRAMEWORKS,
   DEFAULT_BACKEND,
@@ -36,6 +30,22 @@ import { pathExists, render, renderToFile } from "@kosmojs/lib";
 
 import { copyFiles, type Project, type SourceFolder } from "./base";
 import * as templates from "./templates";
+
+/**
+ * Read the installed package.json at runtime to get the actual version.
+ * A static `import ... with { type: "json" }` would be inlined by the
+ * bundler with the pre-bump version, defeating the point.
+ *
+ * INFO: For best compatibility, all packages should share the same version.
+ * When bumping the version (even a patch) for a single package, bump it for all packages
+ * to keep versions fully synchronized across the project.
+ * */
+const self = JSON.parse(
+  readFileSync(
+    createRequire(import.meta.url).resolve("@kosmojs/cli/package.json"),
+    "utf-8",
+  ),
+);
 
 const TPL_DIR = resolve(import.meta.dirname, "templates");
 

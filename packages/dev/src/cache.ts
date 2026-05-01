@@ -1,4 +1,6 @@
+import { readFileSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 
 import crc from "crc/crc32";
@@ -7,13 +9,19 @@ import type {
   RouteResolverCache,
   RouteResolverCacheFactory,
 } from "@kosmojs/core";
-/**
- * Import from published package to ensure correct version at runtime.
- * Local import would be bundled with pre-bump version; this external
- * import resolves to the actual published package.json.
- * */
-import self from "@kosmojs/dev/package.json" with { type: "json" };
 import { pathExists, pathResolver } from "@kosmojs/lib";
+
+/**
+ * Read the installed package.json at runtime to get the actual version.
+ * A static `import ... with { type: "json" }` would be inlined by the
+ * bundler with the pre-bump version, defeating the point.
+ * */
+const self = JSON.parse(
+  readFileSync(
+    createRequire(import.meta.url).resolve("@kosmojs/dev/package.json"),
+    "utf-8",
+  ),
+);
 
 export const cacheFactory: RouteResolverCacheFactory = (
   route,
