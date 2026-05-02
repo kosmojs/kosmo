@@ -45,10 +45,10 @@ The generated boilerplate when you create a new `use.ts`:
 ```ts [api/users/use.ts]
 import { use } from "_/api";
 
-export type ExtendT = {};
+export type UseT = {};
 
 export default [
-  use<ExtendT>(async (ctx, next) => {
+  use<UseT>(async (ctx, next) => {
     return next();
   })
 ];
@@ -56,7 +56,7 @@ export default [
 
 > Some editors load the generated content immediately, others require a brief unfocus/refocus.
 
-Beside the default exported middleware, every `use.ts` exports an `ExtendT` type - even if empty.
+Beside the default exported middleware, every `use.ts` exports the `UseT` type - even if empty.
 This type extends the context for all routes underneath, giving you
 automatic type safety for anything the middleware adds.
 
@@ -66,20 +66,20 @@ The whole point of cascading middleware is to avoid manual wiring.
 That applies to types too - if your auth middleware adds `user` to the context,
 every route underneath should know about it without importing or declaring anything.
 
-`ExtendT` makes this work. Define what your middleware adds:
+`UseT` makes this work. Define what your middleware adds:
 
 ::: code-group
 ```ts [Koa: api/admin/use.ts]
 import { use } from "_/api";
 
-export type ExtendT = {
+export type UseT = {
   user: { id: number; role: "admin" | "user" };
 };
 
 export default [
-  use<ExtendT>(async (ctx, next) => {
+  use<UseT>(async (ctx, next) => {
     const token = ctx.headers.authorization?.replace("Bearer ", "");
-    // NOTE: validate before adding to state - ExtendT promises this property exists
+    // NOTE: validate before adding to state - UseT promises this property exists
     ctx.assert(token, 401, "Authentication required");
     ctx.state.user = await verifyToken(token);
     return next();
@@ -90,14 +90,14 @@ export default [
 ```ts [Hono: api/admin/use.ts]
 import { use } from "_/api";
 
-export type ExtendT = {
+export type UseT = {
   user: { id: number; role: "admin" | "user" };
 };
 
 export default [
-  use<ExtendT>(async (ctx, next) => {
+  use<UseT>(async (ctx, next) => {
     const token = ctx.req.header("authorization")?.replace("Bearer ", "");
-    // NOTE: validate before adding to context - ExtendT promises this property exists
+    // NOTE: validate before adding to context - UseT promises this property exists
     if (!token) throw new HTTPException(401, { message: "Authentication required" });
     ctx.set("user", await verifyToken(token));
     return next();
@@ -127,24 +127,24 @@ export default defineRoute<"admin/dashboard">(({ GET }) => [
 ```
 :::
 
-The code generator imports `ExtendT` from each `use.ts` in the hierarchy
+The code generator imports `UseT` from each `use.ts` in the hierarchy
 and merges them into the context type for `defineRoute`. Inner definitions
 override outer ones - just like at runtime, where inner middleware runs after
 outer middleware and can overwrite context values.
 
-**Note:** the global `api/use.ts` does not need to export `ExtendT`.
+**Note:** the global `api/use.ts` does not need to export `UseT`.
 Even if it does, the export is ignored - global middleware operates on
 `DefaultState` (Koa) or `DefaultVariables` (Hono) defined in `api/env.d.ts`.
-`ExtendT` is for folder-level `use.ts` files only, where the types cascade
+`UseT` is for folder-level `use.ts` files only, where the types cascade
 alongside the middleware itself.
 
-> **Tip:** inner `use.ts` files can import `ExtendT` from outer ones, extend it, and re-export -
+> **Tip:** inner `use.ts` files can import `UseT` from outer ones, extend it, and re-export -
 > avoiding duplicate type definitions across the hierarchy:
 >
 > ```ts [api/admin/settings/use.ts]
-> import type { ExtendT as ParentT } from "../use";
+> import type { UseT as ParentT } from "../use";
 >
-> export type ExtendT = ParentT & {
+> export type UseT = ParentT & {
 >   settingsAccess: "read" | "write";
 > };
 > ```
@@ -157,12 +157,12 @@ alongside the middleware itself.
 ```ts [Koa: api/admin/use.ts]
 import { use } from "_/api";
 
-export type ExtendT = {
+export type UseT = {
   user: { id: number; name: string; role: string };
 };
 
 export default [
-  use<ExtendT>(async (ctx, next) => {
+  use<UseT>(async (ctx, next) => {
     const token = ctx.headers.authorization?.replace("Bearer ", "");
     ctx.assert(token, 401, "Authentication required");
 
@@ -179,12 +179,12 @@ export default [
 import { HTTPException } from "hono/http-exception";
 import { use } from "_/api";
 
-export type ExtendT = {
+export type UseT = {
   user: { id: number; name: string; role: string };
 };
 
 export default [
-  use<ExtendT>(async (ctx, next) => {
+  use<UseT>(async (ctx, next) => {
     const token = ctx.req.header("authorization")?.replace("Bearer ", "");
     if (!token) throw new HTTPException(401, { message: "Authentication required" });
 
@@ -207,12 +207,12 @@ the user is already validated (`ctx.state.user` for Koa, `ctx.get("user")` for H
 ```ts [Koa: api/payments/use.ts]
 import { use } from "_/api";
 
-export type ExtendT = {
+export type UseT = {
   requestId: string;
 };
 
 export default [
-  use<ExtendT>(async (ctx, next) => {
+  use<UseT>(async (ctx, next) => {
     const start = Date.now();
     const requestId = crypto.randomUUID();
 
@@ -231,12 +231,12 @@ export default [
 ```ts [Hono: api/payments/use.ts]
 import { use } from "_/api";
 
-export type ExtendT = {
+export type UseT = {
   requestId: string;
 };
 
 export default [
-  use<ExtendT>(async (ctx, next) => {
+  use<UseT>(async (ctx, next) => {
     const start = Date.now();
     const requestId = crypto.randomUUID();
 
@@ -257,10 +257,10 @@ export default [
 import rateLimit from "koa-ratelimit";
 import { use } from "_/api";
 
-export type ExtendT = {};
+export type UseT = {};
 
 export default [
-  use<ExtendT>(
+  use<UseT>(
     rateLimit({
       driver: "memory",
       db: new Map(),
@@ -275,10 +275,10 @@ export default [
 import { rateLimiter } from "hono-rate-limiter";
 import { use } from "_/api";
 
-export type ExtendT = {};
+export type UseT = {};
 
 export default [
-  use<ExtendT>(
+  use<UseT>(
     rateLimiter({
       windowMs: 60000,
       limit: 100,
@@ -312,17 +312,17 @@ A single `use.ts` can define multiple functions, and each supports the `on` opti
 ```ts [Koa: api/users/use.ts]
 import { use } from "_/api";
 
-export type ExtendT = {
+export type UseT = {
   user: { id: number; name: string };
 };
 
 export default [
-  use<ExtendT>(async (ctx, next) => {
+  use<UseT>(async (ctx, next) => {
     console.log(`${ctx.method} ${ctx.path}`);
     return next();
   }),
 
-  use<ExtendT>(
+  use<UseT>(
     async (ctx, next) => {
       const token = ctx.headers.authorization?.replace("Bearer ", "");
       ctx.assert(token, 401, "Authentication required");
@@ -332,7 +332,7 @@ export default [
     { on: ["POST", "PUT", "PATCH", "DELETE"] },
   ),
 
-  use<ExtendT>(async (ctx, next) => {
+  use<UseT>(async (ctx, next) => {
     const start = Date.now();
     await next();
     ctx.set("X-Response-Time", `${Date.now() - start}ms`);
@@ -344,17 +344,17 @@ export default [
 import { HTTPException } from "hono/http-exception";
 import { use } from "_/api";
 
-export type ExtendT = {
+export type UseT = {
   user: { id: number; name: string };
 };
 
 export default [
-  use<ExtendT>(async (ctx, next) => {
+  use<UseT>(async (ctx, next) => {
     console.log(`${ctx.req.method} ${ctx.req.path}`);
     return next();
   }),
 
-  use<ExtendT>(
+  use<UseT>(
     async (ctx, next) => {
       const token = ctx.req.header("authorization")?.replace("Bearer ", "");
       if (!token) throw new HTTPException(401, { message: "Authentication required" });
@@ -364,7 +364,7 @@ export default [
     { on: ["POST", "PUT", "PATCH", "DELETE"] },
   ),
 
-  use<ExtendT>(async (ctx, next) => {
+  use<UseT>(async (ctx, next) => {
     const start = Date.now();
     await next();
     ctx.header("X-Response-Time", `${Date.now() - start}ms`);

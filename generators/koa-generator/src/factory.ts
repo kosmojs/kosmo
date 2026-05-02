@@ -49,7 +49,7 @@ export default defineGeneratorFactory<Options>(
           cascadingMiddleware: Array<RouteEntry>;
         }) {
           return cascadingState(
-            cascadingMiddleware.map(({ id }) => `ExtendT${id}`),
+            cascadingMiddleware.map(({ id }) => `UseT${id}`),
           );
         },
       },

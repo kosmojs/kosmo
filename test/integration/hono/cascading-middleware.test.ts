@@ -39,9 +39,9 @@ beforeAll(async () => {
       if (file === "use") {
         return `
           import { use } from "${createImport.libApi([], { origin: "src" })}";
-          export type ExtendT = { stack: Array<string> };
+          export type UseT = { stack: Array<string> };
           export default [
-            use<ExtendT>((ctx, next) => {
+            use<UseT>((ctx, next) => {
               if (!ctx.var.stack) {
                 ctx.set("stack", []);
               }

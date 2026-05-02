@@ -10,7 +10,7 @@ import { validationSchemas as {{id}}_schemas } from "{{ createImport "libApi" na
 {{/each}}
 
 {{#each cascadingMiddleware}}
-import {{id}}, { type ExtendT as ExtendT{{id}} } from "{{ createImport "api" file }}";
+import {{id}}, { type UseT as UseT{{id}} } from "{{ createImport "api" file }}";
 {{/each}}
 
 type Override<A, B> = Omit<A, keyof B> & B;
