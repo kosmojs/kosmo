@@ -170,7 +170,6 @@ export default defineGeneratorFactory<Options>(
 
         // deploy global src files that does not change on routes updates
         for (const [file, template] of [
-          ["env.d.ts", templates.srcEnv],
           ["app.ts", templates.srcApp],
           ["dev.ts", templates.srcDev],
           ["errors.ts", templates.srcErrors],
@@ -185,6 +184,14 @@ export default defineGeneratorFactory<Options>(
             { overwrite },
           );
         }
+
+        // rendering api/env.d.ts using lib mappings
+        await deployLibFile(
+          createPath.api("env.d.ts"),
+          templates.srcEnv,
+          {},
+          { overwrite },
+        );
       },
 
       async watch(entries, event) {

@@ -143,7 +143,7 @@ so every route handler picks them up automatically:
 
 ::: code-group
 ```ts [Koa: api/env.d.ts]
-export declare module "_/api" {
+export declare module "@/lib/admin/api" {
   interface DefaultState {
     permissions: Array<"read" | "write" | "admin">;
   }
@@ -154,7 +154,7 @@ export declare module "_/api" {
 ```
 
 ```ts [Hono: api/env.d.ts]
-export declare module "_/api" {
+export declare module "@/lib/admin/api" {
   interface DefaultVariables {
     permissions: Array<"read" | "write" | "admin">;
   }
