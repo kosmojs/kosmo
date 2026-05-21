@@ -1,13 +1,15 @@
 {
   "type": "module",
   "private": true,
-  "pnpm": {
-    "requiredScripts": [
-      "build"
-    ],
-    "onlyBuiltDependencies": [
-      "msw"
-    ]
+  "scripts": {
+    "unit": "pnpm -C .. run test:unit",
+    "unit:generators": "pnpm -C .. run test:unit:generators",
+    "unit:packages": "pnpm -C .. run test:unit:packages",
+    "integration": "pnpm -C .. run test:integration",
+    "integration:api": "pnpm -C .. run test:integration:api",
+    "integration:csr": "pnpm -C .. run test:integration:csr",
+    "integration:ssr": "pnpm -C .. run test:integration:ssr",
+    "integration:cli": "pnpm -C .. run test:integration:cli"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.0",
