@@ -31,6 +31,7 @@
     "@types/mime-types": "^3.0.1",
     "@types/qs": "^6.15.0",
     "mime-types": "^3.0.2",
+    "msw": "^2.14.5",
     "path-to-regexp": "^8.4.2",
     "qs": "^6.15.1",
     "typebox": "^1.1.34"

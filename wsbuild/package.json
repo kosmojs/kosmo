@@ -4,5 +4,8 @@
   "private": true,
   "bin": {
     "wsbuild": "./index.js"
+  },
+  "dependencies": {
+    "vite": "^8.0.10"
   }
 }

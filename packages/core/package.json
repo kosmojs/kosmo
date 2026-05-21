@@ -40,7 +40,9 @@
   "devDependencies": {
     "@types/qs": "^6.15.0",
     "hono": "^4.12.15",
+    "msw": "^2.14.5",
     "path-to-regexp": "^8.4.2",
-    "tfusion": "^0.0.24"
+    "tfusion": "^0.0.24",
+    "vite": "^8.0.10"
   }
 }

@@ -38,10 +38,8 @@
     "@types/bun": "^1.3.13",
     "@types/deno": "^2.5.0",
     "@types/node": "^25.6.0",
-    "msw": "^2.14.2",
     "resolve-tspaths": "^0.8.23",
     "tsconfig": "link:tsconfig",
-    "vite": "^8.0.10",
     "vitest": "^4.1.5",
     "wsbuild": "link:wsbuild"
   },
