@@ -28,6 +28,6 @@ export default defineGenerator<Options>((options) => {
     meta,
     options,
     factory: (sourceFolder) => factory(meta, sourceFolder, options),
-    plugins: () => [vitePlugins.nodePrefix()],
+    plugins: () => [vitePlugins.nodePrefix(), ...(options?.plugins || [])],
   };
 });

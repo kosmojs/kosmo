@@ -1,3 +1,5 @@
+import type { Plugin } from "vite";
+
 import type { ApiRoute, GeneratorCustomTemplates } from "@kosmojs/core";
 
 export type Options = [
@@ -32,6 +34,40 @@ export type Options = [
     >;
 
     templates?: GeneratorCustomTemplates<ApiRoute>;
+
+    /**
+     * Vite plugins to be used on backend build and dev server
+     * */
+    plugins?: Array<Plugin>;
+
+    /**
+     * Emit static assets during the SSR/backend build.
+     *
+     * Vite skips asset emission in SSR builds by default, assuming a companion
+     * client build already wrote them to disk. A backend-only build has no such
+     * companion, so any import that resolves to a *path on disk*
+     * would dangle at runtime. Applies to ?url and asset-graph references:
+     *
+     *   import geoip from "@/files/GeoIP2-Country.mmdb?url";
+     *   const lookup = new Reader<CountryResponse>(
+     *     readFileSync(new URL(geoip, import.meta.url)),
+     *   );
+     *
+     * Resolve at the call site with `new URL(asset, import.meta.url)` so the path
+     * is relative to the emitting module - robust to chunk relocation, and keeps
+     * ?url consistently typed as `string` across frontend/backend builds. Paired
+     * with experimental.renderBuiltUrl returning the bare filename for SSR assets
+     * (otherwise the default `base` prefix yields an unusable leading "/").
+     *
+     * Does NOT apply to content-inlining imports - those bundle the bytes straight
+     * into the JS and need no emitted file:
+     *   ?raw (string)
+     *   ?inline (data URL)
+     *   ?arraybuffer / ?uint8array (typed array)
+     *
+     * Safe to ignore this option if the backend uses only inlining imports.
+     * */
+    emitAssets: boolean;
   },
   false,
 ];

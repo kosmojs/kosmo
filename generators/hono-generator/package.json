@@ -28,6 +28,7 @@
   "devDependencies": {
     "@hono/node-server": "^2.0.0",
     "hono": "^4.12.15",
-    "path-to-regexp": "^8.4.2"
+    "path-to-regexp": "^8.4.2",
+    "vite": "^8.0.10"
   }
 }

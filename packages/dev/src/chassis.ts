@@ -120,13 +120,17 @@ export default async (
       if (apiGenerator) {
         const dir = createPath.distDir("api");
 
-        const externalizeOptions = apiGenerator.options
-          ? Object.entries(apiGenerator.options).flatMap(([k, v]) => {
-              return k === "external" || k === "noExternal" ? [[k, v]] : [];
-            })
-          : [];
+        const apiGeneratorOptions = { ...apiGenerator.options };
+        const { emitAssets = false } = apiGeneratorOptions;
+
+        const externalizeOptions = Object.entries(apiGeneratorOptions).flatMap(
+          ([k, v]) => {
+            return k === "external" || k === "noExternal" ? [[k, v]] : [];
+          },
+        );
 
         await build({
+          base: "./",
           configFile: false,
           root: createPath.src(),
           appType: "custom",
@@ -145,6 +149,7 @@ export default async (
           },
           build: {
             ssr: true,
+            ssrEmitAssets: emitAssets as boolean,
             target: "esnext",
             sourcemap: true,
             emptyOutDir: true,
@@ -154,6 +159,13 @@ export default async (
                 dir,
                 format: "esm",
               },
+            },
+          },
+          experimental: {
+            renderBuiltUrl(filename, { type }) {
+              // emit bare relative asset paths (no leading "/") so call
+              // sites can resolve them against import.meta.url at runtime.
+              return type === "asset" ? filename : undefined;
             },
           },
           cacheDir: cacheDir(sourceFolder, command, "backend"),
