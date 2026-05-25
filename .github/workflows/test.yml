@@ -31,6 +31,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install
+      - run: pnpm -C wsbuild install
       - run: pnpm -C test install
       - run: pnpm -C test exec playwright install --with-deps chromium
       - run: pnpm -r build
