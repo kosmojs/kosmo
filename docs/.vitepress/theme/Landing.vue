@@ -235,7 +235,7 @@ onMounted(() => {
           <div class="lstep">
             <div class="n">3</div>
             <h3>Call it, typed</h3>
-            <p>The page imports a fetch client generated from the route. Params, payload, and response types all flow through.</p>
+            <p>The page imports a fetch client generated from the route. Params, payload, and response types all synced.</p>
           </div>
         </div>
 
@@ -529,7 +529,7 @@ onMounted(() => {
 .kosmo-landing h2,
 .kosmo-landing h3 { font-weight: 600; line-height: 1.08; letter-spacing: -.02em; margin: 0; }
 
-.mono { font-family: var(--mono); }
+.mono { font-family: var(--mono); color: var(--blue); }
 
 /* ---------- nav ---------- */
 .nav {
