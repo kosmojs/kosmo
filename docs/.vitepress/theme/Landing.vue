@@ -159,7 +159,7 @@ onMounted(() => {
         <div class="section-head rise">
           <p class="eyebrow">composable by nature</p>
           <h2>A project is never just one app.</h2>
-          <p>New surfaces keep appearing - each wants its own routing, auth, and deploy story. The usual ways of splitting them apart all charge rent.</p>
+          <p>New surfaces keep appearing - each wants its own routing, auth, and deploy story. The usual ways of splitting them apart all add maintenance overhead.</p>
         </div>
         <div class="cards3 rise">
           <div class="pcard">
