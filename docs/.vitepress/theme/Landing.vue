@@ -110,7 +110,7 @@ onMounted(() => {
     <section class="hero">
       <div class="wrap hero-grid">
         <div>
-          <p class="eyebrow">KosmoJS - the composable meta-framework; built on Vite</p>
+          <p class="eyebrow">KosmoJS - the composable meta-framework</p>
           <h1>
             Many apps.<br />
             One project.<br />
@@ -134,21 +134,19 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- signature: one file becomes a route becomes a typed client -->
-        <div class="panel transform">
+        <!-- a typical project at scale: many concerns, one codebase -->
+        <div class="panel panel-tree">
           <div class="panel-bar">
-            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-            <span class="tab">one definition</span>
+            <svg class="ficon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h3.5l2 2H19a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg>
+            <span class="tab">a typical KosmoJS project at scale</span>
           </div>
-          <pre><code><span class="reveal-line stage"><span class="xform-line"><span class="xform-tag">file</span><span><span class="t-path">api/users/[id]/index.ts</span></span></span>
-<span class="t-kw">export default</span> <span class="t-fn">defineRoute</span>&lt;<span class="t-str">"users/[id]"</span>&gt;(({ <span class="t-prop">GET</span> }) =&gt; [
-  <span class="t-fn">GET</span>(<span class="t-kw">async</span> (<span class="t-prop">ctx</span>) =&gt; {
-    <span class="t-com">// handle GET /api/users/:id</span>
-  }),
-]);</span>
-<span class="reveal-line stage"><span class="xform-line"><span class="xform-tag">becomes</span><span class="xform-arrow">➜</span><span><span class="t-com">route</span>  <span class="t-type">GET</span> <span class="t-path">/api/users/:id</span></span></span></span>
-<span class="reveal-line stage"><span class="xform-line"><span class="xform-tag">and</span><span class="xform-arrow">➜</span><span><span class="t-com">typed client, generated</span></span></span>
-<span class="t-kw">const</span> <span class="t-prop">user</span> = <span class="t-kw">await</span> <span class="t-prop">fetchClients</span>[<span class="t-str">"users/[id]"</span>].<span class="t-meth">GET</span>([<span class="t-num">123</span>]);</span></code></pre>
+<pre><code><span class="tb">src/</span>
+<span class="tb">├─ </span><span class="td">shop/</span>       <span class="tp">/</span>          <span class="ts">React + Hono</span>
+<span class="tb">├─ </span><span class="td">admin/</span>      <span class="tp">/admin</span>     <span class="ts">Solid + Koa</span>
+<span class="tb">├─ </span><span class="td">webhooks/</span>   <span class="tp">/hooks</span>     <span class="ts">Hono, no UI</span>
+<span class="tb">├─ </span><span class="td">docs/</span>       <span class="tp">/docs</span>      <span class="ts">MDX, no API</span>
+<span class="tb">└─ </span><span class="td">status/</span>     <span class="tp">/status</span>    <span class="ts">Vue + Hono</span></code></pre>
+          <div class="tree-cap">- any number of folders, any stack each</div>
         </div>
       </div>
     </section>
@@ -163,15 +161,15 @@ onMounted(() => {
         </div>
         <div class="cards3 rise">
           <div class="pcard">
-            <h3><span class="x">✕</span> Microservices</h3>
+            <h3>Microservices</h3>
             <p>Separate repos, separate pipelines, separate deploy configs. Shared types drift. A schema change turns into a cross-repo negotiation, and you spend more time on infrastructure than features.</p>
           </div>
           <div class="pcard">
-            <h3><span class="x">✕</span> Monorepos</h3>
+            <h3>Monorepos</h3>
             <p>One repo, but now you maintain workspaces, package boundaries, internal dependency graphs, and build caches. The <span class="mono">packages/shared</span> folder slowly becomes a junk drawer. The tooling becomes its own project.</p>
           </div>
           <div class="pcard">
-            <h3><span class="x">✕</span> DIY glue</h3>
+            <h3>DIY glue</h3>
             <p>Hand-wired scripts and a homegrown dev server that stitches the apps together. Cheap to build. Then a second developer joins and asks why <span class="mono">start-all.sh</span> passes <span class="mono">--legacy-peer-deps</span> - and nobody remembers.</p>
           </div>
         </div>
@@ -181,33 +179,21 @@ onMounted(() => {
     <!-- SOLUTION: source folders -->
     <section class="section">
       <div class="wrap">
-        <div class="solution-grid">
-          <div class="rise">
-            <p class="eyebrow">the idea</p>
-            <h2 class="h2-md">Source folders.</h2>
-            <p class="sol-lead">
-              One folder per concern. A source folder is whatever you need it to be -
-              a public site, an internal tool, a backend-only webhook handler, a docs site -
-              each with its own backend and frontend framework, base URL, and build output.
-              None of them are separate packages.
-            </p>
-            <ul class="sol-points">
-              <li><span class="ok">OK</span><span>One <b>package.json</b>, one <b>node_modules</b>, one set of <b>types</b> shared across every folder.</span></li>
-              <li><span class="ok">OK</span><span>Need a type from the customer app in the admin panel? <b>Import it.</b> Change a model and every folder sees it immediately.</span></li>
-              <li><span class="ok">OK</span><span>One command starts them all. One builds them all. Or build a <b>single folder</b> when that is all you need.</span></li>
-              <li><span class="ok">OK</span><span>No publishing, no versioning, no workspace protocols. The directory structure <b>enforces boundaries</b> code review can't.</span></li>
-            </ul>
-          </div>
-          <div class="tree rise" aria-label="Example source folder layout">
-            <div class="row"><span class="branch dim">src/&nbsp;&nbsp;</span><span class="note">one folder or twenty - your call</span></div>
-            <div class="row"><span class="branch">├─ </span><span class="dir">shop</span><span class="note"><span class="fw">React · Hono</span> &nbsp;base <span class="url">/</span></span></div>
-            <div class="row"><span class="branch">├─ </span><span class="dir">admin</span><span class="note"><span class="fw">Solid · Koa</span> &nbsp;base <span class="url">/admin</span></span></div>
-            <div class="row"><span class="branch">├─ </span><span class="dir">webhooks</span><span class="note"><span class="fw">Hono · no UI</span> &nbsp;base <span class="url">/hooks</span></span></div>
-            <div class="row"><span class="branch">├─ </span><span class="dir">docs</span><span class="note"><span class="fw">MDX</span> &nbsp;base <span class="url">/docs</span></span></div>
-            <div class="row"><span class="branch">└─ </span><span class="dir">status</span><span class="note"><span class="fw">Vue · Hono</span> &nbsp;base <span class="url">/status</span></span></div>
-            <div class="row spacer"></div>
-            <div class="row"><span class="branch dim">any number of folders · any stack each · shared types</span></div>
-          </div>
+        <div class="rise sol-block">
+          <p class="eyebrow">built on Vite</p>
+          <h2 class="h2-md">Source folders.</h2>
+          <p class="sol-lead">
+            One folder per concern. A source folder is whatever you need it to be -
+            a public site, an internal tool, a backend-only webhook handler, a docs site -
+            each with its own backend and frontend framework, base URL, and build output.
+            None of them are separate packages.
+          </p>
+          <ul class="sol-points">
+            <li><span class="ok">OK</span><span>One <b>package.json</b>, one <b>node_modules</b>, one set of <b>types</b> shared across every folder.</span></li>
+            <li><span class="ok">OK</span><span>Need a type from the customer app in the admin panel? <b>Import it.</b> Change a model and every folder sees it immediately.</span></li>
+            <li><span class="ok">OK</span><span>One command starts them all. One builds them all. Or build a <b>single folder</b> when that is all you need.</span></li>
+            <li><span class="ok">OK</span><span>No publishing, no versioning, no workspace protocols. The directory structure <b>enforces boundaries</b> code review can't.</span></li>
+          </ul>
         </div>
       </div>
     </section>
@@ -216,35 +202,17 @@ onMounted(() => {
     <section class="section alt" id="loop">
       <div class="wrap">
         <div class="section-head rise">
-          <p class="eyebrow">the whole loop</p>
-          <h2>Drop a file. Get a typed stack.</h2>
-          <p>One directory-based pattern drives both sides of the stack - <span class="mono">api/</span> and <span class="mono">pages/</span> mirror each other. Folder names become path segments; an <span class="mono">index</span> file defines the endpoint or the page. The fetch client is generated from the route, no manual sync.</p>
-        </div>
-
-        <div class="loop-steps rise">
-          <div class="lstep">
-            <div class="n">1</div>
-            <h3>Create a file</h3>
-            <p>Under <span class="mono">api/</span> for an endpoint, under <span class="mono">pages/</span> for a component. KosmoJS scaffolds the boilerplate for you.</p>
-          </div>
-          <div class="lstep">
-            <div class="n">2</div>
-            <h3>It's a route - both sides</h3>
-            <p><span class="mono">api/users/[id]/</span> serves <span class="mono">/api/users/:id</span>; <span class="mono">pages/users/[id]/</span> serves <span class="mono">/users/:id</span>. Same parameters, no config.</p>
-          </div>
-          <div class="lstep">
-            <div class="n">3</div>
-            <h3>Call it, typed</h3>
-            <p>The page imports a fetch client generated from the route. Params, payload, and response types are synced.</p>
-          </div>
+          <p class="eyebrow">connected apps, provisioned</p>
+          <h2>Structure and toolchain provided - you just add features.</h2>
+          <p>You no longer manage repos or wrestle configs - you write business logic. Define a route, and request validation, type-safe fetch clients, and an OpenAPI spec are generated from it. Cascading middleware removes the import-and-wire busywork; nested layouts and anything your chosen framework supports stay available. KosmoJS adds no proprietary abstractions to fight - you keep direct, full access to the frameworks underneath.</p>
         </div>
 
         <div class="loop-cols rise">
           <!-- backend: the route -->
           <div class="codecard">
             <div class="panel-bar">
-              <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-              <span class="tab">api/users/[id]/index.ts</span>
+              <span class="fbadge ts">TS</span>
+              <span class="tab">api/users/index.ts</span>
               <div class="minitabs" role="tablist" aria-label="Backend framework">
                 <button role="tab" :aria-selected="backend === 'koa'" @click="backend = 'koa'">Koa</button>
                 <button role="tab" :aria-selected="backend === 'hono'" @click="backend = 'hono'">Hono</button>
@@ -253,20 +221,31 @@ onMounted(() => {
             <div class="codepane" v-show="backend === 'koa'">
 <pre><code><span class="t-kw">import</span> { <span class="t-prop">defineRoute</span> } <span class="t-kw">from</span> <span class="t-str">"_/api"</span>;
 
-<span class="t-kw">export default</span> <span class="t-fn">defineRoute</span>&lt;<span class="t-str">"users/[id]"</span>, [<span class="t-type">number</span>]&gt;(({ <span class="t-prop">GET</span> }) =&gt; [
-  <span class="t-fn">GET</span>&lt;{ <span class="t-prop">response</span>: [<span class="t-num">200</span>, <span class="t-str">"json"</span>, <span class="t-type">User</span>] }&gt;(<span class="t-kw">async</span> (<span class="t-prop">ctx</span>) =&gt; {
-    <span class="t-kw">const</span> { <span class="t-prop">id</span> } = <span class="t-prop">ctx</span>.<span class="t-prop">validated</span>.<span class="t-prop">params</span>;
-    <span class="t-prop">ctx</span>.<span class="t-prop">body</span> = <span class="t-kw">await</span> <span class="t-fn">getUser</span>(<span class="t-prop">id</span>);
+<span class="t-kw">export default</span> <span class="t-fn">defineRoute</span>&lt;<span class="t-str">"users"</span>&gt;(({ <span class="t-prop">POST</span> }) =&gt; [
+  <span class="t-fn">POST</span>&lt;{
+    <span class="t-prop">json</span>: {
+      <span class="t-prop">name</span>: <span class="t-type">string</span>;
+      <span class="t-prop">email</span>: <span class="t-type">VRefine</span>&lt;<span class="t-type">string</span>, { <span class="t-prop">format</span>: <span class="t-str">"email"</span> }&gt;;
+    };
+  }&gt;(<span class="t-kw">async</span> (<span class="t-prop">ctx</span>) =&gt; {
+    <span class="t-kw">const</span> { <span class="t-prop">name</span>, <span class="t-prop">email</span> } = <span class="t-prop">ctx</span>.<span class="t-prop">validated</span>.<span class="t-prop">json</span>;  <span class="t-com">// validated, typed</span>
+    <span class="t-prop">ctx</span>.<span class="t-prop">body</span> = <span class="t-kw">await</span> <span class="t-fn">createUser</span>(<span class="t-prop">name</span>, <span class="t-prop">email</span>);
+    <span class="t-prop">ctx</span>.<span class="t-prop">status</span> = <span class="t-num">201</span>;
   }),
 ]);</code></pre>
             </div>
             <div class="codepane" v-show="backend === 'hono'">
 <pre><code><span class="t-kw">import</span> { <span class="t-prop">defineRoute</span> } <span class="t-kw">from</span> <span class="t-str">"_/api"</span>;
 
-<span class="t-kw">export default</span> <span class="t-fn">defineRoute</span>&lt;<span class="t-str">"users/[id]"</span>, [<span class="t-type">number</span>]&gt;(({ <span class="t-prop">GET</span> }) =&gt; [
-  <span class="t-fn">GET</span>&lt;{ <span class="t-prop">response</span>: [<span class="t-num">200</span>, <span class="t-str">"json"</span>, <span class="t-type">User</span>] }&gt;(<span class="t-kw">async</span> (<span class="t-prop">ctx</span>) =&gt; {
-    <span class="t-kw">const</span> { <span class="t-prop">id</span> } = <span class="t-prop">ctx</span>.<span class="t-prop">validated</span>.<span class="t-prop">params</span>;
-    <span class="t-kw">return</span> <span class="t-prop">ctx</span>.<span class="t-meth">json</span>(<span class="t-kw">await</span> <span class="t-fn">getUser</span>(<span class="t-prop">id</span>));
+<span class="t-kw">export default</span> <span class="t-fn">defineRoute</span>&lt;<span class="t-str">"users"</span>&gt;(({ <span class="t-prop">POST</span> }) =&gt; [
+  <span class="t-fn">POST</span>&lt;{
+    <span class="t-prop">json</span>: {
+      <span class="t-prop">name</span>: <span class="t-type">string</span>;
+      <span class="t-prop">email</span>: <span class="t-type">VRefine</span>&lt;<span class="t-type">string</span>, { <span class="t-prop">format</span>: <span class="t-str">"email"</span> }&gt;;
+    };
+  }&gt;(<span class="t-kw">async</span> (<span class="t-prop">ctx</span>) =&gt; {
+    <span class="t-kw">const</span> { <span class="t-prop">name</span>, <span class="t-prop">email</span> } = <span class="t-prop">ctx</span>.<span class="t-prop">validated</span>.<span class="t-prop">json</span>;  <span class="t-com">// validated, typed</span>
+    <span class="t-kw">return</span> <span class="t-prop">ctx</span>.<span class="t-meth">json</span>(<span class="t-kw">await</span> <span class="t-fn">createUser</span>(<span class="t-prop">name</span>, <span class="t-prop">email</span>), <span class="t-num">201</span>);
   }),
 ]);</code></pre>
             </div>
@@ -275,21 +254,22 @@ onMounted(() => {
           <!-- frontend: the page -->
           <div class="codecard">
             <div class="panel-bar">
-              <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-              <span class="tab">pages/users/[id]/index.tsx</span>
+              <svg class="ficon-react" viewBox="-12 -12 24 24" aria-hidden="true"><circle r="2.1" fill="currentColor" /><g fill="none" stroke="currentColor" stroke-width="1"><ellipse rx="10" ry="3.8" /><ellipse rx="10" ry="3.8" transform="rotate(60)" /><ellipse rx="10" ry="3.8" transform="rotate(120)" /></g></svg>
+              <span class="tab">pages/users/index.tsx</span>
               <span class="badge">React</span>
             </div>
-<pre><code><span class="t-kw">import</span> { <span class="t-prop">useState</span>, <span class="t-prop">useEffect</span> } <span class="t-kw">from</span> <span class="t-str">"react"</span>;
-<span class="t-kw">import</span> { <span class="t-prop">useParams</span> } <span class="t-kw">from</span> <span class="t-str">"react-router"</span>;
+<pre><code><span class="t-com">// import generated clients</span>
 <span class="t-kw">import</span> <span class="t-prop">fetchClients</span> <span class="t-kw">from</span> <span class="t-str">"_/fetch"</span>;
 
-<span class="t-kw">const</span> { <span class="t-prop">GET</span> } = <span class="t-prop">fetchClients</span>[<span class="t-str">"users/[id]"</span>];
+<span class="t-kw">const</span> { <span class="t-prop">POST</span> } = <span class="t-prop">fetchClients</span>[<span class="t-str">"users"</span>];
 
 <span class="t-kw">export default function</span> <span class="t-fn">Page</span>() {
-  <span class="t-kw">const</span> { <span class="t-prop">id</span> } = <span class="t-fn">useParams</span>();
-  <span class="t-kw">const</span> [<span class="t-prop">user</span>, <span class="t-prop">setUser</span>] = <span class="t-fn">useState</span>(<span class="t-kw">null</span>);
-  <span class="t-fn">useEffect</span>(() =&gt; { <span class="t-fn">GET</span>([<span class="t-prop">id</span>]).<span class="t-meth">then</span>(<span class="t-prop">setUser</span>); }, [<span class="t-prop">id</span>]);
-  <span class="t-kw">return</span> <span class="t-prop">user</span> ? &lt;<span class="t-type">h1</span>&gt;{<span class="t-prop">user</span>.<span class="t-prop">name</span>}&lt;/<span class="t-type">h1</span>&gt; : &lt;<span class="t-type">p</span>&gt;Loading&lt;/<span class="t-type">p</span>&gt;;
+  <span class="t-kw">const</span> <span class="t-prop">form</span> = <span class="t-fn">useForm</span>({ <span class="t-prop">name</span>: <span class="t-str">""</span>, <span class="t-prop">email</span>: <span class="t-str">""</span> });
+
+  <span class="t-com">// fully typed and validated client-side</span>
+  <span class="t-kw">const</span> <span class="t-prop">submit</span> = () =&gt; <span class="t-fn">POST</span>([], { <span class="t-prop">json</span>: <span class="t-prop">form</span>.<span class="t-prop">values</span> });
+
+  <span class="t-kw">return</span> &lt;<span class="t-type">UserForm</span> <span class="t-prop">form</span>={<span class="t-prop">form</span>} <span class="t-prop">onSubmit</span>={<span class="t-prop">submit</span>} /&gt;;
 }</code></pre>
           </div>
         </div>
@@ -303,7 +283,7 @@ onMounted(() => {
         <div class="section-head rise">
           <p class="eyebrow">what you get</p>
           <h2>Structure where it pays off.</h2>
-          <p>The tedious parts of a full-stack project, made consistent across every framework combination.</p>
+          <p>With all of this built in, you forget about the tedious parts of a full-stack project. Multiple sub-projects merge into one coherent, scalable structure - which you don't have to maintain.</p>
         </div>
         <div class="feat-grid rise">
           <div class="fcard">
@@ -476,7 +456,6 @@ onMounted(() => {
    their subtrees over the inherited page palette. */
 .panel,
 .codecard,
-.tree,
 .install {
   --base:#1e1e2e; --mantle:#181825; --crust:#11111b;
   --surface0:#313244; --surface1:#45475a; --surface2:#585b70;
@@ -662,10 +641,15 @@ onMounted(() => {
   border-bottom: 1px solid var(--surface0);
   background: var(--mantle);
 }
-.dot { width: 11px; height: 11px; border-radius: 50%; }
-.dot.r { background: var(--red); } .dot.y { background: var(--yellow); } .dot.g { background: var(--green); }
+.panel-bar .ficon { width: 15px; height: 15px; color: var(--overlay1); flex: none; }
+.panel-bar .ficon-react { width: 16px; height: 16px; color: #61dafb; flex: none; }
+.fbadge {
+  display: inline-grid; place-items: center; min-width: 18px; height: 16px;
+  padding: 0 3px; border-radius: 4px; background: #3178c6; color: #fff;
+  font-family: var(--mono); font-weight: 700; font-size: 9px; letter-spacing: .03em; flex: none;
+}
 .panel-bar .tab {
-  margin-left: 10px; font-family: var(--mono); font-size: 12.5px; color: var(--overlay1);
+  margin-left: 4px; font-family: var(--mono); font-size: 12.5px; color: var(--overlay1);
 }
 .panel pre {
   margin: 0; padding: 22px 22px 24px;
@@ -674,12 +658,16 @@ onMounted(() => {
 }
 .panel code { font-family: var(--mono); white-space: pre; }
 
-.xform-line { display: flex; align-items: baseline; gap: 12px; }
-.xform-tag {
-  font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
-  color: var(--overlay0); min-width: 56px; text-transform: uppercase;
+/* hero source-folder tree panel */
+.panel-tree pre { padding-bottom: 14px; }
+.tb { color: var(--surface2); }
+.td { color: var(--blue); }
+.tp { color: var(--teal); }
+.ts { color: var(--subtext0); }
+.tree-cap {
+  padding: 0 22px 18px;
+  font-family: var(--mono); font-size: 12px; color: var(--overlay0);
 }
-.xform-arrow { color: var(--accent); }
 
 /* syntax tokens */
 .t-kw   { color: var(--mauve); }
@@ -693,62 +681,29 @@ onMounted(() => {
 .t-path { color: var(--teal); }
 
 /* ---------- problem ---------- */
-.cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-@media (max-width: 820px) { .cards3 { grid-template-columns: 1fr; } }
+.cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+@media (max-width: 820px) { .cards3 { grid-template-columns: 1fr; gap: 20px; } }
 .pcard {
-  border: var(--border); border-radius: var(--radius);
-  background: var(--base); padding: 26px 24px;
+  border: none; border-radius: 0; background: none;
+  padding: 16px 0 0; border-top: 1px solid var(--surface0);
 }
-.section.alt .pcard { background: var(--crust); }
+.section.alt .pcard { background: none; }
 .pcard h3 {
-  font-family: var(--mono); font-size: 15px; font-weight: 600;
-  color: var(--text); margin-bottom: 12px;
-  display: flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 13.5px; font-weight: 600;
+  color: var(--subtext1); margin-bottom: 9px;
 }
-.pcard h3 .x { color: var(--red); font-size: 17px; }
-.pcard p { color: var(--subtext0); font-size: 15.5px; margin: 0; line-height: 1.62; }
+.pcard p { color: var(--subtext0); font-size: 14.5px; margin: 0; line-height: 1.6; }
 
-/* ---------- source folder tree ---------- */
-.solution-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: center; }
-@media (max-width: 940px) { .solution-grid { grid-template-columns: 1fr; gap: 36px; } }
+/* ---------- source folders ---------- */
+.sol-block { max-width: 760px; }
 .h2-md { font-size: clamp(28px, 4vw, 42px); }
 .sol-lead { color: var(--subtext0); font-size: 18px; margin: 16px 0 0; }
-.tree {
-  background: var(--crust); border: var(--border); border-radius: var(--radius);
-  font-family: var(--mono); font-size: 14px; line-height: 2.05;
-  padding: 26px 26px;
-  box-shadow: 0 40px 80px -44px rgba(0,0,0,.7);
-}
-.tree .row { display: flex; align-items: center; }
-.tree .row.spacer { height: 14px; }
-.tree .branch { color: var(--surface2); white-space: pre; }
-.tree .branch.dim { color: var(--overlay0); }
-.tree .dir { color: var(--blue); }
-.tree .dir::after { content: "/"; color: var(--overlay0); }
-.tree .note { color: var(--overlay0); margin-left: auto; padding-left: 18px; font-size: 12.5px; }
-.tree .note .fw { color: var(--subtext1); }
-.tree .note .url { color: var(--teal); }
 .sol-points { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 16px; }
 .sol-points li { display: flex; gap: 13px; color: var(--subtext1); font-size: 16px; align-items: flex-start; }
 .sol-points li .ok { color: var(--green); font-family: var(--mono); flex: none; margin-top: 2px; }
 .sol-points li b { color: var(--text); font-weight: 600; }
 
 /* ---------- core loop ---------- */
-.loop-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; margin-bottom: 32px; }
-@media (max-width: 820px){ .loop-steps { grid-template-columns: 1fr; } }
-.lstep { padding: 0 24px; position: relative; }
-.lstep:not(:last-child)::after {
-  content: "➜"; position: absolute; right: -8px; top: 2px;
-  color: var(--surface2); font-family: var(--mono);
-}
-@media (max-width: 820px){ .lstep:not(:last-child)::after { content: none; } .lstep { padding: 0 0 8px; } }
-.lstep .n {
-  font-family: var(--mono); font-size: 12px; color: var(--accent);
-  border: 1px solid var(--surface1); border-radius: 6px;
-  width: 26px; height: 26px; display: grid; place-items: center; margin-bottom: 12px;
-}
-.lstep h3 { font-size: 17px; margin-bottom: 7px; }
-.lstep p { color: var(--subtext0); font-size: 15px; margin: 0; }
 
 .codecard { background: var(--crust); border: var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: 0 40px 80px -44px rgba(0,0,0,.6); }
 .codecard pre { margin: 0; padding: 22px 24px; font-family: var(--mono); font-size: 13.5px; line-height: 1.85; overflow-x: auto; }
@@ -834,16 +789,6 @@ onMounted(() => {
 .foot-copy { width: 100%; margin-top: 24px; font-family: var(--mono); font-size: 12.5px; color: var(--overlay0); }
 .foot-copy .greek { color: var(--subtext0); }
 
-/* ---------- hero transform reveal (CSS-only, motion-aware) ---------- */
-.reveal-line { opacity: 1; }
-@media (prefers-reduced-motion: no-preference) {
-  .transform .reveal-line { opacity: 0; transform: translateY(6px); animation: revealLine .5s var(--ease) forwards; }
-  .transform .reveal-line:nth-child(1) { animation-delay: .15s; }
-  .transform .reveal-line:nth-child(2) { animation-delay: .45s; }
-  .transform .reveal-line:nth-child(3) { animation-delay: .75s; }
-}
-@keyframes revealLine { to { opacity: 1; transform: none; } }
-
 /* ---------- scroll reveal (JS-gated; no-JS shows everything) ---------- */
 .rise { opacity: 1; transform: none; }
 .is-ready .rise { opacity: 0; transform: translateY(18px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
@@ -854,6 +799,5 @@ onMounted(() => {
 
 @media (prefers-reduced-motion: reduce) {
   .is-ready .rise { opacity: 1 !important; transform: none !important; transition: none !important; }
-  .reveal-line { opacity: 1 !important; transform: none !important; }
 }
 </style>
