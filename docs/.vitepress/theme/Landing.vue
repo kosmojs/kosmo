@@ -235,7 +235,7 @@ onMounted(() => {
           <div class="lstep">
             <div class="n">3</div>
             <h3>Call it, typed</h3>
-            <p>The page imports a fetch client generated from the route. Params, payload, and response types all synced.</p>
+            <p>The page imports a fetch client generated from the route. Params, payload, and response types are synced.</p>
           </div>
         </div>
 
