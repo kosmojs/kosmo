@@ -7,6 +7,12 @@ const ready = ref(false);
 const backend = ref<"koa" | "hono">("koa");
 const copyLabel = ref("copy");
 
+// Hero headline typewriter
+const line1 = ref("");
+const line2 = ref("");
+const line3 = ref("");
+const caretLine = ref(0);
+
 // Light/dark, kept in sync with VitePress's own appearance state so the
 // choice persists and carries over to the docs pages.
 const { isDark } = useData();
@@ -45,12 +51,50 @@ function scrollToLoop() {
   target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function typeInto(set: (v: string) => void, full: string, speed = 55) {
+  for (let i = 1; i <= full.length; i += 1) {
+    set(full.slice(0, i));
+    await sleep(speed);
+  }
+}
+
+// Type the headline out line by line, with a brief pause between lines.
+async function runTypewriter() {
+  caretLine.value = 1;
+  await typeInto((v) => (line1.value = v), "Many apps.");
+  await sleep(420);
+  caretLine.value = 2;
+  await typeInto((v) => (line2.value = v), "One project.");
+  await sleep(420);
+  caretLine.value = 3;
+  await typeInto((v) => (line3.value = v), "Zero glue.");
+  await sleep(2000); // let it blink a moment, then retire the caret
+  caretLine.value = 0;
+}
+
+// No animation: drop the full headline in at once.
+function showHeroInstantly() {
+  line1.value = "Many apps.";
+  line2.value = "One project.";
+  line3.value = "Zero glue.";
+  caretLine.value = 0;
+}
+
 onMounted(() => {
   // reconcile with whatever VitePress applied (system/stored) on this load
   dark.value = document.documentElement.classList.contains("dark");
 
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reduce) return; // leave everything visible, no motion
+  if (reduce) {
+    showHeroInstantly(); // headline must still appear, just without motion
+    return; // leave everything else visible, no motion
+  }
+
+  runTypewriter(); // type the headline out
 
   ready.value = true; // enables the pre-hide + scroll-reveal styles
 
@@ -111,10 +155,9 @@ onMounted(() => {
       <div class="wrap hero-grid">
         <div>
           <p class="eyebrow">KosmoJS - the composable meta-framework</p>
-          <h1>
-            Many apps.<br />
-            One project.<br />
-            <span class="accent nowrap">Zero glue.</span>
+          <h1 aria-label="Many apps. One project. Zero glue.">
+            <span class="typed" aria-hidden="true"><span class="tw-line">{{ line1 }}<span v-if="caretLine === 1" class="tw-caret"></span></span><br /><span class="tw-line">{{ line2 }}<span v-if="caretLine === 2" class="tw-caret"></span></span><br /><span class="tw-line zero">{{ line3 }}<span v-if="caretLine === 3" class="tw-caret"></span></span></span>
+            <noscript><span class="tw-line">Many apps.</span><br /><span class="tw-line">One project.</span><br /><span class="tw-line zero" style="color:#179299">Zero glue.</span></noscript>
           </h1>
           <p class="hero-sub">
             <b>KosmoJS is a full-stack meta-framework for building several apps in one codebase.</b>
@@ -230,7 +273,6 @@ onMounted(() => {
   }&gt;(<span class="t-kw">async</span> (<span class="t-prop">ctx</span>) =&gt; {
     <span class="t-kw">const</span> { <span class="t-prop">name</span>, <span class="t-prop">email</span> } = <span class="t-prop">ctx</span>.<span class="t-prop">validated</span>.<span class="t-prop">json</span>;  <span class="t-com">// validated, typed</span>
     <span class="t-prop">ctx</span>.<span class="t-prop">body</span> = <span class="t-kw">await</span> <span class="t-fn">createUser</span>(<span class="t-prop">name</span>, <span class="t-prop">email</span>);
-    <span class="t-prop">ctx</span>.<span class="t-prop">status</span> = <span class="t-num">201</span>;
   }),
 ]);</code></pre>
             </div>
@@ -283,7 +325,7 @@ onMounted(() => {
         <div class="section-head rise">
           <p class="eyebrow">what you get</p>
           <h2>Structure where it pays off.</h2>
-          <p>With all of this built in, you forget about the tedious parts of a full-stack project. Multiple sub-projects merge into one coherent, scalable structure - which you don't have to maintain.</p>
+          <p>With all features enabled out of the box, you forget about the tedious parts of a full-stack project. Multiple sub-projects merge into one coherent, scalable structure - which you don't have to maintain.</p>
         </div>
         <div class="feat-grid rise">
           <div class="fcard">
@@ -606,10 +648,17 @@ onMounted(() => {
 }
 .hero h1 {
   font-size: clamp(40px, 6.2vw, 68px);
+  min-height: 3.24em; /* reserve 3 lines (line-height 1.08) so typing doesn't shift the page */
   margin: 0 0 22px;
 }
-.hero h1 .nowrap { white-space: nowrap; }
-.hero h1 .accent { color: var(--accent); }
+.hero h1 .zero { color: var(--teal); white-space: nowrap; }
+.hero h1 .tw-caret {
+  display: inline-block; width: 3px; height: 0.9em;
+  margin-left: 5px; background: currentColor; vertical-align: -0.06em;
+  animation: caretBlink 1s steps(1, end) infinite;
+}
+@keyframes caretBlink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .hero h1 .tw-caret { display: none; } }
 .hero-sub {
   font-size: 19px; color: var(--subtext1);
   max-width: 540px; margin: 0 0 32px;
