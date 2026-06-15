@@ -615,7 +615,7 @@ onMounted(() => {
 .section.alt { background: var(--mantle); border-block: 1px solid color-mix(in srgb, var(--surface0) 50%, transparent); }
 .section-head { max-width: 680px; margin-bottom: 48px; }
 .section-head h2 { font-size: clamp(28px, 4vw, 40px); }
-.section-head p { color: var(--subtext0); font-size: 18px; margin: 16px 0 0; }
+.section-head p:not(.eyebrow) { color: var(--subtext0); font-size: 18px; margin: 16px 0 0; }
 
 /* ---------- hero ---------- */
 .hero { padding: 84px 0 88px; }
@@ -792,7 +792,7 @@ onMounted(() => {
 
 /* ---------- differ / philosophy ---------- */
 .diff h2 { font-size: clamp(28px, 4.2vw, 44px); max-width: 760px; }
-.diff p { color: var(--subtext1); font-size: 18px; max-width: 720px; margin: 22px 0 0; }
+.diff p:not(.eyebrow) { color: var(--subtext1); font-size: 18px; max-width: 720px; margin: 22px 0 0; }
 .diff p b { color: var(--text); }
 .tagline {
   margin-top: 40px; font-family: var(--mono); font-size: clamp(18px,2.4vw,24px);
