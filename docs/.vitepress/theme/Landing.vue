@@ -72,7 +72,6 @@ async function runTypewriter() {
   await sleep(420);
   caretLine.value = 3;
   await typeInto((v) => (line3.value = v), "Zero glue.");
-  await sleep(2000); // let it blink a moment, then retire the caret
   caretLine.value = 0;
 }
 
@@ -159,12 +158,17 @@ onMounted(() => {
             <span class="typed" aria-hidden="true"><span class="tw-line">{{ line1 }}<span v-if="caretLine === 1" class="tw-caret"></span></span><br /><span class="tw-line">{{ line2 }}<span v-if="caretLine === 2" class="tw-caret"></span></span><br /><span class="tw-line zero">{{ line3 }}<span v-if="caretLine === 3" class="tw-caret"></span></span></span>
             <noscript><span class="tw-line">Many apps.</span><br /><span class="tw-line">One project.</span><br /><span class="tw-line zero" style="color:#179299">Zero glue.</span></noscript>
           </h1>
-          <p class="hero-sub">
-            <b>KosmoJS is a full-stack meta-framework for building several apps in one codebase.</b>
-            Each gets its own backend and frontend framework and its own routes; they all share
-            one install, one set of types, one build.<br />
-            <b>You write features - KosmoJS handles the wiring.</b>
-          </p>
+          <div class="lede-stack">
+            <p class="lede">
+              Most projects outgrow a single app. Most teams have a solution: monorepos, microservices, DIY glue.
+            </p>
+            <p class="lede">
+              <b>KosmoJS does both - it combines monorepo consistency with microservice flexibility by composing several apps in one codebase.</b>
+            </p>
+            <p class="lede">
+              Apps run their own stacks, yet share one install, one set of types, one build.
+            </p>
+          </div>
           <div class="hero-cta">
             <a class="btn btn-primary" href="/start">Get started <span class="arr">➜</span></a>
             <a class="btn btn-ghost" href="#loop" @click.prevent="scrollToLoop">Take the 60-second tour</a>
@@ -247,8 +251,9 @@ onMounted(() => {
         <div class="section-head rise">
           <p class="eyebrow">connected apps, provisioned</p>
           <h2>Structure and toolchain provided - you just add features.</h2>
-          <p>You no longer manage repos or wrestle configs - you write business logic. Define a route, and request validation, type-safe fetch clients, and an OpenAPI spec are generated from it. Cascading middleware removes the import-and-wire busywork; nested layouts and anything your chosen framework supports stay available. KosmoJS adds no proprietary abstractions to fight - you keep direct, full access to the frameworks underneath.</p>
         </div>
+
+        <p class="loop-line loop-intro rise">You no longer manage repos or wrestle configs - you write business logic.</p>
 
         <div class="loop-cols rise">
           <!-- backend: the route -->
@@ -316,6 +321,24 @@ onMounted(() => {
           </div>
         </div>
         <p class="loop-note"><span class="t-kw">[id]</span> required <span class="sep">·</span> <span class="t-kw">{id}</span> optional <span class="sep">·</span> <span class="t-kw">{...path}</span> splat <span class="sep">—</span> identical syntax for API routes and pages. Solid, Vue and MDX pages follow the same shape.</p>
+
+        <div class="loop-feats rise">
+          <div class="lfeat">
+            Directory-based routing wires routes identically across backend and frontend,
+            using same params convention across all frameworks.
+          </div>
+          <div class="lfeat">
+            Your types compile into high-performance runtime validation, with fetch clients and an OpenAPI spec generated from the same types.
+          </div>
+          <div class="lfeat">
+            Cascading middleware removes the import-and-wire busywork. Middleware slots allow surgical overrides at any level depth.
+          </div>
+          <div class="lfeat">
+            Nested layouts, route preload, server-side rendering, conventions and anything your chosen framework supports stay available.
+          </div>
+        </div>
+
+        <p class="loop-line rise">KosmoJS adds no proprietary abstractions to fight - you keep direct, full access to the frameworks underneath.</p>
       </div>
     </section>
 
@@ -659,11 +682,14 @@ onMounted(() => {
 }
 @keyframes caretBlink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .hero h1 .tw-caret { display: none; } }
-.hero-sub {
+.lede {
   font-size: 19px; color: var(--subtext1);
   max-width: 540px; margin: 0 0 32px;
 }
-.hero-sub b { color: var(--text); font-weight: 600; }
+.lede-stack { margin: 0 0 32px; }
+.lede-stack .lede { margin-bottom: 12px; }
+.lede-stack .lede:last-child { margin-bottom: 0; }
+.lede b { color: var(--text); font-weight: 600; }
 .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
 .hero-meta {
   margin-top: 30px; display: flex; gap: 8px 20px; flex-wrap: wrap;
@@ -779,6 +805,16 @@ onMounted(() => {
 .loop-note .t-kw { color: var(--mauve); }
 .loop-note .sep { color: var(--surface2); margin: 0 5px; }
 @media (max-width: 560px){ .loop-note { font-size: 12px; } }
+
+/* full-width intro / closing lines (no max-width, no forced break) */
+#loop .section-head { margin-bottom: 28px; }
+.loop-line { font-size: 19px; color: var(--subtext1); line-height: 1.5; margin: 0; }
+.loop-intro { margin-bottom: 30px; }
+
+/* 2x2 mechanism grid - pcard manner, no header, regular size */
+.loop-feats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 44px; margin: 36px 0 40px; }
+@media (max-width: 820px){ .loop-feats { grid-template-columns: 1fr; gap: 22px; } }
+.lfeat { border-top: 1px solid var(--surface0); padding: 16px 0 0; color: var(--subtext1); font-size: 16px; line-height: 1.55; }
 
 /* ---------- features ---------- */
 .feat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
