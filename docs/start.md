@@ -14,16 +14,16 @@ Zero to a working route in under five minutes.
 ## Create & install
 
 ::: code-group
-```sh [pnpm]
-pnpm create kosmo
-cd my-app
-pnpm install
-```
-
 ```sh [npm]
 npm create kosmo
 cd my-app
 npm install
+```
+
+```sh [pnpm]
+pnpm create kosmo
+cd my-app
+pnpm install
 ```
 
 ```sh [yarn]
@@ -36,24 +36,52 @@ yarn install
 ## Add a source folder
 
 ::: code-group
-```sh [pnpm]
-pnpm +folder
-pnpm install
-```
-
 ```sh [npm]
 npm run +folder
-npm install
+```
+
+```sh [pnpm]
+pnpm +folder
 ```
 
 ```sh [yarn]
 yarn +folder
-yarn install
 ```
 :::
 
 You'll be prompted for a folder name, base URL, framework, and backend.
-The second install pulls in framework-specific dependencies.
+
+*Install newly added dependencies:*
+
+::: code-group
+```sh [npm]
+npm install
+```
+
+```sh [pnpm]
+pnpm install
+```
+
+```sh [yarn]
+yarn install
+```
+:::
+
+## Start the dev server
+
+::: code-group
+```sh [npm]
+npm run dev
+```
+
+```sh [pnpm]
+pnpm dev
+```
+
+```sh [yarn]
+yarn dev
+```
+:::
 
 ## Create a route
 
@@ -87,22 +115,6 @@ export default defineRoute<"users/[id]">(({ GET }) => [
     ctx.json({ id: Number(id), name: "Jane Smith", email: "jane@example.com" });
   }),
 ]);
-```
-:::
-
-## Start the dev server
-
-::: code-group
-```sh [pnpm]
-pnpm dev
-```
-
-```sh [npm]
-npm run dev
-```
-
-```sh [yarn]
-yarn dev
 ```
 :::
 

@@ -30,11 +30,13 @@ yarn create kosmo
 ```
 :::
 
+`cd` into your brand-new project:
+
 ```sh
 cd ./my-app
 ```
 
-## Install Dependencies
+*Install Dependencies:*
 
 ::: code-group
 ```sh [npm]
@@ -49,6 +51,8 @@ pnpm install
 yarn install
 ```
 :::
+
+Project ready, add features!
 
 ## Create a Source Folder
 
@@ -96,7 +100,7 @@ yarn +folder --name front --base / --framework solid --backend koa
 :::
 
 
-Creating a source folder adds framework-specific dependencies to `package.json`. Install them:
+Creating a source folder adds framework-specific dependencies. Install them:
 
 ::: code-group
 ```sh [npm]
@@ -109,6 +113,22 @@ pnpm install
 
 ```sh [yarn]
 yarn install
+```
+:::
+
+## Start the dev server
+
+::: code-group
+```sh [npm]
+npm run dev
+```
+
+```sh [pnpm]
+pnpm dev
+```
+
+```sh [yarn]
+yarn dev
 ```
 :::
 
