@@ -399,7 +399,7 @@ onMounted(() => {
     <section class="section alt diff">
       <div class="wrap rise">
         <p class="eyebrow">how it differs</p>
-        <h2>Opinionated about structure. Unopinionated about everything else.</h2>
+        <h2>Opinionated about structure. Open about everything else.</h2>
         <p>
           Most meta-frameworks pick your frontend for you and own your deploy model. Monorepo tools hand
           you flexibility and a configuration tax. Microservices give independence and a fragmented codebase.
