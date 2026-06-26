@@ -1,7 +1,5 @@
 ## KosmoJS - the composable meta-framework
 
-#### What is this about?
-
 KosmoJS is a full-stack meta-framework for building several apps in one codebase.
 Each gets its own backend and frontend framework and its own routes; they all share one install,
 one set of types, one build.<br />
