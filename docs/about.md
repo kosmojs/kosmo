@@ -87,7 +87,7 @@ Thanks to this architecture, `KosmoJS` provides:
 - [Composable Cascading Middleware](/backend/middleware)
 - [Nested Layouts](/frontend/layouts)
 
-and [More Features ➜](/features)
+and [More Features ›](/features)
 
 ### ⚖️ How it differs
 

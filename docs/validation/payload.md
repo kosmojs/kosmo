@@ -98,7 +98,7 @@ to ensure dates are properly formatted.
 Without `VRefine`, fields are validated only for their basic type - a string must be a string,
 an array must be an array, but no additional constraints apply.
 
-[More on VRefine ➜ ](/validation/refine)
+[More on VRefine ›](/validation/refine)
 
 ## Complex Nested Structures
 

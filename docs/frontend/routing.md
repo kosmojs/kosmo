@@ -55,7 +55,7 @@ pages/
 ```
 
 Layouts stack outward-in and cannot be escaped by child routes.
-[More on Layouts ➜](/frontend/layouts)
+[More on Layouts ›](/frontend/layouts)
 
 ## Lazy Loading
 

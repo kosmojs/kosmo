@@ -49,7 +49,7 @@ export default defineRoute<"users/[id]", [
 ]);
 ```
 
-[More on VRefine ➜ ](/validation/refine)
+[More on VRefine ›](/validation/refine)
 
 ## Multiple Parameters
 

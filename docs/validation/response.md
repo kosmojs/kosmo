@@ -33,4 +33,5 @@ Response validation is especially valuable for data sourced from databases or th
 where the shape can change without warning.
 
 Defining a response schema also enables automatic `OpenAPI` generation -
-type safety and documentation in one step. ([Details ➜ ](/openapi))
+type safety and documentation in one step.
+[Details ›](/openapi)

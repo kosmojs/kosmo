@@ -49,7 +49,7 @@ defineRoute<"[id]/[action]", Params>
 ```
 
 Refinements also generate runtime validation - invalid params are rejected before your handler runs.
-([Details ➜ ](/validation/params))
+[Details ›](/validation/params)
 
 ## Typing Payload & Response
 
@@ -73,7 +73,7 @@ export default defineRoute<"example">(({ POST }) => [
 ```
 
 Both payload and response are validated at runtime, not just at compile time.
-([Details ➜ ](/validation/payload))
+[Details ›](/validation/payload)
 
 ## Typing State & Context
 

@@ -58,10 +58,10 @@ the Ruby framework that pioneered it back in 2007.
 Parameters, payloads, and responses are all typed through `TypeScript` type arguments -
 the same definitions drive both compile-time checking and runtime validation.
 No separate schema language, no DSL switching.
-([Details ➜ ](/backend/type-safety))
+[Details ›](/backend/type-safety)
 
 ## Middleware
 
 The `use` function gives you fine-grained middleware control at the route level,
 complementing global and cascading middleware.
-([Details ➜ ](/backend/middleware))
+[Details ›](/backend/middleware)

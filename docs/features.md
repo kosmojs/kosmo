@@ -18,7 +18,7 @@ Organize distinct concerns - public site, customer app, admin dashboard -
 as independent source folders within a single `Vite` project.
 Each gets its own set of frameworks, base URL, development workflow and build pipeline.
 
-[Read more ➜](/start#📁-create-your-first-source-folder)
+[Read more ›](/tutorial#create-your-first-api-route)
 
 ## Directory-Based Routing
 
@@ -39,7 +39,7 @@ products/[category].html/index.ts   ➜ products/electronics.html
 files/[name].[ext]/index.ts         ➜ files/document.pdf, /files/logo.png
 ```
 
-[Read more ➜](/routing/intro)
+[Read more ›](/routing/intro)
 
 ## Power Syntax for Params
 
@@ -56,7 +56,7 @@ Any param name containing non-alphanumeric characters
 is treated as a raw pattern - giving you precise control over URL structure
 without sacrificing the directory-based routing model.
 
-[Read more ➜](/routing/params#power-syntax)
+[Read more ›](/routing/params#power-syntax)
 
 ## End-to-End Type Safety
 
@@ -79,7 +79,7 @@ export default defineRoute(({ POST }) => [
 ]);
 ```
 
-[Read more ➜](/validation/intro)
+[Read more ›](/validation/intro)
 
 ## Generated Fetch Clients + OpenAPI
 
@@ -93,7 +93,7 @@ const user = await fetchClients["users/[id]"].GET([123]);
 // fully typed, validates payload client-side before the request is sent
 ```
 
-[Fetch Clients ➜](/fetch/intro) · [OpenAPI ➜](/openapi)
+[Fetch Clients ›](/fetch/intro) · [OpenAPI ➜](/openapi)
 
 ## Composable Middleware (Slots)
 
@@ -112,7 +112,7 @@ Slots give you surgical control over middleware composition:
 replace only what needs replacing, inherit everything else.
 Custom slot names are supported by extending the `UseSlots` interface.
 
-[Read more ➜](/backend/middleware)
+[Read more ›](/backend/middleware)
 
 ## Cascading Middleware
 
@@ -127,7 +127,7 @@ api/admin/users/use.ts → wraps only routes under /api/admin/users
 Parent middleware always runs before child middleware.
 Combine with slots to override globals for entire route subtrees.
 
-[Read more ➜](/backend/cascading-middleware)
+[Read more ›](/backend/cascading-middleware)
 
 ## Nested Layouts
 
@@ -145,7 +145,7 @@ pages/
         index.tsx
 ```
 
-[Read more ➜](/frontend/routing)
+[Read more ›](/frontend/routing)
 
 ## Multiple Frameworks
 
@@ -157,7 +157,7 @@ When you add a source folder, `KosmoJS` generates a ready-to-go setup for your c
 router config, entry points, TypeScript settings, and all the wiring between them.
 Switch frameworks per folder without learning a new set of conventions.
 
-[Read more ➜](/frontend/intro)
+[Read more ›](/frontend/intro)
 
 ## Built on Proven Tools
 

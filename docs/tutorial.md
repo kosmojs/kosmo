@@ -153,7 +153,7 @@ pages/
 Parameters: `[id]` required · `{id}` optional · `{...path}` splat.
 Same pattern for API and pages - learn once, use everywhere.
 
-[Read more ➜](/routing/intro)
+[Read more ›](/routing/intro)
 
 ## Path Mappings
 
@@ -247,7 +247,7 @@ yarn dev
 ```
 :::
 
-[Read more ➜](/backend/intro)
+[Read more ›](/backend/intro)
 
 ## Add Validation
 
@@ -339,7 +339,7 @@ export default defineRoute<"users">(({ POST }) => [
 
 Payload is validated before your handler runs. Response is validated before it's sent.
 
-[Read more ➜](/validation/intro)
+[Read more ›](/validation/intro)
 
 ## Add Middleware
 
@@ -370,7 +370,7 @@ export default [
 
 No imports in route files, no repetition. Parent `use.ts` files wrap child routes automatically.
 
-[Read more ➜](/backend/middleware)
+[Read more ›](/backend/middleware)
 
 ## Fetch Clients
 
@@ -424,7 +424,7 @@ onMounted(async () => { user.value = await GET([route.params.id]); });
 
 Server-side validation still runs even when endpoints are called directly - client validation is additive, not a substitute.
 
-[Read more ➜](/fetch/intro)
+[Read more ›](/fetch/intro)
 
 ## Create Client Pages
 
@@ -442,7 +442,7 @@ pages/
 
 Layouts can be nested - deeper layouts wrap inner layouts, matching your route hierarchy.
 
-[Read more ➜](/frontend/routing)
+[Read more ›](/frontend/routing)
 
 ## Server-Side Rendering
 
@@ -473,7 +473,7 @@ node dist/front/ssr/server.js -p 4556
 
 The API server and SSR server are bundled separately - deploy, scale, and run them independently.
 
-[Read more ➜](/frontend/server-side-render)
+[Read more ›](/frontend/server-side-render)
 
 ## Multiple Source Folders
 
