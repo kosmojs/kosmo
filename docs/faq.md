@@ -532,12 +532,21 @@ it's only extracting the whole tuple to a named type that breaks.
 
 #### What payload targets exist?
 Metadata (any method): `query`, `headers`, `cookies`. Body (POST/PUT/PATCH): `json`, `form`, `raw`.
+`form` covers both URL-encoded and multipart form data (so file uploads go here);
+`raw` accepts plain text, binary data, `Buffer`, `ArrayBuffer`, or `Blob`.
 [Details ›](/validation/payload.html#validation-targets)
 
 #### Why one body target but multiple metadata targets?
 Body targets are mutually exclusive (one per handler - you can't have both `json` and `form`);
 metadata targets can be combined freely. A body target on GET, or two body targets,
 is flagged at dev time and the affected schema is disabled.
+[Details ›](/validation/payload.html#validation-targets)
+
+#### How do I handle file uploads?
+Use the `form` body target on a POST/PUT/PATCH handler - it accepts multipart form data,
+so the uploaded file and any accompanying text fields are validated together as one payload.
+Type the file field alongside the metadata fields (e.g. `form: { file: ..., title: string }`),
+and the parsed result is available on `ctx.validated.form` like any other validated body.
 [Details ›](/validation/payload.html#validation-targets)
 
 #### How do I validate responses, and why bother?
@@ -829,6 +838,13 @@ primarily interactive with occasional content -> a framework.
 Import Preact components directly.
 [Details ›](/frontend/mdx.html#writing-pages)
 
+#### How do I access the current route inside a component?
+Call the `useRoute()` hook from `_/use`. It returns the route `name`, the validated `params`,
+and the page's `frontmatter` together, so a shared component (a breadcrumb, a title bar) can
+read where it is without receiving props from the page. This is distinct from a framework's
+own `useParams` - `useRoute()` also carries the route name and frontmatter, not just params.
+[Details ›](/frontend/mdx.html#route-parameters)
+
 #### Why can't I write TypeScript in MDX?
 MDX only supports plain JavaScript expressions.
 Keep typed code (props, hooks, types) in `.tsx` files and import them into the MDX page.
@@ -981,9 +997,10 @@ requests are routed between Vite and your API; a file watcher monitors API files
 
 #### What are the api/dev.ts hooks?
 `requestHandler` (returns the API request handler), `requestMatcher`
-(which requests go to the API vs Vite - defaults to the `apiurl` prefix),
+(which requests go to the API vs Vite - by default, requests whose URL starts with the
+`apiurl` prefix or that carry an `x-api-request: true` header),
 and `teardownHandler` (runs before each API reload).
-[Details ›](/backend/development-workflow.html#apidevts)
+[Details ›](/backend/development-workflow.html#api-dev-ts)
 
 #### How do I add custom request routing (e.g. WebSockets)?
 Override `requestHandler` in `api/dev.ts` for custom dispatch, WebSocket handling,
