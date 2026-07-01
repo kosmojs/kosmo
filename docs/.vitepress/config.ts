@@ -79,51 +79,27 @@ export default defineConfig({
       {
         text: "About",
         link: "/about",
-        activeMatch:
-          "^/(?!features|start|tutorial|routing|frontend|backend|validation).+",
+        activeMatch: "^/about",
+      },
+      {
+        text: "Features",
+        link: "/features",
+        activeMatch: "^/features",
       },
       {
         text: "Quick Start",
         link: "/start",
-        activeMatch:
-          "^/(?!features|about|tutorial|routing|frontend|backend|validation).+",
+        activeMatch: "^/start",
       },
       {
-        text: "Routing",
-        link: "/routing/intro",
-        activeMatch: "^/routing\\/.+",
-      },
-      {
-        text: "Validation",
-        link: "/validation/intro",
-        activeMatch: "^/validation\\/.+",
+        text: "Tutorial",
+        link: "/tutorial",
+        activeMatch: "^/tutorial",
       },
     ],
 
     sidebar: {
       "/": [
-        {
-          text: "Introduction",
-          collapsed: false,
-          items: [
-            {
-              text: "💡 About",
-              link: "/about",
-            },
-            {
-              text: "✨ Features",
-              link: "/features",
-            },
-            {
-              text: "🚀 Quick Start",
-              link: "/start",
-            },
-            {
-              text: "🎓 Tutorial",
-              link: "/tutorial",
-            },
-          ],
-        },
         {
           text: "Routing",
           collapsed: false,

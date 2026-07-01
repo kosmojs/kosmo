@@ -131,11 +131,10 @@ onMounted(() => {
           <span class="glyph">K</span> KosmoJS
         </a>
         <nav class="nav-links">
-          <a href="/about">About</a>
-          <a href="/start">Quick start</a>
-          <a href="/routing/intro">Routing</a>
-          <a href="/validation/intro">Validation</a>
-          <a class="nav-gh" href="https://github.com/kosmojs/kosmo" target="_blank" rel="noopener">GitHub ↗</a>
+          <a href="/about.html">About</a>
+          <a href="/features.html">Features</a>
+          <a href="/start.html">Quick start</a>
+          <a href="/tutorial.html">Tutorial</a>
           <button
             class="nav-toggle"
             @click="toggleTheme"
