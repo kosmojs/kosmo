@@ -50,6 +50,14 @@ export default defineConfig({
         "data-website-id": "e1b463f8-11fa-49ec-a4af-d88f9bef6c05",
       },
     ],
+    [
+      "script",
+      {
+        defer: "true",
+        src: "https://context7.com/widget.js",
+        "data-library": "/llmstxt/kosmojs_dev_llms-full_txt",
+      },
+    ],
   ],
 
   sitemap: {
