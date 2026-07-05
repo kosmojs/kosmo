@@ -162,7 +162,9 @@ onMounted(() => {
               Most projects outgrow a single app. Most teams have a solution: monorepos, microservices, DIY glue.
             </p>
             <p class="lede">
-              <b>KosmoJS does both - it combines monorepo consistency with microservice flexibility by composing several apps in one codebase.</b>
+              <b>
+                KosmoJS composes several apps in one codebase, offering both monorepo consistency and microservice flexibility.
+              </b>
             </p>
             <p class="lede">
               Apps run their own stacks, yet share one install, one set of types, one build.
