@@ -19,7 +19,7 @@ export type Project = {
 
 export type SourceFolder = {
   name: string;
-  base?: string;
+  base: string;
   framework?: keyof typeof FRAMEWORKS | "none";
   backend?: keyof typeof BACKEND_FRAMEWORKS | "none";
   ssr?: boolean;
@@ -90,8 +90,8 @@ export const compareDependencies = async (
 };
 
 export const validateName = (name: string | undefined) => {
-  if (!name) {
-    return "Invalid name provided";
+  if (!name?.trim()) {
+    return "Invalid name";
   }
   if (/[^\w.@$+-]/.test(name)) {
     return "May contain only alphanumerics, hyphens, periods or any of @ $ +";
@@ -100,8 +100,11 @@ export const validateName = (name: string | undefined) => {
 };
 
 export const validateBase = (base: string | undefined) => {
-  if (!base?.startsWith("/")) {
-    return "Should start with a slash";
+  if (!base?.trim()) {
+    return "Invalid base";
+  }
+  if (base.includes(" ")) {
+    return "Should not contain spaces";
   }
   if (
     [

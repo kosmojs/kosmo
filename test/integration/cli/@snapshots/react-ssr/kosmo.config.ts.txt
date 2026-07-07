@@ -3,9 +3,7 @@ import { defineConfig, reactGenerator, ssrGenerator } from "@kosmojs/dev";
 import reactPlugin from "@vitejs/plugin-react";
 
 export default defineConfig({
-  base: {
-    development: "/react-ssr",
-  },
+  base: "/react-ssr",
   plugins: [reactPlugin()],
   generators: [reactGenerator(), ssrGenerator()],
 });

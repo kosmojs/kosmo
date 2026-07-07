@@ -56,15 +56,14 @@ describe("Create API", () => {
     await createProject();
 
     for (const folder of [
-      { name: "with-defaults" },
-      { name: "with-custom-base", base: "/test" },
-      { name: "with-solid", framework: "solid" },
-      { name: "with-solid-ssr", framework: "solid", ssr: true },
-      { name: "with-react", framework: "react" },
-      { name: "with-react-ssr", framework: "react", ssr: true },
-      { name: "with-vue", framework: "vue" },
-      { name: "with-vue-ssr", framework: "vue", ssr: true },
-      { name: "with-koa-backend", backend: "koa" },
+      { name: "with-defaults", base: "/" },
+      { name: "with-solid", base: "/", framework: "solid" },
+      { name: "with-solid-ssr", base: "/", framework: "solid", ssr: true },
+      { name: "with-react", base: "/", framework: "react" },
+      { name: "with-react-ssr", base: "/", framework: "react", ssr: true },
+      { name: "with-vue", base: "/", framework: "vue" },
+      { name: "with-vue-ssr", base: "/", framework: "vue", ssr: true },
+      { name: "with-koa-backend", base: "/", backend: "koa" },
     ] satisfies Array<SourceFolder>) {
       const snapshot = await createSourceFolder(folder);
       await expect(snapshot).toMatchFileSnapshot(

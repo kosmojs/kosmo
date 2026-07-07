@@ -10,9 +10,7 @@ import {
 import vuePlugin from "@vitejs/plugin-vue";
 
 export default defineConfig({
-  base: {
-    development: "/vue-hono-ssr",
-  },
+  base: "/vue-hono-ssr",
   plugins: [vuePlugin()],
   generators: [
     vueGenerator(),

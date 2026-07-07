@@ -29,7 +29,6 @@ export enum BACKEND_FRAMEWORKS {
 }
 
 export const DEFAULT_DIST = "dist";
-export const DEFAULT_BASE = "/";
 export const DEFAULT_APIBASE = "/api";
 export const DEFAULT_PORT = 4556;
 export const DEFAULT_FRAMEWORK = "none";

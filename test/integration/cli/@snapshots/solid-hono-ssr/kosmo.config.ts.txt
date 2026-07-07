@@ -10,9 +10,7 @@ import {
 import solidPlugin from "vite-plugin-solid";
 
 export default defineConfig({
-  base: {
-    development: "/solid-hono-ssr",
-  },
+  base: "/solid-hono-ssr",
   plugins: [solidPlugin({ ssr: true })],
   generators: [
     solidGenerator(),

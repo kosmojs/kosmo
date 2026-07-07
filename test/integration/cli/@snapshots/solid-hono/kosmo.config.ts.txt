@@ -9,9 +9,7 @@ import {
 import solidPlugin from "vite-plugin-solid";
 
 export default defineConfig({
-  base: {
-    development: "/solid-hono",
-  },
+  base: "/solid-hono",
   plugins: [solidPlugin()],
   generators: [solidGenerator(), honoGenerator(), fetchGenerator(), typeboxGenerator()],
   oxc: { jsx: { importSource: "solid-js" } },

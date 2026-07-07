@@ -9,9 +9,7 @@ import {
 import vuePlugin from "@vitejs/plugin-vue";
 
 export default defineConfig({
-  base: {
-    development: "/vue-hono",
-  },
+  base: "/vue-hono",
   plugins: [vuePlugin()],
   generators: [vueGenerator(), honoGenerator(), fetchGenerator(), typeboxGenerator()],
 });

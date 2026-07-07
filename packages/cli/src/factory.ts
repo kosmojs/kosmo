@@ -6,7 +6,6 @@ import { resolve } from "node:path";
 import {
   type BACKEND_FRAMEWORKS,
   DEFAULT_BACKEND,
-  DEFAULT_BASE,
   DEFAULT_DIST,
   DEFAULT_FRAMEWORK,
   DEFAULT_PORT,
@@ -208,7 +207,7 @@ export const createKosmoConfig = (
   }> = [];
 
   const {
-    base = DEFAULT_BASE,
+    base,
     framework = DEFAULT_FRAMEWORK,
     backend = DEFAULT_BACKEND,
   } = folder;

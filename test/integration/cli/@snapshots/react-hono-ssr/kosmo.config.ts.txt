@@ -10,9 +10,7 @@ import {
 import reactPlugin from "@vitejs/plugin-react";
 
 export default defineConfig({
-  base: {
-    development: "/react-hono-ssr",
-  },
+  base: "/react-hono-ssr",
   plugins: [reactPlugin()],
   generators: [
     reactGenerator(),

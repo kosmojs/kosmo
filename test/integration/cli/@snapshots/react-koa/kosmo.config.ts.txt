@@ -9,9 +9,7 @@ import {
 import reactPlugin from "@vitejs/plugin-react";
 
 export default defineConfig({
-  base: {
-    development: "/react-koa",
-  },
+  base: "/react-koa",
   plugins: [reactPlugin()],
   generators: [reactGenerator(), koaGenerator(), fetchGenerator(), typeboxGenerator()],
 });

@@ -237,6 +237,7 @@ export const setupTestProject = async (opt?: {
       projectRoot,
       {
         name: sourceFolder.name,
+        base: sourceFolder.config.base,
         ...(backend ? { backend } : {}),
         ...(framework ? { framework } : {}),
         ...(ssr ? { ssr: true } : {}),

@@ -10,7 +10,6 @@ import { glob } from "tinyglobby";
 
 import {
   BACKEND_FRAMEWORKS,
-  DEFAULT_BASE,
   defaults,
   FRAMEWORKS,
   type ProjectSettings,
@@ -186,9 +185,9 @@ const createFolder = async () => {
       type: "text",
       name: "base",
       message: "Base URL",
-      initial: DEFAULT_BASE,
+      initial: "/",
       onState,
-      validate: (base) => validateBase(base || DEFAULT_BASE) || true,
+      validate: (base) => validateBase(base || "/") || true,
     },
 
     {

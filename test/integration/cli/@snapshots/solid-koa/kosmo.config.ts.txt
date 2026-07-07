@@ -9,9 +9,7 @@ import {
 import solidPlugin from "vite-plugin-solid";
 
 export default defineConfig({
-  base: {
-    development: "/solid-koa",
-  },
+  base: "/solid-koa",
   plugins: [solidPlugin()],
   generators: [solidGenerator(), koaGenerator(), fetchGenerator(), typeboxGenerator()],
   oxc: { jsx: { importSource: "solid-js" } },

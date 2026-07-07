@@ -11,9 +11,7 @@ import {
 {{/each}}
 
 export default defineConfig({
-  base: {
-    development: "{{base}}",
-  },
+  base: "{{base}}",
   plugins: [
     {{#each plugins}}{{importName}}({{options}}),
     {{/each}}

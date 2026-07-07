@@ -10,9 +10,7 @@ import {
 import reactPlugin from "@vitejs/plugin-react";
 
 export default defineConfig({
-  base: {
-    development: "/react-koa-ssr",
-  },
+  base: "/react-koa-ssr",
   plugins: [reactPlugin()],
   generators: [
     reactGenerator(),

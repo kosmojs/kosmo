@@ -25,13 +25,15 @@ export type FolderConfig = Pick<
   | "resolve"
 > & {
   /** Base URL this source folder is served from, e.g. "/" or "/admin" */
-  base: {
-    [key: string]: string;
-    development: string;
-    test?: string;
-    stage?: string;
-    production?: string;
-  };
+  base:
+    | string
+    | {
+        [key: string]: string;
+        development?: string;
+        test?: string;
+        stage?: string;
+        production?: string;
+      };
 
   /** Base URL for API routes, e.g. "/api" */
   apiBase?: string;
