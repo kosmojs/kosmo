@@ -10,7 +10,6 @@ import {
   defineGeneratorFactory,
   pathResolver,
   renderFactory,
-  typeboxLiteralText,
 } from "@kosmojs/lib";
 
 import * as templates from "./templates";
@@ -22,8 +21,12 @@ const defaultSettings: Settings = {
 
 export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
-    const { createPath, createImport, createImportHelpers } =
-      pathResolver(sourceFolder);
+    const {
+      //
+      createPath,
+      createImport,
+      createImportHelpers,
+    } = pathResolver(sourceFolder);
 
     const { renderToFile: deployLibFile } = renderFactory({
       helpers: {
@@ -46,21 +49,14 @@ export default defineGeneratorFactory<Options>(
         }
 
         const resolvedTypes = [
-          entry.params.resolvedType,
+          entry.params,
           ...entry.validationDefinitions.flatMap((def) => {
             return def.target === "response"
-              ? def.variants.map(({ resolvedType }) => resolvedType)
-              : [def.schema.resolvedType];
+              ? (def.variants as never)
+              : [def.schema];
           }),
-        ].flatMap((resolvedType) => {
-          return resolvedType
-            ? [
-                {
-                  ...resolvedType,
-                  text: typeboxLiteralText(resolvedType.text, sourceFolder),
-                },
-              ]
-            : [];
+        ].flatMap(({ resolvedType }) => {
+          return resolvedType ? [resolvedType] : [];
         });
 
         const requestSchemas: Array<{

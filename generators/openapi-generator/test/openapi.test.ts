@@ -2,7 +2,8 @@ import { Spectral } from "@stoplight/spectral-core";
 import { oas } from "@stoplight/spectral-rulesets";
 import { test } from "vitest";
 
-import { type ApiRoute, routesFactory } from "@kosmojs/lib";
+import type { ApiRoute } from "@kosmojs/core";
+import { routesFactory } from "@kosmojs/lib";
 
 import { openapiOptions, sourceFolder } from ".";
 
@@ -11,9 +12,9 @@ import openapiFactory from "@src/openapi";
 test("openapi", async ({ expect }) => {
   const { resolvers } = await routesFactory(sourceFolder);
 
-  const { generateOpenAPISchema } = openapiFactory(sourceFolder);
+  const { generateOpenAPISchema } = openapiFactory();
 
-  const apiRoutes: ApiRoute[] = [];
+  const apiRoutes: Array<ApiRoute> = [];
 
   for (const { handler } of resolvers.values()) {
     const { kind, entry } = await handler();

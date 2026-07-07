@@ -2,7 +2,7 @@ import { join, resolve } from "node:path";
 import { styleText } from "node:util";
 
 import crc from "crc/crc32";
-import { flattener } from "tfusion";
+import { flattener, type ResolvedType } from "tfusion";
 import {
   type CallExpression,
   type Identifier,
@@ -13,6 +13,7 @@ import {
   type TypeNode,
 } from "ts-morph";
 
+import type { ResolvedTypeSignature } from "@kosmojs/core";
 import {
   type ApiRoute,
   defaults,
@@ -23,6 +24,9 @@ import {
   type ValidationTarget,
 } from "@kosmojs/core";
 import { type HTTPMethod, HTTPMethods } from "@kosmojs/core/api";
+
+import { render } from "./render";
+import * as templates from "./templates";
 
 type PathResolver = (path: string) => string;
 
@@ -323,13 +327,15 @@ export const astFactory = () => {
         const variants = typeNode.isKind(SyntaxKind.UnionType)
           ? typeNode.getChildrenOfKind(SyntaxKind.TupleType)
           : [typeNode];
+
         definitions.push({
           ...optsMap[target],
           method,
           target,
           variants: variants.flatMap((e, i) => {
-            const { status, contentType, body } =
-              extractResponseVariant(e) || {};
+            const { status, contentType, body } = {
+              ...extractResponseVariant(e),
+            };
 
             if (!status) {
               return [];
@@ -568,10 +574,57 @@ export const astFactory = () => {
       skipAddingFilesFromTsConfig: true,
     });
 
+    const withTypeboxSchema = (resolvedTypes: Array<ResolvedType>) => {
+      const materializedTypes = render(templates.resolvedTypes, {
+        resolvedTypes,
+      });
+
+      const sourceFile = project.createSourceFile(
+        `${crc(materializedTypes)}-${Date.now()}.ts`,
+        materializedTypes,
+        { overwrite: true },
+      );
+
+      const types = resolvedTypes.map<ResolvedTypeSignature>((type) => {
+        const typeNode = sourceFile.getTypeAlias(type.name)?.getTypeNode();
+
+        if (!typeNode) {
+          return type;
+        }
+
+        const properties = type.properties
+          ? type.properties.map((prop) => {
+              const propNode = typeNode.isKind(SyntaxKind.TypeLiteral)
+                ? typeNode.getProperty(prop.name)?.getTypeNode()
+                : undefined;
+
+              if (!propNode) {
+                return prop;
+              }
+
+              return {
+                ...prop,
+                typeboxSchema: renderTypeboxSchema(propNode),
+              };
+            })
+          : undefined;
+
+        return {
+          ...type,
+          ...(properties ? { properties } : {}),
+          typeboxSchema: renderTypeboxSchema(typeNode),
+        };
+      });
+
+      project.removeSourceFile(sourceFile);
+
+      return types;
+    };
+
     const literalTypesResolver = (
       literalTypes: string,
       options: Parameters<typeof flattener>[2],
-    ) => {
+    ): Array<ResolvedTypeSignature> => {
       const sourceFile = project.createSourceFile(
         `${crc(literalTypes)}-${Date.now()}.ts`,
         literalTypes,
@@ -585,7 +638,7 @@ export const astFactory = () => {
 
       project.removeSourceFile(sourceFile);
 
-      return resolvedTypes;
+      return withTypeboxSchema(resolvedTypes);
     };
 
     return {
@@ -614,4 +667,119 @@ export const astFactory = () => {
     resolveRouteSignature,
     typeResolverFactory,
   };
+};
+
+/**
+ * Render a ts-morph TypeNode to TypeBox Script text, replacing every VRefine
+ * occurrence (at any depth) with the infix `with` form.
+ *
+ *   VRefine<string, { format: "email" }>            ->  (string with { format: "email" })
+ *   VRefine<string, { format: "email" }>[]          ->  (string with { format: "email" })[]
+ *   VRefine<Array<string>, { minItems: 1 }>         ->  (Array<string> with { minItems: 1 })
+ *   VRefine<Record<string, string>, { maxProperties: 20 }>
+ *                                                   ->  (Record<string, string> with { maxProperties: 20 })
+ *
+ * The parentheses matter: for an array element the `with` clause must bind to
+ * the element, not the array, so a VRefine that is the element of an array is
+ * wrapped. We wrap unconditionally - harmless when not nested, required when it
+ * is.
+ *
+ * @param typeNode   the node to render
+ * @param refineTypeName the configured refine type name
+ * */
+const renderTypeboxSchema = (
+  typeNode: TypeNode,
+  refineTypeName = defaults.refineTypeName,
+) => {
+  const traverse = (typeNode: TypeNode): string => {
+    // 1) VRefine<T, Opts> -> `(<render T> with <opts text>)`
+    if (
+      typeNode.isKind(SyntaxKind.TypeReference) &&
+      typeNode.getTypeName().getText() === refineTypeName
+    ) {
+      const [inner, opts] = typeNode.getTypeArguments();
+      if (!inner || !opts) {
+        // Malformed VRefine, emit its raw text unchanged
+        return typeNode.getText();
+      }
+      const innerText = traverse(inner);
+      // Options is a single TypeLiteral; its raw text is exactly what `with`
+      // expects. getText() preserves nested braces and quoted `}>` verbatim.
+      return `(${innerText} with ${opts.getText()})`;
+    }
+
+    // 2) T[] -> `<render T>[]` (element may itself be a VRefine)
+    if (typeNode.isKind(SyntaxKind.ArrayType)) {
+      const element = traverse(typeNode.getElementTypeNode());
+      return `${element}[]`;
+    }
+
+    // 3) Object type literal -> recurse into each property's type node
+    if (typeNode.isKind(SyntaxKind.TypeLiteral)) {
+      const members: string[] = [];
+      for (const member of typeNode.getMembers()) {
+        if (member.isKind(SyntaxKind.PropertySignature)) {
+          const name = member.getName();
+          const optional = member.hasQuestionToken() ? "?" : "";
+          const t = member.getTypeNode();
+          const rendered = t ? traverse(t) : "unknown";
+          members.push(`${name}${optional}: ${rendered}`);
+        } else {
+          // index signatures, call signatures, etc: pass through raw
+          members.push(member.getText());
+        }
+      }
+      return `{ ${members.join(", ")} }`;
+    }
+
+    // 4) Tuple -> recurse into each element
+    if (typeNode.isKind(SyntaxKind.TupleType)) {
+      const elements = typeNode.getElements().map((el) => traverse(el));
+      return `[${elements.join(", ")}]`;
+    }
+
+    // 5) Parenthesized -> recurse, keep the parens
+    if (typeNode.isKind(SyntaxKind.ParenthesizedType)) {
+      return `(${traverse(typeNode.getTypeNode())})`;
+    }
+
+    // 6) Union / Intersection -> recurse into each constituent
+    if (typeNode.isKind(SyntaxKind.UnionType)) {
+      return typeNode
+        .getTypeNodes()
+        .map((t) => traverse(t))
+        .join(" | ");
+    }
+    if (typeNode.isKind(SyntaxKind.IntersectionType)) {
+      return typeNode
+        .getTypeNodes()
+        .map((t) => traverse(t))
+        .join(" & ");
+    }
+
+    // 7) A non-VRefine type reference that carries type arguments - this covers
+    //    the refined bases Array<T> and Record<K, V> (which stay as-is and get a
+    //    trailing `with` clause from case 1), as well as any generic wrapper
+    //    around a VRefine. Recurse into the arguments so a nested VRefine is
+    //    still rewritten, and keep the head name unchanged.
+    if (typeNode.isKind(SyntaxKind.TypeReference)) {
+      const args = typeNode.getTypeArguments();
+      if (args.length === 0) {
+        return typeNode.getText();
+      }
+      const name = typeNode.getTypeName().getText();
+      const rendered = args.map((a) => traverse(a));
+      return `${name}<${rendered.join(", ")}>`;
+    }
+
+    // 8) Anything else (primitive keyword, literal, etc): raw text is correct.
+    return typeNode.getText();
+  };
+
+  return [
+    // Escape backticks for safe use in template literals
+    [/(?<!\\)`/g, "\\`"],
+    // Escape $ for safe use in template literals
+    [/(?<!\\)\$\{/g, "\\${"],
+  ].reduce((text, [a, b]) => text.replace(a, b as never), traverse(typeNode));
 };

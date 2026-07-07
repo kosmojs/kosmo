@@ -1,6 +1,5 @@
-import type { ResolvedType } from "tfusion";
-
 import type { HTTPMethod } from "../api";
+import type { ResolvedTypeSignature } from "./generic";
 
 /**
  * Request metadata validation targets.
@@ -252,7 +251,7 @@ export type ValidationDefinition = {
         status: number;
         contentType: string | undefined;
         body: string | undefined;
-        resolvedType?: ResolvedType | undefined;
+        resolvedType?: ResolvedTypeSignature | undefined;
       }>;
     }
   | {
@@ -261,7 +260,7 @@ export type ValidationDefinition = {
       schema: {
         id: string;
         text: string;
-        resolvedType?: ResolvedType | undefined;
+        resolvedType?: ResolvedTypeSignature | undefined;
       };
     }
 );

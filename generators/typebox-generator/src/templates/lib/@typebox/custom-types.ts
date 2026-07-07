@@ -1,69 +1,58 @@
 import Type from "typebox";
 
-export class TDate extends Type.Base<Date> {
-  public override Check(value: unknown): value is Date {
-    return value instanceof Date;
-  }
-  public override Errors(value: unknown): object[] {
-    return this.Check(value) ? [] : [{ message: "must be Date" }];
-  }
-  public override Clone(): TDate {
-    return new TDate();
-  }
-}
+/**
+ * Custom types for JavaScript constructs that have no JSON Schema
+ * representation (Date, File, Blob, Buffer, ArrayBuffer).
+ *
+ * Each entry is a factory so every use site gets a fresh schema instance,
+ * matching the previous behaviour of `new TDate()` etc.
+ * */
 
-export class TFile extends Type.Base<File> {
-  public override Check(value: unknown): value is File {
-    return value instanceof File;
-  }
-  public override Errors(value: unknown): object[] {
-    return this.Check(value) ? [] : [{ message: "must be File" }];
-  }
-  public override Clone(): TFile {
-    return new TFile();
-  }
-}
+const customType = <T>(
+  check: (value: unknown) => value is T,
+  message: string,
+) => Type.Refine(Type.Unsafe<T>({}), check, () => message);
 
-export class TBlob extends Type.Base<Blob> {
-  public override Check(value: unknown): value is Blob {
-    return value instanceof Blob;
-  }
-  public override Errors(value: unknown): object[] {
-    return this.Check(value) ? [] : [{ message: "must be Blob" }];
-  }
-  public override Clone(): TBlob {
-    return new TBlob();
-  }
-}
+export const TDate = () => {
+  return customType(
+    (value): value is Date => value instanceof Date,
+    "must be Date",
+  );
+};
 
-export class TBuffer extends Type.Base<Buffer> {
-  public override Check(value: unknown): value is Buffer {
-    return value instanceof Buffer;
-  }
-  public override Errors(value: unknown): object[] {
-    return this.Check(value) ? [] : [{ message: "must be Buffer" }];
-  }
-  public override Clone(): TBuffer {
-    return new TBuffer();
-  }
-}
+export const TFile = () => {
+  return customType(
+    (value): value is File => value instanceof File,
+    "must be File",
+  );
+};
 
-export class TArrayBuffer extends Type.Base<ArrayBuffer> {
-  public override Check(value: unknown): value is ArrayBuffer {
-    return value instanceof ArrayBuffer;
-  }
-  public override Errors(value: unknown): object[] {
-    return this.Check(value) ? [] : [{ message: "must be ArrayBuffer" }];
-  }
-  public override Clone(): TArrayBuffer {
-    return new TArrayBuffer();
-  }
-}
+export const TBlob = () => {
+  return customType(
+    (value): value is Blob => value instanceof Blob,
+    "must be Blob",
+  );
+};
+
+export const TBuffer = () => {
+  return customType(
+    (value): value is Buffer =>
+      typeof Buffer !== "undefined" && Buffer.isBuffer(value),
+    "must be Buffer",
+  );
+};
+
+export const TArrayBuffer = () => {
+  return customType(
+    (value): value is ArrayBuffer => value instanceof ArrayBuffer,
+    "must be ArrayBuffer",
+  );
+};
 
 export default {
-  Date: new TDate(),
-  File: new TFile(),
-  Blob: new TBlob(),
-  Buffer: new TBuffer(),
-  ArrayBuffer: new TArrayBuffer(),
+  Date: TDate(),
+  File: TFile(),
+  Blob: TBlob(),
+  Buffer: TBuffer(),
+  ArrayBuffer: TArrayBuffer(),
 };

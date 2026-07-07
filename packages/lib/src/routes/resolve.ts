@@ -18,8 +18,8 @@ import {
 import { astFactory } from "../ast";
 import { pathResolver } from "../paths";
 import { render, renderToFile } from "../render";
+import * as templates from "../templates";
 import type { ResolverSignature } from "./base";
-import * as templates from "./templates";
 
 export const resolverFactory = (
   sourceFolder: SourceFolder,

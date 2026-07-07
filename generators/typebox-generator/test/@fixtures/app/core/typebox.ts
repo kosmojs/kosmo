@@ -3,18 +3,18 @@ import { Settings } from "typebox/system";
 
 Settings.Set({ exactOptionalPropertyTypes: true });
 
-export class TDate extends Type.Base<Date> {
-  public override Check(value: unknown): value is Date {
-    return value instanceof globalThis.Date;
-  }
-  public override Errors(value: unknown): object[] {
-    return this.Check(value) ? [] : [{ message: "must be Date" }];
-  }
-  public override Create(): Date {
-    return new globalThis.Date(0);
-  }
-}
+const customType = <T>(
+  check: (value: unknown) => value is T,
+  message: string,
+) => Type.Refine(Type.Unsafe<T>({}), check, () => message);
+
+export const TDate = () => {
+  return customType(
+    (value): value is Date => value instanceof Date,
+    "must be Date",
+  );
+};
 
 export default {
-  Date: new TDate(),
+  Date: TDate(),
 };

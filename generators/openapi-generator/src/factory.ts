@@ -16,7 +16,7 @@ export default defineGeneratorFactory<Options>(
 
     const { createPath } = pathResolver(sourceFolder);
 
-    const { generateOpenAPISchema } = openapiFactory(sourceFolder);
+    const { generateOpenAPISchema } = openapiFactory();
 
     const generateSchemas = async (entries: Array<ResolvedEntry>) => {
       const apiRoutes = entries.flatMap(({ kind, entry }) =>

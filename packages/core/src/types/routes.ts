@@ -1,5 +1,4 @@
-import type { ResolvedType } from "tfusion";
-
+import type { ResolvedTypeSignature } from "./generic";
 import type { SourceFolder } from "./project";
 import type { ValidationDefinition } from "./validation";
 
@@ -64,7 +63,7 @@ export type ApiRoute = RouteEntry & {
   params: {
     id: string;
     schema: Array<PathTokenParamPart>;
-    resolvedType: ResolvedType | undefined;
+    resolvedType: ResolvedTypeSignature | undefined;
   };
   numericParams: Array<string>;
   optionalParams: boolean;

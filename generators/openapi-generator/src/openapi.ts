@@ -9,9 +9,8 @@ import {
   type RequestBodyTarget,
   RequestBodyTargets,
   type ResponseValidationDefinition,
-  type SourceFolder,
 } from "@kosmojs/core";
-import { sortRoutes, typeboxLiteralText } from "@kosmojs/lib";
+import { sortRoutes } from "@kosmojs/lib";
 
 import type {
   JsonSchema,
@@ -27,17 +26,15 @@ const requestBodyMap: Record<RequestBodyTarget, unknown> = {
   raw: undefined,
 };
 
-export default (sourceFolder: SourceFolder) => {
-  const jsonSchemaBuilder = (text: string): JsonSchema => {
-    if (["Buffer", "ArrayBuffer", "Blob"].includes(text)) {
+export default () => {
+  const jsonSchemaBuilder = (typeboxSchema: string): JsonSchema => {
+    if (["Buffer", "ArrayBuffer", "Blob"].includes(typeboxSchema)) {
       return {
         type: "string",
         format: "binary",
       };
     }
-    return Type.Script(
-      typeboxLiteralText(text, sourceFolder),
-    ) as unknown as JsonSchema;
+    return Type.Script(typeboxSchema) as unknown as JsonSchema;
   };
 
   // Generate unique component ID
@@ -275,15 +272,15 @@ export default (sourceFolder: SourceFolder) => {
     openapiPath: string,
   ): Array<OpenAPIParameter> | undefined => {
     const parameters = route.params.resolvedType?.properties?.flatMap(
-      ({ name }) => {
-        return new RegExp(`\\{${name}\\*?\\}`).test(openapiPath)
+      (prop) => {
+        return new RegExp(`\\{${prop.nameLiteral}\\*?\\}`).test(openapiPath)
           ? [
               {
                 $ref: generateComponentPath(
                   "parameters",
                   route,
                   route.params.id,
-                  name,
+                  prop.nameLiteral,
                 ),
               },
             ]
@@ -367,37 +364,44 @@ export default (sourceFolder: SourceFolder) => {
     for (const def of route.validationDefinitions) {
       if (def.target === "response") {
         for (const { id, resolvedType } of def.variants) {
-          if (resolvedType) {
+          if (resolvedType?.typeboxSchema) {
             schemas[generateComponentId(route, id)] = jsonSchemaBuilder(
-              resolvedType.text,
+              resolvedType.typeboxSchema,
             );
           }
         }
       } else if (def.target === "query") {
         const { id, resolvedType } = def.schema;
         for (const prop of resolvedType?.properties || []) {
-          // generating a schema for every property
-          const key = generateComponentId(route, id, prop.name);
-          schemas[key] = jsonSchemaBuilder(prop.text);
+          if (prop?.typeboxSchema) {
+            // generating a schema for every property
+            const key = generateComponentId(route, id, prop.nameLiteral);
+            schemas[key] = jsonSchemaBuilder(prop.typeboxSchema);
+          }
         }
       } else {
         const { id, resolvedType } = def.schema;
-        if (resolvedType) {
+        if (resolvedType?.typeboxSchema) {
           schemas[generateComponentId(route, id)] = jsonSchemaBuilder(
-            resolvedType.text,
+            resolvedType.typeboxSchema,
           );
         }
       }
     }
 
     if (route.params.resolvedType) {
-      for (const { name, text } of route.params.resolvedType.properties || []) {
-        parameters[generateComponentId(route, route.params.id, name)] = {
-          name,
-          in: "path",
-          required: true,
-          schema: jsonSchemaBuilder(text),
-        };
+      // console.dir(route.params.resolvedType, { depth: 10 });
+      for (const prop of route.params.resolvedType.properties || []) {
+        if (prop?.typeboxSchema) {
+          parameters[
+            generateComponentId(route, route.params.id, prop.nameLiteral)
+          ] = {
+            name: prop.nameLiteral,
+            in: "path",
+            required: true,
+            schema: jsonSchemaBuilder(prop.typeboxSchema),
+          };
+        }
       }
     }
 
@@ -438,7 +442,7 @@ export default (sourceFolder: SourceFolder) => {
               operation.parameters = [];
             }
             operation.parameters.push({
-              name: prop.name,
+              name: prop.nameLiteral,
               in: "query",
               required: !prop.optional,
               schema: {
@@ -446,7 +450,7 @@ export default (sourceFolder: SourceFolder) => {
                   "schemas",
                   route,
                   queryType.schema.id,
-                  prop.name,
+                  prop.nameLiteral,
                 ),
               },
             });

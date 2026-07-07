@@ -28,9 +28,10 @@
     "mime-types": "^3.0.2",
     "path-to-regexp": "^8.4.2",
     "picomatch": "^4.0.4",
-    "tfusion": "^0.0.24",
+    "tfusion": "^0.0.27",
     "tinyglobby": "^0.2.16",
-    "ts-morph": "^28.0.0"
+    "ts-morph": "^28.0.0",
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
     "@kosmojs/lib": "workspace:^",

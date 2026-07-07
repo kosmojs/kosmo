@@ -13,7 +13,7 @@ describe("binary:Blob", async () => {
     const body = "";
     expect(schema?.check(body)).toEqual(false);
     const [error] = schema?.errors(body) || [];
-    expect(error.code).toEqual(MESSAGE_CODES.TYPE_INVALID);
+    expect(error.code).toEqual(MESSAGE_CODES.UNKNOWN);
     expect(error.message).toMatch(/Blob/i);
   });
 });
@@ -29,7 +29,7 @@ describe("binary:ArrayBuffer", async () => {
     const body = "";
     expect(schema?.check(body)).toEqual(false);
     const [error] = schema?.errors(body) || [];
-    expect(error.code).toEqual(MESSAGE_CODES.TYPE_INVALID);
+    expect(error.code).toEqual(MESSAGE_CODES.UNKNOWN);
     expect(error.message).toMatch(/ArrayBuffer/i);
   });
 });
