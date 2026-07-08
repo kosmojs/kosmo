@@ -32,7 +32,6 @@
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
-    "@types/prompts": "^2.4.9",
-    "vite": "^8.0.10"
+    "@types/prompts": "^2.4.9"
   }
 }
