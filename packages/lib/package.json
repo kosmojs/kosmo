@@ -24,16 +24,15 @@
     "handlebars": "^4.7.9",
     "mime-types": "^3.0.2",
     "path-to-regexp": "^8.4.2",
-    "picomatch": "^4.0.4",
-    "tfusion": "^0.0.27",
-    "tinyglobby": "^0.2.16",
-    "ts-morph": "^28.0.0",
-    "typescript": "^6.0.3"
+    "picomatch": "^4.0.5",
+    "tfusion": "^0.1.1",
+    "tinyglobby": "^0.2.17",
+    "ts-morph": "^28.0.0"
   },
   "devDependencies": {
     "@kosmojs/lib": "workspace:^",
     "@types/mime-types": "^3.0.1",
     "@types/picomatch": "^4.0.3",
-    "vite": "^8.0.10"
+    "vite": "^8.1.4"
   }
 }

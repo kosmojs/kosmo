@@ -27,17 +27,17 @@
     "crc": "^4.3.2"
   },
   "devDependencies": {
-    "@koa/router": "^15.4.0",
+    "@koa/router": "^15.7.0",
     "@types/formidable": "^3.5.1",
-    "@types/koa": "^3.0.2",
+    "@types/koa": "^3.0.3",
     "@types/koa-compose": "^3.2.9",
-    "cookie": "^1.1.1",
+    "cookie": "^2.0.1",
     "formidable": "^3.5.4",
-    "koa": "^3.2.0",
+    "koa": "^3.2.1",
     "koa-compose": "^4.1.0",
     "light-my-request": "^6.6.0",
     "path-to-regexp": "^8.4.2",
     "raw-body": "^3.0.2",
-    "vite": "^8.0.10"
+    "vite": "^8.1.4"
   }
 }

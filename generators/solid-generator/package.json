@@ -24,7 +24,7 @@
   "devDependencies": {
     "@solidjs/router": "^0.16.1",
     "path-to-regexp": "^8.4.2",
-    "solid-js": "^1.9.12",
+    "solid-js": "^1.9.14",
     "vite-plugin-solid": "^2.11.12"
   }
 }

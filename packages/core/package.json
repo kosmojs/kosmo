@@ -34,15 +34,15 @@
     "test": "vitest --root ../.. --project packages/core"
   },
   "dependencies": {
-    "qs": "^6.15.1",
-    "string-width": "^8.2.1"
+    "qs": "^6.15.3",
+    "string-width": "^8.2.2"
   },
   "devDependencies": {
-    "@types/qs": "^6.15.0",
-    "hono": "^4.12.15",
-    "msw": "^2.14.5",
+    "@types/qs": "^6.15.1",
+    "hono": "^4.12.28",
+    "msw": "^2.15.0",
     "path-to-regexp": "^8.4.2",
     "tfusion": "^0.0.27",
-    "vite": "^8.0.10"
+    "vite": "^8.1.4"
   }
 }

@@ -1,1 +1,0 @@
-resolve-tspaths --project ./src/tsconfig.json --ext d.ts

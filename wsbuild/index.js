@@ -10,7 +10,7 @@ const { values, positionals } = parseArgs({
   options: {
     scripts: {
       type: "string",
-      default: ["lint", "typecheck", "typefix"],
+      default: ["lint", "typecheck"],
       multiple: true,
       short: "s",
     },

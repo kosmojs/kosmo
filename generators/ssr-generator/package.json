@@ -19,11 +19,11 @@
   "dependencies": {
     "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^",
-    "vite": "^8.0.10"
+    "vite": "^8.1.4"
   },
   "devDependencies": {
-    "@hono/node-server": "^2.0.0",
-    "hono": "^4.12.15",
-    "tinyglobby": "^0.2.16"
+    "@hono/node-server": "^2.0.8",
+    "hono": "^4.12.28",
+    "tinyglobby": "^0.2.17"
   }
 }

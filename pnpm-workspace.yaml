@@ -1,9 +1,16 @@
 minimumReleaseAge: 720
+
 minimumReleaseAgeExclude:
   - typebox
   - tfusion
+  - vite
+
 packages:
   - "generators/*"
   - "packages/*"
   - "wsbuild"
   - "test"
+
+allowBuilds:
+  "@scarf/scarf": false
+  msw: true
