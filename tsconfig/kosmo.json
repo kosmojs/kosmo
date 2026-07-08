@@ -1,10 +1,15 @@
 {
   "extends": "./base.json",
-  "include": ["${configDir}"],
+  "include": [
+    "${configDir}",
+    "./env.d.ts"
+  ],
   "compilerOptions": {
     "rootDir": "${configDir}",
     "outDir": "${configDir}/../pkg",
-    "paths": {},
+    "paths": {
+      "@src/*": ["${configDir}/*"]
+    },
     "declaration": true,
     "emitDeclarationOnly": true
   }

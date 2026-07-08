@@ -1,8 +1,3 @@
-declare module "#templates/*" {
-  const src: string;
-  export default src;
-}
-
 declare module "{{ createImport 'libCore' }}" {
   import type { PathMapper } from "@kosmojs/core/generators";
   export type LinkProps = [""];

@@ -1,8 +1,3 @@
-declare module "#templates/*" {
-  const content: string;
-  export default content;
-}
-
 declare module "{{ createImport 'libCore' }}" {
   import type { PathMapper } from "@kosmojs/core/generators";
   export type LinkProps = [""];
@@ -11,26 +6,26 @@ declare module "{{ createImport 'libCore' }}" {
 }
 
 declare module "{{ createImport 'lib' 'mdx' }}" {
-  export * from "#templates/lib/mdx.ts";
+  export * from "@src/templates/lib/mdx";
 }
 
 declare module "{{ createImport 'lib' 'router' }}" {
   import { createRouterFactory } from "@kosmojs/core/generators";
-  import type { RawRoute, RouterInstance } from "#templates/lib/mdx.ts";
+  import type { RawRoute, RouterInstance } from "@src/templates/lib/mdx";
   export type ParamsMap = Record<string, object>;
   export default createRouterFactory<RawRoute, RouterInstance>();
 }
 
 declare module "{{ createImport 'libEntry' 'client' }}" {
   import { clientRenderFactory } from "@kosmojs/core/generators";
-  import type { RawRoute } from "#templates/lib/mdx.ts";
+  import type { RawRoute } from "@src/templates/lib/mdx";
   export const createRoutes: () => Array<RawRoute>;
   export default clientRenderFactory();
 }
 
 declare module "{{ createImport 'libEntry' 'server' }}" {
   import { serverRenderFactory } from "@kosmojs/core/generators";
-  import type { RawRoute } from "#templates/lib/mdx.ts";
+  import type { RawRoute } from "@src/templates/lib/mdx";
   export const createRoutes: () => Array<RawRoute>;
   export default serverRenderFactory();
 }

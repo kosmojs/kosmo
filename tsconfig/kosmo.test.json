@@ -1,6 +1,9 @@
 {
   "extends": "./base.json",
-  "include": ["${configDir}/../src", "${configDir}"],
+  "include": [
+    "${configDir}/../src",
+    "${configDir}"
+  ],
   "compilerOptions": {
     "paths": {
       "@src/*": ["${configDir}/../src/*"],
