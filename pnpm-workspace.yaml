@@ -5,3 +5,5 @@ minimumReleaseAgeExclude:
 packages:
   - "generators/*"
   - "packages/*"
+  - "wsbuild"
+  - "test"

@@ -1,11 +1,13 @@
 {
   "type": "module",
-  "name": "wsbuild",
   "private": true,
   "bin": {
     "wsbuild": "./index.js"
   },
+  "scripts": {
+    "build": "echo true"
+  },
   "dependencies": {
-    "vite": "^8.0.10"
+    "vite": "^8.1.3"
   }
 }

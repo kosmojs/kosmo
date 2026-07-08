@@ -2,6 +2,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "build": "echo true",
     "unit": "pnpm -C .. run test:unit",
     "unit:generators": "pnpm -C .. run test:unit:generators",
     "unit:packages": "pnpm -C .. run test:unit:packages",
