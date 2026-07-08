@@ -37,7 +37,6 @@ export default defineConfig({
     projects: [
       setupFactory("packages/core", {
         setupFiles: ["test/setup.ts"],
-        globals: true,
       }),
 
       setupFactory("packages/cli", {

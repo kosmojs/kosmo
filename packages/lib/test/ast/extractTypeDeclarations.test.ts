@@ -2,7 +2,7 @@ import { resolve } from "node:path";
 
 import { describe, expect, test } from "vitest";
 
-import { astFactory } from "@src/ast";
+import { astFactory } from "@kosmojs/lib";
 
 describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
   const { createProject, extractTypeDeclarations } = astFactory();

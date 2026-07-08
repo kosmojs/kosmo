@@ -1,8 +1,7 @@
 import { describe, test } from "vitest";
 
 import type { RequestBodyTarget } from "@kosmojs/core";
-
-import { astFactory } from "@src/ast";
+import { astFactory } from "@kosmojs/lib";
 
 describe("extractRouteMethods", () => {
   const {

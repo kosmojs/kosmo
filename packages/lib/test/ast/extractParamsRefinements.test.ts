@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { astFactory } from "@src/ast";
+import { astFactory } from "@kosmojs/lib";
 
 describe("extractParamsRefinements", () => {
   const {

@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 
-import type { SourceFolder } from "@src/types";
+import type { SourceFolder } from "@kosmojs/core";
 
 export const appRoot = resolve(import.meta.dirname, "../@fixtures/app");
 
@@ -8,21 +8,22 @@ export const sourceFolder: SourceFolder = {
   root: appRoot,
   name: "test",
   config: {
-    baseurl: "",
-    apiurl: "",
+    base: "/",
+    apiBase: "/api",
     generators: [
       // providing a stub generator with options.resolveTypes
       {
-        name: "",
-        moduleConfig: {},
-        moduleImport: "",
-        async factory() {
-          return { async watch() {}, async build() {} };
+        meta: { name: "" },
+        factory() {
+          return {
+            meta: { name: "" },
+            async watch() {},
+            async build() {},
+          };
         },
         options: { resolveTypes: true },
       },
     ],
   },
-  viteConfig: {} as never,
   distDir: "",
 };
