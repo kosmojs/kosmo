@@ -63,7 +63,11 @@ export default defineGeneratorFactory<Options>(
       async postBuild() {
         const dir = createPath.distDir("ssr");
 
-        const plugins = [vitePlugins.nodePrefix(), ...(config?.plugins || [])];
+        const plugins = [
+          vitePlugins.tsconfigPaths(sourceFolder),
+          vitePlugins.nodePrefix(),
+          ...(config?.plugins || []),
+        ];
 
         for (const base of generators) {
           plugins.push(...(base.plugins?.(sourceFolder, "build") || []));

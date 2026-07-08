@@ -16,7 +16,12 @@ import {
   type WatcherEvent,
 } from "@kosmojs/core";
 import type { DevSetup } from "@kosmojs/core/api";
-import { pathResolver, routesFactory, spinnerFactory } from "@kosmojs/lib";
+import {
+  pathResolver,
+  routesFactory,
+  spinnerFactory,
+  vitePlugins,
+} from "@kosmojs/lib";
 
 import coreGenerator from "@kosmojs/core-generator";
 
@@ -83,7 +88,11 @@ export default async (
       }
 
       const generators = folderGenerators(sourceFolder);
-      const plugins = [...(config.plugins || [])];
+
+      const plugins = [
+        vitePlugins.tsconfigPaths(sourceFolder),
+        ...(config.plugins || []),
+      ];
 
       for (const base of generators) {
         await base.factory(sourceFolder).build?.(resolvedRoutes);
@@ -100,10 +109,7 @@ export default async (
           root: createPath.src(),
           base: join(config.base, "/"),
           plugins,
-          resolve: {
-            ...config.resolve,
-            tsconfigPaths: true,
-          },
+          resolve: { ...config.resolve },
           build: {
             ...config?.build,
             outDir,
@@ -134,7 +140,10 @@ export default async (
           configFile: false,
           root: createPath.src(),
           appType: "custom",
-          plugins: [...(apiGenerator.plugins?.(sourceFolder, command) || [])],
+          plugins: [
+            vitePlugins.tsconfigPaths(sourceFolder),
+            ...(apiGenerator.plugins?.(sourceFolder, command) || []),
+          ],
           define: {
             ...config.define,
             KOSMO_PRODUCTION_BUILD: "true",
@@ -144,7 +153,6 @@ export default async (
             : { external: true },
           resolve: {
             ...config.resolve,
-            tsconfigPaths: true,
             conditions: ["node"],
           },
           build: {
@@ -210,7 +218,11 @@ export default async (
     const requestMatchers = matchersFactory(sourceFolder);
 
     const generators = folderGenerators(sourceFolder);
-    const plugins = [...(config.plugins || [])];
+
+    const plugins = [
+      vitePlugins.tsconfigPaths(sourceFolder),
+      ...(config.plugins || []),
+    ];
 
     for (const base of generators) {
       plugins.push(...(base.plugins?.(sourceFolder, command) || []));
@@ -230,7 +242,6 @@ export default async (
       },
       resolve: {
         ...config.resolve,
-        tsconfigPaths: true,
       },
       define: {
         ...config.define,
@@ -267,12 +278,12 @@ export default async (
       configFile: false,
       root: createPath.src(),
       appType: "custom",
+      plugins: [vitePlugins.tsconfigPaths(sourceFolder)],
       server: {
         port: port++,
         middlewareMode: true,
         hmr: { port: port++ },
       },
-      resolve: { tsconfigPaths: true },
       define: {
         ...config?.define,
         KOSMO_PRODUCTION_BUILD: "false",
