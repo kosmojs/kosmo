@@ -1,4 +1,5 @@
 {
+  "name": "wsbuild",
   "type": "module",
   "private": true,
   "bin": {
