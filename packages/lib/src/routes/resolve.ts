@@ -166,7 +166,7 @@ export const resolverFactory = (
               sourceFile: getSourceFile(fileFullpath),
               relpathResolver(path) {
                 return join(
-                  sourceFolder.name,
+                  defaults.srcPrefix,
                   defaults.apiDir,
                   dirname(file),
                   path,
