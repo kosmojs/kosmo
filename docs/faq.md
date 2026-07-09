@@ -1340,6 +1340,17 @@ The generated fetch clients validate with the exact server schemas,
 so client and server stay in sync with nothing to keep aligned by hand.
 [Details ›](/validation/skip-validation)
 
+#### Can I extract a `VRefine` constraint object into a named type?
+No - the constraint (the second argument) must always be written inline as an object literal,
+never referenced by name (local `type` alias or imported). Both forms typecheck,
+but only the inlined one produces a working schema: the constraint is emitted as schema text
+and re-parsed by TypeBox against a fixed set of known identifiers,
+so a named reference survives as an unresolved identifier and every value is silently rejected.
+This is the same inline-or-break rule as the `params` refinement and `response` body tuples.
+The base type (the first argument) has no such restriction -
+`VRefine<MyStringAlias, { ... }>` and imported base types flatten normally.
+[Details ›](/validation/refine.html#inline-the-constraints-never-reference-them)
+
 #### Is type safety runtime-enforced or compile-only?
 Both - the same TS type drives compile-time checks and generated runtime validators.
 This is stronger than TanStack's compile-time route typing,
