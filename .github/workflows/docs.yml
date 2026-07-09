@@ -33,11 +33,11 @@ jobs:
         uses: actions/configure-pages@v6
 
       - name: Install dependencies
-        run: pnpm install --ignore-workspace
+        run: pnpm install
         working-directory: ./docs # Run in docs directory
 
       - name: Build with VitePress
-        run: pnpm run build
+        run: pnpm build
         working-directory: ./docs # Run in docs directory
 
       - name: Upload artifact
