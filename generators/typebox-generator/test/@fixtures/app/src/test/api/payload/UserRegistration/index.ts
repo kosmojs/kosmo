@@ -1,18 +1,8 @@
 import { defineRoute } from "@test/index";
+import type { UserRegistrationInput } from "@/types/registration";
 
 export default defineRoute(({ POST }) => [
   POST<{
-    json: {
-      email: VRefine<string, { format: "email" }>;
-      password: VRefine<
-        string,
-        { pattern: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$" }
-      >;
-      firstName: string;
-      lastName: string;
-      dateOfBirth: VRefine<string, { format: "date" }>;
-      agreeToTerms: boolean;
-      marketingOptIn?: boolean;
-    };
+    json: UserRegistrationInput;
   }>(async () => {}),
 ]);

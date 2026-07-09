@@ -1,9 +1,10 @@
 import { defineRoute } from "@test/index";
+import type { UsernameValue } from "./types";
 
 export default defineRoute(({ POST }) => [
   POST<{
     json: {
-      value: VRefine<string, { pattern: "^[a-zA-Z0-9_-]{3,20}$" }>;
+      value: UsernameValue;
     };
   }>(async () => {}),
 ]);

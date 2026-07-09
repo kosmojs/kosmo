@@ -1,4 +1,5 @@
 import { defineRoute } from "@test/index";
+import type { SearchPagination } from "@/types/search";
 
 export default defineRoute(({ POST }) => [
   POST<{
@@ -14,12 +15,7 @@ export default defineRoute(({ POST }) => [
         inStock?: boolean;
         attributes?: Record<string, string | number>;
       };
-      pagination: {
-        page: VRefine<number, { minimum: 1 }>;
-        limit: VRefine<number, { minimum: 1; maximum: 100 }>;
-        sortBy: "relevance" | "price" | "rating" | "newest";
-        sortOrder: "asc" | "desc";
-      };
+      pagination: SearchPagination;
     };
   }>(async () => {}),
 ]);

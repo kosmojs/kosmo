@@ -1,4 +1,5 @@
 import { defineRoute } from "@test/index";
+import type { ProfilePreferences } from "~/types/profile";
 
 export default defineRoute(({ POST }) => [
   POST<{
@@ -14,15 +15,7 @@ export default defineRoute(({ POST }) => [
         phoneNumber?: VRefine<string, { pattern: "^\\+?[1-9][0-9]{4,14}$" }>;
         avatar?: string;
         emailVerified: boolean;
-        preferences: {
-          newsletter: boolean;
-          notifications: {
-            email: boolean;
-            sms: boolean;
-            push: boolean;
-          };
-          theme: "light" | "dark" | "auto";
-        };
+        preferences: ProfilePreferences;
         addresses: Array<{
           id: string;
           type: "home" | "work" | "billing";

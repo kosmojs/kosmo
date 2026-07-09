@@ -1,4 +1,5 @@
 import { defineRoute } from "@test/index";
+import type { BillingAddress } from "@/types/payment";
 
 export default defineRoute(({ POST }) => [
   POST<{
@@ -20,14 +21,7 @@ export default defineRoute(({ POST }) => [
           token: VRefine<string, { minLength: 1; maxLength: 500 }>;
         };
       };
-      billingAddress: {
-        line1: VRefine<string, { minLength: 1; maxLength: 100 }>;
-        line2?: string;
-        city: string;
-        state: VRefine<string, { minLength: 2; maxLength: 2 }>;
-        postalCode: VRefine<string, { pattern: "^[0-9]{5}(-[0-9]{4})?$" }>;
-        country: string;
-      };
+      billingAddress: BillingAddress;
     };
   }>(async () => {}),
 ]);

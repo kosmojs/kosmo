@@ -1,4 +1,5 @@
 import { defineRoute } from "@test/index";
+import type { PaymentMethodInfo } from "~/types/payment";
 
 export default defineRoute(({ POST }) => [
   POST<{
@@ -11,11 +12,7 @@ export default defineRoute(({ POST }) => [
         status: "succeeded" | "pending" | "failed" | "refunded";
         amount: VRefine<number, { minimum: 0.01; maximum: 1000000 }>;
         currency: VRefine<string, { pattern: "^[A-Z]{3}$" }>;
-        paymentMethod: {
-          type: string;
-          last4?: VRefine<string, { pattern: "^[0-9]{4}$" }>;
-          brand?: string;
-        };
+        paymentMethod: PaymentMethodInfo;
         processedAt: string; // String (from DB)
         failureReason?: string | undefined;
         nextAction?:

@@ -1,9 +1,10 @@
 import { defineRoute } from "@test/index";
+import type { Ipv4Value } from "./types";
 
 export default defineRoute(({ POST }) => [
   POST<{
     json: {
-      value: VRefine<string, { format: "ipv4" }>;
+      value: Ipv4Value;
     };
   }>(async () => {}),
 ]);

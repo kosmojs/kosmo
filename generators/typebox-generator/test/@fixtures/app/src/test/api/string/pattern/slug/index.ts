@@ -1,9 +1,10 @@
 import { defineRoute } from "@test/index";
+import type { SlugValue } from "./types";
 
 export default defineRoute(({ POST }) => [
   POST<{
     json: {
-      value: VRefine<string, { pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$" }>;
+      value: SlugValue;
     };
   }>(async () => {}),
 ]);

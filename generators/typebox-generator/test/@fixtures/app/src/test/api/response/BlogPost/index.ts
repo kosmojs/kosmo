@@ -1,4 +1,5 @@
 import { defineRoute } from "@test/index";
+import type { BlogAuthor } from "~/types/blog";
 
 export default defineRoute(({ POST }) => [
   POST<{
@@ -10,11 +11,7 @@ export default defineRoute(({ POST }) => [
         title: VRefine<string, { minLength: 1; maxLength: 200 }>;
         content: string;
         excerpt: string;
-        author: {
-          id: VRefine<string, { pattern: "^[a-zA-Z0-9_-]{1,50}$" }>;
-          name: string;
-          avatar?: string;
-        };
+        author: BlogAuthor;
         tags: string[];
         category: VRefine<string, { minLength: 1; maxLength: 50 }>;
         status: "draft" | "published" | "scheduled";

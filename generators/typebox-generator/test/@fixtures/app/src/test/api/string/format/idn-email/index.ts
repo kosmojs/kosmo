@@ -1,9 +1,11 @@
 import { defineRoute } from "@test/index";
 
+type IdnEmailBody = {
+  value: VRefine<string, { format: "idn-email" }>;
+};
+
 export default defineRoute(({ POST }) => [
   POST<{
-    json: {
-      value: VRefine<string, { format: "idn-email" }>;
-    };
+    json: IdnEmailBody;
   }>(async () => {}),
 ]);

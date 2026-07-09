@@ -1,4 +1,5 @@
 import { defineRoute } from "@test/index";
+import type { DeviceInfo } from "@/types/mfa";
 
 export default defineRoute(({ POST }) => [
   POST<{
@@ -8,12 +9,7 @@ export default defineRoute(({ POST }) => [
       phoneNumber?: string;
       email?: VRefine<string, { format: "email" }>;
       backupCodes: string[];
-      deviceInfo?: {
-        name: VRefine<string, { minLength: 1; maxLength: 50 }>;
-        type: "mobile" | "tablet" | "desktop";
-        os: string;
-        browser?: string;
-      };
+      deviceInfo?: DeviceInfo;
     };
   }>(async () => {}),
 ]);

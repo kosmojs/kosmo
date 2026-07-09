@@ -1,4 +1,5 @@
 import { defineRoute } from "@test/index";
+import type { FileMetadata } from "~/types/upload";
 
 export default defineRoute(({ POST }) => [
   POST<{
@@ -15,14 +16,7 @@ export default defineRoute(({ POST }) => [
         uploadedAt: Date; // Date instance (from ORM)
         expiresAt?: string; // String (from DB)
         thumbnailUrl?: VRefine<string, { format: "url" }>;
-        metadata: {
-          dimensions?: {
-            width: VRefine<number, { minimum: 1 }>;
-            height: VRefine<number, { minimum: 1 }>;
-          };
-          duration?: VRefine<number, { minimum: 0 }>;
-          checksum: VRefine<string, { pattern: "^[a-f0-9]{32,64}$" }>;
-        };
+        metadata: FileMetadata;
       },
     ];
   }>(async () => {}),

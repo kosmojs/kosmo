@@ -1,4 +1,5 @@
 import { defineRoute } from "@test/index";
+import type { OrderShippingAddress } from "~/types/order";
 
 export default defineRoute(({ POST }) => [
   POST<{
@@ -23,13 +24,7 @@ export default defineRoute(({ POST }) => [
           unitPrice: number;
           subtotal: number;
         }>;
-        shippingAddress: {
-          street: VRefine<string, { minLength: 1; maxLength: 100 }>;
-          city: string;
-          state: VRefine<string, { minLength: 2; maxLength: 2 }>;
-          zipCode: VRefine<string, { pattern: "^[0-9]{5}(-[0-9]{4})?$" }>;
-          country: string;
-        };
+        shippingAddress: OrderShippingAddress;
         paymentStatus: "pending" | "paid" | "failed";
       },
     ];

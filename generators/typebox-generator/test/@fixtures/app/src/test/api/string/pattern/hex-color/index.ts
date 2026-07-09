@@ -1,9 +1,10 @@
 import { defineRoute } from "@test/index";
+import type { HexColorValue } from "./types";
 
 export default defineRoute(({ POST }) => [
   POST<{
     json: {
-      value: VRefine<string, { pattern: "^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$" }>;
+      value: HexColorValue;
     };
   }>(async () => {}),
 ]);

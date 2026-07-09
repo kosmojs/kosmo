@@ -1,9 +1,10 @@
 import { defineRoute } from "@test/index";
+import type { PhoneNumberValue } from "./types";
 
 export default defineRoute(({ POST }) => [
   POST<{
     json: {
-      value: VRefine<string, { pattern: "^\\+?[1-9][0-9]{4,14}$" }>;
+      value: PhoneNumberValue;
     };
   }>(async () => {}),
 ]);

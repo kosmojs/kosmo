@@ -1,9 +1,10 @@
 import { defineRoute } from "@test/index";
+import type { CountryCodeValue } from "./types";
 
 export default defineRoute(({ POST }) => [
   POST<{
     json: {
-      value: VRefine<string, { pattern: "^[A-Z]{2}$" }>;
+      value: CountryCodeValue;
     };
   }>(async () => {}),
 ]);
