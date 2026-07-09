@@ -1,11 +1,11 @@
-import { join, resolve } from "node:path";
 import { styleText } from "node:util";
 
 import crc from "crc/crc32";
-import { flattener, type ResolvedType } from "tfusion";
+import flattener, { type ResolvedType } from "tfusion";
 import {
   type CallExpression,
   type Identifier,
+  ModuleResolutionKind,
   Project,
   type ProjectOptions,
   type SourceFile,
@@ -25,6 +25,7 @@ import {
 } from "@kosmojs/core";
 import { type HTTPMethod, HTTPMethods } from "@kosmojs/core/api";
 
+import { pathResolver } from "./paths";
 import { render } from "./render";
 import * as templates from "./templates";
 
@@ -565,13 +566,21 @@ export const astFactory = () => {
     return callExpression.getTypeArguments();
   };
 
-  const typeResolverFactory = ({ root, name }: SourceFolder) => {
+  const typeResolverFactory = (sourceFolder: SourceFolder) => {
+    const { createPath } = pathResolver(sourceFolder);
+
     const project = createProject({
-      tsConfigFilePath: resolve(
-        root,
-        join(defaults.srcDir, name, "tsconfig.json"),
-      ),
-      skipAddingFilesFromTsConfig: true,
+      compilerOptions: {
+        moduleResolution: ModuleResolutionKind.Bundler,
+        types: [],
+        noLib: true,
+        skipLibCheck: true,
+        paths: {
+          [`${defaults.appPrefix}/*`]: [`${sourceFolder.root}/*`],
+          [`${defaults.srcPrefix}/*`]: [createPath.src("*")],
+          [`${defaults.libPrefix}/*`]: [createPath.lib("*")],
+        },
+      },
     });
 
     const withTypeboxSchema = (resolvedTypes: Array<ResolvedType>) => {
