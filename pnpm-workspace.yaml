@@ -10,7 +10,9 @@ packages:
   - "packages/*"
   - "wsbuild"
   - "test"
+  - "docs"
 
 allowBuilds:
   "@scarf/scarf": false
+  esbuild: false
   msw: true
