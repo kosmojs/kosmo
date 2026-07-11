@@ -8,6 +8,7 @@ import {
   defineGeneratorFactory,
   pathResolver,
   spinnerFactory,
+  vitePlugins,
 } from "@kosmojs/lib";
 
 export default defineGeneratorFactory((meta, sourceFolder) => {
@@ -56,7 +57,10 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
         recursive: true,
       });
 
-      const plugins = [...(config?.plugins || [])];
+      const plugins = [
+        vitePlugins.tsconfigPaths(sourceFolder),
+        ...(config?.plugins || []),
+      ];
 
       for (const base of generators) {
         plugins.push(...(base.plugins?.(sourceFolder, "build") || []));
@@ -72,7 +76,6 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
         define: { ...config.define },
         resolve: {
           ...config.resolve,
-          tsconfigPaths: true,
           conditions: ["node"],
         },
         build: {
