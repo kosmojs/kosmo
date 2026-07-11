@@ -84,7 +84,6 @@ export default defineGeneratorFactory<Options>(
             : { external: true },
           resolve: {
             ...config.resolve,
-            tsconfigPaths: true,
           },
           build: {
             // do not use extension here, it may vary by framework
@@ -114,7 +113,6 @@ export default defineGeneratorFactory<Options>(
             : { external: true },
           resolve: {
             ...config.resolve,
-            tsconfigPaths: true,
             conditions: ["node"],
           },
           build: {
