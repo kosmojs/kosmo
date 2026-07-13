@@ -25,6 +25,7 @@ import {
 } from "@kosmojs/core";
 import { type HTTPMethod, HTTPMethods } from "@kosmojs/core/api";
 
+import { escapeTemplateLiterals } from "./generic";
 import { pathResolver } from "./paths";
 import { render } from "./render";
 import * as templates from "./templates";
@@ -785,10 +786,5 @@ const renderTypeboxSchema = (
     return typeNode.getText();
   };
 
-  return [
-    // Escape backticks for safe use in template literals
-    [/(?<!\\)`/g, "\\`"],
-    // Escape $ for safe use in template literals
-    [/(?<!\\)\$\{/g, "\\${"],
-  ].reduce((text, [a, b]) => text.replace(a, b as never), traverse(typeNode));
+  return escapeTemplateLiterals(traverse(typeNode));
 };
