@@ -919,7 +919,7 @@ It uses `node:http`, natively supported by all three runtimes.
 [Details ›](/frontend/server-side-render.html#runtime)
 
 #### How do I disable in-memory static asset serving?
-`ssrGenerator({ serveStaticAssets: false })` when running behind a reverse proxy or CDN.
+Use a reverse proxy or CDN to serve `dist/<folder>/ssr/assets/` folder.
 [Details ›](/frontend/server-side-render.html#static-asset-handling)
 
 #### How do I deploy behind Nginx/Caddy?

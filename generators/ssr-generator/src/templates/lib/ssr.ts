@@ -14,8 +14,6 @@ import type { SSROptions, SSRSetup } from "@kosmojs/core";
 import { pathPatterns } from "{{ createImport 'lib' 'ssr:routes' }}";
 import { base } from "{{ createImport 'libCore' }}";
 
-const SERVE_STATIC_ASSETS = JSON.parse("{{serveStaticAssets}}");
-
 const REDIRECT_CODES = [
   // Moved Permanently
   301,

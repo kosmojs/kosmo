@@ -306,23 +306,6 @@ Same web-standard `ReadableStream` used across all frameworks:
 Hono's `stream.pipe(readableStream)` consumes each framework's output
 identically - no runtime-specific adapters or Node.js stream conversions.
 
-## Static Asset Handling
-
-By default the SSR server loads client assets into memory at startup and serves
-them on request. Disable this when running behind a reverse proxy or CDN:
-
-```ts [kosmo.config.ts]
-export default defineConfig({
-  // ...
-  generators: [
-    // ...
-    ssrGenerator({
-      serveStaticAssets: false, // [!code ++]
-    }),
-  ],
-});
-```
-
 ## Production Build
 
 ::: code-group
@@ -340,8 +323,11 @@ yarn build
 ```
 :::
 
-Produces an SSR bundle at `dist/SOURCE_FOLDER/ssr/server.js`, ready for
-production execution.
+Produces an SSR bundle at `dist/<folder>/ssr/server.js`
+and the `dist/<folder>/ssr/assets/` folder for hydration.
+
+Static files in `assets/` folder are served by the SSR server out of the box.
+If you need them served otherwise, use a reverse proxy or CDN to serve `assets/` folder.
 
 ## Local Testing
 
@@ -383,7 +369,6 @@ Deploy behind a reverse proxy such as Nginx or Caddy:
 ```nginx
 upstream ssr_backend {
   server 127.0.0.1:4556;
-  # server unix:/tmp/app.sock;
 }
 
 server {
