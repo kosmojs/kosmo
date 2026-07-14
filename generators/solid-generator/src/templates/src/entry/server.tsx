@@ -1,4 +1,4 @@
-import { renderToString, generateHydrationScript } from "solid-js/web";
+import { generateHydrationScript, renderToStringAsync } from "solid-js/web";
 
 import renderFactory, { createRoutes } from "{{ createImport 'libEntry' 'server' }}";
 import routerFactory from "../router";
@@ -10,12 +10,11 @@ export default renderFactory(() => {
   const hydrationScript = generateHydrationScript();
   return {
     async renderToString(url, { assets }) {
-      const page = await serverRouter(url);
       const head = assets.reduce(
         (head, { tag }) => `${head}\n${tag}`,
         hydrationScript,
       );
-      const html = renderToString(() => page);
+      const html = await renderToStringAsync(() => serverRouter(url));
       return { head, html };
     },
   };
