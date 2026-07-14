@@ -48,7 +48,8 @@ export const serverRenderFactory: () => SSRFactory = () => {
   return (factory) => factory();
 };
 
-export const clientRenderFactory: (ssr: boolean) => CSRFactory = (ssr) => {
+export const clientRenderFactory: () => CSRFactory = () => {
+  const ssr = window === undefined || !window.__KOSMO_SSR__ ? false : true;
   return async (factory) => {
     const methods = factory();
     if (ssr) {
