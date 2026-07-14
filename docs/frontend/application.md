@@ -214,7 +214,7 @@ that must return:
 - `mount()` - mounts the application fresh in the browser
 - `hydrate()` - hydrates pre-rendered server HTML for interactivity
 
-On page load, `renderFactory` reads `__KOSMO_SSR__` flag to select the
+On page load, `renderFactory` reads `__KOSMO_HYDRATABLE__` flag to select the
 correct method: `hydrate()` for SSR hydration, `mount()` for a fresh client-only mount.
 
 ::: code-group

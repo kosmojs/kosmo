@@ -49,10 +49,9 @@ export const serverRenderFactory: () => SSRFactory = () => {
 };
 
 export const clientRenderFactory: () => CSRFactory = () => {
-  const ssr = window === undefined || !window.__KOSMO_SSR__ ? false : true;
   return async (factory) => {
     const methods = factory();
-    if (ssr) {
+    if (window.__KOSMO_HYDRATABLE__) {
       if (typeof methods.hydrate === "function") {
         // NOTE: it can be async for some frameworks (react, vue)
         await methods.hydrate();

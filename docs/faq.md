@@ -741,7 +741,7 @@ and use the folder's `baseurl`.
 
 #### What is renderFactory?
 It orchestrates `mount()` (fresh client mount) vs `hydrate()` (hydrate SSR HTML),
-choosing automatically via `__KOSMO_SSR__` global var.
+choosing automatically via `__KOSMO_HYDRATABLE__` global var.
 Referenced from `index.html` through `entry/client`.
 [Details ›](/frontend/application.html#application-entry)
 

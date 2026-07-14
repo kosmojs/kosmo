@@ -1,6 +1,6 @@
 declare global {
   interface Window {
-    __KOSMO_SSR__: {}
+    __KOSMO_HYDRATABLE__: {}
   }
 }
 
