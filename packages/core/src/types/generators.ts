@@ -139,11 +139,11 @@ export type SSROptions = {
   //   - `content`: raw file contents for inlining as <style> or inline <script>
   // `size` is included for Content-Length or preload hints.
   assets: Array<{
-    tag: string;
     kind: "js" | "css";
-    path: string;
-    content: string | undefined;
-    size: number | undefined;
+    tag: string;
+    content: string;
+    size?: number;
+    path?: string;
   }>;
 };
 
