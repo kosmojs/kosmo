@@ -70,7 +70,7 @@ export { GET as preload };
 export default function Page() {
   // createAsync recognizes GET as the preloaded function
   // and reuses the cached result - no duplicate request
-  const data = createAsync(GET);
+  const data = createAsync(() => GET());
 
   return (
     <div>

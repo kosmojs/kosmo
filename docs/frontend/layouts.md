@@ -167,7 +167,7 @@ import fetchClients from "_/fetch";
 export const preload = fetchClients["dashboard/data"].GET;
 
 const Layout: ParentComponent = (props) => {
-  const data = createAsync(preload);
+  const data = createAsync(() => preload());
   // ...
   return <>{props.children}</>;
 };
