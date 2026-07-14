@@ -11,13 +11,11 @@ const root = document.getElementById("app");
 if (root) {
   renderFactory(() => {
     return {
-      async mount() {
-        const page = await clientRouter();
-        render(() => page, root);
+      mount() {
+        render(() => clientRouter(), root);
       },
-      async hydrate() {
-        const page = await clientRouter();
-        hydrate(() => page, root)
+      hydrate() {
+        hydrate(() => clientRouter(), root)
       },
     }
   });

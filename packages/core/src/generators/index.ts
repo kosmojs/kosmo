@@ -38,8 +38,8 @@ export const routeRenderHelpers = () => {
 export const createRouterFactory = <RouteT, ReturnT>() => {
   return (
     factory: (routes: Array<RouteT>) => {
-      clientRouter: (url?: URL) => Promise<ReturnT>;
-      serverRouter: (url: URL) => Promise<ReturnT>;
+      clientRouter: (url?: URL) => ReturnT;
+      serverRouter: (url: URL) => ReturnT;
     },
   ) => factory;
 };
@@ -54,12 +54,14 @@ export const clientRenderFactory: () => CSRFactory = () => {
     const methods = factory();
     if (ssr) {
       if (typeof methods.hydrate === "function") {
+        // NOTE: it can be async for some frameworks (react, vue)
         await methods.hydrate();
       } else {
         console.error("❌ `hydrate` method is required in entry/client");
       }
     } else {
       if (typeof methods.mount === "function") {
+        // NOTE: it can be async for some frameworks (react, vue)
         await methods.mount();
       } else {
         console.error("❌ `mount` method is required in entry/client");

@@ -6,10 +6,10 @@ import App from "./App";
 
 export default routerFactory((routes) => {
   return {
-    async clientRouter() {
+    clientRouter() {
       return <Router root={App} base={base}>{routes}</Router>;
     },
-    async serverRouter(url) {
+    serverRouter(url) {
       return <Router root={App} base={base} url={url.pathname}>
         {routes}
       </Router>;

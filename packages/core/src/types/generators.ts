@@ -213,8 +213,8 @@ export type SSRSetup = {
 export type SSRFactory = (factory: () => SSRSetup) => SSRSetup;
 
 type CSRSetup = {
-  mount: () => Promise<void>;
-  hydrate: () => Promise<void>;
+  mount: () => void | Promise<void>;
+  hydrate: () => void | Promise<void>;
 };
 
 export type CSRFactory = (factory: () => CSRSetup) => void;

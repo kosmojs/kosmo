@@ -9,7 +9,7 @@ declare module "{{ createImport 'lib' 'router' }}" {
   import type { App } from "vue";
   import type { RouteRecordRaw } from "vue-router";
   import { createRouterFactory } from "@kosmojs/core/generators";
-  export default createRouterFactory<RouteRecordRaw, App>();
+  export default createRouterFactory<RouteRecordRaw, Promise<App>>();
 }
 
 declare module "{{ createImport 'libEntry' 'client' }}" {

@@ -9,7 +9,7 @@ declare module "{{ createImport 'lib' 'router' }}" {
   import type { JSX } from "react";
   import type { RouteObject } from "react-router";
   import { createRouterFactory } from "@kosmojs/core/generators";
-  export default createRouterFactory<RouteObject, JSX.Element>();
+  export default createRouterFactory<RouteObject, Promise<JSX.Element>>();
 }
 
 declare module "{{ createImport 'libEntry' 'client' }}" {

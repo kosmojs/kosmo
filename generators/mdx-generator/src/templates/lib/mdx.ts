@@ -10,7 +10,7 @@ export type RawRoute = {
   pathSegments: number | undefined;
   regexp: RegExp;
   extractParams: (path: string) => Route["params"];
-  source: RouteComponent | (() => Promise<RouteComponent>);
+  source: RouteComponent | (() => RouteComponent);
   layouts: Array<ComponentType>;
 };
 
@@ -45,7 +45,7 @@ export const createRouter = (
 ) => {
   const catchallRoute = createRoute("NotFound", "", NotFound, []);
   return {
-    async resolve(url: URL = new URL(window.location.href)) {
+    resolve(url: URL = new URL(window.location.href)) {
       const urlSegments = url.pathname.split("/").filter(Boolean).length;
 
       // 1: use lightweight `RegExp.test()` on linear scan - no capture allocation
@@ -70,8 +70,8 @@ export const createRouter = (
       const { name, layouts = [] } = route;
 
       const page =
-        typeof route.source === "function"
-          ? await route.source()
+        typeof route.source === "function" //
+          ? route.source()
           : route.source;
 
       const { frontmatter = {} } = page;

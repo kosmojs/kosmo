@@ -11,12 +11,12 @@ const root = document.getElementById("app");
 if (root) {
   renderFactory(() => {
     return {
-      async mount() {
-        const page = await clientRouter();
+      mount() {
+        const page = clientRouter();
         hydrate(page.component, root);
       },
-      async hydrate() {
-        const page = await clientRouter();
+      hydrate() {
+        const page = clientRouter();
         hydrate(page.component, root);
       }
     };
