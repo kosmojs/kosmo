@@ -27,6 +27,8 @@ export default defineGenerator<Options>((options) => {
     meta,
     options,
     factory: (sourceFolder) => factory(meta, sourceFolder, options),
-    plugins: (sourceFolder, command) => plugins(sourceFolder, command, options),
+    plugins: ({ sourceFolder, command }) => {
+      return plugins(sourceFolder, command, options);
+    },
   };
 });

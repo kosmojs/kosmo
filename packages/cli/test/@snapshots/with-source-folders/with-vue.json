@@ -28,18 +28,12 @@
       "  vueGenerator,",
       "} from \"@kosmojs/dev\";",
       "",
-      "",
-      "import vuePlugin from \"@vitejs/plugin-vue\";",
-      "",
       "export default defineConfig({",
       "  base: \"/\",",
-      "  plugins: [",
-      "    vuePlugin(),",
-      "  ],",
       "  generators: [",
       "    vueGenerator(),",
       "  ],",
-      "  });"
+      "});"
     ]
   ],
   [

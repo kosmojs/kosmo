@@ -63,7 +63,13 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
       ];
 
       for (const base of generators) {
-        plugins.push(...(base.plugins?.(sourceFolder, "build") || []));
+        plugins.push(
+          ...(base.plugins?.({
+            sourceFolder,
+            command: "build",
+            generators: generators.map((e) => e.meta),
+          }) || []),
+        );
       }
 
       spinner.append("bundling routes...");

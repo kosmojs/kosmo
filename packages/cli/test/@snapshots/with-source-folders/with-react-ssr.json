@@ -26,22 +26,16 @@
       "import {",
       "  defineConfig,",
       "  reactGenerator,",
-      "ssrGenerator,",
+      "  ssrGenerator,",
       "} from \"@kosmojs/dev\";",
-      "",
-      "",
-      "import reactPlugin from \"@vitejs/plugin-react\";",
       "",
       "export default defineConfig({",
       "  base: \"/\",",
-      "  plugins: [",
-      "    reactPlugin(),",
-      "  ],",
       "  generators: [",
       "    reactGenerator(),",
-      "ssrGenerator(),",
+      "    ssrGenerator(),",
       "  ],",
-      "  });"
+      "});"
     ]
   ],
   [

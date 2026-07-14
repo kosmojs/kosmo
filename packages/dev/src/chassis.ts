@@ -96,7 +96,13 @@ export default async (
 
       for (const base of generators) {
         await base.factory(sourceFolder).build?.(resolvedRoutes);
-        plugins.push(...(base.plugins?.(sourceFolder, command) || []));
+        plugins.push(
+          ...(base.plugins?.({
+            sourceFolder,
+            command,
+            generators: generators.map((e) => e.meta),
+          }) || []),
+        );
       }
 
       // build client
@@ -142,7 +148,11 @@ export default async (
           appType: "custom",
           plugins: [
             vitePlugins.tsconfigPaths(sourceFolder),
-            ...(apiGenerator.plugins?.(sourceFolder, command) || []),
+            ...(apiGenerator.plugins?.({
+              sourceFolder,
+              command,
+              generators: generators.map((e) => e.meta),
+            }) || []),
           ],
           define: {
             ...config.define,
@@ -225,7 +235,13 @@ export default async (
     ];
 
     for (const base of generators) {
-      plugins.push(...(base.plugins?.(sourceFolder, command) || []));
+      plugins.push(
+        ...(base.plugins?.({
+          sourceFolder,
+          command,
+          generators: generators.map((e) => e.meta),
+        }) || []),
+      );
     }
 
     const viteServer = await createServer({

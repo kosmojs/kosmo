@@ -19,17 +19,13 @@
     [
       "import {",
       "  defineConfig,",
-      "  } from \"@kosmojs/dev\";",
-      "",
-      "",
+      "} from \"@kosmojs/dev\";",
       "",
       "export default defineConfig({",
       "  base: \"/\",",
-      "  plugins: [",
-      "      ],",
       "  generators: [",
-      "      ],",
-      "  });"
+      "  ],",
+      "});"
     ]
   ],
   [

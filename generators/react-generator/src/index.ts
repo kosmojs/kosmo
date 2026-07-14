@@ -1,3 +1,5 @@
+import vitePlugin from "@vitejs/plugin-react";
+
 import type { GeneratorMeta } from "@kosmojs/core";
 import { defineGenerator } from "@kosmojs/lib";
 
@@ -14,7 +16,6 @@ export default defineGenerator<Options>((options) => {
       "path-to-regexp": self.devDependencies["path-to-regexp"],
     },
     devDependencies: {
-      "@vitejs/plugin-react": self.devDependencies["@vitejs/plugin-react"],
       "@types/react": self.devDependencies["@types/react"],
       "@types/react-dom": self.devDependencies["@types/react-dom"],
       "react-dom": self.devDependencies["react-dom"],
@@ -26,5 +27,9 @@ export default defineGenerator<Options>((options) => {
     meta,
     options,
     factory: (sourceFolder) => factory(meta, sourceFolder, options),
+    plugins() {
+      const { templates, ...opts } = { ...options };
+      return [vitePlugin(opts) as never];
+    },
   };
 });

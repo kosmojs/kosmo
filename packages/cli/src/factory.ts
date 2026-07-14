@@ -193,12 +193,6 @@ export const createKosmoConfig = (
 ) => {
   const imports: Array<string> = [];
 
-  const plugins: Array<{
-    importDeclaration: string;
-    importName: string;
-    options: string;
-  }> = [];
-
   const generators: Array<{
     name: string;
     options: string;
@@ -216,36 +210,18 @@ export const createKosmoConfig = (
     : "";
 
   if (framework === "solid") {
-    plugins.push({
-      importDeclaration: `import solidPlugin from "vite-plugin-solid";`,
-      importName: "solidPlugin",
-      options: folder.ssr ? "{ ssr: true }" : "",
-    });
-
     generators.push({
       name: "solidGenerator",
       options: generatorOptions,
       meta: solidGenerator().meta,
     });
   } else if (framework === "react") {
-    plugins.push({
-      importDeclaration: `import reactPlugin from "@vitejs/plugin-react";`,
-      importName: "reactPlugin",
-      options: "",
-    });
-
     generators.push({
       name: "reactGenerator",
       options: generatorOptions,
       meta: reactGenerator().meta,
     });
   } else if (framework === "vue") {
-    plugins.push({
-      importDeclaration: `import vuePlugin from "@vitejs/plugin-vue";`,
-      importName: "vuePlugin",
-      options: "",
-    });
-
     generators.push({
       name: "vueGenerator",
       options: generatorOptions,
@@ -315,7 +291,6 @@ export const createKosmoConfig = (
 
   const context = {
     base,
-    plugins,
     imports,
     generators,
     frameworkSpecificOptions: [

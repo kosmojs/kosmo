@@ -19,10 +19,10 @@
   },
   "dependencies": {
     "@kosmojs/core": "workspace:^",
-    "@kosmojs/lib": "workspace:^"
+    "@kosmojs/lib": "workspace:^",
+    "@vitejs/plugin-vue": "^6.0.7"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.7",
     "path-to-regexp": "^8.4.2",
     "vue": "^3.5.39",
     "vue-router": "^5.1.0"

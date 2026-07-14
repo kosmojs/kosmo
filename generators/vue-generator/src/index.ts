@@ -1,3 +1,5 @@
+import vitePlugin from "@vitejs/plugin-vue";
+
 import type { GeneratorMeta } from "@kosmojs/core";
 import { defineGenerator } from "@kosmojs/lib";
 
@@ -13,9 +15,6 @@ export default defineGenerator<Options>((options) => {
       "vue-router": self.devDependencies["vue-router"],
       "path-to-regexp": self.devDependencies["path-to-regexp"],
     },
-    devDependencies: {
-      "@vitejs/plugin-vue": self.devDependencies["@vitejs/plugin-vue"],
-    },
     jsxImportSource: "vue",
   };
 
@@ -23,5 +22,9 @@ export default defineGenerator<Options>((options) => {
     meta,
     options,
     factory: (sourceFolder) => factory(meta, sourceFolder, options),
+    plugins() {
+      const { templates, ...opts } = { ...options };
+      return [vitePlugin(opts) as never];
+    },
   };
 });

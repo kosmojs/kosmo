@@ -1,25 +1,17 @@
 import {
   defineConfig,
-  {{#each generators}}{{name}},
-  {{/each}}
+{{#each generators}}  {{name}},
+{{/each}}
 } from "@kosmojs/dev";
 
 {{#each imports}}{{.}}
 {{/each}}
-
-{{#each plugins}}{{importDeclaration}}
-{{/each}}
-
 export default defineConfig({
   base: "{{base}}",
-  plugins: [
-    {{#each plugins}}{{importName}}({{options}}),
-    {{/each}}
-  ],
   generators: [
-    {{#each generators}}{{name}}({{options}}),
-    {{/each}}
+{{#each generators}}    {{name}}({{options}}),
+{{/each}}
   ],
-  {{#each frameworkSpecificOptions}}{{.}}
-  {{/each}}
+{{#each frameworkSpecificOptions}}  {{.}}
+{{/each}}
 });

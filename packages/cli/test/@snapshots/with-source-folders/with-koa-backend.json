@@ -20,22 +20,18 @@
       "import {",
       "  defineConfig,",
       "  koaGenerator,",
-      "fetchGenerator,",
-      "typeboxGenerator,",
+      "  fetchGenerator,",
+      "  typeboxGenerator,",
       "} from \"@kosmojs/dev\";",
-      "",
-      "",
       "",
       "export default defineConfig({",
       "  base: \"/\",",
-      "  plugins: [",
-      "      ],",
       "  generators: [",
       "    koaGenerator(),",
-      "fetchGenerator(),",
-      "typeboxGenerator(),",
+      "    fetchGenerator(),",
+      "    typeboxGenerator(),",
       "  ],",
-      "  });"
+      "});"
     ]
   ],
   [

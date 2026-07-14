@@ -26,22 +26,16 @@
       "import {",
       "  defineConfig,",
       "  vueGenerator,",
-      "ssrGenerator,",
+      "  ssrGenerator,",
       "} from \"@kosmojs/dev\";",
-      "",
-      "",
-      "import vuePlugin from \"@vitejs/plugin-vue\";",
       "",
       "export default defineConfig({",
       "  base: \"/\",",
-      "  plugins: [",
-      "    vuePlugin(),",
-      "  ],",
       "  generators: [",
       "    vueGenerator(),",
-      "ssrGenerator(),",
+      "    ssrGenerator(),",
       "  ],",
-      "  });"
+      "});"
     ]
   ],
   [
