@@ -2,27 +2,9 @@ import type { UserConfig } from "vite";
 
 import type { GeneratorBase } from "./generators";
 
-export type FolderConfig = Pick<
+export type FolderConfig = Omit<
   UserConfig,
-  | "publicDir"
-  | "plugins"
-  | "html"
-  | "css"
-  | "json"
-  | "oxc"
-  | "assetsInclude"
-  | "server"
-  | "logLevel"
-  | "customLogger"
-  | "clearScreen"
-  | "envDir"
-  | "envPrefix"
-  | "optimizeDeps"
-  | "ssr"
-  | "dev"
-  | "build"
-  | "define"
-  | "resolve"
+  "root" | "base" | "cacheDir" | "mode" | "builder" | "future" | "legacy"
 > & {
   /** Base URL this source folder is served from, e.g. "/" or "/admin" */
   base:

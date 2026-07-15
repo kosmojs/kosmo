@@ -3,7 +3,6 @@ import { defineGenerator } from "@kosmojs/lib";
 
 import self from "../package.json" with { type: "json" };
 import factory from "./factory";
-import plugins from "./plugins";
 import type { Options } from "./types";
 
 export default defineGenerator<Options>((options) => {
@@ -27,8 +26,5 @@ export default defineGenerator<Options>((options) => {
     meta,
     options,
     factory: (sourceFolder) => factory(meta, sourceFolder, options),
-    plugins: ({ sourceFolder, command }) => {
-      return plugins(sourceFolder, command, options);
-    },
   };
 });

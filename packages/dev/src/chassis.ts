@@ -17,6 +17,7 @@ import {
 } from "@kosmojs/core";
 import type { DevSetup } from "@kosmojs/core/api";
 import {
+  mergeConfigs,
   pathResolver,
   routesFactory,
   spinnerFactory,
@@ -65,7 +66,6 @@ export default async (
 
   if (command === "build") {
     for (const sourceFolder of projectSettings.sourceFolders) {
-      const { config } = sourceFolder;
       const { createPath } = pathResolver(sourceFolder);
 
       const resolvedRoutes = [];
@@ -89,109 +89,88 @@ export default async (
 
       const generators = folderGenerators(sourceFolder);
 
+      for (const generator of generators) {
+        await generator.factory(sourceFolder).build?.(resolvedRoutes);
+      }
+
       const plugins = [
         vitePlugins.tsconfigPaths(sourceFolder),
-        ...(config.plugins || []),
+        vitePlugins.nodePrefix(),
       ];
 
-      for (const base of generators) {
-        await base.factory(sourceFolder).build?.(resolvedRoutes);
-        plugins.push(
-          ...(base.plugins?.({
-            sourceFolder,
-            command,
-            generators: generators.map((e) => e.meta),
-          }) || []),
-        );
-      }
-
-      // build client
-      {
-        const outDir = createPath.distDir("client");
-
-        await build({
-          ...config,
-          configFile: false,
-          root: createPath.src(),
-          base: join(config.base, "/"),
-          plugins,
-          resolve: { ...config.resolve },
-          build: {
-            ...config?.build,
-            outDir,
-            manifest: true,
-            emptyOutDir: true,
+      // INFO: === build client ===
+      await build(
+        mergeConfigs(
+          // user-provided config - lowest priority
+          sourceFolder.config,
+          // generators configs - higher priority
+          ...generators.map(({ factory }) => {
+            return factory(sourceFolder).config?.({ kind: "client", command });
+          }),
+          // main config - highest priority
+          {
+            // base provided by sourceFolder.config
+            root: createPath.src(),
+            cacheDir: cacheDir(sourceFolder, command, "client"),
+            plugins,
+            build: {
+              outDir: createPath.distDir("client"),
+              manifest: true,
+              emptyOutDir: true,
+            },
           },
-          cacheDir: cacheDir(sourceFolder, command, "client"),
-        });
-      }
+        ),
+      );
 
-      // build backend
       const apiGenerator = generators.find((e) => e.meta.slot === "api");
 
+      // INFO: === build backend ===
       if (apiGenerator) {
         const dir = createPath.distDir("api");
 
-        const apiGeneratorOptions = { ...apiGenerator.options };
-        const { emitAssets = false } = apiGeneratorOptions;
-
-        const externalizeOptions = Object.entries(apiGeneratorOptions).flatMap(
-          ([k, v]) => {
-            return k === "external" || k === "noExternal" ? [[k, v]] : [];
-          },
-        );
-
-        await build({
-          base: "./",
-          configFile: false,
-          root: createPath.src(),
-          appType: "custom",
-          plugins: [
-            vitePlugins.tsconfigPaths(sourceFolder),
-            ...(apiGenerator.plugins?.({
-              sourceFolder,
-              command,
-              generators: generators.map((e) => e.meta),
-            }) || []),
-          ],
-          define: {
-            ...config.define,
-            KOSMO_PRODUCTION_BUILD: "true",
-          },
-          ssr: externalizeOptions.length
-            ? Object.fromEntries(externalizeOptions)
-            : { external: true },
-          resolve: {
-            ...config.resolve,
-            conditions: ["node"],
-          },
-          build: {
-            ssr: true,
-            ssrEmitAssets: emitAssets as boolean,
-            target: "esnext",
-            sourcemap: true,
-            emptyOutDir: true,
-            rolldownOptions: {
-              input: [createPath.api("app.ts"), createPath.api("server.ts")],
-              output: {
-                dir,
-                format: "esm",
+        // NOTE: sourceFolder.config is client-specific config - not using for backend!
+        // To provide backend-specific config pass it as api generator options.
+        await build(
+          mergeConfigs(
+            // user-provided config - lowest priority
+            apiGenerator.options,
+            // generator config - higher priority
+            apiGenerator
+              .factory(sourceFolder)
+              .config?.({ kind: "backend", command }),
+            // main config - highest priority
+            {
+              base: "./",
+              root: createPath.src(),
+              appType: "custom",
+              plugins,
+              resolve: {
+                conditions: ["node"],
               },
+              build: {
+                ssr: true,
+                target: "esnext",
+                sourcemap: true,
+                emptyOutDir: true,
+                rolldownOptions: {
+                  input: [
+                    createPath.api("app.ts"),
+                    createPath.api("server.ts"),
+                  ],
+                  output: {
+                    dir,
+                    format: "esm",
+                  },
+                },
+              },
+              cacheDir: cacheDir(sourceFolder, command, "backend"),
             },
-          },
-          experimental: {
-            renderBuiltUrl(filename, { type }) {
-              // emit bare relative asset paths (no leading "/") so call
-              // sites can resolve them against import.meta.url at runtime.
-              return type === "asset" ? filename : undefined;
-            },
-          },
-          cacheDir: cacheDir(sourceFolder, command, "backend"),
-        });
+          ),
+        );
       }
 
-      for (const base of generators) {
-        await base.factory(sourceFolder).postBuild?.(resolvedRoutes);
+      for (const generator of generators) {
+        await generator.factory(sourceFolder).postBuild?.(resolvedRoutes);
       }
     }
 
@@ -220,129 +199,129 @@ export default async (
 
   let port = await findFreePort(devPort);
 
-  // start client servers
   for (const sourceFolder of projectSettings.sourceFolders) {
-    const { config } = sourceFolder;
-
     const { createPath } = pathResolver(sourceFolder);
+
     const requestMatchers = matchersFactory(sourceFolder);
 
     const generators = folderGenerators(sourceFolder);
 
     const plugins = [
       vitePlugins.tsconfigPaths(sourceFolder),
-      ...(config.plugins || []),
+      vitePlugins.nodePrefix(),
     ];
 
-    for (const base of generators) {
-      plugins.push(
-        ...(base.plugins?.({
-          sourceFolder,
-          command,
-          generators: generators.map((e) => e.meta),
-        }) || []),
-      );
-    }
-
-    const viteServer = await createServer({
-      ...config,
-      configFile: false,
-      root: createPath.src(),
-      base: join(config.base, "/"),
-      plugins,
-      server: {
-        ...config.server,
-        port: port++,
-        middlewareMode: true,
-        hmr: { port: port++ },
-      },
-      resolve: {
-        ...config.resolve,
-      },
-      define: {
-        ...config.define,
-      },
-      cacheDir: cacheDir(sourceFolder, command, "client"),
-    });
-
-    for (const [evt, handler] of Object.entries(eventMap[sourceFolder.name])) {
-      viteServer.watcher.on(evt, handler);
-    }
-
-    requestHandlers.push([
-      [sourceFolder.config.base],
-      () => requestMatchers.base,
-      () => viteServer.middlewares,
-    ]);
-
-    teardownHandlers.push(viteServer.close);
-  }
-
-  // start backend servers
-  for (const sourceFolder of projectSettings.sourceFolders) {
-    const { config } = sourceFolder;
-
-    if (!folderGenerators(sourceFolder).find((e) => e.meta.slot === "api")) {
-      continue;
-    }
-
-    const { createPath } = pathResolver(sourceFolder);
-
-    const requestMatchers = matchersFactory(sourceFolder);
-
-    const viteServer = await createServer({
-      configFile: false,
-      root: createPath.src(),
-      appType: "custom",
-      plugins: [vitePlugins.tsconfigPaths(sourceFolder)],
-      server: {
-        port: port++,
-        middlewareMode: true,
-        hmr: { port: port++ },
-      },
-      define: {
-        ...config?.define,
-        KOSMO_PRODUCTION_BUILD: "false",
-      },
-      environments: {
-        api: {
-          resolve: {
-            conditions: ["node"],
+    // INFO: === start client server ===
+    {
+      const viteServer = await createServer(
+        mergeConfigs(
+          // user-provided config - lowest priority
+          sourceFolder.config,
+          // generators configs - higher priority
+          ...generators.map(({ factory }) => {
+            return factory(sourceFolder).config?.({ kind: "client", command });
+          }),
+          // main config - highest priority
+          {
+            // base provided by sourceFolder.config
+            root: createPath.src(),
+            cacheDir: cacheDir(sourceFolder, command, "client"),
+            plugins,
+            server: {
+              port: port++,
+              middlewareMode: true,
+              hmr: { port: port++ },
+            },
           },
-        },
-      },
-      cacheDir: cacheDir(sourceFolder, command, "backend"),
-    });
+        ),
+      );
 
-    const env = viteServer.environments.api as RunnableDevEnvironment;
+      for (const [evt, handler] of Object.entries(
+        eventMap[sourceFolder.name],
+      )) {
+        viteServer.watcher.on(evt, handler);
+      }
 
-    const loadDevSetup = async () => {
-      env.runner.clearCache();
-      return env.runner
-        .import<{ default: DevSetup }>(join(defaults.apiDir, "dev.ts"))
-        .then((e) => e.default);
-    };
+      requestHandlers.push([
+        [sourceFolder.config.base],
+        () => requestMatchers.base,
+        () => viteServer.middlewares,
+      ]);
 
-    let devSetup = await loadDevSetup();
-
-    for (const [evt, handler] of Object.entries(eventMap[sourceFolder.name])) {
-      viteServer.watcher.on(evt, async (file) => {
-        const mods = env.moduleGraph.getModulesByFile(file);
-        if (mods?.size) {
-          await handler(file);
-          await devSetup?.teardownHandler?.();
-          devSetup = await loadDevSetup();
-        }
-      });
+      teardownHandlers.push(viteServer.close);
     }
 
-    requestHandlers.push([
-      [sourceFolder.config.base, sourceFolder.config.apiBase],
-      () => devSetup.requestMatcher || requestMatchers.api,
-      () => devSetup.requestHandler(),
-    ]);
+    const apiGenerator = generators.find((e) => e.meta.slot === "api");
 
-    teardownHandlers.push(viteServer.close);
+    // INFO: === start backend server ===
+    if (apiGenerator) {
+      // NOTE: sourceFolder.config is client-specific config - not using for backend!
+      // To provide backend-specific config pass it as api generator options.
+      const viteServer = await createServer(
+        mergeConfigs(
+          // user-provided config - lowest priority
+          apiGenerator.options,
+          // generator config - higher priority
+          apiGenerator
+            .factory(sourceFolder)
+            .config?.({ kind: "backend", command }),
+          // main config - highest priority
+          {
+            root: createPath.src(),
+            appType: "custom",
+            cacheDir: cacheDir(sourceFolder, command, "backend"),
+            plugins,
+            server: {
+              port: port++,
+              middlewareMode: true,
+              hmr: { port: port++ },
+            },
+            resolve: {
+              conditions: ["node"],
+            },
+            environments: {
+              api: {
+                resolve: {
+                  conditions: ["node"],
+                },
+              },
+            },
+          },
+        ),
+      );
+
+      const env = viteServer.environments.api as RunnableDevEnvironment;
+
+      const loadDevSetup = async () => {
+        env.runner.clearCache();
+        return env.runner
+          .import<{ default: DevSetup }>(join(defaults.apiDir, "dev.ts"))
+          .then((e) => e.default);
+      };
+
+      let devSetup = await loadDevSetup();
+
+      for (const [evt, handler] of Object.entries(
+        eventMap[sourceFolder.name],
+      )) {
+        viteServer.watcher.on(evt, async (file) => {
+          const mods = env.moduleGraph.getModulesByFile(file);
+          if (mods?.size) {
+            await handler(file);
+            await devSetup?.teardownHandler?.();
+            devSetup = await loadDevSetup();
+          }
+        });
+      }
+
+      requestHandlers.push([
+        [sourceFolder.config.base, sourceFolder.config.apiBase],
+        () => devSetup.requestMatcher || requestMatchers.api,
+        () => devSetup.requestHandler(),
+      ]);
+
+      teardownHandlers.push(viteServer.close);
+    }
   }
 
   /**

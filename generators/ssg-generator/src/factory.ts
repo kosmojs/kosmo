@@ -6,6 +6,7 @@ import { build } from "vite";
 
 import {
   defineGeneratorFactory,
+  mergeConfigs,
   pathResolver,
   spinnerFactory,
   vitePlugins,
@@ -57,47 +58,46 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
         recursive: true,
       });
 
-      const plugins = [
-        vitePlugins.tsconfigPaths(sourceFolder),
-        ...(config?.plugins || []),
-      ];
-
-      for (const base of generators) {
-        plugins.push(
-          ...(base.plugins?.({
-            sourceFolder,
-            command: "build",
-            generators: generators.map((e) => e.meta),
-          }) || []),
-        );
-      }
-
       spinner.append("bundling routes...");
 
-      await build({
-        configFile: false,
-        root: createPath.lib(),
-        appType: "custom",
-        plugins,
-        define: { ...config.define },
-        resolve: {
-          ...config.resolve,
-          conditions: ["node"],
-        },
-        build: {
-          ssr: createPath.lib("ssg.ts"),
-          target: "esnext",
-          sourcemap: false,
-          emptyOutDir: true,
-          rolldownOptions: {
-            output: {
-              dir,
-              entryFileNames: "routes.js",
-              format: "esm",
+      await build(
+        mergeConfigs(
+          // user config - lowest priority
+          config,
+          // generators configs - higher priority
+          ...generators.map(({ factory }) => {
+            return factory(sourceFolder).config?.({
+              kind: "client",
+              command: "build",
+            });
+          }),
+          // main config - highest priority
+          {
+            root: createPath.lib(),
+            appType: "custom",
+            plugins: [
+              vitePlugins.tsconfigPaths(sourceFolder),
+              vitePlugins.nodePrefix(),
+            ],
+            resolve: {
+              conditions: ["node"],
+            },
+            build: {
+              ssr: createPath.lib("ssg.ts"),
+              target: "esnext",
+              sourcemap: false,
+              emptyOutDir: true,
+              rolldownOptions: {
+                output: {
+                  dir,
+                  entryFileNames: "routes.js",
+                  format: "esm",
+                },
+              },
             },
           },
-        },
-      });
+        ),
+      );
 
       try {
         const routes = await import(join(dir, "routes.js")).then(

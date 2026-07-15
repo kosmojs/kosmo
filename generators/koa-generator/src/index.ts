@@ -1,5 +1,5 @@
 import type { GeneratorMeta } from "@kosmojs/core";
-import { defineGenerator, vitePlugins } from "@kosmojs/lib";
+import { defineGenerator } from "@kosmojs/lib";
 
 import self from "../package.json" with { type: "json" };
 import factory from "./factory";
@@ -28,6 +28,5 @@ export default defineGenerator<Options>((options) => {
     meta,
     options,
     factory: (sourceFolder) => factory(meta, sourceFolder, options),
-    plugins: () => [vitePlugins.nodePrefix(), ...(options?.plugins || [])],
   };
 });

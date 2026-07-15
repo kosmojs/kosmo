@@ -9,6 +9,7 @@ import {
 } from "@kosmojs/lib";
 
 import { randomCongratMessage } from "./base";
+import plugins from "./plugins";
 import * as templates from "./templates";
 import type { Options } from "./types";
 
@@ -110,6 +111,12 @@ export default defineGeneratorFactory<Options>(
     return {
       meta,
       options,
+
+      config({ command }) {
+        return {
+          plugins: plugins(sourceFolder, command, options),
+        };
+      },
 
       async start() {
         // deploy global lib files that does not change when routes updates

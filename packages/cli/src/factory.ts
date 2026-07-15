@@ -293,11 +293,6 @@ export const createKosmoConfig = (
     base,
     imports,
     generators,
-    frameworkSpecificOptions: [
-      ...(framework === "solid"
-        ? [`oxc: { jsx: { importSource: "solid-js" } }`]
-        : []),
-    ],
   };
 
   return [render(templates.kosmoConfig, context), { generators }] as const;

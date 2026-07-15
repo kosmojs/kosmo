@@ -1,3 +1,5 @@
+import vitePlugin from "@vitejs/plugin-react";
+
 import { defaults, type ResolvedEntry } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
@@ -97,6 +99,13 @@ export default defineGeneratorFactory<Options>(
     return {
       meta,
       options,
+
+      config() {
+        const { templates, ...opts } = { ...options };
+        return {
+          plugins: [vitePlugin(opts)],
+        };
+      },
 
       async start() {
         // deploy global lib files that does not change on routes updates

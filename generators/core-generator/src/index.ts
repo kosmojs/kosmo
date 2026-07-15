@@ -132,7 +132,6 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
 
   return {
     meta,
-    options: undefined,
     start,
     watch: generateLibFiles,
     build: generateLibFiles,

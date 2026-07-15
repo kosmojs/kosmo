@@ -1,5 +1,3 @@
-import vitePlugin from "vite-plugin-solid";
-
 import type { GeneratorMeta } from "@kosmojs/core";
 import { defineGenerator } from "@kosmojs/lib";
 
@@ -22,25 +20,5 @@ export default defineGenerator<Options>((options) => {
     meta,
     options,
     factory: (sourceFolder) => factory(meta, sourceFolder, options),
-    plugins({ command, generators }) {
-      const { templates, ...opts } = { ...options };
-      return command === "build"
-        ? [
-            vitePlugin({
-              ...opts,
-              ...(generators.some((e) => e.slot === "ssr")
-                ? {
-                    ssr: true,
-                    solid: {
-                      ...opts?.solid,
-                      generate: "ssr",
-                      hydratable: true,
-                    },
-                  }
-                : {}),
-            }) as never,
-          ]
-        : [vitePlugin({ ...opts, dev: true, hot: true }) as never];
-    },
   };
 });

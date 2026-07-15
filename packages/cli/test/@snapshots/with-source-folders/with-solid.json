@@ -33,7 +33,6 @@
       "  generators: [",
       "    solidGenerator(),",
       "  ],",
-      "  oxc: { jsx: { importSource: \"solid-js\" } }",
       "});"
     ]
   ],

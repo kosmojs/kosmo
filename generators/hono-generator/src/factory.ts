@@ -153,6 +153,14 @@ export default defineGeneratorFactory<Options>(
       meta,
       options,
 
+      config({ command }) {
+        return {
+          define: {
+            KOSMO_PRODUCTION_BUILD: command === "build" ? "true" : "false",
+          },
+        };
+      },
+
       async start() {
         // deploy global lib files that does not change on routes updates
         for (const [file, template] of [

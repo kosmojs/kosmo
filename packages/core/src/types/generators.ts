@@ -1,5 +1,4 @@
-import type { StreamingApi } from "hono/utils/stream";
-import type { Manifest, Plugin } from "vite";
+import type { UserConfig } from "vite";
 
 import type { HostOpt } from "../fetch";
 import type { ProjectSettings, SourceFolder } from "./project";
@@ -68,6 +67,11 @@ type OptionsRequired<T> = T extends [unknown, infer R extends boolean]
 export type GeneratorFactoryInstance = {
   meta: GeneratorMeta;
   options?: GeneratorOptionsTuple[0] | undefined;
+  // Vite config provided by generator itself
+  config?: (o: {
+    kind: "client" | "backend";
+    command: ProjectSettings["command"];
+  }) => UserConfig;
   start?: () => Promise<void>;
   watch?: (
     entries: Array<ResolvedEntry>,
@@ -98,10 +102,6 @@ export type GeneratorBase = {
   meta: GeneratorMeta;
   options?: GeneratorOptionsTuple[0] | undefined;
   factory: (sourceFolder: SourceFolder) => GeneratorFactoryInstance;
-  plugins?: (
-    sourceFolder: SourceFolder,
-    command: ProjectSettings["command"],
-  ) => Array<Plugin>;
 };
 
 export type DefineGenerator = <T extends GeneratorOptionsTuple | void = void>(

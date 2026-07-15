@@ -5,6 +5,7 @@ import { build } from "vite";
 
 import {
   defineGeneratorFactory,
+  mergeConfigs,
   pathResolver,
   renderFactory,
   sortRoutes,
@@ -16,11 +17,7 @@ import type { Options } from "./types";
 
 export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
-    const {
-      generators = [],
-      refineTypeName,
-      ...config
-    } = { ...sourceFolder.config };
+    const { generators = [], refineTypeName, ...config } = sourceFolder.config;
 
     const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
@@ -29,12 +26,6 @@ export default defineGeneratorFactory<Options>(
         ...createImportHelpers({ origin: "lib" }),
       },
     });
-
-    const externalizeOptions = options
-      ? Object.entries(options).flatMap(([k, v]) => {
-          return k === "external" || k === "noExternal" ? [[k, v]] : [];
-        })
-      : [];
 
     return {
       meta,
@@ -61,53 +52,53 @@ export default defineGeneratorFactory<Options>(
         const plugins = [
           vitePlugins.tsconfigPaths(sourceFolder),
           vitePlugins.nodePrefix(),
-          ...(config?.plugins || []),
         ];
 
-        for (const base of generators) {
-          plugins.push(...(base.plugins?.(sourceFolder, "build") || []));
-        }
-
-        // build the SSR bundle using `entry/server` as the entry point.
-        await build({
-          ...config,
-          configFile: false,
-          root: createPath.src(),
-          plugins,
-          ssr: externalizeOptions.length
-            ? Object.fromEntries(externalizeOptions)
-            : { external: true },
-          resolve: {
-            ...config.resolve,
-          },
-          build: {
-            // do not use extension here, it may vary by framework
-            ssr: createPath.entry("server"),
-            ssrEmitAssets: true,
-            sourcemap: true,
-            emptyOutDir: true,
-            rolldownOptions: {
-              output: {
-                dir,
-                entryFileNames: "app.js",
-                format: "esm",
+        // INFO: === Build the SSR client bundle using `entry/server` as the entry point ===
+        await build(
+          mergeConfigs(
+            // user config - lowest priority
+            config,
+            // generators configs - higher priority
+            ...generators.map(({ factory }) => {
+              return factory(sourceFolder).config?.({
+                kind: "client",
+                command: "build",
+              });
+            }),
+            // main config - highest priority
+            {
+              root: createPath.src(),
+              plugins,
+              define: {
+                KOSMO_PRODUCTION_BUILD: "true",
+              },
+              build: {
+                ssr: createPath.lib("ssr:app"),
+                ssrEmitAssets: true,
+                sourcemap: true,
+                emptyOutDir: true,
+                minify: false,
+                rolldownOptions: {
+                  output: {
+                    dir,
+                    entryFileNames: "app.js",
+                    format: "esm",
+                  },
+                },
               },
             },
-          },
-        });
+          ),
+        );
 
-        // Build the SSR server using `lib/ssr.ts`
+        // INFO: === Build the SSR server using `lib/ssr.ts` ===
+        // no config merge needed here
         await build({
-          configFile: false,
           root: createPath.lib(),
+          configFile: false,
           appType: "custom",
-          plugins: [vitePlugins.nodePrefix()],
-          define: { ...config.define },
-          ssr: externalizeOptions.length
-            ? Object.fromEntries(externalizeOptions)
-            : { external: true },
+          plugins,
           resolve: {
-            ...config.resolve,
             conditions: ["node"],
           },
           build: {
@@ -117,7 +108,7 @@ export default defineGeneratorFactory<Options>(
             emptyOutDir: true,
             rolldownOptions: {
               output: {
-                // emit to a subdir for emptyOutDir to not wipe built client
+                // emit to a subdir for emptyOutDir to not wipe just built app.js and assets
                 dir: join(dir, "server"),
                 entryFileNames: "server.js",
                 format: "esm",

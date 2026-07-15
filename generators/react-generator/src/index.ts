@@ -1,5 +1,3 @@
-import vitePlugin from "@vitejs/plugin-react";
-
 import type { GeneratorMeta } from "@kosmojs/core";
 import { defineGenerator } from "@kosmojs/lib";
 
@@ -27,9 +25,5 @@ export default defineGenerator<Options>((options) => {
     meta,
     options,
     factory: (sourceFolder) => factory(meta, sourceFolder, options),
-    plugins() {
-      const { templates, ...opts } = { ...options };
-      return [vitePlugin(opts) as never];
-    },
   };
 });

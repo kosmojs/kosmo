@@ -1,3 +1,5 @@
+import vitePlugin from "vite-plugin-solid";
+
 import { defaults, type ResolvedEntry } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
@@ -15,6 +17,8 @@ import type { Options } from "./types";
 
 export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
+    const { generators = [] } = sourceFolder.config;
+
     const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
     const { renderToFile: deployLibFile } = renderFactory({
@@ -97,6 +101,31 @@ export default defineGeneratorFactory<Options>(
     return {
       meta,
       options,
+
+      config({ command }) {
+        const { templates, ...opts } = { ...options };
+        return {
+          oxc: { jsx: { importSource: "solid-js" } },
+          plugins:
+            command === "build"
+              ? [
+                  vitePlugin({
+                    ...opts,
+                    ...(generators.some((e) => e.meta.slot === "ssr")
+                      ? {
+                          ssr: true,
+                          solid: {
+                            ...opts?.solid,
+                            generate: "ssr",
+                            hydratable: true,
+                          },
+                        }
+                      : {}),
+                  }),
+                ]
+              : [vitePlugin({ ...opts, dev: true, hot: true })],
+        };
+      },
 
       async start() {
         // deploy global lib files that does not change on routes updates
