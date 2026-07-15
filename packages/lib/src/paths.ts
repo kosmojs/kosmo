@@ -6,7 +6,7 @@ import { defaults, type SourceFolder } from "@kosmojs/core";
 type Options = { origin: "src" | "lib" };
 
 type CreateImport = Record<
-  "src" | "api" | "pages" | "lib" | "libCore" | "libApi" | "libEntry",
+  "src" | "api" | "entry" | "pages" | "lib" | "libCore" | "libApi" | "libEntry",
   (a: Array<string>, o: Options) => string
 >;
 
@@ -45,6 +45,9 @@ export const pathResolver = (
     },
     api(a, o) {
       return this.src([defaults.apiDir, ...a], o);
+    },
+    entry(a, o) {
+      return this.src([defaults.entryDir, ...a], o);
     },
     pages(a, o) {
       return this.src([defaults.pagesDir, ...a], o);
