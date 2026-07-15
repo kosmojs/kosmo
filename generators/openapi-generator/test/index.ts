@@ -4,7 +4,7 @@ import type { SourceFolder } from "@kosmojs/core";
 
 import coreGenerator from "@kosmojs/core-generator";
 
-import openapiGenerator from "@src/index";
+import openapiGenerator from "#/index";
 
 export { defineRoute } from "@kosmojs/koa-generator/lib";
 

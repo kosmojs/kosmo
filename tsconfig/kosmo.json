@@ -8,7 +8,7 @@
     "rootDir": "${configDir}",
     "outDir": "${configDir}/../pkg",
     "paths": {
-      "@src/*": ["${configDir}/*"]
+      "#/*": ["${configDir}/*"]
     },
     "declaration": true,
     "emitDeclarationOnly": true

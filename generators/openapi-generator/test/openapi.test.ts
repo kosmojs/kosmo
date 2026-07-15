@@ -5,9 +5,9 @@ import { test } from "vitest";
 import type { ApiRoute } from "@kosmojs/core";
 import { routesFactory } from "@kosmojs/lib";
 
-import { openapiOptions, sourceFolder } from ".";
+import openapiFactory from "#/openapi";
 
-import openapiFactory from "@src/openapi";
+import { openapiOptions, sourceFolder } from ".";
 
 test("openapi", async ({ expect }) => {
   const { resolvers } = await routesFactory(sourceFolder);

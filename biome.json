@@ -112,31 +112,22 @@
             "groups": [
               [":NODE:", ":BUN:"],
               ":BLANK_LINE:",
+              [":PACKAGE:", ":PACKAGE_WITH_PROTOCOL:", "!@kosmojs/**", "!#/**"],
+              ":BLANK_LINE:",
+
               [
                 ":PACKAGE:",
                 ":PACKAGE_WITH_PROTOCOL:",
-                "!@kosmojs/**",
-                "!@src/**",
-                "!@test/**"
+                "!@kosmojs/*-generator",
+                "!#/**"
               ],
               ":BLANK_LINE:",
 
               [
                 ":PACKAGE:",
                 ":PACKAGE_WITH_PROTOCOL:",
-                "@kosmojs/**",
-                "!@kosmojs/**/*-generator",
-                "!@src/**",
-                "!@test/**"
-              ],
-              ":BLANK_LINE:",
-
-              [
-                ":PACKAGE:",
-                ":PACKAGE_WITH_PROTOCOL:",
-                "@kosmojs/**/*-generator",
-                "!@src/**",
-                "!@test/**"
+                "@kosmojs/*-generator",
+                "!#/**"
               ],
               ":BLANK_LINE:",
 
@@ -146,7 +137,7 @@
               [":ALIAS:"],
               ":BLANK_LINE:",
 
-              [":PATH:", "!./templates/**"],
+              [":PATH:", "!\\{\\{*"],
               ":BLANK_LINE:",
 
               [":PATH:"]

@@ -12,8 +12,7 @@ const setupFactory = (name, { alias, ...setup } = {}) => {
       name,
       alias: {
         ...alias,
-        "@src": "src",
-        "@test": "test",
+        "#": "src",
       },
       ...(name.startsWith("integration:")
         ? {
