@@ -52,7 +52,7 @@ import { renderToString } from "react-dom/server";
 import renderFactory, { createRoutes } from "_/entry/server";
 import routerFactory from "../router";
 
-const routes = createRoutes({ withPreload: false });
+const routes = createRoutes({ withPreload: true });
 const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {
@@ -74,7 +74,7 @@ import { renderToString, generateHydrationScript } from "solid-js/web";
 import renderFactory, { createRoutes } from "_/entry/server";
 import routerFactory from "../router";
 
-const routes = createRoutes({ withPreload: false });
+const routes = createRoutes({ withPreload: true });
 const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {

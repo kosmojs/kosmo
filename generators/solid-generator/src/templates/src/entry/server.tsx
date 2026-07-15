@@ -3,7 +3,7 @@ import { generateHydrationScript, renderToStringAsync } from "solid-js/web";
 import renderFactory, { createRoutes } from "{{ createImport 'libEntry' 'server' }}";
 import routerFactory from "../router";
 
-const routes = createRoutes({ withPreload: false });
+const routes = createRoutes({ withPreload: true });
 const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {
