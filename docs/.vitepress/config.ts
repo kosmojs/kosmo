@@ -113,21 +113,21 @@ export default defineConfig({
           collapsed: false,
           items: [
             {
-              text: "🔰 Intro",
+              text: "Intro",
               docFooterText: "🛣 Routing",
               link: "/routing/intro",
             },
             {
-              text: "💯 Rationale",
+              text: "Rationale",
               link: "/routing/rationale",
             },
             {
-              text: "🚥 Parameters",
+              text: "Parameters",
               link: "/routing/params",
             },
             {
-              text: "🤖 Generated Content",
-              docFooterText: "🤖 Routing - Generated Content",
+              text: "Generated Content",
+              docFooterText: "Routing - Generated Content",
               link: "/routing/generated-content",
             },
           ],
@@ -137,40 +137,40 @@ export default defineConfig({
           collapsed: false,
           items: [
             {
-              text: "🔰 Intro",
-              docFooterText: "🧩 API Intro",
+              text: "Intro",
+              docFooterText: "API Intro",
               link: "/backend/intro",
             },
             {
-              text: "📋 Request Context",
+              text: "Request Context",
               link: "/backend/context",
             },
             {
-              text: "🛡 Type Safety",
+              text: "Type Safety",
               collapsed: false,
               link: "/backend/type-safety",
             },
             {
-              text: "▶️ Middleware",
+              text: "Middleware",
               collapsed: false,
               link: "/backend/middleware",
             },
             {
-              text: "🔽 Cascading Middleware",
+              text: "Cascading Middleware",
               collapsed: false,
               link: "/backend/cascading-middleware",
             },
             {
-              text: "🚨 Error Handling",
+              text: "Error Handling",
               collapsed: false,
               link: "/backend/error-handling",
             },
             {
-              text: "💻 Development Workflow",
+              text: "Development Workflow",
               link: "/backend/development-workflow",
             },
             {
-              text: "🌐 Building for Production",
+              text: "Building for Production",
               link: "/backend/building-for-production",
             },
           ],
@@ -180,41 +180,41 @@ export default defineConfig({
           collapsed: false,
           items: [
             {
-              text: "🔰 Intro",
-              docFooterText: "🎨 Frontend",
+              text: "Intro",
+              docFooterText: "Frontend",
               link: "/frontend/intro",
             },
             {
-              text: "🏗 Application",
+              text: "Application",
               link: "/frontend/application",
             },
             {
-              text: "🛣 Routing",
+              text: "Routing",
               link: "/frontend/routing",
             },
             {
-              text: "🪆 Layouts",
+              text: "Layouts",
               link: "/frontend/layouts",
             },
             {
-              text: "🧭 Link Navigation",
+              text: "Link Navigation",
               link: "/frontend/link-navigation",
             },
             {
-              text: "📥 Data / Preload",
+              text: "Data / Preload",
               link: "/frontend/data-preload",
             },
             {
-              text: "⚡ Server-Side Render",
+              text: "Server-Side Render",
               link: "/frontend/server-side-render",
             },
             {
-              text: "🎨 Custom Templates",
+              text: "Custom Templates",
               link: "/frontend/custom-templates",
             },
             {
-              text: "📄 MDX Content",
-              docFooterText: "📄 Frontend - MDX Content",
+              text: "MDX Content",
+              docFooterText: "Frontend - MDX Content",
               link: "/frontend/mdx",
             },
           ],
@@ -224,41 +224,41 @@ export default defineConfig({
           collapsed: false,
           items: [
             {
-              text: "🔰 Intro",
-              docFooterText: "🛡 Runtype Validation",
+              text: "Intro",
+              docFooterText: "Runtype Validation",
               link: "/validation/intro",
             },
             {
-              text: "🚥 Validating Params",
+              text: "Validating Params",
               link: "/validation/params",
             },
             {
-              text: "📦 Validating Payloads",
+              text: "Validating Payloads",
               link: "/validation/payload",
             },
             {
-              text: "📤 Validating Responses",
+              text: "Validating Responses",
               link: "/validation/response",
             },
             {
-              text: "🎯 VRefine for Refinement",
+              text: "VRefine for Refinement",
               link: "/validation/refine",
             },
             {
-              text: "🏁 Skip Validation",
+              text: "Skip Validation",
               link: "/validation/skip-validation",
             },
             {
-              text: "🚨 Error Handling",
+              text: "Error Handling",
               link: "/validation/error-handling",
             },
             {
-              text: "🏷 Naming Conventions",
+              text: "Naming Conventions",
               link: "/validation/naming-conventions",
             },
             {
-              text: "📊 About Performance",
-              docFooterText: "📊 Validation - Performance",
+              text: "About Performance",
+              docFooterText: "Validation - Performance",
               link: "/validation/performance",
             },
           ],
@@ -268,35 +268,35 @@ export default defineConfig({
           collapsed: false,
           items: [
             {
-              text: "🔰 Intro",
-              docFooterText: "🔗 Fetch Clients",
+              text: "Intro",
+              docFooterText: "Fetch Clients",
               link: "/fetch/intro",
             },
             {
-              text: "🚀 Quick Start",
+              text: "Quick Start",
               link: "/fetch/start",
             },
             {
-              text: "🔌 Integration",
+              text: "Integration",
               link: "/fetch/integration",
             },
             {
-              text: "🛡 Validation",
+              text: "Validation",
               link: "/fetch/validation",
             },
             {
-              text: "🚨 Error Handling",
+              text: "Error Handling",
               link: "/fetch/error-handling",
             },
             {
-              text: "🛠 Utilities",
-              docFooterText: "🛠 Fetch Utilities",
+              text: "Utilities",
+              docFooterText: "Fetch Utilities",
               link: "/fetch/utilities",
             },
           ],
         },
         {
-          text: "📋 OpenAPI",
+          text: "OpenAPI",
           link: "/openapi",
         },
         {
