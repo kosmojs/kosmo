@@ -33,6 +33,6 @@
     "@kosmojs/lib": "workspace:^",
     "@types/mime-types": "^3.0.1",
     "@types/picomatch": "^4.0.3",
-    "vite": "^8.1.4"
+    "vite": "^8.1.5"
   }
 }

@@ -9,10 +9,10 @@
   },
   "devDependencies": {
     "@catppuccin/vitepress": "^0.1.2",
-    "vite": "^8.1.4",
+    "vite": "^8.1.5",
     "vitepress": "2.0.0-alpha.17",
     "vitepress-plugin-group-icons": "^1.7.5",
-    "vitepress-plugin-llms": "^1.13.2",
-    "vue": "^3.5.39"
+    "vitepress-plugin-llms": "^1.13.3",
+    "vue": "^3.5.40"
   }
 }
