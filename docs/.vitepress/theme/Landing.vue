@@ -102,7 +102,7 @@ onMounted(() => {
   const rises = root.querySelectorAll<HTMLElement>(".rise");
 
   if (!("IntersectionObserver" in window)) {
-    rises.forEach((el) => el.classList.add("in"));
+    rises.forEach((el) => { el.classList.add("in") });
     return;
   }
 
@@ -117,7 +117,7 @@ onMounted(() => {
     },
     { threshold: 0.12, rootMargin: "0px 0px -60px 0px" },
   );
-  rises.forEach((el) => io.observe(el));
+  rises.forEach((el) => { io.observe(el) });
 });
 </script>
 
@@ -163,7 +163,7 @@ onMounted(() => {
             </p>
             <p class="lede">
               <b>
-                KosmoJS composes several apps in one codebase, offering both monorepo consistency and microservice flexibility.
+                KosmoJS composes several apps in a scalable codebase, offering both consistency and flexibility.
               </b>
             </p>
             <p class="lede">
