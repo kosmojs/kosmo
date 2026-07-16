@@ -2,10 +2,4 @@ import { createRouterFactory } from "@kosmojs/core/generators";
 
 import type { RawRoute, RouterInstance } from "./mdx";
 
-export type ParamsMap = {
-  {{#each pageRoutes}}
-  "{{name}}": {{serializeParamsLiteral .}};
-  {{/each}}
-};
-
-export default createRouterFactory<RawRoute, RouterInstance>();
+export default createRouterFactory<RawRoute, Promise<RouterInstance>>();

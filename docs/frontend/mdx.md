@@ -264,6 +264,82 @@ export default function Breadcrumb() {
 > not at module scope. `export const params = useParams()` in an MDX file
 > runs on import and will fail.
 
+## Data Fetching
+
+Pages can fetch data during render via a `loader` export - a function that
+runs before the page is rendered, on both the server and the client.
+It receives the resolved route as first argument and its return value is passed
+to the page as `props.data`.
+
+```mdx [pages/index/index.mdx]
+import f from "_/fetch";
+
+export const { GET } = f.index;
+
+export const loader = async () => {
+  return GET();
+};
+
+# Welcome
+
+The message is: {props.data.msg}
+```
+
+`loader` fetches through the same client used elsewhere in the project,
+so a request made during SSR is captured and replayed on hydration instead of firing twice -
+no extra wiring needed on the page.
+
+### Loaders with Route Parameters
+
+`loader` runs before the page tree exists, so it can't use `useParams()`/`useRoute()` -
+those are hooks, and hooks only work while Preact is actually
+rendering a component. Instead, `loader` receives the resolved route object
+directly as first argument:
+
+```ts
+type Route = {
+  name: string;
+  params: Record<string, string | Array<string>>;
+  paramsEntries: [keys: Array<string>, values: Array<unknown>];
+  frontmatter: Record<string, unknown>;
+};
+```
+
+`paramsEntries` is a `[keys, values]` tuple, both in the same order the route
+declares its parameters - the same order `GET`/`parametrize` expect:
+
+```mdx [pages/blog/[slug]/index.mdx]
+import f from "_/fetch";
+
+export const { GET } = f.index;
+
+export const loader = ({ paramsEntries }) => {
+  const [keys, params] = paramsEntries;
+  return GET(params);
+};
+
+# {props.data.title}
+```
+
+Pass `params` straight to a parametrized endpoint when only positional values
+are needed; `keys` is there alongside it for cases like building a request
+body or a cache key from the parameter names themselves. Either way, there's
+no need to reconstruct an array from `params`/`useParams()` by hand.
+
+> **Don't** reach for `Object.keys(route.params)`/`Object.values(route.params)`
+> as a substitute. It happens to work today because JS object key order
+> usually follows insertion order, but that's an implicit contract, not a
+> guarantee tied to how the route declares its parameters - it can silently
+> break for multi-param or splat routes, or if matching internals ever
+> change. `paramsEntries` derives its order from the route's own declared
+> parameter list, so it's correct by construction instead of by coincidence.
+
+> **Important:** `loader` runs during resolution, before the component tree
+> is built, so it never has access to `useParams()`, `useRoute()`, or any
+> other hook - only to the `Route` object passed as its argument. Hooks
+> remain the right tool inside actual components;
+> `loader` is a pre-render step, not a rendered component.
+
 ## Type-Safe Navigation
 
 The generator produces a typed `Link` component at `components/Link.tsx`:
@@ -332,7 +408,7 @@ src/content/
 │   ├── client.tsx         ← minimal client entry (no hydration)
 │   └── server.ts          ← SSR rendering with Preact
 └── pages/
-    └── *.mdx              ← content pages
+    └── *.mdx              ← content pages, optionally exporting `loader`
 ```
 
 ### Router Configuration
@@ -463,6 +539,31 @@ Static routes (no parameters) render automatically with no additional configurat
 > **Important:** Dynamic routes without `staticParams` are skipped from SSG build,
 > that's it, no static files generated for dynamic routes without `staticParams`.
 
+Combine `loader` with `staticParams` to fetch each variant's data at build
+time - `loader` runs once per entry, with that entry's own parameters:
+
+```mdx [pages/docs/[slug]/index.mdx]
+---
+title: Documentation
+staticParams:
+  - [getting-started]
+  - [routing]
+  - [validation]
+---
+
+import f from "_/fetch";
+
+export const { GET } = f.docs;
+
+export const loader = ({ paramsEntries }) => {
+  const [keys, params] = paramsEntries;
+  return GET(params);
+};
+
+# {props.data.title}
+```
+
+Each entry produces its own fetch and its own pre-rendered HTML file.
 
 ## When to Use MDX vs Frameworks
 
@@ -483,5 +584,7 @@ with occasional content, use React/Vue/Solid.
 
 - **No TypeScript in MDX.** Keep typed code in `.tsx` files and import into MDX. MDX only supports plain JavaScript expressions.
 - **Hooks at module scope.** `export const x = useHook()` runs on import, not during render. Always call hooks inside component functions.
+- **`loader` can't use hooks.** `useParams()`, `useRoute()`, and any other hook only work inside a rendered component.
+`loader` runs before the tree exists - use the `Route` object passed as its argument (`paramsEntries`, `frontmatter`, etc.) instead.
 - **Curly braces in prose.** `{...spread}` in markdown text is parsed as a JSX expression. Use backticks for code containing curly braces: `` `{...spread}` ``.
 - **Layouts must be `.mdx`.** Plain `.md` files cannot render `{props.children}` and will not work as layouts.

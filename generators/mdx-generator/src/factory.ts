@@ -101,6 +101,7 @@ export default defineGeneratorFactory<Options>(
       }
 
       for (const [file, template] of [
+        ["params.ts", templates.libParams],
         ["router.ts", templates.libRouter],
         ["ssg:routes.ts", templates.libSsgRoutes],
       ]) {

@@ -7,10 +7,10 @@ import { components } from "./components/mdx"
 export default routerFactory((routes) => {
   const router = createRouter(routes, App, { components });
   return {
-    clientRouter() {
+    async clientRouter() {
       return router.resolve();
     },
-    serverRouter(url) {
+    async serverRouter(url) {
       return router.resolve(url);
     },
   };

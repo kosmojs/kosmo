@@ -10,7 +10,7 @@ const { serverRouter } = routerFactory(routes);
 export default renderFactory(() => {
   return {
     async renderToString(url, { assets }) {
-      const page = serverRouter(url);
+      const page = await serverRouter(url);
 
       const head = assets.reduce(
         (head, { tag }) => `${head}\n${tag}`,

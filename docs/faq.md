@@ -845,6 +845,30 @@ read where it is without receiving props from the page. This is distinct from a 
 own `useParams` - `useRoute()` also carries the route name and frontmatter, not just params.
 [Details ›](/frontend/mdx.html#route-parameters)
 
+#### How do I fetch data in MDX?
+Export a `loader` function from the page. It runs before the page renders,
+through the same fetch client used elsewhere in the project.
+[Details ›](/frontend/mdx.html#data-fetching)
+
+#### How do I access fetched data in MDX?
+Whatever `loader` returns is passed to the page as `props.data` -
+reference it directly in markdown/JSX expressions, e.g. `{props.data.msg}`.
+[Details ›](/frontend/mdx.html#data-fetching)
+
+#### How do I use route name/params inside an MDX loader?
+`loader` runs before the component tree exists, so hooks (`useParams()`, `useRoute()`) aren't available there -
+they only work while Preact is actually rendering a component.
+Instead, `loader` receives the resolved `Route` object as its argument, including `paramsEntries` -
+a `[keys, values]` tuple in the same order the route declares its parameters,
+ready to pass straight to a parametrized endpoint (`GET(params)`).
+[Details ›](/frontend/mdx.html#loaders-with-route-parameters)
+
+#### How do I fetch data in MDX in SSG mode?
+Same `loader` export, combined with `staticParams`. `loader` runs once per declared entry,
+receiving that entry's own `paramsEntries`, and each entry's fetched data gets baked into its
+own pre-rendered HTML file.
+[Details ›](/frontend/mdx.html#static-site-generation)
+
 #### Why can't I write TypeScript in MDX?
 MDX only supports plain JavaScript expressions.
 Keep typed code (props, hooks, types) in `.tsx` files and import them into the MDX page.
@@ -869,7 +893,8 @@ Dynamic routes without `staticParams` are skipped from the SSG build entirely.
 #### What are the common MDX pitfalls?
 No TypeScript in MDX (keep it in `.tsx`); hooks must be called inside components,
 not at module scope (`export const x = useParams()` runs on import and fails);
-curly braces in prose are parsed as JSX - wrap in backticks;
+`loader` can't use hooks either, since it runs before the tree exists - use the `Route`
+argument instead; curly braces in prose are parsed as JSX - wrap in backticks;
 layouts must be `.mdx` not `.md` (`.md` can't render `{props.children}`).
 [Details ›](/frontend/mdx.html#common-pitfalls)
 

@@ -9,11 +9,15 @@ declare module "{{ createImport 'lib' 'mdx' }}" {
   export * from "#/templates/lib/mdx";
 }
 
+declare module "{{ createImport 'lib' 'params' }}" {
+  export type ParamsMap = Record<string, object>;
+  export const paramNames: Record<string, Array<string>>;
+}
+
 declare module "{{ createImport 'lib' 'router' }}" {
   import { createRouterFactory } from "@kosmojs/core/generators";
   import type { RawRoute, RouterInstance } from "#/templates/lib/mdx";
-  export type ParamsMap = Record<string, object>;
-  export default createRouterFactory<RawRoute, RouterInstance>();
+  export default createRouterFactory<RawRoute, Promise<RouterInstance>>();
 }
 
 declare module "{{ createImport 'libEntry' 'client' }}" {

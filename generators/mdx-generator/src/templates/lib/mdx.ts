@@ -2,6 +2,7 @@ import { MDXProvider } from "@mdx-js/preact";
 import { match, pathToRegexp } from "path-to-regexp";
 import { type ComponentType, createContext, h, type VNode } from "preact";
 
+import { paramNames } from "{{ createImport 'lib' 'params' }}";
 import { base } from "{{ createImport 'libCore' }}";
 import * as NotFound from "{{ createImport 'pages' '404.mdx' }}";
 
@@ -10,24 +11,27 @@ export type RawRoute = {
   pathSegments: number | undefined;
   regexp: RegExp;
   extractParams: (path: string) => Route["params"];
-  source: RouteComponent | (() => RouteComponent);
+  source: RouteComponent | (() => Promise<RouteComponent>);
   layouts: Array<ComponentType>;
 };
 
 type RouteComponent = {
   default: ComponentType;
   frontmatter: Route["frontmatter"];
+  loader?: (route: Route) => Promise<unknown>;
 };
 
 type Route = {
   name: string;
   params: Record<string, string | Array<string>>;
+  paramsEntries: [keys: Array<string>, values: Array<unknown>];
   frontmatter: Record<string, unknown>;
 };
 
 export const RouterContext = createContext<Route>({
   name: "",
   params: {},
+  paramsEntries: [[], []],
   frontmatter: {},
 });
 
@@ -45,7 +49,7 @@ export const createRouter = (
 ) => {
   const catchallRoute = createRoute("NotFound", "", NotFound, []);
   return {
-    resolve(url: URL = new URL(window.location.href)) {
+    async resolve(url: URL = new URL(window.location.href)) {
       const urlSegments = url.pathname.split("/").filter(Boolean).length;
 
       // 1: use lightweight `RegExp.test()` on linear scan - no capture allocation
@@ -70,15 +74,37 @@ export const createRouter = (
       const { name, layouts = [] } = route;
 
       const page =
-        typeof route.source === "function" //
-          ? route.source()
+        typeof route.source === "function"
+          ? await route.source()
           : route.source;
 
-      const { frontmatter = {} } = page;
+      const paramsEntries = (
+        Array.isArray(paramNames[name as never])
+          ? [
+              [...paramNames[name as never]],
+              [...paramNames[name as never]].map((key) => params[key]),
+            ]
+          : [
+              // fallback
+              Object.keys(params),
+              Object.values(params),
+            ]
+      ) as never;
+
+      const { frontmatter = {}, loader } = page;
+
+      const data = loader
+        ? await loader({
+            name,
+            params,
+            paramsEntries,
+            frontmatter,
+          })
+        : undefined;
 
       const content = [app, ...layouts].reduce(
         (children, layout) => h(layout, { frontmatter, children } as never),
-        h(page.default, {}),
+        h(page.default, { data } as never),
       );
 
       return {
@@ -88,6 +114,7 @@ export const createRouter = (
             value: {
               name,
               params,
+              paramsEntries,
               frontmatter,
             },
           },

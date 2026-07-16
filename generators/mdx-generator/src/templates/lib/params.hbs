@@ -1,0 +1,9 @@
+export type ParamsMap = {
+{{#each pageRoutes}}"{{name}}": {{serializeParamsLiteral .}};
+{{/each}}
+};
+
+export const paramNames = {
+{{#each pageRoutes}}"{{name}}": [ {{#each params.schema}}"{{name}}", {{/each}}],
+{{/each}}
+} as const;
