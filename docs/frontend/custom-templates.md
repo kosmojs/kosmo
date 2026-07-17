@@ -44,7 +44,7 @@ export default defineConfig({
     reactGenerator({
       templates: { // [!code ++:4]
         "landing/*": landingTemplate,
-        "marketing/**/*": landingTemplate,
+        "marketing/**": landingTemplate,
       },
     }),
   ],
@@ -72,7 +72,7 @@ Matches routes at exactly one nesting level:
 Matches routes at any nesting depth:
 
 ```ts
-{ "marketing/**/*": template }
+{ "marketing/**": template }
 ```
 
 **Matches:** `marketing/campaigns/summer`, `marketing/promo/2024/special`, `marketing/[id]/details`
@@ -94,7 +94,7 @@ generator({
   templates: {
     "landing/home": homeTemplate,   // highest specificity
     "landing/*": landingTemplate,   // medium specificity
-    "**/*": fallbackTemplate,       // lowest specificity
+    "**": fallbackTemplate,       // lowest specificity
   },
 })
 ```
@@ -190,9 +190,9 @@ Route params: {JSON.stringify(useParams())}
 ```ts
 generator({
   templates: {
-    "landing/**/*": landingTemplate,
-    "marketing/**/*": marketingTemplate,
-    "promo/**/*": promoTemplate,
+    "landing/**": landingTemplate,
+    "marketing/**": marketingTemplate,
+    "promo/**": promoTemplate,
   },
 })
 ```
@@ -202,7 +202,7 @@ generator({
 ```ts
 generator({
   templates: {
-    "admin/**/*": adminTemplate,
+    "admin/**": adminTemplate,
   },
 })
 ```
@@ -215,7 +215,7 @@ displays the route name as a placeholder. Replace it globally with:
 ```ts
 generator({
   templates: {
-    "**/*": myDefaultTemplate,
+    "**": myDefaultTemplate,
   },
 })
 ```
