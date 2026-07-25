@@ -59,11 +59,12 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
       );
     }
 
-    /**
-     * expose VRefine as a global type.
-     * not supposed to be overriden by generators.
-     * */
-    await renderToFile(createPath.lib("../env.d.ts"), templates.env, {});
+    for (const [file, template] of [
+      ["env.d.ts", templates.envD],
+      ["global.d.ts", templates.globalD],
+    ]) {
+      await renderToFile(createPath.lib(`../${file}`), template, {});
+    }
 
     /**
      * deploy a default gitignore file that ignore everything,
