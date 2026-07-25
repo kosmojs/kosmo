@@ -1,37 +1,15 @@
-import { createApp, createSSRApp } from "vue";
-import {
-  createMemoryHistory,
-  createRouter,
-  createWebHistory,
-} from "vue-router";
+import routerFactory, { createRouters } from "{{ createImport 'lib' 'router' }}";
 
-import { base } from "{{ createImport 'libCore' }}";
-import routerFactory from "{{ createImport 'lib' 'router' }}";
-import App from "./App.vue";
+import app from "./App.vue";
 
 export default routerFactory((routes) => {
+  const { clientRouter, serverRouter } = createRouters(routes, { app });
   return {
-    async clientRouter() {
-      const app = createApp(App);
-      const router = createRouter({
-        history: createWebHistory(base),
-        routes,
-        strict: true,
-      });
-      app.use(router);
-      return app;
+    clientRouter() {
+      return clientRouter()
     },
-    async serverRouter(url) {
-      const app = createSSRApp(App);
-      const router = createRouter({
-        history: createMemoryHistory(base),
-        routes,
-        strict: true,
-      });
-      await router.push(url.pathname.replace(base, ""));
-      await router.isReady();
-      app.use(router);
-      return app;
+    serverRouter(url) {
+      return serverRouter(url)
     },
   };
 });

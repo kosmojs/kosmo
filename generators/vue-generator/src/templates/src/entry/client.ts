@@ -1,4 +1,9 @@
-import renderFactory, { createRoutes } from "{{ createImport 'libEntry' 'client' }}";
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "{{ createImport 'libEntry' 'client' }}";
+
 import routerFactory from "../router";
 
 const routes = createRoutes();
@@ -9,13 +14,11 @@ const root = document.getElementById("app");
 if (root) {
   renderFactory(() => {
     return {
-      async mount() {
-        const page = await clientRouter();
-        page.mount(root);
+      hydrate() {
+        return hydrate(() => clientRouter(), root);
       },
-      async hydrate() {
-        const page = await clientRouter();
-        page.mount(root, true);
+      mount() {
+        return mount(() => clientRouter(), root);
       },
     };
   });

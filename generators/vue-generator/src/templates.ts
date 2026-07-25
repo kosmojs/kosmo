@@ -6,8 +6,9 @@ export { default as libPageSamples404 } from "#templates/lib/pageSamples/404.hbs
 export { default as libPageSamplesPage } from "#templates/lib/pageSamples/page.hbs";
 export { default as libPageSamplesStyles } from "#templates/lib/pageSamples/styles.css";
 export { default as libPageSamplesWelcome } from "#templates/lib/pageSamples/welcome.hbs";
-export { default as libRouter } from "#templates/lib/router.hbs";
+export { default as libRouter } from "#templates/lib/router";
 export { default as libUnwrap } from "#templates/lib/unwrap";
+export { default as libUse } from "#templates/lib/use";
 export { default as srcApp } from "#templates/src/App.vue";
 export { default as srcComponentsLink } from "#templates/src/components/Link.vue";
 export { default as srcEntryClient } from "#templates/src/entry/client";

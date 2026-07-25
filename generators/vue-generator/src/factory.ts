@@ -1,9 +1,12 @@
 import vitePlugin from "@vitejs/plugin-vue";
 
-import { defaults, type ResolvedEntry } from "@kosmojs/core";
-import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   createTemplateResolver,
+  defaults,
+  type ResolvedEntry,
+} from "@kosmojs/core";
+import { routeRenderHelpers } from "@kosmojs/core/generators";
+import {
   defineGeneratorFactory,
   nestedRoutesFactory,
   pathResolver,
@@ -84,6 +87,7 @@ export default defineGeneratorFactory<Options>(
         await deployLibFile(createPath.libEntry(file), template, {
           pageEntries,
           nestedRoutes,
+          lazyLoad: file === "client.ts",
         });
       }
 
@@ -109,6 +113,7 @@ export default defineGeneratorFactory<Options>(
         for (const [file, template] of [
           ["env.d.ts", templates.libEnvD],
           ["unwrap.ts", templates.libUnwrap],
+          ["use.ts", templates.libUse],
           ["pageSamples/styles.module.css", templates.libPageSamplesStyles],
           ["pageSamples/welcome.vue", templates.libPageSamplesWelcome],
           ["pageSamples/page.vue", templates.libPageSamplesPage],

@@ -4,7 +4,13 @@
   name: "{{name}}",
   {{/if}}
   {{#if component}}
+  {{#if @root.lazyLoad}}
   component: {{component}},
+  meta: { module: {{component}} },
+  {{else}}
+  component: {{component}}.default,
+  meta: { module: async () => {{component}} },
+  {{/if}}
   {{/if}}
   {{#if children.length}}
   children: [ {{#each children}}{{> routePartial}}, {{/each}}],

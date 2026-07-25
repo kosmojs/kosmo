@@ -1,10 +1,24 @@
+import type { App } from "vue";
+
+import {
+  renderToString as renderToStringOrig,
+  renderToWebStream,
+} from "vue/server-renderer";
+
+import type {
+  RenderToStringWrapper,
+  RenderToStreamWrapper,
+  RouterFactoryReturn,
+  SSRRenderWrapper,
+} from "@kosmojs/core";
+
 import { serverRenderFactory } from "@kosmojs/core/generators";
 
 {{#each pageEntries}}
-import {{id}} from "{{ createImport "pages" file }}";
+import * as {{id}} from "{{ createImport 'pages' file }}";
 {{/each}}
 
-import NotFound from "{{ createImport "pages" "404.vue" }}";
+import * as NotFound from "{{ createImport 'pages' '404.vue' }}";
 
 export const createRoutes = () => {
   return [
@@ -14,9 +28,68 @@ export const createRoutes = () => {
     {
       path: "/:catchAll(.*)*",
       name: "NotFound",
-      component: NotFound,
+      component: NotFound.default,
+      meta: { module: NotFound },
     },
   ];
+}
+
+export const baseHeaderTags = (): Array<string> => [];
+
+const createHydrationScript = (
+  loaderData: Record<string, unknown>,
+) => {
+  return loaderData
+    ? `<script>
+        window.__KOSMO_HYDRATION_DATA__ = JSON.parse(
+          ${JSON.stringify(JSON.stringify(loaderData))}
+        );
+      </script>`
+    : undefined;
+};
+
+export const renderWrapper: SSRRenderWrapper = (_context, render) => render();
+
+export const renderToString: RenderToStringWrapper<
+  () => RouterFactoryReturn<
+    Promise<App>,
+    { loaderData: Record<string, unknown> }
+  >,
+  Parameters<typeof renderToStringOrig>[1]
+> = async (resolver, { headerTags = [], context = {} } = {}) => {
+  const { component, loaderData } = await resolver();
+  const html = await renderToStringOrig(component, context);
+  const script = createHydrationScript(loaderData);
+  return {
+    head: [...headerTags, ...script ? [script] : []].join("\n"),
+    html,
+  }
+}
+
+export const renderToStream: RenderToStreamWrapper<
+  () => RouterFactoryReturn<
+    Promise<App>,
+    { loaderData: Record<string, unknown> }
+  >,
+  Parameters<typeof renderToWebStream>[1]
+> = async (resolver, { headerTags = [], context = {} } = {}) => {
+  const { component, loaderData } = await resolver();
+  const source = renderToWebStream(component, context);
+
+  const appendScript = new TransformStream<Uint8Array, Uint8Array>({
+    flush(controller) {
+      // runs once, after `source` has fully flushed and closed
+      const script = createHydrationScript(loaderData);
+      if (script) {
+        controller.enqueue(new TextEncoder().encode(script));
+      }
+    },
+  });
+
+  return {
+    head: [...headerTags].join("\n"),
+    html: source.pipeThrough(appendScript),
+  };
 }
 
 export default serverRenderFactory();
