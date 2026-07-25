@@ -20,7 +20,7 @@
   "dependencies": {
     "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^",
-    "vite-plugin-solid": "^2.11.12"
+    "vite-plugin-solid": "^2.11.13"
   },
   "devDependencies": {
     "@solidjs/router": "^0.16.2",

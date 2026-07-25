@@ -31,7 +31,6 @@
     "@types/formidable": "^3.5.1",
     "@types/koa": "^3.0.3",
     "@types/koa-compose": "^3.2.9",
-    "cookie": "^2.0.1",
     "formidable": "^3.5.4",
     "koa": "^3.2.1",
     "koa-compose": "^4.1.0",
