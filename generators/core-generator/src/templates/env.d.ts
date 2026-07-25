@@ -1,4 +1,5 @@
 declare const KOSMO_PRODUCTION_BUILD: boolean;
+declare const KOSMO_SERVERSIDE_FETCH: boolean;
 
 /**
  * Enhances base TypeScript types with JSON Schema validation constraints.
