@@ -18,7 +18,7 @@ export default (
 
   const hmrPlugin = (): Plugin => {
     const hmrFilters = [
-      `${defaults.srcDir}/${sourceFolder.name}/${defaults.entryDir}/client.tsx`,
+      `${defaults.srcDir}/${sourceFolder.name}/${defaults.entryDir}/client.ts`,
     ].map((e) => createFilter(e));
 
     const hmrFilter = (id: string) => hmrFilters.some((filter) => filter(id));

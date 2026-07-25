@@ -1,7 +1,7 @@
 import type { PageRoute } from "@kosmojs/core";
 
 {{#each pageRoutes}}
-import * as {{id}} from "{{ createImport "pages" file }}";
+import * as {{id}} from "{{ createImport 'pages' file }}";
 {{/each}}
 
 const routeMap: Record<

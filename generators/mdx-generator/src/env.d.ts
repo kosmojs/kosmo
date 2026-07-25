@@ -15,23 +15,64 @@ declare module "{{ createImport 'lib' 'params' }}" {
 }
 
 declare module "{{ createImport 'lib' 'router' }}" {
+  import type { ComponentType } from "preact";
+  import type { RouterFactoryReturn } from "@kosmojs/core";
   import { createRouterFactory } from "@kosmojs/core/generators";
-  import type { RawRoute, RouterInstance } from "#/templates/lib/mdx";
-  export default createRouterFactory<RawRoute, Promise<RouterInstance>>();
+  import type { RawRoute, ResolvedRoute } from "#/templates/lib/mdx";
+
+  export const createRouters: (
+    routes: Array<RawRoute>,
+    assets: { app: ComponentType; components: Record<string, ComponentType<never>> },
+  ) => {
+    clientRouter: () => RouterFactoryReturn<
+      Promise<ResolvedRoute["component"]>,
+      ResolvedRoute
+    >;
+    serverRouter: (url: URL) => RouterFactoryReturn<
+      Promise<ResolvedRoute["component"]>,
+      ResolvedRoute
+    >;
+  }
+
+  export default createRouterFactory<
+    RawRoute,
+    Promise<ResolvedRoute["component"]>,
+    { client: ResolvedRoute, server: ResolvedRoute }
+  >();
 }
 
 declare module "{{ createImport 'libEntry' 'client' }}" {
+  import type { RouterFactoryReturn } from "@kosmojs/core";
   import { clientRenderFactory } from "@kosmojs/core/generators";
-  import type { RawRoute } from "#/templates/lib/mdx";
+  import type { RawRoute, ResolvedRoute } from "#/templates/lib/mdx";
+
   export const createRoutes: () => Array<RawRoute>;
+
+  export const hydrate: (
+    r: () => RouterFactoryReturn<Promise<ResolvedRoute["component"]>>,
+    e: HTMLElement,
+  ) => Promise<void>;
+
+  export const mount: (
+    r: () => RouterFactoryReturn<Promise<ResolvedRoute["component"]>>,
+    e: HTMLElement,
+  ) => Promise<void>;
+
   export default clientRenderFactory();
 }
 
 declare module "{{ createImport 'libEntry' 'server' }}" {
+  import type { RenderToStringWrapper, RouterFactoryReturn } from "@kosmojs/core";
   import { serverRenderFactory } from "@kosmojs/core/generators";
-  import type { RawRoute } from "#/templates/lib/mdx";
+  import type { RawRoute, ResolvedRoute } from "#/templates/lib/mdx";
+
   export const createRoutes: () => Array<RawRoute>;
-  export default serverRenderFactory();
+
+  export const renderToString: RenderToStringWrapper<
+    () => RouterFactoryReturn<Promise<ResolvedRoute["component"]>>
+  >;
+
+  export default serverRenderFactory<false>();
 }
 
 declare module "{{ createImport 'lib' 'pageSamples/404.tsx' }}" {

@@ -1,22 +1,74 @@
+import { renderToString as renderToStringOrig } from "preact-render-to-string";
+
+import type {
+  RenderToStringWrapper,
+  RouterFactoryReturn,
+  SSRRenderWrapper,
+} from "@kosmojs/core";
+
 import { serverRenderFactory } from "@kosmojs/core/generators";
 
-import { createRoute } from "../mdx";
+import { createRoute, type ResolvedRoute } from "../mdx";
 
 {{#each pageRoutes}}
-import * as {{id}} from "{{ createImport "pages" file }}";
+import * as {{id}} from "{{ createImport 'pages' file }}";
 {{/each}}
 {{#each layouts}}
-import * as {{id}} from "{{ createImport "pages" file }}";
+import * as {{id}} from "{{ createImport 'pages' file }}";
 {{/each}}
 
 export const createRoutes = () => {
   return [
     {{#each pageRoutes}}
     createRoute("{{name}}", "{{pathPattern}}", async () => {{id}}, [
-      {{#each layouts}}{{id}}.default, {{/each}}
+      {{#each layouts}}["{{name}}", async () => {{id}}], {{/each}}
     ]),
     {{/each}}
   ];
 };
 
-export default serverRenderFactory();
+const generateHeaderTags = ({ frontmatter, loaderData }: ResolvedRoute) => {
+  const tags: Array<string> = [];
+
+  if (typeof frontmatter?.title === "string") {
+    tags.push(`<title>${frontmatter.title}</title>`);
+  }
+
+  if (typeof frontmatter?.description === "string") {
+    tags.push(`<meta name="description" content="${frontmatter.description}">`);
+  }
+
+  if (Array.isArray(frontmatter?.head)) {
+    for (const [tag, attrs] of frontmatter.head) {
+      const attrStr = Object.entries(attrs)
+        .map(([k, v]) => `${k}="${v}"`)
+        .join(" ");
+      tags.push(`<${tag} ${attrStr}>`);
+    }
+  }
+
+  tags.push(
+    `<script>
+      window.__KOSMO_HYDRATION_DATA__ = JSON.parse(
+        ${JSON.stringify(JSON.stringify(loaderData || {}))}
+      );
+    </script>`
+  )
+
+  return tags
+};
+
+export const renderWrapper: SSRRenderWrapper = (_context, render) => render();
+
+export const renderToString: RenderToStringWrapper<
+  () => RouterFactoryReturn<Promise<ResolvedRoute["component"]>>
+> = async (resolver, { headerTags = [] } = {}) => {
+  const route = await resolver();
+  const html = renderToStringOrig(route.component);
+  return {
+    head: [...headerTags, ...generateHeaderTags(route as never)].join("\n"),
+    html,
+  }
+}
+
+export default serverRenderFactory<false>();

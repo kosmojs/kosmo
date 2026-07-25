@@ -1,17 +1,16 @@
-import { createRouter } from "{{ createImport 'lib' 'mdx' }}";
-import routerFactory from "{{ createImport 'lib' 'router' }}";
+import routerFactory, { createRouters } from "{{ createImport 'lib' 'router' }}";
 
-import App from "./App.mdx";
+import app from "./App.mdx";
 import { components } from "./components/mdx"
 
 export default routerFactory((routes) => {
-  const router = createRouter(routes, App, { components });
+  const { clientRouter, serverRouter } = createRouters(routes, { app, components });
   return {
-    async clientRouter() {
-      return router.resolve();
+    clientRouter() {
+      return clientRouter()
     },
-    async serverRouter(url) {
-      return router.resolve(url);
+    serverRouter(url) {
+      return serverRouter(url)
     },
   };
 });

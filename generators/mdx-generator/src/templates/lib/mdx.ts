@@ -4,15 +4,19 @@ import { type ComponentType, createContext, h, type VNode } from "preact";
 
 import { paramNames } from "{{ createImport 'lib' 'params' }}";
 import { base } from "{{ createImport 'libCore' }}";
-import * as NotFound from "{{ createImport 'pages' '404.mdx' }}";
 
 export type RawRoute = {
   name: string;
   pathSegments: number | undefined;
   regexp: RegExp;
   extractParams: (path: string) => Route["params"];
-  source: RouteComponent | (() => Promise<RouteComponent>);
-  layouts: Array<ComponentType>;
+  loader: () => Promise<RouteComponent>;
+  layouts: Array<[name: string, source: () => Promise<LayoutComponent>]>;
+};
+
+type LayoutComponent = {
+  default: ComponentType;
+  loader?: (route: Route) => Promise<unknown>;
 };
 
 type RouteComponent = {
@@ -21,7 +25,7 @@ type RouteComponent = {
   loader?: (route: Route) => Promise<unknown>;
 };
 
-type Route = {
+export type Route = {
   name: string;
   params: Record<string, string | Array<string>>;
   paramsEntries: [keys: Array<string>, values: Array<unknown>];
@@ -37,19 +41,41 @@ export const RouterContext = createContext<Route>({
 
 export const RouterProvider = RouterContext.Provider;
 
-export type RouterInstance = {
+export type ResolvedRoute = {
   component: VNode<{ value: Route }>;
   frontmatter: Route["frontmatter"];
+  loaderData: Record<string, unknown>;
 };
 
 export const createRouter = (
   routes: Array<RawRoute>,
   app: ComponentType,
-  opt: { components?: Record<string, ComponentType<any>> },
+  opt: { components?: Record<string, ComponentType<never>> },
 ) => {
-  const catchallRoute = createRoute("NotFound", "", NotFound, []);
+  const catchallRoute = createRoute(
+    "NotFound",
+    "",
+    () => import("{{ createImport 'pages' '404.mdx' }}"),
+    [],
+  );
+
+  const runLoader = async (
+    key: string,
+    route: Route,
+    fetcher: (r: Route) => Promise<unknown>,
+  ) => {
+    if (typeof window === "undefined" || !window.__KOSMO_HYDRATION_DATA__) {
+      return fetcher(route);
+    }
+    return key in window.__KOSMO_HYDRATION_DATA__
+      ? window.__KOSMO_HYDRATION_DATA__[key]
+      : fetcher(route);
+  };
+
   return {
-    async resolve(url: URL = new URL(window.location.href)) {
+    async resolve(
+      url: URL = new URL(window.location.href),
+    ): Promise<ResolvedRoute> {
       const urlSegments = url.pathname.split("/").filter(Boolean).length;
 
       // 1: use lightweight `RegExp.test()` on linear scan - no capture allocation
@@ -61,22 +87,19 @@ export const createRouter = (
         matchedRoutes.length > 1
           ? matchedRoutes.find(({ pathSegments }) => {
               return pathSegments === undefined || pathSegments === urlSegments;
-            })
-          : matchedRoutes[0];
+            }) || catchallRoute
+          : matchedRoutes.length === 1
+            ? matchedRoutes[0]
+            : catchallRoute;
 
       // 2: capture params only on matched route
       const params = matchedRoute
         ? matchedRoute.extractParams(url.pathname)
         : {};
 
-      const route = matchedRoute || catchallRoute;
+      const { name } = matchedRoute;
 
-      const { name, layouts = [] } = route;
-
-      const page =
-        typeof route.source === "function"
-          ? await route.source()
-          : route.source;
+      const routeExports = await matchedRoute.loader();
 
       const paramsEntries = (
         Array.isArray(paramNames[name as never])
@@ -91,36 +114,56 @@ export const createRouter = (
             ]
       ) as never;
 
-      const { frontmatter = {}, loader } = page;
+      const { frontmatter = {} } = routeExports;
 
-      const data = loader
-        ? await loader({
-            name,
-            params,
-            paramsEntries,
+      const route: Route = {
+        name,
+        params,
+        paramsEntries,
+        frontmatter,
+      };
+
+      const loaderData: Record<string, unknown> = {};
+
+      if (routeExports.loader) {
+        loaderData[name] = await runLoader(name, route, routeExports.loader);
+      }
+
+      const layouts: Array<{
+        name: string;
+        component: LayoutComponent["default"];
+      }> = [];
+
+      for (const [name, source] of matchedRoute.layouts || []) {
+        const layout = await source();
+        layouts.push({ name, component: layout.default });
+        if (layout.loader) {
+          loaderData[name] = await runLoader(name, route, layout.loader);
+        }
+      }
+
+      const component = [{ name: "", component: app }, ...layouts].reduce(
+        (children, { name, component }) => {
+          return h(component, {
+            children,
             frontmatter,
-          })
-        : undefined;
-
-      const content = [app, ...layouts].reduce(
-        (children, layout) => h(layout, { frontmatter, children } as never),
-        h(page.default, { data } as never),
+            loaderData: loaderData[name],
+          } as never);
+        },
+        h(routeExports.default, {
+          frontmatter,
+          loaderData: loaderData[name],
+        } as never),
       );
 
       return {
         component: h(
           RouterProvider,
-          {
-            value: {
-              name,
-              params,
-              paramsEntries,
-              frontmatter,
-            },
-          },
-          h(MDXProvider, opt, content),
+          { value: route },
+          h(MDXProvider, opt as never, component),
         ),
         frontmatter,
+        loaderData,
       };
     },
   };
@@ -129,7 +172,7 @@ export const createRouter = (
 export const createRoute = (
   name: string,
   pathPattern: string,
-  source: RawRoute["source"],
+  loader: RawRoute["loader"],
   layouts: RawRoute["layouts"],
 ): RawRoute => {
   const path = `${base}/${pathPattern}`.replace(/\/+/g, "/");
@@ -142,35 +185,12 @@ export const createRoute = (
     regexp,
     pathSegments: name.includes("...")
       ? undefined
-      : name.replace(/^index\/?/, "").split("/").length,
+      : name.replace(/^index(\/?|$)/, "").split("/").length,
     extractParams: (path) => {
       const match = matcher(path);
       return match ? match.params : {};
     },
-    source,
+    loader,
     layouts,
   };
-};
-
-export const renderHead = (frontmatter: Route["frontmatter"] | undefined) => {
-  const tags: Array<string> = [];
-
-  if (typeof frontmatter?.title === "string") {
-    tags.push(`<title>${frontmatter.title}</title>`);
-  }
-
-  if (typeof frontmatter?.description === "string") {
-    tags.push(`<meta name="description" content="${frontmatter.description}">`);
-  }
-
-  if (Array.isArray(frontmatter?.head)) {
-    for (const [tag, attrs] of frontmatter.head) {
-      const attrStr = Object.entries(attrs)
-        .map(([k, v]) => `${k}="${v}"`)
-        .join(" ");
-      tags.push(`<${tag} ${attrStr}>`);
-    }
-  }
-
-  return tags.join("\n");
 };

@@ -1,7 +1,11 @@
-import { defaults, type PageRoute, type ResolvedEntry } from "@kosmojs/core";
-import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   createTemplateResolver,
+  defaults,
+  type PageRoute,
+  type ResolvedEntry,
+} from "@kosmojs/core";
+import { routeRenderHelpers } from "@kosmojs/core/generators";
+import {
   defineGeneratorFactory,
   pathResolver,
   renderFactory,
@@ -138,9 +142,9 @@ export default defineGeneratorFactory<Options>(
         for (const [file, template] of [
           ["pages/404.mdx", templates.srcPageSamples404],
           ["components/Link.tsx", templates.srcComponentsLink],
-          ["components/mdx.tsx", templates.srcComponentsMdx],
+          ["components/mdx.ts", templates.srcComponentsMdx],
           ["App.mdx", templates.srcApp],
-          ["router.tsx", templates.srcRouter],
+          ["router.ts", templates.srcRouter],
         ] as const) {
           await deploySrcFile(
             createPath.src(file),
@@ -165,8 +169,8 @@ export default defineGeneratorFactory<Options>(
         );
 
         for (const [file, template] of [
-          ["client.tsx", templates.srcEntryClient],
-          ["server.tsx", templates.srcEntryServer],
+          ["client.ts", templates.srcEntryClient],
+          ["server.ts", templates.srcEntryServer],
         ]) {
           await deploySrcFile(
             createPath.entry(file),
