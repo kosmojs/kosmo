@@ -3,7 +3,8 @@ import { afterAll, beforeAll, describe, it } from "vitest";
 
 import { defaults } from "@kosmojs/core";
 
-import { routes, setupTestProject } from "../setup";
+import { routes } from "../@fixtures/generic/routes";
+import { setupTestProject } from "../setup";
 
 // Generate template from test cases
 const navigationLinks = routes.map(({ id, name, params, label }) => {
@@ -39,7 +40,7 @@ const {
   teardown,
 } = await setupTestProject({
   framework: "react",
-  frameworkOptions: {
+  react: {
     templates: {
       navigation: navigationTemplate,
     },

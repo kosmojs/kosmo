@@ -5,35 +5,34 @@ import { dirname, resolve } from "node:path";
 
 import { serve } from "@hono/node-server";
 import crc from "crc/crc32";
-import got, { type Response } from "got";
+import got from "got";
 import { createJiti } from "jiti";
-import { compile } from "path-to-regexp";
 import { chromium } from "playwright";
 import { inject } from "vitest";
 
 import { createProject, createSourceFolder } from "@kosmojs/cli";
-import type {
+import {
   BACKEND_FRAMEWORKS,
-  FRAMEWORKS,
-  ProjectSettings,
-  SourceFolder,
+  type FRAMEWORKS,
+  type ProjectSettings,
+  type SourceFolder,
 } from "@kosmojs/core";
 import chassis from "@kosmojs/dev/chassis";
+import { pathResolver } from "@kosmojs/lib";
+
 import {
-  createPathPattern,
-  pathResolver,
-  pathTokensFactory,
-} from "@kosmojs/lib";
+  contentPatternFor,
+  createRoutePath,
+  env,
+  exec,
+  installDependencies,
+} from ".";
 
-import { env, exec, installDependencies } from ".";
-import type { RouteName } from "./routes";
+const mode = inject("MODE");
 
-const csr = inject("CSR");
-const ssr = inject("SSR");
-
-const browser = csr
-  ? await chromium.launch({ headless: !process.env.DEBUG })
-  : undefined;
+const browser = await chromium.launch({
+  headless: process.env.DEBUG !== "browser",
+});
 
 const apiClient = got.extend({
   retry: {
@@ -46,24 +45,22 @@ const apiClient = got.extend({
 
 const PORT_RANGE = [40_000, 60_000];
 
-export * from "./routes";
-
-export const setupTestProject = async (opt?: {
+export const setupTestProject = async ({
+  framework,
+  backend = mode === "ssr" ? pickBackend() : undefined,
+  ...generatorOptions
+}: {
   framework?: keyof typeof FRAMEWORKS;
-  frameworkOptions?: Record<string, unknown>;
   backend?: keyof typeof BACKEND_FRAMEWORKS;
-  skip?: (a: { ssr: boolean; csr: boolean }) => boolean;
-}) => {
-  const { framework, frameworkOptions, backend } = { ...opt };
-
-  const skip = opt?.skip //
-    ? opt.skip({ csr, ssr })
-    : false;
-
+} & Partial<
+  Record<
+    keyof typeof FRAMEWORKS | keyof typeof BACKEND_FRAMEWORKS | "ssr",
+    Record<string, unknown>
+  >
+>) => {
   const devPort = await findFreePort();
   const baseURL = `http://localhost:${devPort}`;
-
-  const tempDir = skip ? "" : await mkdtemp(resolve(tmpdir(), ".kosmojs-"));
+  const tempDir = await mkdtemp(resolve(tmpdir(), ".kosmojs-"));
 
   const projectName = "app";
   const projectRoot = resolve(tempDir, projectName);
@@ -88,9 +85,7 @@ export const setupTestProject = async (opt?: {
   let closeServer: () => Promise<void> | undefined;
 
   const cleanup = async () => {
-    if (!skip) {
-      await rm(tempDir, { recursive: true, force: true });
-    }
+    await rm(tempDir, { recursive: true, force: true });
   };
 
   const { createPath, createImport } = pathResolver(sourceFolder);
@@ -154,29 +149,8 @@ export const setupTestProject = async (opt?: {
     await writeFile(filePath, templateBuilder());
   };
 
-  const createRoutePath = (
-    routeName: string,
-    params: Record<string, unknown> | undefined,
-  ) => {
-    const pathTokens = pathTokensFactory(routeName);
-    const pathPattern = createPathPattern(pathTokens);
-    const toPath = compile(pathPattern);
-    return toPath({ ...params } as never);
-  };
-
   const createDevServer = async () => {
-    if (ssr) {
-      const { createApp } = await import(createPath.distDir("ssr/server.js"));
-
-      const app = await createApp();
-      const server = serve({ fetch: app.fetch, port: devPort });
-
-      return async () => {
-        server.close();
-      };
-    }
-
-    if (backend) {
+    if (mode === "backend") {
       const app = await jiti.import<{ fetch: never; listen: Function }>(
         createPath.distDir("api/app.js"),
         { default: true },
@@ -192,29 +166,43 @@ export const setupTestProject = async (opt?: {
       };
     }
 
-    const config = await jiti.import<SourceFolder["config"]>(
-      createPath.src("kosmo.config.ts"),
-      { default: true },
-    );
+    if (mode === "ssr") {
+      const { createApp } = await import(createPath.distDir("ssr/server.js"));
 
-    const teardown = await chassis({
-      ...projectSettings,
-      sourceFolders: [
-        {
-          ...sourceFolder,
-          config,
-        },
-      ],
-    });
+      const app = await createApp();
+      const server = serve({ fetch: app.fetch, port: devPort });
 
-    return teardown;
-  };
-
-  const bootstrapProject = async () => {
-    if (skip) {
-      return;
+      return async () => {
+        server.close();
+      };
     }
 
+    if (mode === "csr") {
+      const config = await jiti.import<SourceFolder["config"]>(
+        createPath.src("kosmo.config.ts"),
+        { default: true },
+      );
+
+      const teardown = await chassis({
+        ...projectSettings,
+        sourceFolders: [
+          {
+            ...sourceFolder,
+            config,
+          },
+        ],
+      });
+
+      return teardown;
+    }
+
+    throw new Error(`Unknown mode ${mode}`);
+  };
+
+  const bootstrapProject = async (opt?: {
+    dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>;
+  }) => {
     await cleanup();
 
     const pkgsDir = resolve(import.meta.dirname, "../../packages");
@@ -224,47 +212,46 @@ export const setupTestProject = async (opt?: {
       { name: projectName, devPort },
       {
         dependencies: {
+          ...opt?.dependencies,
           "@kosmojs/core": `${pkgsDir}/core`,
         },
         devDependencies: {
+          ...opt?.devDependencies,
           "@kosmojs/dev": `${pkgsDir}/dev`,
           "@kosmojs/cli": `${pkgsDir}/cli`,
         },
       },
     );
 
-    createSourceFolder(
+    await createSourceFolder(
       projectRoot,
       {
         name: sourceFolder.name,
         base: sourceFolder.config.base,
-        ...(backend ? { backend } : {}),
         ...(framework ? { framework } : {}),
-        ...(ssr ? { ssr: true } : {}),
+        ...(backend ? { backend } : {}),
+        ssr: mode === "ssr",
       },
-      frameworkOptions ? { [framework as never]: frameworkOptions } : {},
+      generatorOptions,
     );
 
     await installDependencies(projectRoot);
   };
 
-  const defaultContentPatternFor = (route: string) => {
-    return new RegExp(`data-page-route="${route.replace(/[[\]]/g, "\\$&")}"`);
-  };
-
-  const withPageContent = async (
-    routeName: RouteName,
-    paramsOrPath: Record<string, unknown> | string,
-    callback?: (a: {
-      path: string;
-      content: string;
-      defaultContentPattern: RegExp;
-    }) => void | Promise<void>,
+  const withPageContent = async <
+    T extends
+      | string
+      | [route: string, params?: Record<string, unknown> | undefined],
+  >(
+    pathSource: T,
+    opts?: {
+      headers?: Record<string, string> | undefined;
+      cookies?: Record<string, string> | undefined;
+    },
   ) => {
-    const path =
-      typeof paramsOrPath === "string"
-        ? paramsOrPath
-        : createRoutePath(routeName, paramsOrPath);
+    const path = Array.isArray(pathSource)
+      ? createRoutePath(pathSource[0], pathSource[1])
+      : pathSource;
 
     const url =
       path === ""
@@ -276,69 +263,73 @@ export const setupTestProject = async (opt?: {
     let maybeContent: string | undefined;
 
     if (browser) {
-      const context = await browser.newContext();
+      const context = await browser.newContext({
+        extraHTTPHeaders: { ...opts?.headers },
+      });
+
+      if (opts?.cookies) {
+        await context.addCookies(
+          Object.entries(opts.cookies).map(([name, value]) => ({
+            name,
+            value,
+            url: baseURL,
+          })),
+        );
+      }
+
       const page = await context.newPage();
 
       await page.goto(url);
       await page.waitForLoadState("networkidle");
 
       // Wait for page content to be rendered
-      await page.waitForSelector("body:has-text('')", {
-        timeout: 3_000,
-      });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       maybeContent = await page.content();
 
-      await page.close();
+      process.env.DEBUG === "browser" //
+        ? await page.pause()
+        : await page.close();
     } else {
       maybeContent = await apiClient(url).text();
     }
 
-    const content = maybeContent ?? "";
+    const content =
+      framework === "solid"
+        ? (maybeContent?.replace(/\s+data-hk="[^"]*"/g, "") ?? "")
+        : (maybeContent ?? "");
 
-    const data = {
+    return {
       path,
       content,
-      defaultContentPattern: defaultContentPatternFor(routeName),
+      contentPattern: Array.isArray(pathSource)
+        ? contentPatternFor(pathSource[0])
+        : /========================/,
     };
-
-    await callback?.(data);
-
-    return data;
   };
 
-  const withApiResponse = async (
-    routeName: string,
-    params?: Record<string, unknown>,
-    callback?: (a: {
-      path: string;
-      response: Response;
-    }) => void | Promise<void>,
+  const withApiResponse = async <
+    T extends
+      | string
+      | [route: string, params?: Record<string, unknown> | undefined],
+  >(
+    pathSource: T,
   ) => {
-    const path = createRoutePath(routeName, { ...params });
-
+    const path = Array.isArray(pathSource)
+      ? createRoutePath(pathSource[0], pathSource[1])
+      : pathSource;
     const url = `${baseURL}/api/${path}`;
-
     const response = await apiClient(url);
-
-    await callback?.({ path, response });
-
-    return response;
+    return { response };
   };
 
   return {
-    skip,
     projectRoot,
     sourceFolder,
     withPageContent,
     withApiResponse,
-    defaultContentPatternFor,
     bootstrapProject,
     async startServer() {
-      if (skip) {
-        return;
-      }
-
       await installDependencies(projectRoot);
 
       await exec("pnpm", ["build"], { cwd: projectRoot, env });
@@ -363,20 +354,16 @@ export const setupTestProject = async (opt?: {
       routes: Array<{ name: string; file?: string }>,
       templateFactory?: PageTemplateFactory,
     ) {
-      if (!skip) {
-        for (const { name, file = "index" } of routes) {
-          await createPageRoute(name, file, templateFactory);
-        }
+      for (const { name, file = "index" } of routes) {
+        await createPageRoute(name, file, templateFactory);
       }
     },
     async createApiRoutes(
       routes: Array<{ name: string; file?: string }>,
       templateFactory?: ApiTemplateFactory,
     ) {
-      if (!skip) {
-        for (const { name, file = "index" } of routes) {
-          await createApiRoute(name, file, templateFactory);
-        }
+      for (const { name, file = "index" } of routes) {
+        await createApiRoute(name, file, templateFactory);
       }
     },
     async teardown() {
@@ -427,6 +414,19 @@ const findFreePort = async (): Promise<number> => {
 
   return result;
 };
+
+const createBackendPicker = () => {
+  const backends = Object.keys(BACKEND_FRAMEWORKS) as Array<
+    keyof typeof BACKEND_FRAMEWORKS
+  >;
+  let i = 0;
+  return {
+    pick: () => backends[i++ % backends.length],
+    reset: () => (i = 0),
+  };
+};
+
+const { pick: pickBackend } = createBackendPicker();
 
 const isPortFree = (port: number): Promise<boolean> => {
   return new Promise((resolve) => {

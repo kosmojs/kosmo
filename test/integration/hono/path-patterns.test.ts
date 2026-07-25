@@ -2,7 +2,8 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 import { pathResolver } from "@kosmojs/lib";
 
-import { apiRoutes, setupTestProject } from "../setup";
+import { apiRoutes } from "../@fixtures/generic/routes";
+import { setupTestProject } from "../setup";
 
 const {
   sourceFolder,
@@ -11,7 +12,9 @@ const {
   withApiResponse,
   startServer,
   teardown,
-} = await setupTestProject({ backend: "hono" });
+} = await setupTestProject({
+  backend: "hono",
+});
 
 const { createImport } = pathResolver(sourceFolder);
 
@@ -45,9 +48,8 @@ describe("path patterns", async () => {
   for (const [route, variants] of Object.entries(apiRoutes)) {
     for (const params of variants) {
       test(`${route} | ${JSON.stringify(Object.values(params))}`, async () => {
-        await withApiResponse(route, params, ({ response }) => {
-          expect(JSON.parse(response.body as never)).toEqual({ route, params });
-        });
+        const { response } = await withApiResponse([route, params]);
+        expect(JSON.parse(response.body as never)).toEqual({ route, params });
       });
     }
   }

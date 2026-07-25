@@ -2,12 +2,8 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 import { pathResolver } from "@kosmojs/lib";
 
-import {
-  nestedRoutes,
-  type RouteName,
-  setupTestProject,
-  snapshotNameFor,
-} from "../setup";
+import { nestedRoutes, type RouteName } from "../@fixtures/generic/routes";
+import { setupTestProject, snapshotNameFor } from "../setup";
 
 const apiRoutes: Array<{
   name: RouteName;
@@ -27,7 +23,9 @@ const {
   withApiResponse,
   startServer,
   teardown,
-} = await setupTestProject({ backend: "koa" });
+} = await setupTestProject({
+  backend: "koa",
+});
 
 const { createImport } = pathResolver(sourceFolder);
 
@@ -74,11 +72,10 @@ describe("cascading middleware", async () => {
   )) {
     const snapshotName = snapshotNameFor(name, params);
     test(snapshotName, async () => {
-      await withApiResponse(name, params, async ({ response }) => {
-        await expect(response.body).toMatchFileSnapshot(
-          `../@snapshots/cascading-middleware/${snapshotName}.json`,
-        );
-      });
+      const { response } = await withApiResponse([name, params]);
+      await expect(response.body).toMatchFileSnapshot(
+        `../@snapshots/cascading-middleware/${snapshotName}.json`,
+      );
     });
   }
 });

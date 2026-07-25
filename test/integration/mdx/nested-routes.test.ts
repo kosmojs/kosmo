@@ -1,7 +1,8 @@
 import { load } from "cheerio";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-import { nestedRoutes, setupTestProject, snapshotNameFor } from "../setup";
+import { nestedRoutes } from "../@fixtures/generic/routes";
+import { setupTestProject, snapshotNameFor } from "../setup";
 
 const {
   bootstrapProject,
@@ -35,7 +36,7 @@ describe("MDX - Nested Routes", async () => {
   )) {
     const snapshotName = snapshotNameFor(name, params);
     test(snapshotName, async () => {
-      const { content } = await withPageContent(name, params);
+      const { content } = await withPageContent([name, params]);
       const $ = load(content);
       await expect(
         $("#app").html()?.trim()?.replace("<!--app-html-->", ""),

@@ -1,6 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { routes, setupTestProject } from "../setup";
+import { contentPatternFor } from "..";
+import { routes } from "../@fixtures/generic/routes";
+import { setupTestProject } from "../setup";
 
 const landingContentID = `landing-content-${Date.now()}`;
 const landingContent = `Landing Page Content: [ ${landingContentID} ]`;
@@ -23,13 +25,12 @@ export default () => {
 const {
   bootstrapProject,
   withPageContent,
-  defaultContentPatternFor,
   createPageRoutes,
   startServer,
   teardown,
 } = await setupTestProject({
   framework: "solid",
-  frameworkOptions: {
+  solid: {
     templates: {
       landing: landingTemplate,
       "landing/**/*": landingTemplate,
@@ -49,77 +50,68 @@ afterAll(teardown);
 describe("SolidJS - Custom Templates", async () => {
   describe("Pattern Matching", () => {
     it("should use custom template for matching route pattern", async () => {
-      await withPageContent("landing", {}, ({ content }) => {
-        expect(content).toMatch(landingContent);
-        expect(content, content).toMatch(`data-testid="${landingContentID}"`);
-        expect(content).not.toMatch(defaultContentPatternFor("landing"));
-      });
+      const { content } = await withPageContent(["landing"]);
+      expect(content).toMatch(landingContent);
+      expect(content, content).toMatch(`data-testid="${landingContentID}"`);
+      expect(content).not.toMatch(contentPatternFor("landing"));
     });
 
     it("should use custom template for nested matching route", async () => {
-      await withPageContent("landing/about", {}, ({ content }) => {
-        expect(content).toMatch(landingContent);
-        expect(content).not.toMatch(defaultContentPatternFor("landing/about"));
-      });
+      const { content } = await withPageContent(["landing/about"]);
+      expect(content).toMatch(landingContent);
+      expect(content).not.toMatch(contentPatternFor("landing/about"));
     });
 
     it("should use custom template for glob pattern match", async () => {
-      await withPageContent("marketing/campaigns/summer", {}, ({ content }) => {
-        expect(content).toMatch(marketingContent);
-        expect(content).not.toMatch(
-          defaultContentPatternFor("marketing/campaigns/summer"),
-        );
-      });
+      const { content } = await withPageContent(["marketing/campaigns/summer"]);
+      expect(content).toMatch(marketingContent);
+      expect(content).not.toMatch(
+        contentPatternFor("marketing/campaigns/summer"),
+      );
     });
 
     it("should use default template for non-matching route", async () => {
-      await withPageContent(
+      const { content, contentPattern } = await withPageContent([
         "products/list",
-        {},
-        ({ content, defaultContentPattern }) => {
-          expect(content).toMatch(defaultContentPattern);
-          expect(content).not.toMatch(landingContent);
-          expect(content).not.toMatch(marketingContent);
-        },
-      );
+      ]);
+      expect(content).toMatch(contentPattern);
+      expect(content).not.toMatch(landingContent);
+      expect(content).not.toMatch(marketingContent);
     });
   });
 
   describe("Dynamic Routes with Custom Templates", () => {
     it("should apply custom template to dynamic routes", async () => {
-      await withPageContent(
+      const { content } = await withPageContent([
         "landing/[slug]",
         { slug: "product-a" },
-        ({ content }) => {
-          expect(content).toMatch(landingContent);
-        },
-      );
+      ]);
+      expect(content).toMatch(landingContent);
     });
 
     it("should apply custom template to routes with optional params", async () => {
       // Without optional param
-      await withPageContent("landing/search/{query}", {}, ({ content }) => {
+      {
+        const { content } = await withPageContent(["landing/search/{query}"]);
         expect(content).toMatch(landingContent);
-      });
+      }
 
       // With optional param
-      await withPageContent(
-        "landing/search/{query}",
-        { query: "shoes" },
-        ({ content }) => {
-          expect(content).toMatch(landingContent);
-        },
-      );
+      {
+        const { content } = await withPageContent([
+          "landing/search/{query}",
+          { query: "shoes" },
+        ]);
+        expect(content).toMatch(landingContent);
+      }
     });
 
     it("should apply custom template to routes with splat params", async () => {
-      await withPageContent(
+      const { content } = await withPageContent([
         "landing/docs/{...path}",
         { path: ["guide", "getting-started"] },
-        ({ content }) => {
-          expect(content).toMatch(landingContent);
-        },
-      );
+      ]);
+      expect(content).toMatch(landingContent);
     });
   });
 });

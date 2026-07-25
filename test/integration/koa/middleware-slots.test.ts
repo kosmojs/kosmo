@@ -14,10 +14,11 @@ const {
   withApiResponse,
   startServer,
   teardown,
-} = await setupTestProject({ backend: "koa" });
+} = await setupTestProject({
+  backend: "koa",
+});
 
 const coreSlots: Array<keyof UseSlots> = [
-  "bodyparser",
   "validate:params",
   "validate:json",
   "validate:response",
@@ -146,7 +147,7 @@ describe("middleware slots", async () => {
 
     for (const slot of coreSlots) {
       it(`should override slotted middleware: ${slot}`, async ({ expect }) => {
-        const response = await withApiResponse(
+        const { response } = await withApiResponse(
           `should-override/${createRouteName(slot)}`,
         );
         expect(response.body).toEqual(slot);

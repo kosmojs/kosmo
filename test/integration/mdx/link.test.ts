@@ -3,7 +3,8 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { defaults } from "@kosmojs/core";
 
-import { routes, setupTestProject } from "../setup";
+import { routes } from "../@fixtures/generic/routes";
+import { setupTestProject } from "../setup";
 
 // Generate template from test cases
 const navigationLinks = routes.map(({ id, name, params, label }) => {
@@ -36,7 +37,7 @@ const {
   teardown,
 } = await setupTestProject({
   framework: "mdx",
-  frameworkOptions: {
+  mdx: {
     templates: {
       navigation: navigationTemplate,
     },
@@ -53,32 +54,31 @@ afterAll(teardown);
 
 describe("MDX - Link Component", async () => {
   it("should render all links with correct hrefs", async () => {
-    await withPageContent("navigation", {}, async ({ content }) => {
-      // Verify page renders
-      expect(content).toMatch("Navigation Links Test");
-      expect(content).toMatch('data-testid="navigation-page"');
+    const { content } = await withPageContent(["navigation"]);
+    // Verify page renders
+    expect(content).toMatch("Navigation Links Test");
+    expect(content).toMatch('data-testid="navigation-page"');
 
-      const $ = load(content);
+    const $ = load(content);
 
-      // Use Cheerio's selector API to find and verify links
-      for (const link of routes) {
-        const element = $(`a[data-testid="${link.id}"]`);
+    // Use Cheerio's selector API to find and verify links
+    for (const link of routes) {
+      const element = $(`a[data-testid="${link.id}"]`);
 
-        // Verify link exists (Cheerio doesn't have visibility concept)
-        expect(element.length).toEqual(1);
+      // Verify link exists (Cheerio doesn't have visibility concept)
+      expect(element.length).toEqual(1);
 
-        // Verify href attribute
-        const href = element.attr("href");
-        expect(href).toEqual(link.href);
+      // Verify href attribute
+      const href = element.attr("href");
+      expect(href).toEqual(link.href);
 
-        // Verify text content
-        const text = element.text().trim(); // trim() removes whitespace
-        expect(text).toEqual(link.label);
-      }
+      // Verify text content
+      const text = element.text().trim(); // trim() removes whitespace
+      expect(text).toEqual(link.label);
+    }
 
-      // Verify total link count
-      const allLinks = $("a");
-      expect(allLinks.length).toEqual(routes.length);
-    });
+    // Verify total link count
+    const allLinks = $("a");
+    expect(allLinks.length).toEqual(routes.length);
   });
 });
