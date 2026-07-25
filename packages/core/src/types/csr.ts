@@ -1,6 +1,6 @@
 type CSRSetup = {
-  mount: () => void | Promise<void>;
-  hydrate: () => void | Promise<void>;
+  hydrate: () => Promise<unknown>;
+  mount: () => Promise<unknown>;
 };
 
 export type CSRFactory = (factory: () => CSRSetup) => void;

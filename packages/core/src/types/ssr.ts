@@ -1,112 +1,124 @@
 import type { StreamingApi } from "hono/utils/stream";
 import type { Manifest } from "vite";
-/**
- * SSR environment options passed to user-defined
- * renderToString / renderToStream functions.
- * */
-export type SSROptions = {
-  // The original client index.html output from Vite build.
-  // Contains <!--app-head--> and <!--app-html--> placeholders
-  // where SSR content should be injected.
-  template: string;
-
-  // Vite's final manifest.json - the full dependency graph for
-  // client modules, dynamic imports, and related CSS.
-  manifest: Manifest;
-
-  // SSR-related assets, must be injected manually (unlike CSR assets that are injected by Vite).
-  // Each entry provides three ways to consume the asset:
-  //   - `tag`: ready-to-use HTML tag (<script> or <link>) for direct injection
-  //   - `path`: asset URL for building custom tags with additional attributes
-  //   - `content`: raw file contents for inlining as <style> or inline <script>
-  // `size` is included for Content-Length or preload hints.
-  assets: Array<{
-    kind: "js" | "css";
-    tag: string;
-    content: string;
-    size?: number;
-    path?: string;
-  }>;
-};
-
-/**
- * Return type for string-based SSR rendering.
- * - `head` is optional, user may choose to supply additional <meta>/<link>/<style> tags.
- * - `html` is the main server-rendered body markup for hydration.
- * */
-export type SSRStringReturn = {
-  head?: string;
-  html: string;
-};
 
 /**
  * SSR string mode
  *
- * Returns head + html, synchronously or async.
+ * Returns head + html
  *
  * The server will:
  * - insert returned `head` into the HTML template
  * - place returned `html` into the body placeholder
  * */
-export type SSRString = (url: URL, opt: SSROptions) => Promise<SSRStringReturn>;
+export type RenderToStringOptions = {
+  /**
+   * The original client index.html output from Vite build.
+   * Contains <!--app-head--> and <!--app-html--> placeholders
+   * where SSR content is injected by the server.
+   * */
+  template: string;
+
+  /**
+   * Vite's final manifest.json - the full dependency graph for
+   * client modules, dynamic imports, and related CSS.
+   * */
+  manifest: Manifest;
+
+  /**
+   * SSR-related assets, must be injected manually (unlike CSR assets that are injected by Vite).
+   * Each entry provides ways to consume the asset:
+   *   - `tag`: ready-to-use HTML tag (<script> or <link>) for direct injection
+   *   - `content`: raw file contents for inlining as <style> or inline <script>
+   *   - `path`: asset URL for building custom tags with additional attributes.
+   *     Optional - some assets are content-only (eg. an inlined script or style)
+   *     and have no standalone URL.
+   * `size` is included for Content-Length or preload hints.
+   * */
+  assets: Array<{
+    kind: "js" | "css";
+    tag: string;
+    content: string;
+    size: number;
+    path?: string;
+  }>;
+};
+
+export type RenderToStringReturn = {
+  // used to supply additional <meta>/<link>/<style> tags.
+  head?: string;
+  // html is the main server-rendered body markup for hydration.
+  html: string;
+};
+
+export type RenderToString = (
+  url: URL,
+  opt: RenderToStringOptions,
+) => Promise<RenderToStringReturn>;
+
+export type RenderToStringWrapperOptions<
+  //
+  T extends object | undefined = {},
+> = ([T] extends [undefined] ? {} : T) & {
+  headerTags?: Array<string>;
+  context?: Record<string, unknown>;
+};
+
+export type RenderToStringWrapper<T, O extends object | undefined = {}> = (
+  r: T,
+  o: RenderToStringWrapperOptions<O>,
+) => Promise<RenderToStringReturn>;
 
 /**
  * SSR stream mode
  *
- * Writes directly to the HTTP response.
+ * The renderer returns the rendered app as a ReadableStream; the server
+ * writes the opening HTML (with `head` injected), pipes `html` into the
+ * response, then writes the closing HTML and ends the stream.
  *
- * Responsibility of the user/render function:
- * - insert head at the correct time (before first flush)
- * - manage partial flushing, suspense boundaries, etc.
- *
- * The server will NOT modify the response body in this mode,
- * thus the renderer **must call `response.end()`** when streaming is finished,
- * otherwise the HTTP request will remain open and the client will hang.
+ * The renderer does NOT write to the response or close it - `stream` is
+ * passed only as an escape hatch for advanced cases (custom flushing,
+ * interleaved writes, framework-specific streaming strategies).
  * */
-export type SSRStream = (
+export type RenderToStreamOptions = RenderToStringOptions;
+
+export type RenderToStreamReturn = {
+  // used to supply additional <meta>/<link>/<style> tags.
+  head?: string;
+  // html is the framework's rendered app stream, piped into the response
+  // between the opening and closing HTML.
+  html: ReadableStream;
+};
+
+export type RenderToStream = (
   url: URL,
-  opt: SSROptions,
+  opt: RenderToStringOptions,
   stream: StreamingApi,
-) => Promise<void>;
+) => Promise<RenderToStreamReturn>;
 
-/**
- * A fetch exchange captured during SSR, to be embedded in the HTML
- * and replayed by the hydrating client instead of re-fetching.
- * */
-export type SSRSerializedFetch = {
-  key: string;
-  status: number;
-  statusText: string;
-  headers: Array<[string, string]>;
-  body: string | null;
-};
+export type RenderToStreamWrapperOptions<
+  //
+  T extends object | undefined = {},
+> = RenderToStringWrapperOptions<T>;
 
-export type SSRRequestContext = {
-  headers?: HeadersInit;
-  dehydrated?: Array<SSRSerializedFetch>;
-};
+export type RenderToStreamWrapper<T, O extends object | undefined = {}> = (
+  r: T,
+  o: RenderToStreamWrapperOptions<O>,
+) => Promise<RenderToStreamReturn>;
 
 /**
  * Default exported object from the SSR entry module (e.g. entry/server.ts).
  * */
-export type SSRSetup = {
-  /**
-   * Renders the matched route to a complete HTML string.
-   *
-   * Required - used in both dev and production:
-   * - Dev: always used (streaming is not supported in Vite middleware mode).
-   * - Production: used when no `renderToStream` provided.
-   * */
-  renderToString: SSRString;
+export type SSRSetup<StreamImplementationRequired extends boolean = true> = {
+  renderToString: RenderToString;
+} & (StreamImplementationRequired extends true
+  ? { renderToStream: RenderToStream }
+  : {});
 
-  /**
-   * Renders the matched route as a progressive HTML stream.
-   *
-   * Optional - production only. When provided, takes precedence over
-   * `renderToString` for improved Time-to-First-Byte (TTFB) by flushing
-   * HTML chunks as they become available. Ignored in dev mode.
-   * */
-  renderToStream?: SSRStream;
-};
+export type SSRFactory<StreamImplementationRequired extends boolean = true> = (
+  factory: () => SSRSetup<StreamImplementationRequired>,
+) => SSRSetup<StreamImplementationRequired>;
 
-export type SSRFactory = (factory: () => SSRSetup) => SSRSetup;
+export type SSRRenderWrapper = <T>(
+  context: { headers?: HeadersInit; url?: string },
+  render: () => T,
+) => T;

@@ -1,4 +1,9 @@
-import type { CSRFactory, PageRoute, SSRFactory } from "../types";
+import type {
+  CSRFactory,
+  PageRoute,
+  RouterFactoryReturn,
+  SSRFactory,
+} from "../types";
 
 export const routeRenderHelpers = () => {
   return {
@@ -35,32 +40,47 @@ export const routeRenderHelpers = () => {
   };
 };
 
-export const createRouterFactory = <RouteT, ReturnT>() => {
+export const createRouterFactory = <
+  RouteT,
+  ComponentT,
+  OptionsT extends {
+    client?: Record<string, unknown>;
+    server?: Record<string, unknown>;
+  } = {},
+  ClientReturnT = RouterFactoryReturn<
+    ComponentT,
+    OptionsT extends { client: object } ? OptionsT["client"] : {}
+  >,
+  ServerReturnT = RouterFactoryReturn<
+    ComponentT,
+    OptionsT extends { server: object } ? OptionsT["server"] : {}
+  >,
+>() => {
   return (
     factory: (routes: Array<RouteT>) => {
-      clientRouter: (url?: URL) => ReturnT;
-      serverRouter: (url: URL) => ReturnT;
+      clientRouter: () => ClientReturnT;
+      serverRouter: (url: URL) => ServerReturnT;
     },
   ) => factory;
 };
 
-export const serverRenderFactory: () => SSRFactory = () => {
+export const serverRenderFactory: <
+  StreamImplementationRequired extends boolean = true,
+>() => SSRFactory<StreamImplementationRequired> = () => {
   return (factory) => factory();
 };
 
 export const clientRenderFactory: () => CSRFactory = () => {
   return async (factory) => {
     const methods = factory();
-    if (window.__KOSMO_HYDRATABLE__) {
+    if (window.__KOSMO_HYDRATION_BOOL__) {
       if (typeof methods.hydrate === "function") {
-        // NOTE: it can be async for some frameworks (react, vue)
         await methods.hydrate();
       } else {
         console.error("❌ `hydrate` method is required in entry/client");
       }
     } else {
       if (typeof methods.mount === "function") {
-        // NOTE: it can be async for some frameworks (react, vue)
         await methods.mount();
       } else {
         console.error("❌ `mount` method is required in entry/client");
