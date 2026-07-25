@@ -1,14 +1,16 @@
-import { lazy } from "solid-js";
+import { lazy, type JSX } from "solid-js";
+import { hydrate as hydrateOrig, render } from "solid-js/web";
+import type { RouterFactoryReturn } from "@kosmojs/core";
 import { clientRenderFactory } from "@kosmojs/core/generators";
 
 import { loaderFactory } from "../solid";
 
 {{#each pageEntries}}
-const {{id}}_component = lazy(() => import("{{ createImport "pages" file }}"));
-const {{id}}_loader = () => import("{{ createImport "pages" file }}");
+const {{id}}_component = lazy(() => import("{{ createImport 'pages' file }}"));
+const {{id}}_loader = () => import("{{ createImport 'pages' file }}");
 {{/each}}
 
-const NotFound = lazy(() => import("{{ createImport "pages" "404.tsx" }}"));
+const NotFound = lazy(() => import("{{ createImport 'pages' '404.tsx' }}"));
 
 export const createRoutes = (opt?: { withPreload?: boolean }) => {
   const maybeLoader = loaderFactory(opt);
@@ -21,6 +23,23 @@ export const createRoutes = (opt?: { withPreload?: boolean }) => {
       component: NotFound,
     },
   ];
+}
+
+export const hydrate = async (
+  resolver: () => RouterFactoryReturn<JSX.Element>,
+  root: HTMLElement,
+  opts?: Parameters<typeof hydrateOrig>[2],
+) => {
+  hydrateOrig(() => resolver().component, root, opts);
+}
+
+export const mount = async (
+  resolver: () => RouterFactoryReturn<JSX.Element>,
+  root: HTMLElement,
+  init?: Parameters<typeof render>[2],
+  opts?: Parameters<typeof render>[3],
+) => {
+  render(() => resolver().component, root, init, opts);
 }
 
 export default clientRenderFactory();

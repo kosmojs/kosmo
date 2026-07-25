@@ -1,6 +1,9 @@
-import { hydrate, render } from "solid-js/web";
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "{{ createImport 'libEntry' 'client' }}";
 
-import renderFactory, { createRoutes } from "{{ createImport 'libEntry' 'client' }}";
 import routerFactory from "../router";
 
 const routes = createRoutes({ withPreload: true });
@@ -11,11 +14,11 @@ const root = document.getElementById("app");
 if (root) {
   renderFactory(() => {
     return {
-      mount() {
-        render(() => clientRouter(), root);
-      },
       hydrate() {
-        hydrate(() => clientRouter(), root)
+        return hydrate(() => clientRouter(), root)
+      },
+      mount() {
+        return mount(() => clientRouter(), root);
       },
     }
   });

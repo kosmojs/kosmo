@@ -6,7 +6,7 @@ export { default as libPageSamples404 } from "#templates/lib/pageSamples/404.hbs
 export { default as libPageSamplesPage } from "#templates/lib/pageSamples/page.hbs";
 export { default as libPageSamplesStyles } from "#templates/lib/pageSamples/styles.css";
 export { default as libPageSamplesWelcome } from "#templates/lib/pageSamples/welcome.hbs";
-export { default as libRouter } from "#templates/lib/router.hbs";
+export { default as libRouter } from "#templates/lib/router";
 export { default as libSolid } from "#templates/lib/solid";
 export { default as libUnwrap } from "#templates/lib/unwrap";
 export { default as srcApp } from "#templates/src/App";

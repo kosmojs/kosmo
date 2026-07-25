@@ -1,14 +1,31 @@
+import type { JSX } from "solid-js";
+
+import {
+  generateHydrationScript,
+  renderToStringAsync,
+  renderToStream as renderToStreamOrig,
+} from "solid-js/web";
+
+import { provideRequestEvent } from "solid-js/web/storage";
+
+import type {
+  RenderToStringWrapper,
+  RenderToStreamWrapper,
+  RouterFactoryReturn,
+  SSRRenderWrapper,
+} from "@kosmojs/core";
+
 import { serverRenderFactory } from "@kosmojs/core/generators";
 
 import { loaderFactory } from "../solid";
 
 {{#each pageEntries}}
-import * as {{id}} from "{{ createImport "pages" file }}";
+import * as {{id}} from "{{ createImport 'pages' file }}";
 const {{id}}_component = {{id}}.default;
 const {{id}}_loader = async () => {{id}};
 {{/each}}
 
-import NotFound from "{{ createImport "pages" "404.tsx" }}";
+import NotFound from "{{ createImport 'pages' '404.tsx' }}";
 
 export const createRoutes = (opt?: { withPreload?: boolean }) => {
   const maybeLoader = loaderFactory(opt);
@@ -23,4 +40,37 @@ export const createRoutes = (opt?: { withPreload?: boolean }) => {
   ];
 }
 
-export default serverRenderFactory();
+export const renderWrapper: SSRRenderWrapper = (context, render) => {
+  const event = {
+    request: new Request(context.url ?? "http://ssr.local", {
+      headers: new Headers(context.headers),
+    }),
+    locals: {},
+  };
+  return provideRequestEvent(event as never, render);
+};
+
+export const renderToString: RenderToStringWrapper<
+  () => RouterFactoryReturn<JSX.Element>,
+  Parameters<typeof renderToStringAsync>[1]
+> = async (resolver, { headerTags = [], ...options } = {}) => {
+  return {
+    head: [...headerTags, generateHydrationScript()].join("\n"),
+    html: await renderToStringAsync(() => resolver().component, options),
+  };
+};
+
+export const renderToStream: RenderToStreamWrapper<
+  () => RouterFactoryReturn<JSX.Element>,
+  Parameters<typeof renderToStreamOrig>[1]
+> = async (resolver, { headerTags = [], ...options } = {}) => {
+  const stream = renderToStreamOrig(() => resolver().component, options);
+  const { readable, writable } = new TransformStream<string, string>();
+  stream.pipeTo(writable);
+  return {
+    head: [...headerTags, generateHydrationScript()].join("\n"),
+    html: readable,
+  };
+};
+
+export default serverRenderFactory<true>();
