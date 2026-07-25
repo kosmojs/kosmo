@@ -50,9 +50,9 @@ const TPL_DIR = resolve(import.meta.dirname, "templates");
 
 const SELF_VERSION = `^${self.version}`;
 
-type FrameworkOptions = Partial<
+type GeneratorOptions = Partial<
   Record<
-    keyof typeof FRAMEWORKS | keyof typeof BACKEND_FRAMEWORKS,
+    keyof typeof FRAMEWORKS | keyof typeof BACKEND_FRAMEWORKS | "ssr",
     Record<string, unknown>
   >
 >;
@@ -113,7 +113,7 @@ export const createProject = async (
 export const createSourceFolder = async (
   projectRoot: string,
   folder: SourceFolder,
-  options?: FrameworkOptions,
+  generatorOptions?: GeneratorOptions,
 ) => {
   const folderPath = resolve(projectRoot, defaults.srcDir, folder.name);
 
@@ -136,7 +136,10 @@ export const createSourceFolder = async (
 
   const framework = folder.framework || DEFAULT_FRAMEWORK;
 
-  const [kosmoConfig, { generators }] = createKosmoConfig(folder, options);
+  const [kosmoConfig, { generators }] = createKosmoConfig(
+    folder,
+    generatorOptions,
+  );
 
   await writeFile(resolve(folderPath, "kosmo.config.ts"), kosmoConfig, "utf8");
 
@@ -147,7 +150,7 @@ export const createSourceFolder = async (
     ...(["solid", "react"].includes(framework as never)
       ? [
           `${defaults.pagesDir}/index/index.tsx`,
-          `${defaults.entryDir}/client.tsx`,
+          `${defaults.entryDir}/client.ts`,
         ]
       : []),
     ...(["vue"].includes(framework as never)
@@ -159,7 +162,7 @@ export const createSourceFolder = async (
     ...(["mdx"].includes(framework as never)
       ? [
           `${defaults.pagesDir}/index/index.mdx`,
-          `${defaults.entryDir}/client.tsx`,
+          `${defaults.entryDir}/client.ts`,
         ]
       : []),
   ] as const) {
@@ -189,7 +192,7 @@ export const createSourceFolder = async (
 
 export const createKosmoConfig = (
   folder: SourceFolder,
-  options?: FrameworkOptions,
+  generatorOptions?: GeneratorOptions,
 ) => {
   const imports: Array<string> = [];
 
@@ -205,26 +208,29 @@ export const createKosmoConfig = (
     backend = DEFAULT_BACKEND,
   } = folder;
 
-  const generatorOptions = options?.[(framework as never) || backend]
-    ? JSON.stringify(options[(framework as never) || backend], undefined, 2)
-    : "";
+  const options = Object.entries({
+    ...generatorOptions,
+  }).reduce<Record<string, string>>((map, [key, val]) => {
+    map[key] = JSON.stringify(val);
+    return map;
+  }, {});
 
   if (framework === "solid") {
     generators.push({
       name: "solidGenerator",
-      options: generatorOptions,
+      options: options[framework],
       meta: solidGenerator().meta,
     });
   } else if (framework === "react") {
     generators.push({
       name: "reactGenerator",
-      options: generatorOptions,
+      options: options[framework],
       meta: reactGenerator().meta,
     });
   } else if (framework === "vue") {
     generators.push({
       name: "vueGenerator",
-      options: generatorOptions,
+      options: options[framework],
       meta: vueGenerator().meta,
     });
   } else if (framework === "mdx") {
@@ -237,8 +243,8 @@ export const createKosmoConfig = (
 
     generators.push({
       name: "mdxGenerator",
-      options: generatorOptions.length
-        ? generatorOptions
+      options: options[framework]
+        ? options[framework]
         : `{ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }`,
       meta: mdxGenerator().meta,
     });
@@ -247,13 +253,13 @@ export const createKosmoConfig = (
   if (backend === "koa") {
     generators.push({
       name: "koaGenerator",
-      options: generatorOptions,
+      options: options[backend],
       meta: koaGenerator().meta,
     });
   } else if (backend === "hono") {
     generators.push({
       name: "honoGenerator",
-      options: generatorOptions,
+      options: options[backend],
       meta: honoGenerator().meta,
     });
   }
@@ -261,7 +267,7 @@ export const createKosmoConfig = (
   if (folder.ssr || folder.ssg) {
     generators.push({
       name: "ssrGenerator",
-      options: "",
+      options: options.ssr,
       meta: ssrGenerator().meta,
     });
   }

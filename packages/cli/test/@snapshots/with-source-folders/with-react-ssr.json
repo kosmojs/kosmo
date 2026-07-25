@@ -6,7 +6,7 @@
     ]
   ],
   [
-    "with-source-folders/src/with-react-ssr/entry/client.tsx",
+    "with-source-folders/src/with-react-ssr/entry/client.ts",
     [
       ""
     ]
