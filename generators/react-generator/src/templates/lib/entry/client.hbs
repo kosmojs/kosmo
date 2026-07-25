@@ -1,14 +1,24 @@
-import { lazy } from "react";
+import { lazy, type JSX } from "react";
+
+import {
+  createRoot,
+  hydrateRoot,
+  type HydrationOptions,
+  type RootOptions,
+} from "react-dom/client";
+
+import type { RouterFactoryReturn } from "@kosmojs/core";
+
 import { clientRenderFactory } from "@kosmojs/core/generators";
 
 import { loaderFactory } from "../react";
 
 {{#each pageEntries}}
-const {{id}}_component = lazy(() => import("{{ createImport "pages" file }}"));
-const {{id}}_loader = () => import("{{ createImport "pages" file }}");
+const {{id}}_component = lazy(() => import("{{ createImport 'pages' file }}"));
+const {{id}}_loader = () => import("{{ createImport 'pages' file }}");
 {{/each}}
 
-const NotFound = lazy(() => import("{{ createImport "pages" "404.tsx" }}"));
+const NotFound = lazy(() => import("{{ createImport 'pages' '404.tsx' }}"));
 
 export const createRoutes = (opt?: { withPreload?: boolean }) => {
   const maybeLoader = loaderFactory(opt);
@@ -21,6 +31,24 @@ export const createRoutes = (opt?: { withPreload?: boolean }) => {
       Component: NotFound,
     },
   ];
+}
+
+export const hydrate = async (
+  resolver: () => RouterFactoryReturn<Promise<JSX.Element>>,
+  root: HTMLElement,
+  options?: HydrationOptions,
+) => {
+  const { component } = await resolver();
+  hydrateRoot(component as never, root as never, options);
+}
+
+export const mount = async (
+  resolver: () => RouterFactoryReturn<Promise<JSX.Element>>,
+  root: HTMLElement,
+  options?: RootOptions,
+) => {
+  const { component } = await resolver();
+  createRoot(root, options).render(component);
 }
 
 export default clientRenderFactory();

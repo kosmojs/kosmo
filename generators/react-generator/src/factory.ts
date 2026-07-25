@@ -1,9 +1,12 @@
 import vitePlugin from "@vitejs/plugin-react";
 
-import { defaults, type ResolvedEntry } from "@kosmojs/core";
-import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   createTemplateResolver,
+  defaults,
+  type ResolvedEntry,
+} from "@kosmojs/core";
+import { routeRenderHelpers } from "@kosmojs/core/generators";
+import {
   defineGeneratorFactory,
   nestedRoutesFactory,
   pathResolver,
@@ -90,7 +93,7 @@ export default defineGeneratorFactory<Options>(
         });
       }
 
-      await deployLibFile(createPath.lib("router.ts"), templates.libRouter, {
+      await deployLibFile(createPath.lib("router.tsx"), templates.libRouter, {
         entries,
         indexRoutes,
       });
@@ -125,7 +128,7 @@ export default defineGeneratorFactory<Options>(
           ["pages/404.tsx", templates.srcPageSamples404],
           ["components/Link.tsx", templates.srcComponentsLink],
           ["App.tsx", templates.srcApp],
-          ["router.tsx", templates.srcRouter],
+          ["router.ts", templates.srcRouter],
         ]) {
           await deploySrcFile(
             createPath.src(file),
@@ -150,8 +153,8 @@ export default defineGeneratorFactory<Options>(
         );
 
         for (const [file, template] of [
-          ["client.tsx", templates.srcEntryClient],
-          ["server.tsx", templates.srcEntryServer],
+          ["client.ts", templates.srcEntryClient],
+          ["server.ts", templates.srcEntryServer],
         ]) {
           await deploySrcFile(
             createPath.entry(file),

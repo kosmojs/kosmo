@@ -1,14 +1,30 @@
+import type { JSX } from "react";
+
+import {
+  renderToString as renderToStringOrig,
+  renderToReadableStream,
+} from "react-dom/server";
+
+import type { StaticHandlerContext } from "react-router";
+
+import type {
+  RenderToStringWrapper,
+  RenderToStreamWrapper,
+  RouterFactoryReturn,
+  SSRRenderWrapper,
+} from "@kosmojs/core";
+
 import { serverRenderFactory } from "@kosmojs/core/generators";
 
 import { loaderFactory } from "../react";
 
 {{#each pageEntries}}
-import * as {{id}} from "{{ createImport "pages" file }}";
+import * as {{id}} from "{{ createImport 'pages' file }}";
 const {{id}}_component = {{id}}.default;
 const {{id}}_loader = async () => {{id}};
 {{/each}}
 
-import NotFound from "{{ createImport "pages" "404.tsx" }}";
+import NotFound from "{{ createImport 'pages' '404.tsx' }}";
 
 export const createRoutes = (opt?: { withPreload?: boolean }) => {
   const maybeLoader = loaderFactory(opt);
@@ -22,5 +38,29 @@ export const createRoutes = (opt?: { withPreload?: boolean }) => {
     },
   ];
 }
+
+export const renderWrapper: SSRRenderWrapper = (_context, render) => render();
+
+export const renderToString: RenderToStringWrapper<
+  () => RouterFactoryReturn<Promise<JSX.Element>>,
+  Parameters<typeof renderToStringOrig>[1]
+> = async (resolver, { headerTags = [], ...options } = {}) => {
+  const { component } = await resolver();
+  return {
+    head: [...headerTags].join("\n"),
+    html: renderToStringOrig(component, options),
+  };
+};
+
+export const renderToStream: RenderToStreamWrapper<
+  () => RouterFactoryReturn<Promise<JSX.Element>>,
+  Parameters<typeof renderToReadableStream>[1]
+> = async (resolver, { headerTags = [], ...options } = {}) => {
+  const { component } = await resolver();
+  return {
+    head: [...headerTags].join("\n"),
+    html: await renderToReadableStream(component, options),
+  };
+};
 
 export default serverRenderFactory();
