@@ -80,13 +80,19 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
           validationTypes.reduce<
             Record<string, Array<(typeof validationTypes)[number]>>
           >((map, { id, target, method, resolvedType }) => {
-            if (target !== "response") {
-              const key = `${target.replace(/^./, (c) => c.toUpperCase())}T`;
-              if (!map[key]) {
-                map[key] = [];
-              }
-              map[key].push({ id, target, method, resolvedType });
+            if (["headers", "cookies", "response"].includes(target)) {
+              // target supposed to be validated on server only
+              return map;
             }
+
+            const key = `${target.replace(/^./, (c) => c.toUpperCase())}T`;
+
+            if (!map[key]) {
+              map[key] = [];
+            }
+
+            map[key].push({ id, target, method, resolvedType });
+
             return map;
           }, {}),
         ).map(([name, types]) => {
