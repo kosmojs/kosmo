@@ -1,13 +1,11 @@
-import qs from "qs";
+import { stringify as stringifier } from "picoquery";
+
+import { querystringOptions } from "#/generic";
 
 import type { HostOpt } from "./types";
 
 export const stringify = (data: Record<string, unknown>) => {
-  return qs.stringify(data, {
-    arrayFormat: "brackets",
-    indices: false,
-    encodeValuesOnly: true,
-  });
+  return stringifier(data, querystringOptions);
 };
 
 export const join = (...args: Array<unknown>): string => {

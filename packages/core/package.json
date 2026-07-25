@@ -34,7 +34,7 @@
     "test": "vitest --root ../.. --project packages/core"
   },
   "dependencies": {
-    "qs": "^6.15.3",
+    "picoquery": "^2.5.0",
     "string-width": "^8.2.2"
   },
   "devDependencies": {
