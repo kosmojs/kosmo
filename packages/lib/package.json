@@ -22,7 +22,7 @@
     "@topcli/spinner": "^4.2.1",
     "crc": "^4.3.2",
     "handlebars": "^4.7.9",
-    "mime-types": "^3.0.2",
+    "mrmime": "^2.0.1",
     "path-to-regexp": "^8.4.2",
     "picomatch": "^4.0.5",
     "tfusion": "^0.2.0",
@@ -31,7 +31,6 @@
   },
   "devDependencies": {
     "@kosmojs/lib": "workspace:^",
-    "@types/mime-types": "^3.0.1",
     "@types/picomatch": "^4.0.3",
     "vite": "^8.1.5"
   }

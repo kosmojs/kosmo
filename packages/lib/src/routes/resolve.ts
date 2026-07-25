@@ -2,7 +2,7 @@ import { dirname, join, resolve } from "node:path";
 import { styleText } from "node:util";
 
 import crc from "crc/crc32";
-import mimeTypes from "mime-types";
+import { lookup } from "mrmime";
 
 import {
   type ApiRoute,
@@ -305,9 +305,9 @@ export const resolverFactory = (
                     return [variant];
                   }
 
-                  const contentType = mimeTypes.lookup(variant.contentType);
+                  const contentType = lookup(variant.contentType);
 
-                  if (contentType === false) {
+                  if (!contentType) {
                     console.warn(
                       styleText(
                         ["bold", "red"],
@@ -332,8 +332,8 @@ export const resolverFactory = (
                 }),
               };
             } else if (def.contentType && !def.contentType.includes("/")) {
-              const contentType = mimeTypes.lookup(def.contentType);
-              if (contentType === false) {
+              const contentType = lookup(def.contentType);
+              if (!contentType) {
                 console.warn(
                   styleText(
                     ["bold", "red"],
