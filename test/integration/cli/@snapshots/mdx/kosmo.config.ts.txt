@@ -2,9 +2,7 @@ import { defineConfig, mdxGenerator } from "@kosmojs/dev";
 
 import frontmatterPlugin from "remark-frontmatter";
 import mdxFrontmatterPlugin from "remark-mdx-frontmatter";
-
 export default defineConfig({
   base: "/mdx",
-  plugins: [],
   generators: [mdxGenerator({ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] })],
 });

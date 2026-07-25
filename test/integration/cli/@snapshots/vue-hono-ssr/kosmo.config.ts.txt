@@ -7,11 +7,8 @@ import {
   typeboxGenerator,
 } from "@kosmojs/dev";
 
-import vuePlugin from "@vitejs/plugin-vue";
-
 export default defineConfig({
   base: "/vue-hono-ssr",
-  plugins: [vuePlugin()],
   generators: [
     vueGenerator(),
     honoGenerator(),

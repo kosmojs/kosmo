@@ -2,6 +2,5 @@ import { defineConfig, koaGenerator, fetchGenerator, typeboxGenerator } from "@k
 
 export default defineConfig({
   base: "/koa",
-  plugins: [],
   generators: [koaGenerator(), fetchGenerator(), typeboxGenerator()],
 });

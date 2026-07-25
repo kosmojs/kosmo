@@ -7,11 +7,8 @@ import {
   typeboxGenerator,
 } from "@kosmojs/dev";
 
-import solidPlugin from "vite-plugin-solid";
-
 export default defineConfig({
   base: "/solid-hono-ssr",
-  plugins: [solidPlugin({ ssr: true })],
   generators: [
     solidGenerator(),
     honoGenerator(),
@@ -19,5 +16,4 @@ export default defineConfig({
     fetchGenerator(),
     typeboxGenerator(),
   ],
-  oxc: { jsx: { importSource: "solid-js" } },
 });

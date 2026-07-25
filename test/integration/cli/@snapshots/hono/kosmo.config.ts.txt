@@ -2,6 +2,5 @@ import { defineConfig, honoGenerator, fetchGenerator, typeboxGenerator } from "@
 
 export default defineConfig({
   base: "/hono",
-  plugins: [],
   generators: [honoGenerator(), fetchGenerator(), typeboxGenerator()],
 });

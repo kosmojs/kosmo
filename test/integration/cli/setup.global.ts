@@ -37,5 +37,5 @@ export default async () => {
     YAML.stringify({ packages: pkgs.map((e) => e.name) }),
   );
 
-  await installDependencies(pkgsDir, ["--prod"]);
+  await installDependencies(pkgsDir);
 };
