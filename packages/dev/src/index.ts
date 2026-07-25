@@ -31,7 +31,7 @@ export const defineConfig: (config: FolderConfig) => SourceFolder["config"] = (
   }
   return {
     ...config,
-    base: join("/", base, "/"),
+    base: join("/", base),
     apiBase: join("/", config.apiBase || DEFAULT_APIBASE),
   };
 };

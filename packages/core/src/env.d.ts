@@ -1,7 +1,5 @@
-declare global {
+export declare global {
   interface Window {
-    __KOSMO_HYDRATABLE__: {}
+    __KOSMO_HYDRATION_BOOL__: {}
   }
 }
-
-export {}

@@ -3,6 +3,7 @@ import { join, resolve } from "node:path";
 
 import { build } from "vite";
 
+import { createRouteResolver } from "@kosmojs/core";
 import {
   defineGeneratorFactory,
   mergeConfigs,
@@ -14,6 +15,9 @@ import {
 
 import * as templates from "./templates";
 import type { Options } from "./types";
+
+const RENDER_MODES = ["string", "stream"] as const;
+const DEFAULT_RENDER_MODE = RENDER_MODES[0];
 
 export default defineGeneratorFactory<Options>(
   (meta, sourceFolder, options) => {
@@ -32,15 +36,36 @@ export default defineGeneratorFactory<Options>(
       options,
 
       async build(entries) {
+        const renderModeResolver = options?.renderMode
+          ? typeof options.renderMode === "string"
+            ? () => options.renderMode
+            : createRouteResolver(options?.renderMode as never, "string")
+          : () => DEFAULT_RENDER_MODE;
+
         const context = {
+          renderMode: JSON.stringify(options?.renderMode || null),
           pageRoutes: entries
-            .flatMap((e) => (e.kind === "pageRoute" ? [e.entry] : []))
+            .flatMap((e) => {
+              return e.kind === "pageRoute"
+                ? [
+                    {
+                      ...e.entry,
+                      renderMode: renderModeResolver(e.entry.name),
+                    },
+                  ]
+                : [];
+            })
             .sort(sortRoutes),
+          apiGenerator: generators.some((e) => e.meta.slot === "api"),
         };
 
         for (const [file, template] of [
-          ["ssr:routes.ts", templates.ssrRotues],
           ["ssr.ts", templates.ssr],
+          ["@ssr/api.ts", templates.ssrApi],
+          ["@ssr/app.ts", templates.ssrApp],
+          ["@ssr/base.ts", templates.ssrBase],
+          ["@ssr/fetch.ts", templates.ssrFetch],
+          ["@ssr/routes.ts", templates.ssrRotues],
         ]) {
           await deployLibFile(createPath.lib(file), template, context);
         }
@@ -72,9 +97,10 @@ export default defineGeneratorFactory<Options>(
               plugins,
               define: {
                 KOSMO_PRODUCTION_BUILD: "true",
+                KOSMO_SERVERSIDE_FETCH: "true",
               },
               build: {
-                ssr: createPath.lib("ssr:app"),
+                ssr: createPath.lib("@ssr/app"),
                 ssrEmitAssets: true,
                 sourcemap: true,
                 emptyOutDir: true,

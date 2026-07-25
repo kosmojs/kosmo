@@ -14,8 +14,17 @@ export * from "./utils";
 // HTTP methods that typically don't include a request body
 const bodylessMethods = ["GET", "DELETE"];
 
-// Main factory function that creates a configured fetch client instance
-export default (base: string | URL, baseOpts?: Options): FetchMapper => {
+/**
+ * Main factory function that creates a configured fetch client instance.
+ * The transport defaults to the global fetch.
+ * SSR builds pass a transport that dispatch into a Hono/Koa app.
+ * Hydrating clients pass a transport with dedupe logic.
+ * Keeping the factory transport-agnostic keeps server-only modules out of
+ * browser bundles.
+ * */
+export default (base: string | URL, opts?: Options): FetchMapper => {
+  const { transport, ...globalOpts } = { ...opts };
+
   // Factory function that creates HTTP method implementations
   function factory(method: HTTPMethod): FetchMethod {
     return async (...args: Partial<Parameters<FetchMethod>>) => {
@@ -28,7 +37,7 @@ export default (base: string | URL, baseOpts?: Options): FetchMapper => {
         ...fetchOpts // Remaining options passed directly to fetch
       } = {
         ...defaults,
-        ...baseOpts,
+        ...globalOpts,
         ...opts,
       };
 
@@ -86,7 +95,8 @@ export default (base: string | URL, baseOpts?: Options): FetchMapper => {
         ? `?${stringify(data.query as never)}`
         : "";
 
-      return fetch(url + searchParams, config as never)
+      return (transport ?? globalThis.fetch)
+        .call(globalThis, url + searchParams, config as never)
         .then((response) => {
           // Return both response and parsed data based on responseMode
           return Promise.all([

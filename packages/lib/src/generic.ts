@@ -8,7 +8,7 @@ export const mergeConfigs = (
       configFile: false,
       define: {
         KOSMO_PRODUCTION_BUILD: "false",
-        KOSMO_ISOMORPHIC_FETCH: "false",
+        KOSMO_SERVERSIDE_FETCH: "false",
       },
     },
     ...configs,

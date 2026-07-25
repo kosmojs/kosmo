@@ -4,12 +4,12 @@ import fetchFactory, {
   payloadResolver,
 } from "@kosmojs/core/fetch";
 
-import { base, apiBase, apiRouteMap } from "{{ createImport "libCore" }}";
+import { base, apiBase, apiRouteMap } from "{{ createImport 'libCore' }}";
 
 import {
   type MaybeWrapped,
   unwrap,
-} from "{{ createImport "lib" "unwrap" }}";
+} from "{{ createImport 'lib' 'unwrap' }}";
 
 {{#each validationTypes}}
 import type { {{id}} } from "./types";
@@ -45,7 +45,15 @@ const {
   href,
 } = apiRouteMap["{{route.name}}"];
 
-const fetchApi = fetchFactory(join(base, apiBase), { stringify });
+const fetchApi = fetchFactory(
+  join(base, apiBase),
+  {
+    stringify,
+    ...KOSMO_SERVERSIDE_FETCH
+      ? { transport: await import("{{ createImport 'lib' '@ssr/fetch' }}").then((e) => e.transport) }
+      : {},
+  },
+);
 
 {{#each routeMethods}}
 export const {{method}} = (
@@ -74,16 +82,19 @@ export const {{method}} = (
   const [params, payload] = [_params, _payload].map((data) => {
     return typeof opt?.unwrap === "function" ? opt.unwrap(data) : unwrap(data);
   })
-  if (validationSchemas.params) {
-    validationSchemas.params.validate(paramsMapper(params as never));
+  // validate only on client, skip double validation in SSR mode
+  if (!KOSMO_SERVERSIDE_FETCH) {
+    if (validationSchemas.params) {
+      validationSchemas.params.validate(paramsMapper(params as never));
+    }
+    {{#each ../payloadTypes}}
+    if (validationSchemas.{{target}}?.{{../method}}) {
+      validationSchemas.{{target}}.{{../method}}.validate(
+        payloadResolver(payload, "{{target}}")
+      );
+    }
+    {{/each}}
   }
-  {{#each ../payloadTypes}}
-  if (validationSchemas.{{target}}?.{{../method}}) {
-    validationSchemas.{{target}}.{{../method}}.validate(
-      payloadResolver(payload, "{{target}}")
-    );
-  }
-  {{/each}}
   return fetchApi.{{method}}(parametrize(params as never), payload as never);
 };
 {{/each}}
