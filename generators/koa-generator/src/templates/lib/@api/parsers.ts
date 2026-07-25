@@ -1,15 +1,33 @@
 import zlib from "node:zlib";
 
+import type { RouterContext } from "@koa/router";
 import Formidable, { type Options as FormidableOptions } from "formidable";
 import rawParser from "raw-body";
 
-import type { RequestBodyTarget } from "@kosmojs/core";
+import type { RequestBodyTarget, RequestMetadataTarget } from "@kosmojs/core";
+import { parseCookies, parseQuerystring } from "@kosmojs/core/api";
 
 import type {
   DefaultContext,
   DefaultState,
   ParameterizedContext,
 } from "../api";
+
+export const metaparsers: {
+  [T in RequestMetadataTarget]: (ctx: RouterContext) => unknown;
+} = {
+  query(ctx) {
+    return parseQuerystring(ctx.req.url ?? "");
+  },
+
+  headers(ctx) {
+    return ctx.req.headers;
+  },
+
+  cookies(ctx) {
+    return parseCookies(ctx.req.headers);
+  },
+};
 
 type JsonOptions = {
   limit?: number;
@@ -121,13 +139,13 @@ const unwrap = (
       if (!Array.isArray(v) || v.length > 1) {
         return [k, v];
       }
-      if (opt === undefined || opt === false) {
+      if (opt === false) {
         return [k, v];
       }
-      if (opt === true) {
+      if (opt === undefined || opt === true) {
         return [k, v[0]];
       }
-      const { only, except } = opt as Exclude<UnwrapControl, boolean>;
+      const { only, except } = { ...opt } as Exclude<UnwrapControl, boolean>;
       if (only?.includes(k)) {
         return [k, v[0]];
       }

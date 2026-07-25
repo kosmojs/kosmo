@@ -2,15 +2,15 @@ import { join } from "node:path";
 
 import type { RouteSource } from "@kosmojs/core/api";
 
-import { base, apiBase } from "{{ createImport "libCore" }}";
+import { base, apiBase } from "{{ createImport 'libCore' }}";
 
 {{#each routes}}
-import {{id}} from "{{ createImport "api" file }}";
-import { validationSchemas as {{id}}_schemas } from "{{ createImport "libApi" name "schemas" }}";
+import {{id}} from "{{ createImport 'api' file }}";
+import { validationSchemas as {{id}}_schemas } from "{{ createImport 'libApi' name 'schemas' }}";
 {{/each}}
 
 {{#each cascadingMiddleware}}
-import {{id}}, { type UseT as UseT{{id}} } from "{{ createImport "api" file }}";
+import {{id}}, { type UseT as UseT{{id}} } from "{{ createImport 'api' file }}";
 {{/each}}
 
 type Override<A, B> = Omit<A, keyof B> & B;

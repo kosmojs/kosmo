@@ -23,8 +23,7 @@ export const createRoutes = <MiddlewareT, MiddlewareR>(
   // NOTE:: prioritized middleware must run in this exact order!
   const prioritizedSlots: Array<keyof UseSlots> = [
     "errorHandler",
-    "extendContext",
-    "bodyparser",
+    "@extendContext",
     "validate:params",
     "validate:query",
     "validate:headers",

@@ -2,10 +2,14 @@ import { join } from "node:path";
 
 import crc from "crc/crc32";
 
-import type { ApiRoute, ResolvedEntry, RouteEntry } from "@kosmojs/core";
+import {
+  type ApiRoute,
+  createTemplateResolver,
+  type ResolvedEntry,
+  type RouteEntry,
+} from "@kosmojs/core";
 import {
   createPathPattern,
-  createTemplateResolver,
   defineGeneratorFactory,
   pathResolver,
   pathTokensFactory,
@@ -169,7 +173,7 @@ export default defineGeneratorFactory<Options>(
           ["@api/app.ts", templates.libApiApp],
           ["@api/dev.ts", templates.libApiDev],
           ["@api/errors.ts", templates.libApiErrors],
-          ["@api/bodyparser.ts", templates.libApiBodyparser],
+          ["@api/parsers.ts", templates.libApiParsers],
           ["@api/router.ts", templates.libApiRouter],
           ["@api/server.ts", templates.libApiServer],
         ]) {

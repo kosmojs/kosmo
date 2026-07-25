@@ -1,5 +1,4 @@
 import type { MiddlewareHandler } from "hono";
-import { getCookie } from "hono/cookie";
 import type { Router } from "hono/router";
 import { RegExpRouter } from "hono/router/reg-exp-router";
 import { SmartRouter } from "hono/router/smart-router";
@@ -8,6 +7,7 @@ import { match } from "path-to-regexp";
 
 import type {
   RequestBodyTarget,
+  RequestMetadataTarget,
   RequestValidationTarget,
   ValidationErrorEntry,
 } from "@kosmojs/core";
@@ -27,7 +27,7 @@ import {
   type ParameterizedMiddleware,
   use,
 } from "../api";
-import { type BodyparserOptions, bodyparsers } from "./bodyparser";
+import { type BodyparserOptions, bodyparsers, metaparsers } from "./parsers";
 import { routeSources } from "./routes";
 
 import globalMiddleware from "{{ createImport 'api' 'use' }}";
@@ -60,10 +60,14 @@ export const createRouteMiddleware: CreateRouteMiddleware<
 
   const validationMiddleware = [
     /**
-     * Extends Koa context with:
+     * Extends Hono context with:
+     *
+     * - `ctx.metaparser[target]()` - lazy, cached meta parsers.
+     *   Each parser (query, headers, cookies) runs at most once per request;
+     *   subsequent calls return the cached result.
      *
      * - `ctx.bodyparser[target](opts?)` - lazy, cached body parsers.
-     *   Each parser (json, form, multipart, raw) runs at most once per request;
+     *   Each parser (json, form, raw) runs at most once per request;
      *   subsequent calls return the cached result.
      *   This allows both user middleware/handlers and validators
      *   to call the same parser without re-consuming the request stream.
@@ -80,6 +84,26 @@ export const createRouteMiddleware: CreateRouteMiddleware<
           // initialize per-request cache with empty params
           // (later populated by useValidateParams)
           ctx[StateKey] = new Map([["params", {}]]);
+
+          Object.defineProperty(ctx, "metaparser", {
+            value: Object.entries(metaparsers).reduce<{
+              [T in RequestMetadataTarget]?: () => unknown;
+            }>((map, entry) => {
+              const [target, parser] = entry as [
+                RequestMetadataTarget,
+                Function,
+              ];
+              map[target] = () => {
+                if (!ctx[StateKey].has(target)) {
+                  ctx[StateKey].set(target, parser(ctx));
+                }
+                return ctx[StateKey].get(target);
+              };
+              return map;
+            }, {}),
+            enumerable: true,
+          });
+
           Object.defineProperty(ctx, "bodyparser", {
             value: Object.entries(bodyparsers).reduce<{
               [T in RequestBodyTarget]?: (
@@ -97,6 +121,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
             }, {}),
             enumerable: true,
           });
+
           Object.defineProperty(ctx, "validated", {
             get() {
               return Object.fromEntries(ctx[StateKey]);
@@ -106,7 +131,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
         }
         return next();
       },
-      { slot: "extendContext" },
+      { slot: "@extendContext" },
     ) as never,
 
     /**
@@ -317,9 +342,9 @@ export const createRouteMiddleware: CreateRouteMiddleware<
       >,
     ) => Promise<unknown>
   > = {
-    query: async (ctx) => ctx.req.queries(),
-    headers: async (ctx) => ctx.req.header(),
-    cookies: async (ctx) => getCookie(ctx),
+    query: async (ctx) => ctx.metaparser.query(),
+    headers: async (ctx) => ctx.metaparser.headers(),
+    cookies: async (ctx) => ctx.metaparser.cookies(),
     json: async (ctx) => ctx.bodyparser.json(),
     form: async (ctx) => ctx.bodyparser.form(),
     raw: async (ctx) => ctx.bodyparser.raw(),

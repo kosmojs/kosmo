@@ -87,7 +87,7 @@ describe("bodyparser", () => {
     const form = { id: "0", page: "1" };
 
     for (const [unwrap, body] of [
-      [undefined, { id: ["0"], page: ["1"] }],
+      [undefined, { id: "0", page: "1" }],
       [false, { id: ["0"], page: ["1"] }],
       [true, { id: "0", page: "1" }],
       [{ only: ["id"] }, { id: "0", page: ["1"] }],

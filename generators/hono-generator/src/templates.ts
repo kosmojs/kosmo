@@ -1,7 +1,7 @@
 export { default as libApiApp } from "#templates/lib/@api/app";
-export { default as libApiBodyparser } from "#templates/lib/@api/bodyparser";
 export { default as libApiDev } from "#templates/lib/@api/dev";
 export { default as libApiErrors } from "#templates/lib/@api/errors";
+export { default as libApiParsers } from "#templates/lib/@api/parsers";
 export { default as libApiRouter } from "#templates/lib/@api/router";
 export { default as libApiRoutes } from "#templates/lib/@api/routes.hbs";
 export { default as libApiServer } from "#templates/lib/@api/server";

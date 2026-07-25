@@ -11,7 +11,7 @@ import {
   type UseOptions,
 } from "@kosmojs/core/api";
 
-import type { BodyparserOptions } from "./@api/bodyparser";
+import type { BodyparserOptions } from "./@api/parsers";
 import type { RouteMap } from "./@api/routes";
 
 export interface DefaultVariables {}

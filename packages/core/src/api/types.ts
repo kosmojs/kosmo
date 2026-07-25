@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 
 import type {
   RequestBodyTarget,
+  RequestMetadataTarget,
   RequestValidationTarget,
   ValidationDefmap,
   ValidationOptmap,
@@ -39,8 +40,7 @@ export type RouteDefinitionItem<MiddlewareT> =
 
 export interface UseSlots {
   errorHandler: string;
-  extendContext: string;
-  bodyparser: string;
+  "@extendContext": string;
   "validate:params": string;
   "validate:query": string;
   "validate:headers": string;
@@ -149,6 +149,9 @@ export type ExtendContext<
   BodyparserOptions extends Record<RequestBodyTarget, unknown>,
 > = {
   [StateKey]: Map<ValidationTarget, unknown>;
+  metaparser: {
+    [T in RequestMetadataTarget]: <R = unknown>() => R;
+  };
   bodyparser: {
     [T in RequestBodyTarget]: <R = unknown>(
       opts?: BodyparserOptions[T],
