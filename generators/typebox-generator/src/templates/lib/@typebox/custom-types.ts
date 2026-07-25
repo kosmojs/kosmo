@@ -20,9 +20,23 @@ export const TDate = () => {
   );
 };
 
+const isFormidableFile = (value: unknown) => {
+  return value
+    ? typeof value === "object"
+      ? [
+          //
+          "filepath",
+          "originalFilename",
+          "newFilename",
+          "mimetype",
+        ].every((e) => e in value)
+      : false
+    : false;
+};
+
 export const TFile = () => {
   return customType(
-    (value): value is File => value instanceof File,
+    (value): value is File => value instanceof File || isFormidableFile(value),
     "must be File",
   );
 };
