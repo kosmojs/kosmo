@@ -81,29 +81,46 @@ export default defineConfig({
       setupFactory("generators/react-generator"),
       setupFactory("generators/vue-generator"),
 
-      setupFactory("integration:api", {
-        include: ["integration/{koa,hono}/*.test.ts"],
-      }),
-
-      setupFactory("integration:csr", {
-        include: ["integration/{react,solid,vue,mdx}/*.test.ts"],
-        fileParallelism: false,
-        provide: {
-          CSR: "true",
-        },
-      }),
-
-      setupFactory("integration:ssr", {
-        include: ["integration/{react,solid,vue,mdx}/*.test.ts"],
-        provide: {
-          SSR: "true",
-        },
-      }),
-
       setupFactory("integration:cli", {
         globalSetup: ["integration/cli/setup.global.ts"],
         include: ["integration/cli/*.test.ts"],
         testTimeout: 60_000,
+      }),
+
+      setupFactory("integration:backend", {
+        include: ["integration/{koa,hono}/*.test.ts"],
+        provide: {
+          MODE: "backend",
+        },
+      }),
+
+      setupFactory("integration:frontend:csr", {
+        include: ["integration/{react,solid,vue,mdx}/*.test.ts"],
+        fileParallelism: false,
+        provide: {
+          MODE: "csr",
+        },
+      }),
+
+      setupFactory("integration:frontend:ssr", {
+        include: ["integration/{react,solid,vue,mdx}/*.test.ts"],
+        provide: {
+          MODE: "ssr",
+        },
+      }),
+
+      setupFactory("integration:fetch:csr", {
+        include: ["integration/fetch/*.test.ts"],
+        provide: {
+          MODE: "csr",
+        },
+      }),
+
+      setupFactory("integration:fetch:ssr", {
+        include: ["integration/fetch/*.test.ts"],
+        provide: {
+          MODE: "ssr",
+        },
       }),
     ],
   },

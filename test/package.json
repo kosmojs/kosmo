@@ -8,10 +8,14 @@
     "test:unit:generators": "pnpm -C .. run test:unit:generators",
     "test:unit:packages": "pnpm -C .. run test:unit:packages",
     "test:integration": "pnpm -C .. run test:integration",
-    "test:integration:api": "pnpm -C .. run test:integration:api",
-    "test:integration:csr": "pnpm -C .. run test:integration:csr",
-    "test:integration:ssr": "pnpm -C .. run test:integration:ssr",
-    "test:integration:cli": "pnpm -C .. run test:integration:cli"
+    "test:integration:cli": "pnpm -C .. run test:integration:cli",
+    "test:integration:backend": "pnpm -C .. run test:integration:backend",
+    "test:integration:frontend": "pnpm -C .. run test:integration:frontend",
+    "test:integration:frontend:csr": "pnpm -C .. run test:integration:frontend:csr",
+    "test:integration:frontend:ssr": "pnpm -C .. run test:integration:frontend:ssr",
+    "test:integration:fetch": "pnpm -C .. run test:integration:fetch",
+    "test:integration:fetch:csr": "pnpm -C .. run test:integration:fetch:csr",
+    "test:integration:fetch:ssr": "pnpm -C .. run test:integration:fetch:ssr"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.10",
