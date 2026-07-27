@@ -142,7 +142,17 @@ Vue uses `<RouterView />`.
 
 ## Data Loading in Layouts
 
-Layout data loading follows the same per-framework patterns as page components:
+Layout data loading follows the same per-framework patterns as page components,
+but how a layout's data stays distinct from its child page's differs:
+
+- **React** scopes structurally - each route (layouts included) owns its `loader`,
+    and `useLoaderData()` returns the calling route's data.
+    No key; the route tree carries the identity.
+- **SolidJS** keys by the `query()` cache string you supply (`"dashboard/data"` here),
+    so the key lives in the `query()` wrapper, not the hook read.
+- **Vue and MDX** share one per-route store keyed by route name, so the layout
+  passes its path-qualified name to `useLoaderData` (a page passes nothing) -
+  the hook can't tell which layout it runs in.
 
 ::: code-group
 
@@ -161,13 +171,18 @@ export default function Layout() {
 
 ```tsx [SolidJS · layout.tsx]
 import type { ParentComponent } from "solid-js";
-import { createAsync } from "@solidjs/router";
+import { createAsync, query } from "@solidjs/router";
 import fetchClients from "_/fetch";
 
-export const preload = fetchClients["dashboard/data"].GET;
+const { GET } = fetchClients["dashboard/data"];
+
+// wrap in query() so preload and createAsync share one cache key
+const getData = query(() => GET(), "dashboard/data");
+
+export const preload = () => getData();
 
 const Layout: ParentComponent = (props) => {
-  const data = createAsync(() => preload());
+  const data = createAsync(() => getData());
   // ...
   return <>{props.children}</>;
 };
@@ -176,37 +191,53 @@ export default Layout;
 ```
 
 ```vue [Vue · layout.vue]
+<script lang="ts">
+import fetchClients from "_/fetch";
+
+// loader export lives in a plain <script> block
+export const loader = fetchClients["dashboard/data"].GET;
+</script>
+
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import fetchClients, { type ResponseT } from "_/fetch";
+import { useLoaderData } from "_/use";
+import { type ResponseT } from "_/fetch";
 
-const data = ref<ResponseT["dashboard/data"]["GET"] | null>(null);
-const loading = ref(true);
-
-async function fetchData() {
-  loading.value = true;
-  try {
-    data.value = await fetchClients["dashboard/data"].GET();
-  } finally {
-    loading.value = false;
-  }
-}
-
-onMounted(fetchData);
+// a layout passes its path-qualified name to read its own data
+const data = useLoaderData<ResponseT["dashboard/data"]["GET"]>("dashboard/layout");
 </script>
 
 <template>
   ...
 </template>
 ```
+
+```mdx [MDX · layout.mdx]
+import fetchClients from "_/fetch";
+import { useLoaderData } from "_/use";
+
+export const loader = fetchClients["dashboard/data"].GET;
+
+export const Nav = () => {
+  // a layout passes its path-qualified name to read its own data
+  const data = useLoaderData("dashboard/layout");
+  return <nav>{data.title}</nav>;
+};
+
+<Nav />
+<main>
+  {props.children}
+</main>
+```
 :::
 
-React and SolidJS loaders/preloads run before the layout renders - data is
-available immediately and shared across all child routes without duplicate
-fetches. Vue requires manual lifecycle management via `onMounted` or navigation
-guards; see the
-[Vue Router documentation](https://router.vuejs.org/guide/advanced/data-fetching.html)
-for advanced patterns.
+Across all four frameworks the loader/preload runs before the layout renders,
+so its data is available immediately and shared across every child route
+without a duplicate fetch. The read is a hook (`useLoaderData` / `createAsync`)
+rather than a prop - `props` carries only `children`/`<Outlet />`. Keeping a
+layout's data distinct from its page's is automatic in React (per-route) and
+Solid (via the `query()` key); in Vue and MDX you pass the layout's
+path-qualified name (e.g. `"dashboard/layout"` for `pages/dashboard/layout.*`)
+to the hook.
 
 ## Global Layout via App File
 
@@ -264,4 +295,6 @@ App
 - **Case sensitivity.** Only `layout.{tsx,vue,mdx}` are recognized as layout files.
 - **Framework file isolation.** `.vue` files in a React/SolidJS/MDX folder are ignored, and `.tsx/.mdx` files in a Vue folder are ignored.
 - **No layout opt-out.** Child routes always inherit parent layouts. Routes that shouldn't share a layout belong in a different directory branch.
-- **Data loading differs by framework.** React and SolidJS have built-in route-level data patterns. Vue requires manual lifecycle management. MDX layouts delegate data loading to a separate component in a `.tsx` file.
+- **Data loading uses hooks, not props.** All four frameworks load layout data through a `loader`/`preload` export read with a hook (`useLoaderData`/`createAsync`).
+Keeping a layout's data separate from its page's is automatic in React (per-route) and Solid (via the `query()` key);
+in Vue and MDX the layout passes its path-qualified name to `useLoaderData` (a page passes nothing).

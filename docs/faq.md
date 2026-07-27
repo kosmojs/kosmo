@@ -9,7 +9,7 @@ outline: [2, 3]
 ### Getting Started & Project Setup
 
 #### What is KosmoJS and what problem does it solve?
-A composable meta-framework for organizing multiple apps in one project.
+A composable meta-framework for organizing multiple apps in a scalable project.
 
 It avoids the friction of microservices (drifting shared types, separate CI/deploy),
 monorepos (workspace/package/build-cache overhead and a `packages/shared` dumping ground),
@@ -59,17 +59,19 @@ Adding a folder pulls in framework-specific dependencies that need to be install
 
 #### How do I start the dev server and what's the default port?
 `pnpm dev` (all folders) or `pnpm dev front` (one folder). Default port is `4556`.
-[Details ›](/backend/development-workflow.html#starting-the-dev-server)
+[Details ›](/backend/development-workflow#starting-the-dev-server)
 
 #### How do I change the dev port?
 It's the `devPort` value in `package.json`.
-[Details ›](/backend/development-workflow.html#starting-the-dev-server)
+[Details ›](/backend/development-workflow#starting-the-dev-server)
 
 #### How does this compare to Next.js / Nuxt / SolidStart / tRPC / a hand-rolled Vite setup?
 Unlike Next/Nuxt/SolidStart it doesn't choose your frontend or own your deploy model;
 unlike tRPC it's route-based (not procedure-based) and also generates OpenAPI and runtime validators;
 unlike a hand-rolled Vite setup it provides directory routing for both sides,
-generated validation/clients, and multi-folder build orchestration without the DIY glue.
+generated validation/clients, an isomorphic fetch client (in-process on the server
+during SSR, no network hop), out-of-the-box SSR with an opt-in streaming render mode,
+and multi-folder build orchestration without the DIY glue.
 [Details ›](/features)
 
 ### Source Folders
@@ -97,28 +99,31 @@ and they coexist in one project.
 [Details ›](/features)
 
 #### How do folders share types without publishing/versioning?
-Import a type directly across folders; change a database model and every folder sees it immediately.
-No publishing, no workspace protocols.
-[Details ›](/frontend/intro.html#multi-folder-architecture)
+Import a type directly across folders through the reserved aliases - `@/*` for root-level
+imports, `~/*` for source-folder imports, `_/*` for generated code. Change a database model
+and every folder sees it immediately. No publishing, no workspace protocols.
+[Details ›](/frontend/intro#multi-folder-architecture)
 
 #### Can I build/deploy a single folder?
-Yes - `pnpm build front` builds just that folder; folders develop and deploy independently.
+Yes - `pnpm build front` builds just that folder. Folders develop together as one project,
+but can be built all at once or one at a time, and each build is a self-contained entity you
+can deploy independently.
 [Details ›](/backend/building-for-production)
 
 #### How do I run/build all folders vs one?
 `pnpm dev` / `pnpm build` for all; append a folder name (`pnpm dev front`, `pnpm build admin`) for one.
-[Details ›](/backend/development-workflow.html#starting-the-dev-server)
+[Details ›](/backend/development-workflow#starting-the-dev-server)
 
 #### Do routes/types leak between folders?
 No - generated types and utilities are scoped per folder.
 The admin dashboard's navigation types won't include the main app's routes, and vice versa.
-[Details ›](/frontend/intro.html#multi-folder-architecture)
+[Details ›](/frontend/intro#multi-folder-architecture)
 
 #### When should I split into separate folders?
 One folder per distinct concern (main app, admin, marketing).
 A useful rule for SSR vs CSR: deploy an SSR folder for marketing content
 and a CSR folder for the app rather than mixing SSR/CSR within one folder.
-[Details ›](/frontend/server-side-render.html#technical-considerations)
+[Details ›](/frontend/server-side-render#technical-considerations)
 
 ### Directory-Based Routing
 
@@ -128,7 +133,7 @@ Folder names become path segments; `index` files define the endpoint or componen
 - `pages/users/[id]/index.tsx` maps to `/users/:id`.
 
 No separate routing config - your file structure is your route definition.
-[Details ›](/routing/intro.html#how-it-works)
+[Details ›](/routing/intro#how-it-works)
 
 #### Why directory-based instead of file-based?
 Clarity at scale: only `index.ts` is a route handler; every other file in the folder
@@ -140,17 +145,19 @@ The only cost is creating a folder even when it holds just `index.ts`.
 #### Why must every route be a folder with an `index` file, even the root?
 Consistency - no special cases. The base route uses a folder named `index`
 (`pages/index/index.tsx` -> `/`).
-[Details ›](/routing/intro.html#how-it-works)
+[Details ›](/routing/intro#how-it-works)
 
 #### How do nested routes work?
 Nest folders. `api/users/[id]/posts/index.ts` -> `/api/users/:id/posts`,
 as deep as your domain requires, each level colocating its own helpers, types,
-and tests without affecting siblings.
-[Details ›](/routing/intro.html#nested-routes)
+and tests without affecting siblings. Nesting also composes vertically: layouts wrap
+nested pages, and middleware cascades down the tree, so a parent segment's layout and
+middleware apply to everything beneath it.
+[Details ›](/routing/intro#nested-routes)
 
 #### Why the parallel `api/` and `pages/` structure?
 Intentional - a page and its corresponding API endpoint are always one folder apart and easy to find.
-[Details ›](/routing/intro.html#how-it-works)
+[Details ›](/routing/intro#how-it-works)
 
 #### How do I create an API route?
 Create a folder under `api/` with an `index.ts` file - the folder path becomes the URL
@@ -159,20 +166,23 @@ exposes `/api/products`, and `api/products/[id]/index.ts` exposes `/api/products
 Inside, default-export a `defineRoute` that returns method handlers,
 then replace the generated placeholder with real logic and visit the URL
 (e.g. `http://localhost:4556/api/products`).
-[Details ›](/routing/intro.html#route-file-requirements)
+[Details ›](/routing/intro#route-file-requirements)
 
 #### How do I create a page?
 Create a matching folder under `pages/` with an `index` component file for your framework -
 `pages/products/index.tsx` (React/SolidJS), `.vue` (Vue), or `.mdx` (MDX) - and it becomes `/products`.
 KosmoJS generates a placeholder component you replace with your own;
 the parallel `api/` and `pages/` trees mean a page and its endpoint are always one folder apart.
+The two sides are coupled by usage, not by name - you pick the names on each end freely. The
+docs mirror api and page names purely for consistency; matching them is a convention, not a
+requirement.
 Pages typically read data through the generated fetch client (`fetchClients["products"].GET()`).
-[Details ›](/routing/intro.html#route-file-requirements)
+[Details ›](/routing/intro#route-file-requirements)
 
 #### What does the `_/` prefix and `_/api` map to?
 `_/` maps to `lib/` (generated code). `_/api` resolves to `lib/<folder>/api.ts`,
 where `<folder>` is your source-folder name.
-[Details ›](/routing/generated-content.html#api-routes)
+[Details ›](/routing/generated-content#api-routes)
 
 #### What do `@/*`, `~/*`, `_/*` mean?
 
@@ -199,51 +209,51 @@ Same syntax for API routes and pages.
 Matched segments come back as an array - for `/docs/guides/deployment/production`,
 `ctx.validated.params.path` is `["guides", "deployment", "production"]`.
 Useful for doc sites, file browsers, arbitrarily nested paths.
-[Details ›](/routing/params.html#splat-parameters)
+[Details ›](/routing/params#splat-parameters)
 
 #### Why can't an optional param precede a required one?
 It creates ambiguity; `users/{optional}/[required]` is invalid.
 Optional params must not be followed by required ones (`users/{section}/{subsection}` is fine).
-[Details ›](/routing/params.html#optional-parameters)
+[Details ›](/routing/params#optional-parameters)
 
 #### Why am I getting an unexpected 404 with an optional param before a static segment?
 With `properties/{city}/filters`, visiting `/properties/filters` makes the router match
 `{city}="filters"` and then expect another `/filters` segment that isn't there - 404.
 Fix it by adding an explicit static route (`properties/filters/index.tsx`), which takes priority.
-[Details ›](/routing/params.html#watch-out-for-ambiguous-paths)
+[Details ›](/routing/params#watch-out-for-ambiguous-paths)
 
 #### When does a static route win over a dynamic one?
 Always - static routes take priority over dynamic ones.
-[Details ›](/routing/params.html#watch-out-for-ambiguous-paths)
+[Details ›](/routing/params#watch-out-for-ambiguous-paths)
 
 #### How does a sibling `index` make `[id]` effectively optional?
 A parent `index` provides a fallback to render, so `careers/index.tsx` + `careers/[jobId]/index.tsx`
 makes `[jobId]` effectively optional. `{jobId}` communicates that intent more clearly;
 both notations work identically here.
-[Details ›](/routing/params.html#required-vs-optional-a-subtlety)
+[Details ›](/routing/params#required-vs-optional-a-subtlety)
 
 #### How do mixed segments work?
 Static text + params in one segment: `[category].html`, `[id]-[data].json`, `[name].[ext]`.
 The folder is named with the mixed segment and `index.ts` lives inside it like any other route.
-[Details ›](/routing/params.html#mixed-segments)
+[Details ›](/routing/params#mixed-segments)
 
 #### Which frontends support mixed segments?
 Backend (Koa/Hono): full support. Vue and MDX: full support. React Router: `.ext` suffix only.
 SolidJS: not supported. Prefer simple segments for frontend routes
 and keep mixed segments to the API side where support is complete.
-[Details ›](/routing/params.html#mixed-segments)
+[Details ›](/routing/params#mixed-segments)
 
 #### What is power syntax?
 Raw `path-to-regexp v8` patterns passed through directly.
 The rule: any param name containing non-alphanumeric characters is treated as a raw pattern.
 Examples: `book{-:id}-info`, `locale{-:lang{-:country}}`, `api/{v:version}/users`.
 Read the path-to-regexp docs before using it in production.
-[Details ›](/routing/params.html#power-syntax)
+[Details ›](/routing/params#power-syntax)
 
 #### How do I make an optional static part (e.g. an optional `.html`)?
 e.g. `products/{:category.html}` - matches `/products` and `/products/electronics.html`
 but not `/products/electronics`.
-[Details ›](/routing/params.html#power-syntax)
+[Details ›](/routing/params#power-syntax)
 
 #### Does KosmoJS run its own path-to-regexp routing under the hood?
 No - path-to-regexp is used only at build time to parse your directory structure into route definitions.
@@ -252,7 +262,7 @@ exactly as you would register them by hand, so you keep the framework's full nat
 Hono's high-performance router on the backend, and React Router / Solid Router / Vue Router
 (with their nested layouts) on the frontend.
 KosmoJS is the chassis, not the engine - the engine is whichever framework you chose.
-[Details ›](/routing/intro.html#native-routing-under-the-hood)
+[Details ›](/routing/intro#native-routing-under-the-hood)
 
 ### Auto-Generated Boilerplate
 
@@ -271,23 +281,23 @@ This applies to page components, not API routes.
 A page's default export should be a named function (`export default function Page() {...}`) -
 an anonymous arrow can break Vite's HMR. API routes are unaffected:
 they default-export `defineRoute(...)`, which is already a named call.
-[Details ›](/routing/generated-content.html#client-pages)
+[Details ›](/routing/generated-content#client-pages)
 
 #### How do I override the default generated template?
 Pass `templates` in the generator options in `kosmo.config.ts`, keyed by glob pattern,
 each value a template string written to disk as the component/route file.
-[Details ›](/frontend/custom-templates.html#configuration)
+[Details ›](/frontend/custom-templates#configuration)
 
 #### How does glob matching work for templates?
 `*` matches exactly one nesting level, `**` matches any depth,
 and an exact string targets a single route. Templates work with all parameter types
 (`users/[id]`, `products/{category}`, `docs/{...path}`, combined).
-[Details ›](/frontend/custom-templates.html#pattern-syntax)
+[Details ›](/frontend/custom-templates#pattern-syntax)
 
 #### When multiple template patterns match, which wins?
 The first matching pattern - order them most-specific first
 (`landing/home` before `landing/*` before `**/*`).
-[Details ›](/frontend/custom-templates.html#resolution-priority)
+[Details ›](/frontend/custom-templates#resolution-priority)
 
 #### How do templates help with CRUD scaffolding?
 Define one template with the standard boilerplate; each generated file across many tables
@@ -299,19 +309,19 @@ starts with the right structure instead of rewriting the skeleton N times by han
 #### How do I define an endpoint?
 Default-export a `defineRoute` definition; the factory receives HTTP method builders and `use`,
 and returns an array of handlers. Import `defineRoute` from `_/api`.
-[Details ›](/backend/intro.html#defining-endpoints)
+[Details ›](/backend/intro#defining-endpoints)
 
 #### Can I define multiple methods in one file?
 Yes - return `GET`, `POST`, `PUT`, `DELETE`, etc. in the array.
-[Details ›](/backend/intro.html#defining-endpoints)
+[Details ›](/backend/intro#defining-endpoints)
 
 #### Does handler order matter?
 No - dispatch is by HTTP method. Undefined methods return `405 Method Not Allowed` automatically.
-[Details ›](/backend/intro.html#defining-endpoints)
+[Details ›](/backend/intro#defining-endpoints)
 
 #### Which method builders exist?
 `HEAD`, `OPTIONS`, `GET`, `POST`, `PUT`, `PATCH`, `DELETE`.
-[Details ›](/backend/intro.html#defining-endpoints)
+[Details ›](/backend/intro#defining-endpoints)
 
 #### Why method-based routing?
 In `KosmoJS` a single route folder owns one URL, and inside it you declare a handler per HTTP method -
@@ -325,7 +335,7 @@ returning `405 Method Not Allowed` automatically for verbs you didn't define.
 The style draws on Sinatra (2007), the Ruby framework that pioneered defining routes as
 `get "/path" do ... end` blocks - the same idea of a verb mapping straight to a handler,
 brought into a typed, directory-based structure.
-[Details ›](/backend/intro.html#defining-endpoints)
+[Details ›](/backend/intro#defining-endpoints)
 
 ### Backend: Koa vs Hono
 
@@ -345,7 +355,7 @@ Different: the context API inside handlers (body, params, state, error model).
 #### How do params differ in Koa vs Hono?
 `ctx.params` (Koa) vs `ctx.req.param()` (Hono); prefer `ctx.validated.params` in both -
 it carries the refined, validated type.
-[Details ›](/backend/context.html#route-parameters)
+[Details ›](/backend/context#route-parameters)
 
 #### How do I set the response body in each?
 `ctx.body = ...` (Koa) vs `ctx.json(...)` / `ctx.text(...)` (Hono).
@@ -356,40 +366,40 @@ Koa: middleware try-catch that bubbles up (`await next()` throws);
 response via mutating `ctx.body`/`ctx.status`; per-route override via the `errorHandler` slot.
 Hono: `app.onError()` catches everything (`await next()` doesn't throw);
 response by returning a `Response`; per-route behavior by branching inside `app.onError()`.
-[Details ›](/backend/error-handling.html#koa-vs-hono-key-differences)
+[Details ›](/backend/error-handling#koa-vs-hono-key-differences)
 
 ### Backend: Context & Bodyparser
 
 #### What is `ctx.bodyparser`?
 A unified parser API - `.json()`, `.form()`, `.raw()` - identical across frameworks.
 Results are cached, so calling the same parser repeatedly doesn't re-parse.
-[Details ›](/backend/context.html#unified-bodyparser)
+[Details ›](/backend/context#unified-bodyparser)
 
 #### Do I usually call bodyparser directly?
 Rarely - defining a validation schema runs the appropriate parser automatically
 and places the result in `ctx.validated`.
-[Details ›](/backend/context.html#unified-bodyparser)
+[Details ›](/backend/context#unified-bodyparser)
 
 #### What is `ctx.validated`?
 The validated, typed result for each target you defined:
 `ctx.validated.json`, `.query`, `.headers`, `.cookies`, `.form`, `.raw`, `.params`.
-[Details ›](/backend/context.html#validated-data-access)
+[Details ›](/backend/context#validated-data-access)
 
 #### Do the raw params still work?
 Yes - `ctx.params` (Koa) and `ctx.req.param()` (Hono) still return raw strings if you need them.
-[Details ›](/backend/context.html#route-parameters)
+[Details ›](/backend/context#route-parameters)
 
 ### Backend: Middleware
 
 #### How do I add route-level middleware?
 Use the `use` builder inside `defineRoute`. By default middleware applies to all HTTP methods;
 call `next()` to continue, skip it to short-circuit.
-[Details ›](/backend/middleware.html#basic-usage)
+[Details ›](/backend/middleware#basic-usage)
 
 #### How does the onion model work?
 Middleware runs in definition order going in, then unwinds in reverse after the handler.
 Global `api/use.ts` runs first, then route-level `use`, then the handler, then back out.
-[Details ›](/backend/middleware.html#execution-order-onion-model)
+[Details ›](/backend/middleware#execution-order-onion-model)
 
 #### Why do `use` calls run before handlers regardless of array position?
 This is intentional, not a quirk of how you order the array. `use` registers middleware
@@ -398,25 +408,33 @@ the framework always runs the middleware chain first, then the matched handler -
 so a `use` written after a handler in the array still runs before it.
 If you need logic to run *after* the handler, put it after `await next()` inside a middleware:
 code before `await next()` runs on the way in, code after it runs on the way back out (the onion model).
-[Details ›](/backend/middleware.html#execution-order-onion-model)
+[Details ›](/backend/middleware#execution-order-onion-model)
 
 #### How do I restrict middleware to specific methods?
-The `on` option, e.g. `{ on: ["POST","PUT","DELETE"] }`.
-[Details ›](/backend/middleware.html#method-specific-middleware)
+Pass the `on` option to `use`, listing the methods the middleware should run for.
+Handlers for other methods skip it:
+```ts
+use(async (ctx, next) => {
+  ctx.state.user = await verifyToken(ctx.headers.authorization);
+  return next();
+}, { on: ["POST", "PUT", "DELETE"] })
+```
+The same `on` option works in cascading `use.ts` files.
+[Details ›](/backend/middleware#method-specific-middleware)
 
-#### What are slots?
+#### What are middleware slots?
 Named positions in the middleware chain - middleware with the same slot name
 replaces earlier middleware at that position, letting you override global defaults per-route
 without bypassing everything else.
-[Details ›](/backend/middleware.html#slot-composition)
+[Details ›](/backend/middleware#slot-composition)
 
 #### How do I register a custom slot name?
 Extend the `UseSlots` interface in `api/env.d.ts`, then use `{ slot: "yourName" }` anywhere.
-[Details ›](/backend/middleware.html#slot-composition)
+[Details ›](/backend/middleware#slot-composition)
 
 #### When I override via slot, does `on` inherit from what I'm replacing?
 No - `on` doesn't inherit; set it explicitly if needed.
-[Details ›](/backend/middleware.html#slot-composition)
+[Details ›](/backend/middleware#slot-composition)
 
 ### Backend: Cascading Middleware
 
@@ -424,29 +442,29 @@ No - `on` doesn't inherit; set it explicitly if needed.
 Place `use.ts` in a folder and it automatically wraps all routes in that folder and its subfolders -
 no imports or wiring. `api/users/use.ts` wraps everything under `/api/users`;
 `api/users/account/use.ts` wraps only `/api/users/account`.
-[Details ›](/backend/cascading-middleware.html#how-it-works)
+[Details ›](/backend/cascading-middleware#how-it-works)
 
 #### What's the execution order across levels?
 Global `api/use.ts` -> parent folder `use.ts` -> current folder `use.ts` -> route handler.
 Parent always runs before child; children cannot skip parent middleware.
-[Details ›](/backend/cascading-middleware.html#how-it-works)
+[Details ›](/backend/cascading-middleware#how-it-works)
 
 #### What is `UseT`?
 A type every folder-level `use.ts` exports (even when empty) describing
 what the middleware adds to context. The generator merges these so every route underneath
 is typed automatically - no imports, no type args on `defineRoute`.
 Inner definitions override outer ones, mirroring runtime.
-[Details ›](/backend/cascading-middleware.html#type-safe-context-extension)
+[Details ›](/backend/cascading-middleware#type-safe-context-extension)
 
 #### How do I extend `UseT` from a parent?
 Import the parent's `UseT`, intersect it, and re-export -
 avoiding duplicate definitions across the hierarchy.
-[Details ›](/backend/cascading-middleware.html#type-safe-context-extension)
+[Details ›](/backend/cascading-middleware#type-safe-context-extension)
 
 #### Why does the global `api/use.ts` ignore `UseT`?
 Global middleware operates on `DefaultState` (Koa) / `DefaultVariables` (Hono) from `api/env.d.ts`;
 `UseT` is for folder-level files only, where the types cascade alongside the middleware.
-[Details ›](/backend/cascading-middleware.html#type-safe-context-extension)
+[Details ›](/backend/cascading-middleware#type-safe-context-extension)
 
 #### Why can some params be undefined in cascading middleware?
 A `use.ts` runs for every route in its subtree, including ones that don't define a given param -
@@ -454,14 +472,15 @@ so the `id` param is present for `/users/[id]` but undefined for the `/users` ro
 under the same `use.ts`. That's expected, not a bug. Keep cascading middleware generic -
 auth, logging, rate limiting; put param-specific logic in the route handler,
 where the param is guaranteed to exist.
-[Details ›](/backend/cascading-middleware.html#parameter-availability)
+[Details ›](/backend/cascading-middleware#parameter-availability)
 
 #### How do I implement auth / logging / rate limiting?
-Define them in a `use.ts` with the appropriate `UseT`.
-The docs show auth (token verify + `ctx.assert`/`HTTPException`,
-setting `ctx.state.user`/`ctx.set("user")`), request logging (timing + request IDs),
-and rate limiting (`koa-ratelimit` / `hono-rate-limiter` wired through `use`).
-[Details ›](/backend/cascading-middleware.html#common-use-cases)
+However your framework already does it - KosmoJS imposes nothing here and stays fully transparent.
+Any Koa or Hono middleware package works unchanged (`koa-ratelimit`, `hono-rate-limiter`, your own
+token check, a logger), wired the native way for your framework. You can wire it directly in a
+route's `index.ts` via `use(...)`, or in a folder-level `use.ts` to cascade it over a subtree.
+Nothing is KosmoJS-specific about the middleware itself; it's plain Koa/Hono.
+[Details ›](/backend/cascading-middleware#common-use-cases)
 
 ### Backend: Error Handling
 
@@ -469,26 +488,26 @@ and rate limiting (`koa-ratelimit` / `hono-rate-limiter` wired through `use`).
 `api/errors.ts`, generated per source folder - a regular file you can customize freely.
 The Koa handler is wired into global middleware via the `errorHandler` slot;
 the Hono handler into `app.onError()`.
-[Details ›](/backend/error-handling.html#default-error-handler)
+[Details ›](/backend/error-handling#default-error-handler)
 
 #### How do I distinguish a ValidationError?
 `error instanceof ValidationError` (from `@kosmojs/core/errors`) -> respond 400 with field detail;
 otherwise use `error.statusCode || 500`.
-[Details ›](/backend/error-handling.html#default-error-handler)
+[Details ›](/backend/error-handling#default-error-handler)
 
 #### How do I do route-level error overrides?
 Koa: override per-route or per-subtree via the `errorHandler` slot
 (inline `use` or a cascading `use.ts`). Hono: there's a single `app.onError()` -
 branch on `ctx.req.path` inside it for route-specific behavior.
-[Details ›](/backend/error-handling.html#route-level-overrides-koa)
+[Details ›](/backend/error-handling#route-level-overrides-koa)
 
 #### Why shouldn't I wrap handler logic in try-catch?
 Let errors propagate to the central error handler instead of swallowing them per-route.
-[Details ›](/backend/error-handling.html#let-handlers-fail)
+[Details ›](/backend/error-handling#let-handlers-fail)
 
 #### What do I use instead of try-catch?
 `ctx.assert` / `ctx.throw` (Koa) and `throw new HTTPException(...)` (Hono).
-[Details ›](/backend/error-handling.html#let-handlers-fail)
+[Details ›](/backend/error-handling#let-handlers-fail)
 
 ### Validation
 
@@ -497,57 +516,57 @@ TypeScript types are automatically converted to JSON Schema and validated at run
 no separate schema language, no schemas drifting out of sync.
 One type definition is the source of truth for server validation,
 client (fetch) validation, and the OpenAPI spec.
-[Details ›](/validation/intro.html#understanding-runtype-validation)
+[Details ›](/validation/intro#understanding-runtype-validation)
 
 #### How does one type give both compile-time and runtime safety?
 The same definition that gives compile-time checking (autocomplete, refactor safety)
 also generates the runtime validator that runs when real requests arrive -
 closing the gap TypeScript can't cover at runtime.
-[Details ›](/validation/intro.html#understanding-runtype-validation)
+[Details ›](/validation/intro#understanding-runtype-validation)
 
 #### How are validators generated?
 AST parsing (via ts-morph / TFusion) extracts types and traces referenced files;
 AOT compilation produces high-performance validators in `lib` via TypeBox -
 direct property checks, not a generic JSON Schema interpreter.
-[Details ›](/validation/intro.html#how-generation-works)
+[Details ›](/validation/intro#how-generation-works)
 
 #### Why is double (client + server) validation a performance gain, not a cost?
 Invalid requests are caught client-side before they leave the browser,
 saving bandwidth/compute and giving users instant feedback;
 server validation still runs for direct API calls.
-[Details ›](/validation/intro.html#end-to-end-validation)
+[Details ›](/validation/intro#end-to-end-validation)
 
 #### How do I refine params?
 Pass a tuple as the second type argument to `defineRoute`;
 each position maps to a param in path order (e.g. `<"users/[id]", [number]>`).
 A request to `/api/users/abc` is rejected with 400 before the handler runs.
 Refinements are positional, not name-based - renaming `[id]` to `[userId]` needs no change here.
-[Details ›](/validation/params.html#params-refinements)
+[Details ›](/validation/params#params-refinements)
 
 #### Why must the params tuple be written inline?
 A pre-defined tuple *alias* loses the structural info the generator needs to emit a schema.
 Individual type aliases used *inside* the inline tuple are fine -
 it's only extracting the whole tuple to a named type that breaks.
-[Details ›](/validation/params.html#params-refinements)
+[Details ›](/validation/params#params-refinements)
 
 #### What payload targets exist?
 Metadata (any method): `query`, `headers`, `cookies`. Body (POST/PUT/PATCH): `json`, `form`, `raw`.
 `form` covers both URL-encoded and multipart form data (so file uploads go here);
 `raw` accepts plain text, binary data, `Buffer`, `ArrayBuffer`, or `Blob`.
-[Details ›](/validation/payload.html#validation-targets)
+[Details ›](/validation/payload#validation-targets)
 
 #### Why one body target but multiple metadata targets?
 Body targets are mutually exclusive (one per handler - you can't have both `json` and `form`);
 metadata targets can be combined freely. A body target on GET, or two body targets,
 is flagged at dev time and the affected schema is disabled.
-[Details ›](/validation/payload.html#validation-targets)
+[Details ›](/validation/payload#validation-targets)
 
 #### How do I handle file uploads?
 Use the `form` body target on a POST/PUT/PATCH handler - it accepts multipart form data,
 so the uploaded file and any accompanying text fields are validated together as one payload.
 Type the file field alongside the metadata fields (e.g. `form: { file: ..., title: string }`),
 and the parsed result is available on `ctx.validated.form` like any other validated body.
-[Details ›](/validation/payload.html#validation-targets)
+[Details ›](/validation/payload#validation-targets)
 
 #### How do I validate responses, and why bother?
 The `response` property as a positional tuple: `[status, contentType, Schema]`,
@@ -560,16 +579,16 @@ or drifted DB/third-party shapes) and enables automatic OpenAPI generation.
 Fully supported - import shared types, use generic wrappers like `Payload<User>`.
 The generator resolves generics, traces all referenced types,
 and rebuilds the schema when a shared type changes.
-[Details ›](/validation/payload.html#referenced-types)
+[Details ›](/validation/payload#referenced-types)
 
 #### Inline object type vs `Payload<T>` for the `json` target - are they equivalent?
 Yes. An inline literal (`json: { email: VRefine<string,{format:"email"}> }`)
 and a named wrapper (`json: Payload<CreateUser>`) express the same thing -
 the validated body schema. Use inline for one-off shapes and a named type to reuse a domain model.
-[Details ›](/validation/payload.html#referenced-types)
+[Details ›](/validation/payload#referenced-types)
 
 #### What is VRefine?
-It adds JSON Schema constraints to a primitive type - globally available, no import.
+It adds JSON Schema constraints to the target type - globally available, no import.
 `VRefine<number, { minimum: 1, multipleOf: 1 }>`. The first argument is the base type,
 the second is any valid JSON Schema validation keyword.
 [Details ›](/validation/refine)
@@ -595,21 +614,24 @@ turning a clear validation error into a confusing DB error.
 [Details ›](/validation/refine)
 
 #### What does a ValidationError expose?
-`target` (which request part failed: `params`/`query`/`headers`/`cookies`/`json`/`form`/`raw`/`response`), `errors` (array of `ValidationErrorEntry` with `keyword`/`path`/`message`/`params`/`code`), `errorMessage` (all errors as one string), `errorSummary` (e.g. "2 validation errors found across 2 fields"), `route`, and `data` (the data that failed).
-[Details ›](/validation/error-handling.html#validationerror-properties)
+`target` (which request part failed: `params`/`query`/`headers`/`cookies`/`json`/`form`/`raw`/`response`),
+`errors` (array of `ValidationErrorEntry` with `keyword`/`path`/`message`/`params`/`code`),
+`errorMessage` (all errors as one string), `errorSummary` (e.g. "2 validation errors found across 2 fields"),
+`route`, and `data` (the data that failed).
+[Details ›](/validation/error-handling#validationerror-properties)
 
 #### How do I surface field-level form errors?
 Map `error.errors` to `{path, message}` pairs; `target` tells you which request part failed.
 Nested field paths use arrow notation (`customer > address > city`) -
 match them with word-boundary regex to avoid false positives.
-[Details ›](/validation/error-handling.html#validationerror-properties)
+[Details ›](/validation/error-handling#validationerror-properties)
 
 #### How do I set custom per-field error messages?
 The second type argument to the handler accepts a per-target message set:
 an `error` fallback plus `"error.fieldName"` overrides (dot notation for nested fields,
 e.g. `"error.order.shipping.address.postalCode"`).
 KosmoJS picks the most specific message; it appears in each entry's `message`.
-[Details ›](/validation/error-handling.html#custom-error-messages)
+[Details ›](/validation/error-handling#custom-error-messages)
 
 #### Why must I avoid built-in type names?
 Names like `Event`, `Response`, `Request`, `Error`, `Date`, `Partial`, `Record`, `Buffer`
@@ -617,7 +639,7 @@ are referenced as-is during type flattening, so the validator sees the built-in,
 not your custom type - a silent runtime failure with no compile error.
 Use a consistent `T` suffix/prefix (`EventT`, `TResponse`).
 The full list is in the TFusion builtins reference.
-[Details ›](/validation/naming-conventions.html#why-this-matters)
+[Details ›](/validation/naming-conventions#why-this-matters)
 
 #### How do I skip runtime validation but keep types?
 Per-target `runtimeValidation: false` in the second type argument (works for payload and response).
@@ -631,17 +653,17 @@ runtime validation is what catches mismatched DB responses, unexpected payloads,
 #### What type arguments does defineRoute accept?
 RouteName (required), ParamsTuple, then State + Context (Koa) or Variables + Bindings (Hono).
 The 3rd/4th are for types unique to one route.
-[Details ›](/backend/type-safety.html#typing-state-context)
+[Details ›](/backend/type-safety#typing-state-context)
 
 #### How do I type Cloudflare bindings (e.g. D1) in Hono?
 The 4th type argument (`{ DB: D1Database }`) for a single route,
 or `DefaultBindings` in `api/env.d.ts` globally; read via `ctx.env.DB`.
-[Details ›](/backend/type-safety.html#typing-state-context)
+[Details ›](/backend/type-safety#typing-state-context)
 
 #### How do I add global context/state types?
 Declare them in `api/env.d.ts` via module augmentation: `DefaultState`/`DefaultContext` (Koa)
 or `DefaultVariables`/`DefaultBindings` (Hono).
-[Details ›](/backend/type-safety.html#global-context-types-apienvdts)
+[Details ›](/backend/type-safety#global-context-types-apienvdts)
 
 ### Fetch Clients
 
@@ -653,18 +675,19 @@ Output lands in `lib` alongside validators and the OpenAPI spec.
 
 #### How do I call a client?
 `import fetchClients from "_/fetch"`, then `fetchClients["users/[id]"].GET([123])`.
-[Details ›](/fetch/start.html#method-signatures)
+[Details ›](/fetch/start#method-signatures)
 
 #### What's the method signature?
 First argument is a params array in path order; second is the optional payload
-(`{ query }`, `{ json }`, etc.). Response type is inferred from your route's `response` definition.
-[Details ›](/fetch/start.html#method-signatures)
+(`{ query }`, `{ json }`, etc.). Every type is inferred from the route definition -
+params, payload, and response alike.
+[Details ›](/fetch/start#method-signatures)
 
 #### How do I call a route with no params or no payload?
 No params: call with no array (`fetchClients["users"].GET()`).
 Payload but no params: pass `[]` for params (`GET([], { query: {...} })`).
 If the route defines no payload, the second argument isn't required.
-[Details ›](/fetch/start.html#routes-without-parameters-or-payloads)
+[Details ›](/fetch/start#routes-without-parameters-or-payloads)
 
 #### Are requests validated before they leave the browser?
 Yes - clients validate params and payload before any network request,
@@ -677,7 +700,7 @@ Each client exposes `validationSchemas` (`params`, `json.POST`, etc.) for real-t
 Four methods: `check(data)` (cheap boolean, safe per keystroke), `errors(data)`
 (field-level array, only after `check` fails), `errorMessage(data)` (one string),
 `errorSummary(data)` (brief overview). Gate the heavy three behind `check`.
-[Details ›](/fetch/validation.html#validation-schemas)
+[Details ›](/fetch/validation#validation-schemas)
 
 #### How do I do performant per-field validation as users type?
 Schemas validate whole objects, so on a partially-filled form `check` fails
@@ -686,7 +709,7 @@ Fix: merge the field under test into a fully-valid placeholder payload
 (`{ ...validPayload, name: e.target.value }`) so `check` only fails for that field.
 On submit, always validate the real payload. Most forms don't need this -
 it matters for complex forms validating in real time.
-[Details ›](/fetch/validation.html#per-field-validation-performance)
+[Details ›](/fetch/validation#per-field-validation-performance)
 
 #### How do I build URLs without making a request?
 `path([123])` -> `/api/users/123`; `path([123], { query: { include: "posts" } })` adds a query string;
@@ -703,9 +726,11 @@ anything else is a network or server error.
 
 #### How does it integrate with framework data patterns?
 Clients return standard promises, so they drop into SolidJS `createResource`,
-React hooks/`useEffect`, TanStack Query `queryFn`, etc.
-Types flow through these abstractions automatically.
-[Details ›](/fetch/error-handling)
+React Router `loader`/`useLoaderData`, TanStack Query `queryFn`, or a `useEffect`
+hook. Types flow through these abstractions automatically. Render-time patterns
+(loader, resource) also run during SSR in-process; a `useEffect` fetch only runs
+on the client.
+[Details ›](/fetch/integration)
 
 ### Frontend
 
@@ -715,41 +740,41 @@ to the framework's native router and reactive model.
 [Details ›](/fetch/integration)
 
 #### How do I enable a generator on an existing folder?
-Register the generator (and its Vite plugin, e.g. `@vitejs/plugin-react` +
-`reactGenerator()`) in the folder's `kosmo.config.ts`.
-Restart the dev server after adding generators.
-[Details ›](/frontend/intro.html#enabling-the-generator)
+Register the generator (e.g. `reactGenerator()`) in the folder's `kosmo.config.ts` and restart
+the dev server. The generator inserts its own Vite plugin automatically - don't add the plugin
+yourself (e.g. `@vitejs/plugin-react`), or it runs twice.
+[Details ›](/frontend/intro#enabling-the-generator)
 
 #### What `jsxImportSource` does each framework need?
 React `"react"`, SolidJS `"solid-js"`, Vue `"vue"` (only when using JSX),
 MDX `"preact"`. All use `jsx: "preserve"` (Vite does the JSX transform, not TS).
 Mixing frameworks needs per-folder tsconfig - KosmoJS generates a `tsconfig.base.json`
 per folder in `lib/` for your folder's `tsconfig.json` to extend.
-[Details ›](/frontend/intro.html#typescript-configuration)
+[Details ›](/frontend/intro#typescript-configuration)
 
 #### What foundation files does a framework generator produce?
 A root App component (your app shell), a router config (`routerFactory`),
 and a client entry point (`entry/client`). SSR adds a server entry.
-[Details ›](/frontend/intro.html#enabling-the-generator)
+[Details ›](/frontend/intro#enabling-the-generator)
 
 #### What is routerFactory?
 It wires your App + generated routes to the native router.
 Its callback returns `clientRouter()` (browser navigation) and `serverRouter(url)` (SSR routing).
 Generated routes are always wrapped inside your App, establishing the layout hierarchy,
 and use the folder's `baseurl`.
-[Details ›](/frontend/application.html#router-configuration)
+[Details ›](/frontend/application#router-configuration)
 
 #### What is renderFactory?
 It orchestrates `mount()` (fresh client mount) vs `hydrate()` (hydrate SSR HTML),
-choosing automatically via `__KOSMO_HYDRATABLE__` global var.
+choosing automatically via `__KOSMO_HYDRATION_BOOL__` global var.
 Referenced from `index.html` through `entry/client`.
-[Details ›](/frontend/application.html#application-entry)
+[Details ›](/frontend/application#application-entry)
 
 #### Are page components lazy-loaded?
 Yes - all page components are lazy-loaded by default and fetched on demand,
 keeping the initial bundle small. The generated route shape differs slightly
 per framework's router format.
-[Details ›](/frontend/routing.html#lazy-loading)
+[Details ›](/frontend/routing#lazy-loading)
 
 ### Layouts
 
@@ -757,34 +782,38 @@ per framework's router format.
 A `layout` file in any `pages/` folder wraps every route in that folder and its subfolders;
 nest layouts by nesting folders. No imports or config - the file system defines the hierarchy,
 and child routes cannot escape parent layouts.
-[Details ›](/frontend/layouts.html#define-a-layout)
+[Details ›](/frontend/layouts#define-a-layout)
 
 #### What's the nested render order?
 Outermost App -> each layout in path order -> the page. E.g. for `/dashboard/settings/profile`:
 `App` -> `dashboard/layout` -> `dashboard/settings/layout` -> page.
-[Details ›](/frontend/layouts.html#define-a-layout)
+[Details ›](/frontend/layouts#define-a-layout)
 
 #### What's the recognized layout filename per framework, and is it case-sensitive?
 `layout.tsx` (React/SolidJS), `layout.vue` (Vue), `layout.mdx` (MDX) - lowercase only.
 Other casings are treated as regular components.
 Each folder runs one framework and ignores other frameworks' files (a Vue folder ignores `.tsx`, etc.).
-[Details ›](/frontend/layouts.html#layout-file-naming)
+[Details ›](/frontend/layouts#layout-file-naming)
 
 #### What does the root App file wrap, and how is it different from a layout?
 `App.{tsx,vue,mdx}` at the source-folder root wraps every route -
 the place for truly global concerns (auth checks, analytics, error boundaries).
 A `layout` file scopes shared UI to a folder subtree.
-[Details ›](/frontend/layouts.html#global-layout-via-app-file)
+[Details ›](/frontend/layouts#global-layout-via-app-file)
 
 #### How does each framework render the child route?
 React `<Outlet/>`, Vue `<RouterView/>`, SolidJS and MDX `props.children`.
-[Details ›](/frontend/layouts.html#layout-implementation)
+[Details ›](/frontend/layouts#layout-implementation)
 
 #### How do I load data in a layout?
-Same per-framework patterns as pages: React `loader` + `useLoaderData`,
-SolidJS `preload` + `createAsync`, Vue `onMounted`/guards.
-Load shared data at the common parent layout rather than duplicating the fetch in each child.
-[Details ›](/frontend/layouts.html#data-loading-in-layouts)
+Layouts are route-level, so a `layout.tsx` uses the same loader/preload a page does.
+React (`loader` + `useLoaderData`), Solid (`preload` + `query`/`createAsync`),
+Vue (`loader` + `useLoaderData`), and MDX (`loader` + `useLoaderData`) all load
+at the layout level, fetching shared data once for everything beneath it.
+For Vue and MDX a layout passes its path-qualified name to `useLoaderData`
+(e.g. `useLoaderData("dashboard/layout")`) to read its own data rather than the
+page's; React and Solid scope per route automatically.
+[Details ›](/frontend/layouts#data-loading-in-layouts)
 
 ### Navigation (typed Link)
 
@@ -793,35 +822,50 @@ The generator produces a `Link` at `components/Link.{tsx,vue}` with compile-time
 The `to` prop takes a typed tuple `[routeName, ...params]` (e.g. `["users/[id]", 123]`),
 plus an optional `query` prop. Typing the route name triggers IntelliSense;
 parameterized routes require their params.
-[Details ›](/frontend/link-navigation.html#usage)
+[Details ›](/frontend/link-navigation#usage)
 
 #### What's the refactor-safety benefit?
 Renaming a route directory produces TypeScript errors at every `Link` referencing the old name -
 turning refactors into an automated checklist.
-[Details ›](/frontend/link-navigation.html#linkprops-type)
+[Details ›](/frontend/link-navigation#linkprops-type)
 
 ### Data Preload
 
 #### How does route-level preloading work per framework?
 
+`GET` here is a method off the generated fetch client for the route
+(`const { GET } = fetchClients["users/data"]`) - exported under the name the framework's
+router expects.
+
 - React: `export { GET as loader }` - React Router calls it before render;
 `useLoaderData<ResponseT[...]>()` retrieves the typed result with no duplicate request
 (runs on load, hover, navigation).
 
-- SolidJS: `export { GET as preload }` - called on hover/intent;
-`createAsync(preload)` reuses the cached result.
+- SolidJS: wrap the fetch in `query()` and export it as `preload` - called on
+hover/intent; `createAsync` calling the same `query`-wrapped function reuses the
+cached result. The raw client `GET` isn't cached, so the `query()` wrapper is
+what makes preload and `createAsync` share one fetch.
 
-- Vue: no built-in route-level preload hook - use `onMounted`, `watch` on params,
-or navigation guards in `router.ts`.
+- Vue: `export const loader` in a plain `<script>` block (a `<script setup>`
+can't hold ES exports) - the router runs it before render, and the page reads
+the result with `useLoaderData()`.
 
-[Details ›](/frontend/data-preload.html#page-integration)
+- MDX: `export const loader` too - runs before render, and the page reads the
+result with the `useLoaderData()` hook (`props` stays yours).
 
-#### Why does Vue behave differently for preloading?
-Vue Router has no built-in route-level preload mechanism,
-so KosmoJS can't offer the same loader/preload ergonomics.
-This is a property of Vue Router, not a KosmoJS limitation;
-prefetching support is under consideration.
-[Details ›](/frontend/data-preload.html#how-it-works)
+[Details ›](/frontend/data-preload#page-integration)
+
+#### Do I need a Suspense boundary for data fetching?
+For SolidJS, yes - `createAsync` (like `createResource`) suspends, reporting pending state
+to the nearest `<Suspense>` and errors to the nearest `<ErrorBoundary>`. KosmoJS
+ships no boundary: the generated `App` renders children directly, on purpose -
+one app-wide `<Suspense>` is an anti-pattern (any pending fetch collapses the
+whole page to a single fallback). Scope a boundary to the data component or a
+subtree yourself. React, Vue, and MDX loaders resolve before render and
+don't suspend, so they need none unless you reach for something like `React.lazy`,
+`use()`, or an async `<script setup>`.
+Wrapping the whole app works if you accept the tradeoff - your call, not a default.
+[Details ›](/frontend/data-preload#suspense-is-your-responsibility)
 
 ### MDX
 
@@ -831,29 +875,31 @@ rendered to static HTML with Preact, minimal client JS by default.
 React/Vue/Solid for interactivity-primary folders (dashboards, client-side state, real-time forms).
 Rule of thumb: primarily content with occasional interactivity -> MDX;
 primarily interactive with occasional content -> a framework.
-[Details ›](/frontend/mdx.html#when-to-use-mdx-vs-frameworks)
+[Details ›](/frontend/mdx#when-to-use-mdx-vs-frameworks)
 
 #### How do I write MDX pages?
 `.mdx`/`.md` files in `pages/`, mixing markdown and JSX, with YAML frontmatter between `---` fences.
 Import Preact components directly.
-[Details ›](/frontend/mdx.html#writing-pages)
+[Details ›](/frontend/mdx#writing-pages)
 
 #### How do I access the current route inside a component?
 Call the `useRoute()` hook from `_/use`. It returns the route `name`, the validated `params`,
 and the page's `frontmatter` together, so a shared component (a breadcrumb, a title bar) can
 read where it is without receiving props from the page. This is distinct from a framework's
 own `useParams` - `useRoute()` also carries the route name and frontmatter, not just params.
-[Details ›](/frontend/mdx.html#route-parameters)
+[Details ›](/frontend/mdx#route-parameters)
 
 #### How do I fetch data in MDX?
 Export a `loader` function from the page. It runs before the page renders,
 through the same fetch client used elsewhere in the project.
-[Details ›](/frontend/mdx.html#data-fetching)
+[Details ›](/frontend/mdx#data-fetching)
 
 #### How do I access fetched data in MDX?
-Whatever `loader` returns is passed to the page as `props.data` -
-reference it directly in markdown/JSX expressions, e.g. `{props.data.msg}`.
-[Details ›](/frontend/mdx.html#data-fetching)
+Read it with the `useLoaderData()` hook inside a component - `props` stays yours.
+Because a hook must run during render, wrap the read in a small component
+(`export const Msg = () => { const data = useLoaderData(); return <p>{data.msg}</p>; }`)
+and place `<Msg />` in the markdown.
+[Details ›](/frontend/mdx#data-fetching)
 
 #### How do I use route name/params inside an MDX loader?
 `loader` runs before the component tree exists, so hooks (`useParams()`, `useRoute()`) aren't available there -
@@ -861,34 +907,34 @@ they only work while Preact is actually rendering a component.
 Instead, `loader` receives the resolved `Route` object as its argument, including `paramsEntries` -
 a `[keys, values]` tuple in the same order the route declares its parameters,
 ready to pass straight to a parametrized endpoint (`GET(params)`).
-[Details ›](/frontend/mdx.html#loaders-with-route-parameters)
+[Details ›](/frontend/mdx#loaders-with-route-parameters)
 
 #### How do I fetch data in MDX in SSG mode?
 Same `loader` export, combined with `staticParams`. `loader` runs once per declared entry,
 receiving that entry's own `paramsEntries`, and each entry's fetched data gets baked into its
 own pre-rendered HTML file.
-[Details ›](/frontend/mdx.html#static-site-generation)
+[Details ›](/frontend/mdx#static-site-generation)
 
 #### Why can't I write TypeScript in MDX?
 MDX only supports plain JavaScript expressions.
 Keep typed code (props, hooks, types) in `.tsx` files and import them into the MDX page.
-[Details ›](/frontend/mdx.html#common-pitfalls)
+[Details ›](/frontend/mdx#common-pitfalls)
 
 #### How do I override markdown elements globally?
 The component map in `components/mdx.tsx` (applied through `MDXProvider`) -
 override `h1`, `pre`, links, etc. for all pages. Individual pages can still import additional components.
-[Details ›](/frontend/mdx.html#using-components)
+[Details ›](/frontend/mdx#using-components)
 
 #### How does frontmatter drive the head?
 `title`, `description`, and a `head` array in frontmatter inject `<head>` content automatically -
 the same convention as VitePress, no new syntax.
-[Details ›](/frontend/mdx.html#frontmatter-head-injection)
+[Details ›](/frontend/mdx#frontmatter-head-injection)
 
 #### How does SSG handle dynamic routes?
 Declare variants via `staticParams` in frontmatter; the build renders one HTML file per entry.
 Static routes render automatically.
 Dynamic routes without `staticParams` are skipped from the SSG build entirely.
-[Details ›](/frontend/mdx.html#static-site-generation)
+[Details ›](/frontend/mdx#static-site-generation)
 
 #### What are the common MDX pitfalls?
 No TypeScript in MDX (keep it in `.tsx`); hooks must be called inside components,
@@ -896,68 +942,91 @@ not at module scope (`export const x = useParams()` runs on import and fails);
 `loader` can't use hooks either, since it runs before the tree exists - use the `Route`
 argument instead; curly braces in prose are parsed as JSX - wrap in backticks;
 layouts must be `.mdx` not `.md` (`.md` can't render `{props.children}`).
-[Details ›](/frontend/mdx.html#common-pitfalls)
+[Details ›](/frontend/mdx#common-pitfalls)
 
 ### SSR
 
 #### Is SSR on by default?
-No - folders default to client-side rendering (with Vite's dev server and HMR on dev).
-Enable SSR per folder via `--ssr` at creation or by registering `ssrGenerator()`
-in `kosmo.config.ts` (restart dev after adding).
-[Details ›](/frontend/server-side-render.html#adding-ssr-support)
+No - folders default to client-side rendering (with Vite's dev server and HMR in dev). Enable
+SSR when you create the folder (choose it in the interactive prompt, or pass `--ssr` in CLI
+mode), or add it later by registering `ssrGenerator()` in `kosmo.config.ts` and restarting dev.
+[Details ›](/frontend/server-side-render#adding-ssr-support)
 
 #### Does SSR run in dev?
 No - in dev, Vite handles all requests with HMR and CSR for immediate feedback.
 SSR activates exclusively in production builds.
 (This commonly surprises Next/TanStack migrators who expect dev to mirror prod rendering.)
-[Details ›](/frontend/server-side-render.html#development-experience)
+[Details ›](/frontend/server-side-render#development-experience)
 
 #### renderToString vs renderToStream?
-`renderToString(url, SSROptions)` renders the full page before sending and returns `{ html, head }`
-(provided by default). `renderToStream` enables progressive streaming for better TTFB
-and takes precedence when both are present.
-[Details ›](/frontend/server-side-render.html#server-entry-point)
+Both return `{ head, html }` - `renderToString` resolves `html` to a string (full page
+rendered before sending), `renderToStream` resolves it to a `ReadableStream` (progressive
+flushing, better TTFB). Framework folders implement both; which one runs per route is
+chosen by `renderMode`, not by precedence. MDX is the exception - it renders static
+content and implements only `renderToString`.
+[Details ›](/frontend/server-side-render#server-entry-point)
 
-#### What does renderToString receive?
-The requested URL plus `SSROptions`:
+#### What do the render methods receive?
+Both share the same first two arguments - the requested URL plus `SSROptions`:
 `template` (client `index.html` with `<!--app-head-->`/`<!--app-html-->` placeholders),
 `manifest` (Vite's dependency graph),
-and `assets` (SSR assets you inject manually, each offering `tag`/`path`/`content`/`size`).
-[Details ›](/frontend/server-side-render.html#render-factory-arguments)
+and `assets` (SSR assets you inject manually, each offering `kind`/`tag`/`content`/`size`,
+plus an optional `path` - content-only assets like inlined scripts have no URL).
+`renderToStream` also receives the stream as a third argument for custom flushing control.
+[Details ›](/frontend/server-side-render#render-factory-arguments)
 
 #### Why must I inject SSR assets manually but not CSR assets?
 Vite injects CSR assets automatically; SSR-related assets are not,
-so the server entry composes them into `head` itself (e.g. `assets.map(a => a.tag).join("\n")`).
-[Details ›](/frontend/server-side-render.html#render-factory-arguments)
+so the server entry composes them into `head` itself.
+[Details ›](/frontend/server-side-render#render-factory-arguments)
 
 #### How does streaming work across runtimes?
-Frameworks expose a web-standard `ReadableStream`
-(`renderToReadableStream`, `renderToStream().readable`, `renderToWebStream`)
-that pipes directly into Hono's `stream.pipe()` - no Node stream adapters, identical on Node/Bun/Deno.
-Split the template at `<!--app-html-->`, write the head, pipe the framework stream, write the tail.
-[Details ›](/frontend/server-side-render.html#stream-rendering)
+`renderToStream` (imported from `_/entry/server`) returns a web-standard `ReadableStream`
+for every framework, so streaming behaves the same on Node, Bun, and Deno. You return the
+stream as `html`; the server handles writing it into the response. Enable it per route via
+`renderMode`.
+[Details ›](/frontend/server-side-render#stream-rendering)
+
+#### How do I use a different render mode per route or group of routes?
+`renderMode` in `ssrGenerator()` options controls string vs stream per route. Every route
+defaults to `"string"`; set `"stream"` to stream all routes, or pass a map of glob patterns to
+opt in selectively. When patterns overlap, the first match wins, so order them specific to
+general. Streaming a route needs the folder's renderer to implement `renderToStream`; MDX
+folders render static content and don't accept the streaming mode.
+[Details ›](/frontend/server-side-render#selecting-the-render-mode)
 
 #### How do I build and run the SSR bundle, and on which runtimes?
 `pnpm build` produces `dist/<folder>/ssr/server.js`. Run it with `node`, `bun`,
 or `deno run -A` (`... -p 4556`). Unix sockets are supported across all three (`-s /tmp/app.sock`).
 It uses `node:http`, natively supported by all three runtimes.
-[Details ›](/frontend/server-side-render.html#runtime)
+[Details ›](/frontend/server-side-render#runtime)
 
-#### How do I disable in-memory static asset serving?
-Use a reverse proxy or CDN to serve `dist/<folder>/ssr/assets/` folder.
-[Details ›](/frontend/server-side-render.html#static-asset-handling)
+#### Can I serve the SSR static assets so they don't hit the SSR server?
+Yes. In-memory serving of `dist/<folder>/ssr/assets/` can't be turned off, but you can put a
+reverse proxy or CDN in front to serve that folder directly, so asset requests never reach the
+SSR process.
+[Details ›](/frontend/server-side-render#static-asset-handling)
 
 #### How do I deploy behind Nginx/Caddy?
-Reverse-proxy to the SSR port (or a Unix socket). The API and SSR servers are bundled separately,
-so deploy, scale, and run them independently.
-[Details ›](/frontend/server-side-render.html#production-deployment)
+Reverse-proxy to the SSR port (or a Unix socket). The SSR bundle includes the API, so it serves
+API requests on the same port seamlessly - no separate API process needed alongside it.
+[Details ›](/frontend/server-side-render#production-deployment)
 
 #### What breaks during SSR?
 Browser APIs (`window`, `document`, browser-only APIs) are unavailable server-side.
 Coordinate async data so it's ready before render, plan state serialization for hydration,
 and remember the hydration bundle still ships to clients (size still matters).
 Use error boundaries so a server error doesn't terminate the process.
-[Details ›](/frontend/server-side-render.html#technical-considerations)
+[Details ›](/frontend/server-side-render#technical-considerations)
+
+#### How do I fetch data during SSR?
+Use your framework's render-time data path - a `loader` (React, Vue, MDX), a
+`preload` (Solid), or a Solid `createResource`/Suspense resource - and call the
+generated fetch client inside it. During
+SSR the client dispatches to the API route in-process (the API server is bundled into the SSR
+bundle), so there's no network hop, just the full validation/handler chain. A fetch in
+`useEffect`/`onMounted` won't run on the server - those fire only after hydration.
+[Details ›](/fetch/integration#isomorphic-fetch)
 
 ### Build & Deployment
 
@@ -967,23 +1036,26 @@ Use error boundaries so a server error doesn't terminate the process.
 
 #### What's the build output layout?
 `dist/<folder>/` with `api/` (`app.js` factory + `server.js` bundled server),
-`client/` (`assets/` + `index.html`), and `ssr/` (`app.js` + `server.js`, only when SSR is enabled).
-[Details ›](/backend/building-for-production.html#build-output)
+`client/` (`assets/` + `index.html`), and `ssr/` (`app.js` + `server.js` + `assets/` folder, only when SSR is enabled).
+[Details ›](/backend/building-for-production#build-output)
 
 #### What's the simplest way to run the API in production?
 `node dist/front/api/server.js`. For more control, use the app factory at `dist/<folder>/api/app.js`.
-[Details ›](/backend/building-for-production.html#running-in-production)
+[Details ›](/backend/building-for-production#running-in-production)
 
 #### How do I mount the app factory per runtime?
 Koa: `app.callback()` is a Node `(req,res)` handler -
 on Deno/Bun use it via the `node:http` compat layer (`createServer(app.callback())`),
 not their native serve APIs. Hono: `app.fetch` is a Web Fetch handler -
 Node via `@hono/node-server`'s `getRequestListener`, Deno via `Deno.serve`, Bun via `Bun.serve`.
-[Details ›](/backend/building-for-production.html#running-in-production)
+[Details ›](/backend/building-for-production#running-in-production)
 
 #### Why are the API and SSR servers separate?
-They're bundled separately so you can deploy, scale, and run them independently.
-[Details ›](/backend/building-for-production.html#build-output)
+They're built as separate bundles so you can deploy, scale, and run them independently. But the
+SSR bundle already includes the API and serves it on the same port, so an SSR deployment doesn't
+need a separate API process. Running the API server on its own is only needed for CSR folders,
+where there's no SSR bundle to carry it.
+[Details ›](/backend/building-for-production#build-output)
 
 ### OpenAPI
 
@@ -996,57 +1068,55 @@ parameters, and responses. No manual schema authoring or annotation layers.
 Add `openapiGenerator(config)` in `kosmo.config.ts`. Required: `outfile`, `openapi` (e.g. `"3.1.0"`),
 `info` (`title` + `version`), `servers` (each `url` + optional `description`).
 Optional `info`: `summary`, `description` (markdown), `termsOfService`, `contact`, `license`.
-[Details ›](/openapi.html#configuration)
+[Details ›](/openapi#configuration)
 
 #### Why does one route with an optional param produce two paths?
 OpenAPI requires all path params to be mandatory, so a route like `users/[id]/posts/{postId}`
 emits both `/users/{id}/posts/{postId}` and `/users/{id}/posts` -
 both referencing the same handlers and schemas.
-[Details ›](/openapi.html#generated-specification)
+[Details ›](/openapi#generated-specification)
 
 #### Does the spec regenerate automatically?
 Yes - it regenerates in the background whenever you change routes, types, or schemas,
 alongside the validation and fetch generators.
-[Details ›](/openapi.html#generated-specification)
+[Details ›](/openapi#generated-specification)
 
 #### How do I serve the spec?
 Point Swagger UI, Redoc, or Stoplight Elements at the generated file.
-[Details ›](/openapi.html#generated-specification)
+[Details ›](/openapi#generated-specification)
 
 ### Dev Workflow & Internals
 
 #### What happens when the dev server starts?
 Vite compiles `api/app.ts`; the dev server serves both client pages and your API routes;
 requests are routed between Vite and your API; a file watcher monitors API files for changes.
-[Details ›](/backend/development-workflow.html#what-happens-on-start)
+[Details ›](/backend/development-workflow#what-happens-on-start)
 
 #### What are the api/dev.ts hooks?
-`requestHandler` (returns the API request handler), `requestMatcher`
-(which requests go to the API vs Vite - by default, requests whose URL starts with the
-`apiurl` prefix or that carry an `x-api-request: true` header),
-and `teardownHandler` (runs before each API reload).
-[Details ›](/backend/development-workflow.html#api-dev-ts)
+`requestHandler` (returns the API request handler) and `teardownHandler`
+(runs before each API reload).
+[Details ›](/backend/development-workflow#api-dev-ts)
 
 #### How do I add custom request routing (e.g. WebSockets)?
 Override `requestHandler` in `api/dev.ts` for custom dispatch, WebSocket handling,
 multi-handler setups, etc.
-[Details ›](/backend/development-workflow.html#apidevts)
+[Details ›](/backend/development-workflow#apidevts)
 
 #### Why are my DB connections leaking during development?
 Frequent rebuilds can exhaust connections. Close connections and release resources
 in `teardownHandler`, which runs before each reload.
-[Details ›](/backend/development-workflow.html#apidevts)
+[Details ›](/backend/development-workflow#apidevts)
 
 #### How do I inspect registered routes and their middleware?
 Each route has a `debug` property; enable with `DEBUG=api pnpm dev` to print path,
 methods, middleware chain (by slot), and handler.
 Targeted properties: `debug.headline`, `debug.methods`, `debug.middleware`, `debug.handler`.
-[Details ›](/backend/development-workflow.html#inspecting-routes)
+[Details ›](/backend/development-workflow#inspecting-routes)
 
 #### Why should I name my middleware functions?
 Named functions print by name in the debug output; anonymous ones print only their first line,
 which is much harder to read.
-[Details ›](/backend/development-workflow.html#inspecting-routes)
+[Details ›](/backend/development-workflow#inspecting-routes)
 
 #### How does validation generation performance scale?
 With type complexity - simple routes are near-instant, deep hierarchies with many dependencies
@@ -1059,18 +1129,18 @@ By the time you switch to the browser, the schema is ready.
 Deleting the `lib` folder manually, or a KosmoJS update bumping the cache version.
 On large projects this can take minutes - the same category as clearing `node_modules`
 or regenerating a Prisma client, not part of the normal edit-test cycle.
-[Details ›](/validation/performance.html#when-it-becomes-noticeable)
+[Details ›](/validation/performance#when-it-becomes-noticeable)
 
 #### How does this compare to Zod/Yup on performance vs maintenance?
 Zod/Yup have zero generation overhead because you hand-write the schemas -
 eliminating generation time but adding ongoing maintenance and drift risk.
 KosmoJS trades a few seconds of machine time for eliminating that manual work entirely.
-[Details ›](/validation/performance.html#machine-time-vs-human-time)
+[Details ›](/validation/performance#machine-time-vs-human-time)
 
 #### Where does generated code live?
 In `lib`, kept out of your source directories and bundled like any other dependency
 at production build time. Treat it as a build artifact - you don't need to read it.
-[Details ›](/validation/intro.html#how-generation-works)
+[Details ›](/validation/intro#how-generation-works)
 
 ### Mental Model & Positioning
 
@@ -1090,11 +1160,6 @@ OpenAPI, opt-in SSR, and build orchestration.
 No - you choose React, Vue, SolidJS, or MDX per source folder, and can mix them across folders.
 [Details ›](/frontend/intro)
 
-#### Can I use React?
-Yes. React is a first-class generator alongside Vue, SolidJS, and MDX,
-and React folders use React Router (`Outlet`, `useLoaderData`, `useParams`).
-[Details ›](/frontend/intro)
-
 #### How does it compare to TanStack's "bring your own everything"?
 Similar spirit on the app layer - unopinionated about state/styling/data libraries -
 but it adds conventions for routing, validation, and build that TanStack leaves to you,
@@ -1110,7 +1175,7 @@ No platform lock-in. It's a standard Node/Vite app -
 deploy the bundled servers to Node/Bun/Deno/edge yourself.
 You can still deploy to Vercel as a Node app, but there are no Vercel-specific features
 (and no dependence on them).
-[Details ›](/backend/building-for-production.html#running-in-production)
+[Details ›](/backend/building-for-production#running-in-production)
 
 #### What does it give me over Vite + React Router + Hono wired by hand?
 Directory routing for both sides, generated runtime validators from TS types,
@@ -1128,7 +1193,7 @@ package boundaries, internal dependency graphs, or build-cache configs.
 #### What's the equivalent of Next's `app/page.tsx`?
 A folder with an `index` file: `pages/users/[id]/index.tsx` -> `/users/:id`.
 (TanStack file-based plugin users: same idea, folder-driven.)
-[Details ›](/routing/intro.html#how-it-works)
+[Details ›](/routing/intro#how-it-works)
 
 #### Why folders-with-`index` instead of `page.tsx`?
 Only `index` is the route; siblings are colocated helpers - unambiguous at scale.
@@ -1147,20 +1212,20 @@ Different sigils, same concepts.
 Splat `{...path}` covers both. It matches any number of segments including zero,
 so it behaves like Next's optional catch-all `[[...slug]]` - `docs/{...path}` matches `/docs`
 as well as `/docs/a/b/c`. There's no separate required-vs-optional catch-all distinction to manage.
-[Details ›](/routing/params.html#splat-parameters)
+[Details ›](/routing/params#splat-parameters)
 
 #### Type-safe params like TanStack Router?
 Yes - refine params via the inline tuple type arg to `defineRoute`;
 `ctx.validated.params` carries the refined type, validated at runtime
 (stronger than TanStack's compile-time-only route typing,
 which doesn't validate request bodies by itself).
-[Details ›](/backend/type-safety.html#typing-params)
+[Details ›](/backend/type-safety#typing-params)
 
 #### Where's the central route tree (TanStack `routeTree.gen.ts`) / route config object?
 There isn't one you register. Routing is filesystem-driven;
 route configs are generated per source folder into `lib/` for the native router to consume.
 Treat generated code as a build artifact.
-[Details ›](/frontend/routing.html#generated-route-shape)
+[Details ›](/frontend/routing#generated-route-shape)
 
 #### Route groups like Next's `(group)`?
 There's no route-group syntax, and it isn't needed. Next's `(group)` is a lightweight way
@@ -1190,7 +1255,7 @@ and use client-side modal state (or your router's modal patterns) for the interc
 #### Nested layouts vs Next `layout.tsx` / TanStack `_layout`?
 Same idea - a `layout` file wraps its folder and subfolders, nesting by folders,
 rendered outward-in via `<Outlet/>` (React), `<RouterView/>` (Vue), or `props.children` (Solid/MDX).
-[Details ›](/frontend/layouts.html#define-a-layout)
+[Details ›](/frontend/layouts#define-a-layout)
 
 #### Do layouts persist state across navigation like App Router?
 Yes, in the normal case. When you navigate between sibling routes under the same layout,
@@ -1208,7 +1273,7 @@ using the native principles of your chosen framework.
 
 Not-found has a built-in: a `pages/404.{tsx,vue}` component is rendered for unmatched routes.
 Backend errors are separate - they centralize in `api/errors.ts`.
-[Details ›](/frontend/layouts.html#global-layout-via-app-file)
+[Details ›](/frontend/layouts#global-layout-via-app-file)
 
 #### `beforeLoad` / search-param validation hook?
 KosmoJS doesn't add a proprietary `beforeLoad`-style hook - it leaves your framework's
@@ -1216,13 +1281,13 @@ primitives untouched, so you use the native pattern directly:
 
 - React Router's `loader`
 - Solid Router's `preload`
-- Vue Router's navigation guards run before the route renders
-and are the place for pre-load checks and redirects.
+- Vue's `loader` export for data; Vue Router's navigation guards remain available
+for pre-load checks and redirects
 
 For the data contract itself, search params are validated via the `query` target
 on handlers (with VRefine constraints) and surfaced through the generated,
 client-side-validating fetch clients.
-[Details ›](/frontend/data-preload.html#page-integration)
+[Details ›](/frontend/data-preload#page-integration)
 
 #### Typed/validated search params like TanStack search schemas?
 Not implemented yet - it's a considered feature.
@@ -1231,7 +1296,7 @@ KosmoJS validates query params on the API contract
 but there's no router-level `validateSearch` that types `useSearch()` on the *page route*
 the way TanStack does - query typing centers on the API/fetch boundary,
 not page-route search state. For now, read and parse search params with your framework's native router.
-[Details ›](/validation/payload.html#validation-targets)
+[Details ›](/validation/payload#validation-targets)
 
 ### Data Fetching
 
@@ -1240,25 +1305,36 @@ No RSC, and no `"use client"`/`"use server"` directive boundary - by design, not
 KosmoJS keeps the battle-tested industry standard: server code in `api/`,
 client code in `pages/`, and a plain HTTP API between them with typed fetch clients across the wire.
 There's no interleaving of server and client code in one file and no new mental model to learn -
-the boundary is the network call. Boring, as in 2015 - and boring is a feature here.
+the boundary is the network call. Boring, as in 2015 - and boring is a feature here. And with
+the isomorphic fetch client that boundary costs nothing on the server: during SSR the call runs
+in-process, so there's no network layer at all.
 [Details ›](/frontend/intro)
 
+#### How about server functions?
+There aren't any, and you don't need them. A server function exists to run server-only code from
+the client without hand-writing an endpoint; KosmoJS gives you that through the API route plus its
+generated typed client. The same client is isomorphic - during SSR it calls the route in-process
+(no network hop), on the client it's a same-origin request - so one typed call covers both sides
+without a separate server-function primitive.
+[Details ›](/fetch/integration#isomorphic-fetch)
+
 #### Can a page fetch from the database server-side without an API hop?
-Not the RSC way. SSR renders your client components server-side,
-but data still flows through the API layer / fetch clients.
+Not the RSC way - data flows through the API layer, not direct DB access in the page.
+But during SSR that isn't a network hop: the isomorphic fetch client dispatches to the
+API route in-process (no socket), so you get the API boundary without the round-trip cost.
 The de-facto model is API routes + generated clients + framework loader/preload.
-[Details ›](/frontend/data-preload)
+[Details ›](/fetch/integration#isomorphic-fetch)
 
 #### Loaders like TanStack Start/Router?
-Yes for React (`loader`) and SolidJS (`preload`); Vue uses `onMounted`/guards.
+Yes for all four - React and MDX (`loader`), Vue (`loader`), SolidJS (`preload`).
 The loader is simply your generated fetch client's method exported as `loader`/`preload`,
 so the typed response flows into `useLoaderData`/`createAsync`.
-[Details ›](/frontend/data-preload.html#page-integration)
+[Details ›](/frontend/data-preload#page-integration)
 
 #### Is there loader caching / staleness / `loaderDeps`?
 No built-in loader cache - React/Solid reuse the in-flight/cached result for that navigation;
 SolidJS `preload` results are cached/reused by `createAsync`. For real caching, bring TanStack Query.
-[Details ›](/frontend/data-preload.html#how-it-works)
+[Details ›](/frontend/data-preload#how-it-works)
 
 #### Where does TanStack Query fit?
 *Not a bundled dependency*, but fetch clients return plain promises,
@@ -1269,10 +1345,17 @@ Put `QueryClientProvider` in your root App wrapper. There's no generated Query-o
 you wire `queryKey`/`queryFn` yourself.
 [Details ›](/fetch/integration)
 
-#### Does SSR + Query hydration work?
-Possible, but it's on you - wire dehydrate/hydrate in the SSR entry.
-KosmoJS doesn't bundle Query SSR plumbing.
-[Details ›](/frontend/server-side-render.html#technical-considerations)
+#### Does SSR data fetching work without extra plumbing?
+Yes - the generated fetch client is isomorphic. During SSR a render-time fetch
+(a `loader` or `createAsync`) dispatches to the API route in-process, and the
+framework's own hydration carries the result to the client: all four frameworks
+reuse the server-rendered data without re-fetching. React and Solid do it through
+their built-in hydration; Vue and MDX serialize the loader result into the page
+and read it on the client before the loader would fetch. You don't wire
+dehydrate/hydrate for that. A third-party cache like TanStack Query is optional
+and separate - if you add it and want its cache serialized across SSR, that
+plumbing is on you, but it isn't required for fetch-client data to survive hydration.
+[Details ›](/fetch/integration#isomorphic-fetch)
 
 #### fetch caching / `revalidatePath` / `revalidateTag` / ISR?
 No fetch cache extensions, no tag/path revalidation, no ISR. Cache at the CDN/proxy layer;
@@ -1282,9 +1365,9 @@ MDX SSG is full static generation. After a mutation, refetch or invalidate your 
 
 #### Preload on link hover/intent - which frameworks?
 React `loader` runs on load/hover/navigation; SolidJS `preload` runs on hover/intent
-(cached by `createAsync`); Vue requires manual guards.
-Loader (React) and preload (SolidJS) make data ready before render, eliminating route-level spinners.
-[Details ›](/frontend/data-preload.html#how-it-works)
+(cached by `query`/`createAsync`); Vue and MDX run their `loader` before render.
+Loader (React/Vue/MDX) and preload (SolidJS) make data ready before render, eliminating route-level spinners.
+[Details ›](/frontend/data-preload#how-it-works)
 
 ### Server Actions / Mutations / RPC
 
@@ -1295,7 +1378,7 @@ and calling its generated typed client, validated client-side first.
 (There's no progressive-enhancement no-JS form submit as a first-class feature,
 and no `useFormState`/`useActionState` equivalent -
 use your framework's form state plus the client's `validationSchemas` for field errors.)
-[Details ›](/fetch/start.html#method-signatures)
+[Details ›](/fetch/start#method-signatures)
 
 #### End-to-end RPC type safety like tRPC?
 Effectively yes via generated clients - params, payload,
@@ -1308,7 +1391,7 @@ and backed by generated TypeBox validators plus automatic OpenAPI.
 #### Client-side input validation like a tRPC input schema?
 Yes - the client validates params/payload before sending, using the same server schemas,
 so client-valid and server-accepted stay in sync.
-[Details ›](/fetch/validation.html#validation-schemas)
+[Details ›](/fetch/validation#validation-schemas)
 
 ### Backend / API
 
@@ -1317,36 +1400,36 @@ so client-valid and server-accepted stay in sync.
 plus validation and a generated client for free. You don't write `Response.json()`;
 use Koa `ctx.body` or Hono `ctx.json()`. There's no `NextRequest`/`NextResponse` -
 it's the native Koa/Hono context extended with `ctx.bodyparser` and `ctx.validated`.
-[Details ›](/backend/intro.html#defining-endpoints)
+[Details ›](/backend/intro#defining-endpoints)
 
 #### Why an array instead of named method exports?
 The factory yields method builders + `use`; returning an array lets you compose middleware
 and methods together with shared types.
-[Details ›](/backend/intro.html#defining-endpoints)
+[Details ›](/backend/intro#defining-endpoints)
 
 #### Run on the edge / Cloudflare / Deno / Bun?
 With Hono the API runs on Node/Deno/Bun/Cloudflare Workers and edge platforms unchanged (`app.fetch`).
 Koa runs via the `node:http` compat layer. There's no automatic serverless/edge function
 packaging like Next - you run the bundled server or wire `app.fetch` into an edge runtime yourself.
-[Details ›](/backend/building-for-production.html#running-in-production)
+[Details ›](/backend/building-for-production#running-in-production)
 
 #### Edge middleware (`middleware.ts`) vs cascading `use.ts`?
 There's no global edge-middleware file or client-route interception layer.
 API middleware is per-subtree via auto-wrapping `use.ts` plus slots;
 to gate a subtree behind auth, drop a `use.ts` in its folder (typed context via `UseT`).
 For the client side, use the global `App.*` wrapper or a layout.
-[Details ›](/backend/cascading-middleware.html#how-it-works)
+[Details ›](/backend/cascading-middleware#how-it-works)
 
 #### Bring Hono ecosystem middleware?
 Yes - e.g. `hono-rate-limiter` is shown wired through `use`.
 There's no bundled auth (no NextAuth integration) - wire your own in middleware:
 verify token, set `ctx.state.user` / `ctx.set("user")`.
-[Details ›](/backend/cascading-middleware.html#common-use-cases)
+[Details ›](/backend/cascading-middleware#common-use-cases)
 
 #### Typed env/bindings (e.g. D1)?
 Hono bindings are typed via `defineRoute`'s 4th type arg or `DefaultBindings` in `api/env.d.ts`
 (e.g. `DB: D1Database`), read via `ctx.env.DB`.
-[Details ›](/backend/type-safety.html#typing-state-context)
+[Details ›](/backend/type-safety#typing-state-context)
 
 ### Validation & Types
 
@@ -1355,7 +1438,7 @@ No - "runtype" validation: TS types -> JSON Schema -> TypeBox validators, genera
 You write TS types once; validators are generated, eliminating hand-written schemas
 and type/schema drift. One source of truth drives compile-time types, runtime validation,
 client validation, and OpenAPI.
-[Details ›](/validation/intro.html#understanding-runtype-validation)
+[Details ›](/validation/intro#understanding-runtype-validation)
 
 #### Do I lose flexibility without Zod?
 Constraints come via `VRefine` (JSON Schema keywords like `minLength`, `pattern`,
@@ -1374,13 +1457,13 @@ so a named reference survives as an unresolved identifier and every value is sil
 This is the same inline-or-break rule as the `params` refinement and `response` body tuples.
 The base type (the first argument) has no such restriction -
 `VRefine<MyStringAlias, { ... }>` and imported base types flatten normally.
-[Details ›](/validation/refine.html#inline-the-constraints-never-reference-them)
+[Details ›](/validation/refine#inline-the-constraints-never-reference-them)
 
 #### Is type safety runtime-enforced or compile-only?
 Both - the same TS type drives compile-time checks and generated runtime validators.
 This is stronger than TanStack's compile-time route typing,
 which doesn't validate request bodies on its own.
-[Details ›](/validation/intro.html#understanding-runtype-validation)
+[Details ›](/validation/intro#understanding-runtype-validation)
 
 #### Why is there a codegen/generation step at all?
 Validators are AOT-compiled from types (TanStack users used to instant route typing
@@ -1388,16 +1471,16 @@ should expect a brief generation pass, cached per file, running alongside Vite).
 A slow full rebuild only happens when you delete `lib/` or a cache-version bump occurs -
 akin to regenerating `routeTree.gen.ts` from scratch, but heavier.
 Treat generated code as a black box, like the generated route tree.
-[Details ›](/validation/performance.html#machine-time-vs-human-time)
+[Details ›](/validation/performance#machine-time-vs-human-time)
 
 ### Rendering & SSR
 
 #### Is KosmoJS CSR-first, and how do I enable SSR?
 Yes - folders default to CSR with Vite's dev server and HMR.
 Opt into SSR via `ssrGenerator()` (or `--ssr` at creation). SSR runs in production builds, not dev.
-There are no per-route rendering directives like `dynamic`/`force-static` -
-the SSR-vs-CSR split is per source folder (e.g. an SSR marketing folder + a CSR app folder).
-[Details ›](/frontend/server-side-render.html#adding-ssr-support)
+Whether a folder is SSR or CSR is a per-folder choice (e.g. an SSR marketing folder + a CSR app
+folder); within an SSR folder, `renderMode` selects string vs stream per route by glob pattern.
+[Details ›](/frontend/server-side-render#adding-ssr-support)
 
 #### ISR / on-demand revalidation / PPR?
 No ISR/revalidation and no partial prerendering.
@@ -1407,13 +1490,7 @@ No ISR/revalidation and no partial prerendering.
 MDX folders support SSG, rendering each route to static HTML (`staticParams` for dynamic routes)
 - purpose-built for docs/blog/marketing with frontmatter-driven head, layouts, and typed nav.
 Comparable to Next + MDX/Contentlayer but built in.
-[Details ›](/frontend/mdx.html#static-site-generation)
-
-#### Streaming SSR vs Next + Suspense?
-`renderToStream` streams via a web `ReadableStream` piped through Hono, improving TTFB;
-it takes precedence over `renderToString`.
-This streams HTML progressively rather than doing selective/island hydration.
-[Details ›](/frontend/server-side-render.html#stream-rendering)
+[Details ›](/frontend/mdx#static-site-generation)
 
 #### Islands / partial hydration?
 Not offered as a named feature. MDX delivers minimal client JS by default and hydrates;
@@ -1424,14 +1501,14 @@ React/Solid/Vue hydrate the app via `renderFactory`.
 MDX frontmatter drives `<head>` (title/description/head array);
 for app frameworks you set head in the SSR entry's returned `head` and in components.
 No `metadata` export convention.
-[Details ›](/frontend/mdx.html#frontmatter-head-injection)
+[Details ›](/frontend/mdx#frontmatter-head-injection)
 
 ### Project Structure, Tooling & Config
 
 #### Different framework per folder, sharing types without `packages/shared`?
 Yes - e.g. MDX marketing, React app, Vue admin in one project,
 importing types directly across folders with no publishing or workspace protocols.
-Folders develop and deploy independently while sharing infrastructure.
+Folders develop together as one project and deploy independently while sharing infrastructure.
 [Details ›](/features)
 
 #### Is Vite exposed/configurable? What replaces `next.config.js`?
@@ -1445,7 +1522,7 @@ plus standard Vite config. There's no `app/` vs `pages/` debate - you're in `src
 Run the bundled server: `node dist/front/api/server.js` (API)
 or `node dist/front/ssr/server.js -p 4556` (SSR). No adapter system - Koa via `node:http`,
 Hono via native runtime servers.
-[Details ›](/backend/building-for-production.html#build-output)
+[Details ›](/backend/building-for-production#build-output)
 
 #### `next/image` / `next/font` / `next/link` / `next/head` equivalents?
 A generated typed `Link` exists. Head injection is via MDX frontmatter and the SSR `head`.
@@ -1489,7 +1566,7 @@ Check the folder's `kosmo.config.ts` for the framework generator
 (`reactGenerator()`, `solidGenerator()`, `vueGenerator()`, or `mdxGenerator()`),
 or look at the page file extensions (`.tsx`/`.vue`/`.mdx`).
 It matters because data preload (React `loader`+`useLoaderData`,
-SolidJS `preload`+`createAsync`, Vue `onMounted`/guards),
+SolidJS `preload`+`createAsync`, Vue `loader`+`useLoaderData`, MDX `loader`+`useLoaderData`),
 child rendering (React `<Outlet/>`, Vue `<RouterView/>`, Solid/MDX `props.children`),
 entry wiring, layout filename (`layout.tsx`/`.vue`/`.mdx`),
 `jsxImportSource` (`react`/`solid-js`/`vue`/`preact`),

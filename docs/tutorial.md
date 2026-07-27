@@ -16,7 +16,7 @@ A step-by-step walkthrough covering everything `KosmoJS` provides.
 ::: code-group
 ```sh [npm]
 npm create kosmo
-# non-interactive: npm create kosmo --name my-app
+# non-interactive: npm create kosmo -- --name my-app
 ```
 
 ```sh [pnpm]

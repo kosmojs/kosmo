@@ -66,143 +66,89 @@ The callback must return two functions:
 ::: code-group
 
 ```tsx [React · router.tsx]
-import {
-  createBrowserRouter,
-  createStaticHandler,
-  createStaticRouter,
-  RouterProvider,
-  StaticRouterProvider,
-} from "react-router";
+import routerFactory, { createRouters } from "_/router";
 
-import { baseurl } from "~/config";
-import routerFactory from "_/router";
-import App from "./App";
+import app from "./App";
 
 export default routerFactory((routes) => {
-  const routeStack = [
-    {
-      path: "/",
-      Component: App,
-      children: routes,
-    },
-  ];
-
-  const handler = createStaticHandler(routeStack, { basename: baseurl });
-
+  const { clientRouter, serverRouter } = createRouters(routes, { app });
   return {
-    async clientRouter() {
-      const router = createBrowserRouter(routeStack, { basename: baseurl });
-      return <RouterProvider router={router} />;
+    clientRouter() {
+      return clientRouter()
     },
-    async serverRouter(url) {
-      const context = await handler.query(new Request(url.href));
-
-      if (context instanceof Response) {
-        // handled by SSR server
-        throw context;
-      }
-
-      const router = createStaticRouter(routeStack, context);
-
-      return <StaticRouterProvider router={router} context={context} />;
+    serverRouter(url) {
+      return serverRouter(url)
     },
   };
 });
 ```
 
 ```tsx [SolidJS · router.tsx]
-import { Router } from "@solidjs/router";
+import routerFactory, { createRouters } from "_/router";
 
-import { baseurl } from "~/config";
-import routerFactory from "_/router";
-import App from "./App";
+import app from "./App";
 
 export default routerFactory((routes) => {
+  const { clientRouter, serverRouter } = createRouters(routes, { app });
   return {
-    async clientRouter() {
-      return <Router root={App} base={baseurl}>{routes}</Router>;
+    clientRouter() {
+      return clientRouter()
     },
-    async serverRouter(url) {
-      return <Router root={App} base={baseurl} url={url.pathname}>
-        {routes}
-      </Router>;
+    serverRouter(url) {
+      return serverRouter(url)
     },
-  }
+  };
 });
 ```
 
 ```ts [Vue · router.ts]
-import { createApp, createSSRApp } from "vue";
-import {
-  createMemoryHistory,
-  createRouter,
-  createWebHistory,
-} from "vue-router";
+import routerFactory, { createRouters } from "_/router";
 
-import { baseurl } from "~/config";
-import routerFactory from "_/router";
-import App from "./App.vue";
+import app from "./App.vue";
 
 export default routerFactory((routes) => {
+  const { clientRouter, serverRouter } = createRouters(routes, { app });
   return {
-    async clientRouter() {
-      const app = createApp(App);
-      const router = createRouter({
-        history: createWebHistory(baseurl),
-        routes,
-        strict: true,
-      });
-      app.use(router);
-      return app;
+    clientRouter() {
+      return clientRouter()
     },
-    async serverRouter(url) {
-      const app = createSSRApp(App);
-      const router = createRouter({
-        history: createMemoryHistory(baseurl),
-        routes,
-        strict: true,
-      });
-      await router.push(url.pathname.replace(baseurl, ""));
-      await router.isReady();
-      app.use(router);
-      return app;
+    serverRouter(url) {
+      return serverRouter(url)
     },
   };
 });
 ```
 
 ```tsx [MDX · router.tsx]
-import { createRouter } from "_/mdx";
-import routerFactory from "_/router";
+import routerFactory, { createRouters } from "_/router";
 
-import App from "./App.mdx";
+import app from "./App.mdx";
 import { components } from "./components/mdx"
 
 export default routerFactory((routes) => {
-  const router = createRouter(routes, App, { components });
+  const { clientRouter, serverRouter } = createRouters(routes, { app, components });
   return {
-    async clientRouter() {
-      return router.resolve();
+    clientRouter() {
+      return clientRouter()
     },
-    async serverRouter(url) {
-      return router.resolve(url);
+    serverRouter(url) {
+      return serverRouter(url)
     },
   };
 });
 ```
 :::
 
-All use your source folder's `baseurl` config for correct path-based
-routing. The generated `routes` are always wrapped inside your `App` component,
+The generated `routes` are always wrapped inside your `App` component,
 establishing the layout hierarchy.
 
 ## Application Entry
 
-The `entry/client.tsx` file is your application's DOM rendering entry point,
+The `entry/client.ts` file is your application's DOM rendering entry point,
 referenced from `index.html`:
 
 ```html
-<script type="module" src="./entry/client.tsx"></script>
+<script type="module" src="./entry/client.ts"></script>
 ```
 
 Vite begins from this HTML file, follows the import to `entry/client`, and
@@ -214,15 +160,18 @@ that must return:
 - `mount()` - mounts the application fresh in the browser
 - `hydrate()` - hydrates pre-rendered server HTML for interactivity
 
-On page load, `renderFactory` reads `__KOSMO_HYDRATABLE__` flag to select the
+On page load, `renderFactory` reads `__KOSMO_HYDRATION_BOOL__` flag to select the
 correct method: `hydrate()` for SSR hydration, `mount()` for a fresh client-only mount.
 
 ::: code-group
 
 ```tsx [React · entry/client.tsx]
-import { createRoot, hydrateRoot } from "react-dom/client";
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "_/entry/client";
 
-import renderFactory, { createRoutes } from "_/entry/client";
 import routerFactory from "../router";
 
 const routes = createRoutes({ withPreload: true });
@@ -233,13 +182,11 @@ const root = document.getElementById("app");
 if (root) {
   renderFactory(() => {
     return {
-      async mount() {
-        const page = await clientRouter();
-        createRoot(root).render(page);
+      hydrate() {
+        return hydrate(() => clientRouter(), root);
       },
-      async hydrate() {
-        const page = await clientRouter();
-        hydrateRoot(root, page);
+      mount() {
+        return mount(() => clientRouter(), root);
       },
     };
   });
@@ -249,9 +196,12 @@ if (root) {
 ```
 
 ```tsx [SolidJS · entry/client.tsx]
-import { hydrate, render } from "solid-js/web";
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "_/entry/client";
 
-import renderFactory, { createRoutes } from "_/entry/client";
 import routerFactory from "../router";
 
 const routes = createRoutes({ withPreload: true });
@@ -262,15 +212,13 @@ const root = document.getElementById("app");
 if (root) {
   renderFactory(() => {
     return {
-      async mount() {
-        const page = await clientRouter();
-        render(() => page, root);
+      hydrate() {
+        return hydrate(() => clientRouter(), root);
       },
-      async hydrate() {
-        const page = await clientRouter();
-        hydrate(() => page, root)
+      mount() {
+        return mount(() => clientRouter(), root);
       },
-    }
+    };
   });
 } else {
   console.error("❌ Root element not found!");
@@ -278,7 +226,12 @@ if (root) {
 ```
 
 ```ts [Vue · entry/client.ts]
-import renderFactory, { createRoutes } from "_/entry/client";
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "_/entry/client";
+
 import routerFactory from "../router";
 
 const routes = createRoutes();
@@ -289,13 +242,11 @@ const root = document.getElementById("app");
 if (root) {
   renderFactory(() => {
     return {
-      async mount() {
-        const page = await clientRouter();
-        page.mount(root);
+      hydrate() {
+        return hydrate(() => clientRouter(), root);
       },
-      async hydrate() {
-        const page = await clientRouter();
-        page.mount(root, true);
+      mount() {
+        return mount(() => clientRouter(), root);
       },
     };
   });
@@ -305,9 +256,12 @@ if (root) {
 ```
 
 ```tsx [MDX · entry/client.tsx]
-import { hydrate, render } from "preact";
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "_/entry/client";
 
-import renderFactory, { createRoutes } from "_/entry/client";
 import routerFactory from "../router";
 
 const routes = createRoutes();
@@ -318,13 +272,11 @@ const root = document.getElementById("app");
 if (root) {
   renderFactory(() => {
     return {
-      async mount() {
-        const page = await clientRouter();
-        render(page.component, root);
+      hydrate() {
+        return hydrate(() => clientRouter(), root);
       },
-      async hydrate() {
-        const page = await clientRouter();
-        hydrate(page.component, root);
+      mount() {
+        return mount(() => clientRouter(), root);
       },
     };
   });
@@ -334,7 +286,17 @@ if (root) {
 ```
 :::
 
+Under the hood:
+
 - React uses `createRoot`/`hydrateRoot` from `react-dom/client`.
 - SolidJS uses `render`/`hydrate` from `solid-js/web`.
 - Vue constructs separate app instances via `createApp` and `createSSRApp`.
 - MDX uses `render`/`hydrate` from `preact`.
+
+The generated `hydrate` and `mount` are conveniences that wire the router to the
+DOM the usual way - nothing more.
+
+If you need custom mounting (a different root resolution, an extra provider around the tree, your own hydration strategy),
+ignore them and build the component yourself: the entry only needs to render the
+router's component into `root`. Read the generated `_/entry/client` source to see
+exactly what they do, then substitute your own.

@@ -73,7 +73,8 @@ Regular markdown works as expected - **bold**, *italic*, `code`,
 ```
 
 Frontmatter is defined in YAML between `---` fences.
-It drives `<head>` injection and is accessible to layouts via props.
+It drives `<head>` injection and is accessible in pages and layouts via
+`useFrontmatter()` (or `useRoute().frontmatter`).
 
 ## Using Components
 
@@ -162,8 +163,9 @@ App.mdx (root layout)
 
 ### Writing Layouts
 
-Layouts receive `props.children` (the wrapped content) and
-`props.frontmatter` (from the matched page):
+Layouts receive the wrapped content as `props.children`. Everything else -
+the page's frontmatter, loader data - is read with hooks, so `props` carries
+only what a layout composes around:
 
 ```mdx [pages/docs/layout.mdx]
 <nav>
@@ -180,15 +182,23 @@ Layouts receive `props.children` (the wrapped content) and
 </footer>
 ```
 
-Access the page's frontmatter for dynamic head content or conditional rendering:
+Access the page's frontmatter with `useFrontmatter()` for dynamic head content
+or conditional rendering:
 
 ```mdx [pages/layout.mdx]
-<div class="page-wrapper">
-  {props.frontmatter.title && (
+import { useFrontmatter } from "_/use";
+
+export const Header = () => {
+  const frontmatter = useFrontmatter();
+  return frontmatter.title ? (
     <header>
-      <h1>{props.frontmatter.title}</h1>
+      <h1>{frontmatter.title}</h1>
     </header>
-  )}
+  ) : null;
+};
+
+<div class="page-wrapper">
+  <Header />
   {props.children}
 </div>
 ```
@@ -249,7 +259,7 @@ import PostHeader from "./PostHeader.tsx"
 ```
 :::
 
-`useRoute()` provides the full route context including name, params, and frontmatter:
+`useRoute()` provides the full route context including name, params, frontmatter, and loader data:
 
 ```tsx
 import { useRoute } from "_/use";
@@ -268,21 +278,23 @@ export default function Breadcrumb() {
 
 Pages can fetch data during render via a `loader` export - a function that
 runs before the page is rendered, on both the server and the client.
-It receives the resolved route as first argument and its return value is passed
-to the page as `props.data`.
+It receives the resolved route as first argument, and its return value is read
+inside the page with the `useLoaderData()` hook - `props` stays entirely yours.
 
-```mdx [pages/index/index.mdx]
+```mdx [pages/users/index.mdx]
 import f from "_/fetch";
+import { useLoaderData } from "_/use";
 
-export const { GET } = f.index;
+export const loader = f["users"].GET;
 
-export const loader = async () => {
-  return GET();
+export const Message = () => {
+  const data = useLoaderData();
+  return <p>The message is: {data.msg}</p>;
 };
 
 # Welcome
 
-The message is: {props.data.msg}
+<Message />
 ```
 
 `loader` fetches through the same client used elsewhere in the project,
@@ -297,28 +309,35 @@ rendering a component. Instead, `loader` receives the resolved route object
 directly as first argument:
 
 ```ts
-type Route = {
+// the object passed to `loader` - a subset of the route context,
+// without frontmatter or loaderData (which aren't resolved yet at loader time)
+type LoaderRoute = {
   name: string;
   params: Record<string, string | Array<string>>;
   paramsEntries: [keys: Array<string>, values: Array<unknown>];
-  frontmatter: Record<string, unknown>;
 };
 ```
 
 `paramsEntries` is a `[keys, values]` tuple, both in the same order the route
-declares its parameters - the same order `GET`/`parametrize` expect:
+declares its parameters - the same order `GET` expect:
 
 ```mdx [pages/blog/[slug]/index.mdx]
 import f from "_/fetch";
+import { useLoaderData } from "_/use";
 
-export const { GET } = f.index;
+export const { GET } = f["blog/[slug]"];
 
 export const loader = ({ paramsEntries }) => {
   const [keys, params] = paramsEntries;
   return GET(params);
 };
 
-# {props.data.title}
+export const Title = () => {
+  const data = useLoaderData();
+  return <h1>{data.title}</h1>;
+};
+
+<Title />
 ```
 
 Pass `params` straight to a parametrized endpoint when only positional values
@@ -439,14 +458,19 @@ export default routerFactory((routes) => {
 
 Both client and server entries follow the same `renderFactory` pattern as React/Solid/Vue.
 - Client entry either renders the whole page on dev or hydrates the rendered SSR page.
-- Server entry factory returns `renderToString` with `{ head, html }`.
+- Server entry factory returns `renderToString` with `{ head, html }`. MDX renders
+  static content, so it implements only `renderToString` - it is the one framework
+  that omits `renderToStream`.
 
 :::code-group
 
 ```tsx [entry/client.tsx]
-import { hydrate, render } from "preact";
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "_/entry/client";
 
-import renderFactory, { createRoutes } from "_/entry/client";
 import routerFactory from "../router";
 
 const routes = createRoutes();
@@ -457,44 +481,40 @@ const root = document.getElementById("app");
 if (root) {
   renderFactory(() => {
     return {
-      async mount() {
-        const page = await clientRouter();
-        render(page.component, root);
+      hydrate() {
+        return hydrate(() => clientRouter(), root);
       },
-      async hydrate() {
-        const page = await clientRouter();
-        hydrate(page.component, root);
+      mount() {
+        return mount(() => clientRouter(), root);
       },
     };
   });
 } else {
   console.error("❌ Root element not found!");
 }
+
 ```
 
 ```ts [entry/server.ts]
-import { renderToString } from "preact-render-to-string";
+import renderFactory, {
+  createRoutes,
+  renderToString,
+  // no renderToStream on MDX folders
+} from "_/entry/server";
 
-import { renderHead } from "_/mdx";
-import renderFactory, { createRoutes } from "_/entry/server";
 import routerFactory from "../router";
 
 const routes = createRoutes();
+
 const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {
   return {
     async renderToString(url, { assets }) {
-      const page = await serverRouter(url);
-
-      const head = assets.reduce(
-        (head, { tag }) => `${head}\n${tag}`,
-        renderHead(page?.frontmatter),
+      return renderToString(
+        () => serverRouter(url),
+        { headerTags: assets.map(({ tag }) => tag) },
       );
-
-      const html = page ? renderToString(page.component) : "";
-
-      return { html, head };
     },
   };
 });
@@ -552,6 +572,7 @@ staticParams:
 ---
 
 import f from "_/fetch";
+import { useLoaderData } from "_/use";
 
 export const { GET } = f.docs;
 
@@ -560,7 +581,12 @@ export const loader = ({ paramsEntries }) => {
   return GET(params);
 };
 
-# {props.data.title}
+export const Title = () => {
+  const data = useLoaderData();
+  return <h1>{data.title}</h1>;
+};
+
+<Title />
 ```
 
 Each entry produces its own fetch and its own pre-rendered HTML file.

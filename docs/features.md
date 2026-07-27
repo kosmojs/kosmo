@@ -7,7 +7,8 @@ head:
   - - meta
     - name: keywords
       content: typescript validation, vite multi-app, type-safe routing,
-        fetch client generator, openapi 3.1, solidjs, react, vue, mdx, koa, hono
+        fetch client generator, isomorphic fetch, ssr, streaming ssr, openapi 3.1,
+        solidjs, react, vue, mdx, koa, hono
 ---
 
 Everything `KosmoJS` provides, at a glance.
@@ -94,6 +95,48 @@ const user = await fetchClients["users/[id]"].GET([123]);
 ```
 
 [Fetch Clients ›](/fetch/intro) · [OpenAPI ➜](/openapi)
+
+## Isomorphic Fetch
+
+The same fetch client runs on the server and the client.
+
+When a call fires during SSR, the request goes to the API route in-process,
+skipping the network while still running the full validation and handler chain.
+
+The result is serialized into the page and reused on hydration,
+so the request is not repeated on the client.
+
+```ts
+// runs on the server during SSR, on the client during navigation -
+// same call, same types, no network hop on the server
+export const loader = ({ params }) => fetchClients["users/[id]"].GET([params.id]);
+```
+
+[Read more ›](/fetch/integration#isomorphic-fetch)
+
+## Built-in Streaming SSR
+
+Render pages as a stream instead of a single string - the shell flushes to the
+browser early, improving Time-to-First-Byte for large pages or long data-fetching chains.
+
+Each framework streams through its own native renderer,
+returning a web-standard `ReadableStream` that works the same on Node, Bun, and Deno;
+`KosmoJS` adds no rendering layer of its own.
+
+Streaming is opt-in - every route defaults to string rendering.
+Set `renderMode: "stream"` to stream all routes, or map glob patterns for per-route selection:
+
+```ts [kosmo.config.ts]
+ssrGenerator({
+  renderMode: {
+    "docs/**": "stream",
+  },
+})
+```
+
+Available for `React`, `SolidJS`, and `Vue`; `MDX` renders to a string.
+
+[Read more ›](/frontend/server-side-render#stream-rendering)
 
 ## Composable Middleware (Slots)
 

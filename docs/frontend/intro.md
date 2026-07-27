@@ -23,7 +23,6 @@ and selecting your framework. To add one to an existing folder, register it
 manually in your source folder's `kosmo.config.ts`:
 
 ```ts [kosmo.config.ts]
-import reactPlugin from "@vitejs/plugin-react"; // [!code ++]
 import {
   defineConfig,
   // ...
@@ -32,9 +31,6 @@ import {
 
 export default defineConfig({
   // ...
-  plugins: [
-    reactPlugin(), // [!code ++]
-  ],
   generators: [
     // ...
     reactGenerator(), // [!code ++]
