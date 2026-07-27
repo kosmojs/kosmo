@@ -3,12 +3,13 @@ import { useRoute, useRouter } from "vue-router";
 import type { RouterWithLoaderData } from "./router";
 
 /**
- * Reads the current route's loader data. The key is the route name,
- * resolved from the active route - callers pass nothing.
+ * Reads loader data for the current page or one of its layouts.
+ * Without a key, returns the page's own data.
+ * For a layout, pass its path-qualified name (e.g. "dashboard/layout") -
+ * a hook can't tell which layout it runs in.
  * */
-export const useLoaderData = <T>(): T => {
-  const route = useRoute();
+export const useLoaderData = <T>(key?: string): T | undefined => {
   const router = useRouter() as RouterWithLoaderData;
-  const key = String(route.name ?? route.path);
-  return router.__loaderData?.[key] as T;
+  const route = useRoute();
+  return router.__loaderData?.[key || (route.name as string)] as T;
 };
