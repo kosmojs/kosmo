@@ -302,9 +302,11 @@ const data = useLoaderData();
 
     mdx: `
 ${renderBaseImports}
+import { useLoaderData } from "${defaults.libPrefix}/use";
 export const loader = () => ${fetchInvocation};
+export { useLoaderData };
 
-<div id="data" dangerouslySetInnerHTML={{ __html: JSON.stringify(props.loaderData) }} />
+<div id="data" dangerouslySetInnerHTML={{ __html: JSON.stringify(useLoaderData()) }} />
 `,
   }[framework];
 };

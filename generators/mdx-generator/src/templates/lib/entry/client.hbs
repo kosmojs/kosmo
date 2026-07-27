@@ -2,7 +2,7 @@ import { render, hydrate as hydrateOrig } from "preact";
 import type { RouterFactoryReturn } from "@kosmojs/core";
 import { clientRenderFactory } from "@kosmojs/core/generators";
 
-import { createRoute, type ResolvedRoute } from "../mdx";
+import { createRoute, type RouteComponent } from "../mdx";
 
 {{#each pageRoutes}}
 const {{id}} = () => import("{{ createImport 'pages' file }}");
@@ -22,7 +22,7 @@ export const createRoutes = () => {
 };
 
 export const hydrate = async (
-  resolver: () => RouterFactoryReturn<Promise<ResolvedRoute["component"]>>,
+  resolver: () => RouterFactoryReturn<Promise<RouteComponent>>,
   root: HTMLElement,
 ) => {
   const { component } = await resolver();
@@ -31,7 +31,7 @@ export const hydrate = async (
 }
 
 export const mount = async (
-  resolver: () => RouterFactoryReturn<Promise<ResolvedRoute["component"]>>,
+  resolver: () => RouterFactoryReturn<Promise<RouteComponent>>,
   root: HTMLElement,
 ) => {
   const { component } = await resolver();

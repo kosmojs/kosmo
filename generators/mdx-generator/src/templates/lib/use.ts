@@ -18,5 +18,25 @@ export function useParamsEntries<T extends keyof ParamsMap>(): [
   (typeof paramNames)[T],
   SameLengthTuple<(typeof paramNames)[T], unknown>,
 ] {
-  return useContext(RouterContext).paramsEntries;
+  return useContext(RouterContext).paramsEntries as never;
 }
+
+/**
+ * Reads loader data for the current page or one of its layouts.
+ * Without a key, returns the page's own data.
+ * For a layout, pass its path-qualified name (e.g. "dashboard/layout") -
+ * a hook can't tell which layout it runs in.
+ * */
+export const useLoaderData = <T>(key?: string): T | undefined => {
+  const route = useContext(RouterContext);
+  return route.loaderData?.[key || route.name] as T;
+};
+
+/**
+ * Reads the current route's frontmatter.
+ * */
+export const useFrontmatter = <
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(): T => {
+  return useContext(RouterContext).frontmatter as T;
+};

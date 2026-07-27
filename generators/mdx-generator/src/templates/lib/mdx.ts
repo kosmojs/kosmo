@@ -10,26 +10,33 @@ export type RawRoute = {
   pathSegments: number | undefined;
   regexp: RegExp;
   extractParams: (path: string) => Route["params"];
-  loader: () => Promise<RouteComponent>;
-  layouts: Array<[name: string, source: () => Promise<LayoutComponent>]>;
+  loader: () => Promise<RouteModule>;
+  layouts: Array<[name: string, source: () => Promise<LayoutModule>]>;
 };
 
-type LayoutComponent = {
+type Loader = (
+  route: Pick<Route, "name" | "params" | "paramsEntries">,
+) => Promise<unknown> | undefined;
+
+type LayoutModule = {
   default: ComponentType;
-  loader?: (route: Route) => Promise<unknown>;
+  loader?: Loader;
 };
 
-type RouteComponent = {
+type RouteModule = {
   default: ComponentType;
   frontmatter: Route["frontmatter"];
-  loader?: (route: Route) => Promise<unknown>;
+  loader?: Loader;
 };
+
+export type RouteComponent = VNode<{ value: Route }>;
 
 export type Route = {
   name: string;
   params: Record<string, string | Array<string>>;
   paramsEntries: [keys: Array<string>, values: Array<unknown>];
   frontmatter: Record<string, unknown>;
+  loaderData: Record<string, unknown>;
 };
 
 export const RouterContext = createContext<Route>({
@@ -37,15 +44,10 @@ export const RouterContext = createContext<Route>({
   params: {},
   paramsEntries: [[], []],
   frontmatter: {},
+  loaderData: {},
 });
 
 export const RouterProvider = RouterContext.Provider;
-
-export type ResolvedRoute = {
-  component: VNode<{ value: Route }>;
-  frontmatter: Route["frontmatter"];
-  loaderData: Record<string, unknown>;
-};
 
 export const createRouter = (
   routes: Array<RawRoute>,
@@ -59,23 +61,17 @@ export const createRouter = (
     [],
   );
 
-  const runLoader = async (
-    key: string,
-    route: Route,
-    fetcher: (r: Route) => Promise<unknown>,
-  ) => {
+  const runLoader = async (key: string, fetcher: () => ReturnType<Loader>) => {
     if (typeof window === "undefined" || !window.__KOSMO_HYDRATION_DATA__) {
-      return fetcher(route);
+      return fetcher();
     }
     return key in window.__KOSMO_HYDRATION_DATA__
       ? window.__KOSMO_HYDRATION_DATA__[key]
-      : fetcher(route);
+      : fetcher();
   };
 
   return {
-    async resolve(
-      url: URL = new URL(window.location.href),
-    ): Promise<ResolvedRoute> {
+    async resolve(url: URL = new URL(window.location.href)) {
       const urlSegments = url.pathname.split("/").filter(Boolean).length;
 
       // 1: use lightweight `RegExp.test()` on linear scan - no capture allocation
@@ -99,7 +95,7 @@ export const createRouter = (
 
       const { name } = matchedRoute;
 
-      const routeExports = await matchedRoute.loader();
+      const routeModule = await matchedRoute.loader();
 
       const paramsEntries = (
         Array.isArray(paramNames[name as never])
@@ -114,46 +110,44 @@ export const createRouter = (
             ]
       ) as never;
 
-      const { frontmatter = {} } = routeExports;
+      const { frontmatter = {} } = routeModule;
+
+      const loaderData: Record<string, unknown> = {};
+
+      loaderData[name] = await runLoader(name, () => {
+        return routeModule.loader
+          ? routeModule.loader({ name, params, paramsEntries })
+          : undefined; // should not survive serialization if no loader
+      });
+
+      const layouts: Array<{
+        name: string;
+        component: LayoutModule["default"];
+      }> = [];
+
+      for (const [name, source] of matchedRoute.layouts || []) {
+        const layout = await source();
+        layouts.push({ name, component: layout.default });
+        loaderData[name] = await runLoader(name, () => {
+          return layout.loader
+            ? layout.loader({ name, params, paramsEntries })
+            : undefined; // should not survive serialization if no loader
+        });
+      }
 
       const route: Route = {
         name,
         params,
         paramsEntries,
         frontmatter,
+        loaderData,
       };
 
-      const loaderData: Record<string, unknown> = {};
-
-      if (routeExports.loader) {
-        loaderData[name] = await runLoader(name, route, routeExports.loader);
-      }
-
-      const layouts: Array<{
-        name: string;
-        component: LayoutComponent["default"];
-      }> = [];
-
-      for (const [name, source] of matchedRoute.layouts || []) {
-        const layout = await source();
-        layouts.push({ name, component: layout.default });
-        if (layout.loader) {
-          loaderData[name] = await runLoader(name, route, layout.loader);
-        }
-      }
-
       const component = [{ name: "", component: app }, ...layouts].reduce(
-        (children, { name, component }) => {
-          return h(component, {
-            children,
-            frontmatter,
-            loaderData: loaderData[name],
-          } as never);
+        (children, { component }) => {
+          return h(component, { children } as never);
         },
-        h(routeExports.default, {
-          frontmatter,
-          loaderData: loaderData[name],
-        } as never),
+        h(routeModule.default, {}),
       );
 
       return {
@@ -162,8 +156,7 @@ export const createRouter = (
           { value: route },
           h(MDXProvider, opt as never, component),
         ),
-        frontmatter,
-        loaderData,
+        route,
       };
     },
   };

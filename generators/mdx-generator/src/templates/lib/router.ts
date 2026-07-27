@@ -6,8 +6,9 @@ import { createRouterFactory } from "@kosmojs/core/generators";
 import {
   createRouter,
   type RawRoute,
-  type ResolvedRoute,
-} from "{{ createImport 'lib' 'mdx' }}";
+  type Route,
+  type RouteComponent,
+} from "./mdx";
 
 export const createRouters = (
   routes: Array<RawRoute>,
@@ -19,13 +20,10 @@ export const createRouters = (
     components: Record<string, ComponentType<never>>;
   },
 ): {
-  clientRouter: () => RouterFactoryReturn<
-    Promise<ResolvedRoute["component"]>,
-    ResolvedRoute
-  >;
+  clientRouter: () => RouterFactoryReturn<Promise<RouteComponent>>;
   serverRouter: (
     url: URL,
-  ) => RouterFactoryReturn<Promise<ResolvedRoute["component"]>, ResolvedRoute>;
+  ) => RouterFactoryReturn<Promise<RouteComponent>, { route: Route }>;
 } => {
   const router = createRouter(routes, app, { components });
 
@@ -41,6 +39,6 @@ export const createRouters = (
 
 export default createRouterFactory<
   RawRoute,
-  Promise<ResolvedRoute["component"]>,
-  { client: ResolvedRoute; server: ResolvedRoute }
+  Promise<RouteComponent>,
+  { server: { route: Route } }
 >();

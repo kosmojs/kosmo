@@ -8,7 +8,7 @@ import type {
 
 import { serverRenderFactory } from "@kosmojs/core/generators";
 
-import { createRoute, type ResolvedRoute } from "../mdx";
+import { createRoute, type Route, type RouteComponent } from "../mdx";
 
 {{#each pageRoutes}}
 import * as {{id}} from "{{ createImport 'pages' file }}";
@@ -27,7 +27,7 @@ export const createRoutes = () => {
   ];
 };
 
-const generateHeaderTags = ({ frontmatter, loaderData }: ResolvedRoute) => {
+const generateHeaderTags = ({ name, frontmatter, loaderData }: Route) => {
   const tags: Array<string> = [];
 
   if (typeof frontmatter?.title === "string") {
@@ -50,7 +50,7 @@ const generateHeaderTags = ({ frontmatter, loaderData }: ResolvedRoute) => {
   tags.push(
     `<script>
       window.__KOSMO_HYDRATION_DATA__ = JSON.parse(
-        ${JSON.stringify(JSON.stringify(loaderData || {}))}
+        ${JSON.stringify(JSON.stringify(loaderData[name] || {}))}
       );
     </script>`
   )
@@ -61,10 +61,10 @@ const generateHeaderTags = ({ frontmatter, loaderData }: ResolvedRoute) => {
 export const renderWrapper: SSRRenderWrapper = (_context, render) => render();
 
 export const renderToString: RenderToStringWrapper<
-  () => RouterFactoryReturn<Promise<ResolvedRoute["component"]>>
+  () => RouterFactoryReturn<Promise<RouteComponent>, { route: Route }>
 > = async (resolver, { headerTags = [] } = {}) => {
-  const route = await resolver();
-  const html = renderToStringOrig(route.component);
+  const { component, route } = await resolver();
+  const html = renderToStringOrig(component);
   return {
     head: [...headerTags, ...generateHeaderTags(route as never)].join("\n"),
     html,
