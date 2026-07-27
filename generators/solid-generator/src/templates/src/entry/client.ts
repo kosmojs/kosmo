@@ -15,12 +15,12 @@ if (root) {
   renderFactory(() => {
     return {
       hydrate() {
-        return hydrate(() => clientRouter(), root)
+        return hydrate(() => clientRouter(), root);
       },
       mount() {
         return mount(() => clientRouter(), root);
       },
-    }
+    };
   });
 } else {
   console.error("❌ Root element not found!");

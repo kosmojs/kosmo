@@ -5,14 +5,12 @@ import renderFactory, {
 } from "{{ createImport 'libEntry' 'server' }}";
 
 import routerFactory from "../router";
-
 const routes = createRoutes();
-
 const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {
   return {
-    async renderToString(url, { assets }) {
+    renderToString(url, { assets }) {
       return renderToString(
         () => serverRouter(url),
         { headerTags: assets.map(({ tag }) => tag) },

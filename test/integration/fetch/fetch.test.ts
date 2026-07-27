@@ -2,12 +2,7 @@ import { afterAll, beforeAll, describe, test } from "vitest";
 
 import { createTestGroups } from ".";
 
-const testGroups = await createTestGroups({
-  // frameworks: ["vue"],
-  // backends: ["koa"],
-  // renderModes: ["string"],
-  // routes: ["form"],
-});
+const testGroups = await createTestGroups();
 
 beforeAll(async () => {
   for (const { project } of testGroups) {

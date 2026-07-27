@@ -5,9 +5,7 @@ import renderFactory, {
 } from "{{ createImport 'libEntry' 'server' }}";
 
 import routerFactory from "../router";
-
 const routes = createRoutes();
-
 const { serverRouter } = routerFactory(routes);
 
 export default renderFactory(() => {
@@ -18,7 +16,7 @@ export default renderFactory(() => {
         { headerTags: assets.map(({ tag }) => tag) },
       );
     },
-    async renderToStream(url, { assets }) {
+    renderToStream(url, { assets }) {
       return renderToStream(
         () => serverRouter(url),
         { headerTags: assets.map(({ tag }) => tag) },
