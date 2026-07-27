@@ -15,7 +15,7 @@
     "test:unit": "vitest run --project=packages/* --project=generators/*",
     "test:unit:generators": "vitest run --project=generators/*",
     "test:unit:packages": "vitest run --project=packages/*",
-    "test:integration": "vitest run --project=integration:{cli,backend,frontend:{csr,ssr},fetch:{csr,ssr}}",
+    "test:integration": "vitest run --project=\"integration:*\"",
     "test:integration:cli": "vitest run --project=integration:cli",
     "test:integration:backend": "vitest run --project=integration:backend",
     "test:integration:frontend": "vitest run --project=integration:frontend:{csr,ssr}",

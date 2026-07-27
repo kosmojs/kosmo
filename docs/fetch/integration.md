@@ -147,5 +147,5 @@ React's `loader`/`useLoaderData` resolves before render and does not suspend,
 so it needs no boundary unless you reach for `React.lazy` or a promise-throwing `use()`.
 Wrapping the whole app in one boundary does work if you accept the
 tradeoff - it is your call, not a default `KosmoJS` makes for you. See
-[Data Preloading](/fetch/data-preload#suspense-is-your-responsibility) for the
+[Data Preloading](/frontend/data-preload#suspense-is-your-responsibility) for the
 full breakdown.
