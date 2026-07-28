@@ -100,6 +100,7 @@ describe("should create the project and folders", async () => {
 
   for (const { name, base, framework, backend, ssr } of folders) {
     test(`create ${name} folder`, async ({ expect }) => {
+      await installDependencies(projectRoot);
       await exec(
         "pnpm",
         [
