@@ -12,9 +12,11 @@ export const pnpmDir = resolve(tmpdir(), ".kosmojs/pnpm-store");
 
 export const execFile = promisify(child_process.execFile);
 
-const { npm_config_minimum_release_age, ...env } = process.env;
-
-export { env };
+// pnpm exports its resolved config to child processes; an inherited
+// workspace-dir var pins the install to the monorepo root regardless of cwd
+export const env = Object.fromEntries(
+  Object.entries(process.env).filter(([key]) => !/^p?npm_config_/i.test(key)),
+);
 
 export const installDependencies = async (
   cwd: string,
@@ -27,7 +29,6 @@ export const installDependencies = async (
       "--store-dir",
       pnpmDir,
       "--no-frozen-lockfile",
-      "--prefer-offline",
       ...(args || []),
     ],
     { cwd, env },

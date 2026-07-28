@@ -1,5 +1,13 @@
-minimumReleaseAge: 720
+saveWorkspaceProtocol: rolling
+savePrefix: ^
+linkWorkspacePackages: false
+disallowWorkspaceCycles: true
+enablePrePostScripts: true
+engineStrict: true
+publishBranch: main
+pmOnFail: download
 
+minimumReleaseAge: 720
 minimumReleaseAgeExclude:
   - typebox
   - tfusion
