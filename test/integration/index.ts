@@ -18,6 +18,10 @@ export const env = Object.fromEntries(
   Object.entries(process.env).filter(([key]) => !/^p?npm_config_/i.test(key)),
 );
 
+// fixture deps' build scripts are irrelevant for integration tests;
+// keep ERR_PNPM_IGNORED_BUILDS from failing the install
+env.PNPM_CONFIG_STRICT_DEP_BUILDS = "false";
+
 export const installDependencies = async (
   cwd: string,
   args?: Array<string>,
@@ -29,6 +33,7 @@ export const installDependencies = async (
       "--store-dir",
       pnpmDir,
       "--no-frozen-lockfile",
+      "--prefer-offline",
       ...(args || []),
     ],
     { cwd, env },
