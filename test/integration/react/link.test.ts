@@ -57,32 +57,31 @@ afterAll(teardown);
 
 describe("React - Link Component", async () => {
   it("should render all links with correct hrefs", async ({ expect }) => {
-    await withPageContent("navigation", {}, async ({ content }) => {
-      // Verify page renders
-      expect(content).toMatch("Navigation Links Test");
-      expect(content).toMatch('data-testid="navigation-page"');
+    const { content } = await withPageContent(["navigation"]);
+    // Verify page renders
+    expect(content).toMatch("Navigation Links Test");
+    expect(content).toMatch('data-testid="navigation-page"');
 
-      const $ = load(content);
+    const $ = load(content);
 
-      // Use Cheerio's selector API to find and verify links
-      for (const link of routes) {
-        const element = $(`a[data-testid="${link.id}"]`);
+    // Use Cheerio's selector API to find and verify links
+    for (const link of routes) {
+      const element = $(`a[data-testid="${link.id}"]`);
 
-        // Verify link exists (Cheerio doesn't have visibility concept)
-        expect(element.length).toBe(1);
+      // Verify link exists (Cheerio doesn't have visibility concept)
+      expect(element.length).toBe(1);
 
-        // Verify href attribute
-        const href = element.attr("href");
-        expect(href).toBe(link.href);
+      // Verify href attribute
+      const href = element.attr("href");
+      expect(href).toBe(link.href);
 
-        // Verify text content
-        const text = element.text().trim(); // trim() removes whitespace
-        expect(text).toBe(link.label);
-      }
+      // Verify text content
+      const text = element.text().trim(); // trim() removes whitespace
+      expect(text).toBe(link.label);
+    }
 
-      // Verify total link count
-      const allLinks = $("a");
-      expect(allLinks.length).toBe(routes.length);
-    });
+    // Verify total link count
+    const allLinks = $("a");
+    expect(allLinks.length).toBe(routes.length);
   });
 });
