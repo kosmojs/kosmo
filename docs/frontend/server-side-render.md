@@ -65,6 +65,7 @@ import renderFactory, {
 } from "_/entry/server";
 
 import routerFactory from "../router";
+
 const routes = createRoutes({ withPreload: true });
 const { serverRouter } = routerFactory(routes);
 
@@ -94,6 +95,7 @@ import renderFactory, {
 } from "_/entry/server";
 
 import routerFactory from "../router";
+
 const routes = createRoutes({ withPreload: true });
 const { serverRouter } = routerFactory(routes);
 
@@ -123,6 +125,7 @@ import renderFactory, {
 } from "_/entry/server";
 
 import routerFactory from "../router";
+
 const routes = createRoutes();
 const { serverRouter } = routerFactory(routes);
 
@@ -152,6 +155,7 @@ import renderFactory, {
 } from "_/entry/server";
 
 import routerFactory from "../router";
+
 const routes = createRoutes();
 const { serverRouter } = routerFactory(routes);
 
