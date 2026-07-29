@@ -1,9 +1,8 @@
 import { copyFile, mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
 
-import { load } from "cheerio";
 import crc from "crc/crc32";
-import { inject, type TestFunction } from "vitest";
+import { inject } from "vitest";
 
 import { BACKEND_FRAMEWORKS, defaults, FRAMEWORKS } from "@kosmojs/core";
 import { pathResolver } from "@kosmojs/lib";
@@ -25,11 +24,7 @@ type TestEntry = {
 export type TestGroup = {
   name: string;
   project: Awaited<ReturnType<typeof setupTestProject>>;
-  tests: Array<
-    TestEntry & {
-      run: TestFunction;
-    }
-  >;
+  tests: Array<TestEntry>;
 };
 
 const mode = inject("MODE");
@@ -113,15 +108,22 @@ export const createTestGroups = async (opt?: {
                   crc(route + JSON.stringify(payload)),
                 ].join("/");
 
-                await createPageRoutes([{ name: path }], async () => {
-                  return () => {
-                    return renderPageComponent(
-                      framework as never,
-                      route as never,
-                      { params: JSON.stringify(params), method, payload },
-                    );
-                  };
-                });
+                for (const file of ["index", "layout"] as const) {
+                  await createPageRoutes([{ name: path, file }], async () => {
+                    return () => {
+                      return renderPageComponent(
+                        framework as never,
+                        route as never,
+                        {
+                          params: JSON.stringify(params),
+                          method,
+                          payload,
+                          file,
+                        },
+                      );
+                    };
+                  });
+                }
 
                 group.tests.push({
                   project,
@@ -131,15 +133,6 @@ export const createTestGroups = async (opt?: {
                   headers,
                   cookies,
                   payload,
-                  run: createTestRunner({
-                    project,
-                    route,
-                    path,
-                    params: params as never,
-                    headers,
-                    cookies,
-                    payload,
-                  }),
                 });
               }
             }
@@ -152,65 +145,6 @@ export const createTestGroups = async (opt?: {
   }
 
   return testGroups;
-};
-
-const createTestRunner = ({
-  project,
-  path,
-  params,
-  headers,
-  cookies,
-  payload,
-}: TestEntry): TestFunction => {
-  return async ({ expect }) => {
-    const { content } = await project.withPageContent(path, {
-      headers,
-      cookies,
-    });
-
-    const $ = load(content);
-
-    if (process.env.DEBUG) {
-      console.log([$("#app").html()]);
-    }
-
-    const response = JSON.parse($("#data").html() ?? "");
-
-    expect(
-      Object.values(response.params),
-      JSON.stringify([params, response.params], undefined, 2),
-    ).toEqual(params);
-
-    if (headers) {
-      expect(
-        response.headers,
-        JSON.stringify([headers, response.headers], undefined, 2),
-      ).toMatchObject(headers);
-    }
-
-    if (cookies) {
-      expect(
-        response.cookies,
-        JSON.stringify([cookies, response.cookies], undefined, 2),
-      ).toMatchObject(cookies);
-    }
-
-    for (const [target, targetPayload] of Object.entries(payload)) {
-      if (response[target].type === "Buffer") {
-        expect(Buffer.from(response[target])).toEqual(
-          Buffer.from(targetPayload as never),
-        );
-      } else if (target === "form") {
-        for (const entry of targetPayload as Array<object>) {
-          for (const prop of Object.keys(entry)) {
-            expect(response[target]).toHaveProperty(prop);
-          }
-        }
-      } else {
-        expect(response[target]).toEqual(targetPayload as never);
-      }
-    }
-  };
 };
 
 const renderApiEndpoint = (
@@ -242,7 +176,12 @@ const renderApiEndpoint = (
 const renderPageComponent = (
   framework: keyof typeof FRAMEWORKS,
   route: keyof typeof routes,
-  data: { params: string; method: string; payload: Record<string, unknown> },
+  data: {
+    params: string;
+    method: string;
+    payload: Record<string, unknown>;
+    file?: "index" | "layout";
+  },
 ) => {
   const renderBaseImports = `
 import f from "${defaults.libPrefix}/fetch";
@@ -262,8 +201,9 @@ import { formDataFactory } from "${defaults.libPrefix}/@testUtils";
     { ${payload.join(", ")} }
   )`;
 
-  return {
-    solid: `
+  if (data.file === "index") {
+    return {
+      solid: `
 import { Suspense } from "solid-js";
 import { query, createAsync } from "@solidjs/router";
 ${renderBaseImports}
@@ -275,7 +215,7 @@ export default function Page() {
   </Suspense>
 }`,
 
-    react: `
+      react: `
 import { useLoaderData } from "react-router";
 ${renderBaseImports}
 export const loader = () => ${fetchInvocation};
@@ -284,7 +224,7 @@ export default function Page() {
   return <div id="data">{JSON.stringify(data)}</div>;
 }`,
 
-    vue: `
+      vue: `
 <script lang="ts">
 ${renderBaseImports}
 export const loader = () => {
@@ -300,13 +240,69 @@ const data = useLoaderData();
 </template>
 `,
 
-    mdx: `
+      mdx: `
 ${renderBaseImports}
 import { useLoaderData } from "${defaults.libPrefix}/use";
 export const loader = () => ${fetchInvocation};
 export { useLoaderData };
 
 <div id="data" dangerouslySetInnerHTML={{ __html: JSON.stringify(useLoaderData()) }} />
+`,
+    }[framework];
+  }
+
+  return {
+    solid: `
+import { Suspense } from "solid-js";
+import { query, createAsync } from "@solidjs/router";
+${renderBaseImports}
+const getData = query(() => ${fetchInvocation}, "${route}:${crc(fetchInvocation)}");
+export default function Layout(props) {
+  const data = createAsync(() => getData());
+  return <Suspense>
+    <div id="layout-data">{JSON.stringify(data())}</div>
+    {props.children}
+  </Suspense>
+}`,
+
+    react: `
+import { Outlet } from "react-router";
+import { useLoaderData } from "react-router";
+${renderBaseImports}
+export const loader = () => ${fetchInvocation};
+export default function Layout() {
+  const data = useLoaderData();
+  return <>
+    <div id="layout-data">{JSON.stringify(data)}</div>
+    <Outlet />
+  </>
+}`,
+
+    vue: `
+<script lang="ts">
+${renderBaseImports}
+export const loader = () => {
+  return ${fetchInvocation};
+};
+</script>
+<script setup lang="ts">
+import { useLoaderData } from "${defaults.libPrefix}/use";
+const data = useLoaderData();
+</script>
+<template>
+<div id="layout-data" v-html="JSON.stringify(data)"></div>
+<RouterView />
+</template>
+`,
+
+    mdx: `
+${renderBaseImports}
+import { useLoaderData } from "${defaults.libPrefix}/use";
+export const loader = () => ${fetchInvocation};
+export { useLoaderData };
+
+<div id="layout-data" dangerouslySetInnerHTML={{ __html: JSON.stringify(useLoaderData()) }} />
+{props.children}
 `,
   }[framework];
 };
