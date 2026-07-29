@@ -48,23 +48,6 @@ if (import.meta.hot) {
       remarkPlugins,
       rehypePlugins,
     }) as Plugin,
-
-    {
-      name: "kosmo:mdx[config]",
-      enforce: "pre",
-      config() {
-        return {
-          build: {
-            ssrEmitAssets: true,
-          },
-          oxc: {
-            jsx: {
-              importSource: "preact",
-            },
-          },
-        };
-      },
-    },
   ];
 
   if (command === "serve") {

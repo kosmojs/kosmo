@@ -5,6 +5,7 @@ import renderFactory, {
 } from "{{ createImport 'libEntry' 'server' }}";
 
 import routerFactory from "../router";
+
 const routes = createRoutes();
 const { serverRouter } = routerFactory(routes);
 
