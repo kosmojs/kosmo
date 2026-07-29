@@ -170,7 +170,7 @@ export default function Layout() {
 ```
 
 ```tsx [SolidJS · layout.tsx]
-import type { ParentComponent } from "solid-js";
+import { Suspense, type ParentComponent } from "solid-js";
 import { createAsync, query } from "@solidjs/router";
 import fetchClients from "_/fetch";
 
@@ -184,7 +184,7 @@ export const preload = () => getData();
 const Layout: ParentComponent = (props) => {
   const data = createAsync(() => getData());
   // ...
-  return <>{props.children}</>;
+  return <Suspense>{props.children}</Suspense>;
 };
 
 export default Layout;

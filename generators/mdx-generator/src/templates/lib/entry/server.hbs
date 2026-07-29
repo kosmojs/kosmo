@@ -50,7 +50,7 @@ const generateHeaderTags = ({ name, frontmatter, loaderData }: Route) => {
   tags.push(
     `<script>
       window.__KOSMO_HYDRATION_DATA__ = JSON.parse(
-        ${JSON.stringify(JSON.stringify(loaderData[name] || {}))}
+        ${JSON.stringify(JSON.stringify(loaderData))}
       );
     </script>`
   )

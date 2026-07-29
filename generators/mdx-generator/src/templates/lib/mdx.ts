@@ -117,7 +117,7 @@ export const createRouter = (
       loaderData[name] = await runLoader(name, () => {
         return routeModule.loader
           ? routeModule.loader({ name, params, paramsEntries })
-          : undefined; // should not survive serialization if no loader
+          : undefined; // should not survive serialization if no loader defined
       });
 
       const layouts: Array<{
@@ -126,12 +126,13 @@ export const createRouter = (
       }> = [];
 
       for (const [name, source] of matchedRoute.layouts || []) {
-        const layout = await source();
-        layouts.push({ name, component: layout.default });
-        loaderData[name] = await runLoader(name, () => {
-          return layout.loader
-            ? layout.loader({ name, params, paramsEntries })
-            : undefined; // should not survive serialization if no loader
+        const layoutModule = await source();
+        layouts.push({ name, component: layoutModule.default });
+        const key = `${name}/layout`;
+        loaderData[key] = await runLoader(key, () => {
+          return layoutModule.loader
+            ? layoutModule.loader({ name, params, paramsEntries })
+            : undefined; // should not survive serialization if no loader defined
         });
       }
 

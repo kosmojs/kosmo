@@ -68,7 +68,7 @@ export const traverseFactory = () => {
         return [];
       }
 
-      const layoutName = `${name}:layout`;
+      const layoutName = `${name}/layout`;
 
       const path = parent
         ? pathFactory(pathTokens)

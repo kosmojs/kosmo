@@ -13,7 +13,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   for (const { project } of testGroups) {
-    // await project.teardown();
+    await project.teardown();
   }
 });
 
@@ -32,33 +32,34 @@ for (const { name, tests } of testGroups) {
           console.log([$("#app").html()]);
         }
 
-        for (const selector of ["#data", "#layout-data"]) {
-          const response = JSON.parse($(selector).html() ?? "");
+        for (const origin of ["index", "layout"]) {
+          const {
+            //
+            requestOrigin,
+            ...response
+          } = JSON.parse($(`#${origin}-data`).html() ?? "");
+
+          expect(
+            origin,
+            JSON.stringify([origin, requestOrigin], undefined, 2),
+          ).toEqual(requestOrigin);
 
           expect(
             Object.values(response.params),
-            JSON.stringify([selector, params, response.params], undefined, 2),
+            JSON.stringify([origin, params, response.params], undefined, 2),
           ).toEqual(params);
 
           if (headers) {
             expect(
               response.headers,
-              JSON.stringify(
-                [selector, headers, response.headers],
-                undefined,
-                2,
-              ),
+              JSON.stringify([origin, headers, response.headers], undefined, 2),
             ).toMatchObject(headers);
           }
 
           if (cookies) {
             expect(
               response.cookies,
-              JSON.stringify(
-                [selector, cookies, response.cookies],
-                undefined,
-                2,
-              ),
+              JSON.stringify([origin, cookies, response.cookies], undefined, 2),
             ).toMatchObject(cookies);
           }
 
@@ -67,7 +68,7 @@ for (const { name, tests } of testGroups) {
               expect(
                 Buffer.from(response[target]),
                 JSON.stringify(
-                  [selector, targetPayload, response[target]],
+                  [origin, targetPayload, response[target]],
                   undefined,
                   2,
                 ),
@@ -78,7 +79,7 @@ for (const { name, tests } of testGroups) {
                   expect(
                     response[target],
                     JSON.stringify(
-                      [selector, prop, response[target]],
+                      [origin, prop, response[target]],
                       undefined,
                       2,
                     ),
@@ -89,7 +90,7 @@ for (const { name, tests } of testGroups) {
               expect(
                 response[target],
                 JSON.stringify(
-                  [selector, targetPayload, response[target]],
+                  [origin, targetPayload, response[target]],
                   undefined,
                   2,
                 ),

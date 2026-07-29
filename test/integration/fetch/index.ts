@@ -115,6 +115,7 @@ export const createTestGroups = async (opt?: {
                         framework as never,
                         route as never,
                         {
+                          path,
                           params: JSON.stringify(params),
                           method,
                           payload,
@@ -154,13 +155,19 @@ const renderApiEndpoint = (
   const methods = Object.keys(routes[route]);
 
   const definitions = Object.entries(routes[route]).map(([meth, type]) => {
+    const body = {
+      koa: `ctx.body = {
+        ...ctx.validated,
+        requestOrigin: ctx.get("x-request-origin"),
+      };`,
+      hono: `return ctx.json({
+      ...ctx.validated,
+      requestOrigin: ctx.req.header("x-request-origin"),
+    });`,
+    }[backend];
     return `
       ${meth}<${type}>((ctx) => {
-        ${
-          backend === "koa" //
-            ? "ctx.body = ctx.validated;"
-            : "return ctx.json(ctx.validated);"
-        }
+        ${body}
       })
     `.trim();
   });
@@ -177,10 +184,11 @@ const renderPageComponent = (
   framework: keyof typeof FRAMEWORKS,
   route: keyof typeof routes,
   data: {
+    path: string;
     params: string;
     method: string;
     payload: Record<string, unknown>;
-    file?: "index" | "layout";
+    file: "index" | "layout";
   },
 ) => {
   const renderBaseImports = `
@@ -196,10 +204,15 @@ import { formDataFactory } from "${defaults.libPrefix}/@testUtils";
     return `"${k}": ${JSON.stringify(v)}`;
   });
 
-  const fetchInvocation = `f["${route}"].${data.method}(
-    ${data.params},
-    { ${payload.join(", ")} }
-  )`;
+  const loader = `() => {
+    return f["${route}"].${data.method}(
+      ${data.params},
+      {
+        headers: { "x-request-origin": "${data.file}" },
+        ${payload.join(", ")}
+      },
+    );
+  }`;
 
   if (data.file === "index") {
     return {
@@ -207,46 +220,44 @@ import { formDataFactory } from "${defaults.libPrefix}/@testUtils";
 import { Suspense } from "solid-js";
 import { query, createAsync } from "@solidjs/router";
 ${renderBaseImports}
-const getData = query(() => ${fetchInvocation}, "${route}:${crc(fetchInvocation)}");
+const getData = query(${loader}, "${route}:${crc(loader)}");
 export default function Page() {
   const data = createAsync(() => getData());
   return <Suspense>
-    <div id="data">{JSON.stringify(data())}</div>
+    <div id="${data.file}-data">{JSON.stringify(data())}</div>
   </Suspense>
 }`,
 
       react: `
 import { useLoaderData } from "react-router";
 ${renderBaseImports}
-export const loader = () => ${fetchInvocation};
+export const loader = ${loader};
 export default function Page() {
   const data = useLoaderData();
-  return <div id="data">{JSON.stringify(data)}</div>;
+  return <div id="${data.file}-data">{JSON.stringify(data)}</div>;
 }`,
 
       vue: `
 <script lang="ts">
 ${renderBaseImports}
-export const loader = () => {
-  return ${fetchInvocation};
-};
+export const loader = ${loader};
 </script>
 <script setup lang="ts">
 import { useLoaderData } from "${defaults.libPrefix}/use";
 const data = useLoaderData();
 </script>
 <template>
-<div id="data" v-html="JSON.stringify(data)"></div>
+<div id="${data.file}-data" v-html="JSON.stringify(data)"></div>
 </template>
 `,
 
       mdx: `
 ${renderBaseImports}
 import { useLoaderData } from "${defaults.libPrefix}/use";
-export const loader = () => ${fetchInvocation};
-export { useLoaderData };
+export const loader = ${loader};
+export const data = () => JSON.stringify(useLoaderData());
 
-<div id="data" dangerouslySetInnerHTML={{ __html: JSON.stringify(useLoaderData()) }} />
+<div id="${data.file}-data">{data()}</div>
 `,
     }[framework];
   }
@@ -256,11 +267,11 @@ export { useLoaderData };
 import { Suspense } from "solid-js";
 import { query, createAsync } from "@solidjs/router";
 ${renderBaseImports}
-const getData = query(() => ${fetchInvocation}, "${route}:${crc(fetchInvocation)}");
+const getData = query(${loader}, "${route}:${crc(loader)}");
 export default function Layout(props) {
   const data = createAsync(() => getData());
   return <Suspense>
-    <div id="layout-data">{JSON.stringify(data())}</div>
+    <div id="${data.file}-data">{JSON.stringify(data())}</div>
     {props.children}
   </Suspense>
 }`,
@@ -269,11 +280,11 @@ export default function Layout(props) {
 import { Outlet } from "react-router";
 import { useLoaderData } from "react-router";
 ${renderBaseImports}
-export const loader = () => ${fetchInvocation};
+export const loader = ${loader};
 export default function Layout() {
   const data = useLoaderData();
   return <>
-    <div id="layout-data">{JSON.stringify(data)}</div>
+    <div id="${data.file}-data">{JSON.stringify(data)}</div>
     <Outlet />
   </>
 }`,
@@ -281,16 +292,14 @@ export default function Layout() {
     vue: `
 <script lang="ts">
 ${renderBaseImports}
-export const loader = () => {
-  return ${fetchInvocation};
-};
+export const loader = ${loader};
 </script>
 <script setup lang="ts">
 import { useLoaderData } from "${defaults.libPrefix}/use";
-const data = useLoaderData();
+const data = useLoaderData("${data.path}/layout");
 </script>
 <template>
-<div id="layout-data" v-html="JSON.stringify(data)"></div>
+<div id="${data.file}-data" v-html="JSON.stringify(data)"></div>
 <RouterView />
 </template>
 `,
@@ -298,10 +307,10 @@ const data = useLoaderData();
     mdx: `
 ${renderBaseImports}
 import { useLoaderData } from "${defaults.libPrefix}/use";
-export const loader = () => ${fetchInvocation};
-export { useLoaderData };
+export const loader = ${loader};
+export const data = () => JSON.stringify(useLoaderData("${data.path}/layout"));
 
-<div id="layout-data" dangerouslySetInnerHTML={{ __html: JSON.stringify(useLoaderData()) }} />
+<div id="${data.file}-data">{data()}</div>
 {props.children}
 `,
   }[framework];
