@@ -27,6 +27,7 @@ import {
   exec,
   installDependencies,
 } from ".";
+import { APP_FILE, appMap } from "./app";
 
 const mode = inject("MODE");
 
@@ -241,6 +242,14 @@ export const setupTestProject = async ({
       generatorOptions,
     );
 
+    if (framework) {
+      await writeFile(
+        createPath.src(APP_FILE[framework]),
+        appMap[framework],
+        "utf8",
+      );
+    }
+
     await installDependencies(projectRoot);
   };
 
@@ -285,11 +294,37 @@ export const setupTestProject = async ({
 
       const page = await context.newPage();
 
+      const pageErrors: Array<string> = [];
+
+      page.on("pageerror", (error) => {
+        pageErrors.push(`[pageerror] ${error.message}`);
+      });
+
+      page.on("console", (msg) => {
+        if (msg.type() === "error") {
+          pageErrors.push(`[console.error] ${msg.text()}`);
+        }
+      });
+
       await page.goto(url);
       await page.waitForLoadState("networkidle");
 
-      // Wait for page content to be rendered
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Wait for the client runtime to take over.
+      // Fails loudly if hydration never happened.
+      await page.waitForFunction(
+        () => window.__APP_RENDERED__ === true,
+        undefined,
+        { timeout: 1_000 },
+      );
+
+      if (pageErrors.length) {
+        throw new Error(
+          [
+            `Browser reported ${pageErrors.length} error(s) at ${url}:`,
+            ...new Set(pageErrors),
+          ].join("\n"),
+        );
+      }
 
       maybeContent = await page.content();
 
@@ -300,10 +335,9 @@ export const setupTestProject = async ({
       maybeContent = await apiClient(url).text();
     }
 
-    const content =
-      framework === "solid"
-        ? (maybeContent?.replace(/\s+data-hk="[^"]*"/g, "") ?? "")
-        : (maybeContent ?? "");
+    const content = maybeContent
+      ? maybeContent.replace(/>\n+/g, ">").replace(/\s+data-hk="[^"]*"/g, "")
+      : "";
 
     return {
       path,
@@ -376,7 +410,7 @@ export const setupTestProject = async ({
       await browser?.close();
       await closeServer?.();
       await cleanup();
-      await new Promise((resolve) => setTimeout(resolve, 1_000));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     },
   };
 };

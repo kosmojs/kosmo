@@ -1,8 +1,9 @@
 import { copyFile, mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
 
+import { load } from "cheerio";
 import crc from "crc/crc32";
-import { inject } from "vitest";
+import { inject, type TestFunction } from "vitest";
 
 import { BACKEND_FRAMEWORKS, defaults, FRAMEWORKS } from "@kosmojs/core";
 import { pathResolver } from "@kosmojs/lib";
@@ -24,7 +25,7 @@ type TestEntry = {
 export type TestGroup = {
   name: string;
   project: Awaited<ReturnType<typeof setupTestProject>>;
-  tests: Array<TestEntry>;
+  tests: Array<TestEntry & { run: TestFunction }>;
 };
 
 const mode = inject("MODE");
@@ -136,6 +137,15 @@ export const createTestGroups = async (opt?: {
                   headers,
                   cookies,
                   payload,
+                  run: createTestRunner({
+                    project,
+                    route,
+                    path,
+                    params: params as never,
+                    headers,
+                    cookies,
+                    payload,
+                  }),
                 });
               }
             }
@@ -148,6 +158,91 @@ export const createTestGroups = async (opt?: {
   }
 
   return testGroups;
+};
+
+const createTestRunner = ({
+  project,
+  path,
+  params,
+  headers,
+  cookies,
+  payload,
+}: TestEntry): TestFunction => {
+  return async ({ expect }) => {
+    const { content } = await project.withPageContent(path, {
+      headers,
+      cookies,
+    });
+
+    const $ = load(content);
+
+    if (process.env.DEBUG) {
+      console.log([$("#app").html()]);
+    }
+
+    for (const origin of ["index", "layout"]) {
+      const {
+        //
+        requestOrigin,
+        ...response
+      } = JSON.parse($(`#${origin}-data`).html() ?? "");
+
+      expect(
+        origin,
+        JSON.stringify([origin, requestOrigin], undefined, 2),
+      ).toEqual(requestOrigin);
+
+      expect(
+        Object.values(response.params),
+        JSON.stringify([origin, params, response.params], undefined, 2),
+      ).toEqual(params);
+
+      if (headers) {
+        expect(
+          response.headers,
+          JSON.stringify([origin, headers, response.headers], undefined, 2),
+        ).toMatchObject(headers);
+      }
+
+      if (cookies) {
+        expect(
+          response.cookies,
+          JSON.stringify([origin, cookies, response.cookies], undefined, 2),
+        ).toMatchObject(cookies);
+      }
+
+      for (const [target, targetPayload] of Object.entries(payload)) {
+        if (response[target].type === "Buffer") {
+          expect(
+            Buffer.from(response[target]),
+            JSON.stringify(
+              [origin, targetPayload, response[target]],
+              undefined,
+              2,
+            ),
+          ).toEqual(Buffer.from(targetPayload as never));
+        } else if (target === "form") {
+          for (const entry of targetPayload as Array<object>) {
+            for (const prop of Object.keys(entry)) {
+              expect(
+                response[target],
+                JSON.stringify([origin, prop, response[target]], undefined, 2),
+              ).toHaveProperty(prop);
+            }
+          }
+        } else {
+          expect(
+            response[target],
+            JSON.stringify(
+              [origin, targetPayload, response[target]],
+              undefined,
+              2,
+            ),
+          ).toEqual(targetPayload as never);
+        }
+      }
+    }
+  };
 };
 
 const renderApiEndpoint = (

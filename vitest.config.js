@@ -96,7 +96,6 @@ export default defineConfig({
 
       setupFactory("integration:frontend:csr", {
         include: ["integration/{react,solid,vue,svelte,mdx}/*.test.ts"],
-        fileParallelism: false,
         provide: {
           MODE: "csr",
         },
