@@ -215,7 +215,7 @@ jobs:
           # an unmatched glob must expand to nothing, not to its own literal
           shopt -s nullglob
 
-          tarballs=(npm-tarballs/*.tgz)
+          tarballs=(./npm-tarballs/*.tgz)
 
           if [ "${#tarballs[@]}" -eq 0 ]; then
             echo 'no tarballs restored from the build job' >&2
