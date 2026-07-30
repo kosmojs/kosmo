@@ -176,7 +176,7 @@ onMounted(() => {
           </div>
           <div class="hero-meta">
             <span>Koa · Hono</span>
-            <span>React · Solid · Vue · MDX</span>
+            <span>React · Solid · Vue · Svelte · MDX</span>
             <span>Node · Bun · Deno · Workers</span>
             <span>MIT</span>
           </div>
@@ -321,7 +321,7 @@ onMounted(() => {
 }</code></pre>
           </div>
         </div>
-        <p class="loop-note"><span class="t-kw">[id]</span> required <span class="sep">·</span> <span class="t-kw">{id}</span> optional <span class="sep">·</span> <span class="t-kw">{...path}</span> splat <span class="sep">—</span> identical syntax for API routes and pages. Solid, Vue and MDX pages follow the same shape.</p>
+        <p class="loop-note"><span class="t-kw">[id]</span> required <span class="sep">·</span> <span class="t-kw">{id}</span> optional <span class="sep">·</span> <span class="t-kw">{...path}</span> splat - identical syntax for API routes and pages.</p>
 
         <div class="loop-feats rise">
           <div class="lfeat">

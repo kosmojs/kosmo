@@ -192,8 +192,8 @@ pages/
 
 ## Multiple Frameworks
 
-**Backend:** `Koa` or `Hono` - same routing architecture, same type safety.
-**Frontend:** `React`, `Vue`, `SolidJS`, `MDX` - same routing/layout/SSR conventions.
+- **Backend:** `Koa` or `Hono` - same routing architecture, same type safety.
+- **Frontend:** `React`, `Vue`, `SolidJS`, `Svelte`, `MDX` - same routing/layout/SSR.
 
 Different source folders can use different framework combinations.
 When you add a source folder, `KosmoJS` generates a ready-to-go setup for your chosen stack -

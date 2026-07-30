@@ -26,7 +26,7 @@ dev workflow, and build orchestration.
 
 #### Is KosmoJS a runtime, a bundler, or a framework?
 A meta-framework that sits on top of Vite. There is no proprietary runtime, no custom bundler,
-and no framework lock-in - every layer (Vite, Koa/Hono, React/Vue/Solid/MDX)
+and no framework lock-in - every layer (Vite, Koa/Hono, React/Vue/Solid/Svelte/MDX)
 is a tool you can use, debug, and replace independently.
 [Details ›](/about)
 
@@ -45,7 +45,7 @@ Run `npm run +folder` (or `pnpm +folder` / `yarn +folder`).
 
 #### What am I prompted for when adding a source folder?
 Folder name, base URL, framework, backend, and SSR/SSG. Non-interactive flags:
-`--name`, `--base`, `--framework solid|react|vue|mdx`, `--backend koa|hono`, `--ssr`, `--ssg`.
+`--name`, `--base`, `--framework solid|react|vue|svelte|mdx`, `--backend koa|hono`, `--ssr`, `--ssg`.
 [Details ›](/start)
 
 #### Why isn't a source folder created automatically?
@@ -94,7 +94,7 @@ You get monorepo-like structure and microservice-like independence with single-p
 [Details ›](/about)
 
 #### Can different folders use different frameworks/backends at the same time?
-Yes. Each folder picks its own backend (Koa/Hono) and frontend (React/Vue/SolidJS/MDX),
+Yes. Each folder picks its own backend (Koa/Hono) and frontend (React/Vue/SolidJS/Svelte/MDX),
 and they coexist in one project.
 [Details ›](/features)
 
@@ -170,7 +170,7 @@ then replace the generated placeholder with real logic and visit the URL
 
 #### How do I create a page?
 Create a matching folder under `pages/` with an `index` component file for your framework -
-`pages/products/index.tsx` (React/SolidJS), `.vue` (Vue), or `.mdx` (MDX) - and it becomes `/products`.
+`pages/products/index.tsx` (React/SolidJS), `.vue` (Vue), `.svelte` (Svelte), or `.mdx` (MDX) - and it becomes `/products`.
 KosmoJS generates a placeholder component you replace with your own;
 the parallel `api/` and `pages/` trees mean a page and its endpoint are always one folder apart.
 The two sides are coupled by usage, not by name - you pick the names on each end freely. The
@@ -238,7 +238,7 @@ The folder is named with the mixed segment and `index.ts` lives inside it like a
 [Details ›](/routing/params#mixed-segments)
 
 #### Which frontends support mixed segments?
-Backend (Koa/Hono): full support. Vue and MDX: full support. React Router: `.ext` suffix only.
+Backend (Koa/Hono): full support. Vue, Svelte, and MDX: full support. React Router: `.ext` suffix only.
 SolidJS: not supported. Prefer simple segments for frontend routes
 and keep mixed segments to the API side where support is complete.
 [Details ›](/routing/params#mixed-segments)
@@ -735,7 +735,7 @@ on the client.
 ### Frontend
 
 #### Which frontend frameworks are supported?
-React, SolidJS, Vue, and MDX - each with a dedicated generator bridging directory routing
+React, SolidJS, Vue, Svelte, and MDX - each with a dedicated generator bridging directory routing
 to the framework's native router and reactive model.
 [Details ›](/fetch/integration)
 
@@ -790,27 +790,27 @@ Outermost App -> each layout in path order -> the page. E.g. for `/dashboard/set
 [Details ›](/frontend/layouts#define-a-layout)
 
 #### What's the recognized layout filename per framework, and is it case-sensitive?
-`layout.tsx` (React/SolidJS), `layout.vue` (Vue), `layout.mdx` (MDX) - lowercase only.
+`layout.tsx` (React/SolidJS), `layout.vue` (Vue), `layout.svelte` (Svelte), `layout.mdx` (MDX) - lowercase only.
 Other casings are treated as regular components.
 Each folder runs one framework and ignores other frameworks' files (a Vue folder ignores `.tsx`, etc.).
 [Details ›](/frontend/layouts#layout-file-naming)
 
 #### What does the root App file wrap, and how is it different from a layout?
-`App.{tsx,vue,mdx}` at the source-folder root wraps every route -
+`App.{tsx,vue,svelte,mdx}` at the source-folder root wraps every route -
 the place for truly global concerns (auth checks, analytics, error boundaries).
 A `layout` file scopes shared UI to a folder subtree.
 [Details ›](/frontend/layouts#global-layout-via-app-file)
 
 #### How does each framework render the child route?
-React `<Outlet/>`, Vue `<RouterView/>`, SolidJS and MDX `props.children`.
+React `<Outlet/>`, Vue `<RouterView/>`, SolidJS and MDX `props.children`, Svelte `{@render children()}`.
 [Details ›](/frontend/layouts#layout-implementation)
 
 #### How do I load data in a layout?
 Layouts are route-level, so a `layout.tsx` uses the same loader/preload a page does.
 React (`loader` + `useLoaderData`), Solid (`preload` + `query`/`createAsync`),
-Vue (`loader` + `useLoaderData`), and MDX (`loader` + `useLoaderData`) all load
+Vue, Svelte, and MDX (all `loader` + `useLoaderData`) all load
 at the layout level, fetching shared data once for everything beneath it.
-For Vue and MDX a layout passes its path-qualified name to `useLoaderData`
+For Vue, Svelte, and MDX a layout passes its path-qualified name to `useLoaderData`
 (e.g. `useLoaderData("dashboard/layout")`) to read its own data rather than the
 page's; React and Solid scope per route automatically.
 [Details ›](/frontend/layouts#data-loading-in-layouts)
@@ -861,7 +861,7 @@ to the nearest `<Suspense>` and errors to the nearest `<ErrorBoundary>`. KosmoJS
 ships no boundary: the generated `App` renders children directly, on purpose -
 one app-wide `<Suspense>` is an anti-pattern (any pending fetch collapses the
 whole page to a single fallback). Scope a boundary to the data component or a
-subtree yourself. React, Vue, and MDX loaders resolve before render and
+subtree yourself. React, Vue, Svelte, and MDX loaders resolve before render and
 don't suspend, so they need none unless you reach for something like `React.lazy`,
 `use()`, or an async `<script setup>`.
 Wrapping the whole app works if you accept the tradeoff - your call, not a default.
@@ -869,10 +869,10 @@ Wrapping the whole app works if you accept the tradeoff - your call, not a defau
 
 ### MDX
 
-#### When should I use MDX over React/Vue/Solid?
+#### When should I use MDX over React/Vue/Solid/Svelte?
 MDX for content-primary folders (documentation, blogs, marketing) -
 rendered to static HTML with Preact, minimal client JS by default.
-React/Vue/Solid for interactivity-primary folders (dashboards, client-side state, real-time forms).
+React/Vue/Solid/Svelte for interactivity-primary folders (dashboards, client-side state, real-time forms).
 Rule of thumb: primarily content with occasional interactivity -> MDX;
 primarily interactive with occasional content -> a framework.
 [Details ›](/frontend/mdx#when-to-use-mdx-vs-frameworks)
@@ -1020,7 +1020,7 @@ Use error boundaries so a server error doesn't terminate the process.
 [Details ›](/frontend/server-side-render#technical-considerations)
 
 #### How do I fetch data during SSR?
-Use your framework's render-time data path - a `loader` (React, Vue, MDX), a
+Use your framework's render-time data path - a `loader` (React, Vue, Svelte, MDX), a
 `preload` (Solid), or a Solid `createResource`/Suspense resource - and call the
 generated fetch client inside it. During
 SSR the client dispatches to the API route in-process (the API server is bundled into the SSR
@@ -1157,7 +1157,14 @@ OpenAPI, opt-in SSR, and build orchestration.
 [Details ›](/features)
 
 #### Does it pick a frontend for me like Next?
-No - you choose React, Vue, SolidJS, or MDX per source folder, and can mix them across folders.
+No - you choose React, Vue, SolidJS, Svelte, or MDX per source folder, and can mix them across folders.
+[Details ›](/frontend/intro)
+
+#### Does the Svelte support require SvelteKit?
+No - KosmoJS uses only Svelte's UI layer (component compilation, `mount`/`hydrate`),
+not SvelteKit. Routing, data loading, and SSR come from KosmoJS itself, so a Svelte
+page uses the same `loader` export + `useLoaderData()` hook as MDX, not SvelteKit's
+`load` function or `+page` files.
 [Details ›](/frontend/intro)
 
 #### How does it compare to TanStack's "bring your own everything"?
@@ -1254,7 +1261,7 @@ and use client-side modal state (or your router's modal patterns) for the interc
 
 #### Nested layouts vs Next `layout.tsx` / TanStack `_layout`?
 Same idea - a `layout` file wraps its folder and subfolders, nesting by folders,
-rendered outward-in via `<Outlet/>` (React), `<RouterView/>` (Vue), or `props.children` (Solid/MDX).
+rendered outward-in via `<Outlet/>` (React), `<RouterView/>` (Vue), `props.children` (Solid/MDX), or `{@render children()}` (Svelte).
 [Details ›](/frontend/layouts#define-a-layout)
 
 #### Do layouts persist state across navigation like App Router?
@@ -1326,7 +1333,7 @@ The de-facto model is API routes + generated clients + framework loader/preload.
 [Details ›](/fetch/integration#isomorphic-fetch)
 
 #### Loaders like TanStack Start/Router?
-Yes for all four - React and MDX (`loader`), Vue (`loader`), SolidJS (`preload`).
+Yes, every framework uses own pattern - `export loader` on React / Vue / Svelte / MDX, `export preload` on SolidJS.
 The loader is simply your generated fetch client's method exported as `loader`/`preload`,
 so the typed response flows into `useLoaderData`/`createAsync`.
 [Details ›](/frontend/data-preload#page-integration)
@@ -1348,9 +1355,9 @@ you wire `queryKey`/`queryFn` yourself.
 #### Does SSR data fetching work without extra plumbing?
 Yes - the generated fetch client is isomorphic. During SSR a render-time fetch
 (a `loader` or `createAsync`) dispatches to the API route in-process, and the
-framework's own hydration carries the result to the client: all four frameworks
-reuse the server-rendered data without re-fetching. React and Solid do it through
-their built-in hydration; Vue and MDX serialize the loader result into the page
+framework's own hydration carries the result to the client: every framework
+reuses the server-rendered data without re-fetching. React and Solid do it through
+their built-in hydration; Vue, Svelte, and MDX serialize the loader result into the page
 and read it on the client before the loader would fetch. You don't wire
 dehydrate/hydrate for that. A third-party cache like TanStack Query is optional
 and separate - if you add it and want its cache serialized across SSR, that
@@ -1365,8 +1372,8 @@ MDX SSG is full static generation. After a mutation, refetch or invalidate your 
 
 #### Preload on link hover/intent - which frameworks?
 React `loader` runs on load/hover/navigation; SolidJS `preload` runs on hover/intent
-(cached by `query`/`createAsync`); Vue and MDX run their `loader` before render.
-Loader (React/Vue/MDX) and preload (SolidJS) make data ready before render, eliminating route-level spinners.
+(cached by `query`/`createAsync`); Vue, Svelte, and MDX run their `loader` before render.
+Loader (React/Vue/Svelte/MDX) and preload (SolidJS) make data ready before render, eliminating route-level spinners.
 [Details ›](/frontend/data-preload#how-it-works)
 
 ### Server Actions / Mutations / RPC
@@ -1561,16 +1568,16 @@ Koa bubbles errors up through middleware try-catch and responds by mutating `ctx
 Hono catches everything in `app.onError()` and responds by returning a `Response`.
 Guessing wrong produces code that won't run.
 
-#### A2. Which frontend framework is this folder - React, SolidJS, Vue, or MDX?
+#### A2. Which frontend framework is this folder - React, SolidJS, Vue, Svelte, or MDX?
 Check the folder's `kosmo.config.ts` for the framework generator
-(`reactGenerator()`, `solidGenerator()`, `vueGenerator()`, or `mdxGenerator()`),
-or look at the page file extensions (`.tsx`/`.vue`/`.mdx`).
+(`reactGenerator()`, `solidGenerator()`, `vueGenerator()`, `svelteGenerator()`, or `mdxGenerator()`),
+or look at the page file extensions (`.tsx`/`.vue`/`.svelte`/`.mdx`).
 It matters because data preload (React `loader`+`useLoaderData`,
-SolidJS `preload`+`createAsync`, Vue `loader`+`useLoaderData`, MDX `loader`+`useLoaderData`),
-child rendering (React `<Outlet/>`, Vue `<RouterView/>`, Solid/MDX `props.children`),
-entry wiring, layout filename (`layout.tsx`/`.vue`/`.mdx`),
+SolidJS `preload`+`createAsync`, Vue/Svelte/MDX `loader`+`useLoaderData`),
+child rendering (React `<Outlet/>`, Vue `<RouterView/>`, Solid/MDX `props.children`, Svelte `{@render children()}`),
+entry wiring, layout filename (`layout.tsx`/`.vue`/`.svelte`/`.mdx`),
 `jsxImportSource` (`react`/`solid-js`/`vue`/`preact`),
-and mixed-segment support (full for Vue/MDX, `.ext`-only for React, none for SolidJS) all differ.
+and mixed-segment support (full for Vue/Svelte/MDX, `.ext`-only for React, none for SolidJS) all differ.
 
 #### A3. Is this an API route or a page?
 API routes default-export `defineRoute(...)` returning an array of method handlers;

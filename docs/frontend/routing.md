@@ -1,11 +1,11 @@
 ---
 title: Routing
 description: Watch-based route generation, lazy-loaded components, data loading
-  integration, and nested layout patterns for React, SolidJS, Vue and MDX applications.
+  integration, and nested layout patterns for React, SolidJS, Vue, Svelte and MDX applications.
 head:
   - - meta
     - name: keywords
-      content: react route generation, solidjs routing, vue routing, mdx routing,
+      content: react route generation, solidjs routing, vue routing, svelte routing, mdx routing,
         lazy components, loader integration, preload function, route parameters,
         code splitting, dynamic imports, nested routes, layout components,
         route hierarchy, outlet pattern, router view, kosmojs routing
@@ -64,49 +64,10 @@ the initial JavaScript bundle and fetched on demand when a user navigates to
 that path. This keeps initial payloads small, accelerates application startup,
 and ensures users download only the code for routes they actually visit.
 
-## Generated Route Shape
-
-The route object written to `lib` differs slightly per framework to match each
-router's expected format:
-
-::: code-group
-
-```ts [React]
-// React Router receives a flat route definition.
-// The loader is wired automatically when your page exports one.
-{
-  path: "/users/:id",
-  lazy: () => import("@/src/front/pages/users/[id]/index.tsx"),
-}
-```
-
-```ts [SolidJS]
-// SolidJS Router receives component and preload as separate keys.
-// The preload function is called on link hover and navigation intent.
-{
-  path: "/users/[id]",
-  component: lazy(() => import("@/src/front/pages/users/[id]/index.tsx")),
-  preload: () =>
-    import("@/src/front/pages/users/[id]/index.tsx").then(
-      (mdl) => (mdl as ComponentModule).preload?.()
-    ),
-}
-```
-
-```ts [Vue]
-// Vue Router receives a standard lazy route definition.
-{
-  name: "users/[id]",
-  path: "/users/[id]",
-  component: () => import("@/src/front/pages/users/[id]/index.vue"),
-}
-```
-
-:::
-
 ## Data Loading on Navigation
 
-React and SolidJS integrate data fetching directly into the route lifecycle.
+Every framework integrates data fetching into the route lifecycle through a
+page-level `loader`/`preload` export.
 
 **React** - when a page exports a `loader` function, React Router executes it
 at strategic moments: initial page load, link hover, and navigation initiation.
@@ -115,9 +76,20 @@ for route-level data.
 
 **SolidJS** - when a page exports a `preload` function, SolidJS Router calls it
 on link hover and navigation intent. The preload result is cached and reused by
-`createAsync` inside the component, so no duplicate requests are made.
+`createAsync` inside the component (wrap the fetch in `query()` so both share
+one cache key), so no duplicate requests are made.
 
-**Vue** - preload hooks are not yet part of the Vue generator. Route-level data
-fetching is handled through navigation guards in `router.ts` or reactive
-`setup()` logic within the component. Prefetching support is under
-consideration - contributions are welcome! 🙌
+**Vue** - a page exports a `loader` (from a plain `<script>` block), and the
+generated router runs it before the route renders via a navigation guard. The
+component reads the result with `useLoaderData()` - no manual guards or
+`onMounted` needed.
+
+**Svelte** - a page exports a `loader` (from its module `<script>` block); the
+router runs it before render and the component reads it with `useLoaderData()`.
+
+**MDX** - a page exports a `loader`; it runs before render and the page reads
+the result with the `useLoaderData()` hook.
+
+Loader results are serialized during SSR and reused on hydration, so a request
+made on the server is not repeated on the client.
+[More on data loading ›](/frontend/data-preload)

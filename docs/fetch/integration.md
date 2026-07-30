@@ -1,12 +1,12 @@
 ---
 title: Fetch Client Integration
 description: Integrate KosmoJS fetch clients with SolidJS query/createAsync,
-    React and Vue useLoaderData, and MDX hooks. Type safety flows through all framework abstractions.
+    React, Vue and Svelte useLoaderData, and MDX hooks. Type safety flows through all framework abstractions.
 head:
   - - meta
     - name: keywords
       content: solidjs integration, react hooks, createAsync, preload, useLoaderData,
-        fetch client integration, vue loader, mdx loader, typescript hooks,
+        fetch client integration, vue loader, svelte loader, mdx loader, typescript hooks,
         isomorphic fetch, ssr hydration, in-process fetch, suspense boundary, error boundary
 ---
 
@@ -14,6 +14,7 @@ The fetch client returns standard promises, so it fits naturally into whatever a
 
 ::: code-group
 ```tsx [SolidJS]
+import { Suspense } from "solid-js";
 import { createAsync, query, useParams } from "@solidjs/router";
 import fetchClients from "_/fetch";
 
@@ -71,6 +72,25 @@ const user = useLoaderData();
 </template>
 ```
 
+```svelte [Svelte]
+<script module lang="ts">
+import fetchClients from "_/fetch";
+
+const { GET } = fetchClients["users/[id]"];
+
+// the loader lives in the module <script> block; the instance <script> can't hold ES exports
+export const loader = ({ params }) => GET([params.id]);
+</script>
+
+<script lang="ts">
+import { useLoaderData } from "_/use";
+
+const user = useLoaderData();
+</script>
+
+<div>{user.name}</div>
+```
+
 ```mdx [MDX]
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
@@ -91,11 +111,13 @@ export const User = () => {
 Types flow through these abstractions - loaders, resources, hooks, and components automatically
 know the response shape from your API definition.
 
-Nothing here is a KosmoJS abstraction. Solid's `query`/`createAsync`, React Router's `loader` and
-`useLoaderData`, Vue's `useLoaderData`, MDX's `useLoaderData` - each reads through the framework's
-own model, with no wrapper API, added lifecycle, or removed behavior on top. The fetch client is
-just a typed function that takes the params array you build and returns a promise; where and how
-you call it is entirely the framework's own model.
+KosmoJS only owns the envelope - the typed fetch client and how requests cross the wire.
+Everything above it is the framework's own model: Solid's `query`/`createAsync`, React Router's
+`loader` and `useLoaderData`, Vue's `useLoaderData`, Svelte's `useLoaderData`, MDX's `useLoaderData` -
+each reads through its native patterns, with no proprietary abstraction layered on top.
+
+The client is just a typed function that takes the params array you build and returns a promise; where and how
+you call it is entirely the framework's.
 
 ## Isomorphic Fetch
 
@@ -112,7 +134,7 @@ that one fetches on the client after hydration, like a plain CSR app.
 For requests that run during SSR, the server-rendered result is reused on hydration rather than refetched:
 
 - **Solid and React** reuse it through their built-in hydration.
-- **Vue and MDX** reuse it through their loader: the result is serialized into the page during SSR
+- **Vue, Svelte, and MDX** reuse it through their loader: the result is serialized into the page during SSR
   and read on the client before the loader would fetch, so the request made during SSR is not repeated.
 
 ## Suspense Is Your Responsibility
@@ -145,6 +167,8 @@ export default function UserProfile() {
 
 React's `loader`/`useLoaderData` resolves before render and does not suspend,
 so it needs no boundary unless you reach for `React.lazy` or a promise-throwing `use()`.
+The same holds for Vue, Svelte, and MDX loaders - they resolve before render, so only
+Solid's `createAsync` needs a boundary in the common case.
 Wrapping the whole app in one boundary does work if you accept the
 tradeoff - it is your call, not a default `KosmoJS` makes for you. See
 [Data Preloading](/frontend/data-preload#suspense-is-your-responsibility) for the

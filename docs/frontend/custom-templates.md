@@ -2,11 +2,11 @@
 title: Custom Page Templates
 description: Override default generated page components for specific routes using
   glob pattern matching. Create specialized scaffolding for landing pages, admin
-  dashboards, and marketing sections in React, SolidJS, Vue and MDX source folders.
+  dashboards, and marketing sections in React, SolidJS, Vue, Svelte and MDX source folders.
 head:
   - - meta
     - name: keywords
-      content: react templates, solidjs templates, vue templates, mdx templates,
+      content: react templates, solidjs templates, vue templates, svelte templates, mdx templates,
         route patterns, glob matching, template configuration, landing page templates
 ---
 
@@ -166,6 +166,20 @@ const customTemplate = `
 import { useRoute } from "vue-router";
 const route = useRoute();
 </script>
+`;
+```
+
+```ts [Svelte]
+const customTemplate = `
+<script lang="ts">
+import { useParams } from "_/use";
+const params = useParams();
+</script>
+
+<div>
+  <h1>Custom Template</h1>
+  <p>Route params: {JSON.stringify(params)}</p>
+</div>
 `;
 ```
 

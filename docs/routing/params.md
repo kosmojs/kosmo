@@ -104,8 +104,7 @@ files/[name].[ext]            ➜ /files/document.pdf
 
 Mixed segments work fully for backend routes (Koa/Hono). Frontend support varies:
 
-- **Vue Router** - full support
-- **MDX** - full support
+- **Vue, Svelte and MDX** - full support
 - **React Router** - `.ext` suffix only
 - **SolidJS Router** - not supported
 

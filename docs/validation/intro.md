@@ -18,10 +18,6 @@ One type definition becomes the source of truth for:
 - client-side validation in generated fetch clients
 - OpenAPI 3.1 specification
 
-<div class="text-center">
-  <LinkButton href="/validation/payload">Get Started</LinkButton>
-</div>
-
 ## Understanding Runtype Validation
 
 When you provide type annotations to your route parameters, payloads, and responses,
@@ -51,10 +47,6 @@ so what the client considers valid and what the server accepts are always in syn
 Double validation is not a performance cost - it's a performance gain.
 Invalid requests never reach your server, saving bandwidth and compute.
 Users also get instant feedback instead of waiting for a server response.
-
-<div class="text-center">
-  <LinkButton href="/validation/payload">Get Started</LinkButton>
-</div>
 
 ## How Generation Works
 

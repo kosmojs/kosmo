@@ -1,12 +1,12 @@
 ---
 title: Server-Side Rendering
-description: Add SSR capabilities to React, SolidJS, Vue and MDX applications using
+description: Add SSR capabilities to React, SolidJS, Vue, Svelte and MDX applications using
   the KosmoJS SSR generator. String and stream rendering patterns, production
   builds, and deployment configurations for server-rendered applications.
 head:
   - - meta
     - name: keywords
-      content: react ssr, solidjs ssr, vue ssr, mdx ssr, server rendering, hydration,
+      content: react ssr, solidjs ssr, vue ssr, svelte ssr, mdx ssr, server rendering, hydration,
         renderToString, renderToStream, react router ssr, solidjs ssr, vue router ssr,
         production rendering, stream rendering, kosmojs ssr
 ---
@@ -147,6 +147,30 @@ export default renderFactory(() => {
 });
 ```
 
+```svelte [Svelte]
+import renderFactory, {
+  createRoutes,
+  renderToString,
+  // no renderToStream on Svelte folders
+} from "_/entry/server";
+
+import routerFactory from "../router";
+
+const routes = createRoutes();
+const { serverRouter } = routerFactory(routes);
+
+export default renderFactory(() => {
+  return {
+    renderToString(url, { assets }) {
+      return renderToString(
+        () => serverRouter(url),
+        { headerTags: assets.map(({ tag }) => tag) },
+      );
+    },
+  };
+});
+```
+
 ```tsx [MDX]
 import renderFactory, {
   createRoutes,
@@ -183,9 +207,9 @@ Both are awaited. The server writes the opening HTML with `head` injected,
 emits `html`, then writes the closing HTML - you return content,
 and template assembly and the response are handled for you.
 
-MDX is the one exception to implementing both methods: it renders static content,
-provides only `renderToString`, and its folder does not expose the streaming
-render mode.
+MDX and Svelte are the exceptions to implementing both methods: they provide only
+`renderToString` and their folders do not expose the streaming render mode -
+MDX because it renders static content, Svelte because its folder ships string rendering only.
 
 ## Render Factory Arguments
 
@@ -246,8 +270,8 @@ differing only in the renderer it calls and the `ReadableStream` it resolves to.
 so streaming works the same on Node, Bun, and Deno.
 
 Streaming a route is opt-in per route via [`renderMode`](#selecting-the-render-mode).
-MDX is the exception: it renders static content, provides no `renderToStream`, and
-its folder does not expose the streaming mode.
+MDX and Svelte are the exceptions: they provide no `renderToStream`, and their
+folders do not expose the streaming mode.
 
 ## Selecting the Render Mode
 
@@ -282,7 +306,7 @@ ssrGenerator({
 
 When a route matches multiple patterns, the first match wins - so more specific
 patterns come first. Streaming a route requires the folder's renderer to
-implement `renderToStream`; MDX folders do not accept the streaming mode.
+implement `renderToStream`; MDX and Svelte folders do not accept the streaming mode.
 
 ## Production Build
 

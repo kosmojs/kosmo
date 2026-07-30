@@ -122,8 +122,11 @@ Visit `http://localhost:4556/api/users/123`. You should see JSON.
 
 ## Create a page
 
-With the dev server still running, create `pages/users/[id]/index.tsx` (or `.vue`).
-`KosmoJS` generates a placeholder component - replace it with a page that fetches from your API route:
+With the dev server still running, create `pages/users/[id]/index.tsx`
+(or `.vue` / `.svelte` / `.mdx`).
+`KosmoJS` generates a placeholder component - replace it with a page that fetches from your API route.
+React, SolidJS, and Vue fetch in the component here; Svelte and MDX read through a
+`loader` export instead (resolved before render), so they need no loading state:
 
 ::: code-group
 ```tsx [React]
@@ -179,6 +182,40 @@ onMounted(async () => { user.value = await GET([route.params.id]); });
   <div v-if="user"><h1>{{ user.name }}</h1><p>{{ user.email }}</p></div>
   <div v-else>Loading...</div>
 </template>
+```
+
+```svelte [Svelte]
+<script module lang="ts">
+import fetchClients from "_/fetch";
+
+const { GET } = fetchClients["users/[id]"];
+
+export const loader = ({ params }) => GET([params.id]);
+</script>
+
+<script lang="ts">
+import { useLoaderData } from "_/use";
+
+const user = useLoaderData();
+</script>
+
+<div><h1>{user.name}</h1><p>{user.email}</p></div>
+```
+
+```mdx [MDX]
+import fetchClients from "_/fetch";
+import { useLoaderData } from "_/use";
+
+const { GET } = fetchClients["users/[id]"];
+
+export const loader = ({ params }) => GET([params.id]);
+
+export const UserPage = () => {
+  const user = useLoaderData();
+  return <div><h1>{user.name}</h1><p>{user.email}</p></div>;
+};
+
+<UserPage />
 ```
 :::
 

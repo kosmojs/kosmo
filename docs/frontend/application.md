@@ -1,11 +1,11 @@
 ---
 title: Application Structure
-description: Generator-produced foundation files for React, SolidJS, Vue and MDX applications -
+description: Generator-produced foundation files for React, SolidJS, Vue, Svelte and MDX applications -
   root App component, router configuration, and client entry point with SSR hydration support.
 head:
   - - meta
     - name: keywords
-      content: react app foundation, solidjs app structure, vue app, mdx app,
+      content: react app foundation, solidjs app structure, vue app, svelte app, mdx app,
         suspense setup, router integration, createRoot, hydration, app entry point,
         vite entry, strictmode setup, solidjs router, vue router, react router.
 ---
@@ -23,7 +23,8 @@ other application-wide concerns.
 
 ::: code-group
 
-```tsx [React · App.tsx]
+```tsx [React]
+// App.tsx
 import { Outlet } from "react-router";
 
 export default function App() {
@@ -31,7 +32,8 @@ export default function App() {
 }
 ```
 
-```tsx [SolidJS · App.tsx]
+```tsx [SolidJS]
+// App.tsx
 import type { ParentComponent } from "solid-js";
 
 const App: ParentComponent = (props) => {
@@ -41,21 +43,33 @@ const App: ParentComponent = (props) => {
 export default App;
 ```
 
-```vue [Vue · App.vue]
+```vue [Vue]
+// App.vue
 <template>
   <RouterView />
 </template>
 ```
 
-```mdx [MDX · App.mdx]
+```svelte [Svelte]
+// App.svelte
+<script lang="ts">
+  import type { Snippet } from "svelte";
+  let { children }: { children: Snippet } = $props();
+</script>
+
+{@render children()}
+```
+
+```mdx [MDX]
+// App.mdx
 {props.children}
 ```
 :::
 
 ## Router Configuration
 
-The `routerFactory` function connects your root App component and generated
-routes to the framework's native router.
+The `routerFactory` function in `router.ts` file connects your root App component
+and generated routes to the framework's native router.
 It accepts a callback receiving auto-generated route definitions from `KosmoJS`.
 
 The callback must return two functions:
@@ -65,7 +79,7 @@ The callback must return two functions:
 
 ::: code-group
 
-```tsx [React · router.tsx]
+```tsx [React]
 import routerFactory, { createRouters } from "_/router";
 
 import app from "./App";
@@ -83,7 +97,7 @@ export default routerFactory((routes) => {
 });
 ```
 
-```tsx [SolidJS · router.tsx]
+```tsx [SolidJS]
 import routerFactory, { createRouters } from "_/router";
 
 import app from "./App";
@@ -101,7 +115,7 @@ export default routerFactory((routes) => {
 });
 ```
 
-```ts [Vue · router.ts]
+```ts [Vue]
 import routerFactory, { createRouters } from "_/router";
 
 import app from "./App.vue";
@@ -119,7 +133,25 @@ export default routerFactory((routes) => {
 });
 ```
 
-```tsx [MDX · router.tsx]
+```svelte [Svelte]
+import routerFactory, { createRouters } from "_/router";
+
+import app from "./App.svelte";
+
+export default routerFactory((routes) => {
+  const { clientRouter, serverRouter } = createRouters(routes, { app });
+  return {
+    clientRouter() {
+      return clientRouter()
+    },
+    serverRouter(url) {
+      return serverRouter(url)
+    },
+  };
+});
+```
+
+```tsx [MDX]
 import routerFactory, { createRouters } from "_/router";
 
 import app from "./App.mdx";
@@ -165,7 +197,7 @@ correct method: `hydrate()` for SSR hydration, `mount()` for a fresh client-only
 
 ::: code-group
 
-```tsx [React · entry/client.tsx]
+```tsx [React]
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -195,7 +227,7 @@ if (root) {
 }
 ```
 
-```tsx [SolidJS · entry/client.tsx]
+```tsx [SolidJS]
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -225,7 +257,7 @@ if (root) {
 }
 ```
 
-```ts [Vue · entry/client.ts]
+```ts [Vue]
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -255,7 +287,37 @@ if (root) {
 }
 ```
 
-```tsx [MDX · entry/client.tsx]
+```svelte [Svelte]
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "_/entry/client";
+
+import routerFactory from "../router";
+
+const routes = createRoutes();
+const { clientRouter } = routerFactory(routes);
+
+const root = document.getElementById("app");
+
+if (root) {
+  renderFactory(() => {
+    return {
+      hydrate() {
+        return hydrate(() => clientRouter(), root);
+      },
+      mount() {
+        return mount(() => clientRouter(), root);
+      },
+    };
+  });
+} else {
+  console.error("❌ Root element not found!");
+}
+```
+
+```tsx [MDX]
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -291,6 +353,7 @@ Under the hood:
 - React uses `createRoot`/`hydrateRoot` from `react-dom/client`.
 - SolidJS uses `render`/`hydrate` from `solid-js/web`.
 - Vue constructs separate app instances via `createApp` and `createSSRApp`.
+- Svelte uses `mount`/`hydrate` from `svelte`.
 - MDX uses `render`/`hydrate` from `preact`.
 
 The generated `hydrate` and `mount` are conveniences that wire the router to the

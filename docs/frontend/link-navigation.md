@@ -2,11 +2,11 @@
 title: Type-Safe Navigation
 description: Generated Link component wrapping each framework's native router
   with compile-time route validation. Autocomplete navigation targets, parameter
-  enforcement, and query string handling for React, SolidJS, Vue and MDX.
+  enforcement, and query string handling for React, SolidJS, Vue, Svelte and MDX.
 head:
   - - meta
     - name: keywords
-      content: react navigation, solidjs link, vue router link, mdx link component,
+      content: react navigation, solidjs link, vue router link, svelte link, mdx link component,
         type-safe links, route autocomplete, parameter validation, typed navigation.
 ---
 
@@ -15,7 +15,7 @@ router link with compile-time route validation. It knows your complete route
 structure and parameters, delivering autocomplete and type checking throughout
 navigation code.
 
-The component is available at `components/Link.tsx` (or `Link.vue`) in your
+The component is available at `components/Link.tsx` (or `Link.vue` / `Link.svelte`) in your
 source folder.
 
 ## Usage
@@ -66,6 +66,25 @@ import Link from "~/components/Link.vue";
     </Link>
   </nav>
 </template>
+```
+
+```svelte [Menu.svelte]
+<script lang="ts">
+import Link from "~/components/Link.svelte";
+</script>
+
+<nav>
+  <!-- Navigate to a static route -->
+  <Link to={["index"]}>Home</Link>
+
+  <!-- Navigate with a required parameter -->
+  <Link to={["users/[id]", 123]}>User Profile</Link>
+
+  <!-- Navigate with a parameter and query string -->
+  <Link to={["posts/[slug]", "hello-world"]} query={{ ref: "sidebar" }}>
+    Blog Post
+  </Link>
+</nav>
 ```
 :::
 

@@ -6,7 +6,7 @@ head:
   - - meta
     - name: keywords
       content: vite tutorial, typescript api tutorial, kosmojs walkthrough,
-        hono api, koa api, solidjs, react, vue, mdx
+        hono api, koa api, solidjs, react, vue, svelte, mdx
 ---
 
 A step-by-step walkthrough covering everything `KosmoJS` provides.
@@ -80,7 +80,7 @@ Non-interactive mode is also supported:
 
 - `--name`
 - `--base`
-- `--framework solid|react|vue|mdx`
+- `--framework solid|react|vue|svelte|mdx`
 - `--backend koa|hono`
 - `--ssr`
 - `--ssg`
@@ -419,6 +419,39 @@ const route = useRoute();
 const user = ref(null);
 onMounted(async () => { user.value = await GET([route.params.id]); });
 </script>
+```
+
+```svelte [Svelte]
+<script module lang="ts">
+import fetchClients from "_/fetch";
+
+const { GET } = fetchClients["users/[id]"];
+
+export const loader = ({ params }) => GET([params.id]);
+</script>
+
+<script lang="ts">
+import { useLoaderData } from "_/use";
+
+const user = useLoaderData();
+// ...
+</script>
+```
+
+```mdx [MDX]
+import fetchClients from "_/fetch";
+import { useLoaderData } from "_/use";
+
+const { GET } = fetchClients["users/[id]"];
+
+export const loader = ({ params }) => GET([params.id]);
+
+export const User = () => {
+  const user = useLoaderData();
+  // ...
+};
+
+<User />
 ```
 :::
 

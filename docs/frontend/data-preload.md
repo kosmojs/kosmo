@@ -1,13 +1,13 @@
 ---
 title: Data Preloading
 description: Prefetch route data before components render using React Router's
-    loader pattern, SolidJS Router's query/preload, and Vue and MDX loader exports.
+    loader pattern, SolidJS Router's query/preload, and Vue, Svelte and MDX loader exports.
     Type-safe data availability derived from API endpoint definitions.
 head:
   - - meta
     - name: keywords
       content: react router loaders, useLoaderData, solidjs preload, createAsync, query,
-        vue loader, mdx loader, data prefetching, route data loading, async loading,
+        vue loader, svelte loader, mdx loader, data prefetching, route data loading, async loading,
         type-safe data, kosmojs data fetching, suspense boundary, error boundary
 ---
 
@@ -18,8 +18,8 @@ with `KosmoJS`'s generated fetch clients.
 
 ## API Endpoint
 
-Start by creating an API endpoint that provides the data. The same endpoint
-is used across all three frameworks:
+Start by creating an API endpoint that provides the data.
+The same endpoint is used across every framework:
 
 ```ts [api/users/data/index.ts]
 import { defineRoute } from "_/api";
@@ -45,9 +45,11 @@ const { GET } = fetchClients["users/data"];
 // React Router calls it before the component renders
 export { GET as loader };
 
+type T = ResponseT["users/data"]["GET"];
+
 export default function Page() {
   // useLoaderData retrieves the already-fetched result - no duplicate request
-  const data = useLoaderData<ResponseT["users/data"]["GET"]>();
+  const data = useLoaderData<T>();
 
   return (
     <div>
@@ -98,8 +100,10 @@ export const loader = fetchClients["users/data"].GET;
 import { useLoaderData } from "_/use";
 import type { ResponseT } from "_/fetch";
 
+type T = ResponseT["users/data"]["GET"];
+
 // the router runs the loader before the component renders; read its result here
-const data = useLoaderData<ResponseT["users/data"]["GET"]>();
+const data = useLoaderData<T>();
 </script>
 
 <template>
@@ -107,6 +111,30 @@ const data = useLoaderData<ResponseT["users/data"]["GET"]>();
     <UserList v-if="data" :users="data.users" />
   </div>
 </template>
+```
+
+```svelte [Svelte]
+<script module lang="ts">
+import fetchClients from "_/fetch";
+
+// the loader lives in the module <script> block -
+// the instance <script> can't hold ES exports
+export const loader = fetchClients["users/data"].GET;
+</script>
+
+<script lang="ts">
+import { useLoaderData } from "_/use";
+import type { ResponseT } from "_/fetch";
+
+type T = ResponseT["users/data"]["GET"];
+
+// the router runs the loader before the component renders; read its result here
+const data = useLoaderData<T>();
+</script>
+
+{#if data}
+  <UserList users={data.users} />
+{/if}
 ```
 
 ```mdx [MDX]
@@ -147,6 +175,11 @@ would fetch again.
 component renders. The component reads the result with `useLoaderData()` - no
 `onMounted`, no manual `ref`, and the data is available synchronously at first
 render, so it works under SSR without a re-fetch on hydration.
+
+**Svelte** - identical shape to Vue and MDX: a page exports a `loader` from its
+module `<script>` block, the router runs it before render, and the instance
+`<script>` reads the result with `useLoaderData()`. KosmoJS uses only Svelte's
+UI layer, not SvelteKit, so data loading is the loader, not SvelteKit's `load`.
 
 **MDX** - export a `loader` and read its result with the `useLoaderData()`
 hook; `props` stays entirely yours. It runs before the page renders, on both
@@ -191,6 +224,9 @@ render and does not suspend, so it needs no boundary. You only need
 not suspend either, so it needs no boundary. A `<Suspense>` boundary is only
 relevant if you reach for async `<script setup>` (a top-level `await`), which
 turns the component async and wants a boundary above it.
+
+**Svelte** - the `loader`/`useLoaderData` pattern resolves before render and
+does not suspend, so it needs no boundary in the common case.
 
 **MDX** - `loader`/`useLoaderData` resolves before render and does not suspend,
 so it needs no boundary in the common case.
