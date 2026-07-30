@@ -69,21 +69,103 @@ jobs:
           --recursive
           run build
 
-      # Only packages/* is published, so only packages/* is uploaded.
+      # Tarballs are packed AND verified in the build job.
+      # `workspace:` is a pnpm protocol and only pnpm rewrites it into a real range;
+      # npm packs manifest verbatim, making every dependent package uninstallable.
       #
-      # pnpm-workspace.yaml is included as an anchor, not because the publish
-      # job needs it: actions/upload-artifact derives the archive root from the
-      # least common ancestor of everything it matched, so without a file at
-      # the repository root that root would drift with the number of packages
-      # that happen to build. The anchor pins it, and the download restores to
-      # `.` unconditionally.
-      - name: Upload build artifacts
+      # Packing with pnpm up front also means the publish job stages an already-built tarball,
+      # and staging a tarball skips the packing pipeline entirely,
+      # so no `.pnpmfile.mjs` hook can rewrite a manifest on the way out.
+      #
+      # `pnpm pack --recursive` is deliberately not used: it packs private packages too,
+      # so every generator would land in the artifact and become a candidate for staging.
+      # Iterating packages/* and skipping private manifests keeps the set identical to what the publish job expects.
+      #
+      # --pack-destination resolves relative to the package directory, so the
+      # absolute workspace path is passed rather than a relative one.
+      - name: Pack npm tarballs
+        env:
+          TARBALL_DIR: npm-tarballs
+        run: |
+          set -euo pipefail
+
+          # an unmatched glob must expand to nothing, not to its own literal
+          shopt -s nullglob
+
+          mkdir -p "$TARBALL_DIR"
+
+          packed=0
+
+          for manifest in packages/*/package.json; do
+            directory=$(dirname "$manifest")
+
+            if [ "$(jq --raw-output '.private // false' "$manifest")" = "true" ]; then
+              continue
+            fi
+
+            (
+              cd "$directory"
+              pnpm pack --pack-destination "${GITHUB_WORKSPACE}/${TARBALL_DIR}"
+            )
+
+            packed=$((packed + 1))
+          done
+
+          if [ "$packed" -eq 0 ]; then
+            echo 'no publishable packages found under packages/' >&2
+            exit 1
+          fi
+
+          echo "packed ${packed} tarball(s)"
+          ls -1 "$TARBALL_DIR"
+
+      # The one thing pnpm cannot check for itself - does packed version match the tag being released.
+      # Everything else about the tarball is pnpm's own output,
+      # and pnpm fails loudly on its own if packing goes wrong -
+      # re-asserting it here would just be testing pnpm.
+      #
+      # Lockstep versioning across the workspace is assumed. Every offender is
+      # reported rather than stopping at the first, so a botched bump shows the
+      # full list in one run.
+      - name: Verify tarball versions
+        env:
+          TARBALL_DIR: npm-tarballs
+        run: |
+          set -euo pipefail
+
+          # an unmatched glob must expand to nothing, not to its own literal
+          shopt -s nullglob
+
+          tagged=${GITHUB_REF_NAME#v}
+          mismatched=()
+
+          for tarball in "$TARBALL_DIR"/*.tgz; do
+            manifest=$(tar --extract --to-stdout --file "$tarball" package/package.json)
+
+            name=$(printf '%s' "$manifest" | jq --raw-output '.name')
+            version=$(printf '%s' "$manifest" | jq --raw-output '.version')
+
+            if [ "$version" != "$tagged" ]; then
+              mismatched+=("${name} declares ${version}")
+            fi
+          done
+
+          if [ "${#mismatched[@]}" -gt 0 ]; then
+            printf 'tag %s does not match:\n' "$tagged" >&2
+            printf '  %s\n' "${mismatched[@]}" >&2
+            exit 1
+          fi
+
+          echo "verified ${tagged} across every tarball"
+
+      # Only the tarballs cross the job boundary - no manifests, no build directories, no workspace anchor.
+      # The archive root is the tarball directory itself, so the download restores a flat set of .tgz files
+      # into a path of the publish job's choosing.
+      - name: Upload npm tarballs
         uses: actions/upload-artifact@v7
         with:
-          name: build-artifacts
-          path: |
-            pnpm-workspace.yaml
-            packages/*/pkg
+          name: npm-tarballs
+          path: npm-tarballs/*.tgz
           retention-days: 1
 
   # The critical job. Holds publish rights to the whole workspace and
@@ -101,16 +183,12 @@ jobs:
       # credentials - without this every publish fails with ENEEDAUTH
       id-token: write
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - name: Download build artifacts
+      # Deliberately no checkout. Everything this job needs is inside the tarballs.
+      - name: Download npm tarballs
         uses: actions/download-artifact@v8
         with:
-          name: build-artifacts
-          path: .
+          name: npm-tarballs
+          path: npm-tarballs
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v7
@@ -122,77 +200,7 @@ jobs:
           # registry into .npmrc so the CLI targets the right host
           registry-url: https://registry.npmjs.org
 
-      # Three things are checked here, before anything reaches the registry:
-      #
-      # 1. Build output was restored. If the artifact ever unpacks to the
-      #    wrong depth, every package would ship empty rather than fail.
-      # 2. Every publishable package carries the tagged version.
-      #    This assumes lockstep versioning across the workspace.
-      # 3. At least one publishable package exists at all.
-      #
-      # All three report every offender rather than stopping at the first,
-      # so a botched bump shows the full list in one run.
-      - name: Resolve publish plan
-        env:
-          PUBLISH_PLAN: ${{ runner.temp }}/publish-plan.tsv
-        run: |
-          set -euo pipefail
-
-          # an unmatched glob must expand to nothing, not to its own literal
-          shopt -s nullglob
-
-          tagged=${GITHUB_REF_NAME#v}
-          missing=()
-          mismatched=()
-          : > "$PUBLISH_PLAN"
-
-          for manifest in packages/*/package.json; do
-            directory=$(dirname "$manifest")
-
-            if [ "$(jq --raw-output '.private // false' "$manifest")" = "true" ]; then
-              continue
-            fi
-
-            name=$(jq --raw-output '.name' "$manifest")
-            version=$(jq --raw-output '.version' "$manifest")
-
-            if [ ! -d "${directory}/pkg" ]; then
-              missing+=("$directory")
-            fi
-
-            if [ "$version" != "$tagged" ]; then
-              mismatched+=("${directory} declares ${version}")
-            fi
-
-            printf '%s\t%s\t%s\n' "$directory" "$name" "$version" >> "$PUBLISH_PLAN"
-          done
-
-          failed=0
-
-          if [ "${#missing[@]}" -gt 0 ]; then
-            printf 'no build output restored for:\n' >&2
-            printf '  %s\n' "${missing[@]}" >&2
-            failed=1
-          fi
-
-          if [ "${#mismatched[@]}" -gt 0 ]; then
-            printf 'tag %s does not match:\n' "$tagged" >&2
-            printf '  %s\n' "${mismatched[@]}" >&2
-            failed=1
-          fi
-
-          if [ ! -s "$PUBLISH_PLAN" ]; then
-            echo 'no publishable packages found under packages/' >&2
-            failed=1
-          fi
-
-          if [ "$failed" -ne 0 ]; then
-            exit 1
-          fi
-
-          echo "$(wc --lines < "$PUBLISH_PLAN") publishable package(s) at ${tagged}"
-
-      # Stages every planned package. Nothing here becomes installable:
+      # Stages every tarball the build job produced. Nothing here becomes installable:
       # a maintainer approves each staged version with 2FA afterwards,
       # via `npm stage approve <stage-id>` or the Staged Packages tab.
       #
@@ -201,25 +209,26 @@ jobs:
       # so staging a version that is already live is a genuine error
       # and should fail the run rather than be skipped silently.
       - name: Stage npm packages
-        env:
-          PUBLISH_PLAN: ${{ runner.temp }}/publish-plan.tsv
         run: |
           set -euo pipefail
 
-          # read the plan up front so npm never shares stdin with the loop
-          mapfile -t entries < "$PUBLISH_PLAN"
+          # an unmatched glob must expand to nothing, not to its own literal
+          shopt -s nullglob
 
-          for entry in "${entries[@]}"; do
-            IFS=$'\t' read -r directory name version <<< "$entry"
+          tarballs=(npm-tarballs/*.tgz)
 
-            echo "stage ${name}@${version}"
+          if [ "${#tarballs[@]}" -eq 0 ]; then
+            echo 'no tarballs restored from the build job' >&2
+            exit 1
+          fi
 
-            # `npm stage publish` packs the current working directory and takes
-            # no directory argument, so cd in a subshell rather than passing one
-            (
-              cd "$directory"
-              npm stage publish --ignore-scripts
-            )
+          for tarball in "${tarballs[@]}"; do
+            echo "stage $(basename "$tarball")"
+
+            # `npm stage publish` takes a package spec, and a path to a tarball
+            # is a valid spec - so the already-packed artifact is staged as is,
+            # with no repacking and no manifest rewriting on the way out
+            npm stage publish "$tarball" --ignore-scripts
           done
 
-          echo "staged ${#entries[@]} package(s) - approve them with 2FA before they become installable"
+          echo "staged ${#tarballs[@]} package(s) - approve them with 2FA before they become installable"
