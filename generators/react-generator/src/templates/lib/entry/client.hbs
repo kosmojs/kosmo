@@ -39,7 +39,7 @@ export const hydrate = async (
   options?: HydrationOptions,
 ) => {
   const { component } = await resolver();
-  hydrateRoot(component as never, root as never, options);
+  hydrateRoot(root, component, options);
 }
 
 export const mount = async (
