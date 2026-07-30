@@ -33,10 +33,10 @@ export const API_USE_BASENAME = "use";
 export const API_USE_PATTERN = `${API_USE_BASENAME}.ts`;
 
 export const PAGE_INDEX_BASENAME = "index";
-export const PAGE_INDEX_PATTERN = `${PAGE_INDEX_BASENAME}.{tsx,vue,mdx,md}`;
+export const PAGE_INDEX_PATTERN = `${PAGE_INDEX_BASENAME}.{tsx,vue,svelte,mdx,md}`;
 
 export const PAGE_LAYOUT_BASENAME = "layout";
-export const PAGE_LAYOUT_PATTERN = `${PAGE_LAYOUT_BASENAME}.{tsx,vue,mdx}`;
+export const PAGE_LAYOUT_PATTERN = `${PAGE_LAYOUT_BASENAME}.{tsx,vue,svelte,mdx}`;
 
 const ROUTE_FILE_PATTERNS = [
   // match index files in api dir

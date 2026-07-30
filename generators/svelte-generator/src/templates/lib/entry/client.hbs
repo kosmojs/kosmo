@@ -1,0 +1,41 @@
+import { hydrate as hydrateOrig, mount as mountOrig } from "svelte";
+import type { RouterFactoryReturn } from "@kosmojs/core";
+import { clientRenderFactory } from "@kosmojs/core/generators";
+
+import { createRoute, type RouteComponent } from "../svelte";
+
+{{#each pageRoutes}}
+const {{id}} = () => import("{{ createImport 'pages' file }}");
+{{/each}}
+{{#each layouts}}
+const {{id}} = () => import("{{ createImport 'pages' file }}");
+{{/each}}
+
+export const createRoutes = () => {
+  return [
+    {{#each pageRoutes}}
+    createRoute("{{name}}", "{{pathPattern}}", {{id}}, [
+      {{#each layouts}}["{{name}}", {{id}}], {{/each}}
+    ]),
+    {{/each}}
+  ];
+};
+
+export const hydrate = async (
+  resolver: () => RouterFactoryReturn<Promise<RouteComponent>>,
+  root: HTMLElement,
+) => {
+  const { component } = await resolver();
+  hydrateOrig(component.Component, { target: root, props: component.props });
+  window.__KOSMO_HYDRATION_DATA__ = undefined;
+}
+
+export const mount = async (
+  resolver: () => RouterFactoryReturn<Promise<RouteComponent>>,
+  root: HTMLElement,
+) => {
+  const { component } = await resolver();
+  mountOrig(component.Component, { target: root, props: component.props });
+}
+
+export default clientRenderFactory();

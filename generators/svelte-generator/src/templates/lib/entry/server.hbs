@@ -1,0 +1,66 @@
+import { render as renderOrig } from "svelte/server";
+
+import type {
+  RenderToStringWrapper,
+  RouterFactoryReturn,
+  SSRRenderWrapper,
+} from "@kosmojs/core";
+
+import { serverRenderFactory } from "@kosmojs/core/generators";
+
+import { createRoute, type Route, type RouteComponent } from "../svelte";
+
+{{#each pageRoutes}}
+import * as {{id}} from "{{ createImport 'pages' file }}";
+{{/each}}
+{{#each layouts}}
+import * as {{id}} from "{{ createImport 'pages' file }}";
+{{/each}}
+
+export const createRoutes = () => {
+  return [
+    {{#each pageRoutes}}
+    createRoute("{{name}}", "{{pathPattern}}", async () => {{id}}, [
+      {{#each layouts}}["{{name}}", async () => {{id}}], {{/each}}
+    ]),
+    {{/each}}
+  ];
+};
+
+const createHydrationScript = (loaderData: Route["loaderData"]) => {
+  return loaderData
+    ? `<script>
+        window.__KOSMO_HYDRATION_DATA__ = JSON.parse(
+          ${JSON.stringify(JSON.stringify(loaderData))}
+        );
+      </script>`
+    : undefined;
+};
+
+export const renderWrapper: SSRRenderWrapper = (_context, render) => render();
+
+export const renderToString: RenderToStringWrapper<
+  () => RouterFactoryReturn<Promise<RouteComponent>, { route: Route }>
+> = async (resolver, { headerTags = [] } = {}) => {
+  const { component, route } = await resolver();
+
+  // svelte/server render() returns `head` - everything the page and its
+  // layouts put in <svelte:head> - plus `body`. That covers what MDX builds
+  // from frontmatter, so there is no generateHeaderTags() counterpart here.
+  const { head, body } = await renderOrig(component.Component, {
+    props: component.props,
+  });
+
+  const script = createHydrationScript(route.loaderData);
+
+  return {
+    head: [...headerTags, head, ...(script ? [script] : [])]
+      .filter(Boolean)
+      .join("\n"),
+    html: body,
+  }
+}
+
+// svelte/server exposes only render() - no web-stream renderer -
+// so this folder is string-only SSR.
+export default serverRenderFactory<false>();

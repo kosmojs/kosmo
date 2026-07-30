@@ -1,0 +1,19 @@
+<script lang="ts">
+  import PageSample from "{{ createImport 'lib' 'pageSamples/page.svelte' }}";
+
+  const pathMap = {
+    page: "{{ createImport 'pages' route.file }}",
+    pages: "{{ createImport 'pages' }}",
+    api: "{{ createImport 'api' }}",
+  };
+</script>
+
+<svelte:head>
+  <title>{{title}}</title>
+</svelte:head>
+
+<PageSample
+  message="{{message}}"
+  routeName={"{{route.name}}"}
+  {pathMap}
+/>

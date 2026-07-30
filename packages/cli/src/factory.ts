@@ -22,6 +22,7 @@ import {
   solidGenerator,
   ssgGenerator,
   ssrGenerator,
+  svelteGenerator,
   typeboxGenerator,
   vueGenerator,
 } from "@kosmojs/dev";
@@ -159,6 +160,12 @@ export const createSourceFolder = async (
           `${defaults.entryDir}/client.ts`,
         ]
       : []),
+    ...(["svelte"].includes(framework as never)
+      ? [
+          `${defaults.pagesDir}/index/index.svelte`,
+          `${defaults.entryDir}/client.ts`,
+        ]
+      : []),
     ...(["mdx"].includes(framework as never)
       ? [
           `${defaults.pagesDir}/index/index.mdx`,
@@ -232,6 +239,12 @@ export const createKosmoConfig = (
       name: "vueGenerator",
       options: options[framework],
       meta: vueGenerator().meta,
+    });
+  } else if (framework === "svelte") {
+    generators.push({
+      name: "svelteGenerator",
+      options: options[framework],
+      meta: svelteGenerator().meta,
     });
   } else if (framework === "mdx") {
     imports.push(

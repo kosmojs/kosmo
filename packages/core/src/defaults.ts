@@ -20,6 +20,7 @@ export enum FRAMEWORKS {
   react = "React",
   vue = "Vue",
   solid = "SolidJS",
+  svelte = "Svelte",
   mdx = "MDX",
 }
 

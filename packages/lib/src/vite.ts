@@ -73,6 +73,7 @@ export const tsconfigPaths = (sourceFolder: SourceFolder): Plugin => {
     ".jsx",
     ".mjs",
     ".vue",
+    ".svelte",
     ".md",
     ".mdx",
     ".json",

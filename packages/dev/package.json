@@ -37,6 +37,7 @@
     "@kosmojs/ssr-generator": "workspace:^",
     "@kosmojs/typebox-generator": "workspace:^",
     "@kosmojs/vue-generator": "workspace:^",
+    "@kosmojs/svelte-generator": "workspace:^",
     "crc": "^4.3.2",
     "vite": "^8.1.5"
   }
