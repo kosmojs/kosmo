@@ -12,6 +12,7 @@ minimumReleaseAgeExclude:
   - typebox
   - tfusion
   - vite
+  - "@vitejs/*"
 
 packages:
   - "generators/*"

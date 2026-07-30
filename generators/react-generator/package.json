@@ -21,7 +21,7 @@
   "dependencies": {
     "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^",
-    "@vitejs/plugin-react": "^6.0.4"
+    "@vitejs/plugin-react": "^6.0.5"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",

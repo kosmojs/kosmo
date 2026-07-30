@@ -20,6 +20,6 @@
   "dependencies": {
     "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^",
-    "vite": "^8.1.5"
+    "vite": "^8.2.0"
   }
 }

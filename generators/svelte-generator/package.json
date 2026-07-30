@@ -21,7 +21,7 @@
     "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^",
     "@sveltejs/vite-plugin-svelte": "^7.2.0",
-    "vite": "^8.1.5"
+    "vite": "^8.2.0"
   },
   "devDependencies": {
     "path-to-regexp": "^8.4.2",
