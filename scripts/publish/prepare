@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-pnpm -r build
-changeset add
-git add --all .
-git commit -am changeset
-changeset version
-git commit -am "chore: version bump"

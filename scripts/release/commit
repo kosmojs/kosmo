@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+# Tag the prepared release and push it. Pushing the tag is what triggers
+# .github/workflows/publish.yml, so every check here is a check that runs
+# before anything can reach the npm stage queue.
+
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+# an unmatched glob must expand to nothing, not to its own literal
+shopt -s nullglob
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo 'working tree is dirty - run `pnpm release:prepare` first' >&2
+  exit 1
+fi
+
+# a changeset left in place means `changeset version` never ran.
+# README.md lives in .changeset and is not a changeset.
+pending=()
+for changeset in .changeset/*.md; do
+  if [ "$(basename "$changeset")" = 'README.md' ]; then
+    continue
+  fi
+  pending+=("$changeset")
+done
+
+if [ "${#pending[@]}" -gt 0 ]; then
+  echo 'unconsumed changesets remain - run `pnpm release:prepare` first:' >&2
+  printf '  %s\n' "${pending[@]}" >&2
+  exit 1
+fi
+
+# The version is derived from the packages themselves rather than from any one designated manifest,
+# and every publishable package must agree.
+# This is the same unanimity the workflow enforces after the tag is pushed -
+# checking it here turns a failed release run into a failed shell command.
+declare -A versions=()
+declared=()
+
+for manifest in packages/*/package.json; do
+  if [ "$(jq --raw-output '.private // false' "$manifest")" = 'true' ]; then
+    continue
+  fi
+
+  version=$(jq --raw-output '.version' "$manifest")
+  versions["$version"]=1
+  declared+=("$(dirname "$manifest") at ${version}")
+done
+
+if [ "${#declared[@]}" -eq 0 ]; then
+  echo 'no publishable packages found under packages/' >&2
+  exit 1
+fi
+
+if [ "${#versions[@]}" -ne 1 ]; then
+  echo 'packages are not on a single version:' >&2
+  printf '  %s\n' "${declared[@]}" >&2
+  exit 1
+fi
+
+version="${!versions[*]}"
+tag="v${version}"
+
+if git rev-parse --verify --quiet "refs/tags/${tag}" >/dev/null; then
+  echo "tag ${tag} already exists - bump again rather than moving it" >&2
+  exit 1
+fi
+
+printf 'tagging %s:\n' "$tag"
+printf '  %s\n' "${declared[@]}"
+
+# annotated rather than lightweight: carries author and date,
+# and is what git describe and --follow-tags consider a real tag
+git tag --annotate "$tag" --message "$tag"
+
+# Push branch and tag together. Pushing the tag alone uploads the commit
+# objects but leaves the remote branch pointing at the previous commit,
+# so the release exists only as a tag target.
+# --atomic means neither lands if the branch has moved on underneath.
+git push --atomic origin "$branch" "$tag"
+
+echo
+echo "pushed ${tag} - the publish workflow will stage the packages"
+echo "approve them with 2FA on npmjs.com before they become installable"

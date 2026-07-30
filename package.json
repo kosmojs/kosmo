@@ -24,9 +24,8 @@
     "test:integration:fetch": "vitest run --project=\"integration:fetch:*\"",
     "test:integration:fetch:csr": "vitest run --project=integration:fetch:csr",
     "test:integration:fetch:ssr": "vitest run --project=integration:fetch:ssr",
-    "prepub": "./scripts/publish/prepare",
-    "pub": "pnpm -r publish --access public",
-    "pub:tags": "git push --follow-tags"
+    "release:prepare": "bash ./scripts/release/prepare",
+    "release:commit": "bash ./scripts/release/commit"
   },
   "dependencies": {
     "@biomejs/biome": "^2.5.6",
