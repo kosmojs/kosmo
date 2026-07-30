@@ -2,7 +2,7 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/solid-generator",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [
