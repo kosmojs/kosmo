@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@kosmojs/dev",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "cacheVersion": "001",
   "author": "Slee Woo",
   "license": "MIT",
