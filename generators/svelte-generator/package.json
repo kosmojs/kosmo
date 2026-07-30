@@ -2,7 +2,7 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/svelte-generator",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [
