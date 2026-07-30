@@ -4,6 +4,11 @@
   "version": "0.2.2",
   "author": "Slee Woo",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kosmojs/kosmo.git",
+    "directory": "packages/create"
+  },
   "files": [
     "pkg/*"
   ],

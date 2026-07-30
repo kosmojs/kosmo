@@ -5,6 +5,11 @@
   "cacheVersion": "001",
   "author": "Slee Woo",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kosmojs/kosmo.git",
+    "directory": "packages/dev"
+  },
   "files": [
     "pkg/*"
   ],
