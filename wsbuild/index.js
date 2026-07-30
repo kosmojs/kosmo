@@ -36,14 +36,16 @@ await build({
   plugins,
   ssr: {
     external: true,
+    noExternal: /@kosmojs\/.+-generator/,
   },
   resolve: {
     tsconfigPaths: true,
     conditions: ["node"],
   },
   build: {
-    ssr: true,
     target: "esnext",
+    ssr: true,
+    minify: true,
     sourcemap: true,
     emptyOutDir: true,
     rolldownOptions: {

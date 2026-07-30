@@ -1,5 +1,6 @@
 {
   "type": "module",
+  "private": true,
   "name": "@kosmojs/typebox-generator",
   "version": "0.2.1",
   "cacheVersion": "1",

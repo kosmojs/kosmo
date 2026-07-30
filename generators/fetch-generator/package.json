@@ -1,5 +1,6 @@
 {
   "type": "module",
+  "private": true,
   "name": "@kosmojs/fetch-generator",
   "version": "0.2.1",
   "author": "Slee Woo",
