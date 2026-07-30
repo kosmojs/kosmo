@@ -1,0 +1,225 @@
+# Single entrypoint for every publish to the npm registry.
+#
+# npm trusted publishing binds each package to one repository + one workflow filename,
+# and the registry allows only one trust config per package.
+# Every release path therefore has to originate from THIS file -
+# splitting stable and prerelease into separate workflows would break OIDC for all packages.
+#
+# Renaming this file invalidates every trust record and requires re-running
+# `npm trust revoke` + `npm trust github` across the workspace.
+#
+# Only packages/* is published. The generators are private and ship as part
+# of the packages that embed them, so they are built but never published.
+#
+# Versioning is manual and local. CI never bumps a version, never writes to
+# the repository, and never consults a changelog tool -
+# it publishes exactly what the tagged commit's manifests declare.
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+# Serialize releases against each other. The key is deliberately constant:
+# on a tag push github.ref is the tag itself, so keying on it would put every
+# release in its own group and serialize nothing.
+# Never cancel in progress - a half-staged workspace is worse than a queued run.
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+
+  # Build in a separate job so the publish job never runs workspace code.
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [24.x]
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          version: 11.15.0
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
+          # slower, but without cache poisoning risk
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: >-
+          pnpm install
+          --frozen-lockfile
+          --ignore-scripts
+
+      - name: Build packages
+        run: >-
+          pnpm
+          --recursive
+          run build
+
+      # Only packages/* is published, so only packages/* is uploaded.
+      #
+      # pnpm-workspace.yaml is included as an anchor, not because the publish
+      # job needs it: actions/upload-artifact derives the archive root from the
+      # least common ancestor of everything it matched, so without a file at
+      # the repository root that root would drift with the number of packages
+      # that happen to build. The anchor pins it, and the download restores to
+      # `.` unconditionally.
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-artifacts
+          path: |
+            pnpm-workspace.yaml
+            packages/*/pkg
+          retention-days: 1
+
+  # The critical job. Holds publish rights to the whole workspace and
+  # therefore installs no dependencies and executes no lifecycle scripts.
+  publish:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [24.x]
+    needs:
+      - build
+    permissions:
+      contents: read
+      # mints the OIDC token that npm exchanges for short-lived publish
+      # credentials - without this every publish fails with ENEEDAUTH
+      id-token: write
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: build-artifacts
+          path: .
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
+          # slower, but without cache poisoning risk
+          package-manager-cache: false
+          # not used for auth - no NPM_TOKEN is involved - but it writes the
+          # registry into .npmrc so the CLI targets the right host
+          registry-url: https://registry.npmjs.org
+
+      # Three things are checked here, before anything reaches the registry:
+      #
+      # 1. Build output was restored. If the artifact ever unpacks to the
+      #    wrong depth, every package would ship empty rather than fail.
+      # 2. Every publishable package carries the tagged version.
+      #    This assumes lockstep versioning across the workspace.
+      # 3. At least one publishable package exists at all.
+      #
+      # All three report every offender rather than stopping at the first,
+      # so a botched bump shows the full list in one run.
+      - name: Resolve publish plan
+        env:
+          PUBLISH_PLAN: ${{ runner.temp }}/publish-plan.tsv
+        run: |
+          set -euo pipefail
+
+          # an unmatched glob must expand to nothing, not to its own literal
+          shopt -s nullglob
+
+          tagged=${GITHUB_REF_NAME#v}
+          missing=()
+          mismatched=()
+          : > "$PUBLISH_PLAN"
+
+          for manifest in packages/*/package.json; do
+            directory=$(dirname "$manifest")
+
+            if [ "$(jq --raw-output '.private // false' "$manifest")" = "true" ]; then
+              continue
+            fi
+
+            name=$(jq --raw-output '.name' "$manifest")
+            version=$(jq --raw-output '.version' "$manifest")
+
+            if [ ! -d "${directory}/pkg" ]; then
+              missing+=("$directory")
+            fi
+
+            if [ "$version" != "$tagged" ]; then
+              mismatched+=("${directory} declares ${version}")
+            fi
+
+            printf '%s\t%s\t%s\n' "$directory" "$name" "$version" >> "$PUBLISH_PLAN"
+          done
+
+          failed=0
+
+          if [ "${#missing[@]}" -gt 0 ]; then
+            printf 'no build output restored for:\n' >&2
+            printf '  %s\n' "${missing[@]}" >&2
+            failed=1
+          fi
+
+          if [ "${#mismatched[@]}" -gt 0 ]; then
+            printf 'tag %s does not match:\n' "$tagged" >&2
+            printf '  %s\n' "${mismatched[@]}" >&2
+            failed=1
+          fi
+
+          if [ ! -s "$PUBLISH_PLAN" ]; then
+            echo 'no publishable packages found under packages/' >&2
+            failed=1
+          fi
+
+          if [ "$failed" -ne 0 ]; then
+            exit 1
+          fi
+
+          echo "$(wc --lines < "$PUBLISH_PLAN") publishable package(s) at ${tagged}"
+
+      # Stages every planned package. Nothing here becomes installable:
+      # a maintainer approves each staged version with 2FA afterwards,
+      # via `npm stage approve <stage-id>` or the Staged Packages tab.
+      #
+      # There is deliberately no already-published check.
+      # A release is not retried - a botched one is superseded by a new version -
+      # so staging a version that is already live is a genuine error
+      # and should fail the run rather than be skipped silently.
+      - name: Stage npm packages
+        env:
+          PUBLISH_PLAN: ${{ runner.temp }}/publish-plan.tsv
+        run: |
+          set -euo pipefail
+
+          # read the plan up front so npm never shares stdin with the loop
+          mapfile -t entries < "$PUBLISH_PLAN"
+
+          for entry in "${entries[@]}"; do
+            IFS=$'\t' read -r directory name version <<< "$entry"
+
+            echo "stage ${name}@${version}"
+
+            # `npm stage publish` packs the current working directory and takes
+            # no directory argument, so cd in a subshell rather than passing one
+            (
+              cd "$directory"
+              npm stage publish --ignore-scripts
+            )
+          done
+
+          echo "staged ${#entries[@]} package(s) - approve them with 2FA before they become installable"
