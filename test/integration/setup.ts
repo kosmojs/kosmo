@@ -104,7 +104,13 @@ export const setupTestProject = async ({
     templateFactory?: PageTemplateFactory,
   ) => {
     const fileExt = framework
-      ? { solid: "tsx", react: "tsx", vue: "vue", mdx: "mdx" }[framework]
+      ? {
+          solid: "tsx",
+          react: "tsx",
+          vue: "vue",
+          svelte: "svelte",
+          mdx: "mdx",
+        }[framework]
       : "ts";
 
     const filePath = createPath.pages(`${name}/${file}.${fileExt}`);

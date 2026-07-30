@@ -95,7 +95,7 @@ export default defineConfig({
       }),
 
       setupFactory("integration:frontend:csr", {
-        include: ["integration/{react,solid,vue,mdx}/*.test.ts"],
+        include: ["integration/{react,solid,vue,svelte,mdx}/*.test.ts"],
         fileParallelism: false,
         provide: {
           MODE: "csr",
@@ -103,7 +103,7 @@ export default defineConfig({
       }),
 
       setupFactory("integration:frontend:ssr", {
-        include: ["integration/{react,solid,vue,mdx}/*.test.ts"],
+        include: ["integration/{react,solid,vue,svelte,mdx}/*.test.ts"],
         provide: {
           MODE: "ssr",
         },

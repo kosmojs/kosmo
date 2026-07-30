@@ -45,7 +45,9 @@ export const createTestGroups = async (opt?: {
   for (const backend of opt?.backends || Object.keys(BACKEND_FRAMEWORKS)) {
     for (const framework of opt?.frameworks || Object.keys(FRAMEWORKS)) {
       for (const renderMode of renderModes) {
-        if (framework === "mdx" && renderMode === "stream") {
+        // mdx has no stream path, and svelte/server exposes only render() -
+        // the svelte generator is string-only SSR (serverRenderFactory<false>)
+        if (["mdx", "svelte"].includes(framework) && renderMode === "stream") {
           continue;
         }
 
@@ -251,6 +253,18 @@ const data = useLoaderData();
 </template>
 `,
 
+      svelte: `
+<script module lang="ts">
+${renderBaseImports}
+export const loader = ${loader};
+</script>
+<script lang="ts">
+import { useLoaderData } from "${defaults.libPrefix}/use";
+const data = useLoaderData();
+</script>
+<div id="${data.file}-data">{JSON.stringify(data)}</div>
+`,
+
       mdx: `
 ${renderBaseImports}
 import { useLoaderData } from "${defaults.libPrefix}/use";
@@ -302,6 +316,21 @@ const data = useLoaderData("${data.path}/layout");
 <div id="${data.file}-data" v-html="JSON.stringify(data)"></div>
 <RouterView />
 </template>
+`,
+
+    svelte: `
+<script module lang="ts">
+${renderBaseImports}
+export const loader = ${loader};
+</script>
+<script lang="ts">
+import type { Snippet } from "svelte";
+import { useLoaderData } from "${defaults.libPrefix}/use";
+let { children }: { children: Snippet } = $props();
+const data = useLoaderData("${data.path}/layout");
+</script>
+<div id="${data.file}-data">{JSON.stringify(data)}</div>
+{@render children()}
 `,
 
     mdx: `
