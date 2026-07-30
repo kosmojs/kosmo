@@ -418,13 +418,13 @@ maintaining a consistent project structure:
 ```txt
 src/content/
 ├── App.mdx                ← global layout
-├── router.tsx             ← Preact router using createRouter
+├── router.tsx             ← Actual router using createRouter
 ├── index.html             ← HTML shell with placeholders
 ├── components/
 │   ├── Link.tsx           ← typed navigation component
 │   └── mdx.tsx            ← MDXProvider component overrides
 ├── entry/
-│   ├── client.tsx         ← minimal client entry (no hydration)
+│   ├── client.tsx         ← minimal client entry
 │   └── server.ts          ← SSR rendering with Preact
 └── pages/
     └── *.mdx              ← content pages, optionally exporting `loader`
