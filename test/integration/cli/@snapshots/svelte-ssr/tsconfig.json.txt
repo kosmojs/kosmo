@@ -1,0 +1,3 @@
+{
+  "extends": "../../lib/svelte-ssr/tsconfig.base.json"
+}

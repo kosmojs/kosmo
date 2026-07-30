@@ -1,0 +1,19 @@
+import {
+  defineConfig,
+  svelteGenerator,
+  honoGenerator,
+  ssrGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/svelte-hono-ssr",
+  generators: [
+    svelteGenerator(),
+    honoGenerator(),
+    ssrGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

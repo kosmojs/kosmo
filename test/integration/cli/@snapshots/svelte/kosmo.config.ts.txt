@@ -1,0 +1,6 @@
+import { defineConfig, svelteGenerator } from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/svelte",
+  generators: [svelteGenerator()],
+});
