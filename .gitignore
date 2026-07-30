@@ -1,3 +1,4 @@
+/.envrc
 /packages/*/test/**/@fixtures/**/lib/
 /packages/*/pkg/
 
