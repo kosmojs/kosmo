@@ -115,7 +115,7 @@ await build({
 });
 
 for (const name of values.scripts) {
-  const path = resolve(import.meta.dirname, `../scripts/${name}`);
+  const path = resolve(import.meta.dirname, `../scripts/build/${name}`);
   await new Promise((resolve) => {
     console.log(styleText("blue", `› ${name}`));
     execFile("sh", [path], (error, stdout, stderr) => {
