@@ -1,3 +1,3 @@
 {
-  "extends": "../../lib/vue-hono-ssr/tsconfig.base.json"
+  "extends": "../../lib/vue-hono-ssr/tsconfig.json"
 }

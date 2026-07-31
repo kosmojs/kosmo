@@ -20,7 +20,7 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
   const start = async () => {
     // deploy a tsconfig file for root tsconfig to extend from
     await renderToFile(
-      createPath.lib("../tsconfig.base.json"),
+      createPath.lib("../tsconfig.json"),
       JSON.stringify(generateTsconfig(), undefined, 2),
       {},
     );
@@ -42,7 +42,7 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
       }
 
       await renderToFile(
-        createPath.lib("tsconfig.base.json"),
+        createPath.lib("tsconfig.json"),
         JSON.stringify(
           {
             ...tsconfig,

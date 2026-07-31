@@ -1,3 +1,3 @@
 {
-  "extends": "../../lib/svelte-hono/tsconfig.base.json"
+  "extends": "../../lib/svelte-hono/tsconfig.json"
 }

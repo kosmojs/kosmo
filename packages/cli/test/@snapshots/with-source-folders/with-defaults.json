@@ -32,7 +32,7 @@
     "with-source-folders/src/with-defaults/tsconfig.json",
     [
       "{",
-      "  \"extends\": \"../../lib/with-defaults/tsconfig.base.json\"",
+      "  \"extends\": \"../../lib/with-defaults/tsconfig.json\"",
       "}"
     ]
   ]

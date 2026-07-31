@@ -38,7 +38,7 @@
     "with-source-folders/src/with-koa-backend/tsconfig.json",
     [
       "{",
-      "  \"extends\": \"../../lib/with-koa-backend/tsconfig.base.json\"",
+      "  \"extends\": \"../../lib/with-koa-backend/tsconfig.json\"",
       "}"
     ]
   ]

@@ -28,7 +28,7 @@
     "default-project/tsconfig.json",
     [
       "{",
-      "  \"extends\": \"./lib/tsconfig.base.json\"",
+      "  \"extends\": \"./lib/tsconfig.json\"",
       "}"
     ]
   ]

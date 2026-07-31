@@ -64,15 +64,15 @@ configuration. Each framework has its own JSX import source requirement:
 | Svelte | n/a *(no JSX - compiled from `.svelte`)* |
 | MDX | `"preact"` |
 
-All frameworks use `jsx: "preserve"` - `KosmoJS` delegates JSX transformation
-to Vite, not TypeScript - but differing `jsxImportSource` values cause type
+`KosmoJS` delegates JSX transformation to Vite, not TypeScript -
+but differing `jsxImportSource` values cause type
 conflicts when multiple frameworks coexist in the same project.
 
-`KosmoJS` solves this by generating a `tsconfig.base.json` specific to each source folder,
+Solved by generating a `tsconfig.json` specific to each source folder,
 placed in the `lib/` directory for the source folder to extend:
 
 ```json [src/front/tsconfig.json]
-{ "extends": "../../lib/front/tsconfig.base.json" }
+{ "extends": "../../lib/front/tsconfig.json" }
 ```
 
 Each config supplies the correct `jsxImportSource`, path mappings, and core settings.

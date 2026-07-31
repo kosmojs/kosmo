@@ -31,7 +31,7 @@ import { pathResolver } from "./paths";
  * regressed in Vite 8.1.0 (still broken as of 8.1.3): it stops resolving
  * `paths` mappings, especially those defined in an extended / referenced base
  * config - which is exactly Kosmo's structure, where a source folder's
- * tsconfig `extends` `lib/<name>/tsconfig.base.json` and the paths use the
+ * tsconfig `extends` `lib/<name>/tsconfig.json` and the paths use the
  * TypeScript `${configDir}` variable. The failure surfaces as:
  *
  *   [vite] Failed to resolve import "_/pageSamples/welcome.vue" from

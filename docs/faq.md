@@ -746,10 +746,9 @@ yourself (e.g. `@vitejs/plugin-react`), or it runs twice.
 [Details ›](/frontend/intro#enabling-the-generator)
 
 #### What `jsxImportSource` does each framework need?
-React `"react"`, SolidJS `"solid-js"`, Vue `"vue"` (only when using JSX),
-MDX `"preact"`. All use `jsx: "preserve"` (Vite does the JSX transform, not TS).
-Mixing frameworks needs per-folder tsconfig - KosmoJS generates a `tsconfig.base.json`
-per folder in `lib/` for your folder's `tsconfig.json` to extend.
+React `"react"`, SolidJS `"solid-js"`, Vue `"vue"` (only when using JSX), MDX `"preact"`.
+Mixing frameworks needs per-folder tsconfig - KosmoJS generates a `tsconfig.json`
+per folder in `lib/` for your folder's `tsconfig.json` to extend from.
 [Details ›](/frontend/intro#typescript-configuration)
 
 #### What foundation files does a framework generator produce?

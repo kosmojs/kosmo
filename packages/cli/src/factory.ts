@@ -98,7 +98,7 @@ export const createProject = async (
     [
       "tsconfig.json",
       JSON.stringify(
-        { extends: `./${defaults.libDir}/tsconfig.base.json` },
+        { extends: `./${defaults.libDir}/tsconfig.json` },
         undefined,
         2,
       ),
@@ -179,7 +179,7 @@ export const createSourceFolder = async (
   await writeFile(
     resolve(folderPath, "tsconfig.json"),
     JSON.stringify(
-      { extends: `../../${defaults.libDir}/${folder.name}/tsconfig.base.json` },
+      { extends: `../../${defaults.libDir}/${folder.name}/tsconfig.json` },
       undefined,
       2,
     ),

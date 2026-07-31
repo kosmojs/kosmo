@@ -1,3 +1,3 @@
 {
-  "extends": "../../lib/mdx-hono-ssr/tsconfig.base.json"
+  "extends": "../../lib/mdx-hono-ssr/tsconfig.json"
 }

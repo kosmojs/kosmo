@@ -48,9 +48,6 @@ export const generateTsconfig = (sourceFolder?: string) => {
             `${rootDir}/../../${defaults.libDir}/${sourceFolder}/*`,
           ],
         },
-        // NOTE: do not set jsx for root tsconfig.json;
-        // only add it to source folder's tsconfig.json!
-        jsx: "preserve",
       },
     };
   }
