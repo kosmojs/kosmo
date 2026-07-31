@@ -44,8 +44,8 @@ Run `npm run +folder` (or `pnpm +folder` / `yarn +folder`).
 [Details ›](/start)
 
 #### What am I prompted for when adding a source folder?
-Folder name, base URL, framework, backend, and SSR/SSG. Non-interactive flags:
-`--name`, `--base`, `--framework solid|react|vue|svelte|mdx`, `--backend koa|hono`, `--ssr`, `--ssg`.
+Folder name, base URL, framework, backend, and SSR. Non-interactive flags:
+`--name`, `--base`, `--framework solid|react|vue|svelte|mdx`, `--backend koa|hono`, `--ssr`.
 [Details ›](/start)
 
 #### Why isn't a source folder created automatically?
@@ -909,10 +909,27 @@ a `[keys, values]` tuple in the same order the route declares its parameters,
 ready to pass straight to a parametrized endpoint (`GET(params)`).
 [Details ›](/frontend/mdx#loaders-with-route-parameters)
 
+#### Is SSG enabled on MDX folders?
+Yes, by default - SSG is MDX-only, so there is nothing to enable.
+Each route renders to its own static HTML file at build time,
+with staticParams supplying the entries for dynamic routes.
+[Details ›](/frontend/mdx#static-site-generation)
+
+#### How does SSG handle dynamic routes?
+Declare variants via `staticParams` in frontmatter; the build renders one HTML file per entry.
+Static routes render automatically.
+Dynamic routes without `staticParams` are skipped from the SSG build entirely.
+[Details ›](/frontend/mdx#static-site-generation)
+
 #### How do I fetch data in MDX in SSG mode?
 Same `loader` export, combined with `staticParams`. `loader` runs once per declared entry,
 receiving that entry's own `paramsEntries`, and each entry's fetched data gets baked into its
 own pre-rendered HTML file.
+[Details ›](/frontend/mdx#static-site-generation)
+
+#### How do I turn SSG off for an MDX folder?
+Remove/comment `ssgGenerator()` from that folder's `kosmo.config.ts`.
+The folder keeps rendering normally, it just stops emitting static routes.
 [Details ›](/frontend/mdx#static-site-generation)
 
 #### Why can't I write TypeScript in MDX?
@@ -929,12 +946,6 @@ override `h1`, `pre`, links, etc. for all pages. Individual pages can still impo
 `title`, `description`, and a `head` array in frontmatter inject `<head>` content automatically -
 the same convention as VitePress, no new syntax.
 [Details ›](/frontend/mdx#frontmatter-head-injection)
-
-#### How does SSG handle dynamic routes?
-Declare variants via `staticParams` in frontmatter; the build renders one HTML file per entry.
-Static routes render automatically.
-Dynamic routes without `staticParams` are skipped from the SSG build entirely.
-[Details ›](/frontend/mdx#static-site-generation)
 
 #### What are the common MDX pitfalls?
 No TypeScript in MDX (keep it in `.tsx`); hooks must be called inside components,
@@ -976,8 +987,9 @@ plus an optional `path` - content-only assets like inlined scripts have no URL).
 [Details ›](/frontend/server-side-render#render-factory-arguments)
 
 #### Why must I inject SSR assets manually but not CSR assets?
-Vite injects CSR assets automatically; SSR-related assets are not,
-so the server entry composes them into `head` itself.
+CSR's index.html already carries the client asset tags.
+For SSR, the server asks your renderer for `{ head, html }` and builds the document from them -
+so composing assets into head is just your side of that handoff, not a Vite workaround.
 [Details ›](/frontend/server-side-render#render-factory-arguments)
 
 #### How does streaming work across runtimes?
@@ -1366,8 +1378,7 @@ plumbing is on you, but it isn't required for fetch-client data to survive hydra
 
 #### fetch caching / `revalidatePath` / `revalidateTag` / ISR?
 No fetch cache extensions, no tag/path revalidation, no ISR. Cache at the CDN/proxy layer;
-MDX SSG is full static generation. After a mutation, refetch or invalidate your own client cache
-(e.g. via Query).
+MDX SSG is full static generation. After a mutation, refetch or invalidate your own client cache.
 [Details ›](/openapi)
 
 #### Preload on link hover/intent - which frameworks?
@@ -1494,9 +1505,15 @@ No ISR/revalidation and no partial prerendering.
 [Details ›](/frontend/server-side-render)
 
 #### SSG / static export vs `output: export`?
-MDX folders support SSG, rendering each route to static HTML (`staticParams` for dynamic routes)
-- purpose-built for docs/blog/marketing with frontmatter-driven head, layouts, and typed nav.
+SSG suported by MDX folders only, rendering each route to static HTML (`staticParams` for dynamic routes) -
+purpose-built for docs/blog/marketing with frontmatter-driven head, layouts, and typed nav.
 Comparable to Next + MDX/Contentlayer but built in.
+[Details ›](/frontend/mdx#static-site-generation)
+
+#### Can I use SSG with React, Vue, SolidJS or Svelte?
+Nope - SSG is MDX-only. For others use SSR instead, per-folder -
+an MDX folder for docs/marketing alongside an SSR or CSR folder for the app is the intended shape.
+Extending SSG to other frameworks is an open consideration though.
 [Details ›](/frontend/mdx#static-site-generation)
 
 #### Islands / partial hydration?

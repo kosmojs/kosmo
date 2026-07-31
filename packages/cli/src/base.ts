@@ -23,7 +23,6 @@ export type SourceFolder = {
   framework?: keyof typeof FRAMEWORKS | "none";
   backend?: keyof typeof BACKEND_FRAMEWORKS | "none";
   ssr?: boolean;
-  ssg?: boolean;
 };
 
 export const CREATE_OPTIONS = ["project", "folder"] as const;

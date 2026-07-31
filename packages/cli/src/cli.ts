@@ -34,7 +34,6 @@ const options = parseArgs({
     backend: { type: "string" },
     framework: { type: "string" },
     ssr: { type: "boolean" },
-    ssg: { type: "boolean" },
     quiet: { type: "boolean", short: "q" },
     help: { type: "boolean", short: "h" },
   },
@@ -224,19 +223,6 @@ const createFolder = async () => {
       },
       name: "ssr",
       message: "Enable server-side rendering (SSR)?",
-      initial: false,
-      active: "yes",
-      inactive: "no",
-    },
-
-    {
-      type: (prev: SourceFolder["framework"]) => {
-        return ["mdx"].includes(prev as never) // only if...
-          ? "toggle"
-          : undefined;
-      },
-      name: "ssg",
-      message: "Enable server-side generation (SSG)?",
       initial: false,
       active: "yes",
       inactive: "no",

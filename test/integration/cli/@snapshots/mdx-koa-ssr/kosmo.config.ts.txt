@@ -1,6 +1,7 @@
 import {
   defineConfig,
   mdxGenerator,
+  ssgGenerator,
   koaGenerator,
   ssrGenerator,
   fetchGenerator,
@@ -13,6 +14,7 @@ export default defineConfig({
   base: "/mdx-koa-ssr",
   generators: [
     mdxGenerator({ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }),
+    ssgGenerator(),
     koaGenerator(),
     ssrGenerator(),
     fetchGenerator(),

@@ -1,7 +1,9 @@
 import {
   defineConfig,
   mdxGenerator,
+  ssgGenerator,
   honoGenerator,
+  ssrGenerator,
   fetchGenerator,
   typeboxGenerator,
 } from "@kosmojs/dev";
@@ -12,7 +14,9 @@ export default defineConfig({
   base: "/mdx-hono",
   generators: [
     mdxGenerator({ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }),
+    ssgGenerator(),
     honoGenerator(),
+    ssrGenerator(),
     fetchGenerator(),
     typeboxGenerator(),
   ],

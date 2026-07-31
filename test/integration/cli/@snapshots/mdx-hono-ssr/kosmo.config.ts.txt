@@ -1,6 +1,7 @@
 import {
   defineConfig,
   mdxGenerator,
+  ssgGenerator,
   honoGenerator,
   ssrGenerator,
   fetchGenerator,
@@ -13,6 +14,7 @@ export default defineConfig({
   base: "/mdx-hono-ssr",
   generators: [
     mdxGenerator({ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }),
+    ssgGenerator(),
     honoGenerator(),
     ssrGenerator(),
     fetchGenerator(),

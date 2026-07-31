@@ -261,6 +261,12 @@ export const createKosmoConfig = (
         : `{ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }`,
       meta: mdxGenerator().meta,
     });
+
+    generators.push({
+      name: "ssgGenerator",
+      options: "",
+      meta: ssgGenerator().meta,
+    });
   }
 
   if (backend === "koa") {
@@ -277,19 +283,11 @@ export const createKosmoConfig = (
     });
   }
 
-  if (folder.ssr || folder.ssg) {
+  if (folder.ssr || framework === "mdx") {
     generators.push({
       name: "ssrGenerator",
       options: options.ssr,
       meta: ssrGenerator().meta,
-    });
-  }
-
-  if (folder.ssg) {
-    generators.push({
-      name: "ssgGenerator",
-      options: "",
-      meta: ssgGenerator().meta,
     });
   }
 

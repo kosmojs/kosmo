@@ -401,7 +401,7 @@ const cacheDir = (
 const folderGenerators = (sourceFolder: SourceFolder): Array<GeneratorBase> => {
   const { generators = [] } = sourceFolder.config;
 
-  const coreGenerators: Partial<
+  const baseGenerators: Partial<
     Record<NonNullable<GeneratorMeta["slot"]>, GeneratorBase>
   > = {};
 
@@ -409,7 +409,7 @@ const folderGenerators = (sourceFolder: SourceFolder): Array<GeneratorBase> => {
 
   for (const base of generators) {
     if (base.meta.slot) {
-      coreGenerators[base.meta.slot] = base;
+      baseGenerators[base.meta.slot] = base;
     } else {
       userGenerators.push(base);
     }
@@ -419,17 +419,17 @@ const folderGenerators = (sourceFolder: SourceFolder): Array<GeneratorBase> => {
     // core generator should run first
     coreGenerator(),
     // then api generator
-    ...(coreGenerators.api ? [coreGenerators.api] : []),
+    ...(baseGenerators.api ? [baseGenerators.api] : []),
     // then fetch generator, only if api generator also enabled
-    ...(coreGenerators.fetch && coreGenerators.api
-      ? [coreGenerators.fetch]
+    ...(baseGenerators.fetch && baseGenerators.api
+      ? [baseGenerators.fetch]
       : []),
     // then user generators in the order they were added
     ...userGenerators,
     // then ssr generator should run after user generators
-    ...(coreGenerators.ssr ? [coreGenerators.ssr] : []),
+    ...(baseGenerators.ssr ? [baseGenerators.ssr] : []),
     // and ssg generator should run last
-    ...(coreGenerators.ssg ? [coreGenerators.ssg] : []),
+    ...(baseGenerators.ssg ? [baseGenerators.ssg] : []),
   ];
 };
 

@@ -74,7 +74,7 @@ yarn +folder
 ```
 :::
 
-You'll be prompted for folder name, base URL, framework, backend, and SSR/SSG.
+You'll be prompted for folder name, base URL, framework, backend, and SSR.
 
 Non-interactive mode is also supported:
 
@@ -83,7 +83,6 @@ Non-interactive mode is also supported:
 - `--framework solid|react|vue|svelte|mdx`
 - `--backend koa|hono`
 - `--ssr`
-- `--ssg`
 
 ::: code-group
 ```sh [npm]
