@@ -29,10 +29,17 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
     {
       const tsconfig = generateTsconfig(sourceFolder.name);
 
-      const compilerOptions: { jsxImportSource?: string | undefined } = {};
+      const compilerOptions: {
+        jsx?: string;
+        jsxImportSource?: string;
+      } = {};
+
       const types = new Set<string>(tsconfig.compilerOptions.types || []);
 
       for (const { meta } of sourceFolder.config.generators || []) {
+        if (meta.jsx) {
+          compilerOptions.jsx = meta.jsx;
+        }
         if (meta.jsxImportSource) {
           compilerOptions.jsxImportSource = meta.jsxImportSource;
         }

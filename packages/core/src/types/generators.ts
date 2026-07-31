@@ -35,6 +35,12 @@ export type GeneratorMeta = {
   resolveTypes?: boolean;
 
   /**
+   * jsx option per folder; needed on react/solid folders,
+   * should be missing on mdx folders.
+   * */
+  jsx?: "preserve";
+
+  /**
    * JSX transform target for this generator's source folder.
    * Sets the `jsxImportSource` in the source folder's tsconfig,
    * ensuring correct JSX type resolution per framework.

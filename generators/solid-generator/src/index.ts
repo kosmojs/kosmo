@@ -13,6 +13,7 @@ export default defineGenerator<Options>((options) => {
       "@solidjs/router": self.devDependencies["@solidjs/router"],
       "path-to-regexp": self.devDependencies["path-to-regexp"],
     },
+    jsx: "preserve",
     jsxImportSource: "solid-js",
   };
 

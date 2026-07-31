@@ -18,6 +18,7 @@ export default defineGenerator<Options>((options) => {
       "@types/react-dom": self.devDependencies["@types/react-dom"],
       "react-dom": self.devDependencies["react-dom"],
     },
+    jsx: "preserve",
     jsxImportSource: "react",
   };
 
