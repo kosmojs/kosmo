@@ -67,7 +67,7 @@ const run = async () => {
 
   assertNoError(() => {
     return !packageJson?.distDir || !packageJson.devPort
-      ? "Found package.json but it's missing `distDir` or `devPort` - is this a KosmoJS project?"
+      ? "package.json does not exist or some of `distDir` / `devPort` is not set"
       : undefined;
   });
 

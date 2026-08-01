@@ -23,13 +23,5 @@
         }
       ]
     ]
-  ],
-  [
-    "default-project/tsconfig.json",
-    [
-      "{",
-      "  \"extends\": \"./lib/tsconfig.json\"",
-      "}"
-    ]
   ]
 ]

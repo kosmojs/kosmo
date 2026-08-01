@@ -54,16 +54,8 @@ describe("should create the project and folders", async () => {
       "utf8",
     );
 
-    await installDependencies(projectRoot);
-
     expect(packageJson.devPort).toEqual(DEFAULT_PORT);
     expect(packageJson.distDir).toEqual(DEFAULT_DIST);
-
-    for (const file of ["tsconfig.json"] as const) {
-      const fileContent = await readFile(resolve(projectRoot, file), "utf8");
-      const { code } = await format(file, fileContent);
-      await expect(code).toMatchFileSnapshot("./@snapshots/package.json.txt");
-    }
   });
 
   const folders = [...Object.keys(FRAMEWORKS), undefined].flatMap(
@@ -115,7 +107,10 @@ describe("should create the project and folders", async () => {
         ],
         { cwd: projectRoot, env },
       );
-      for (const file of ["kosmo.config.ts", "tsconfig.json"] as const) {
+      for (const file of [
+        //
+        "kosmo.config.ts",
+      ] as const) {
         const fileContent = await readFile(
           resolve(projectRoot, `src/${name}/${file}`),
           "utf8",

@@ -95,14 +95,6 @@ export const createProject = async (
 
   for (const [file, template] of [
     ["package.json", JSON.stringify(packageJson, undefined, 2)],
-    [
-      "tsconfig.json",
-      JSON.stringify(
-        { extends: `./${defaults.libDir}/tsconfig.json` },
-        undefined,
-        2,
-      ),
-    ],
   ]) {
     await renderToFile(resolve(projectPath, file), template, {
       defaults,
@@ -175,16 +167,6 @@ export const createSourceFolder = async (
   ] as const) {
     await renderToFile(resolve(folderPath, file), "", {});
   }
-
-  await writeFile(
-    resolve(folderPath, "tsconfig.json"),
-    JSON.stringify(
-      { extends: `../../${defaults.libDir}/${folder.name}/tsconfig.json` },
-      undefined,
-      2,
-    ),
-    "utf8",
-  );
 
   for (const generator of generators) {
     for (const key of ["dependencies", "devDependencies"] as const) {

@@ -1,3 +1,0 @@
-{
-  "extends": "../../lib/vue-ssr/tsconfig.json"
-}

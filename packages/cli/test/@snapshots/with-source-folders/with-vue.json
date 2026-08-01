@@ -41,13 +41,5 @@
     [
       ""
     ]
-  ],
-  [
-    "with-source-folders/src/with-vue/tsconfig.json",
-    [
-      "{",
-      "  \"extends\": \"../../lib/with-vue/tsconfig.json\"",
-      "}"
-    ]
   ]
 ]

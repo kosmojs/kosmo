@@ -41,13 +41,5 @@
     [
       ""
     ]
-  ],
-  [
-    "with-source-folders/src/with-react/tsconfig.json",
-    [
-      "{",
-      "  \"extends\": \"../../lib/with-react/tsconfig.json\"",
-      "}"
-    ]
   ]
 ]

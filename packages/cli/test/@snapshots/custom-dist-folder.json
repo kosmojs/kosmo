@@ -23,13 +23,5 @@
         }
       ]
     ]
-  ],
-  [
-    "custom-dist-folder/tsconfig.json",
-    [
-      "{",
-      "  \"extends\": \"./lib/tsconfig.json\"",
-      "}"
-    ]
   ]
 ]

@@ -1,6 +1,10 @@
-import { dirname } from "node:path";
+import { dirname, resolve } from "node:path";
 
-import type { GeneratorMeta, ResolvedEntry } from "@kosmojs/core";
+import {
+  defaults,
+  type GeneratorMeta,
+  type ResolvedEntry,
+} from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   defineGenerator,
@@ -18,11 +22,37 @@ const factory = defineGeneratorFactory((meta, sourceFolder) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
   const start = async () => {
+    // deploy a root tsconfig file
+    await renderToFile(
+      resolve(sourceFolder.root, "tsconfig.json"),
+      JSON.stringify(
+        { extends: `./${defaults.libDir}/tsconfig.json` },
+        undefined,
+        2,
+      ),
+      {},
+      { overwrite: false },
+    );
+
     // deploy a tsconfig file for root tsconfig to extend from
     await renderToFile(
       createPath.lib("../tsconfig.json"),
       JSON.stringify(generateTsconfig(), undefined, 2),
       {},
+    );
+
+    // deploy a sourceFolder tsconfig file
+    await renderToFile(
+      createPath.src("tsconfig.json"),
+      JSON.stringify(
+        {
+          extends: `../../${defaults.libDir}/${sourceFolder.name}/tsconfig.json`,
+        },
+        undefined,
+        2,
+      ),
+      {},
+      { overwrite: false },
     );
 
     // deploy a tsconfig file for sourceFolder tsconfig to extend from

@@ -1,3 +1,0 @@
-{
-  "extends": "../../lib/react-hono-ssr/tsconfig.json"
-}

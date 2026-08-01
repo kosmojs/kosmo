@@ -41,13 +41,5 @@
     [
       ""
     ]
-  ],
-  [
-    "with-source-folders/src/with-solid/tsconfig.json",
-    [
-      "{",
-      "  \"extends\": \"../../lib/with-solid/tsconfig.json\"",
-      "}"
-    ]
   ]
 ]
