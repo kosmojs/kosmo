@@ -170,7 +170,12 @@ export const createSourceFolder = async (
 
   for (const generator of generators) {
     for (const key of ["dependencies", "devDependencies"] as const) {
-      packageJson[key] = { ...packageJson[key], ...generator.meta[key] };
+      packageJson[key] = {
+        ...packageJson[key],
+        ...(typeof generator.meta[key] === "function"
+          ? generator.meta[key]({ generators })
+          : generator.meta[key]),
+      };
     }
   }
 
@@ -208,25 +213,25 @@ export const createKosmoConfig = (
     generators.push({
       name: "solidGenerator",
       options: options[framework],
-      meta: solidGenerator().meta,
+      meta: solidGenerator.meta,
     });
   } else if (framework === "react") {
     generators.push({
       name: "reactGenerator",
       options: options[framework],
-      meta: reactGenerator().meta,
+      meta: reactGenerator.meta,
     });
   } else if (framework === "vue") {
     generators.push({
       name: "vueGenerator",
       options: options[framework],
-      meta: vueGenerator().meta,
+      meta: vueGenerator.meta,
     });
   } else if (framework === "svelte") {
     generators.push({
       name: "svelteGenerator",
       options: options[framework],
-      meta: svelteGenerator().meta,
+      meta: svelteGenerator.meta,
     });
   } else if (framework === "mdx") {
     imports.push(
@@ -241,13 +246,13 @@ export const createKosmoConfig = (
       options: options[framework]
         ? options[framework]
         : `{ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }`,
-      meta: mdxGenerator().meta,
+      meta: mdxGenerator.meta,
     });
 
     generators.push({
       name: "ssgGenerator",
       options: "",
-      meta: ssgGenerator().meta,
+      meta: ssgGenerator.meta,
     });
   }
 
@@ -255,13 +260,13 @@ export const createKosmoConfig = (
     generators.push({
       name: "koaGenerator",
       options: options[backend],
-      meta: koaGenerator().meta,
+      meta: koaGenerator.meta,
     });
   } else if (backend === "hono") {
     generators.push({
       name: "honoGenerator",
       options: options[backend],
-      meta: honoGenerator().meta,
+      meta: honoGenerator.meta,
     });
   }
 
@@ -269,7 +274,7 @@ export const createKosmoConfig = (
     generators.push({
       name: "ssrGenerator",
       options: options.ssr,
-      meta: ssrGenerator().meta,
+      meta: ssrGenerator.meta,
     });
   }
 
@@ -278,12 +283,12 @@ export const createKosmoConfig = (
       {
         name: "fetchGenerator",
         options: "",
-        meta: fetchGenerator().meta,
+        meta: fetchGenerator.meta,
       },
       {
         name: "typeboxGenerator",
         options: "",
-        meta: typeboxGenerator().meta,
+        meta: typeboxGenerator.meta,
       },
     );
   }

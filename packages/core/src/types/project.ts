@@ -1,6 +1,6 @@
 import type { UserConfig } from "vite";
 
-import type { GeneratorBase } from "./generators";
+import type { GeneratorSignature } from "./generators";
 
 export type FolderConfig = Omit<
   UserConfig,
@@ -21,7 +21,7 @@ export type FolderConfig = Omit<
   apiBase?: string;
 
   /** Generators to run for this source folder (validation, fetch clients, OpenAPI, etc.) */
-  generators?: Array<GeneratorBase>;
+  generators?: Array<GeneratorSignature>;
 
   /**
    * Name to use for custom runtime validation refinements.

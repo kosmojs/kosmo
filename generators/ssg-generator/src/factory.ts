@@ -12,7 +12,7 @@ import {
   vitePlugins,
 } from "@kosmojs/lib";
 
-export default defineGeneratorFactory((meta, sourceFolder) => {
+export default defineGeneratorFactory((sourceFolder) => {
   const {
     generators = [],
     refineTypeName,
@@ -22,8 +22,6 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
   const { createPath } = pathResolver(sourceFolder);
 
   return {
-    meta,
-
     async postBuild() {
       const dir = createPath.distDir("ssg");
 

@@ -24,6 +24,7 @@
     "@vitejs/plugin-react": "^6.0.5"
   },
   "devDependencies": {
+    "@tanstack/react-query": "^5.101.4",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "path-to-regexp": "^8.4.2",

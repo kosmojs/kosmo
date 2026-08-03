@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@solidjs/router": "^1.0.0",
+    "@tanstack/solid-query": "^5.101.4",
     "path-to-regexp": "^8.4.2",
     "solid-js": "^1.9.14"
   }

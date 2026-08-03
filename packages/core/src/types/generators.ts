@@ -9,6 +9,13 @@ export type WatcherEvent = {
   file: string;
 };
 
+type MetaDependencies =
+  | Record<string, string>
+  | ((o: {
+      // let generator know what other generators enabled for current source folder
+      generators: Array<Pick<GeneratorSignature, "meta">>;
+    }) => Record<string, string>);
+
 export type GeneratorMeta = {
   name: string;
 
@@ -21,10 +28,13 @@ export type GeneratorMeta = {
 
   /**
    * Package dependencies required by this generator.
-   * The dev plugin checks installation status before running.
    * */
-  dependencies?: Record<string, string>;
-  devDependencies?: Record<string, string>;
+  dependencies?: MetaDependencies;
+
+  /**
+   * Package devDependencies required by this generator.
+   * */
+  devDependencies?: MetaDependencies;
 
   /**
    * Enables type resolution for generators that require fully resolved type information.
@@ -64,15 +74,7 @@ export type GeneratorCustomTemplates<T> = Record<
 
 type GeneratorOptionsTuple = [Record<string, unknown> | object, boolean];
 
-type OptionsShape<T> = T extends [infer S, ...unknown[]] ? S : void;
-
-type OptionsRequired<T> = T extends [unknown, infer R extends boolean]
-  ? R
-  : false;
-
-export type GeneratorFactoryInstance = {
-  meta: GeneratorMeta;
-  options?: GeneratorOptionsTuple[0] | undefined;
+export type GeneratorFactory = {
   // Vite config provided by generator itself
   config?: (o: {
     kind: "client" | "backend";
@@ -89,40 +91,11 @@ export type GeneratorFactoryInstance = {
   postBuild?: (entries: Array<ResolvedEntry>) => Promise<void>;
 };
 
-export type GeneratorFactory<T extends GeneratorOptionsTuple | void = void> =
-  T extends void
-    ? (m: GeneratorMeta, f: SourceFolder) => GeneratorFactoryInstance
-    : OptionsRequired<T> extends true
-      ? (
-          m: GeneratorMeta,
-          f: SourceFolder,
-          o: OptionsShape<T>,
-        ) => GeneratorFactoryInstance
-      : (
-          m: GeneratorMeta,
-          f: SourceFolder,
-          o?: OptionsShape<T>,
-        ) => GeneratorFactoryInstance;
-
-export type GeneratorBase = {
+export type GeneratorSignature = {
   meta: GeneratorMeta;
   options?: GeneratorOptionsTuple[0] | undefined;
-  factory: (sourceFolder: SourceFolder) => GeneratorFactoryInstance;
+  factory: (sourceFolder: SourceFolder) => GeneratorFactory;
 };
-
-export type DefineGenerator = <T extends GeneratorOptionsTuple | void = void>(
-  setup: (options: T extends void ? void : OptionsShape<T>) => GeneratorBase,
-) => T extends void
-  ? () => GeneratorBase
-  : OptionsRequired<T> extends true
-    ? (options: OptionsShape<T>) => GeneratorBase
-    : (options?: OptionsShape<T>) => GeneratorBase;
-
-export type DefineGeneratorFactory = <
-  T extends GeneratorOptionsTuple | void = void,
->(
-  f: GeneratorFactory<T>,
-) => GeneratorFactory<T>;
 
 export type PathMapperSignature<ParamsT extends readonly unknown[]> = {
   paramsMapper(params: ParamsT): Record<string, unknown>;

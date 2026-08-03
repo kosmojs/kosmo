@@ -12,7 +12,7 @@ import type { Options } from "./types";
 export default (
   sourceFolder: SourceFolder,
   command: ProjectSettings["command"],
-  options: Options[0] | undefined,
+  options: Options | undefined,
 ): Array<Plugin> => {
   const { remarkPlugins = [], rehypePlugins = [] } = { ...options };
 

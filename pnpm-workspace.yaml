@@ -25,3 +25,4 @@ allowBuilds:
   "@scarf/scarf": false
   esbuild: false
   msw: true
+  vue-demi: false

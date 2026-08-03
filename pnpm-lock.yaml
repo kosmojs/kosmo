@@ -71,7 +71,13 @@ importers:
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../packages/lib
+      semver:
+        specifier: ^7.8.5
+        version: 7.8.5
     devDependencies:
+      '@types/semver':
+        specifier: ^7.7.1
+        version: 7.7.1
       path-to-regexp:
         specifier: ^8.4.2
         version: 8.4.2
@@ -211,6 +217,9 @@ importers:
       path-to-regexp:
         specifier: ^8.4.2
         version: 8.4.2
+      semver:
+        specifier: ^7.8.5
+        version: 7.8.5
       typebox:
         specifier: ^1.3.8
         version: 1.3.8
@@ -243,6 +252,9 @@ importers:
         specifier: ^6.0.5
         version: 6.0.5(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0))
     devDependencies:
+      '@tanstack/react-query':
+        specifier: ^5.101.4
+        version: 5.101.4(react@19.2.8)
       '@types/react':
         specifier: ^19.2.17
         version: 19.2.17
@@ -277,6 +289,9 @@ importers:
       '@solidjs/router':
         specifier: ^1.0.0
         version: 1.0.0(solid-js@1.9.14)
+      '@tanstack/solid-query':
+        specifier: ^5.101.4
+        version: 5.101.4(solid-js@1.9.14)
       path-to-regexp:
         specifier: ^8.4.2
         version: 8.4.2
@@ -336,12 +351,27 @@ importers:
         specifier: ^8.2.0
         version: 8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0)
     devDependencies:
+      '@tanstack/svelte-query':
+        specifier: ^6.1.38
+        version: 6.1.38(svelte@5.56.8)
       path-to-regexp:
         specifier: ^8.4.2
         version: 8.4.2
       svelte:
         specifier: ^5.56.8
         version: 5.56.8
+
+  generators/tsq-generator:
+    dependencies:
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../../packages/core
+      '@kosmojs/lib':
+        specifier: workspace:^
+        version: link:../../packages/lib
+      vite:
+        specifier: ^8.2.0
+        version: 8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0)
 
   generators/typebox-generator:
     dependencies:
@@ -354,6 +384,9 @@ importers:
       crc:
         specifier: ^4.3.2
         version: 4.3.2
+      semver:
+        specifier: ^7.8.5
+        version: 7.8.5
     devDependencies:
       '@kosmojs/core-generator':
         specifier: workspace:^
@@ -377,6 +410,9 @@ importers:
         specifier: ^6.0.8
         version: 6.0.8(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0))(vue@3.5.40(typescript@7.0.2))
     devDependencies:
+      '@tanstack/vue-query':
+        specifier: ^5.101.4
+        version: 5.101.4(vue@3.5.40(typescript@7.0.2))
       path-to-regexp:
         specifier: ^8.4.2
         version: 8.4.2
@@ -488,6 +524,9 @@ importers:
       path-to-regexp:
         specifier: ^8.4.2
         version: 8.4.2
+      semver:
+        specifier: ^7.8.5
+        version: 7.8.5
       typebox:
         specifier: ^1.3.8
         version: 1.3.8
@@ -1719,6 +1758,37 @@ packages:
       svelte: ^5.46.4
       vite: ^8.0.0-beta.7 || ^8.0.0
 
+  '@tanstack/match-sorter-utils@8.19.4':
+    resolution: {integrity: sha512-Wo1iKt2b9OT7d+YGhvEPD3DXvPv2etTusIMhMUoG7fbhmxcXCtIjJDEygy91Y2JFlwGyjqiBPRozme7UD8hoqg==}
+    engines: {node: '>=12'}
+
+  '@tanstack/query-core@5.101.4':
+    resolution: {integrity: sha512-gNwcvOJcRbLWPOLG/2OBm+zM+Yv+MKsXKEOWC57USuZDEsI71hEErQsiEGx5wX9rzWWkfwM0fVSPoiIFSsxfiw==}
+
+  '@tanstack/react-query@5.101.4':
+    resolution: {integrity: sha512-yRg2pfOCxIs4ZJW3XYYHU/WgtD04FHSnfHlpRT7h7pR77hwkdRG4wxbKe4aq6P0RvXUTBSQpQeadS1SUYUe+KA==}
+    peerDependencies:
+      react: ^18 || ^19
+
+  '@tanstack/solid-query@5.101.4':
+    resolution: {integrity: sha512-w+QNX4al4zkfOfO6FYILouPX3yAxLANvBNz0cZqaBrSRKfBP3qNC179wu/eS2w1asH+QqEeI0rR2/s7gRGxnFA==}
+    peerDependencies:
+      solid-js: ^1.6.0
+
+  '@tanstack/svelte-query@6.1.38':
+    resolution: {integrity: sha512-oV5S/+uAot23p3lJChLAHr82+8ApgQMyIgroWPpN0d6Y6TlThRbLSXnhx6CoUk6AkwlCPxf9vh4SOHa0eXHiWg==}
+    peerDependencies:
+      svelte: ^5.25.0
+
+  '@tanstack/vue-query@5.101.4':
+    resolution: {integrity: sha512-UYjkUZhnWQIFGNb7SdgjCitAftNyYQfOIVUh6vBUQAG4SQKNMSBKeQERFDubpxLAMpIBJTaOrE8fM4c1kZcIGQ==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.2
+      vue: ^2.6.0 || ^3.3.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
   '@topcli/spinner@4.2.1':
     resolution: {integrity: sha512-JY+3i4ZFunrSazc6UnJfWiuTF8L357+m052Xq093H0l9w5WLZ/JTtmJZVHBi3Lptvv/X4C2u6x7r6rDJaE4BSw==}
     engines: {node: '>=22'}
@@ -1859,6 +1929,9 @@ packages:
 
   '@types/react@19.2.17':
     resolution: {integrity: sha512-MXfmqaVPEVgkBT/aY0aGCkRWWtByiYQXo3xdQ8r5RzuFrPiRn8Gar2tQdXSUQ2GKV3bkXckek89V8wQBY2Q/Aw==}
+
+  '@types/semver@7.7.1':
+    resolution: {integrity: sha512-FmgJfu+MOcQ370SD0ev7EI8TlCAfKYU+B4m5T3yXc1CiRN94g/SZPtsCkk506aUDtlMnFZvasDwHHUcZUEaYuA==}
 
   '@types/send@1.2.1':
     resolution: {integrity: sha512-arsCikDvlU99zl1g69TcAB3mzZPpxgw0UQnaHeC1Nwb015xp8bknZv5rIfri9xTOcMuaVgvabfIRA7PSZVuZIQ==}
@@ -2079,6 +2152,9 @@ packages:
 
   '@vue/compiler-ssr@3.5.40':
     resolution: {integrity: sha512-rrE5xiXG663+vHCHa3J9p2z5OcBRjXmoqenprJxAFQxg5pSshzeBiCE6pu46axapRJ2Adk0YDA2BRZVjiHXnhg==}
+
+  '@vue/devtools-api@6.6.4':
+    resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
 
   '@vue/devtools-api@8.2.1':
     resolution: {integrity: sha512-6u4vXBlIBAC1wMplIZgpyPn7uh/s4Bf6F5bMzvLv+EdJ0aHs/+4B7Ygv864EStQSjRbsRzTko/kUG1A1IejQ3A==}
@@ -4044,6 +4120,9 @@ packages:
   remark@15.0.1:
     resolution: {integrity: sha512-Eht5w30ruCXgFmxVUSlNWQ9iiimq07URKeFS3hNc8cUWy1llX4KDWfyEDZRycMc+znsN9Ux5/tJ/BFdgdOwA3A==}
 
+  remove-accents@0.5.0:
+    resolution: {integrity: sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==}
+
   require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
@@ -4690,6 +4769,17 @@ packages:
       happy-dom:
         optional: true
       jsdom:
+        optional: true
+
+  vue-demi@0.14.10:
+    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
         optional: true
 
   vue-router@5.2.0:
@@ -5868,6 +5958,35 @@ snapshots:
       vite: 8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0)
       vitefu: 1.1.3(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0))
 
+  '@tanstack/match-sorter-utils@8.19.4':
+    dependencies:
+      remove-accents: 0.5.0
+
+  '@tanstack/query-core@5.101.4': {}
+
+  '@tanstack/react-query@5.101.4(react@19.2.8)':
+    dependencies:
+      '@tanstack/query-core': 5.101.4
+      react: 19.2.8
+
+  '@tanstack/solid-query@5.101.4(solid-js@1.9.14)':
+    dependencies:
+      '@tanstack/query-core': 5.101.4
+      solid-js: 1.9.14
+
+  '@tanstack/svelte-query@6.1.38(svelte@5.56.8)':
+    dependencies:
+      '@tanstack/query-core': 5.101.4
+      svelte: 5.56.8
+
+  '@tanstack/vue-query@5.101.4(vue@3.5.40(typescript@7.0.2))':
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.19.4
+      '@tanstack/query-core': 5.101.4
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.40(typescript@7.0.2)
+      vue-demi: 0.14.10(vue@3.5.40(typescript@7.0.2))
+
   '@topcli/spinner@4.2.1':
     dependencies:
       cli-spinners: 3.4.0
@@ -6042,6 +6161,8 @@ snapshots:
   '@types/react@19.2.17':
     dependencies:
       csstype: 3.2.3
+
+  '@types/semver@7.7.1': {}
 
   '@types/send@1.2.1':
     dependencies:
@@ -6228,6 +6349,8 @@ snapshots:
     dependencies:
       '@vue/compiler-dom': 3.5.40
       '@vue/shared': 3.5.40
+
+  '@vue/devtools-api@6.6.4': {}
 
   '@vue/devtools-api@8.2.1':
     dependencies:
@@ -8382,6 +8505,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  remove-accents@0.5.0: {}
+
   require-directory@2.1.1: {}
 
   require-from-string@2.0.2: {}
@@ -9103,6 +9228,10 @@ snapshots:
       '@types/node': 26.1.2
     transitivePeerDependencies:
       - msw
+
+  vue-demi@0.14.10(vue@3.5.40(typescript@7.0.2)):
+    dependencies:
+      vue: 3.5.40(typescript@7.0.2)
 
   vue-router@5.2.0(@vue/compiler-sfc@3.5.40)(esbuild@0.28.1)(rolldown@1.2.1)(rollup@4.62.3)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0))(vue@3.5.40(typescript@7.0.2)):
     dependencies:

@@ -7,9 +7,9 @@ import { build, createServer, type RunnableDevEnvironment } from "vite";
 
 import {
   defaults,
-  type GeneratorBase,
-  type GeneratorFactoryInstance,
+  type GeneratorFactory,
   type GeneratorMeta,
+  type GeneratorSignature,
   type ProjectSettings,
   type ResolvedEntry,
   type SourceFolder,
@@ -35,28 +35,20 @@ export default async (
 
   // NOTE: initialize generators before anything else, regardless command
   for (const sourceFolder of projectSettings.sourceFolders) {
-    for (const base of folderGenerators(sourceFolder)) {
-      if (!base.meta?.name || typeof base.factory !== "function") {
+    for (const generator of folderGenerators(sourceFolder)) {
+      if (!generator.meta?.name || typeof generator.factory !== "function") {
         throw new Error(
           `${sourceFolder.name}: Unrecognized generator - must be created via defineGenerator()`,
         );
       }
 
-      const factory = base.factory(sourceFolder);
-
-      if (!factory.meta?.name) {
-        throw new Error(
-          `${sourceFolder.name}: ${base.meta.name} generator is missing meta property`,
-        );
-      }
-
       try {
-        await factory.start?.();
+        await generator.factory(sourceFolder).start?.();
       } catch (error) {
         console.error(
           styleText(
             "red",
-            `${sourceFolder.name}: ${base.meta.name} generator failed to initialize`,
+            `${sourceFolder.name}: ${generator.meta.name} generator failed to initialize`,
           ),
         );
         throw error;
@@ -398,20 +390,22 @@ const cacheDir = (
   return resolve(root, `var/.vite/${name}/${command}/${mode}`);
 };
 
-const folderGenerators = (sourceFolder: SourceFolder): Array<GeneratorBase> => {
+const folderGenerators = (
+  sourceFolder: SourceFolder,
+): Array<GeneratorSignature> => {
   const { generators = [] } = sourceFolder.config;
 
   const baseGenerators: Partial<
-    Record<NonNullable<GeneratorMeta["slot"]>, GeneratorBase>
+    Record<NonNullable<GeneratorMeta["slot"]>, GeneratorSignature>
   > = {};
 
-  const userGenerators: Array<GeneratorBase> = [];
+  const userGenerators: Array<GeneratorSignature> = [];
 
-  for (const base of generators) {
-    if (base.meta.slot) {
-      baseGenerators[base.meta.slot] = base;
+  for (const generator of generators) {
+    if (generator.meta.slot) {
+      baseGenerators[generator.meta.slot] = generator;
     } else {
-      userGenerators.push(base);
+      userGenerators.push(generator);
     }
   }
 
@@ -447,12 +441,12 @@ const eventFactory = async (
 
   const generators: Array<{
     name: string | undefined;
-    factory: GeneratorFactoryInstance;
+    factory: GeneratorFactory;
   }> = [];
 
-  for (const base of folderGenerators(sourceFolder)) {
-    const factory = base.factory(sourceFolder);
-    generators.push({ name: base.meta.name, factory });
+  for (const generator of folderGenerators(sourceFolder)) {
+    const factory = generator.factory(sourceFolder);
+    generators.push({ name: generator.meta.name, factory });
   }
 
   const resolvedRoutes = new Map<

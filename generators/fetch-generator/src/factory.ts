@@ -13,7 +13,7 @@ import {
 
 import * as templates from "./templates";
 
-export default defineGeneratorFactory((meta, sourceFolder) => {
+export default defineGeneratorFactory((sourceFolder) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
   const { renderToFile: deployLibFile } = renderFactory({
@@ -143,8 +143,6 @@ export default defineGeneratorFactory((meta, sourceFolder) => {
   };
 
   return {
-    meta,
-
     async start() {
       // supposed to be replaced by specialized generators, write it only at initialization.
       // fetch generator always runs before other generators
