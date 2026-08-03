@@ -58,7 +58,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, { options }) => {
       for (const [file, template] of [
         ["ssr.ts", templates.ssr],
         ["@ssr/api.ts", templates.ssrApi],
-        ["@ssr/app.ts", templates.ssrApp],
+        ["@ssr/__kosmo_ssr_bundle.ts", templates.ssrBundle],
         ["@ssr/base.ts", templates.ssrBase],
         ["@ssr/fetch.ts", templates.ssrFetch],
         ["@ssr/routes.ts", templates.ssrRotues],
@@ -93,10 +93,10 @@ export default defineGeneratorFactory<Options>((sourceFolder, { options }) => {
             plugins,
             define: {
               KOSMO_PRODUCTION_BUILD: "true",
-              KOSMO_SERVERSIDE_FETCH: "true",
+              KOSMO_SSR_BUNDLE: "true",
             },
             build: {
-              ssr: createPath.lib("@ssr/app"),
+              ssr: createPath.lib("@ssr/__kosmo_ssr_bundle"),
               ssrEmitAssets: true,
               sourcemap: true,
               emptyOutDir: true,

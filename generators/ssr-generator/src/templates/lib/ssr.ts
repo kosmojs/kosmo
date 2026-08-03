@@ -68,16 +68,13 @@ export const createApp = async () => {
   const ssrOptions = () => {
     const cssAssets = [...assets.entries()].flatMap(
       ([path, { file, buffer, size }]) => {
-        // Vite is naming assets by entry name, ssr:base becomes ssr_base
-        if (!/^ssr_base-.+\.css$/i.test(file)) {
+        // Vite is naming assets by entry name
+        if (!/^__kosmo_ssr_bundle-.+\.css$/i.test(file)) {
           return [];
         }
 
-        if (template.includes(file.replace(/^ssr_base\b/, ""))) {
-          // skip if template contains a file with same hash;
-          // Vite use same hash for client and server assets:
-          // client asset: index-D-m1j8Sq.css
-          // server asset: ssr_base-D-m1j8Sq.css
+        // skip if template contains a file with same hash
+        if (template.includes(file.replace(/^__kosmo_ssr_bundle\b/, ""))) {
           return [];
         }
 
