@@ -3,8 +3,7 @@ import { afterAll, beforeAll, describe, test } from "vitest";
 import { createTestGroups } from ".";
 
 const testGroups = await createTestGroups({
-  backends: ["hono"],
-  frameworks: ["svelte"],
+  frameworks: ["solid"],
 });
 
 beforeAll(async () => {
