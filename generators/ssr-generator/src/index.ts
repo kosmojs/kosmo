@@ -8,12 +8,12 @@ export default defineGenerator<Options>({
   meta: {
     name: "SSR",
     slot: "ssr",
-    dependencies: {
-      tinyglobby: self.devDependencies["tinyglobby"],
-      hono: self.devDependencies["hono"],
-      "@hono/node-server": self.devDependencies["@hono/node-server"],
-      "light-my-request": self.devDependencies["light-my-request"],
-    },
+  },
+  dependencies: {
+    tinyglobby: self.devDependencies["tinyglobby"],
+    hono: self.devDependencies["hono"],
+    "@hono/node-server": self.devDependencies["@hono/node-server"],
+    "light-my-request": self.devDependencies["light-my-request"],
   },
   factory,
 });

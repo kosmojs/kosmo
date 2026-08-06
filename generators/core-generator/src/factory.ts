@@ -31,36 +31,37 @@ export default defineGeneratorFactory((sourceFolder) => {
       const { dependencies = {}, devDependencies = {} } = await import(
         resolve(sourceFolder.root, "package.json"),
         { with: { type: "json" } }
-      );
+      ).then((m) => m.default);
 
       const missing: Array<[string, string, string]> = [];
       const outdated: Array<[string, string, string]> = [];
 
-      const required = generators.flatMap(({ meta }) => {
+      const required = generators.flatMap((generator) => {
         return (["dependencies", "devDependencies"] as const).flatMap((key) => {
-          return meta[key]
+          return generator[key]
             ? Object.entries(
-                typeof meta[key] === "function"
-                  ? (meta[key] as Function)({ generators })
-                  : (meta[key] as object),
+                typeof generator[key] === "function"
+                  ? (generator[key] as Function)(generator.options)
+                  : (generator[key] as object),
               ).flatMap(([name, v]) => {
-                const version = semver.clean(v as string);
-                return version ? [[name, version, key]] : [];
+                const minVersion = semver.minVersion(v as string)?.version;
+                return minVersion ? [[name, minVersion, key]] : [];
               })
             : [];
         });
       });
 
       for (const [name, minVersion, key] of required) {
-        const version = semver.clean(
-          dependencies[name] || devDependencies[name],
-        );
-        if (version) {
+        const rawVersion = dependencies[name] || devDependencies[name];
+        const version = rawVersion
+          ? semver.minVersion(rawVersion)?.version
+          : undefined;
+        if (!rawVersion || !version) {
+          missing.push([name, minVersion, key]);
+        } else {
           if (semver.lt(version, minVersion)) {
             outdated.push([name, minVersion, key]);
           }
-        } else {
-          missing.push([name, minVersion, key]);
         }
       }
 
@@ -189,12 +190,16 @@ export default defineGeneratorFactory((sourceFolder) => {
       { overwrite: false },
     );
 
-    /**
-     * deploy a stub SSG file.
-     * generators that support SSG will override it as needed.
-     * then SSG generator will import it and generate static files for exported routes.
-     * */
-    await renderToFile(createPath.lib("ssg.ts"), "export default [];", {});
+    for (const [file, template] of [
+      /**
+       * deploy a stub SSG file.
+       * generators that support SSG will override it as needed.
+       * then SSG generator will import it and generate static files for exported routes.
+       * */
+      ["ssg.ts", "export default [];"],
+    ]) {
+      await renderToFile(createPath.lib(file), template, {});
+    }
   };
 
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {

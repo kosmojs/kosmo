@@ -7,9 +7,9 @@ export default defineGenerator({
   meta: {
     name: "Fetch",
     slot: "fetch",
-    dependencies: {
-      "path-to-regexp": self.devDependencies["path-to-regexp"],
-    },
+  },
+  dependencies: {
+    "path-to-regexp": self.devDependencies["path-to-regexp"],
   },
   factory,
 });

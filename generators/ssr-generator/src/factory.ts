@@ -19,7 +19,7 @@ import type { Options } from "./types";
 const RENDER_MODES = ["string", "stream"] as const;
 const DEFAULT_RENDER_MODE = RENDER_MODES[0];
 
-export default defineGeneratorFactory<Options>((sourceFolder, { options }) => {
+export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   const { generators = [], refineTypeName, ...config } = sourceFolder.config;
 
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);

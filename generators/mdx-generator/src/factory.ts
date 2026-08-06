@@ -17,7 +17,7 @@ import plugins from "./plugins";
 import * as templates from "./templates";
 import type { Options } from "./types";
 
-export default defineGeneratorFactory<Options>((sourceFolder, { options }) => {
+export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
   const { renderToFile: deployLibFile } = renderFactory({

@@ -19,7 +19,7 @@ const defaultSettings: Settings = {
   exactOptionalPropertyTypes: true,
 };
 
-export default defineGeneratorFactory<Options>((sourceFolder, { options }) => {
+export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   const {
     //
     createPath,

@@ -1,56 +1,36 @@
 import type {
   GeneratorFactory,
-  GeneratorMeta,
+  GeneratorSignature,
   SourceFolder,
 } from "@kosmojs/core";
 
-export const defineGenerator = <T extends object, R extends boolean = false>({
+export const defineGenerator = <O extends object, R extends boolean = false>({
   meta,
   factory,
-}: {
-  meta: GeneratorMeta;
-  factory: (
-    f: SourceFolder,
-    o: R extends true
-      ? { meta: GeneratorMeta; options: T }
-      : { meta: GeneratorMeta },
-  ) => GeneratorFactory;
-}): R extends true
-  ? ((o: T) => {
-      meta: GeneratorMeta;
-      options: T;
-      factory: (f: SourceFolder) => GeneratorFactory;
-    }) & { meta: GeneratorMeta }
-  : (() => {
-      meta: GeneratorMeta;
-      options?: T;
-      factory: (f: SourceFolder) => GeneratorFactory;
-    }) & { meta: GeneratorMeta } => {
-  const wrapper = ((options?: T) => {
+  dependencies,
+  devDependencies,
+}: Omit<GeneratorSignature, "factory"> & {
+  factory: (f: SourceFolder, o?: O) => GeneratorFactory;
+}): [R] extends [true]
+  ? ((o: O) => GeneratorSignature) &
+      Pick<GeneratorSignature, "meta" | "dependencies" | "devDependencies">
+  : ((o?: O) => GeneratorSignature) &
+      Pick<GeneratorSignature, "meta" | "dependencies" | "devDependencies"> => {
+  const wrapper = ((options?: O) => {
     return {
       meta,
-      factory: (folder: SourceFolder) => {
-        return options
-          ? factory(folder, { meta, options } as never)
-          : factory(folder, { meta } as never);
-      },
-      ...(options === undefined ? {} : { options }),
+      factory: (folder: SourceFolder) => factory(folder, options),
+      dependencies,
+      devDependencies,
+      options,
     };
   }) as never;
 
-  Object.assign(wrapper, { meta });
+  Object.assign(wrapper, { meta, dependencies, devDependencies });
 
   return wrapper;
 };
 
-export const defineGeneratorFactory = <
-  T extends object,
-  R extends boolean = false,
->(
-  factory: (
-    f: SourceFolder,
-    o: R extends true
-      ? { meta: GeneratorMeta; options: T }
-      : { meta: GeneratorMeta; options?: T },
-  ) => GeneratorFactory,
+export const defineGeneratorFactory = <O extends object>(
+  factory: (f: SourceFolder, o?: O) => GeneratorFactory,
 ) => factory;

@@ -9,17 +9,17 @@ export default defineGenerator<Options>({
     name: "Koa",
     slot: "api",
     types: ["@types/koa"],
-    dependencies: {
-      koa: self.devDependencies.koa,
-      "@koa/router": self.devDependencies["@koa/router"],
-      "path-to-regexp": self.devDependencies["path-to-regexp"],
-      formidable: self.devDependencies.formidable,
-      "raw-body": self.devDependencies["raw-body"],
-    },
-    devDependencies: {
-      "@types/koa": self.devDependencies["@types/koa"],
-      "@types/formidable": self.devDependencies["@types/formidable"],
-    },
+  },
+  dependencies: {
+    koa: self.devDependencies.koa,
+    "@koa/router": self.devDependencies["@koa/router"],
+    "path-to-regexp": self.devDependencies["path-to-regexp"],
+    formidable: self.devDependencies.formidable,
+    "raw-body": self.devDependencies["raw-body"],
+  },
+  devDependencies: {
+    "@types/koa": self.devDependencies["@types/koa"],
+    "@types/formidable": self.devDependencies["@types/formidable"],
   },
   factory,
 });

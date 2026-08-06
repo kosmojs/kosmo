@@ -7,18 +7,17 @@ import type { Options } from "./types";
 export default defineGenerator<Options>({
   meta: {
     name: "MDX",
-    dependencies: {
-      "path-to-regexp": self.devDependencies["path-to-regexp"],
-    },
-    devDependencies: {
-      preact: self.devDependencies.preact,
-      "preact-render-to-string":
-        self.devDependencies["preact-render-to-string"],
-      "@mdx-js/preact": self.devDependencies["@mdx-js/preact"],
-      "remark-frontmatter": self.devDependencies["remark-frontmatter"],
-      "remark-mdx-frontmatter": self.devDependencies["remark-mdx-frontmatter"],
-    },
     jsxImportSource: "preact",
+  },
+  dependencies: {
+    "path-to-regexp": self.devDependencies["path-to-regexp"],
+  },
+  devDependencies: {
+    preact: self.devDependencies.preact,
+    "preact-render-to-string": self.devDependencies["preact-render-to-string"],
+    "@mdx-js/preact": self.devDependencies["@mdx-js/preact"],
+    "remark-frontmatter": self.devDependencies["remark-frontmatter"],
+    "remark-mdx-frontmatter": self.devDependencies["remark-mdx-frontmatter"],
   },
   factory,
 });

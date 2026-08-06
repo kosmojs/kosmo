@@ -7,18 +7,12 @@ import type { Options } from "./types";
 export default defineGenerator<Options>({
   meta: {
     name: "Svelte",
-    dependencies({ generators }) {
-      return {
-        svelte: self.devDependencies.svelte,
-        "path-to-regexp": self.devDependencies["path-to-regexp"],
-        ...(generators.some((e) => e.meta.slot === "tsq")
-          ? {
-              "@tanstack/svelte-query":
-                self.devDependencies["@tanstack/svelte-query"],
-            }
-          : {}),
-      };
-    },
+  },
+  dependencies(options?: Options) {
+    return {
+      svelte: self.devDependencies.svelte,
+      "path-to-regexp": self.devDependencies["path-to-regexp"],
+    };
   },
   factory,
 });

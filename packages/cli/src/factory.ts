@@ -168,13 +168,13 @@ export const createSourceFolder = async (
     await renderToFile(resolve(folderPath, file), "", {});
   }
 
-  for (const generator of generators) {
+  for (const { generator } of generators) {
     for (const key of ["dependencies", "devDependencies"] as const) {
       packageJson[key] = {
         ...packageJson[key],
-        ...(typeof generator.meta[key] === "function"
-          ? generator.meta[key]({ generators })
-          : generator.meta[key]),
+        ...(typeof generator[key] === "function"
+          ? generator[key](folder.tsq ? { tanstack: { query: true } } : {})
+          : generator[key]),
       };
     }
   }
@@ -193,7 +193,7 @@ export const createKosmoConfig = (
   const generators: Array<{
     name: string;
     options: string;
-    meta: GeneratorMeta;
+    generator: GeneratorSignature;
   }> = [];
 
   const {
@@ -213,25 +213,25 @@ export const createKosmoConfig = (
     generators.push({
       name: "solidGenerator",
       options: options[framework],
-      meta: solidGenerator.meta,
+      generator: solidGenerator as never,
     });
   } else if (framework === "react") {
     generators.push({
       name: "reactGenerator",
       options: options[framework],
-      meta: reactGenerator.meta,
+      generator: reactGenerator as never,
     });
   } else if (framework === "vue") {
     generators.push({
       name: "vueGenerator",
       options: options[framework],
-      meta: vueGenerator.meta,
+      generator: vueGenerator as never,
     });
   } else if (framework === "svelte") {
     generators.push({
       name: "svelteGenerator",
       options: options[framework],
-      meta: svelteGenerator.meta,
+      generator: svelteGenerator as never,
     });
   } else if (framework === "mdx") {
     imports.push(
@@ -246,13 +246,13 @@ export const createKosmoConfig = (
       options: options[framework]
         ? options[framework]
         : `{ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }`,
-      meta: mdxGenerator.meta,
+      generator: mdxGenerator as never,
     });
 
     generators.push({
       name: "ssgGenerator",
       options: "",
-      meta: ssgGenerator.meta,
+      generator: ssgGenerator as never,
     });
   }
 
@@ -260,13 +260,13 @@ export const createKosmoConfig = (
     generators.push({
       name: "koaGenerator",
       options: options[backend],
-      meta: koaGenerator.meta,
+      generator: koaGenerator as never,
     });
   } else if (backend === "hono") {
     generators.push({
       name: "honoGenerator",
       options: options[backend],
-      meta: honoGenerator.meta,
+      generator: honoGenerator as never,
     });
   }
 
@@ -274,21 +274,21 @@ export const createKosmoConfig = (
     generators.push({
       name: "ssrGenerator",
       options: options.ssr,
-      meta: ssrGenerator.meta,
+      generator: ssrGenerator as never,
     });
   }
 
-  if (generators.some(({ meta }) => meta.slot === "api")) {
+  if (generators.some(({ generator }) => generator.meta.slot === "backend")) {
     generators.push(
       {
         name: "fetchGenerator",
         options: "",
-        meta: fetchGenerator.meta,
+        generator: fetchGenerator as never,
       },
       {
         name: "typeboxGenerator",
         options: "",
-        meta: typeboxGenerator.meta,
+        generator: typeboxGenerator as never,
       },
     );
   }

@@ -11,9 +11,9 @@ import factory from "./factory";
 export default defineGenerator({
   meta: {
     name: "Core",
-    dependencies: {
-      "path-to-regexp": self.devDependencies["path-to-regexp"],
-    },
+  },
+  dependencies: {
+    "path-to-regexp": self.devDependencies["path-to-regexp"],
   },
   factory,
 });

@@ -9,13 +9,6 @@ export type WatcherEvent = {
   file: string;
 };
 
-type MetaDependencies =
-  | Record<string, string>
-  | ((o: {
-      // let generator know what other generators enabled for current source folder
-      generators: Array<Pick<GeneratorSignature, "meta">>;
-    }) => Record<string, string>);
-
 export type GeneratorMeta = {
   name: string;
 
@@ -26,15 +19,6 @@ export type GeneratorMeta = {
    * */
   slot?: "api" | "fetch" | "ssr" | "ssg";
 
-  /**
-   * Package dependencies required by this generator.
-   * */
-  dependencies?: MetaDependencies;
-
-  /**
-   * Package devDependencies required by this generator.
-   * */
-  devDependencies?: MetaDependencies;
 
   /**
    * Enables type resolution for generators that require fully resolved type information.
@@ -72,29 +56,46 @@ export type GeneratorCustomTemplates<T> = Record<
   string | ((r: T) => string)
 >;
 
-type GeneratorOptionsTuple = [Record<string, unknown> | object, boolean];
-
 export type GeneratorFactory = {
   // Vite config provided by generator itself
   config?: (o: {
     kind: "client" | "backend";
     command: ProjectSettings["command"];
   }) => UserConfig;
+
   start?: () => Promise<void>;
+
   watch?: (
     entries: Array<ResolvedEntry>,
     event?: WatcherEvent,
   ) => Promise<void>;
   // runs before Vite build
   build?: (entries: Array<ResolvedEntry>) => Promise<void>;
+
   // runs after Vite build
   postBuild?: (entries: Array<ResolvedEntry>) => Promise<void>;
 };
 
+/**
+ * Dependency declarations are consumed twice:
+ *  - when the source folder is created, before generators are configured
+ *  - when the dev server or build starts, with generators configured
+ * So when a function is provided, it is called twice: first with no options,
+ * then with the resolved options. This lets a generator vary its dependencies
+ * by option - e.g. enabling the tanstack.query option adds a dependency, and on
+ * the next build the core generator re-invokes dependencies/devDependencies with
+ * the target generator's options and warns if the newly required dependency is missing.
+ * */
+type GeneratorDependencies =
+  | Record<string, string>
+  | ((o?: object) => Record<string, string>);
+
 export type GeneratorSignature = {
   meta: GeneratorMeta;
-  options?: GeneratorOptionsTuple[0] | undefined;
   factory: (sourceFolder: SourceFolder) => GeneratorFactory;
+  options?: object;
+  dependencies?: GeneratorDependencies;
+  devDependencies?: GeneratorDependencies;
 };
 
 export type PathMapperSignature<ParamsT extends readonly unknown[]> = {

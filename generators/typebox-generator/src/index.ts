@@ -8,9 +8,9 @@ export default defineGenerator<Options>({
   meta: {
     name: "TypeBox",
     resolveTypes: true,
-    dependencies: {
-      typebox: self.devDependencies.typebox,
-    },
+  },
+  dependencies: {
+    typebox: self.devDependencies.typebox,
   },
   factory,
 });
