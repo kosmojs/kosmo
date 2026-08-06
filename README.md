@@ -1,18 +1,15 @@
 ## KosmoJS - the composable meta-framework
 
-KosmoJS is a full-stack meta-framework for building several apps in one codebase.
-Each gets its own backend and frontend framework and its own routes; they all share one install,
-one set of types, one build.<br />
-You write features - KosmoJS handles the wiring.
+KosmoJS composes several apps in a scalable codebase, offering both consistency and flexibility.
 
 #### Notable Features
 
-Multiple source folders. Directory-based routing.
-Cascading middleware. Nested layouts.
-End-to-end validation. Fetch clients. OpenAPI spec.
-Koa, Hono, SolidJS, React, Vue, MDX and more.
+Multiple source folders. Directory-based routing. Cascading middleware. Nested layouts.
+End-to-end validation. Typed fetch clients. OpenAPI spec. Isomorphic fetch. Streaming SSR. TanStack Query.
 
-📘 [Documentation ➜ kosmojs.dev](https://kosmojs.dev)
+Koa, Hono, React, Vue, SolidJS, Svelte, MDX and more.
+
+📘 [Documentation: kosmojs.dev](https://kosmojs.dev)
 
 ## 🎯 What is KosmoJS?
 
@@ -20,9 +17,8 @@ A **meta-framework** that gives your `Vite` project a scalable shape:
 
 - Multiple **source folders** for distinct areas (website, admin dashboard, API)
 - Each folder splits into **`api/` and `pages/`** - clean boundary between server and client
-- **Generators** that produce validation schemas, fetch clients, and `OpenAPI` specs from your types
-
-Named after the Greek "Kosmos" (κόσμος) - "order" or "world".
+- Unified routing patterns that work equally on backend and frontend
+- End-to-end validation from TypeScript types alone - no schema language to learn
 
 📘 [Learn more](https://kosmojs.dev/about.html)
 
@@ -79,25 +75,29 @@ Each source folder runs its own set of frameworks with its own base URL, config 
 
 ## ✨ Features
 
-- **🗂️ Multiple Source Folders** - organize distinct concerns (public site, customer app, admin dashboard) as independent source folders within a single Vite project.
+- **Multiple Source Folders** - organize distinct concerns (public site, customer app, admin dashboard) as independent source folders within a single Vite project. Each has its own frameworks, base URL, dev workflow, and build.
 
-- **🛣️ Directory-Based Routing** - folder structure defines routes for both API and pages. Dynamic parameters: `[id]` required · `{id}` optional · `{...path}` splat. Mixed segments supported for backend routes.
+- **Directory-Based Routing** - folder structure defines routes for both API and pages. Dynamic parameters: `[id]` required · `{id}` optional · `{...path}` splat. Mixed segments supported for backend routes.
 
-- **🪆 Nested Layouts** - frontend pages support nested layout components that wrap child routes, letting you compose shared UI (nav, sidebars, auth shells) at any level of the route hierarchy.
+- **End-to-End Type Safety** - write `TypeScript` types once, get runtime validation automatically. The same definition drives compile-time checking, runtime validation, type-safe fetch clients, and API docs.
 
-- **⚡ Power Syntax for Params** - use raw [path-to-regexp v8](https://github.com/pillarjs/path-to-regexp) patterns directly in folder names for precise URL control beyond standard named parameters.
+- **Typed Fetch Clients + OpenAPI** - fully-typed fetch clients with client-side validation and an OpenAPI 3.1 spec, both derived from the same type definitions.
 
-- **🛡️ End-to-End Type Safety** - write `TypeScript` types once, get runtime validation automatically. Same definition drives compile-time checking, runtime validation, and API docs.
+- **Isomorphic Fetch** - the same fetch client runs on server and client. During SSR the call dispatches to the API route in-process - no network hop - and the result is reused on hydration, not refetched.
 
-- **🔗 Generated Fetch Clients + OpenAPI** - fully-typed fetch clients with client-side validation and an OpenAPI 3.1 spec, both derived from the same type definitions.
+- **Streaming SSR** - opt into streamed rendering per route to flush the shell early and improve Time-to-First-Byte. Each framework streams through its own native renderer; no rendering layer of KosmoJS's own.
 
-- **🎛️ Composable Middleware (Slots)** - override global middleware per-route or per-subtree using named slots. Replace only what needs replacing, inherit everything else.
+- **Nested Layouts** - frontend pages support nested layout components that wrap child routes, letting you compose shared UI (nav, sidebars, auth shells) at any level of the route hierarchy.
 
-- **🌊 Cascading Middleware** - place a `use.ts` in any folder and its middleware automatically wraps all routes in that folder and its subfolders. No imports or wiring needed.
+- **Composable Middleware (Slots)** - override global middleware per-route or per-subtree using named slots. Replace only what needs replacing, inherit everything else.
 
-- **🎨 Multiple Frameworks** - `Koa` or `Hono` for backend, `React`, `Vue`, `SolidJS` or `MDX` for frontend. Different source folders can use different combinations.
+- **Cascading Middleware** - place a `use.ts` in any folder and its middleware automatically wraps all routes in that folder and its subfolders. No imports or wiring needed.
 
-- **🔧 Built on Proven Tools** - `Koa`/`Hono` · `React`/`Vue`/`Solid`/`MDX` · `Vite` · `TypeScript`. No proprietary abstractions.
+- **TanStack Query Integration** - opt in per source folder and KosmoJS wires the query client for you (per-request on the server, singleton in the browser). Enabling it is one option; using it is just importing `useQuery`. Works across React, SolidJS, Vue, and Svelte.
+
+- **Multiple Frameworks** - `Koa` or `Hono` for backend; `React`, `Vue`, `SolidJS`, `Svelte`, or `MDX` for frontend. Different source folders can use different combinations.
+
+- **Built on Proven Tools** - no proprietary runtime, no custom bundler, no framework lock-in.
 
 📘 [Learn more](https://kosmojs.dev/features.html)
 

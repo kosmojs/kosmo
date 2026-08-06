@@ -42,23 +42,6 @@ files/[name].[ext]/index.ts         ➜ files/document.pdf, /files/logo.png
 
 [Read more ›](/routing/intro)
 
-## Power Syntax for Params
-
-When standard named parameters aren't enough, use raw [path-to-regexp v8](https://github.com/pillarjs/path-to-regexp)
-patterns directly in your folder names:
-
-```
-book{-:id}-info           ➜ /book-info or /book-123-info
-locale{-:lang{-:country}} ➜ /locale, /locale-en, /locale-en-US
-api/{v:version}/users     ➜ /api/users or /api/v2/users
-```
-
-Any param name containing non-alphanumeric characters
-is treated as a raw pattern - giving you precise control over URL structure
-without sacrificing the directory-based routing model.
-
-[Read more ›](/routing/params#power-syntax)
-
 ## End-to-End Type Safety
 
 Write `TypeScript` types once - `KosmoJS` generates runtime validators automatically.
@@ -82,7 +65,7 @@ export default defineRoute(({ POST }) => [
 
 [Read more ›](/validation/intro)
 
-## Generated Fetch Clients + OpenAPI
+## Typed Fetch Clients + OpenAPI
 
 For every API route, `KosmoJS` generates a fully-typed fetch client
 and an OpenAPI 3.1 spec - both derived from the same type definitions.
