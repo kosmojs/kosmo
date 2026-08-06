@@ -127,6 +127,25 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         ["pageSamples/welcome.svelte", templates.libPageSamplesWelcome],
         ["pageSamples/page.svelte", templates.libPageSamplesPage],
         ["pageSamples/404.svelte", templates.libPageSamples404],
+        ...(options?.tanstack?.query
+          ? [
+              ["app/app.svelte", templates.libApp],
+              ["app/app-tsq.svelte", templates.libAppTsq],
+              [
+                "app/index.ts",
+                `export { default as AppProvider } from "./app-tsq.svelte";`,
+              ],
+              ["query.ts", templates.libQuery],
+            ]
+          : [
+              ["app/app.svelte", templates.libApp],
+              ["app/app-tsq.svelte", "/** tanstack query disabled */"],
+              [
+                "app/index.ts",
+                `export { default as AppProvider } from "./app.svelte";`,
+              ],
+              ["query.ts", "/** tanstack query disabled */"],
+            ]),
       ]) {
         await deployLibFile(createPath.lib(file), template, {});
       }
@@ -187,6 +206,16 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
     async build(entries) {
       await generateSrcFiles(entries);
       await generateLibFiles(entries);
+    },
+
+    async ssrBuild() {
+      await deployLibFile(
+        createPath.lib("query.ts"),
+        options?.tanstack?.query
+          ? templates.libQuerySSR
+          : "/** tanstack query disabled */",
+        { ssrBundle: true },
+      );
     },
   };
 });

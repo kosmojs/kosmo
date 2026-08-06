@@ -34,6 +34,7 @@ const options = parseArgs({
     backend: { type: "string" },
     framework: { type: "string" },
     ssr: { type: "boolean" },
+    tsq: { type: "boolean" },
     quiet: { type: "boolean", short: "q" },
     help: { type: "boolean", short: "h" },
   },
@@ -223,6 +224,19 @@ const createFolder = async () => {
       },
       name: "ssr",
       message: "Enable server-side rendering (SSR)?",
+      initial: false,
+      active: "yes",
+      inactive: "no",
+    },
+
+    {
+      type: (prev: SourceFolder["framework"]) => {
+        return ["none", "mdx"].includes(prev as never) // skip if...
+          ? undefined
+          : "toggle";
+      },
+      name: "tsq",
+      message: "Enable TanStack Query?",
       initial: false,
       active: "yes",
       inactive: "no",

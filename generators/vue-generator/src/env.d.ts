@@ -5,20 +5,31 @@ declare module "{{ createImport 'libCore' }}" {
   export const pageRouteMap: ReturnType<PathMapper>;
 }
 
+declare module "{{ createImport 'lib' '@ssr/base' }}" {
+  import type { AsyncLocalStorage } from "node:async_hooks";
+  import type { QueryClient } from "@tanstack/react-query";
+  export const store: InstanceType<
+    typeof AsyncLocalStorage<{ tsqClient: QueryClient }>
+  >;
+}
+
 declare module "{{ createImport 'lib' 'app' }}" {
   import type { Plugin } from "vue";
   export const appProvider: Plugin;
 }
 
 declare module "{{ createImport 'lib' 'router' }}" {
-  import type { App, Component } from "vue";
+  import type { App, Component, Plugin } from "vue";
   import type { RouteRecordRaw } from "vue-router";
   import type { RouterFactoryReturn } from "@kosmojs/core";
   import { createRouterFactory } from "@kosmojs/core/generators";
 
   export const createRouters: (
     routes: Array<RouteRecordRaw>,
-    assets: { app: Component },
+    assets: {
+      app: Component;
+      use?: Array<[plugin: Plugin, options: object | undefined]>;
+    },
   ) => {
     clientRouter: () => RouterFactoryReturn<Promise<App>>;
     serverRouter: (url: URL) => RouterFactoryReturn<Promise<App>, {

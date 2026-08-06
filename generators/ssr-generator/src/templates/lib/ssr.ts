@@ -142,7 +142,7 @@ export const createApp = async () => {
                 headers: Object.fromEntries(ctx.req.raw.headers),
                 url: ctx.req.url,
               },
-              () => renderToStream(url, ssrOptions(), stream),
+              () => renderToStream(url, ssrOptions(), stream as never),
             );
             await stream.write(htmlStart.replace("<!--app-head-->", head));
             await stream.pipe(html);

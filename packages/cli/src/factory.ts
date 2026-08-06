@@ -204,6 +204,14 @@ export const createKosmoConfig = (
 
   const options = Object.entries({
     ...generatorOptions,
+    ...(folder.tsq && framework !== "mdx"
+      ? {
+          [framework]: {
+            ...(generatorOptions?.[framework as never] || {}),
+            tanstack: { query: true },
+          },
+        }
+      : {}),
   }).reduce<Record<string, string>>((map, [key, val]) => {
     map[key] = JSON.stringify(val);
     return map;

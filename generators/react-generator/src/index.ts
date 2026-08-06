@@ -15,6 +15,12 @@ export default defineGenerator<Options>({
       react: self.devDependencies.react,
       "react-router": self.devDependencies["react-router"],
       "path-to-regexp": self.devDependencies["path-to-regexp"],
+      ...(options?.tanstack?.query
+        ? {
+            "@tanstack/react-query":
+              self.devDependencies["@tanstack/react-query"],
+          }
+        : {}),
     };
   },
   devDependencies: {

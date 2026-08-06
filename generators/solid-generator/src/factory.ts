@@ -132,6 +132,15 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         ["pageSamples/welcome.tsx", templates.libPageSamplesWelcome],
         ["pageSamples/page.tsx", templates.libPageSamplesPage],
         ["pageSamples/404.tsx", templates.libPageSamples404],
+        ...(options?.tanstack?.query
+          ? [
+              ["app.tsx", templates.libAppTsq],
+              ["query.ts", templates.libQuery],
+            ]
+          : [
+              ["app.tsx", templates.libApp],
+              ["query.ts", "/** tanstack query disabled */"],
+            ]),
       ]) {
         await deployLibFile(createPath.lib(file), template, {});
       }
@@ -197,6 +206,16 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
     async build(entries) {
       await generateSrcFiles(entries);
       await generateLibFiles(entries);
+    },
+
+    async ssrBuild() {
+      await deployLibFile(
+        createPath.lib("query.ts"),
+        options?.tanstack?.query
+          ? templates.libQuerySSR
+          : "/** tanstack query disabled */",
+        { ssrBundle: true },
+      );
     },
   };
 });

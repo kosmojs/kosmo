@@ -12,6 +12,12 @@ export default defineGenerator<Options>({
     return {
       svelte: self.devDependencies.svelte,
       "path-to-regexp": self.devDependencies["path-to-regexp"],
+      ...(options?.tanstack?.query
+        ? {
+            "@tanstack/svelte-query":
+              self.devDependencies["@tanstack/svelte-query"],
+          }
+        : {}),
     };
   },
   factory,

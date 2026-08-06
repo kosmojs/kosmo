@@ -14,6 +14,11 @@ export default defineGenerator<Options>({
       vue: self.devDependencies.vue,
       "vue-router": self.devDependencies["vue-router"],
       "path-to-regexp": self.devDependencies["path-to-regexp"],
+      ...(options?.tanstack?.query
+        ? {
+            "@tanstack/vue-query": self.devDependencies["@tanstack/vue-query"],
+          }
+        : {}),
     };
   },
   factory,

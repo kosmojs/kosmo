@@ -114,6 +114,16 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         ["pageSamples/welcome.vue", templates.libPageSamplesWelcome],
         ["pageSamples/page.vue", templates.libPageSamplesPage],
         ["pageSamples/404.vue", templates.libPageSamples404],
+        ["app/provider.vue", templates.libAppProvider],
+        ...(options?.tanstack?.query
+          ? [
+              ["app/index.ts", templates.libAppTsq],
+              ["query.ts", templates.libQuery],
+            ]
+          : [
+              ["app/index.ts", templates.libApp],
+              ["query.ts", "/** tanstack query disabled */"],
+            ]),
       ]) {
         await deployLibFile(createPath.lib(file), template, {});
       }
@@ -179,6 +189,16 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
     async build(entries) {
       await generateSrcFiles(entries);
       await generateLibFiles(entries);
+    },
+
+    async ssrBuild() {
+      await deployLibFile(
+        createPath.lib("query.ts"),
+        options?.tanstack?.query
+          ? templates.libQuerySSR
+          : "/** tanstack query disabled */",
+        { ssrBundle: true },
+      );
     },
   };
 });

@@ -1,4 +1,5 @@
 export { default as libApp } from "#templates/lib/app";
+export { default as libAppTsq } from "#templates/lib/app-tsq";
 export { default as libEntryClient } from "#templates/lib/entry/client.hbs";
 export { default as libEntryRoutePartial } from "#templates/lib/entry/routePartial.hbs";
 export { default as libEntryServer } from "#templates/lib/entry/server.hbs";
@@ -7,6 +8,8 @@ export { default as libPageSamples404 } from "#templates/lib/pageSamples/404.hbs
 export { default as libPageSamplesPage } from "#templates/lib/pageSamples/page.hbs";
 export { default as libPageSamplesStyles } from "#templates/lib/pageSamples/styles.css";
 export { default as libPageSamplesWelcome } from "#templates/lib/pageSamples/welcome.hbs";
+export { default as libQuery } from "#templates/lib/query";
+export { default as libQuerySSR } from "#templates/lib/query-ssr";
 export { default as libReact } from "#templates/lib/react";
 export { default as libRouter } from "#templates/lib/router";
 export { default as srcApp } from "#templates/src/app";

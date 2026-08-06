@@ -15,6 +15,12 @@ export default defineGenerator<Options>({
       "solid-js": self.devDependencies["solid-js"],
       "@solidjs/router": self.devDependencies["@solidjs/router"],
       "path-to-regexp": self.devDependencies["path-to-regexp"],
+      ...(options?.tanstack?.query
+        ? {
+            "@tanstack/solid-query":
+              self.devDependencies["@tanstack/solid-query"],
+          }
+        : {}),
     };
   },
   factory,

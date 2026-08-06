@@ -5,6 +5,14 @@ declare module "{{ createImport 'libCore' }}" {
   export const pageRouteMap: ReturnType<PathMapper>;
 }
 
+declare module "{{ createImport 'lib' '@ssr/base' }}" {
+  import type { AsyncLocalStorage } from "node:async_hooks";
+  import type { QueryClient } from "@tanstack/react-query";
+  export const store: InstanceType<
+    typeof AsyncLocalStorage<{ tsqClient: QueryClient }>
+  >;
+}
+
 declare module "{{ createImport 'lib' 'app' }}" {
   import type { JSX } from "react";
   export const AppProvider: (o: { children: JSX.Element }) => JSX.Element;

@@ -2,6 +2,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 
 export type RequestContext = {
   headers?: HeadersInit;
+  tsqClient?: unknown;
 };
 
 export const redirectCodes = [

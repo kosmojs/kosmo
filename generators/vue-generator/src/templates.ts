@@ -1,4 +1,5 @@
 export { default as libApp } from "#templates/lib/app/app";
+export { default as libAppTsq } from "#templates/lib/app/app-tsq";
 export { default as libAppProvider } from "#templates/lib/app/provider.vue";
 export { default as libEntryClient } from "#templates/lib/entry/client.hbs";
 export { default as libEntryRoutePartial } from "#templates/lib/entry/routePartial.hbs";
@@ -8,6 +9,8 @@ export { default as libPageSamples404 } from "#templates/lib/pageSamples/404.hbs
 export { default as libPageSamplesPage } from "#templates/lib/pageSamples/page.hbs";
 export { default as libPageSamplesStyles } from "#templates/lib/pageSamples/styles.css";
 export { default as libPageSamplesWelcome } from "#templates/lib/pageSamples/welcome.hbs";
+export { default as libQuery } from "#templates/lib/query";
+export { default as libQuerySSR } from "#templates/lib/query-ssr";
 export { default as libRouter } from "#templates/lib/router";
 export { default as libUnwrap } from "#templates/lib/unwrap";
 export { default as libUse } from "#templates/lib/use";

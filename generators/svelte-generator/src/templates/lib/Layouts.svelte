@@ -16,7 +16,7 @@
 
   setRouteContext(() => route);
 
-  const chain = $derived([...layouts].reverse().concat(app));
+  const chain = $derived([app, ...layouts.toReversed()]);
 </script>
 
 {#snippet layer(index: number)}
