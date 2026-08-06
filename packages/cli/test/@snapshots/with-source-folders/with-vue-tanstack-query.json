@@ -1,18 +1,18 @@
 [
   [
-    "with-source-folders/src/with-vue/api/index/index.ts",
+    "with-source-folders/src/with-vue-tanstack-query/api/index/index.ts",
     [
       ""
     ]
   ],
   [
-    "with-source-folders/src/with-vue/entry/client.ts",
+    "with-source-folders/src/with-vue-tanstack-query/entry/client.ts",
     [
       ""
     ]
   ],
   [
-    "with-source-folders/src/with-vue/index.html",
+    "with-source-folders/src/with-vue-tanstack-query/index.html",
     [
       "<!--",
       "Do not remove! Build process requires this file for framework-less source folders.",
@@ -21,18 +21,18 @@
     ]
   ],
   [
-    "with-source-folders/src/with-vue/kosmo.config.ts",
+    "with-source-folders/src/with-vue-tanstack-query/kosmo.config.ts",
     [
       "import { defineConfig, vueGenerator } from \"@kosmojs/dev\";",
       "",
       "export default defineConfig({",
       "  base: \"/\",",
-      "  generators: [vueGenerator()],",
+      "  generators: [vueGenerator({ tanstack: { query: true } })],",
       "});"
     ]
   ],
   [
-    "with-source-folders/src/with-vue/pages/index/index.vue",
+    "with-source-folders/src/with-vue-tanstack-query/pages/index/index.vue",
     [
       ""
     ]

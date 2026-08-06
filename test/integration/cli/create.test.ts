@@ -6,7 +6,7 @@ import { format } from "oxfmt";
 import { afterAll, describe, test } from "vitest";
 
 import {
-  BACKEND_FRAMEWORKS,
+  BACKENDS,
   DEFAULT_DIST,
   DEFAULT_PORT,
   FRAMEWORKS,
@@ -60,33 +60,31 @@ describe("should create the project and folders", async () => {
 
   const folders = [...Object.keys(FRAMEWORKS), undefined].flatMap(
     (framework) => {
-      return [...Object.keys(BACKEND_FRAMEWORKS), undefined].flatMap(
-        (backend) => {
-          if (framework) {
-            return ["ssr", undefined].map((ssr) => {
-              const name = [framework, backend, ssr].filter(Boolean).join("-");
-              return {
-                name,
-                base: `/${name}`,
-                framework: framework as string | undefined,
+      return [...Object.keys(BACKENDS), undefined].flatMap((backend) => {
+        if (framework) {
+          return ["ssr", undefined].map((ssr) => {
+            const name = [framework, backend, ssr].filter(Boolean).join("-");
+            return {
+              name,
+              base: `/${name}`,
+              framework: framework as string | undefined,
+              backend,
+              ssr,
+            };
+          });
+        }
+        return backend
+          ? [
+              {
+                name: backend,
+                base: `/${backend}`,
+                framework,
                 backend,
-                ssr,
-              };
-            });
-          }
-          return backend
-            ? [
-                {
-                  name: backend,
-                  base: `/${backend}`,
-                  framework,
-                  backend,
-                  ssr: undefined,
-                },
-              ]
-            : [];
-        },
-      );
+                ssr: undefined,
+              },
+            ]
+          : [];
+      });
     },
   );
 

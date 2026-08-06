@@ -17,20 +17,11 @@
   [
     "with-source-folders/src/with-koa-backend/kosmo.config.ts",
     [
-      "import {",
-      "  defineConfig,",
-      "  koaGenerator,",
-      "  fetchGenerator,",
-      "  typeboxGenerator,",
-      "} from \"@kosmojs/dev\";",
+      "import { defineConfig, koaGenerator, fetchGenerator, typeboxGenerator } from \"@kosmojs/dev\";",
       "",
       "export default defineConfig({",
       "  base: \"/\",",
-      "  generators: [",
-      "    koaGenerator(),",
-      "    fetchGenerator(),",
-      "    typeboxGenerator(),",
-      "  ],",
+      "  generators: [koaGenerator(), fetchGenerator(), typeboxGenerator()],",
       "});"
     ]
   ]

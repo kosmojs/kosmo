@@ -23,18 +23,11 @@
   [
     "with-source-folders/src/with-solid-ssr/kosmo.config.ts",
     [
-      "import {",
-      "  defineConfig,",
-      "  solidGenerator,",
-      "  ssrGenerator,",
-      "} from \"@kosmojs/dev\";",
+      "import { defineConfig, solidGenerator, ssrGenerator } from \"@kosmojs/dev\";",
       "",
       "export default defineConfig({",
       "  base: \"/\",",
-      "  generators: [",
-      "    solidGenerator(),",
-      "    ssrGenerator(),",
-      "  ],",
+      "  generators: [solidGenerator(), ssrGenerator()],",
       "});"
     ]
   ],

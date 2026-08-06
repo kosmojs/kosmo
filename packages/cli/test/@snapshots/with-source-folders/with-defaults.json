@@ -17,14 +17,11 @@
   [
     "with-source-folders/src/with-defaults/kosmo.config.ts",
     [
-      "import {",
-      "  defineConfig,",
-      "} from \"@kosmojs/dev\";",
+      "import { defineConfig } from \"@kosmojs/dev\";",
       "",
       "export default defineConfig({",
       "  base: \"/\",",
-      "  generators: [",
-      "  ],",
+      "  generators: [],",
       "});"
     ]
   ]

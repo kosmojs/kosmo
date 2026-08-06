@@ -11,6 +11,7 @@ import {
   type Project,
   type SourceFolder,
 } from "@kosmojs/cli";
+import { FRAMEWORKS } from "@kosmojs/core";
 
 describe("Create API", () => {
   it("should create default project", async (ctx) => {
@@ -64,6 +65,12 @@ describe("Create API", () => {
       { name: "with-vue", base: "/", framework: "vue" },
       { name: "with-vue-ssr", base: "/", framework: "vue", ssr: true },
       { name: "with-koa-backend", base: "/", backend: "koa" },
+      ...Object.keys(FRAMEWORKS).map((framework) => ({
+        name: `with-${framework}-tanstack-query`,
+        base: "/",
+        framework: framework as never,
+        tsq: true,
+      })),
     ] satisfies Array<SourceFolder>) {
       const snapshot = await createSourceFolder(folder);
       await expect(snapshot).toMatchFileSnapshot(

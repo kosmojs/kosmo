@@ -1,0 +1,46 @@
+[
+  [
+    "with-source-folders/src/with-mdx-tanstack-query/api/index/index.ts",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/src/with-mdx-tanstack-query/entry/client.ts",
+    [
+      ""
+    ]
+  ],
+  [
+    "with-source-folders/src/with-mdx-tanstack-query/index.html",
+    [
+      "<!--",
+      "Do not remove! Build process requires this file for framework-less source folders.",
+      "Framework generators will override this stub with their own setup.",
+      "-->"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-mdx-tanstack-query/kosmo.config.ts",
+    [
+      "import { defineConfig, mdxGenerator, ssgGenerator, ssrGenerator } from \"@kosmojs/dev\";",
+      "import frontmatterPlugin from \"remark-frontmatter\";",
+      "import mdxFrontmatterPlugin from \"remark-mdx-frontmatter\";",
+      "",
+      "export default defineConfig({",
+      "  base: \"/\",",
+      "  generators: [",
+      "    mdxGenerator({ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }),",
+      "    ssgGenerator(),",
+      "    ssrGenerator(),",
+      "  ],",
+      "});"
+    ]
+  ],
+  [
+    "with-source-folders/src/with-mdx-tanstack-query/pages/index/index.mdx",
+    [
+      ""
+    ]
+  ]
+]

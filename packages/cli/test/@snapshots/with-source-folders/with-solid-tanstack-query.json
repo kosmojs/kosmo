@@ -1,18 +1,18 @@
 [
   [
-    "with-source-folders/src/with-solid/api/index/index.ts",
+    "with-source-folders/src/with-solid-tanstack-query/api/index/index.ts",
     [
       ""
     ]
   ],
   [
-    "with-source-folders/src/with-solid/entry/client.ts",
+    "with-source-folders/src/with-solid-tanstack-query/entry/client.ts",
     [
       ""
     ]
   ],
   [
-    "with-source-folders/src/with-solid/index.html",
+    "with-source-folders/src/with-solid-tanstack-query/index.html",
     [
       "<!--",
       "Do not remove! Build process requires this file for framework-less source folders.",
@@ -21,18 +21,18 @@
     ]
   ],
   [
-    "with-source-folders/src/with-solid/kosmo.config.ts",
+    "with-source-folders/src/with-solid-tanstack-query/kosmo.config.ts",
     [
       "import { defineConfig, solidGenerator } from \"@kosmojs/dev\";",
       "",
       "export default defineConfig({",
       "  base: \"/\",",
-      "  generators: [solidGenerator()],",
+      "  generators: [solidGenerator({ tanstack: { query: true } })],",
       "});"
     ]
   ],
   [
-    "with-source-folders/src/with-solid/pages/index/index.tsx",
+    "with-source-folders/src/with-solid-tanstack-query/pages/index/index.tsx",
     [
       ""
     ]
