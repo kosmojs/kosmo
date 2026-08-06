@@ -36,5 +36,7 @@ jobs:
       - run: pnpm test:unit
       - run: pnpm test:integration:cli
       - run: pnpm test:integration:backend
-      - run: pnpm test:integration:frontend
-      - run: pnpm test:integration:fetch
+      - run: pnpm test:integration:frontend:csr
+      - run: pnpm test:integration:frontend:ssr
+      - run: pnpm test:integration:fetch:csr
+      - run: pnpm test:integration:fetch:ssr
