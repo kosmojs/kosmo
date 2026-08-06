@@ -23,8 +23,8 @@
     "vite": "^8.2.0"
   },
   "devDependencies": {
-    "@hono/node-server": "^2.0.12",
-    "hono": "^4.12.32",
+    "@hono/node-server": "^2.1.0",
+    "hono": "^4.13.0",
     "light-my-request": "^6.6.0",
     "tinyglobby": "^0.2.17"
   }

@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@types/picomatch": "^4.0.3",
-    "hono": "^4.12.32",
+    "hono": "^4.13.0",
     "msw": "^2.15.0",
     "path-to-regexp": "^8.4.2",
     "tfusion": "^0.2.0",
