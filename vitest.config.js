@@ -17,11 +17,13 @@ const setupFactory = (name, { alias, ...setup } = {}) => {
       ...(name.startsWith("integration:")
         ? {
             root: "./test",
+            testTimeout: 10_000,
             hookTimeout: 180_000,
           }
         : {
             root: resolve(import.meta.dirname, name),
             include: ["test/**/*.test.ts"],
+            testTimeout: 5_000,
             hookTimeout: 60_000,
           }),
       ...setup,
