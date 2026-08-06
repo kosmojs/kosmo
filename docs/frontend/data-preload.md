@@ -37,19 +37,17 @@ export default defineRoute<"users/data">(({ GET }) => [
 
 ```tsx [React]
 import { useLoaderData } from "react-router";
-import fetchClients, { type ResponseT } from "_/fetch";
+import fetchClients from "_/fetch";
 
 const { GET } = fetchClients["users/data"];
 
 // Export the fetch function as loader -
 // React Router calls it before the component renders
-export { GET as loader };
-
-type T = ResponseT["users/data"]["GET"];
+export const loader = () => GET();
 
 export default function Page() {
   // useLoaderData retrieves the already-fetched result - no duplicate request
-  const data = useLoaderData<T>();
+  const data = useLoaderData();
 
   return (
     <div>
@@ -91,19 +89,18 @@ export default function Page() {
 <script lang="ts">
 import fetchClients from "_/fetch";
 
+const { GET } = fetchClients["users/data"];
+
 // the loader is a module-level export, so it lives in a plain <script> block -
 // <script setup> compiles to setup() and cannot hold ES exports
-export const loader = fetchClients["users/data"].GET;
+export const loader = () => GET();
 </script>
 
 <script setup lang="ts">
 import { useLoaderData } from "_/use";
-import type { ResponseT } from "_/fetch";
-
-type T = ResponseT["users/data"]["GET"];
 
 // the router runs the loader before the component renders; read its result here
-const data = useLoaderData<T>();
+const data = useLoaderData();
 </script>
 
 <template>
@@ -117,19 +114,18 @@ const data = useLoaderData<T>();
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
+const { GET } = fetchClients["users/data"];
+
 // the loader lives in the module <script> block -
 // the instance <script> can't hold ES exports
-export const loader = fetchClients["users/data"].GET;
+export const loader = () => GET();
 </script>
 
 <script lang="ts">
 import { useLoaderData } from "_/use";
-import type { ResponseT } from "_/fetch";
-
-type T = ResponseT["users/data"]["GET"];
 
 // the router runs the loader before the component renders; read its result here
-const data = useLoaderData<T>();
+const data = useLoaderData();
 </script>
 
 {#if data}
@@ -141,7 +137,9 @@ const data = useLoaderData<T>();
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 
-export const loader = fetchClients["users/data"].GET;
+export const { GET } = fetchClients["users/data"];
+
+export const loader = () => GET();
 
 export const Users = () => {
   const data = useLoaderData();

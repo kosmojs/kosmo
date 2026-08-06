@@ -15,8 +15,7 @@ router link with compile-time route validation. It knows your complete route
 structure and parameters, delivering autocomplete and type checking throughout
 navigation code.
 
-The component is available at `components/Link.tsx` (or `Link.vue` / `Link.svelte`) in your
-source folder.
+The component is available at `components/Link.{tsx,vue,svelte}` in your source folder.
 
 ## Usage
 

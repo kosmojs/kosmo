@@ -1,74 +1,111 @@
 ---
 title: Application Structure
-description: Generator-produced foundation files for React, SolidJS, Vue, Svelte and MDX applications -
-  root App component, router configuration, and client entry point with SSR hydration support.
+description: Generator-produced foundation files for React, SolidJS, Vue, Svelte
+    and MDX applications - root app component, AppProvider seam, router configuration
+    and client entry point with SSR hydration support.
 head:
   - - meta
     - name: keywords
       content: react app foundation, solidjs app structure, vue app, svelte app, mdx app,
-        suspense setup, router integration, createRoot, hydration, app entry point,
-        vite entry, strictmode setup, solidjs router, vue router, react router.
+        AppProvider, appProvider, provider seam, router integration, createRoot,
+        hydration, app entry point, vite entry, solidjs router, vue router, react router.
 ---
 
-Each framework generator produces a small set of foundation files that wire up
-routing, navigation, and application bootstrap. The structure is consistent
-across frameworks: a root App component, a router configuration, and a client
-entry point.
+Each framework generator produces a small set of foundation files that wire up routing,
+navigation, and application bootstrap.
+
+The structure is consistent across frameworks:
+a root app component, a router configuration, and a client entry point.
 
 ## Root Application Component
 
 The generator creates a minimal root component as your application shell.
-Extend it with global layouts, error boundaries, authentication providers, or
-other application-wide concerns.
+Extend it with global layouts, error boundaries, authentication providers,
+or other application-wide concerns.
+
+The shell composes `AppProvider`, imported from `_/app`, around the routed tree.
+`_/app` is a generated seam: a wrapper the framework generator owns and can swap under the hood.
+
+By default it is a pass-through (it renders its children unchanged),
+so out of the box your app behaves exactly like a plain shell.
 
 ::: code-group
 
 ```tsx [React]
-// App.tsx
+// app.tsx
 import { Outlet } from "react-router";
+import { AppProvider } from "_/app";
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <AppProvider>
+      <Outlet />
+    </AppProvider>
+  );
 }
 ```
 
 ```tsx [SolidJS]
-// App.tsx
+// app.tsx
 import type { ParentComponent } from "solid-js";
+import { AppProvider } from "_/app";
 
-const App: ParentComponent = (props) => {
-  return props.children;
+const app: ParentComponent = (props) => {
+  return <AppProvider>{props.children}</AppProvider>;
 };
 
-export default App;
+export default app;
 ```
 
 ```vue [Vue]
-// App.vue
+<!-- app.vue -->
+<script setup lang="ts">
+import { AppProvider } from "_/app";
+</script>
+
 <template>
-  <RouterView />
+  <AppProvider>
+    <RouterView />
+  </AppProvider>
 </template>
 ```
 
 ```svelte [Svelte]
-// App.svelte
+<!-- app.svelte -->
 <script lang="ts">
   import type { Snippet } from "svelte";
+  import { AppProvider } from "_/app";
   let { children }: { children: Snippet } = $props();
 </script>
 
-{@render children()}
+<AppProvider>
+  {@render children()}
+</AppProvider>
 ```
 
 ```mdx [MDX]
-// App.mdx
-{props.children}
+// app.mdx
+import { AppProvider } from "_/app";
+
+<AppProvider>{props.children}</AppProvider>
 ```
 :::
 
+### Why the AppProvider seam
+
+Wrapping the shell in `AppProvider` costs nothing when it is a pass-through,
+and it buys one thing: features that need to wrap the whole tree in a provider -
+a query client, a theme, an auth context - can be enabled without you editing your code.
+
+The framework generator swaps the pass-through `_/app` for one that installs the provider,
+and the file that composes it is untouched because it already wires `AppProvider` unconditionally.
+
+Toggling such a feature on or off never changes your code.
+A plain shell would force you to add and remove the provider wiring by hand each time.
+
 ## Router Configuration
 
-The `routerFactory` function in `router.ts` file connects your root App component
+The `routerFactory` function in `router.ts` file connects your root app component
 and generated routes to the framework's native router.
 It accepts a callback receiving auto-generated route definitions from `KosmoJS`.
 
@@ -82,7 +119,7 @@ The callback must return two functions:
 ```tsx [React]
 import routerFactory, { createRouters } from "_/router";
 
-import app from "./App";
+import app from "./app";
 
 export default routerFactory((routes) => {
   const { clientRouter, serverRouter } = createRouters(routes, { app });
@@ -100,7 +137,7 @@ export default routerFactory((routes) => {
 ```tsx [SolidJS]
 import routerFactory, { createRouters } from "_/router";
 
-import app from "./App";
+import app from "./app";
 
 export default routerFactory((routes) => {
   const { clientRouter, serverRouter } = createRouters(routes, { app });
@@ -117,11 +154,15 @@ export default routerFactory((routes) => {
 
 ```ts [Vue]
 import routerFactory, { createRouters } from "_/router";
+import { appProvider } from "_/app";
 
-import app from "./App.vue";
+import app from "./app.vue";
 
 export default routerFactory((routes) => {
-  const { clientRouter, serverRouter } = createRouters(routes, { app });
+  const { clientRouter, serverRouter } = createRouters(routes, {
+    app,
+    use: [[appProvider, undefined]],
+  });
   return {
     clientRouter() {
       return clientRouter()
@@ -136,7 +177,7 @@ export default routerFactory((routes) => {
 ```svelte [Svelte]
 import routerFactory, { createRouters } from "_/router";
 
-import app from "./App.svelte";
+import app from "./app.svelte";
 
 export default routerFactory((routes) => {
   const { clientRouter, serverRouter } = createRouters(routes, { app });
@@ -154,7 +195,7 @@ export default routerFactory((routes) => {
 ```tsx [MDX]
 import routerFactory, { createRouters } from "_/router";
 
-import app from "./App.mdx";
+import app from "./app.mdx";
 import { components } from "./components/mdx"
 
 export default routerFactory((routes) => {
@@ -171,7 +212,7 @@ export default routerFactory((routes) => {
 ```
 :::
 
-The generated `routes` are always wrapped inside your `App` component,
+The generated `routes` are always wrapped inside your `app` component,
 establishing the layout hierarchy.
 
 ## Application Entry
@@ -359,7 +400,7 @@ Under the hood:
 The generated `hydrate` and `mount` are conveniences that wire the router to the
 DOM the usual way - nothing more.
 
-If you need custom mounting (a different root resolution, an extra provider around the tree, your own hydration strategy),
-ignore them and build the component yourself: the entry only needs to render the
-router's component into `root`. Read the generated `_/entry/client` source to see
-exactly what they do, then substitute your own.
+If you need custom mounting, ignore them and build the component yourself:
+the entry only needs to render the router's component into `root`.
+
+Read the generated `_/entry/client` source to see exactly what they do, then substitute your own.

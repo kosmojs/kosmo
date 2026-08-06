@@ -179,14 +179,14 @@ but how a layout's data stays distinct from its child page's differs:
 ```tsx [React]
 // layout.tsx
 import { Outlet, useLoaderData } from "react-router";
-import fetchClients, { type ResponseT } from "_/fetch";
+import fetchClients from "_/fetch";
 
-export const loader = fetchClients["dashboard/data"].GET;
+const { GET } = fetchClients["dashboard/data"];
 
-type T = ResponseT["dashboard/data"]["GET"];
+export const loader = () => GET();
 
 export default function Layout() {
-  const data = useLoaderData<T>();
+  const data = useLoaderData();
   // ...
   return <Outlet />;
 }
@@ -215,22 +215,21 @@ export default Layout;
 ```
 
 ```vue [Vue]
-// layout.vue
+<!-- layout.vue -->
 <script lang="ts">
 import fetchClients from "_/fetch";
 
+const { GET } = fetchClients["dashboard/data"];
+
 // loader export lives in a plain <script> block
-export const loader = fetchClients["dashboard/data"].GET;
+export const loader = () => GET();
 </script>
 
 <script setup lang="ts">
 import { useLoaderData } from "_/use";
-import { type ResponseT } from "_/fetch";
-
-type T = ResponseT["dashboard/data"]["GET"];
 
 // a layout passes its path-qualified name to read its own data
-const data = useLoaderData<T>("dashboard/layout");
+const data = useLoaderData("dashboard/layout");
 </script>
 
 <template>
@@ -239,24 +238,23 @@ const data = useLoaderData<T>("dashboard/layout");
 ```
 
 ```svelte [Svelte]
-// layout.svelte
+<!-- layout.svelte -->
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
+const { GET } = fetchClients["dashboard/data"];
+
 // loader export lives in the module <script> block
-export const loader = fetchClients["dashboard/data"].GET;
+export const loader = () => GET();
 </script>
 
 <script lang="ts">
 import { useLoaderData } from "_/use";
-import type { ResponseT } from "_/fetch";
 
 let { children } = $props();
 
-type T = ResponseT["dashboard/data"]["GET"];
-
 // a layout passes its path-qualified name to read its own data
-const data = useLoaderData<T>("dashboard/layout");
+const data = useLoaderData("dashboard/layout");
 </script>
 
 <nav>{data.title}</nav>
@@ -270,7 +268,9 @@ const data = useLoaderData<T>("dashboard/layout");
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 
-export const loader = fetchClients["dashboard/data"].GET;
+const { GET } = fetchClients["dashboard/data"];
+
+export const loader = () => GET();
 
 export const Nav = () => {
   // a layout passes its path-qualified name to read its own data
@@ -285,14 +285,15 @@ export const Nav = () => {
 ```
 :::
 
-Across all frameworks the loader/preload runs before the layout renders,
-so its data is available immediately and shared across every child route
-without a duplicate fetch. The read is a hook (`useLoaderData` / `createAsync`)
-rather than a prop - `props` carries only `children`/`<Outlet />`. Keeping a
-layout's data distinct from its page's is automatic in React (per-route) and
-Solid (via the `query()` key); in Vue, Svelte, and MDX you pass the layout's
-path-qualified name (e.g. `"dashboard/layout"` for `pages/dashboard/layout.*`)
-to the hook.
+Loader/preload runs before the layout renders, so its data is available immediately
+and shared across every child route without a duplicate fetch.
+
+The read is a hook (`useLoaderData` / `createAsync`) rather than a prop -
+`props` carries only `children`/`<Outlet />`.
+
+Keeping a layout's data distinct from its page's is automatic in React (per-route)
+and Solid (via the `query()` key); in Vue, Svelte, and MDX you pass the layout's
+path-qualified name (e.g. `"dashboard/layout"` for `pages/dashboard/layout.*`) to the hook.
 
 ## Global Layout via App File
 
