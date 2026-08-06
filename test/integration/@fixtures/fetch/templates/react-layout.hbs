@@ -1,0 +1,21 @@
+import { Outlet } from "react-router";
+import { useLoaderData } from "react-router";
+import f from "_/fetch";
+import { formDataFactory } from "_/@testUtils";
+
+export const loader = () => {
+  return f["{{route}}"].{{method}}(
+    {{params}},
+    {
+      {{#each payload}}"{{key}}": {{val}},{{/each}}
+    },
+  );
+}
+
+export default function Layout() {
+  const data = useLoaderData();
+  return <>
+    <div id="{{file}}-data">{JSON.stringify(data)}</div>
+    <Outlet />
+  </>
+}

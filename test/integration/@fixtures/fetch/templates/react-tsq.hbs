@@ -1,0 +1,36 @@
+import { dehydrate, HydrationBoundary, useQuery } from "@tanstack/react-query";
+import { useLoaderData } from "react-router";
+import { getQueryClient } from "_/query";
+import f from "_/fetch";
+import { formDataFactory } from "_/@testUtils";
+
+const queryOptions = () => ({
+  queryKey: ["{{route}}:{{loaderHash}}"],
+  queryFn: () => {
+    return f["{{route}}"].{{method}}(
+      {{params}},
+      {
+        {{#each payload}}"{{key}}": {{val}},{{/each}}
+      },
+    );
+  },
+});
+
+export const loader = async () => {
+  const client = getQueryClient();
+  await client.prefetchQuery(queryOptions());
+  return dehydrate(client);
+};
+
+function Reader() {
+  const { data } = useQuery(queryOptions());
+  return <div id="{{file}}-data">{JSON.stringify(data)}</div>;
+}
+
+export default function Page() {
+  return (
+    <HydrationBoundary state={useLoaderData()}>
+      <Reader />
+    </HydrationBoundary>
+  );
+}

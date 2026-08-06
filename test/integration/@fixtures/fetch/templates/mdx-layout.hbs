@@ -1,0 +1,17 @@
+import f from "_/fetch";
+import { formDataFactory } from "_/@testUtils";
+import { useLoaderData } from "_/use";
+
+export const loader = () => {
+  return f["{{route}}"].{{method}}(
+    {{params}},
+    {
+      {{#each payload}}"{{key}}": {{val}},{{/each}}
+    },
+  );
+}
+
+export const data = () => JSON.stringify(useLoaderData("{{path}}/layout"));
+
+<div id="{{file}}-data">{data()}</div>
+{props.children}

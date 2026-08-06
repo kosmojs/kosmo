@@ -1,0 +1,20 @@
+<script module lang="ts">
+import f from "_/fetch";
+import { formDataFactory } from "_/@testUtils";
+
+export const loader = () => {
+  return f["{{route}}"].{{method}}(
+    {{params}},
+    {
+      {{#each payload}}"{{key}}": {{val}},{{/each}}
+    },
+  );
+}
+</script>
+
+<script lang="ts">
+import { useLoaderData } from "_/use";
+const data = useLoaderData();
+</script>
+
+<div id="{{file}}-data">{JSON.stringify(data)}</div>

@@ -1,0 +1,39 @@
+<script lang="ts">
+import { dehydrate } from "@tanstack/vue-query";
+import { getQueryClient } from "_/query";
+import f from "_/fetch";
+import { formDataFactory } from "_/@testUtils";
+
+export const queryOptions = () => ({
+  queryKey: ["{{route}}:{{loaderHash}}"],
+  queryFn: () => {
+    return f["{{route}}"].{{method}}(
+      {{params}},
+      {
+        {{#each payload}}"{{key}}": {{val}},{{/each}}
+      },
+    );
+  },
+});
+
+export const loader = async () => {
+  const client = getQueryClient();
+  await client.prefetchQuery(queryOptions());
+  return dehydrate(client);
+};
+</script>
+
+<script setup lang="ts">
+import { hydrate, useQuery } from "@tanstack/vue-query";
+import { getQueryClient } from "_/query";
+import { useLoaderData } from "_/use";
+
+hydrate(getQueryClient(), useLoaderData("{{path}}/layout"));
+
+const { data } = useQuery(queryOptions());
+</script>
+
+<template>
+<div id="{{file}}-data" v-html="JSON.stringify(data)"></div>
+<RouterView />
+</template>

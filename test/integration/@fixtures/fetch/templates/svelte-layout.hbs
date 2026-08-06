@@ -1,0 +1,23 @@
+<script module lang="ts">
+import f from "_/fetch";
+import { formDataFactory } from "_/@testUtils";
+
+export const loader = () => {
+  return f["{{route}}"].{{method}}(
+    {{params}},
+    {
+      {{#each payload}}"{{key}}": {{val}},{{/each}}
+    },
+  );
+}
+</script>
+
+<script lang="ts">
+import type { Snippet } from "svelte";
+import { useLoaderData } from "_/use";
+let { children }: { children: Snippet } = $props();
+const data = useLoaderData("{{path}}/layout");
+</script>
+
+<div id="{{file}}-data">{JSON.stringify(data)}</div>
+{@render children()}

@@ -1,15 +1,15 @@
 import type { FRAMEWORKS } from "@kosmojs/core";
 
-// Filename of the root App wrapper per framework.
-// App wraps every route, so overwriting it here covers pages produced by the
-// harness templateFactory, by the generator default template, and by the
-// generator `templates` config alike.
+// Filename of the root app wrapper per framework.
+// The app wraps every route and composes AppProvider from _/app,
+// so overwriting it here covers pages produced by the harness templateFactory,
+// by the generator default template, and by the generator `templates` config alike.
 export const APP_FILE: Record<keyof typeof FRAMEWORKS, string> = {
-  react: "App.tsx",
-  solid: "App.tsx",
-  vue: "App.vue",
-  svelte: "App.svelte",
-  mdx: "App.mdx",
+  react: "app.tsx",
+  solid: "app.tsx",
+  vue: "app.vue",
+  svelte: "app.svelte",
+  mdx: "app.mdx",
 };
 
 // Each probe sets window.__APP_RENDERED__ from a mount/effect callback, which
@@ -21,31 +21,40 @@ export const appMap: Record<keyof typeof FRAMEWORKS, string> = {
   react: `
 import { useEffect } from "react";
 import { Outlet } from "react-router";
+import { AppProvider } from "_/app";
 
-export default function App() {
+export default function app() {
   useEffect(() => {
     window.__APP_RENDERED__ = true;
   }, []);
 
-  return <Outlet />;
+  return (
+    <AppProvider>
+      <Outlet />
+    </AppProvider>
+  );
 }
 `.trimStart(),
 
   solid: `
 import { onMount, type ParentComponent } from "solid-js";
+import { AppProvider } from "_/app";
 
-export default function App(props) {
+const app: ParentComponent = (props) => {
   onMount(() => {
     window.__APP_RENDERED__ = true;
   });
 
-  return props.children;
+  return <AppProvider>{props.children}</AppProvider>;
 };
+
+export default app;
 `.trimStart(),
 
   vue: `
 <script setup lang="ts">
 import { onMounted } from "vue";
+import { AppProvider } from "_/app";
 
 onMounted(() => {
   window.__APP_RENDERED__ = true;
@@ -53,12 +62,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <RouterView />
+  <AppProvider>
+    <RouterView />
+  </AppProvider>
 </template>
 `.trimStart(),
 
   svelte: `
 <script lang="ts">
+  import { AppProvider } from "_/app";
   import type { Snippet } from "svelte";
 
   let { children }: { children: Snippet } = $props();
@@ -68,11 +80,14 @@ onMounted(() => {
   });
 </script>
 
-{@render children()}
+<AppProvider>
+  {@render children()}
+</AppProvider>
 `.trimStart(),
 
   mdx: `
 import { useEffect } from "preact/hooks";
+import { AppProvider } from "_/app";
 
 export const RenderingProbe = () => {
   useEffect(() => {
@@ -83,6 +98,6 @@ export const RenderingProbe = () => {
 
 <RenderingProbe />
 
-{props.children}
+<AppProvider>{props.children}</AppProvider>
 `.trimStart(),
 };

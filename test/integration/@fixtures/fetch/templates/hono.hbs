@@ -1,0 +1,12 @@
+import { defineRoute } from "_/api";
+
+export default defineRoute(({ {{#each definitions}}{{method}}, {{/each}} }) => [
+  {{#each definitions}}
+  {{method}}<{{type}}>((ctx) => {
+    return ctx.json({
+      ...ctx.validated,
+      requestOrigin: ctx.req.header("x-request-origin"),
+    });
+  }),
+  {{/each}}
+]);

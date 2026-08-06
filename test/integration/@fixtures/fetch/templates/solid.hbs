@@ -1,0 +1,22 @@
+import { Suspense } from "solid-js";
+import { query, createAsync } from "@solidjs/router";
+import f from "_/fetch";
+import { formDataFactory } from "_/@testUtils";
+
+const loader = () => {
+  return f["{{route}}"].{{method}}(
+    {{params}},
+    {
+      {{#each payload}}"{{key}}": {{val}},{{/each}}
+    },
+  );
+}
+
+const getData = query(loader, "{{route}}:{{loaderHash}}");
+
+export default function Page() {
+  const data = createAsync(() => getData());
+  return <Suspense>
+    <div id="{{file}}-data">{JSON.stringify(data())}</div>
+  </Suspense>
+}

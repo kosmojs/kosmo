@@ -1,0 +1,27 @@
+import { Suspense } from "solid-js";
+import { useQuery } from "@tanstack/solid-query";
+import { getQueryClient } from "_/query";
+import f from "_/fetch";
+import { formDataFactory } from "_/@testUtils";
+
+const queryOptions = () => ({
+  queryKey: ["{{route}}:{{loaderHash}}"],
+  queryFn: () => {
+    return f["{{route}}"].{{method}}(
+      {{params}},
+      {
+        {{#each payload}}"{{key}}": {{val}},{{/each}}
+      },
+    );
+  },
+});
+
+export const preload = () => getQueryClient().prefetchQuery(queryOptions());
+
+export default function Layout(props) {
+  const query = useQuery(() => queryOptions());
+  return <Suspense>
+    <div id="{{file}}-data">{JSON.stringify(query.data)}</div>
+    {props.children}
+  </Suspense>
+}

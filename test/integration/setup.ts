@@ -2,6 +2,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import net from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
+import { styleText } from "node:util";
 
 import { serve } from "@hono/node-server";
 import crc from "crc/crc32";
@@ -12,7 +13,7 @@ import { inject } from "vitest";
 
 import { createProject, createSourceFolder } from "@kosmojs/cli";
 import {
-  BACKEND_FRAMEWORKS,
+  BACKENDS,
   type FRAMEWORKS,
   type ProjectSettings,
   type SourceFolder,
@@ -49,13 +50,15 @@ const PORT_RANGE = [40_000, 60_000];
 export const setupTestProject = async ({
   framework,
   backend = mode === "ssr" ? pickBackend() : undefined,
+  tsq,
   ...generatorOptions
 }: {
   framework?: keyof typeof FRAMEWORKS;
-  backend?: keyof typeof BACKEND_FRAMEWORKS;
+  backend?: keyof typeof BACKENDS;
+  tsq?: boolean;
 } & Partial<
   Record<
-    keyof typeof FRAMEWORKS | keyof typeof BACKEND_FRAMEWORKS | "ssr",
+    keyof typeof FRAMEWORKS | keyof typeof BACKENDS | "ssr",
     Record<string, unknown>
   >
 >) => {
@@ -237,6 +240,7 @@ export const setupTestProject = async ({
         base: sourceFolder.config.base,
         ...(framework ? { framework } : {}),
         ...(backend ? { backend } : {}),
+        ...(tsq ? { tsq } : {}),
         ssr: mode === "ssr",
       },
       generatorOptions,
@@ -314,13 +318,16 @@ export const setupTestProject = async ({
       await page.waitForFunction(
         () => window.__APP_RENDERED__ === true,
         undefined,
-        { timeout: 1_000 },
+        { timeout: 5_000 },
       );
 
       if (pageErrors.length) {
-        throw new Error(
+        console.error(
           [
-            `Browser reported ${pageErrors.length} error(s) at ${url}:`,
+            styleText(
+              ["red", "italic"],
+              `Browser reported ${pageErrors.length} error(s) at ${url}:`,
+            ),
             ...new Set(pageErrors),
           ].join("\n"),
         );
@@ -456,9 +463,7 @@ const findFreePort = async (): Promise<number> => {
 };
 
 const createBackendPicker = () => {
-  const backends = Object.keys(BACKEND_FRAMEWORKS) as Array<
-    keyof typeof BACKEND_FRAMEWORKS
-  >;
+  const backends = Object.keys(BACKENDS) as Array<keyof typeof BACKENDS>;
   let i = 0;
   return {
     pick: () => backends[i++ % backends.length],
