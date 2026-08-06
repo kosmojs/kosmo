@@ -83,6 +83,7 @@ export const createProject = async (
       "@kosmojs/cli": SELF_VERSION,
       "@kosmojs/dev": SELF_VERSION,
       "@types/node": self.devDependencies["@types/node"],
+      vite: self.devDependencies["vite"],
       ...assets?.devDependencies,
     },
   };
