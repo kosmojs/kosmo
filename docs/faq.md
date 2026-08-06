@@ -732,6 +732,26 @@ hook. Types flow through these abstractions automatically. Render-time patterns
 on the client.
 [Details ›](/fetch/integration)
 
+#### How do I get a route's response type on the client?
+You usually don't need to - awaiting a method already gives a typed result
+(`const user = await fetchClients["users"].GET([123])` types `user` from the route's response).
+For out-of-band typing - a `createAsync` accessor, a `useLoaderData()` result,
+a prop, a shared helper - import `ResponseT` from `_/fetch`, keyed by route name then method:
+`ResponseT["users"]["GET"]`.
+[Details ›](/fetch/type-safety#response-types)
+
+#### Why is my route missing from `ResponseT`?
+`ResponseT` is opt-in: an entry exists only for routes whose handler declares a `response` type.
+A route with no `response` has no `ResponseT` entry - the same reason it has no response validation.
+Add a `response` to the handler and the entry (and validation) appear together.
+[Details ›](/fetch/type-safety#response-types)
+
+#### What's the response type when a handler returns multiple responses?
+A handler can declare a union of responses; `ResponseT` collapses to a union of their body types,
+dropping any variant with no body (no third tuple element, like a bare `[409]`).
+So `[201, "json", User] | [202, "json", { queued: true }] | [409]` yields `User | { queued: true }`.
+[Details ›](/fetch/type-safety#multiple-responses)
+
 ### Frontend
 
 #### Which frontend frameworks are supported?

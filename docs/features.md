@@ -8,7 +8,7 @@ head:
     - name: keywords
       content: typescript validation, vite multi-app, type-safe routing,
         fetch client generator, isomorphic fetch, ssr, streaming ssr, openapi 3.1,
-        solidjs, react, vue, mdx, koa, hono
+        tanstack query, react query, solidjs, react, vue, mdx, koa, hono
 ---
 
 Everything `KosmoJS` provides, at a glance.
@@ -189,6 +189,29 @@ pages/
 ```
 
 [Read more ›](/frontend/routing)
+
+## TanStack Query Integration
+
+Opt into TanStack Query per source folder and `KosmoJS` wires it for you - the
+query client is provided, per-request on the server and a singleton in the
+browser, with no setup in your app code. Enabling it is one option; using it is
+just importing `useQuery`.
+
+```ts [kosmo.config.ts]
+reactGenerator({ tanstack: { query: true } })
+```
+
+```tsx
+// then, in any component - the client is already provided
+const { data } = useQuery({ queryKey: ["users", id], queryFn: () => GET([id]) });
+```
+
+Works across `React`, `SolidJS`, `Vue`, and `Svelte`, each on its own official
+adapter. `KosmoJS` provides the seamless basic path and stays out of the way of
+the rest: advanced SSR warmup uses TanStack's own `dehydrate` and
+`HydrationBoundary` directly, not a wrapper that could drift from them.
+
+[Read more ›](/frontend/tanstack-query)
 
 ## Multiple Frameworks
 
