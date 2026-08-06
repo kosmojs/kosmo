@@ -1,41 +1,23 @@
-/* === GLOW BG === */
-.glow-bg {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-}
-.glow-bg .orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.15;
-}
-.glow-bg .orb-1 {
-  width: 600px;
-  height: 600px;
-  background: #4a5ba0;
-  top: -200px;
-  left: -100px;
-}
-.glow-bg .orb-2 {
-  width: 500px;
-  height: 500px;
-  background: #764ba2;
-  top: 30%;
-  right: -150px;
-  opacity: 0.1;
-}
-.glow-bg .orb-3 {
-  width: 400px;
-  height: 400px;
-  background: #a78bfa;
-  bottom: 10%;
-  left: 20%;
-  opacity: 0.08;
-}
+/*
+  KosmoJS docs - stylesheet entry.
 
+  Load order matters: tokens define the variables, the rest consume them.
+
+  landing.css rides along on every page rather than code-splitting with the
+  landing components. That costs a few KB on a docs page and buys a
+  deterministic cascade: these rules always land before any component's
+  scoped block. Every selector in it is scoped under `.landing`, so nothing
+  applies outside the landing itself.
+*/
+
+@import "./tokens.css";
+@import "./code.css";
+@import "./docs.css";
+@import "./landing/landing.css";
+
+/* ---------- markdown helpers ---------- */
+
+/* the K in "KosmoJS" when the name is set inline */
 .k {
   font-weight: 800;
 }
@@ -56,44 +38,7 @@
   white-space: nowrap !important;
 }
 
-.VPHero .image {
-  position: relative; /* create positioning context */
-  display: flex;
-  justify-content: center; /* center the <img> */
-  align-items: center; /* vertical centering too */
-}
-
-.VPHero .image::before {
-  content: "";
-  position: absolute;
-  inset: 0; /* stretch to wrapper */
-  margin: auto; /* center within wrapper */
-  width: 50%; /* bigger than the img */
-  height: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 50%;
-  filter: blur(100px);
-  z-index: 0;
-}
-
-.VPHero .image img {
-  position: relative;
-  z-index: 1; /* image above glow */
-  max-width: 100%; /* stays responsive */
-}
-
-.VPHero .tagline-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.2rem;
-}
-
-.VPHero .tagline-container > .headline {
-  font-size: 150%;
-  font-style: italic;
-  margin-bottom: 0.8rem;
-}
-
-.VPHero .tagline-container > span:not(.headline) {
-  white-space: nowrap;
+/* a centered call to action block, as used at the foot of About and Features */
+.vp-doc .text-center {
+  margin: 40px 0 8px;
 }

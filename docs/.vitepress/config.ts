@@ -13,6 +13,9 @@ export default defineConfig({
 
   lastUpdated: true,
 
+  // dark by default; the toggle still switches the whole site, code blocks included
+  appearance: "dark",
+
   // Force .html on all URLs
   cleanUrls: false,
 
@@ -42,6 +45,9 @@ export default defineConfig({
   },
 
   head: [
+    // scheme-aware mark; the SVG resolves light and dark itself
+    ["link", { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
+    ["link", { rel: "apple-touch-icon", href: "/apple-touch-icon.png" }],
     [
       "script",
       {
@@ -66,7 +72,7 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [llmstxt(), groupIconVitePlugin()],
+    plugins: [llmstxt() as never, groupIconVitePlugin() as never],
   },
 
   markdown: {
@@ -114,7 +120,7 @@ export default defineConfig({
           items: [
             {
               text: "Intro",
-              docFooterText: "🛣 Routing",
+              docFooterText: "Routing",
               link: "/routing/intro",
             },
             {
@@ -197,16 +203,20 @@ export default defineConfig({
               link: "/frontend/layouts",
             },
             {
-              text: "Link Navigation",
-              link: "/frontend/link-navigation",
-            },
-            {
               text: "Data / Preload",
               link: "/frontend/data-preload",
             },
             {
               text: "Server-Side Render",
               link: "/frontend/server-side-render",
+            },
+            {
+              text: "TanStack Query",
+              link: "/frontend/tanstack-query",
+            },
+            {
+              text: "Link Navigation",
+              link: "/frontend/link-navigation",
             },
             {
               text: "Custom Templates",
@@ -283,6 +293,10 @@ export default defineConfig({
             {
               text: "Validation",
               link: "/fetch/validation",
+            },
+            {
+              text: "Type Safety",
+              link: "/fetch/type-safety",
             },
             {
               text: "Error Handling",

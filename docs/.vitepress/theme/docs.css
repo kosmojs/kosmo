@@ -1,0 +1,640 @@
+/*
+  KosmoJS docs - VitePress chrome and prose.
+
+  Goal: an internal page should look like the landing page kept reading. Same
+  background wash, same type pairing, same frames, same accents.
+
+  The one deliberate flourish is the sidebar: it is drawn as a source tree,
+  with a guide rail, connector ticks and path-prefixed section labels. The
+  framework's whole premise is that the directory tree is the route map, so
+  the navigation says the same thing the docs do.
+*/
+
+/* ---------- page shell ---------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/*
+  Ambient wash, same one the landing page carries. Negative z-index keeps it
+  above the body background and behind every piece of content.
+*/
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--kx-glow);
+}
+
+::selection {
+  background-color: var(--kx-accent-soft);
+}
+
+/* ---------- nav bar ---------- */
+
+.VPNavBar .title,
+.VPNavBar .content-body {
+  backdrop-filter: blur(12px);
+}
+
+.VPNavBar:not(.home) .divider-line {
+  background-color: var(--kx-line-soft);
+}
+
+.VPNavBarTitle .title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  font-family: var(--kx-font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  border-bottom: 0;
+}
+
+/* the mark comes from the nav-bar-title-before slot in Layout.vue */
+
+/* landing nav links are 15px / 400 - match them here */
+.VPNavBarMenu .VPNavBarMenuLink {
+  padding: 0 12px;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--kx-text-2);
+}
+
+.VPNavBarMenu .VPNavBarMenuLink:hover,
+.VPNavBarMenu .VPNavBarMenuLink.active {
+  color: var(--kx-text);
+}
+
+.VPNavBarMenu .VPNavBarMenuLink.active {
+  position: relative;
+}
+
+.VPNavBarMenu .VPNavBarMenuLink.active::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  bottom: 16px;
+  left: 12px;
+  height: 1px;
+  background-color: var(--kx-accent-line);
+}
+
+.VPNavBarSearch .VPNavBarSearchButton,
+.VPNavBarSearch .DocSearch-Button {
+  border: 1px solid var(--kx-line);
+  border-radius: 9px;
+  background-color: var(--kx-bg-lift);
+  font-family: var(--kx-font-mono);
+  font-size: 12.5px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.VPNavBarSearch .VPNavBarSearchButton:hover {
+  border-color: var(--kx-line-strong);
+}
+
+.VPNavBarSearch .VPNavBarSearchButton .keys kbd,
+.VPNavBarSearch .VPNavBarSearchButton .keys .key-cmd {
+  border-radius: 5px;
+  background-color: var(--kx-bg-sunk);
+  box-shadow: none;
+  font-family: var(--kx-font-mono);
+}
+
+.VPSocialLink {
+  color: var(--kx-text-3);
+}
+
+/* ---------- sidebar: the source tree ---------- */
+
+.VPSidebar {
+  border-right: 1px solid var(--kx-line-soft);
+}
+
+.VPSidebar .group + .group {
+  border-top: 1px solid var(--kx-line-soft);
+  padding-top: 16px;
+  margin-top: 4px;
+}
+
+/* section label reads as a path segment: "/ Routing" */
+.VPSidebarItem.level-0 > .item .text {
+  font-family: var(--kx-font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--kx-text-3);
+  transition: color 0.15s;
+}
+
+.VPSidebarItem.level-0 > .item .text::before {
+  content: "/";
+  margin-right: 7px;
+  color: var(--kx-accent-2);
+  opacity: 0.85;
+}
+
+.VPSidebarItem.level-0.has-active > .item .text,
+.VPSidebarItem.level-0 > .item:hover .text {
+  color: var(--kx-text);
+}
+
+.VPSidebarItem.level-0 > .item > .indicator {
+  display: none;
+}
+
+.VPSidebarItem.level-0 > .item .caret {
+  color: var(--kx-text-4);
+}
+
+/* the guide rail every child hangs off */
+.VPSidebarItem.level-0 > .items {
+  position: relative;
+  margin-left: 5px;
+  padding-left: 18px;
+  border-left: 1px solid var(--kx-line);
+}
+
+.VPSidebarItem.level-1 > .item {
+  position: relative;
+  margin: 1px -9px;
+  padding: 0 9px;
+  border-radius: 8px;
+  transition: background-color 0.15s;
+}
+
+.VPSidebarItem.level-1 > .item:hover {
+  background-color: var(--kx-line-soft);
+}
+
+.VPSidebarItem.level-1.is-active > .item {
+  background-color: var(--kx-accent-soft);
+}
+
+/* connector tick from the rail to the item */
+.VPSidebarItem.level-1 > .item > .indicator {
+  top: 50%;
+  bottom: auto;
+  left: -14px;
+  width: 14px;
+  height: 1px;
+  border-radius: 0;
+  background-color: var(--kx-line);
+  transition: background-color 0.15s;
+}
+
+.VPSidebarItem.level-1.is-active > .item > .indicator {
+  background-color: var(--kx-accent-2);
+}
+
+.VPSidebarItem.level-1 .link .text {
+  padding: 5px 0;
+  font-size: 14px;
+  color: var(--kx-text-3);
+  transition: color 0.15s;
+}
+
+.VPSidebarItem.level-1 > .item:hover .link .text {
+  color: var(--kx-text);
+}
+
+.VPSidebarItem.level-1.is-active .link .text {
+  font-weight: 500;
+  color: var(--kx-accent);
+}
+
+/* a top-level entry with no children (OpenAPI) - keep it on the same grid */
+.VPSidebarItem.level-0.is-link > .item .link .text {
+  color: var(--kx-text-2);
+}
+
+/* ---------- local nav (mobile) ---------- */
+
+.VPLocalNav {
+  border-bottom: 1px solid var(--kx-line-soft);
+  backdrop-filter: blur(12px);
+  background-color: color-mix(in srgb, var(--kx-bg-sunk) 84%, transparent);
+}
+
+.VPLocalNavOutlineDropdown button {
+  font-family: var(--kx-font-mono);
+  font-size: 12.5px;
+}
+
+/* ---------- document width ---------- */
+
+.VPDoc .container {
+  margin: 0 auto;
+}
+
+.VPDoc:not(.has-sidebar) .content {
+  max-width: 960px;
+}
+
+/*
+  Wider measure than the stock 688px: these pages carry a lot of code, and a
+  snippet that has to scroll horizontally is a snippet nobody reads.
+*/
+.VPContent .VPDoc.has-aside .content-container {
+  max-width: 768px;
+}
+
+.VPContent .VPDoc:not(.has-aside) .content-container {
+  max-width: 900px;
+}
+
+/* ---------- prose ---------- */
+
+.vp-doc {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--kx-text-2);
+}
+
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4,
+.vp-doc h5,
+.vp-doc h6 {
+  font-family: var(--kx-font-display);
+  color: var(--kx-text);
+}
+
+.vp-doc h1 {
+  margin: 6px 0 22px;
+  font-size: clamp(32px, 4.4vw, 42px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
+
+/*
+  Section rule: a hairline that starts at the accent and fades out, replacing
+  the flat full-width divider the default theme draws above every h2.
+*/
+.vp-doc h2 {
+  margin: 60px 0 20px;
+  border-top: 0;
+  padding-top: 26px;
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  background-image: linear-gradient(
+    90deg,
+    var(--kx-accent-line),
+    var(--kx-line) 34%,
+    transparent 78%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: 0 0;
+}
+
+.vp-doc h3 {
+  margin: 38px 0 12px;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+
+.vp-doc h4 {
+  margin: 28px 0 10px;
+  font-size: 16.5px;
+  font-weight: 600;
+}
+
+.vp-doc .header-anchor {
+  color: var(--kx-text-4);
+  font-weight: 400;
+}
+
+.vp-doc p,
+.vp-doc li {
+  line-height: 1.75;
+}
+
+.vp-doc p {
+  margin: 18px 0;
+}
+
+.vp-doc strong,
+.vp-doc b {
+  color: var(--kx-text);
+  font-weight: 600;
+}
+
+.vp-doc a {
+  color: var(--kx-accent);
+  font-weight: 400;
+  text-decoration: underline;
+  text-decoration-color: var(--kx-accent-line);
+  text-underline-offset: 3px;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+
+.vp-doc a:hover {
+  color: var(--kx-accent-hi);
+  text-decoration-color: currentColor;
+}
+
+.vp-doc ul,
+.vp-doc ol {
+  padding-left: 22px;
+}
+
+.vp-doc li + li {
+  margin-top: 7px;
+}
+
+.vp-doc ul > li::marker {
+  color: var(--kx-accent-2);
+}
+
+.vp-doc ol > li::marker {
+  color: var(--kx-text-4);
+  font-family: var(--kx-font-mono);
+  font-size: 0.9em;
+}
+
+.vp-doc blockquote {
+  margin: 22px 0;
+  border-left: 2px solid var(--kx-accent-line);
+  padding-left: 18px;
+  color: var(--kx-text-3);
+}
+
+.vp-doc blockquote > p {
+  font-size: 15.5px;
+}
+
+.vp-doc hr {
+  margin: 44px 0;
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    var(--kx-line),
+    var(--kx-line) 40%,
+    transparent
+  );
+}
+
+.vp-doc img {
+  border-radius: var(--kx-radius-sm);
+}
+
+/* ---------- tables ---------- */
+
+.vp-doc table {
+  margin: 26px 0;
+  font-size: 14.5px;
+}
+
+.vp-doc tr,
+.vp-doc tr:nth-child(2n) {
+  border-top: 0;
+  background-color: transparent;
+}
+
+.vp-doc th,
+.vp-doc td {
+  border: 0;
+  border-bottom: 1px solid var(--kx-line-soft);
+  padding: 11px 18px 11px 0;
+  vertical-align: top;
+}
+
+.vp-doc th {
+  font-family: var(--kx-font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kx-text-4);
+  border-bottom-color: var(--kx-line);
+}
+
+.vp-doc tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* ---------- custom blocks ---------- */
+
+.vp-doc .custom-block {
+  margin: 26px 0;
+  border: 1px solid var(--kx-line);
+  border-left: 2px solid var(--vp-c-brand-1);
+  border-radius: var(--kx-radius-sm);
+  padding: 16px 18px 4px;
+  background-color: var(--kx-bg-lift);
+  color: var(--kx-text-2);
+}
+
+.vp-doc .custom-block .custom-block-title {
+  font-family: var(--kx-font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.vp-doc .custom-block.tip {
+  border-left-color: var(--kx-teal);
+  background-color: var(--vp-c-tip-soft);
+}
+
+.vp-doc .custom-block.info,
+.vp-doc .custom-block.note {
+  border-left-color: var(--kx-blue);
+  background-color: var(--vp-c-note-soft);
+}
+
+.vp-doc .custom-block.warning {
+  border-left-color: var(--kx-yellow);
+  background-color: var(--vp-c-warning-soft);
+}
+
+.vp-doc .custom-block.danger,
+.vp-doc .custom-block.caution {
+  border-left-color: var(--kx-red);
+  background-color: var(--vp-c-danger-soft);
+}
+
+.vp-doc .custom-block.details {
+  border-left-color: var(--kx-line-strong);
+  background-color: var(--kx-bg-lift);
+}
+
+.vp-doc .custom-block.details summary {
+  font-family: var(--kx-font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--kx-text-2);
+}
+
+/* code inside a callout should not fight the callout tint */
+.vp-doc .custom-block div[class*="language-"] {
+  box-shadow: none;
+}
+
+/* ---------- aside / on this page ---------- */
+
+.VPDocAsideOutline .content {
+  border-left: 1px solid var(--kx-line);
+  padding-left: 16px;
+}
+
+.VPDocAsideOutline .outline-title {
+  font-family: var(--kx-font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kx-text-4);
+}
+
+.VPDocAsideOutline .outline-link {
+  font-size: 13.5px;
+  line-height: 1.5;
+  padding: 4px 0;
+  color: var(--kx-text-3);
+  transition: color 0.15s;
+}
+
+.VPDocAsideOutline .outline-link:hover,
+.VPDocAsideOutline .outline-link.active {
+  color: var(--kx-text);
+}
+
+.VPDocAsideOutline .outline-marker {
+  background-color: var(--kx-accent-2);
+}
+
+/* ---------- page footer: pager and timestamp ---------- */
+
+.VPDocFooter {
+  margin-top: 56px;
+}
+
+.VPDocFooter .prev-next {
+  border-top: 1px solid var(--kx-line-soft);
+  padding-top: 28px;
+  gap: 16px;
+}
+
+.VPDocFooter .pager-link {
+  border: 1px solid var(--kx-line);
+  border-radius: var(--kx-radius-sm);
+  background-color: var(--kx-bg-lift);
+  padding: 14px 18px;
+  transition: border-color 0.18s, transform 0.18s var(--kx-ease);
+}
+
+.VPDocFooter .pager-link:hover {
+  border-color: var(--kx-accent-line);
+  transform: translateY(-2px);
+}
+
+.VPDocFooter .pager-link .desc {
+  font-family: var(--kx-font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kx-text-4);
+}
+
+.VPDocFooter .pager-link .title {
+  font-family: var(--kx-font-display);
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--kx-accent);
+}
+
+.VPLastUpdated,
+.VPDocFooter .edit-info {
+  font-family: var(--kx-font-mono);
+  font-size: 12px;
+  color: var(--kx-text-4);
+}
+
+/* ---------- site footer ---------- */
+
+/* doubled class - the default theme sets these from a scoped rule of equal weight */
+.VPFooter.VPFooter {
+  border-top: 1px solid var(--kx-line-soft);
+  background-color: var(--kx-bg-sunk);
+  padding: 34px 24px;
+}
+
+.VPFooter .message,
+.VPFooter .copyright {
+  font-family: var(--kx-font-mono);
+  font-size: 12.5px;
+  line-height: 1.9;
+  color: var(--kx-text-4);
+}
+
+/* ---------- search modal ---------- */
+
+.VPLocalSearchBox .search-bar {
+  border: 1px solid var(--kx-line);
+  border-radius: var(--kx-radius-sm);
+  background-color: var(--kx-bg-lift);
+}
+
+.VPLocalSearchBox .search-input {
+  font-family: var(--kx-font-text);
+}
+
+.VPLocalSearchBox .result {
+  border: 1px solid var(--kx-line-soft);
+  border-radius: var(--kx-radius-sm);
+}
+
+.VPLocalSearchBox .titles .title.main {
+  font-weight: 600;
+}
+
+/* ---------- badges ---------- */
+
+.VPBadge {
+  border-radius: 6px;
+  font-family: var(--kx-font-mono);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ---------- focus and motion ---------- */
+
+.VPContent :focus-visible,
+.VPNav :focus-visible,
+.VPSidebar :focus-visible {
+  outline: 2px solid var(--kx-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .VPDocFooter .pager-link:hover {
+    transform: none;
+  }
+}

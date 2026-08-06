@@ -1,0 +1,202 @@
+/*
+  KosmoJS docs - design tokens.
+
+  Single source of truth for the whole site. The landing sections and the
+  VitePress default theme both read the `--kx-*` tokens defined here, so the
+  two never drift apart.
+
+  Light values live on `:root`, dark values on `.dark`, which is the VitePress
+  convention. "Dark first" is a runtime default (`appearance: "dark"` in
+  config.ts), not a cascade trick - so the light scheme stays a first-class
+  citizen and every surface, code blocks included, flips with it.
+
+  Role mapping, both schemes:
+
+    sunk  -> app chrome (nav, sidebar, footer)  - recedes
+    bg    -> the page itself
+    lift  -> cards, panels, elevated blocks     - comes forward
+    code  -> every code surface                 - the deepest / brightest one
+*/
+
+:root {
+  /* ---------- Catppuccin Latte (light scheme) ---------- */
+
+  --kx-bg: #eff1f5;
+  --kx-bg-sunk: #e6e9ef;
+  --kx-bg-lift: #f7f8fb;
+  --kx-bg-inset: #e3e6ee;
+
+  --kx-line: #dcdfe9;
+  --kx-line-soft: #e5e8ef;
+  --kx-line-strong: #c4c8d6;
+
+  --kx-text: #4c4f69;
+  --kx-text-2: #5c5f77;
+  --kx-text-3: #7c7f93;
+  --kx-text-4: #9ca0b0;
+
+  --kx-accent: #8839ef;
+  --kx-accent-hi: #7287fd;
+  --kx-accent-2: #179299;
+  --kx-accent-soft: rgba(136, 57, 239, 0.09);
+  --kx-accent-line: rgba(136, 57, 239, 0.28);
+
+  --kx-blue: #1e66f5;
+  --kx-green: #40a02b;
+  --kx-yellow: #df8e1d;
+  --kx-peach: #fe640b;
+  --kx-red: #d20f39;
+  --kx-teal: #179299;
+  --kx-mauve: #8839ef;
+
+  /* ambient wash painted behind the page, keyed off the accents */
+  --kx-glow:
+    radial-gradient(720px 460px at 82% -10%, rgba(136, 57, 239, 0.07), transparent 70%),
+    radial-gradient(560px 400px at 4% 12%, rgba(30, 102, 245, 0.06), transparent 70%);
+
+  --kx-shadow-card: 0 1px 2px rgba(76, 79, 105, 0.05), 0 18px 40px -32px rgba(76, 79, 105, 0.4);
+  --kx-shadow-code: 0 1px 2px rgba(76, 79, 105, 0.06), 0 26px 50px -38px rgba(76, 79, 105, 0.45);
+
+  /* ---------- shape and motion ---------- */
+
+  --kx-radius: 14px;
+  --kx-radius-sm: 9px;
+  --kx-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ---------- type ---------- */
+
+  /* display face: headings, brand, buttons - carries the personality */
+  --kx-font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  /* text face: prose and UI - variable Inter ships with VitePress */
+  --kx-font-text: Inter, ui-sans-serif, system-ui, sans-serif;
+  /* utility face: code, labels, eyebrows, tabs, paths */
+  --kx-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+.dark {
+  /* ---------- Catppuccin Mocha (dark scheme, the default) ---------- */
+
+  --kx-bg: #181825;
+  --kx-bg-sunk: #13131f;
+  --kx-bg-lift: #1e1e2e;
+  --kx-bg-inset: #11111b;
+
+  --kx-line: #272739;
+  --kx-line-soft: #202030;
+  --kx-line-strong: #3a3a4f;
+
+  --kx-text: #cdd6f4;
+  --kx-text-2: #bac2de;
+  --kx-text-3: #a6adc8;
+  --kx-text-4: #7f849c;
+
+  --kx-accent: #cba6f7;
+  --kx-accent-hi: #b4befe;
+  --kx-accent-2: #94e2d5;
+  --kx-accent-soft: rgba(203, 166, 247, 0.11);
+  --kx-accent-line: rgba(203, 166, 247, 0.35);
+
+  --kx-blue: #89b4fa;
+  --kx-green: #a6e3a1;
+  --kx-yellow: #f9e2af;
+  --kx-peach: #fab387;
+  --kx-red: #f38ba8;
+  --kx-teal: #94e2d5;
+  --kx-mauve: #cba6f7;
+
+  --kx-glow:
+    radial-gradient(720px 460px at 82% -10%, rgba(203, 166, 247, 0.13), transparent 70%),
+    radial-gradient(560px 400px at 4% 12%, rgba(137, 180, 250, 0.09), transparent 70%);
+
+  --kx-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 24px 48px -34px rgba(0, 0, 0, 0.8);
+  --kx-shadow-code: 0 1px 2px rgba(0, 0, 0, 0.5), 0 34px 60px -40px rgba(0, 0, 0, 0.9);
+}
+
+/*
+  ---------- VitePress variable bridge ----------
+
+  Everything the default theme paints is re-pointed at the tokens above, so
+  restyling a surface means editing one token rather than hunting selectors.
+*/
+
+:root {
+  --vp-font-family-base: var(--kx-font-text);
+  --vp-font-family-mono: var(--kx-font-mono);
+
+  --vp-c-bg: var(--kx-bg);
+  --vp-c-bg-alt: var(--kx-bg-sunk);
+  --vp-c-bg-soft: var(--kx-bg-lift);
+  --vp-c-bg-elv: var(--kx-bg-lift);
+
+  --vp-c-divider: var(--kx-line);
+  --vp-c-border: var(--kx-line);
+  --vp-c-gutter: var(--kx-line);
+
+  --vp-c-text-1: var(--kx-text);
+  --vp-c-text-2: var(--kx-text-3);
+  --vp-c-text-3: var(--kx-text-4);
+
+  --vp-c-brand-1: var(--kx-accent);
+  --vp-c-brand-2: var(--kx-accent-hi);
+  --vp-c-brand-3: var(--kx-accent);
+  --vp-c-brand-soft: var(--kx-accent-soft);
+
+  --vp-c-default-1: var(--kx-text-3);
+  --vp-c-default-2: var(--kx-text-4);
+  --vp-c-default-3: var(--kx-line-strong);
+  --vp-c-default-soft: var(--kx-bg-lift);
+
+  --vp-c-tip-1: var(--kx-teal);
+  --vp-c-tip-2: var(--kx-teal);
+  --vp-c-tip-3: var(--kx-teal);
+  --vp-c-tip-soft: color-mix(in srgb, var(--kx-teal) 12%, transparent);
+
+  --vp-c-note-1: var(--kx-blue);
+  --vp-c-note-soft: color-mix(in srgb, var(--kx-blue) 12%, transparent);
+
+  --vp-c-warning-1: var(--kx-yellow);
+  --vp-c-warning-2: var(--kx-yellow);
+  --vp-c-warning-3: var(--kx-yellow);
+  --vp-c-warning-soft: color-mix(in srgb, var(--kx-yellow) 13%, transparent);
+
+  --vp-c-danger-1: var(--kx-red);
+  --vp-c-danger-2: var(--kx-red);
+  --vp-c-danger-3: var(--kx-red);
+  --vp-c-danger-soft: color-mix(in srgb, var(--kx-red) 12%, transparent);
+
+  --vp-c-caution-1: var(--kx-peach);
+  --vp-c-caution-soft: color-mix(in srgb, var(--kx-peach) 12%, transparent);
+
+  --vp-c-important-1: var(--kx-mauve);
+  --vp-c-important-soft: var(--kx-accent-soft);
+
+  --vp-c-sponsor: var(--kx-red);
+
+  --vp-nav-bg-color: color-mix(in srgb, var(--kx-bg) 78%, transparent);
+  --vp-sidebar-bg-color: var(--kx-bg-sunk);
+  --vp-local-nav-bg-color: var(--kx-bg-sunk);
+  --vp-backdrop-bg-color: color-mix(in srgb, var(--kx-bg-inset) 72%, transparent);
+
+  --vp-shadow-1: var(--kx-shadow-card);
+  --vp-shadow-2: var(--kx-shadow-card);
+  --vp-shadow-3: var(--kx-shadow-code);
+  --vp-shadow-4: var(--kx-shadow-code);
+  --vp-shadow-5: var(--kx-shadow-code);
+
+  --vp-button-brand-bg: var(--kx-accent);
+  --vp-button-brand-hover-bg: var(--kx-accent-hi);
+  --vp-button-brand-active-bg: var(--kx-accent);
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-text: var(--kx-bg-inset);
+  --vp-button-brand-hover-text: var(--kx-bg-inset);
+
+  --vp-custom-block-font-size: 15px;
+
+  /*
+    The mark's satellite reads this; its body rides on currentColor. Both
+    follow the scheme because the artwork is inlined rather than served
+    through an <img>.
+  */
+  --kosmo-accent: var(--kx-accent);
+}
