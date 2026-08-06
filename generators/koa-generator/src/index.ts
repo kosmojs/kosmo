@@ -7,7 +7,7 @@ import type { Options } from "./types";
 export default defineGenerator<Options>({
   meta: {
     name: "Koa",
-    slot: "api",
+    slot: "backend",
     types: ["@types/koa"],
   },
   dependencies: {

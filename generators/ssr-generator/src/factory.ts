@@ -52,7 +52,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
               : [];
           })
           .sort(sortRoutes),
-        apiGenerator: generators.some((e) => e.meta.slot === "api"),
+        apiGenerator: generators.some((e) => e.meta.slot === "backend"),
       };
 
       for (const [file, template] of [

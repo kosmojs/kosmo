@@ -17,8 +17,7 @@ export type GeneratorMeta = {
    * api/fetch generators always run first, ssr always run last.
    * User generators run in the order they were added.
    * */
-  slot?: "api" | "fetch" | "ssr" | "ssg";
-
+  slot?: "backend" | "fetch" | "ssr" | "ssg";
 
   /**
    * Enables type resolution for generators that require fully resolved type information.

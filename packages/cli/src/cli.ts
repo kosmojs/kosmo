@@ -9,7 +9,7 @@ import prompts, { type PromptObject } from "prompts";
 import { glob } from "tinyglobby";
 
 import {
-  BACKEND_FRAMEWORKS,
+  BACKENDS,
   defaults,
   FRAMEWORKS,
   type ProjectSettings,
@@ -145,7 +145,7 @@ const createFolder = async () => {
 
     for (const [key, values] of [
       ["framework", FRAMEWORKS],
-      ["backend", BACKEND_FRAMEWORKS],
+      ["backend", BACKENDS],
     ] as const) {
       if (options.values[key]) {
         assertNoError(() => {
@@ -195,7 +195,7 @@ const createFolder = async () => {
       message: "Backend Framework",
       onState,
       choices: [
-        ...Object.entries(BACKEND_FRAMEWORKS).map(([value, title]) => {
+        ...Object.entries(BACKENDS).map(([value, title]) => {
           return { value, title };
         }),
         { value: "none", title: "None (client-only folder)" },

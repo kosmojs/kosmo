@@ -4,14 +4,14 @@ import { createRequire } from "node:module";
 import { resolve } from "node:path";
 
 import {
-  type BACKEND_FRAMEWORKS,
+  type BACKENDS,
   DEFAULT_BACKEND,
   DEFAULT_DIST,
   DEFAULT_FRAMEWORK,
   DEFAULT_PORT,
   defaults,
   type FRAMEWORKS,
-  type GeneratorMeta,
+  type GeneratorSignature,
 } from "@kosmojs/core";
 import {
   fetchGenerator,
@@ -53,7 +53,7 @@ const SELF_VERSION = `^${self.version}`;
 
 type GeneratorOptions = Partial<
   Record<
-    keyof typeof FRAMEWORKS | keyof typeof BACKEND_FRAMEWORKS | "ssr",
+    keyof typeof FRAMEWORKS | keyof typeof BACKENDS | "ssr",
     Record<string, unknown>
   >
 >;

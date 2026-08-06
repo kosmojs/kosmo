@@ -114,7 +114,7 @@ export default async (
         ),
       );
 
-      const apiGenerator = generators.find((e) => e.meta.slot === "api");
+      const apiGenerator = generators.find((e) => e.meta.slot === "backend");
 
       // INFO: === build backend ===
       if (apiGenerator) {
@@ -243,7 +243,7 @@ export default async (
       teardownHandlers.push(viteServer.close);
     }
 
-    const apiGenerator = generators.find((e) => e.meta.slot === "api");
+    const apiGenerator = generators.find((e) => e.meta.slot === "backend");
 
     // INFO: === start backend server ===
     if (apiGenerator) {
@@ -412,17 +412,17 @@ const folderGenerators = (
   return [
     // core generator should run first
     coreGenerator(),
-    // then api generator
-    ...(baseGenerators.api ? [baseGenerators.api] : []),
-    // then fetch generator, only if api generator also enabled
-    ...(baseGenerators.fetch && baseGenerators.api
+    // then backend generator
+    ...(baseGenerators.backend ? [baseGenerators.backend] : []),
+    // then fetch generator, only if backend generator also enabled
+    ...(baseGenerators.fetch && baseGenerators.backend
       ? [baseGenerators.fetch]
       : []),
     // then user generators in the order they were added
     ...userGenerators,
-    // then ssr generator should run after user generators
+    // ssr generator should run after user generators
     ...(baseGenerators.ssr ? [baseGenerators.ssr] : []),
-    // and ssg generator should run last
+    // ssg generator should run after ssr generator
     ...(baseGenerators.ssg ? [baseGenerators.ssg] : []),
   ];
 };

@@ -7,7 +7,7 @@ import type { Options } from "./types";
 export default defineGenerator<Options>({
   meta: {
     name: "Hono",
-    slot: "api",
+    slot: "backend",
   },
   dependencies: {
     hono: self.devDependencies.hono,

@@ -2,7 +2,7 @@ import { cp } from "node:fs/promises";
 import { basename } from "node:path";
 import { styleText } from "node:util";
 
-import { BACKEND_FRAMEWORKS, FRAMEWORKS } from "@kosmojs/core";
+import { BACKENDS, FRAMEWORKS } from "@kosmojs/core";
 
 export type PackageJSON = {
   devPort?: number;
@@ -21,8 +21,9 @@ export type SourceFolder = {
   name: string;
   base: string;
   framework?: keyof typeof FRAMEWORKS | "none";
-  backend?: keyof typeof BACKEND_FRAMEWORKS | "none";
+  backend?: keyof typeof BACKENDS | "none";
   ssr?: boolean;
+  tsq?: boolean;
 };
 
 export const CREATE_OPTIONS = ["project", "folder"] as const;
@@ -152,7 +153,7 @@ export const printUsage = () => {
       .join(", ")} ${styleText("dim", "(omit for API-only folders)")}`,
     "",
     `  ${styleText("cyan", "--backend")} ${styleText("dim", "<framework>")}`,
-    `  Backend framework: ${Object.keys(BACKEND_FRAMEWORKS)
+    `  Backend framework: ${Object.keys(BACKENDS)
       .map((e) => styleText("yellow", e))
       .join(", ")} ${styleText("dim", "(omit for client-only folders)")}`,
     "",

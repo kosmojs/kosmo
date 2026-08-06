@@ -24,7 +24,7 @@ export enum FRAMEWORKS {
   mdx = "MDX",
 }
 
-export enum BACKEND_FRAMEWORKS {
+export enum BACKENDS {
   hono = "Hono",
   koa = "Koa",
 }
