@@ -1,3 +1,4 @@
+export { default as libApp } from "#templates/lib/app/app.svelte";
 export { default as libEntryClient } from "#templates/lib/entry/client.hbs";
 export { default as libEntryServer } from "#templates/lib/entry/server.hbs";
 export { default as libEnvD } from "#templates/lib/env.d";
@@ -10,7 +11,7 @@ export { default as libParams } from "#templates/lib/params.hbs";
 export { default as libRouter } from "#templates/lib/router";
 export { default as libSvelte } from "#templates/lib/svelte";
 export { default as libUse } from "#templates/lib/use";
-export { default as srcApp } from "#templates/src/App.svelte";
+export { default as srcApp } from "#templates/src/app.svelte";
 export { default as srcComponentsLink } from "#templates/src/components/Link.svelte";
 export { default as srcEntryClient } from "#templates/src/entry/client";
 export { default as srcEntryServer } from "#templates/src/entry/server";

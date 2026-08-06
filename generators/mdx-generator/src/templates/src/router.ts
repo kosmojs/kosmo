@@ -1,6 +1,6 @@
 import routerFactory, { createRouters } from "{{ createImport 'lib' 'router' }}";
 
-import app from "./App.mdx";
+import app from "./app.mdx";
 import { components } from "./components/mdx"
 
 export default routerFactory((routes) => {

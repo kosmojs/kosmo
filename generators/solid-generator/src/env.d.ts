@@ -5,6 +5,11 @@ declare module "{{ createImport 'libCore' }}" {
   export const pageRouteMap: ReturnType<PathMapper>;
 }
 
+declare module "{{ createImport 'lib' 'app' }}" {
+  import type { ParentComponent } from "solid-js";
+  export const AppProvider: ParentComponent;
+}
+
 declare module "{{ createImport 'lib' 'router' }}" {
   import type { JSX, ParentComponent } from "solid-js";
   import type { RouteDefinition } from "@solidjs/router";

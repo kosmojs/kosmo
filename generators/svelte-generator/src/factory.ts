@@ -135,7 +135,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
       for (const [file, template] of [
         ["pages/404.svelte", templates.srcPageSamples404],
         ["components/Link.svelte", templates.srcComponentsLink],
-        ["App.svelte", templates.srcApp],
+        ["app.svelte", templates.srcApp],
         ["router.ts", templates.srcRouter],
       ] as const) {
         await deploySrcFile(

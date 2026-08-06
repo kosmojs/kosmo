@@ -5,6 +5,11 @@ declare module "{{ createImport 'libCore' }}" {
   export const pageRouteMap: ReturnType<PathMapper>;
 }
 
+declare module "{{ createImport 'lib' 'app' }}" {
+  import type { Plugin } from "vue";
+  export const appProvider: Plugin;
+}
+
 declare module "{{ createImport 'lib' 'router' }}" {
   import type { App, Component } from "vue";
   import type { RouteRecordRaw } from "vue-router";

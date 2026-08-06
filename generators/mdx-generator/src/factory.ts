@@ -124,6 +124,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
       // deploy global lib files that does not change when routes updates
       for (const [file, template] of [
         ["env.d.ts", templates.libEnvD],
+        ["app.ts", templates.libApp],
         ["mdx.ts", templates.libMdx],
         ["use.ts", templates.libUse],
         ["ssg.ts", templates.libSsg],
@@ -140,7 +141,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         ["pages/404.mdx", templates.srcPageSamples404],
         ["components/Link.tsx", templates.srcComponentsLink],
         ["components/mdx.ts", templates.srcComponentsMdx],
-        ["App.mdx", templates.srcApp],
+        ["app.mdx", templates.srcApp],
         ["router.ts", templates.srcRouter],
       ] as const) {
         await deploySrcFile(

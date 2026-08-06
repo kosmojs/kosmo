@@ -1,3 +1,4 @@
+export { default as libApp } from "#templates/lib/app";
 export { default as libEntryClient } from "#templates/lib/entry/client.hbs";
 export { default as libEntryServer } from "#templates/lib/entry/server.hbs";
 export { default as libEnvD } from "#templates/lib/env.d";
@@ -11,7 +12,7 @@ export { default as libRouter } from "#templates/lib/router";
 export { default as libSsg } from "#templates/lib/ssg";
 export { default as libSsgRoutes } from "#templates/lib/ssg:routes.hbs";
 export { default as libUse } from "#templates/lib/use";
-export { default as srcApp } from "#templates/src/App.mdx";
+export { default as srcApp } from "#templates/src/app.mdx";
 export { default as srcComponentsLink } from "#templates/src/components/Link";
 export { default as srcComponentsMdx } from "#templates/src/components/mdx";
 export { default as srcEntryClient } from "#templates/src/entry/client";

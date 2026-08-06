@@ -5,6 +5,11 @@ declare module "{{ createImport 'libCore' }}" {
   export const pageRouteMap: ReturnType<PathMapper>;
 }
 
+declare module "{{ createImport 'lib' 'app' }}" {
+  import type { JSX } from "react";
+  export const AppProvider: (o: { children: JSX.Element }) => JSX.Element;
+}
+
 declare module "{{ createImport 'lib' 'router' }}" {
   import type { JSX, ComponentType } from "react";
   import type { RouteObject } from "react-router";

@@ -5,6 +5,11 @@ declare module "{{ createImport 'libCore' }}" {
   export const pageRouteMap: ReturnType<PathMapper>;
 }
 
+declare module "{{ createImport 'lib' 'app' }}" {
+  import type { Component } from "svelte";
+  export const AppProvider: Component;
+}
+
 declare module "{{ createImport 'lib' 'params' }}" {
   export type ParamsMap = Record<string, object>;
   export const paramNames: Record<string, Array<string>>;

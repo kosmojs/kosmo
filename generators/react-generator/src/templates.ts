@@ -1,3 +1,4 @@
+export { default as libApp } from "#templates/lib/app";
 export { default as libEntryClient } from "#templates/lib/entry/client.hbs";
 export { default as libEntryRoutePartial } from "#templates/lib/entry/routePartial.hbs";
 export { default as libEntryServer } from "#templates/lib/entry/server.hbs";
@@ -8,7 +9,7 @@ export { default as libPageSamplesStyles } from "#templates/lib/pageSamples/styl
 export { default as libPageSamplesWelcome } from "#templates/lib/pageSamples/welcome.hbs";
 export { default as libReact } from "#templates/lib/react";
 export { default as libRouter } from "#templates/lib/router";
-export { default as srcApp } from "#templates/src/App";
+export { default as srcApp } from "#templates/src/app";
 export { default as srcComponentsLink } from "#templates/src/components/Link";
 export { default as srcEntryClient } from "#templates/src/entry/client";
 export { default as srcEntryServer } from "#templates/src/entry/server";

@@ -1,3 +1,4 @@
+export { default as libApp } from "#templates/lib/app";
 export { default as libEntryClient } from "#templates/lib/entry/client.hbs";
 export { default as libEntryRoutePartial } from "#templates/lib/entry/routePartial.hbs";
 export { default as libEntryServer } from "#templates/lib/entry/server.hbs";
@@ -9,7 +10,7 @@ export { default as libPageSamplesWelcome } from "#templates/lib/pageSamples/wel
 export { default as libRouter } from "#templates/lib/router";
 export { default as libSolid } from "#templates/lib/solid";
 export { default as libUnwrap } from "#templates/lib/unwrap";
-export { default as srcApp } from "#templates/src/App";
+export { default as srcApp } from "#templates/src/app";
 export { default as srcComponentsLink } from "#templates/src/components/Link";
 export { default as srcEntryClient } from "#templates/src/entry/client";
 export { default as srcEntryServer } from "#templates/src/entry/server";

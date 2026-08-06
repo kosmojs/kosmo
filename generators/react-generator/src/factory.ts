@@ -123,7 +123,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
       for (const [file, template] of [
         ["pages/404.tsx", templates.srcPageSamples404],
         ["components/Link.tsx", templates.srcComponentsLink],
-        ["App.tsx", templates.srcApp],
+        ["app.tsx", templates.srcApp],
         ["router.ts", templates.srcRouter],
       ]) {
         await deploySrcFile(

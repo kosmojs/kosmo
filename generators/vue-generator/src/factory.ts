@@ -122,7 +122,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
       for (const [file, template] of [
         ["pages/404.vue", templates.srcPageSamples404],
         ["components/Link.vue", templates.srcComponentsLink],
-        ["App.vue", templates.srcApp],
+        ["app.vue", templates.srcApp],
         ["router.ts", templates.srcRouter],
       ]) {
         await deploySrcFile(

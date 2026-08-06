@@ -1,6 +1,6 @@
 import routerFactory, { createRouters } from "{{ createImport 'lib' 'router' }}";
 
-import app from "./App.svelte";
+import app from "./app.svelte";
 
 export default routerFactory((routes) => {
   const { clientRouter, serverRouter } = createRouters(routes, { app });

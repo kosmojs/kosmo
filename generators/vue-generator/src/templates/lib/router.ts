@@ -1,4 +1,10 @@
-import { type App, type Component, createApp, createSSRApp } from "vue";
+import {
+  type App,
+  type Component,
+  createApp,
+  createSSRApp,
+  type Plugin,
+} from "vue";
 import {
   createMemoryHistory,
   createRouter,
@@ -69,7 +75,13 @@ const installLoaderGuard = (router: RouterWithLoaderData) => {
 
 export const createRouters = (
   routes: Array<RouteRecordRaw>,
-  { app }: { app: Component },
+  {
+    app,
+    use,
+  }: {
+    app: Component;
+    use?: Array<[plugin: Plugin, options: object | undefined]>;
+  },
 ): {
   clientRouter: () => RouterFactoryReturn<Promise<App>>;
   serverRouter: (
@@ -93,6 +105,12 @@ export const createRouters = (
 
       component.use(router);
 
+      if (Array.isArray(use)) {
+        for (const [plugin, options] of use) {
+          component.use(plugin, options);
+        }
+      }
+
       return { component };
     },
 
@@ -114,6 +132,12 @@ export const createRouters = (
       await router.isReady();
 
       component.use(router);
+
+      if (Array.isArray(use)) {
+        for (const [plugin, options] of use) {
+          component.use(plugin, options);
+        }
+      }
 
       return { component, loaderData: router.__loaderData };
     },

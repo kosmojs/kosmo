@@ -1,3 +1,5 @@
+export { default as libApp } from "#templates/lib/app/app";
+export { default as libAppProvider } from "#templates/lib/app/provider.vue";
 export { default as libEntryClient } from "#templates/lib/entry/client.hbs";
 export { default as libEntryRoutePartial } from "#templates/lib/entry/routePartial.hbs";
 export { default as libEntryServer } from "#templates/lib/entry/server.hbs";
@@ -9,7 +11,7 @@ export { default as libPageSamplesWelcome } from "#templates/lib/pageSamples/wel
 export { default as libRouter } from "#templates/lib/router";
 export { default as libUnwrap } from "#templates/lib/unwrap";
 export { default as libUse } from "#templates/lib/use";
-export { default as srcApp } from "#templates/src/App.vue";
+export { default as srcApp } from "#templates/src/app.vue";
 export { default as srcComponentsLink } from "#templates/src/components/Link.vue";
 export { default as srcEntryClient } from "#templates/src/entry/client";
 export { default as srcEntryServer } from "#templates/src/entry/server";
