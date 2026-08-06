@@ -2,7 +2,7 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/koa-generator",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [
