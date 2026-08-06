@@ -5,7 +5,7 @@ const { rootEl, ready } = useReveal();
 </script>
 
 <template>
-  <section class="section" ref="rootEl" :class="{ 'is-ready': ready }">
+  <section class="section alt" ref="rootEl" :class="{ 'is-ready': ready }">
     <div class="wrap">
       <div class="section-head rise">
         <p class="eyebrow">what you get</p>

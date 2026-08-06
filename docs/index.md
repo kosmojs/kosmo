@@ -34,8 +34,47 @@ import SiteFooter from "./.vitepress/theme/landing/SiteFooter.vue";
 <Hero />
 <Problem />
 <SourceFolders />
-<CoreLoop />
 <Features />
+<CoreLoop>
+  <template #route>
+
+```ts [Hono: api/users/index.ts]
+import { defineRoute } from "_/api";
+
+export default defineRoute<"users">(({ POST }) => [
+  POST<{
+    json: {
+      name: string;
+      email: VRefine<string, { format: "email" }>;
+    };
+  }>(async (ctx) => {
+    const { name, email } = ctx.validated.json;  // validated, typed
+    return ctx.json(await createUser(name, email), 201);
+  }),
+]);
+```
+
+  </template>
+  <template #page>
+
+```tsx [React: pages/users/index.tsx]
+// import generated clients
+import fetchClients from "_/fetch";
+
+const { POST } = fetchClients["users"];
+
+export default function Page() {
+  const form = useForm({ name: "", email: "" });
+
+  // fully typed and validated client-side
+  const submit = () => POST([], { json: form.values });
+
+  return <UserForm form={form} onSubmit={submit} />;
+}
+```
+
+  </template>
+</CoreLoop>
 <Philosophy />
 <FinalCta />
 <SiteFooter />

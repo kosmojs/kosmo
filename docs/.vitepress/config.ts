@@ -72,7 +72,10 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [llmstxt() as never, groupIconVitePlugin() as never],
+    plugins: [
+      llmstxt() as never,
+      groupIconVitePlugin() as never,
+    ],
   },
 
   markdown: {

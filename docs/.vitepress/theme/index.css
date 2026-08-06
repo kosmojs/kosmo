@@ -3,6 +3,10 @@
 
   Load order matters: tokens define the variables, the rest consume them.
 
+  There is deliberately no code stylesheet here. Code blocks - on the landing
+  as much as in the docs - are painted by the default theme, so the only way
+  they can diverge is if someone adds one back.
+
   landing.css rides along on every page rather than code-splitting with the
   landing components. That costs a few KB on a docs page and buys a
   deterministic cascade: these rules always land before any component's
@@ -40,8 +44,4 @@
 /* a centered call to action block, as used at the foot of About and Features */
 .vp-doc .text-center {
   margin: 40px 0 8px;
-}
-
- .vp-code-group .tabs, .vp-code-block-title-bar {
-  border-radius: 0;
 }

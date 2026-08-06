@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import { useReveal } from "./reveal";
 
 const { rootEl, ready } = useReveal();
-
-const backend = ref<"koa" | "hono">("koa");
 </script>
 
 <template>
-      <section class="section alt" id="loop" ref="rootEl" :class="{ 'is-ready': ready }">
+      <section class="section" id="loop" ref="rootEl" :class="{ 'is-ready': ready }">
         <div class="wrap">
           <div class="section-head rise">
             <p class="eyebrow">connected apps, provisioned</p>
@@ -19,67 +16,13 @@ const backend = ref<"koa" | "hono">("koa");
 
           <div class="loop-cols rise">
             <!-- backend: the route -->
-            <div class="codecard">
-              <div class="panel-bar">
-                <span class="fbadge ts">TS</span>
-                <span class="tab">api/users/index.ts</span>
-                <div class="minitabs" role="tablist" aria-label="Backend framework">
-                  <button role="tab" :aria-selected="backend === 'koa'" @click="backend = 'koa'">Koa</button>
-                  <button role="tab" :aria-selected="backend === 'hono'" @click="backend = 'hono'">Hono</button>
-                </div>
-              </div>
-              <div class="codepane" v-show="backend === 'koa'">
-  <pre><code><span class="t-kw">import</span> { <span class="t-prop">defineRoute</span> } <span class="t-kw">from</span> <span class="t-str">"_/api"</span>;
-
-  <span class="t-kw">export default</span> <span class="t-fn">defineRoute</span>&lt;<span class="t-str">"users"</span>&gt;(({ <span class="t-prop">POST</span> }) =&gt; [
-    <span class="t-fn">POST</span>&lt;{
-      <span class="t-prop">json</span>: {
-        <span class="t-prop">name</span>: <span class="t-type">string</span>;
-        <span class="t-prop">email</span>: <span class="t-type">VRefine</span>&lt;<span class="t-type">string</span>, { <span class="t-prop">format</span>: <span class="t-str">"email"</span> }&gt;;
-      };
-    }&gt;(<span class="t-kw">async</span> (<span class="t-prop">ctx</span>) =&gt; {
-      <span class="t-kw">const</span> { <span class="t-prop">name</span>, <span class="t-prop">email</span> } = <span class="t-prop">ctx</span>.<span class="t-prop">validated</span>.<span class="t-prop">json</span>;  <span class="t-com">// validated, typed</span>
-      <span class="t-prop">ctx</span>.<span class="t-prop">body</span> = <span class="t-kw">await</span> <span class="t-fn">createUser</span>(<span class="t-prop">name</span>, <span class="t-prop">email</span>);
-    }),
-  ]);</code></pre>
-              </div>
-              <div class="codepane" v-show="backend === 'hono'">
-  <pre><code><span class="t-kw">import</span> { <span class="t-prop">defineRoute</span> } <span class="t-kw">from</span> <span class="t-str">"_/api"</span>;
-
-  <span class="t-kw">export default</span> <span class="t-fn">defineRoute</span>&lt;<span class="t-str">"users"</span>&gt;(({ <span class="t-prop">POST</span> }) =&gt; [
-    <span class="t-fn">POST</span>&lt;{
-      <span class="t-prop">json</span>: {
-        <span class="t-prop">name</span>: <span class="t-type">string</span>;
-        <span class="t-prop">email</span>: <span class="t-type">VRefine</span>&lt;<span class="t-type">string</span>, { <span class="t-prop">format</span>: <span class="t-str">"email"</span> }&gt;;
-      };
-    }&gt;(<span class="t-kw">async</span> (<span class="t-prop">ctx</span>) =&gt; {
-      <span class="t-kw">const</span> { <span class="t-prop">name</span>, <span class="t-prop">email</span> } = <span class="t-prop">ctx</span>.<span class="t-prop">validated</span>.<span class="t-prop">json</span>;  <span class="t-com">// validated, typed</span>
-      <span class="t-kw">return</span> <span class="t-prop">ctx</span>.<span class="t-meth">json</span>(<span class="t-kw">await</span> <span class="t-fn">createUser</span>(<span class="t-prop">name</span>, <span class="t-prop">email</span>), <span class="t-num">201</span>);
-    }),
-  ]);</code></pre>
-              </div>
+            <div class="vp-doc codecard">
+              <slot name="route" />
             </div>
 
             <!-- frontend: the page -->
-            <div class="codecard">
-              <div class="panel-bar">
-                <svg class="ficon-react" viewBox="-12 -12 24 24" aria-hidden="true"><circle r="2.1" fill="currentColor" /><g fill="none" stroke="currentColor" stroke-width="1"><ellipse rx="10" ry="3.8" /><ellipse rx="10" ry="3.8" transform="rotate(60)" /><ellipse rx="10" ry="3.8" transform="rotate(120)" /></g></svg>
-                <span class="tab">pages/users/index.tsx</span>
-                <span class="badge">React</span>
-              </div>
-  <pre><code><span class="t-com">// import generated clients</span>
-  <span class="t-kw">import</span> <span class="t-prop">fetchClients</span> <span class="t-kw">from</span> <span class="t-str">"_/fetch"</span>;
-
-  <span class="t-kw">const</span> { <span class="t-prop">POST</span> } = <span class="t-prop">fetchClients</span>[<span class="t-str">"users"</span>];
-
-  <span class="t-kw">export default function</span> <span class="t-fn">Page</span>() {
-    <span class="t-kw">const</span> <span class="t-prop">form</span> = <span class="t-fn">useForm</span>({ <span class="t-prop">name</span>: <span class="t-str">""</span>, <span class="t-prop">email</span>: <span class="t-str">""</span> });
-
-    <span class="t-com">// fully typed and validated client-side</span>
-    <span class="t-kw">const</span> <span class="t-prop">submit</span> = () =&gt; <span class="t-fn">POST</span>([], { <span class="t-prop">json</span>: <span class="t-prop">form</span>.<span class="t-prop">values</span> });
-
-    <span class="t-kw">return</span> &lt;<span class="t-type">UserForm</span> <span class="t-prop">form</span>={<span class="t-prop">form</span>} <span class="t-prop">onSubmit</span>={<span class="t-prop">submit</span>} /&gt;;
-  }</code></pre>
+            <div class="vp-doc codecard">
+              <slot name="page" />
             </div>
           </div>
           <p class="loop-note"><span class="t-kw">[id]</span> required <span class="sep">·</span> <span class="t-kw">{id}</span> optional <span class="sep">·</span> <span class="t-kw">{...path}</span> splat - identical syntax for API routes and pages.</p>
@@ -119,53 +62,6 @@ const backend = ref<"koa" | "hono">("koa");
   .loop-cols {
     grid-template-columns: 1fr;
   }
-}
-
-.minitabs {
-  display: flex;
-  margin-left: auto;
-}
-
-/* the underlined tab a docs code group draws, not a pill */
-.minitabs button {
-  position: relative;
-  border: 0;
-  padding: 0 12px;
-  background: none;
-  font-family: var(--kx-font-mono);
-  font-size: 12.5px;
-  font-weight: 400;
-  letter-spacing: 0.01em;
-  line-height: 42px;
-  color: var(--kx-code-muted);
-  cursor: pointer;
-  transition: color 0.15s;
-}
-
-.minitabs button:hover,
-.minitabs button[aria-selected="true"] {
-  color: var(--kx-code-text);
-}
-
-.minitabs button[aria-selected="true"]::after {
-  content: "";
-  position: absolute;
-  right: 8px;
-  bottom: 0;
-  left: 8px;
-  height: 1px;
-  background: var(--kx-accent);
-}
-
-/* reads as the language tag a docs code block shows in its corner */
-.badge {
-  margin-left: auto;
-  padding-right: 12px;
-  font-family: var(--kx-font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.04em;
-  color: var(--kx-code-muted);
-  opacity: 0.75;
 }
 
 .loop-note {

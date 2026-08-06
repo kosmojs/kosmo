@@ -56,43 +56,43 @@ function copyCmd() {
   align-items: center;
   gap: 14px;
   margin-bottom: 30px;
-  border: 1px solid var(--kx-code-line);
+  border: 1px solid var(--vp-c-divider);
   border-radius: 12px;
   padding: 13px 16px;
-  background: var(--kx-code-bg);
-  box-shadow: var(--kx-shadow-code);
+  background: var(--vp-code-block-bg);
+  box-shadow: var(--kx-shadow-card);
   font-family: var(--kx-font-mono);
   font-size: 14.5px;
 }
 
 .install .prompt {
-  color: var(--kx-syn-str);
+  color: var(--kx-green);
 }
 
 .install .cmd {
-  color: var(--kx-code-text);
+  color: var(--vp-code-block-color);
 }
 
 .install button {
   min-width: 80px;
-  border: 1px solid var(--kx-code-line);
+  border: 1px solid var(--vp-c-divider);
   border-radius: 7px;
   padding: 5px 11px;
-  background: var(--kx-code-bar-bg);
+  background: var(--vp-code-tab-bg);
   font-family: var(--kx-font-mono);
   font-size: 12px;
-  color: var(--kx-code-muted);
+  color: var(--vp-code-tab-text-color);
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s;
 }
 
 .install button:hover {
-  color: var(--kx-code-text);
+  color: var(--vp-code-block-color);
   border-color: var(--kx-accent-line);
 }
 
 .install button.copied {
-  color: var(--kx-syn-str);
+  color: var(--kx-green);
 }
 
 .cta-row {

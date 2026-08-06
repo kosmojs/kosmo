@@ -179,171 +179,51 @@
 /* ---------- code surfaces ---------- */
 
 /*
-  One recipe, shared with the docs code blocks through the --kx-code-* tokens:
-  same background, frame, radius, metrics and syntax palette.
+  The two core-loop snippets are markdown files imported by CoreLoop.vue, so
+  Shiki highlights them and the default theme paints them - title bar, file
+  icon and copy button included. Nothing about them is maintained here.
+
+  The hero tree is the exception: its colors are semantic (teal for the URL a
+  folder serves, blue for the folder itself), which no highlighter can infer
+  from a text fence. It stays hand-marked-up, and the classes below are for it
+  and for the inline path tokens in the caption underneath.
 */
-.landing .panel,
-.landing .codecard {
-  border: 1px solid var(--kx-code-line);
-  border-radius: var(--kx-code-radius);
-  background: var(--kx-code-bg);
-  box-shadow: var(--kx-shadow-code);
-  overflow: hidden;
-}
 
 /*
-  .landing Bar metrics are lifted from the docs code-group tab strip: same 42px height,
-  same 8px inset, same hairline drawn as an inset shadow. A snippet here and a
-  snippet in the docs then share one silhouette.
+  A grid or flex item is min-width:auto by default, so a long line of code
+  would stretch its column rather than scroll inside the block. The stock
+  block already scrolls - it just needs permission to be narrower than its
+  content. Without this the whole page grows a horizontal scrollbar.
 */
-.landing .panel-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 8px;
-  /* 42px of label plus the hairline, which is how the docs strip measures up */
-  height: 43px;
-  box-shadow: inset 0 -1px var(--kx-code-line);
-  background: var(--kx-code-bar-bg);
+.landing .hero-grid > *,
+.landing .loop-cols > * {
+  min-width: 0;
 }
 
-/* the leading icon sits where a code group puts its first tab label */
-.landing .panel-bar > :first-child {
-  margin-left: 12px;
-}
-
-.landing .panel-bar .ficon {
-  width: 15px;
-  height: 15px;
-  flex: none;
-  color: var(--kx-code-muted);
-}
-
-.landing .panel-bar .ficon-react {
-  width: 16px;
-  height: 16px;
-  flex: none;
-  color: #61dafb;
-}
-
-.landing .panel-bar .fbadge {
-  display: inline-grid;
-  place-items: center;
-  flex: none;
-  min-width: 18px;
-  height: 16px;
-  padding: 0 3px;
-  border-radius: 4px;
-  background: #3178c6;
-  color: #fff;
-  font-family: var(--kx-font-mono);
-  font-weight: 700;
-  font-size: 9px;
-  letter-spacing: 0.03em;
-}
-
-.landing .panel-bar .tab {
-  font-family: var(--kx-font-mono);
-  font-size: 12.5px;
-  letter-spacing: 0.01em;
-  color: var(--kx-code-muted);
-}
-
-.landing .panel pre,
-.landing .codecard pre {
-  margin: 0;
-  padding: var(--kx-code-pad-y) 0;
-  font-family: var(--kx-font-mono);
-  font-size: var(--kx-code-size);
-  line-height: var(--kx-code-leading);
-  color: var(--kx-code-text);
-  overflow-x: auto;
-}
-
-/*
-  .landing The gutter belongs to the code,
-.landing not the scroller - same as the docs blocks,
-  where padding rides along when a long line is scrolled to its end.
-*/
-.landing .panel code,
-.landing .codecard code {
-  display: block;
-  width: fit-content;
-  min-width: 100%;
-  padding: 0 var(--kx-code-pad-x);
-  font-family: var(--kx-font-mono);
-  white-space: pre;
-}
-
-.landing .panel ::selection,
-.landing .codecard ::selection {
-  background: var(--kx-code-selection);
-}
-
-/* hero source-folder tree panel */
-.landing .panel-tree pre {
-  padding-bottom: 14px;
-}
-
-.landing .tb {
-  color: var(--kx-syn-punct);
+/* the hues below are the catppuccin ones Shiki emits, read from tokens.css */
+.landing .t-kw {
+  color: var(--kx-mauve);
 }
 
 .landing .td {
-  color: var(--kx-syn-fn);
+  color: var(--kx-blue);
 }
 
 .landing .tp {
-  color: var(--kx-syn-path);
+  color: var(--kx-teal);
 }
 
-.landing .panel-tree .ts {
-  color: var(--kx-syn-com);
+.landing .tb,
+.landing .ts {
+  color: var(--kx-text-4);
 }
 
+/* the caption rides inside the block, on the code's own gutter */
 .landing .tree-cap {
-  padding: 0 var(--kx-code-pad-x) 18px;
-  font-family: var(--kx-font-mono);
+  padding: 0 24px 18px;
+  font-family: var(--vp-font-family-mono);
   font-size: 12px;
-  color: var(--kx-code-muted);
-}
-
-/* syntax tokens - mirrors the Shiki catppuccin themes used in the docs */
-.landing .t-kw {
-  color: var(--kx-syn-kw);
-}
-
-.landing .t-fn {
-  color: var(--kx-syn-fn);
-}
-
-.landing .t-str {
-  color: var(--kx-syn-str);
-}
-
-.landing .t-num {
-  color: var(--kx-syn-num);
-}
-
-.landing .t-type {
-  color: var(--kx-syn-type);
-}
-
-.landing .t-com {
-  color: var(--kx-syn-com);
-  font-style: italic;
-}
-
-.landing .t-prop {
-  color: var(--kx-syn-prop);
-}
-
-.landing .t-meth {
-  color: var(--kx-syn-fn);
-}
-
-.landing .t-path {
-  color: var(--kx-syn-path);
+  color: var(--vp-code-tab-text-color);
 }
 
 /* ---------- scroll reveal (JS-gated; no-JS shows everything) ---------- */

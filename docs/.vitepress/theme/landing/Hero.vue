@@ -97,18 +97,23 @@ onMounted(() => {
           </div>
 
           <!-- a typical project at scale: many concerns, one codebase -->
-          <div class="panel panel-tree">
-            <div class="panel-bar">
-              <svg class="ficon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h3.5l2 2H19a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg>
-              <span class="tab">a typical KosmoJS project at scale</span>
-            </div>
+          <div class="vp-doc panel-tree">
+            <div class="vp-code-group">
+              <div class="tabs">
+                <label>// a typical KosmoJS project at scale</label>
+              </div>
+              <div class="blocks">
+                <div class="language-txt active">
   <pre><code><span class="tb">src/</span>
   <span class="tb">├─ </span><span class="td">shop/</span>       <span class="tp">/</span>          <span class="ts">React + Hono</span>
   <span class="tb">├─ </span><span class="td">admin/</span>      <span class="tp">/admin</span>     <span class="ts">Solid + Koa</span>
   <span class="tb">├─ </span><span class="td">webhooks/</span>   <span class="tp">/hooks</span>     <span class="ts">Hono, no UI</span>
   <span class="tb">├─ </span><span class="td">docs/</span>       <span class="tp">/docs</span>      <span class="ts">MDX, no API</span>
   <span class="tb">└─ </span><span class="td">status/</span>     <span class="tp">/status</span>    <span class="ts">Vue + Hono</span></code></pre>
-            <div class="tree-cap">- any number of folders, any stack each</div>
+                  <div class="tree-cap">- any number of folders, any stack each</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

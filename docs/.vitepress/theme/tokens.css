@@ -54,8 +54,8 @@
     radial-gradient(720px 460px at 82% -10%, rgba(136, 57, 239, 0.07), transparent 70%),
     radial-gradient(560px 400px at 4% 12%, rgba(30, 102, 245, 0.06), transparent 70%);
 
-  --kx-shadow-card: 0 1px 2px rgba(76, 79, 105, 0.05), 0 18px 40px -32px rgba(76, 79, 105, 0.4);
-  --kx-shadow-code: 0 1px 2px rgba(76, 79, 105, 0.06), 0 26px 50px -38px rgba(76, 79, 105, 0.45);
+  --kx-shadow-card: 0 1px 5px rgba(76, 79, 105, 0.05), 0 18px 40px -32px rgba(76, 79, 105, 0.4);
+  --kx-shadow-code: 0 1px 5px rgba(76, 79, 105, 0.05), 0 16px 32px -28px rgba(76, 79, 105, 0.28);
 
   /* ---------- shape and motion ---------- */
 
@@ -108,8 +108,8 @@
     radial-gradient(720px 460px at 82% -10%, rgba(203, 166, 247, 0.13), transparent 70%),
     radial-gradient(560px 400px at 4% 12%, rgba(137, 180, 250, 0.09), transparent 70%);
 
-  --kx-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 24px 48px -34px rgba(0, 0, 0, 0.8);
-  --kx-shadow-code: 0 1px 2px rgba(0, 0, 0, 0.5), 0 34px 60px -40px rgba(0, 0, 0, 0.9);
+  --kx-shadow-card: 0 1px 5px rgba(0, 0, 0, 0.4), 0 24px 48px -34px rgba(0, 0, 0, 0.8);
+  --kx-shadow-code: 0 1px 5px rgba(0, 0, 0, 0.32), 0 18px 36px -28px rgba(0, 0, 0, 0.68);
 }
 
 /*
