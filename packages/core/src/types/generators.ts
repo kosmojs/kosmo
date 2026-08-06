@@ -68,11 +68,22 @@ export type GeneratorFactory = {
     entries: Array<ResolvedEntry>,
     event?: WatcherEvent,
   ) => Promise<void>;
+
   // runs before Vite build
   build?: (entries: Array<ResolvedEntry>) => Promise<void>;
 
   // runs after Vite build
   postBuild?: (entries: Array<ResolvedEntry>) => Promise<void>;
+
+  /**
+   * Runs only on the SSR build, to update files that differ between CSR and SSR.
+   * The pattern: have all consumers import the env-sensitive value from a single file,
+   * ship a CSR default, and rewrite that one file here for SSR.
+   * e.g. the fetch generator points every fetch client at a shared transport
+   * module that exports `transport = fetch` by default; ssrBuild rewrites it to
+   * export the SSR transport instead.
+   * */
+  ssrBuild?: () => Promise<void>;
 };
 
 /**

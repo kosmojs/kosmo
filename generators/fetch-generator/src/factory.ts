@@ -1,4 +1,5 @@
 import {
+  defaults,
   RequestValidationTargets,
   type ResolvedEntry,
   type ValidationTarget,
@@ -144,10 +145,15 @@ export default defineGeneratorFactory((sourceFolder) => {
 
   return {
     async start() {
-      // supposed to be replaced by specialized generators, write it only at initialization.
-      // fetch generator always runs before other generators
-      // so it is safe to re-initialize this file before specialized generators update it.
-      await deployLibFile(createPath.lib("unwrap.ts"), templates.unwrap, {});
+      for (const [file, template] of [
+        // unwrap file supposed to be replaced by specialized generators, write it only at initialization.
+        // fetch generator always runs before other generators
+        // so it is safe to re-initialize this file before specialized generators update it.
+        ["unwrap.ts", templates.unwrap],
+        ["@fetch.ts", "export const transport = undefined;"],
+      ]) {
+        await deployLibFile(createPath.lib(file), template, {});
+      }
     },
 
     async watch(entries, event) {
@@ -173,6 +179,17 @@ export default defineGeneratorFactory((sourceFolder) => {
 
     async build(entries) {
       await generateLibFiles(entries, entries);
+    },
+
+    async ssrBuild() {
+      for (const [file, template] of [
+        [
+          "@fetch.ts",
+          `export { transport } from "${defaults.libPrefix}/@ssr/fetch";`,
+        ],
+      ]) {
+        await deployLibFile(createPath.lib(file), template, {});
+      }
     },
   };
 });

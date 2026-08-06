@@ -75,6 +75,18 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         vitePlugins.nodePrefix(),
       ];
 
+      /**
+       * Before the SSR bundle is built, give each generator a chance to rewrite its
+       * env-sensitive files for the server. The CSR build shipped the client defaults
+       * (e.g. transport = fetch); ssrBuild swaps in the SSR variants
+       * (e.g. the SSR transport) in place.
+       * Runs only here, on the SSR pass - never on the client build -
+       * so the client keeps its defaults and only the server copy is patched.
+       * */
+      for (const generator of generators) {
+        await generator.factory(sourceFolder).ssrBuild?.();
+      }
+
       // INFO: === Build the SSR client bundle using `entry/server` as the entry point ===
       await build(
         mergeConfigs(
@@ -93,7 +105,6 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
             plugins,
             define: {
               KOSMO_PRODUCTION_BUILD: "true",
-              KOSMO_SSR_BUNDLE: "true",
             },
             build: {
               ssr: createPath.lib("@ssr/__kosmo_ssr_bundle"),
