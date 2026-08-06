@@ -14,7 +14,9 @@ export type ResponseMode =
   | "arrayBuffer"
   | "raw";
 
-export type Options = Partial<Defaults> & { transport?: Transport } & Pick<
+export type Options = Partial<Defaults> & {
+  transport?: Transport | undefined;
+} & Pick<
     RequestInit,
     | "cache"
     | "credentials"
