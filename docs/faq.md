@@ -1371,28 +1371,68 @@ so the typed response flows into `useLoaderData`/`createAsync`.
 
 #### Is there loader caching / staleness / `loaderDeps`?
 No built-in loader cache - React/Solid reuse the in-flight/cached result for that navigation;
-SolidJS `preload` results are cached/reused by `createAsync`. For real caching, bring TanStack Query.
-[Details ›](/frontend/data-preload#how-it-works)
+SolidJS `preload` results are cached/reused by `createAsync`.
+For real caching, enable TanStack Query (a first-class option).
+[Details ›](/frontend/tanstack-query)
 
-#### Where does TanStack Query fit?
-*Not a bundled dependency*, but fetch clients return plain promises,
-so Query slots in cleanly as your cache/mutation layer:
-`queryFn: () => fetchClients["users/[id]"].GET([id])`, `mutationFn` for mutations,
-`queryClient.invalidateQueries` after. The typed response flows into Query's generics.
-Put `QueryClientProvider` in your root App wrapper. There's no generated Query-options helper -
-you wire `queryKey`/`queryFn` yourself.
-[Details ›](/fetch/integration)
+#### How do I enable TanStack Query?
+Turn it on when you create the source folder - interactive mode asks,
+or pass `--tsq` non-interactively (`pnpm +folder --name front --base / --framework react --tsq`).
+
+To add it later, set the `tanstack` option on the framework generator in `kosmo.config.ts`
+(`reactGenerator({ tanstack: { query: true } })`).
+
+Once it's on, everything is wired - no setup, no provider to place - you just start using it in your components.
+[Details ›](/frontend/tanstack-query#enabling-and-using-it)
+
+#### How do I read data with TanStack Query once it's enabled?
+Just write the read: `useQuery` against a fetch client (`queryKey` + `queryFn: () => GET([id])`) in a component.
+Frameworks differ only at the hook: React and Vue take the options object directly;
+Solid and Svelte take a thunk (`() => (...)`) to stay reactive;
+and Svelte's hook is `createQuery`, not `useQuery`.
+[Details ›](/frontend/tanstack-query#basic-usage)
+
+#### How do I warm TanStack Query on the server (SSR)?
+To render a page's data on the server and hydrate it warm, you wire it yourself with TanStack's own primitives -
+`dehydrate` on the server, `HydrationBoundary`/`hydrate` on the client - following your framework's official SSR guide.
+
+The one KosmoJS-specific detail: get the request-scoped client from `getQueryClient()` in your loader,
+so you prefetch into the same client the render reads, and share one query-options
+helper between loader and component so the `queryKey` matches.
+
+(Solid needs no boundary - its `generateHydrationScript()` carries the cache automatically.)
+[Details ›](/frontend/tanstack-query#ssr-warmup-advanced)
+
+#### How do I do mutations with TanStack Query?
+Exactly as TanStack documents - no KosmoJS-specific wiring.
+`mutationFn` calls the fetch client's `POST`/`PUT`/etc.,
+and `queryClient.invalidateQueries({ queryKey })` in `onSuccess` refetches the affected queries in place -
+the thing a loader alone can't do without re-navigating.
+Mutations are client-side, so SSR doesn't affect them.
+[Details ›](/frontend/tanstack-query#mutations-and-invalidation)
+
+#### How do I get a Query client, or configure one?
+`_/query` provides two exports: `getQueryClient()` and `createQueryClient(options)`.
+
+Use `createQueryClient(options)` when you need a custom staleTime, retry policy, etc.
+Create the custom client in your `app.{tsx,vue,svelte}` and provide it as a prop to `AppProvider`.
+[Details ›](/frontend/tanstack-query#configuring-a-custom-client)
 
 #### Does SSR data fetching work without extra plumbing?
-Yes - the generated fetch client is isomorphic. During SSR a render-time fetch
-(a `loader` or `createAsync`) dispatches to the API route in-process, and the
-framework's own hydration carries the result to the client: every framework
-reuses the server-rendered data without re-fetching. React and Solid do it through
-their built-in hydration; Vue, Svelte, and MDX serialize the loader result into the page
-and read it on the client before the loader would fetch. You don't wire
-dehydrate/hydrate for that. A third-party cache like TanStack Query is optional
-and separate - if you add it and want its cache serialized across SSR, that
-plumbing is on you, but it isn't required for fetch-client data to survive hydration.
+Yes - the generated fetch client is isomorphic.
+
+During SSR a render-time fetch (a `loader` or `createAsync`) dispatches to the API route in-process,
+and the framework's own hydration carries the result to the client:
+every framework reuses the server-rendered data without re-fetching.
+
+React and Solid do it through their built-in hydration;
+Vue, Svelte, and MDX serialize the loader result into the page
+and read it on the client before the loader would fetch.
+You don't wire dehydrate/hydrate for that.
+
+TanStack Query is an optional opt-in layer - if you enable it and want its cache serialized across SSR,
+that plumbing is on you (via TanStack's own dehydrate/hydrate),
+but it isn't required for fetch-client data to survive hydration.
 [Details ›](/fetch/integration#isomorphic-fetch)
 
 #### fetch caching / `revalidatePath` / `revalidateTag` / ISR?
