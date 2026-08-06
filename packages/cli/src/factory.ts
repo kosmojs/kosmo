@@ -3,6 +3,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 
+import { format } from "oxfmt";
+
 import {
   type BACKENDS,
   DEFAULT_BACKEND,
@@ -135,7 +137,13 @@ export const createSourceFolder = async (
     generatorOptions,
   );
 
-  await writeFile(resolve(folderPath, "kosmo.config.ts"), kosmoConfig, "utf8");
+  await writeFile(
+    resolve(folderPath, "kosmo.config.ts"),
+    await format("kosmo.config.ts", kosmoConfig, {
+      sortImports: true,
+    }).then((e) => (e.errors.length ? kosmoConfig : e.code)),
+    "utf8",
+  );
 
   for (const file of [
     // stub files for initial build to pass;
