@@ -227,7 +227,7 @@ export const resolverFactory = (
                 overrides: { [refineTypeName]: refineTypeName },
                 withProperties: [
                   params.id,
-                  ...validationTypes.flatMap(({ id }) => id),
+                  ...validationTypes.map(({ id }) => id),
                 ],
               })
             : undefined;

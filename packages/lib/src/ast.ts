@@ -589,6 +589,7 @@ export const astFactory = () => {
         resolvedTypes,
       });
 
+      // NOTE: file name should be unique as it will stay during project's life cycle.
       const sourceFile = project.createSourceFile(
         `${crc(materializedTypes)}-${Date.now()}.ts`,
         materializedTypes,
@@ -626,7 +627,8 @@ export const astFactory = () => {
         };
       });
 
-      project.removeSourceFile(sourceFile);
+      // NOTE: do not removeSourceFile, that invalidates proejct's cache,
+      // triggering cache rebuild on next call.
 
       return types;
     };
@@ -635,6 +637,7 @@ export const astFactory = () => {
       literalTypes: string,
       options: Parameters<typeof flattener>[2],
     ): Array<ResolvedTypeSignature> => {
+      // NOTE: file name should be unique as it will stay during project's life cycle.
       const sourceFile = project.createSourceFile(
         `${crc(literalTypes)}-${Date.now()}.ts`,
         literalTypes,
@@ -646,7 +649,8 @@ export const astFactory = () => {
         stripComments: true,
       });
 
-      project.removeSourceFile(sourceFile);
+      // NOTE: do not removeSourceFile, that invalidates proejct's cache,
+      // triggering cache rebuild on next call.
 
       return withTypeboxSchema(resolvedTypes);
     };
