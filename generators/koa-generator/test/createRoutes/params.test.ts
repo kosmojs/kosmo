@@ -14,7 +14,7 @@ describe("createRouterRoutes", () => {
         [
           {
             pathPattern,
-            params: ["path"],
+            params: [{ name: "path", kind: "splat", type: "string" }],
             definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 ctx.body = ctx.validated.params;
@@ -43,8 +43,10 @@ describe("createRouterRoutes", () => {
         [
           {
             pathPattern: `/${pathPattern}`,
-            params: ["id", "name"],
-            numericParams: ["id"],
+            params: [
+              { name: "id", kind: "required", type: "number" },
+              { name: "name", kind: "required", type: "string" },
+            ],
             definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 ctx.body = ctx.validated.params;
@@ -57,9 +59,7 @@ describe("createRouterRoutes", () => {
 
       const ctx = await runMiddleware(
         stack.flatMap((e) => e.middleware),
-        {
-          path: "/0/name",
-        },
+        { path: "/0/name" },
       );
 
       expect(ctx.body).toEqual({ id: 0, name: "name" });
@@ -73,8 +73,7 @@ describe("createRouterRoutes", () => {
         [
           {
             pathPattern,
-            params: ["ids"],
-            numericParams: ["ids"],
+            params: [{ name: "ids", kind: "splat", type: "number" }],
             definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 ctx.body = ctx.validated.params;

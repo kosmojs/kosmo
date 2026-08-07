@@ -3,12 +3,16 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { ResolvedType } from "tfusion";
 
 export type ResolvedTypeSignature = Omit<ResolvedType, "properties"> & {
+  // needed for validation
   typeboxSchema?: string;
   properties?: Array<
     NonNullable<ResolvedType["properties"]>[number] & {
+      // needed for openapi
       typeboxSchema?: string;
     }
   >;
+  // needed to coerce numeric params
+  numericProperties?: Array<string>;
 };
 
 /**

@@ -11,26 +11,26 @@ export type LinkProps =
 export type LinkProps = never;
 {{/if}}
 
+// used by fetch clients
 export const apiRouteMap = {
   {{#each apiRoutes}}
   "{{name}}": pathMapper<[{{serializeParamsTupleElements .}}]>(
     apiBase,
     "{{name}}",
     "{{pathPattern}}",
-    [{{#each params.schema}}["{{name}}", "{{kind}}"], {{/each}}],
-    [{{#each numericParams}}"{{.}}", {{/each}}],
+    {{serializeParamsTuple .}},
   ),
   {{/each}}
 };
 
+// used by Link component
 export const pageRouteMap = {
   {{#each pageRoutes}}
   "{{name}}": pathMapper<[{{serializeParamsTupleElements .}}]>(
     base,
     "{{name}}",
     "{{pathPattern}}",
-    [{{#each params.schema}}["{{name}}", "{{kind}}"], {{/each}}],
-    [{{#each numericParams}}"{{.}}", {{/each}}],
+    {{serializeParamsTuple .}},
   ),
   {{/each}}
 };

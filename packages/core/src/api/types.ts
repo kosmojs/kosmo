@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 import type {
+  PathTokenParamPart,
   RequestBodyTarget,
   RequestMetadataTarget,
   RequestValidationTarget,
@@ -8,7 +9,7 @@ import type {
   ValidationOptmap,
   ValidationSchemas,
   ValidationTarget,
-} from "../types/validation";
+} from "../types";
 
 export enum HTTPMethods {
   HEAD = "HEAD",
@@ -67,8 +68,11 @@ export type RouteSource<MiddlewareT> = {
   // just automatically imported from use.ts files
   cascadingMiddleware: [...a: Array<MiddlewareDefinition<MiddlewareT>>];
   definitionItems: Array<RouteDefinitionItem<MiddlewareT>>;
-  params: Array<string>;
-  numericParams: Array<string>;
+  params: Array<{
+    name: string;
+    kind: PathTokenParamPart["kind"];
+    type: "string" | "number";
+  }>;
   validationSchemas: ValidationSchemas;
   meta?: Record<string, unknown>;
 };

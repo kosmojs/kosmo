@@ -1,5 +1,4 @@
-import { copyFile, mkdir, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { mkdir } from "node:fs/promises";
 
 import { load } from "cheerio";
 import crc from "crc/crc32";
@@ -273,8 +272,14 @@ const renderApiFile = (
   backend: keyof typeof BACKENDS,
   route: keyof typeof routes,
 ) => {
+  const { paramsRefinements, ...definitions } = {
+    paramsRefinements: [],
+    ...routes[route],
+  };
   return render(templates[backend], {
-    definitions: Object.entries(routes[route]).map(([method, type]) => ({
+    name: route,
+    paramsRefinements,
+    definitions: Object.entries(definitions).map(([method, type]) => ({
       method,
       type,
     })),

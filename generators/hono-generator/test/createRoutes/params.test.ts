@@ -14,7 +14,7 @@ describe("createRouterRoutes", () => {
         [
           {
             pathPattern,
-            params: ["path"],
+            params: [{ name: "path", kind: "splat", type: "string" }],
             definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 return ctx.json(ctx.validated.params);
@@ -45,8 +45,10 @@ describe("createRouterRoutes", () => {
         [
           {
             pathPattern: `/${pathPattern}`,
-            params: ["id", "name"],
-            numericParams: ["id"],
+            params: [
+              { name: "id", kind: "required", type: "number" },
+              { name: "name", kind: "required", type: "string" },
+            ],
             definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 return ctx.json(ctx.validated.params);
@@ -77,8 +79,7 @@ describe("createRouterRoutes", () => {
         [
           {
             pathPattern,
-            params: ["ids"],
-            numericParams: ["ids"],
+            params: [{ name: "ids", kind: "splat", type: "number" }],
             definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 return ctx.json(ctx.validated.params);

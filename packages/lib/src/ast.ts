@@ -8,6 +8,7 @@ import {
   ModuleResolutionKind,
   Project,
   type ProjectOptions,
+  type PropertySignature,
   type SourceFile,
   SyntaxKind,
   type TypeNode,
@@ -254,19 +255,15 @@ export const astFactory = () => {
           continue;
         }
 
-        const nameNode = member.getNameNode();
-        const valueNode = member.getTypeNodeOrThrow();
-
-        const name = nameNode.isKind(SyntaxKind.StringLiteral)
-          ? nameNode.getLiteralText() // No quotes
-          : nameNode.getText(); // Regular identifier
+        const name = propertyName(member);
+        const node = member.getTypeNodeOrThrow();
 
         if (name === "contentType") {
-          contentType = extractStringLiteral(valueNode);
+          contentType = extractStringLiteral(node);
         } else if (name === "runtimeValidation") {
-          runtimeValidation = parseRuntimeValidation(valueNode);
+          runtimeValidation = parseRuntimeValidation(node);
         } else if (name.startsWith("error")) {
-          const literal = extractStringLiteral(valueNode);
+          const literal = extractStringLiteral(node);
           if (literal) {
             customErrors[name] = literal;
           }
@@ -603,26 +600,32 @@ export const astFactory = () => {
           return type;
         }
 
-        const properties = type.properties
-          ? type.properties.map((prop) => {
-              const propNode = typeNode.isKind(SyntaxKind.TypeLiteral)
-                ? typeNode.getProperty(prop.name)?.getTypeNode()
-                : undefined;
+        const properties = [];
+        const numericProperties = [];
 
-              if (!propNode) {
-                return prop;
-              }
+        for (const prop of type.properties || []) {
+          const propNode = typeNode.isKind(SyntaxKind.TypeLiteral)
+            ? typeNode.getProperty(prop.nameDeclaration)?.getTypeNode()
+            : undefined;
 
-              return {
-                ...prop,
-                typeboxSchema: renderTypeboxSchema(propNode),
-              };
-            })
-          : undefined;
+          if (!propNode) {
+            continue;
+          }
+
+          properties.push({
+            ...prop,
+            typeboxSchema: renderTypeboxSchema(propNode),
+          });
+
+          if (isNumericTypeNode(propNode)) {
+            numericProperties.push(prop.name);
+          }
+        }
 
         return {
           ...type,
-          ...(properties ? { properties } : {}),
+          properties,
+          numericProperties,
           typeboxSchema: renderTypeboxSchema(typeNode),
         };
       });
@@ -684,21 +687,80 @@ export const astFactory = () => {
 };
 
 /**
+ * Property name as declared, stripping quotes for string-literal keys.
+ * */
+const propertyName = (property: PropertySignature): string => {
+  const nameNode = property.getNameNode();
+  return nameNode.isKind(SyntaxKind.StringLiteral)
+    ? nameNode.getLiteralValue()
+    : nameNode.getText();
+};
+
+/**
+ * Whether a top-level type node reduces to `number`.
+ *
+ * Peels the wrappers tfusion leaves intact after flattening
+ * (aliases are already inlined by then, VRefine is preserved via self-override):
+ *
+ *   number                      -> true
+ *   VRefine<number, {}>         -> true (peel to first type argument)
+ *   Array<number>               -> true (peel to first type argument)
+ *   number[]                    -> true (peel to element type)
+ *   readonly number[]           -> true (peel the type operator, then array)
+ *   VRefine<Array<number>, {}>  -> true (peels compose)
+ *   string | number             -> false (unions are not a single number)
+ *
+ * Does NOT descend into object properties or nested tuple elements -
+ * it judges the single node handed to it, so callers control which top-level elements are tested.
+ *
+ * @param typeNode   the node to test
+ * @param refineTypeName the configured refine type name
+ * */
+const isNumericTypeNode = (
+  typeNode: TypeNode,
+  refineTypeName = defaults.refineTypeName,
+): boolean => {
+  // VRefine<T, Opts> -> T; Array<T> -> T
+  if (typeNode.isKind(SyntaxKind.TypeReference)) {
+    const name = typeNode.getTypeName().getText();
+    return name === refineTypeName || name === "Array"
+      ? isNumericTypeNode(typeNode.getTypeArguments()[0])
+      : false;
+  }
+
+  // T[] -> T
+  if (typeNode.isKind(SyntaxKind.ArrayType)) {
+    return isNumericTypeNode(typeNode.getElementTypeNode());
+  }
+
+  // readonly T[] -> element type (other type operators like keyof / unique
+  // are not numeric, so they correctly fall through to the final check)
+  if (
+    typeNode.isKind(SyntaxKind.TypeOperator) &&
+    typeNode.getOperator() === SyntaxKind.ReadonlyKeyword
+  ) {
+    return isNumericTypeNode(typeNode.getTypeNode());
+  }
+
+  // plain number
+  return typeNode.isKind(SyntaxKind.NumberKeyword);
+};
+
+/**
  * Render a ts-morph TypeNode to TypeBox Script text, replacing every VRefine
  * occurrence (at any depth) with the infix `with` form.
  *
- *   VRefine<string, { format: "email" }>            ->  (string with { format: "email" })
- *   VRefine<string, { format: "email" }>[]          ->  (string with { format: "email" })[]
- *   VRefine<Array<string>, { minItems: 1 }>         ->  (Array<string> with { minItems: 1 })
+ *   VRefine<string, { format: "email" }>     ->  (string with { format: "email" })
+ *   VRefine<string, { format: "email" }>[]   ->  (string with { format: "email" })[]
+ *   VRefine<Array<string>, { minItems: 1 }>  ->  (Array<string> with { minItems: 1 })
  *   VRefine<Record<string, string>, { maxProperties: 20 }>
- *                                                   ->  (Record<string, string> with { maxProperties: 20 })
+ *                                            ->  (Record<string, string> with { maxProperties: 20 })
  *
- * The parentheses matter: for an array element the `with` clause must bind to
- * the element, not the array, so a VRefine that is the element of an array is
- * wrapped. We wrap unconditionally - harmless when not nested, required when it
- * is.
+ * The parentheses matter: for an array element the `with` clause must bind to the element,
+ * not the array, so a VRefine that is the element of an array is wrapped.
+ * So, wrapping unconditionally - harmless when not nested, required when it is.
  *
- * @param typeNode   the node to render
+ * @param typeNode the node to render
  * @param refineTypeName the configured refine type name
  * */
 const renderTypeboxSchema = (
@@ -771,11 +833,12 @@ const renderTypeboxSchema = (
         .join(" & ");
     }
 
-    // 7) A non-VRefine type reference that carries type arguments - this covers
-    //    the refined bases Array<T> and Record<K, V> (which stay as-is and get a
-    //    trailing `with` clause from case 1), as well as any generic wrapper
-    //    around a VRefine. Recurse into the arguments so a nested VRefine is
-    //    still rewritten, and keep the head name unchanged.
+    // 7) A non-VRefine type reference that carries type arguments -
+    // this covers the refined bases Array<T> and Record<K, V>
+    // (which stay as-is and get a trailing `with` clause from case 1),
+    // as well as any generic wrapper around a VRefine.
+    // Recurse into the arguments so a nested VRefine is still rewritten,
+    // and keep the head name unchanged.
     if (typeNode.isKind(SyntaxKind.TypeReference)) {
       const args = typeNode.getTypeArguments();
       if (args.length === 0) {

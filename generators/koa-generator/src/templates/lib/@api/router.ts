@@ -46,7 +46,7 @@ export type RouterOptions = import("@koa/router").RouterOptions;
  * */
 export const createRouteMiddleware: CreateRouteMiddleware<
   ParameterizedMiddleware
-> = ({ name, pathPattern, params, numericParams, validationSchemas }) => {
+> = ({ name, pathPattern, params, validationSchemas }) => {
   const pathMatcher = match(pathPattern);
 
   const matchPath = (path: string) => {
@@ -145,16 +145,12 @@ export const createRouteMiddleware: CreateRouteMiddleware<
       function useValidateParams(ctx, next) {
         const matched = matchPath(ctx.path);
         const normalizedParams = params.reduce(
-          (map: Record<string, unknown>, name) => {
+          (map: Record<string, unknown>, { name, type }) => {
             const value = matched ? matched.params[name] : undefined;
             if (Array.isArray(value)) {
-              map[name] = numericParams.includes(name)
-                ? value.map(Number)
-                : value;
+              map[name] = type === "number" ? value.map(Number) : value;
             } else if (value) {
-              map[name] = numericParams.includes(name) //
-                ? Number(value)
-                : value;
+              map[name] = type === "number" ? Number(value) : value;
             }
             return map;
           },

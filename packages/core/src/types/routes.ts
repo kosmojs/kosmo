@@ -65,7 +65,6 @@ export type ApiRoute = RouteEntry & {
     schema: Array<PathTokenParamPart>;
     resolvedType: ResolvedTypeSignature | undefined;
   };
-  numericParams: Array<string>;
   optionalParams: boolean;
   methods: Array<string>;
   typeDeclarations: Array<TypeDeclaration>;
@@ -126,11 +125,7 @@ export type RouteResolverCache = {
   referencedFiles: Record<string, number>;
 } & Pick<
   ApiRoute,
-  | "params"
-  | "methods"
-  | "numericParams"
-  | "typeDeclarations"
-  | "validationDefinitions"
+  "params" | "methods" | "typeDeclarations" | "validationDefinitions"
 >;
 
 export type RouteResolverCacheFactory = (

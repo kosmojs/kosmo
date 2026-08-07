@@ -186,16 +186,6 @@ export const resolverFactory = (
               : [def.schema];
           });
 
-          const numericParams = paramsRefinements
-            ? paramsRefinements.flatMap(({ text, index }) => {
-                if (text === "number") {
-                  const param = paramsSchema.at(index);
-                  return param ? [param.name] : [];
-                }
-                return [];
-              })
-            : [];
-
           const typesFile = pathResolver(sourceFolder).createPath.libApi(
             dirname(file),
             "types.ts",
@@ -256,7 +246,6 @@ export const resolverFactory = (
             params,
             methods,
             typeDeclarations,
-            numericParams,
             validationDefinitions: validationDefinitions.map((def) => {
               return {
                 ...def,
@@ -361,7 +350,6 @@ export const resolverFactory = (
           pathPattern,
           honoPattern,
           params: cache.params,
-          numericParams: cache.numericParams,
           optionalParams,
           folder,
           file,

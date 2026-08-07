@@ -83,6 +83,7 @@ export const routes = {
     }`,
   },
   "params/[id]": {
+    paramsRefinements: ["number"],
     GET: `{
       query: {
         currency?: string;
@@ -109,6 +110,7 @@ export const routes = {
     GET: `{}`,
   },
   "mixed/[id]/{...path}": {
+    paramsRefinements: ["number", "Array<string>"],
     GET: `{}`,
   },
 } as const;
@@ -166,7 +168,7 @@ export const payloadMap: PayloadMap = {
     ],
   },
   "params/[id]": {
-    params: [["42"], ["prod_abc"]],
+    params: [[42], [-42], [4.2]],
     GET: [
       { query: {} },
       { query: { currency: "USD" } },
@@ -196,10 +198,10 @@ export const payloadMap: PayloadMap = {
   // required param followed by a splat
   "mixed/[id]/{...path}": {
     params: [
-      ["42"],
-      ["42", ["x"]],
-      ["42", ["x", "y"]],
-      ["usr_abc", ["a", "b", "c"]],
+      [1],
+      [2, ["x"]],
+      [3, ["x", "y"]],
+      [4, ["a", "b", "c"]],
     ],
     GET: [{}],
   },

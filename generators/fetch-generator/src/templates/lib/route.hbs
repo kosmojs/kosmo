@@ -81,7 +81,9 @@ export const {{method}} = (
   // validate only on client, skip double validation in SSR mode
   if (!import.meta.env.SSR) {
     if (validationSchemas.params) {
-      validationSchemas.params.validate(paramsMapper(params as never));
+      validationSchemas.params.validate(
+        paramsMapper(params as never, { coerceNumbers: true }),
+      );
     }
     {{#each ../payloadTypes}}
     if (validationSchemas.{{target}}?.{{../method}}) {

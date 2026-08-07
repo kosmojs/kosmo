@@ -1,4 +1,6 @@
+import type { RouteSource } from "../api";
 import type {
+  ApiRoute,
   CSRFactory,
   PageRoute,
   RouterFactoryReturn,
@@ -13,6 +15,20 @@ export const routeRenderHelpers = () => {
         pathPattern,
         params,
       } satisfies Pick<PageRoute, "name" | "pathPattern" | "params">);
+    },
+    serializeParamsTuple: ({ params }: ApiRoute) => {
+      const numericProperties = params.resolvedType?.numericProperties || [];
+      return JSON.stringify(
+        params.schema.map<RouteSource<never>["params"][number]>(
+          ({ name, kind }) => {
+            return {
+              name,
+              kind,
+              type: numericProperties.includes(name) ? "number" : "string",
+            };
+          },
+        ),
+      );
     },
     serializeParamsTupleElements: (route: PageRoute) => {
       return route.params.schema

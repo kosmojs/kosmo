@@ -1,0 +1,50 @@
+{
+  "typeDeclarations": [
+    {
+      "typeAliasDeclaration": {
+        "name": "Payload"
+      },
+      "text": "type Payload = { id: number };"
+    }
+  ],
+  "paramsRefinements": [
+    {
+      "index": 0,
+      "text": "number"
+    }
+  ],
+  "methods": [
+    "GET",
+    "POST"
+  ],
+  "validationDefinitions": [
+    {
+      "method": "GET",
+      "target": "query",
+      "schema": {
+        "id": "QueryTGET4220738409",
+        "text": "{ page?: number }"
+      }
+    },
+    {
+      "method": "POST",
+      "target": "json",
+      "schema": {
+        "id": "JsonTPOST4220738409",
+        "text": "Payload"
+      }
+    },
+    {
+      "method": "POST",
+      "target": "response",
+      "variants": [
+        {
+          "id": "ResponseTPOST2692108644",
+          "status": 200,
+          "contentType": "json",
+          "body": "{ ok: boolean }"
+        }
+      ]
+    }
+  ]
+}

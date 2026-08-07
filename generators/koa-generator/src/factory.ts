@@ -8,6 +8,7 @@ import {
   type ResolvedEntry,
   type RouteEntry,
 } from "@kosmojs/core";
+import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   createPathPattern,
   defineGeneratorFactory,
@@ -36,6 +37,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   const { renderToFile: deployLibFile } = renderFactory({
     helpers: {
       ...createImportHelpers({ origin: "lib" }),
+      ...routeRenderHelpers(),
       paramsDefaults({ params }: ApiRoute) {
         const elements = params.schema.map(() => "unknown?");
         return `[${elements.join(", ")}]`;

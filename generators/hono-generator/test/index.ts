@@ -36,7 +36,6 @@ export const middlewareStackBuilder = (
           GET(async function get() {}),
         ]) as never,
         params: [],
-        numericParams: [],
         validationSchemas: {},
         ...(e as Partial<RouteSource<ParameterizedMiddleware>>),
       };

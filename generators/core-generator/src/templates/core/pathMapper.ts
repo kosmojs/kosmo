@@ -1,19 +1,19 @@
 import { compile } from "path-to-regexp";
 
 import type { PathMapperSignature } from "@kosmojs/core";
+import type { RouteSource } from "@kosmojs/core/api";
 import { createHost, join, stringify } from "@kosmojs/core/fetch";
 
 export const pathMapper = <ParamsT extends readonly unknown[]>(
   basePath: string,
   routeName: string,
   pathPattern: string,
-  paramsMap: Array<[name: string, kind: string]>,
-  numericParams: Array<string>,
+  paramsMap: RouteSource<never>["params"],
 ): PathMapperSignature<ParamsT> => {
   const toPath = compile(pathPattern);
 
-  const castParam = (name: string, value: unknown) => {
-    if (numericParams.includes(name)) {
+  const castParam = (value: unknown, coerceNumbers: boolean | undefined) => {
+    if (coerceNumbers) {
       const n = Number(value);
       return Number.isFinite(n) ? n : String(value);
     }
@@ -22,17 +22,24 @@ export const pathMapper = <ParamsT extends readonly unknown[]>(
 
   const paramsMapper: PathMapperSignature<ParamsT>["paramsMapper"] = (
     params,
+    opt?: { coerceNumbers?: boolean },
   ) => {
-    return paramsMap.reduce<Record<string, unknown>>((map, [name, kind], i) => {
-      if (kind === "splat") {
-        if (Array.isArray(params[i]) && params[i].length) {
-          map[name] = params[i].map((v) => castParam(name, v));
+    return paramsMap.reduce<Record<string, unknown>>(
+      (map, { name, type }, i) => {
+        if (Array.isArray(params[i])) {
+          map[name] = params[i].map((v) => {
+            return castParam(v, opt?.coerceNumbers ? type === "number" : false);
+          });
+        } else if (params[i] !== undefined) {
+          map[name] = castParam(
+            params[i],
+            opt?.coerceNumbers ? type === "number" : false,
+          );
         }
-      } else if (params[i] !== undefined) {
-        map[name] = castParam(name, params[i]);
-      }
-      return map;
-    }, {});
+        return map;
+      },
+      {},
+    );
   };
 
   const parametrize: PathMapperSignature<ParamsT>["parametrize"] = (params) => {

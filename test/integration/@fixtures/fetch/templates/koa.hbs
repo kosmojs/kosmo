@@ -1,12 +1,17 @@
 import { defineRoute } from "_/api";
 
-export default defineRoute(({ {{#each definitions}}{{method}}, {{/each}} }) => [
-  {{#each definitions}}
-  {{method}}<{{type}}>((ctx) => {
-    ctx.body = {
-      ...ctx.validated,
-      requestOrigin: ctx.get("x-request-origin"),
-    };
-  }),
-  {{/each}}
-]);
+export default defineRoute<
+  "{{name}}",
+  [ {{#each paramsRefinements}}{{.}}, {{/each}} ]
+>(
+  ({ {{#each definitions}}{{method}}, {{/each}} }) => [
+    {{#each definitions}}
+    {{method}}<{{type}}>((ctx) => {
+      ctx.body = {
+        ...ctx.validated,
+        requestOrigin: ctx.get("x-request-origin"),
+      };
+    }),
+    {{/each}}
+  ],
+);
