@@ -30,13 +30,13 @@
     "mrmime": "^2.0.1",
     "path-to-regexp": "^8.4.2",
     "picomatch": "^4.0.5",
-    "tfusion": "^0.2.0",
+    "tfusion": "^0.2.2",
     "tinyglobby": "^0.2.17",
     "ts-morph": "^28.0.0"
   },
   "devDependencies": {
     "@kosmojs/lib": "workspace:^",
     "@types/picomatch": "^4.0.3",
-    "vite": "^8.2.0"
+    "vite": "^8.2.1"
   }
 }

@@ -273,14 +273,14 @@ export default () => {
   ): Array<OpenAPIParameter> | undefined => {
     const parameters = route.params.resolvedType?.properties?.flatMap(
       (prop) => {
-        return new RegExp(`\\{${prop.nameLiteral}\\*?\\}`).test(openapiPath)
+        return new RegExp(`\\{${prop.name}\\*?\\}`).test(openapiPath)
           ? [
               {
                 $ref: generateComponentPath(
                   "parameters",
                   route,
                   route.params.id,
-                  prop.nameLiteral,
+                  prop.name,
                 ),
               },
             ]
@@ -375,7 +375,7 @@ export default () => {
         for (const prop of resolvedType?.properties || []) {
           if (prop?.typeboxSchema) {
             // generating a schema for every property
-            const key = generateComponentId(route, id, prop.nameLiteral);
+            const key = generateComponentId(route, id, prop.name);
             schemas[key] = jsonSchemaBuilder(prop.typeboxSchema);
           }
         }
@@ -393,10 +393,8 @@ export default () => {
       // console.dir(route.params.resolvedType, { depth: 10 });
       for (const prop of route.params.resolvedType.properties || []) {
         if (prop?.typeboxSchema) {
-          parameters[
-            generateComponentId(route, route.params.id, prop.nameLiteral)
-          ] = {
-            name: prop.nameLiteral,
+          parameters[generateComponentId(route, route.params.id, prop.name)] = {
+            name: prop.name,
             in: "path",
             required: true,
             schema: jsonSchemaBuilder(prop.typeboxSchema),
@@ -442,7 +440,7 @@ export default () => {
               operation.parameters = [];
             }
             operation.parameters.push({
-              name: prop.nameLiteral,
+              name: prop.name,
               in: "query",
               required: !prop.optional,
               schema: {
@@ -450,7 +448,7 @@ export default () => {
                   "schemas",
                   route,
                   queryType.schema.id,
-                  prop.nameLiteral,
+                  prop.name,
                 ),
               },
             });
