@@ -1,3 +1,14 @@
+## [](https://github.com/kosmojs/kosmo/compare/v0.2.10...v) (2026-08-10)
+
+## [0.2.10](https://github.com/kosmojs/kosmo/compare/v0.2.9...v0.2.10) (2026-08-10)
+
+### Bug Fixes
+
+* correctly detect numeric params ([8425a04](https://github.com/kosmojs/kosmo/commit/8425a04ebca76ad239d89f81e04778bbdf624f0e))
+* detect and coerce numeric properties in query validation target ([7443989](https://github.com/kosmojs/kosmo/commit/7443989fc134948f2b24e6bb8edf80e9522fed55))
+* dev server routing ([5ed8e55](https://github.com/kosmojs/kosmo/commit/5ed8e55ed056b7789d7e061c96890197de32f889))
+
+## [0.2.9](https://github.com/kosmojs/kosmo/compare/v0.2.8...v0.2.9) (2026-08-06)
 
 ## [0.2.8](https://github.com/kosmojs/kosmo/compare/v0.2.7...v0.2.8) (2026-08-06)
 
