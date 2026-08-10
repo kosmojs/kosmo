@@ -24,6 +24,14 @@ git commit --message 'chore: add changeset'
 
 changeset version
 
+# Generate the changelog from the same conventional commits,
+# into the same commit as the version bump.
+# Generating here - before any release tag exists on HEAD -
+# is what keeps conventional-changelog from prepending an empty unreleased header:
+# the latest tag is still the previous release,
+# so the new section dates from it and carries the bumped version number.
+pnpm conventional-changelog --preset conventionalcommits --release-count 0
+
 # --all again, and for the same reason: `changeset version` consumes the
 # changeset files and can create a CHANGELOG.md for a package that never had one.
 # `commit -a` would stage the deletions and silently drop the new files.

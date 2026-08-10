@@ -1,4 +1,3 @@
-## [](https://github.com/kosmojs/kosmo/compare/v0.2.10...v) (2026-08-10)
 
 ## [0.2.10](https://github.com/kosmojs/kosmo/compare/v0.2.9...v0.2.10) (2026-08-10)
 
