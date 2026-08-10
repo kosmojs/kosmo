@@ -566,13 +566,19 @@ const eventFactory = async (
   };
 };
 
+const normalizeRegex = (s: string) => {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\/+$/, "");
+};
+
 const matchersFactory: (
   sourceFolder: SourceFolder,
 ) => Record<"base" | "api", (req: IncomingMessage) => boolean> = ({
   config,
 }) => {
-  const basePattern = new RegExp(`^${config.base}($|/*)`);
-  const apiPattern = new RegExp(`^${join(config.base, config.apiBase)}($|/*)`);
+  const basePattern = new RegExp(`^${normalizeRegex(config.base)}(?=$|/)`);
+  const apiPattern = new RegExp(
+    `^${normalizeRegex(join(config.base, config.apiBase))}(?=$|/)`,
+  );
   return {
     base(req) {
       return apiPattern.test(req.url as string)
