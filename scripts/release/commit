@@ -77,6 +77,10 @@ printf '  %s\n' "${declared[@]}"
 # and is what git describe and --follow-tags consider a real tag
 git tag --annotate "$tag" --message "$tag"
 
+# generate and commit changelog
+pnpm conventional-changelog --preset conventionalcommits --release-count 0
+git commit -am "chore: changelog"
+
 # Push branch and tag together. Pushing the tag alone uploads the commit
 # objects but leaves the remote branch pointing at the previous commit,
 # so the release exists only as a tag target.
