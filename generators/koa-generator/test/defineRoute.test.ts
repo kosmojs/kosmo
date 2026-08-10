@@ -36,9 +36,9 @@ describe("defineRoute", () => {
 
     test("accepts slot option", () => {
       const [stack] = defineRoute(({ use }) => [
-        use(async () => {}, { slot: "bodyparser" }),
+        use(async () => {}, { slot: "errorHandler" }),
       ]) as unknown as Array<MiddlewareDefinition<ParameterizedMiddleware>>;
-      expect(stack.options?.slot).toEqual("bodyparser");
+      expect(stack.options?.slot).toEqual("errorHandler");
     });
 
     test("accepts `on` option", () => {

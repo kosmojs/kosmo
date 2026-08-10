@@ -39,7 +39,6 @@ export const middlewareStackBuilder = (
         definitionItems: defineRoute(({ GET }) => [
           GET(async function get() {}),
         ]) as never,
-        params: [],
         validationSchemas: {},
         ...(e as Partial<RouteSource<ParameterizedMiddleware>>),
       };

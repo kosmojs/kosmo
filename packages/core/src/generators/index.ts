@@ -1,6 +1,4 @@
-import type { RouteSource } from "../api";
 import type {
-  ApiRoute,
   CSRFactory,
   PageRoute,
   RouterFactoryReturn,
@@ -9,27 +7,6 @@ import type {
 
 export const routeRenderHelpers = () => {
   return {
-    pageLinkBase({ name, pathPattern, params }: PageRoute) {
-      return JSON.stringify({
-        name,
-        pathPattern,
-        params,
-      } satisfies Pick<PageRoute, "name" | "pathPattern" | "params">);
-    },
-    serializeParamsTuple: ({ params }: ApiRoute) => {
-      const numericProperties = params.resolvedType?.numericProperties || [];
-      return JSON.stringify(
-        params.schema.map<RouteSource<never>["params"][number]>(
-          ({ name, kind }) => {
-            return {
-              name,
-              kind,
-              type: numericProperties.includes(name) ? "number" : "string",
-            };
-          },
-        ),
-      );
-    },
     serializeParamsTupleElements: (route: PageRoute) => {
       return route.params.schema
         .map((p, i) => {

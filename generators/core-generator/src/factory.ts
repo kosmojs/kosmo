@@ -3,7 +3,14 @@ import { styleText } from "node:util";
 
 import semver from "semver";
 
-import { defaults, type ResolvedEntry } from "@kosmojs/core";
+import {
+  type ApiRoute,
+  type ApiRouteSerialized,
+  defaults,
+  type PageRoute,
+  type PageRouteSerialized,
+  type ResolvedEntry,
+} from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   defineGeneratorFactory,
@@ -207,15 +214,50 @@ export default defineGeneratorFactory((sourceFolder) => {
       helpers: {
         ...createImportHelpers({ origin: "lib" }),
         ...routeRenderHelpers(),
+        serializeApiRoute({
+          name,
+          pathPattern,
+          params,
+          validationDefinitions,
+        }: ApiRoute) {
+          return JSON.stringify({
+            name,
+            pathPattern,
+            params: params.schema.map((e) => e.name),
+            numericProperties: {
+              params: params.schema.flatMap(({ name }) => {
+                return params.resolvedType?.numericProperties?.includes(name)
+                  ? [name]
+                  : [];
+              }),
+              query: validationDefinitions.reduce<
+                ApiRouteSerialized["numericProperties"]["query"]
+              >((map, e) => {
+                if (e.target === "query") {
+                  map[e.method] =
+                    e.schema.resolvedType?.numericProperties || [];
+                }
+                return map;
+              }, {}),
+            },
+          } satisfies ApiRouteSerialized);
+        },
+        serializePageRoute({ name, pathPattern, params }: PageRoute) {
+          return JSON.stringify({
+            name,
+            pathPattern,
+            params: params.schema.map((e) => e.name),
+          } satisfies PageRouteSerialized);
+        },
       },
       partials: {
-        pathMapper: templates.corePathMapper,
+        routeMapperPartial: templates.coreRouteMapperPartial,
       },
     });
 
     await renderToFile(
-      createPath.libCore("routeMap.ts"),
-      templates.coreRouteMap,
+      createPath.libCore("routes.ts"),
+      templates.coreRouteMapper,
       {
         apiRoutes: entries.flatMap(({ kind, entry }) => {
           return kind === "apiRoute" ? [entry] : [];

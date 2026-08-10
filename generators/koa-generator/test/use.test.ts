@@ -24,8 +24,8 @@ describe("global use", () => {
   });
 
   test("accepts slot option", () => {
-    const stack = use(async () => {}, { slot: "bodyparser" });
-    expect(stack.options?.slot).toEqual("bodyparser");
+    const stack = use(async () => {}, { slot: "errorHandler" });
+    expect(stack.options?.slot).toEqual("errorHandler");
   });
 
   test("accepts `on` option", () => {

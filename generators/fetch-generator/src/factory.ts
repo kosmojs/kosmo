@@ -2,6 +2,7 @@ import {
   defaults,
   RequestValidationTargets,
   type ResolvedEntry,
+  type ResolvedTypeSignature,
   type ValidationTarget,
 } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
@@ -42,7 +43,7 @@ export default defineGeneratorFactory((sourceFolder) => {
           id: string;
           target: ValidationTarget;
           method: string;
-          resolvedType: unknown;
+          resolvedType: ResolvedTypeSignature | undefined;
         }> = [];
 
         for (const def of entry.validationDefinitions) {
@@ -150,7 +151,8 @@ export default defineGeneratorFactory((sourceFolder) => {
         // fetch generator always runs before other generators
         // so it is safe to re-initialize this file before specialized generators update it.
         ["unwrap.ts", templates.unwrap],
-        ["@fetch.ts", "export const transport = undefined;"],
+        ["@fetch/transport.ts", templates.libFetchTransport],
+        ["@fetch/index.ts", templates.libFetchIndex],
       ]) {
         await deployLibFile(createPath.lib(file), template, {});
       }
@@ -184,7 +186,7 @@ export default defineGeneratorFactory((sourceFolder) => {
     async ssrBuild() {
       for (const [file, template] of [
         [
-          "@fetch.ts",
+          "@fetch/transport.ts",
           `export { transport } from "${defaults.libPrefix}/@ssr/fetch";`,
         ],
       ]) {

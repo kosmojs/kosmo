@@ -1,6 +1,5 @@
 import type { UserConfig } from "vite";
 
-import type { HostOpt } from "../fetch";
 import type { ProjectSettings, SourceFolder } from "./project";
 import type { ResolvedEntry } from "./routes";
 
@@ -106,16 +105,4 @@ export type GeneratorSignature = {
   options?: object;
   dependencies?: GeneratorDependencies;
   devDependencies?: GeneratorDependencies;
-};
-
-export type PathMapperSignature<ParamsT extends readonly unknown[]> = {
-  paramsMapper(params: ParamsT): Record<string, unknown>;
-  parametrize(params: ParamsT): string;
-  // route path without base
-  // eg: if base is /admin and route path is /users
-  // return just /users
-  base(params: ParamsT, query?: Record<string, unknown>): string;
-  // route path with base prepended, eg: /admin/users
-  path(params: ParamsT, query?: Record<string, unknown>): string;
-  href(host: HostOpt, params: ParamsT, query?: Record<string, unknown>): string;
 };

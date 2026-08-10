@@ -28,7 +28,7 @@ export const routes = {
   query: {
     GET: `{
       query: {
-        page?: string;
+        page?: number;
         search?: string;
       };
     }`,
@@ -49,7 +49,7 @@ export const routes = {
   },
   meta: {
     GET: `{
-      query: { page?: string };
+      query: { page?: number };
       headers: { authorization: string };
       cookies: { session: string };
     }`,
@@ -58,7 +58,7 @@ export const routes = {
     POST: `{
       json: {
         name: string;
-        count?: string;
+        count?: number;
       };
     }`,
   },
@@ -122,8 +122,8 @@ export const payloadMap: PayloadMap = {
   query: {
     GET: [
       { query: {} },
-      { query: { page: "1" } },
-      { query: { page: "2", search: "alice" } },
+      { query: { page: 1 } },
+      { query: { page: 2, search: "alice" } },
     ],
   },
   headers: {
@@ -139,14 +139,14 @@ export const payloadMap: PayloadMap = {
     cookies: { session: "sess_abc" },
     GET: [
       {
-        query: { page: "1" },
+        query: { page: 1 },
       },
     ],
   },
   json: {
     POST: [
       { json: { name: "alice" } },
-      { json: { name: "bob", count: "3" } },
+      { json: { name: "bob", count: 3 } },
     ],
   },
   form: {

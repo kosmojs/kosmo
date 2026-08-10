@@ -145,3 +145,20 @@ export type RouteResolverCacheFactory = (
     },
   ) => Promise<RouteResolverCache>;
 };
+
+type RouteSerialized = Pick<RouteEntry, "name" | "pathPattern"> & {
+  params: Array<string>;
+};
+
+export type ApiRouteSerialized = RouteSerialized & {
+  numericProperties: {
+    params: Array<string>;
+    query: Record<
+      // GET, POST etc.
+      string,
+      Array<string>
+    >;
+  };
+};
+
+export type PageRouteSerialized = RouteSerialized;

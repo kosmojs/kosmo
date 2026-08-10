@@ -13,8 +13,8 @@ describe("createRouterRoutes", () => {
       const stack = middlewareStackBuilder(
         [
           {
+            name: "{...path}",
             pathPattern,
-            params: [{ name: "path", kind: "splat", type: "string" }],
             definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 return ctx.json(ctx.validated.params);
@@ -44,11 +44,8 @@ describe("createRouterRoutes", () => {
       const stack = middlewareStackBuilder(
         [
           {
+            name: "[id]/[name]",
             pathPattern: `/${pathPattern}`,
-            params: [
-              { name: "id", kind: "required", type: "number" },
-              { name: "name", kind: "required", type: "string" },
-            ],
             definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 return ctx.json(ctx.validated.params);
@@ -78,8 +75,8 @@ describe("createRouterRoutes", () => {
       const stack = middlewareStackBuilder(
         [
           {
+            name: "{...ids}",
             pathPattern,
-            params: [{ name: "ids", kind: "splat", type: "number" }],
             definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 return ctx.json(ctx.validated.params);

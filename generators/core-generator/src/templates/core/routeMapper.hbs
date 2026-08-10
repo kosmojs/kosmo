@@ -1,0 +1,29 @@
+{{> routeMapperPartial}}
+
+import { base } from "./config";
+
+// used by backend generators and fetch clients
+export const apiRouteMap = {
+  {{#each apiRoutes}}
+  "{{name}}": {{serializeApiRoute .}},
+  {{/each}}
+};
+
+// used by frontend generators on Link component
+export const pageRouteMap = {
+  {{#each pageRoutes}}
+  "{{name}}": pageRouteMapper<[{{serializeParamsTupleElements .}}]>(
+    base,
+    {{serializePageRoute .}},
+  ),
+  {{/each}}
+};
+
+{{#if pageRoutes.length}}
+export type LinkProps =
+  {{#each pageRoutes}}
+  | [ "{{name}}", {{serializeParamsTupleElements .}} ]
+  {{/each}};
+{{else}}
+export type LinkProps = never;
+{{/if}}

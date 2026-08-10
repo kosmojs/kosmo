@@ -1,11 +1,7 @@
-import fetchFactory, {
-  join,
-  stringify,
-  payloadResolver,
-} from "@kosmojs/core/fetch";
+import fetchFactory, { join, stringify } from "@kosmojs/core/fetch";
 
 import { base, apiBase, apiRouteMap } from "{{ createImport 'libCore' }}";
-import { transport } from "{{ createImport 'lib' '@fetch' }}";
+import { transport, fetchHelpers } from "{{ createImport 'lib' '@fetch' }}";
 
 import {
   type MaybeWrapped,
@@ -42,9 +38,13 @@ export type ResponseT = {
 const {
   paramsMapper,
   parametrize,
+  payloadResolver,
   path,
   href,
-} = apiRouteMap["{{route.name}}"];
+} = fetchHelpers<[{{serializeParamsTupleElements route}}]>(
+  apiBase,
+  apiRouteMap["{{route.name}}"],
+);
 
 const fetchApi = fetchFactory(
   join(base, apiBase),
@@ -88,7 +88,7 @@ export const {{method}} = (
     {{#each ../payloadTypes}}
     if (validationSchemas.{{target}}?.{{../method}}) {
       validationSchemas.{{target}}.{{../method}}.validate(
-        payloadResolver(payload, "{{target}}")
+        payloadResolver(payload, "{{target}}", "{{../method}}"),
       );
     }
     {{/each}}
