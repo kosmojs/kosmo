@@ -35,6 +35,15 @@ export default defineRoute<"users/[id]", [
 
 A request to `/api/users/abc` is rejected with a 400 before your handler runs.
 
+::: tip Numeric params are coerced for you
+A URL param arrives as a string, but when you type it as `number`,
+`KosmoJS` coerces it before validation - `"123"` becomes `123`.
+
+A non-numeric value like `"abc"` is left as-is and fails the number check, producing a clean 400.
+
+So you write `number` (or a numeric `VRefine`) and read a real number from `ctx.validated.params`; no manual coercion needed.
+:::
+
 Access validated parameters through `ctx.validated.params` - it carries the refined type,
 not the raw string. The underlying `ctx.params` (Koa) or `ctx.req.param()` (Hono) still exists
 if you need the original.

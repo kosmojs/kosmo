@@ -34,7 +34,7 @@ import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
-    ctx.text("Automatically generated route: [ users/[id] ]");
+    return ctx.text("Automatically generated route: [ users/[id] ]");
   }),
 ]);
 ```

@@ -190,7 +190,7 @@ import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
-    ctx.text("Automatically generated route: [ users/[id] ]");
+    return ctx.text("Automatically generated route: [ users/[id] ]");
   }),
 ]);
 ```
@@ -224,7 +224,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
     const { id } = ctx.req.param();
     const user: User = { id: Number(id), name: "Jane Smith", email: "jane@example.com" };
-    ctx.json(user);
+    return ctx.json(user);
   }),
 ]);
 ```
@@ -274,7 +274,7 @@ export default defineRoute<"users/[id]", [
   GET(async (ctx) => {
     const { id } = ctx.validated.params; // number, not string [!code hl]
     const user: User = { id, name: "Jane Smith", email: "jane@example.com" };
-    ctx.json(user);
+    return ctx.json(user);
   }),
 ]);
 ```
@@ -330,7 +330,7 @@ export default defineRoute<"users">(({ POST }) => [
     response: [200, "json", User] // [!code hl]
   }>(async (ctx) => {
     const { name, email, age } = ctx.validated.json;
-    ctx.json({ id: 1, name, email, age });
+    return ctx.json({ id: 1, name, email, age });
   }),
 ]);
 ```

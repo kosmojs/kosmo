@@ -543,17 +543,53 @@ A request to `/api/users/abc` is rejected with 400 before the handler runs.
 Refinements are positional, not name-based - renaming `[id]` to `[userId]` needs no change here.
 [Details ›](/validation/params#params-refinements)
 
+#### If URL params are strings, how does a `number` param validate?
+KosmoJS coerces the value before validation: type a param as `number` and `"123"` becomes `123`,
+while a non-numeric `"abc"` stays a string and fails the check with a clean 400.
+So you write `number` (or a numeric `VRefine`) and read a real number from `ctx.validated.params`, no manual coercing.
+[Details ›](/validation/params#params-refinements)
+
 #### Why must the params tuple be written inline?
 A pre-defined tuple *alias* loses the structural info the generator needs to emit a schema.
 Individual type aliases used *inside* the inline tuple are fine -
 it's only extracting the whole tuple to a named type that breaks.
 [Details ›](/validation/params#params-refinements)
 
-#### What payload targets exist?
+#### What validation targets exist?
 Metadata (any method): `query`, `headers`, `cookies`. Body (POST/PUT/PATCH): `json`, `form`, `raw`.
 `form` covers both URL-encoded and multipart form data (so file uploads go here);
 `raw` accepts plain text, binary data, `Buffer`, `ArrayBuffer`, or `Blob`.
 [Details ›](/validation/payload#validation-targets)
+
+#### Can validation targets hold numbers?
+Only the `query` target will coerce numbers before validation:
+
+```ts
+GET<{ query: { page: number } }>((ctx) => {
+  const { page } = ctx.validated.query // page is a number
+});
+```
+
+`headers`/`cookies`/`form`/`raw` never coerce numbers.
+
+::: warning will never pass validation
+`POST<{ form: { age: number } }>`
+:::
+
+`json` carries numbers natively, no coercion needed.
+[Details ›](/validation/payload#validation-targets)
+
+#### Can validation targets hold booleans?
+Only `json` carries booleans natively, other targets will fail validation if boolean used directly.
+
+::: warning will never pass validation
+`POST<{ form: { consented: boolean } }>`
+:::
+
+Use a string union instead:
+```ts
+POST<{ form: { consented: "true" | "false" | "on" | "off" } }>
+```
 
 #### Why one body target but multiple metadata targets?
 Body targets are mutually exclusive (one per handler - you can't have both `json` and `form`);

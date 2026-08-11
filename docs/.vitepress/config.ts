@@ -72,10 +72,7 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [
-      llmstxt() as never,
-      groupIconVitePlugin() as never,
-    ],
+    plugins: [llmstxt() as never, groupIconVitePlugin() as never],
   },
 
   markdown: {
@@ -242,15 +239,15 @@ export default defineConfig({
               link: "/validation/intro",
             },
             {
-              text: "Validating Params",
+              text: "Params",
               link: "/validation/params",
             },
             {
-              text: "Validating Payloads",
+              text: "Payloads",
               link: "/validation/payload",
             },
             {
-              text: "Validating Responses",
+              text: "Responses",
               link: "/validation/response",
             },
             {

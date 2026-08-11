@@ -35,10 +35,21 @@ Each target maps to a part of the incoming HTTP request.
 
 Any combination of metadata targets is valid. Body targets are mutually exclusive - one per handler.
 
+::: tip Where numeric coercion applies (and where it doesn't)
+Everything off the wire is a string. `KosmoJS` coerces numeric values in exactly two places -
+route **params** and **`query`** - typing a `query` field or a param as `number` turns `"10"` into `10`.
+
+Non-numeric input stays as is and fails validation cleanly - `abc` not coerced, validation fails.
+
+`headers`/`cookies`/`form`/`raw` never coerce numbers.
+
+`json` carries real numbers natively, no coercion needed.
+:::
+
 ```ts
 // ✅ Multiple metadata targets + one body target
 POST<{
-  query: { page: number };
+  query: { page: number }; // coerced: "2" -> 2
   headers: { authorization: string };
   json: { title: string };
 }>

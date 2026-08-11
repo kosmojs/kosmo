@@ -112,7 +112,7 @@ type User = { id: number; name: string; email: string }
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
     const { id } = ctx.req.param();
-    ctx.json({ id: Number(id), name: "Jane Smith", email: "jane@example.com" });
+    return ctx.json({ id: Number(id), name: "Jane Smith", email: "jane@example.com" });
   }),
 ]);
 ```
