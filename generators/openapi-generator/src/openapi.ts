@@ -493,6 +493,16 @@ export default () => {
   };
 
   const generateOpenAPISchema = (routes: ApiRoute[]) => {
+    /**
+     * Precompute each route's generated path variations once, keyed by name,
+     * so the subsumption check below is a set lookup rather than a re-parse.
+     * */
+    const variationsByName = new Map<string, Array<string>>();
+
+    for (const route of routes) {
+      variationsByName.set(route.name, generatePathVariations(route));
+    }
+
     const { components, paths } = routes
       .sort(
         /**
@@ -514,13 +524,29 @@ export default () => {
          *       index.ts
          *
          * Two routes exist: search/{:type} and search/{:type}/{:page}.
-         * The shorter route is already covered by the longer one's
-         * generated variations, so including both would produce
-         * duplicate/phantom paths in the OpenAPI spec.
+         * Because {:page} is optional, the longer route ALSO emits the
+         * `search/{:type}` variation, so the shorter route's paths are a
+         * subset and including both would produce duplicate/phantom paths.
+         *
+         * The test must be on the generated path variations, not the route
+         * names: a required-param child like `posts/[id]` emits only
+         * `/posts/{id}` (never `/posts`), so the `posts` collection is NOT
+         * subsumed and must be kept. A name-prefix check (`startsWith`)
+         * wrongly drops any route whose name is a string prefix of another.
          * */
-        const subsumed = routes.some((e) => {
-          return e.name === route.name ? false : e.name.startsWith(route.name);
-        });
+        const own = variationsByName.get(route.name) ?? [];
+
+        const subsumed =
+          own.length > 0
+            ? routes.some((e) => {
+                if (e.name === route.name) {
+                  return false;
+                }
+                const other = variationsByName.get(e.name) ?? [];
+                const otherSet = new Set(other);
+                return own.every((path) => otherSet.has(path));
+              })
+            : false;
 
         return subsumed ? [] : [route];
       })

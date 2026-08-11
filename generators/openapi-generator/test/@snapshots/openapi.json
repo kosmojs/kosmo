@@ -1022,6 +1022,85 @@
         }
       }
     },
+    "/users/{id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users_id_index_ts_2390016005_ResponseTGET1698717845"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/users_id_index_ts_2390016005_ParamsT1482590779_id3208210256"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/users_id_index_ts_2390016005_JsonTGET253193823"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users_id_index_ts_2390016005_ResponseTPUT1698717845"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/users_id_index_ts_2390016005_ParamsT1482590779_id3208210256"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/users_id_index_ts_2390016005_JsonTPUT253193823"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/users_id_index_ts_2390016005_ResponseTDELETE2606313607"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/users_id_index_ts_2390016005_ParamsT1482590779_id3208210256"
+          }
+        ]
+      }
+    },
     "/data": {
       "get": {
         "responses": {
@@ -1721,6 +1800,32 @@
           }
         ]
       }
+    },
+    "/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/index_index_ts_2109308135_ResponseTGET2109545860"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/index_index_ts_2109308135_JsonTGET953914569"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2014,6 +2119,15 @@
           "pattern": "^[a-zA-Z0-9_]{3,20}$",
           "minLength": 3,
           "maxLength": 20
+        }
+      },
+      "users_id_index_ts_2390016005_ParamsT1482590779_id3208210256": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": 1
         }
       },
       "data_page_limit_index_ts_2131952970_ParamsT565499099_page336246304": {
@@ -3585,6 +3699,169 @@
           }
         }
       },
+      "users_id_index_ts_2390016005_JsonTGET253193823": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "profile"
+              },
+              {
+                "type": "string",
+                "const": "posts"
+              },
+              {
+                "type": "string",
+                "const": "all"
+              }
+            ]
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "expand": {
+            "type": "boolean"
+          }
+        }
+      },
+      "users_id_index_ts_2390016005_ResponseTGET1698717845": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "role",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "admin"
+              },
+              {
+                "type": "string",
+                "const": "user"
+              },
+              {
+                "type": "string",
+                "const": "moderator"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "users_id_index_ts_2390016005_JsonTPUT253193823": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "admin"
+              },
+              {
+                "type": "string",
+                "const": "user"
+              },
+              {
+                "type": "string",
+                "const": "moderator"
+              }
+            ]
+          }
+        }
+      },
+      "users_id_index_ts_2390016005_ResponseTPUT1698717845": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "role",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "admin"
+              },
+              {
+                "type": "string",
+                "const": "user"
+              },
+              {
+                "type": "string",
+                "const": "moderator"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "users_id_index_ts_2390016005_ResponseTDELETE2606313607": {
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
       "data_page_limit_index_ts_2131952970_JsonTGET2919723961": {
         "type": "object",
         "properties": {
@@ -4705,6 +4982,52 @@
                 }
               }
             }
+          }
+        }
+      },
+      "index_index_ts_2109308135_JsonTGET953914569": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "full"
+              },
+              {
+                "type": "string",
+                "const": "minimal"
+              }
+            ]
+          },
+          "includeEndpoints": {
+            "type": "boolean"
+          }
+        }
+      },
+      "index_index_ts_2109308135_ResponseTGET2109545860": {
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "endpoints",
+          "documentation"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "documentation": {
+            "type": "string"
           }
         }
       }
