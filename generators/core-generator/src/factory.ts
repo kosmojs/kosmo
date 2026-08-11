@@ -76,7 +76,7 @@ export default defineGeneratorFactory((sourceFolder) => {
         console.error(
           styleText(
             ["red", "italic"],
-            `✗ There are ${missing.length} missing dependencies, please consider installing them.`,
+            `There are ${missing.length} missing dependencies, please consider installing them.`,
           ),
         );
         for (const key of ["dependencies", "devDependencies"]) {
@@ -92,13 +92,12 @@ export default defineGeneratorFactory((sourceFolder) => {
       if (outdated.length) {
         console.error(
           styleText(
-            ["blue", "italic"],
-            `! There are ${outdated.length} outdated dependencies, please consider updating them:`,
+            ["yellow", "italic"],
+            `There are ${outdated.length} outdated dependencies, please consider updating them:`,
           ),
         );
-        console.error(
-          styleText(["blue"], `${outdated.map(([name]) => name).join(" ")}`),
-        );
+        console.error(outdated.map(([name]) => name).join(" "));
+        console.error();
       }
     }
 
