@@ -14,42 +14,34 @@ const { rootEl, ready } = useReveal();
       </div>
       <div class="feat-grid rise">
         <div class="fcard">
-          <div class="ico">[ ]/</div>
           <h3>Directory-based routing</h3>
           <p>Your folder tree is the route map, for API and pages alike. Nothing to keep in sync.</p>
         </div>
         <div class="fcard">
-          <div class="ico">&lt;T&gt;</div>
           <h3>End-to-end type safety</h3>
-          <p>Write the type once. Runtime validation, a typed client, and OpenAPI all derive from it.</p>
+          <p>Write the type once. Runtime validation, a typed client, and an OpenAPI spec all derive from it.</p>
         </div>
         <div class="fcard">
-          <div class="ico">↯</div>
-          <h3>Generated fetch clients</h3>
-          <p>Every route gets a typed client. Invalid requests fail in the browser, before a round trip.</p>
+          <h3>Isomorphic fetch</h3>
+          <p>The same typed client runs on server and client. During SSR it calls the route in-process - no network hop, no server functions to define.</p>
         </div>
         <div class="fcard">
-          <div class="ico">{ }</div>
-          <h3>OpenAPI 3.1, free</h3>
-          <p>A spec falls out of the same definitions - no annotation layer, no hand-authored schema.</p>
+          <h3>Built-in streaming SSR</h3>
+          <p>Flush the shell early and stream the rest - opt in per route. Each framework streams through its own native renderer.</p>
         </div>
         <div class="fcard">
-          <div class="ico">⤵</div>
           <h3>Cascading middleware</h3>
           <p>Drop a <span class="mono">use.ts</span> in any folder; it wraps everything beneath it. No imports, no wiring.</p>
         </div>
         <div class="fcard">
-          <div class="ico">⧉</div>
-          <h3>Composable slots</h3>
-          <p>Override one piece of global middleware per route or subtree. Inherit everything else.</p>
+          <h3>TanStack Query</h3>
+          <p>Opt in per folder and the query client is wired for you - per-request on the server, singleton in the browser.</p>
         </div>
         <div class="fcard">
-          <div class="ico">⋓</div>
           <h3>Nested layouts</h3>
           <p>Compose shared shells - nav, sidebars, auth - at any depth. The file system is the hierarchy.</p>
         </div>
         <div class="fcard">
-          <div class="ico">⚙</div>
           <h3>Built on proven tools</h3>
           <p>No proprietary runtime, no custom bundler. Every layer is something you can debug and swap.</p>
         </div>
@@ -92,13 +84,6 @@ const { rootEl, ready } = useReveal();
   border-color: var(--kx-accent-line);
   transform: translateY(-3px);
   box-shadow: var(--kx-shadow-card);
-}
-
-.fcard .ico {
-  margin-bottom: 14px;
-  font-family: var(--kx-font-mono);
-  font-size: 20px;
-  color: var(--kx-accent);
 }
 
 .fcard h3 {
