@@ -55,14 +55,10 @@ const fetchApi = fetchFactory(
 export const {{method}} = (
   _params{{#if ../route.optionalParams}}?{{/if}}: MaybeWrapped<ParamsT>,
   _payload?: {
-    {{#each ../payloadTargets}}
-    {{#if payloadType}}
-    {{target}}: {{payloadType.name}} extends { {{../method}}: unknown }
-      ? MaybeWrapped<{{payloadType.name}}["{{../method}}"]>
+    {{#each payloadTypes}}
+    {{target}}: {{id}} extends { {{method}}: unknown }
+      ? MaybeWrapped<{{id}}["{{method}}"]>
       : unknown,
-    {{else}}
-    {{target}}?: unknown;
-    {{/if}}
     {{/each}}
   },
   opt?: {
@@ -85,10 +81,10 @@ export const {{method}} = (
         paramsMapper(params as never, { coerceNumbers: true }),
       );
     }
-    {{#each ../payloadTypes}}
-    if (validationSchemas.{{target}}?.{{../method}}) {
-      validationSchemas.{{target}}.{{../method}}.validate(
-        payloadResolver(payload, "{{target}}", "{{../method}}"),
+    {{#each payloadTypes}}
+    if (validationSchemas.{{target}}?.{{method}}) {
+      validationSchemas.{{target}}.{{method}}.validate(
+        payloadResolver(payload as never, "{{target}}", "{{../method}}"),
       );
     }
     {{/each}}

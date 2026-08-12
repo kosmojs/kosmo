@@ -1,6 +1,5 @@
 import {
   defaults,
-  RequestValidationTargets,
   type ResolvedEntry,
   type ResolvedTypeSignature,
   type ValidationTarget,
@@ -70,46 +69,24 @@ export default defineGeneratorFactory((sourceFolder) => {
         }
 
         const routeMethods = entry.methods.map((method) => {
+          const payloadTypes = validationTypes.filter((e) => {
+            return e.method === method
+              ? ![
+                  // skip these targets, validated on server only
+                  "headers",
+                  "cookies",
+                  "response",
+                ].includes(e.target)
+              : false;
+          });
           return {
             method,
+            payloadTypes,
             responseType: validationTypes.find((e) => {
               return e.target === "response" ? e.method === method : false;
             }),
           };
         });
-
-        const payloadTypes = Object.entries(
-          validationTypes.reduce<
-            Record<string, Array<(typeof validationTypes)[number]>>
-          >((map, { id, target, method, resolvedType }) => {
-            if (["headers", "cookies", "response"].includes(target)) {
-              // target supposed to be validated on server only
-              return map;
-            }
-
-            const key = `${target.replace(/^./, (c) => c.toUpperCase())}T`;
-
-            if (!map[key]) {
-              map[key] = [];
-            }
-
-            map[key].push({ id, target, method, resolvedType });
-
-            return map;
-          }, {}),
-        ).map(([name, types]) => {
-          return { name, types, target: types[0].target };
-        });
-
-        const payloadTargets = Object.keys(RequestValidationTargets).map(
-          (target) => {
-            const payloadType = payloadTypes.find((e) => e.target === target);
-            return {
-              target,
-              payloadType,
-            };
-          },
-        );
 
         const responseTypes = Object.values(
           validationTypes.reduce<
@@ -135,8 +112,6 @@ export default defineGeneratorFactory((sourceFolder) => {
             route: entry,
             validationTypes,
             routeMethods,
-            payloadTypes,
-            payloadTargets,
             responseTypes,
           },
         );
