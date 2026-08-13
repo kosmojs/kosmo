@@ -1,0 +1,18 @@
+import { Component } from "react";
+import { Outlet } from "react-router";
+
+class Boundary extends Component {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed
+      ? <div data-boundary>{"{{BOUNDARY_MESSAGE}}"}</div>
+      : this.props.children;
+  }
+}
+
+export default function Layout() {
+  return <Boundary><Outlet /></Boundary>;
+}

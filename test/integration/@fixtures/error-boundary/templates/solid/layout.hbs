@@ -1,0 +1,14 @@
+import { onMount, ErrorBoundary, type ParentProps } from "solid-js";
+
+export default function Layout(props: ParentProps) {
+  onMount(() => {
+    window.__APP_RENDERED__ = true;
+  });
+  return (
+    <ErrorBoundary
+      fallback={<div data-boundary>{"{{BOUNDARY_MESSAGE}}"}</div>}
+    >
+      {props.children}
+    </ErrorBoundary>
+  );
+}

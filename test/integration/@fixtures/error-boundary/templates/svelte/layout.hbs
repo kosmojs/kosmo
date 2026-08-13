@@ -1,0 +1,12 @@
+<script lang="ts">
+  import type { Snippet } from "svelte";
+  let { children }: { children: Snippet } = $props();
+</script>
+
+<svelte:boundary>
+  {@render children()}
+
+  {#snippet failed()}
+    <div data-boundary>{{BOUNDARY_MESSAGE}}</div>
+  {/snippet}
+</svelte:boundary>

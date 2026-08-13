@@ -211,6 +211,10 @@ export default defineConfig({
               link: "/frontend/server-side-render",
             },
             {
+              text: "Error Boundaries",
+              link: "/frontend/error-boundaries",
+            },
+            {
               text: "TanStack Query",
               link: "/frontend/tanstack-query",
             },

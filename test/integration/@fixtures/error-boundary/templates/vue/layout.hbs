@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { ref, onErrorCaptured } from "vue";
+
+const failed = ref(false);
+onErrorCaptured(() => {
+  failed.value = true;
+  return false;
+});
+</script>
+
+<template>
+  <div v-if="failed" data-boundary>{{BOUNDARY_MESSAGE}}</div>
+  <RouterView v-else />
+</template>

@@ -30,7 +30,7 @@ import {
 } from ".";
 import { APP_FILE, appMap } from "./app";
 
-const mode = inject("MODE");
+export const mode = inject("MODE");
 
 const browser = await chromium.launch({
   headless: process.env.DEBUG !== "browser",
@@ -51,11 +51,13 @@ export const setupTestProject = async ({
   framework,
   backend = mode === "ssr" ? pickBackend() : undefined,
   tsq,
+  skip,
   ...generatorOptions
 }: {
   framework?: keyof typeof FRAMEWORKS;
   backend?: keyof typeof BACKENDS;
   tsq?: boolean;
+  skip?: boolean;
 } & Partial<
   Record<
     keyof typeof FRAMEWORKS | keyof typeof BACKENDS | "ssr",
@@ -209,54 +211,6 @@ export const setupTestProject = async ({
     throw new Error(`Unknown mode ${mode}`);
   };
 
-  const bootstrapProject = async (opt?: {
-    dependencies?: Record<string, string>;
-    devDependencies?: Record<string, string>;
-  }) => {
-    await cleanup();
-
-    const pkgsDir = resolve(import.meta.dirname, "../../packages");
-
-    await createProject(
-      tempDir,
-      { name: projectName, devPort },
-      {
-        dependencies: {
-          ...opt?.dependencies,
-          "@kosmojs/core": `${pkgsDir}/core`,
-        },
-        devDependencies: {
-          ...opt?.devDependencies,
-          "@kosmojs/dev": `${pkgsDir}/dev`,
-          "@kosmojs/cli": `${pkgsDir}/cli`,
-        },
-      },
-    );
-
-    await createSourceFolder(
-      projectRoot,
-      {
-        name: sourceFolder.name,
-        base: sourceFolder.config.base,
-        ...(framework ? { framework } : {}),
-        ...(backend ? { backend } : {}),
-        ...(tsq ? { tsq } : {}),
-        ssr: mode === "ssr",
-      },
-      generatorOptions,
-    );
-
-    if (framework) {
-      await writeFile(
-        createPath.src(APP_FILE[framework]),
-        appMap[framework],
-        "utf8",
-      );
-    }
-
-    await installDependencies(projectRoot);
-  };
-
   const withPageContent = async <
     T extends
       | string
@@ -375,8 +329,62 @@ export const setupTestProject = async ({
     sourceFolder,
     withPageContent,
     withApiResponse,
-    bootstrapProject,
+    async bootstrapProject(opt?: {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    }) {
+      if (skip) {
+        return;
+      }
+
+      await cleanup();
+
+      const pkgsDir = resolve(import.meta.dirname, "../../packages");
+
+      await createProject(
+        tempDir,
+        { name: projectName, devPort },
+        {
+          dependencies: {
+            ...opt?.dependencies,
+            "@kosmojs/core": `${pkgsDir}/core`,
+          },
+          devDependencies: {
+            ...opt?.devDependencies,
+            "@kosmojs/dev": `${pkgsDir}/dev`,
+            "@kosmojs/cli": `${pkgsDir}/cli`,
+          },
+        },
+      );
+
+      await createSourceFolder(
+        projectRoot,
+        {
+          name: sourceFolder.name,
+          base: sourceFolder.config.base,
+          ...(framework ? { framework } : {}),
+          ...(backend ? { backend } : {}),
+          ...(tsq ? { tsq } : {}),
+          ssr: mode === "ssr",
+        },
+        generatorOptions,
+      );
+
+      if (framework) {
+        await writeFile(
+          createPath.src(APP_FILE[framework]),
+          appMap[framework],
+          "utf8",
+        );
+      }
+
+      await installDependencies(projectRoot);
+    },
     async startServer() {
+      if (skip) {
+        return;
+      }
+
       await installDependencies(projectRoot);
 
       await exec("pnpm", ["build"], { cwd: projectRoot, env });
@@ -401,6 +409,9 @@ export const setupTestProject = async ({
       routes: Array<{ name: string; file?: string }>,
       templateFactory?: PageTemplateFactory,
     ) {
+      if (skip) {
+        return;
+      }
       for (const { name, file = "index" } of routes) {
         await createPageRoute(name, file, templateFactory);
       }
@@ -409,11 +420,17 @@ export const setupTestProject = async ({
       routes: Array<{ name: string; file?: string }>,
       templateFactory?: ApiTemplateFactory,
     ) {
+      if (skip) {
+        return;
+      }
       for (const { name, file = "index" } of routes) {
         await createApiRoute(name, file, templateFactory);
       }
     },
     async teardown() {
+      if (skip) {
+        return;
+      }
       await browser?.close();
       await closeServer?.();
       await cleanup();

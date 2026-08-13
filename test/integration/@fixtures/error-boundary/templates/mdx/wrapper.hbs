@@ -1,0 +1,11 @@
+import { useErrorBoundary, useEffect } from "preact/hooks";
+import type { ComponentChildren } from "preact";
+
+export default function ErrorBoundary(props) {
+  const [error] = useErrorBoundary();
+  if (error) {
+    useEffect(() => { window.__APP_RENDERED__ = true }, []);
+    return <div data-boundary>{"{{BOUNDARY_MESSAGE}}"}</div>;
+  }
+  return <>{props.children}</>;
+}
