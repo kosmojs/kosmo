@@ -10,7 +10,7 @@ const {
   createPageRoutes,
   startServer,
   teardown,
-} = await setupTestProject({ framework: "react" });
+} = await setupTestProject({ framework: "vue" });
 
 beforeAll(async () => {
   await bootstrapProject();
@@ -19,18 +19,17 @@ beforeAll(async () => {
     return () => {
       if (file === "index") {
         return `
-          export default function Page() {
-            return <div>{"${name}"}</div>;
-          };
-        `;
+        <template>
+          <div>${name}</div>
+        </template>
+      `;
       }
 
       return `
-        import { Outlet } from "react-router";
-        export default function Layout(props) {
-          return <div data-layout="${name}"><Outlet /></div>;
-        };
-      `;
+      <template>
+        <div data-layout="${name}"><router-view /></div>
+      </template>
+    `;
     };
   });
 
@@ -39,7 +38,7 @@ beforeAll(async () => {
 
 afterAll(teardown);
 
-describe("React - Nested Routes", async () => {
+describe("Vue - Layouts", async () => {
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {
@@ -51,9 +50,8 @@ describe("React - Nested Routes", async () => {
         $("#app")
           .html()
           ?.trim()
-          ?.replace(/<script>.+<\/script>$/m, "")
-          ?.replace("<!--app-html-->", ""),
-      ).toMatchFileSnapshot(`../@snapshots/nested-routes/${snapshotName}.html`);
+          ?.replace(/<!--\[-->|<!--\]-->/g, ""),
+      ).toMatchFileSnapshot(`../@snapshots/layouts/${snapshotName}.html`);
     });
   }
 });

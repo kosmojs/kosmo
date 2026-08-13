@@ -10,7 +10,7 @@ const {
   createPageRoutes,
   startServer,
   teardown,
-} = await setupTestProject({ framework: "vue" });
+} = await setupTestProject({ framework: "solid" });
 
 beforeAll(async () => {
   await bootstrapProject();
@@ -19,17 +19,17 @@ beforeAll(async () => {
     return () => {
       if (file === "index") {
         return `
-        <template>
-          <div>${name}</div>
-        </template>
-      `;
+          export default function Page() {
+            return <div>{"${name}"}</div>;
+          };
+        `;
       }
 
       return `
-      <template>
-        <div data-layout="${name}"><router-view /></div>
-      </template>
-    `;
+        export default function Layout(props) {
+          return <div data-layout="${name}">{props.children}</div>;
+        };
+      `;
     };
   });
 
@@ -38,7 +38,7 @@ beforeAll(async () => {
 
 afterAll(teardown);
 
-describe("Vue - Nested Routes", async () => {
+describe("SolidJS - Layouts", async () => {
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {
@@ -47,11 +47,8 @@ describe("Vue - Nested Routes", async () => {
       const { content } = await withPageContent([name, params]);
       const $ = load(content);
       await expect(
-        $("#app")
-          .html()
-          ?.trim()
-          ?.replace(/<!--\[-->|<!--\]-->/g, ""),
-      ).toMatchFileSnapshot(`../@snapshots/nested-routes/${snapshotName}.html`);
+        $("#app").html()?.trim()?.replace("<!--app-html-->", ""),
+      ).toMatchFileSnapshot(`../@snapshots/layouts/${snapshotName}.html`);
     });
   }
 });

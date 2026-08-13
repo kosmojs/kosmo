@@ -10,7 +10,7 @@ const {
   createPageRoutes,
   startServer,
   teardown,
-} = await setupTestProject({ framework: "mdx" });
+} = await setupTestProject({ framework: "react" });
 
 beforeAll(async () => {
   await bootstrapProject();
@@ -18,10 +18,19 @@ beforeAll(async () => {
   await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
     return () => {
       if (file === "index") {
-        return `<div>{"${name}"}</div>`;
+        return `
+          export default function Page() {
+            return <div>{"${name}"}</div>;
+          };
+        `;
       }
 
-      return `<div data-layout="${name}">{props.children}</div>`;
+      return `
+        import { Outlet } from "react-router";
+        export default function Layout(props) {
+          return <div data-layout="${name}"><Outlet /></div>;
+        };
+      `;
     };
   });
 
@@ -30,7 +39,7 @@ beforeAll(async () => {
 
 afterAll(teardown);
 
-describe("MDX - Nested Routes", async () => {
+describe("React - Layouts", async () => {
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {
@@ -39,8 +48,12 @@ describe("MDX - Nested Routes", async () => {
       const { content } = await withPageContent([name, params]);
       const $ = load(content);
       await expect(
-        $("#app").html()?.trim()?.replace("<!--app-html-->", ""),
-      ).toMatchFileSnapshot(`../@snapshots/nested-routes/${snapshotName}.html`);
+        $("#app")
+          .html()
+          ?.trim()
+          ?.replace(/<script>.+<\/script>$/m, "")
+          ?.replace("<!--app-html-->", ""),
+      ).toMatchFileSnapshot(`../@snapshots/layouts/${snapshotName}.html`);
     });
   }
 });

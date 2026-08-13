@@ -10,7 +10,7 @@ const {
   createPageRoutes,
   startServer,
   teardown,
-} = await setupTestProject({ framework: "solid" });
+} = await setupTestProject({ framework: "mdx" });
 
 beforeAll(async () => {
   await bootstrapProject();
@@ -18,18 +18,10 @@ beforeAll(async () => {
   await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
     return () => {
       if (file === "index") {
-        return `
-          export default function Page() {
-            return <div>{"${name}"}</div>;
-          };
-        `;
+        return `<div>{"${name}"}</div>`;
       }
 
-      return `
-        export default function Layout(props) {
-          return <div data-layout="${name}">{props.children}</div>;
-        };
-      `;
+      return `<div data-layout="${name}">{props.children}</div>`;
     };
   });
 
@@ -38,7 +30,7 @@ beforeAll(async () => {
 
 afterAll(teardown);
 
-describe("SolidJS - Nested Routes", async () => {
+describe("MDX - Layouts", async () => {
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {
@@ -48,7 +40,7 @@ describe("SolidJS - Nested Routes", async () => {
       const $ = load(content);
       await expect(
         $("#app").html()?.trim()?.replace("<!--app-html-->", ""),
-      ).toMatchFileSnapshot(`../@snapshots/nested-routes/${snapshotName}.html`);
+      ).toMatchFileSnapshot(`../@snapshots/layouts/${snapshotName}.html`);
     });
   }
 });

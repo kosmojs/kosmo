@@ -39,7 +39,7 @@ beforeAll(async () => {
 
 afterAll(teardown);
 
-describe("Svelte - Nested Routes", async () => {
+describe("Svelte - Layouts", async () => {
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {
@@ -56,7 +56,7 @@ describe("Svelte - Nested Routes", async () => {
           .html()
           ?.replace(/<!--[\s\S]*?-->/g, "")
           ?.trim(),
-      ).toMatchFileSnapshot(`../@snapshots/nested-routes/${snapshotName}.html`);
+      ).toMatchFileSnapshot(`../@snapshots/layouts/${snapshotName}.html`);
     });
   }
 });
