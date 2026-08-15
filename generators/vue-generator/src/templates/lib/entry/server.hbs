@@ -74,21 +74,17 @@ export const renderToStream: RenderToStreamWrapper<
   Parameters<typeof renderToWebStream>[1]
 > = async (resolver, { headerTags = [], context = {} } = {}) => {
   const { component, loaderData } = await resolver();
-  const source = renderToWebStream(component, context);
 
-  const appendScript = new TransformStream<Uint8Array, Uint8Array>({
-    flush(controller) {
-      // runs once, after `source` has fully flushed and closed
-      const script = createHydrationScript(loaderData);
-      if (script) {
-        controller.enqueue(new TextEncoder().encode(script));
-      }
-    },
-  });
+  /**
+   * loaderData is fully resolved before streaming starts, so the hydration
+   * script ships in head - same as string mode. Head is written with the shell,
+   * guaranteeing delivery even when the stream errors mid-body.
+   * */
+  const script = createHydrationScript(loaderData);
 
   return {
-    head: [...headerTags].join("\n"),
-    html: source.pipeThrough(appendScript),
+    head: [...headerTags, ...script ? [script] : []].join("\n"),
+    html: renderToWebStream(component, context),
   };
 }
 
