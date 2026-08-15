@@ -7,26 +7,15 @@ import { inject, type TestFunction } from "vitest";
 import { BACKENDS, FRAMEWORKS } from "@kosmojs/core";
 import { pathResolver, render, renderToFile } from "@kosmojs/lib";
 
-import { dependencies } from "../../package.json";
-import * as layouts from "../@fixtures/fetch/layouts";
-import { payloadMap, routes } from "../@fixtures/fetch/routes";
-import * as templates from "../@fixtures/fetch/templates";
-import { setupTestProject } from "../setup";
-
-type TestEntry = {
-  project: TestGroup["project"];
-  route: string;
-  path: string;
-  params: Array<string | Array<string>>;
-  headers?: Record<string, string> | undefined;
-  cookies?: Record<string, string> | undefined;
-  payload: Record<string, unknown>;
-};
+import { dependencies } from "../package.json";
+import { payloadMap, routes } from "./@fixtures/fetch/routes";
+import * as templates from "./@fixtures/fetch/templates";
+import { setupTestProject } from "./setup";
 
 export type TestGroup = {
   name: string;
   project: Awaited<ReturnType<typeof setupTestProject>>;
-  tests: Array<TestEntry & { run: TestFunction }>;
+  tests: Array<[name: string, runner: TestFunction]>;
 };
 
 const mode = inject("MODE");
@@ -37,6 +26,7 @@ export const createTestGroups = async (opt?: {
   renderModes?: Array<"string" | "stream">;
   tsqModes?: Array<boolean>;
   routes?: Array<keyof typeof routes>;
+  skip?: boolean;
 }) => {
   const testGroups: Array<TestGroup> = [];
 
@@ -73,10 +63,16 @@ export const createTestGroups = async (opt?: {
             framework: framework as never,
             tsq,
             ...(renderMode ? { ssr: { renderMode } } : {}),
+            ...(opt?.skip ? { skip: opt.skip } : {}),
           });
 
           const group: TestGroup = {
-            name: [backend, framework, renderMode || mode].join(":"),
+            name: [
+              backend,
+              framework,
+              renderMode || mode,
+              ...(tsq ? ["tsq"] : []),
+            ].join(":"),
             project,
             tests: [],
           };
@@ -120,6 +116,10 @@ export const createTestGroups = async (opt?: {
               ...payloadEntries
             },
           ] of Object.entries(payloadMap)) {
+            if (opt?.skip) {
+              continue;
+            }
+
             if (opt?.routes && !opt.routes.includes(route as never)) {
               continue;
             }
@@ -151,15 +151,9 @@ export const createTestGroups = async (opt?: {
                     });
                   }
 
-                  group.tests.push({
-                    project,
-                    route,
+                  group.tests.push([
                     path,
-                    params: params as never,
-                    headers,
-                    cookies,
-                    payload,
-                    run: createTestRunner({
+                    createTestRunner({
                       project,
                       route,
                       path,
@@ -168,7 +162,7 @@ export const createTestGroups = async (opt?: {
                       cookies,
                       payload,
                     }),
-                  });
+                  ]);
                 }
               }
             }
@@ -190,7 +184,15 @@ const createTestRunner = ({
   headers,
   cookies,
   payload,
-}: TestEntry): TestFunction => {
+}: {
+  project: TestGroup["project"];
+  route: string;
+  path: string;
+  params: Array<string | Array<string>>;
+  headers?: Record<string, string> | undefined;
+  cookies?: Record<string, string> | undefined;
+  payload: Record<string, unknown>;
+}): TestFunction => {
   return async ({ expect }) => {
     const { content } = await project.withPageContent(path, {
       headers,
@@ -304,16 +306,16 @@ const renderPageFile = (data: {
     return { key, val: JSON.stringify(val) };
   });
 
-  const templateName = data.tsq //
-    ? `${data.framework}Tsq`
-    : `${data.framework}`;
-
   const template =
     data.file === "index" //
-      ? templates[templateName as never]
-      : layouts[templateName as never];
+      ? data.tsq
+        ? `${data.framework}PageTsq`
+        : `${data.framework}Page`
+      : data.tsq
+        ? `${data.framework}LayoutTsq`
+        : `${data.framework}Layout`;
 
-  return render(template, {
+  return render(templates[template as never], {
     ...data,
     payload: [
       ...payload,

@@ -1,0 +1,13 @@
+import { useEffect } from "preact/hooks";
+import { AppProvider } from "_/app";
+
+export const RenderingProbe = () => {
+  useEffect(() => {
+    window.__APP_RENDERED__ = true;
+  }, []);
+  return null;
+};
+
+<RenderingProbe />
+
+<AppProvider>{props.children}</AppProvider>

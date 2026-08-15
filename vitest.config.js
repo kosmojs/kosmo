@@ -109,20 +109,6 @@ export default defineConfig({
           MODE: "ssr",
         },
       }),
-
-      setupFactory("integration:fetch:csr", {
-        include: ["integration/fetch/*.test.ts"],
-        provide: {
-          MODE: "csr",
-        },
-      }),
-
-      setupFactory("integration:fetch:ssr", {
-        include: ["integration/fetch/*.test.ts"],
-        provide: {
-          MODE: "ssr",
-        },
-      }),
     ],
   },
 });

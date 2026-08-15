@@ -33,10 +33,30 @@ jobs:
       - run: pnpm -r install
       - run: pnpm -C test exec playwright install --with-deps chromium
       - run: pnpm -r build
-      - run: pnpm test:unit
-      - run: pnpm test:integration:cli
-      - run: pnpm test:integration:backend
-      - run: pnpm test:integration:frontend:csr
-      - run: pnpm test:integration:frontend:ssr
-      - run: pnpm test:integration:fetch:csr
-      - run: pnpm test:integration:fetch:ssr
+
+      - name: test:unit
+        run: pnpm test:unit
+
+      - name: test:integration cli
+        run: pnpm test:integration cli
+
+      - name: test:integration hono
+        run: pnpm test:integration hono
+
+      - name: test:integration koa
+        run: pnpm test:integration koa
+
+      - name: test:integration mdx
+        run: pnpm test:integration mdx
+
+      - name: test:integration react
+        run: pnpm test:integration react
+
+      - name: test:integration solid
+        run: pnpm test:integration solid
+
+      - name: test:integration svelte
+        run: pnpm test:integration svelte
+
+      - name: test:integration vue
+        run: pnpm test:integration vue

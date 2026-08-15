@@ -1,0 +1,5 @@
+export { default as mdxApp } from "./mdx/app.hbs?raw"
+export { default as reactApp } from "./react/app.hbs?raw"
+export { default as solidApp } from "./solid/app.hbs?raw"
+export { default as svelteApp } from "./svelte/app.hbs?raw"
+export { default as vueApp } from "./vue/app.hbs?raw"

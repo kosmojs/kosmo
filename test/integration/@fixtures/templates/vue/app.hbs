@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { onMounted } from "vue";
+import { AppProvider } from "_/app";
+
+onMounted(() => {
+  window.__APP_RENDERED__ = true;
+});
+</script>
+
+<template>
+  <AppProvider>
+    <RouterView />
+  </AppProvider>
+</template>

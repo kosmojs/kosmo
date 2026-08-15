@@ -20,9 +20,6 @@
     "test:integration:frontend": "vitest run --project=\"integration:frontend:*\"",
     "test:integration:frontend:csr": "vitest run --project=integration:frontend:csr",
     "test:integration:frontend:ssr": "vitest run --project=integration:frontend:ssr",
-    "test:integration:fetch": "vitest run --project=\"integration:fetch:*\"",
-    "test:integration:fetch:csr": "vitest run --project=integration:fetch:csr",
-    "test:integration:fetch:ssr": "vitest run --project=integration:fetch:ssr",
     "release:prepare": "bash ./scripts/release/prepare",
     "release:commit": "bash ./scripts/release/commit"
   },

@@ -1,0 +1,14 @@
+<script lang="ts">
+  import { AppProvider } from "_/app";
+  import type { Snippet } from "svelte";
+
+  let { children }: { children: Snippet } = $props();
+
+  $effect(() => {
+    window.__APP_RENDERED__ = true;
+  });
+</script>
+
+<AppProvider>
+  {@render children()}
+</AppProvider>

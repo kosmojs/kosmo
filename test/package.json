@@ -12,10 +12,7 @@
     "test:integration:backend": "pnpm -C .. run test:integration:backend",
     "test:integration:frontend": "pnpm -C .. run test:integration:frontend",
     "test:integration:frontend:csr": "pnpm -C .. run test:integration:frontend:csr",
-    "test:integration:frontend:ssr": "pnpm -C .. run test:integration:frontend:ssr",
-    "test:integration:fetch": "pnpm -C .. run test:integration:fetch",
-    "test:integration:fetch:csr": "pnpm -C .. run test:integration:fetch:csr",
-    "test:integration:fetch:ssr": "pnpm -C .. run test:integration:fetch:ssr"
+    "test:integration:frontend:ssr": "pnpm -C .. run test:integration:frontend:ssr"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.0",

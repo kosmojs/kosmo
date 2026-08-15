@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, test } from "vitest";
 
-import { createTestGroups } from ".";
+import { createTestGroups } from "../fetch";
 
 const testGroups = await createTestGroups({
-  frameworks: ["svelte"],
+  frameworks: ["solid"],
 });
 
 beforeAll(async () => {
@@ -20,8 +20,8 @@ afterAll(async () => {
 
 for (const { name, tests } of testGroups) {
   describe(name, () => {
-    for (const { path, run } of tests) {
-      test(path, run);
+    for (const [name, runner] of tests) {
+      test(name, runner);
     }
   });
 }
