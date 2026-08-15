@@ -2,7 +2,7 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/fetch-generator",
-  "version": "0.2.10",
+  "version": "0.3.0",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [

@@ -1,3 +1,24 @@
+## [0.3.0](https://github.com/kosmojs/kosmo/compare/v0.2.10...v) (2026-08-15)
+
+### ⚠ BREAKING CHANGES
+
+* **ssr:** an SSR fetch failure now yields a CSR fallback (200)
+  instead of a 500.
+* **fetch:** fetch calls that previously resolved to undefined on a
+  failed request now throw. Callers relying on the silent-undefined
+  behavior must add try/catch or an error boundary.
+
+### Features
+
+* **ssr:** recover from SSR render failures by falling back to CSR ([a836c8d](https://github.com/kosmojs/kosmo/commit/a836c8d95336c98440e74e20fc3a6fdbab8c43ac))
+
+### Bug Fixes
+
+* **fetch-generator:** filter payload types by target ([ca241f6](https://github.com/kosmojs/kosmo/commit/ca241f6a8aca29c34d2103970aaab0eb6f03f7af))
+* **fetch:** always throw on failure ([183e185](https://github.com/kosmojs/kosmo/commit/183e185bbd42cf0c35899c0af5424a7feb62bd7e))
+* **openapi:** keep collection routes with param-child siblings ([094ea95](https://github.com/kosmojs/kosmo/commit/094ea95880d186b69f7b19e4c272b1a1b3561371))
+* **ssr:** preserve query string in the router during SSR ([64856ae](https://github.com/kosmojs/kosmo/commit/64856ae0dd943fd6850e0b7feaac5f29e10264ed))
+* **vue:** ship the hydration script in head on streamed SSR routes ([844adca](https://github.com/kosmojs/kosmo/commit/844adca50125939891cffda68d5d1451a15a0e1c))
 
 ## [0.2.10](https://github.com/kosmojs/kosmo/compare/v0.2.9...v0.2.10) (2026-08-10)
 
