@@ -1,0 +1,8 @@
+import f from "_/fetch";
+import { useLoaderData } from "_/use";
+
+export const loader = () => f["{{endpoint}}"].GET();
+
+export const data = () => useLoaderData()?.message;
+
+<div data-ok>{data()}</div>

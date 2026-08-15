@@ -28,7 +28,7 @@ import {
   exec,
   installDependencies,
 } from ".";
-import { APP_FILE, appMap } from "./app";
+import * as templates from "./@fixtures/templates";
 
 export const mode = inject("MODE");
 
@@ -179,10 +179,9 @@ export const setupTestProject = async ({
     }
 
     if (mode === "ssr") {
-      const { createApp } = await import(createPath.distDir("ssr/server.js"));
+      const { startServer } = await import(createPath.distDir("ssr/server.js"));
 
-      const app = await createApp();
-      const server = serve({ fetch: app.fetch, port: devPort });
+      const server = await startServer({ port: devPort });
 
       return async () => {
         server.close();
@@ -325,6 +324,8 @@ export const setupTestProject = async ({
   };
 
   return {
+    baseURL,
+    devPort,
     projectRoot,
     sourceFolder,
     withPageContent,
@@ -371,9 +372,17 @@ export const setupTestProject = async ({
       );
 
       if (framework) {
+        const ext = {
+          react: "tsx",
+          solid: "tsx",
+          vue: "vue",
+          svelte: "svelte",
+          mdx: "mdx",
+        }[framework];
+
         await writeFile(
-          createPath.src(APP_FILE[framework]),
-          appMap[framework],
+          createPath.src(`app.${ext}`),
+          templates[`${framework}App`],
           "utf8",
         );
       }

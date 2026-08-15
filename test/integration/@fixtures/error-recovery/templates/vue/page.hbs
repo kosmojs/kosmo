@@ -1,0 +1,14 @@
+<script lang="ts">
+import f from "_/fetch";
+
+export const loader = () => f["{{endpoint}}"].GET();
+</script>
+
+<script setup lang="ts">
+import { useLoaderData } from "_/use";
+const data = useLoaderData();
+</script>
+
+<template>
+<div data-ok v-html="data?.message"></div>
+</template>

@@ -1,0 +1,11 @@
+import { useLoaderData } from "react-router";
+import f from "_/fetch";
+
+export const loader = () => {
+  return f["{{endpoint}}"].GET();
+};
+
+export default function Page() {
+  const data = useLoaderData();
+  return <div data-ok>{data?.message}</div>;
+}

@@ -1,0 +1,7 @@
+import { defineRoute } from "_/api";
+
+export default defineRoute(({ GET }) => [
+  GET(() => {
+    throw new Error("backend route failed on purpose");
+  }),
+]);

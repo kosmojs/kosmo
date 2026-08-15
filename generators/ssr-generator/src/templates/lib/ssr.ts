@@ -14,14 +14,9 @@ import { HTTPException } from "hono/http-exception";
 import { stream } from "hono/streaming";
 import { glob } from "tinyglobby";
 
-import {
-  type FetchApp,
-  isFetchApp,
-  type NodeApp,
-  type SSRSetup,
-} from "@kosmojs/core";
+import type { FetchApp, NodeApp, SSRSetup } from "@kosmojs/core";
 
-import { redirectCodes, ssrOrigin } from "./@ssr/base";
+import { isFetchApp, redirectCodes, ssrOrigin } from "./@ssr/base";
 
 import { routeMap } from "{{ createImport 'lib' '@ssr/routes' }}";
 import { apiBase, base } from "{{ createImport 'libCore' }}";
@@ -43,12 +38,14 @@ export const createApp = async () => {
   const {
     ssrApp,
     withSsrContext,
+    errorProvider,
   }: {
     ssrApp: SSRSetup;
     withSsrContext: <T>(
       context: { headers?: Record<string, string>; url?: string },
       render: () => T,
     ) => Promise<T>;
+    errorProvider: () => Error | undefined;
   } = await import(`${ROOT}/app.js`);
 
   // Read the client index.html that includes <!--app-head--> and <!--app-html-->
@@ -108,13 +105,47 @@ export const createApp = async () => {
   };
 
   const renderPage = async (url: URL, ctx: Context) => {
-    const { head = "", html } = await withSsrContext(
+    const {
+      head = "",
+      html,
+      error,
+    } = await withSsrContext(
       {
         headers: Object.fromEntries(ctx.req.raw.headers),
         url: ctx.req.url,
       },
-      () => renderToString(url, ssrOptions()),
+      async () => {
+        try {
+          /**
+           * Catch a hard SSR render failure and fall back to CSR,
+           * where the client's error boundaries can surface a meaningful error.
+           * Server-side error boundaries behave inconsistently across frameworks,
+           * can not rely on them here.
+           * Instead, the SSR output are discarded and the client shell served verbatim,
+           * letting the client re-render and handle the error uniformly.
+           * This is the render-level counterpart to the transport-level catch in loaders.
+           * */
+          const { head = "", html } = await renderToString(url, ssrOptions());
+          return { head, html, error: errorProvider() };
+        } catch (error) {
+          return { error };
+        }
+      },
     );
+
+    if (error) {
+      console.error("WARN: SSR failed, fallback to CSR");
+      console.error(error);
+      console.error();
+      return [
+        htmlStart.replace(
+          "<!--app-head-->",
+          `<script>console.error("WARN: SSR failed, fallback to CSR")</script>`,
+        ),
+        htmlEnd,
+      ].join("");
+    }
+
     return [
       htmlStart.replace("<!--app-head-->", head),
       html ?? "",

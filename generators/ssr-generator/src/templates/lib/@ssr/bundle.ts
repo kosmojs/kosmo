@@ -16,3 +16,7 @@ export const withSsrContext = <T>(
 ): T => {
   return store.run(context, () => renderWrapper(context, render));
 };
+
+export const errorProvider = () => {
+  return store.getStore()?.error;
+};

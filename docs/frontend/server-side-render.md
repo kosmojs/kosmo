@@ -7,7 +7,7 @@ head:
   - - meta
     - name: keywords
       content: react ssr, solidjs ssr, vue ssr, svelte ssr, mdx ssr, server rendering, hydration,
-        renderToString, renderToStream, react router ssr, solidjs ssr, vue router ssr,
+        renderToString, renderToStream, ssr error handling, csr fallback, react router ssr, vue router ssr,
         production rendering, stream rendering, kosmojs ssr
 ---
 
@@ -307,6 +307,52 @@ ssrGenerator({
 When a route matches multiple patterns, the first match wins - so more specific
 patterns come first. Streaming a route requires the folder's renderer to
 implement `renderToStream`; MDX and Svelte folders do not accept the streaming mode.
+
+## Fetch Errors and Recovery
+
+Pages fetch data during server rendering through the same fetch client the browser uses,
+dispatched in-process into the API app.
+When a fetch fails mid-render, what happens next depends on the render mode.
+
+### String-rendered routes recover automatically.
+
+A string-rendered page is produced in full before a single byte leaves the server,
+so a failed fetch aborts the render while the response is still untouched -
+the server falls back to serving the client `index.html` verbatim.
+
+The browser receives a clean CSR page: the client entry mounts from scratch,
+fetching is retried in the browser, and any remaining failure surfaces through the error handling
+the page already implements for client-side navigation.
+No configuration is needed - string routes degrade to CSR on their own.
+
+### Streaming routes do not recover.
+
+Streaming exists to flush the shell before rendering completes,
+so by the time a fetch fails, the status line, headers, and opening HTML are already on the wire -
+there is no response left to replace, and no server-side fallback is possible.
+
+Routes that enable streaming must handle fetch errors manually, inside the page itself:
+
+- catch errors in loaders or components and render an explicit error state.
+- treat failure as a regular data state: a streamed page should be able to render something for every state its data can be in.
+- lean on the framework's containment primitives
+    - React contains the failure through the enclosing Suspense boundary:
+    the stream survives, the server emits the suspense fallback, and the client retries the subtree,
+    where an error boundary takes over (React never renders error boundary fallback HTML on the server);
+    - Solid serializes resource errors into the stream and rethrows them during client hydration,
+    where an `ErrorBoundary` catches them;
+    - Vue has no streaming-side equivalent: `onErrorCaptured` can stop an error from propagating,
+    which keeps the stream alive, but no fallback is rendered in that same server pass -
+    the failed subtree is simply absent until the boundary takes over on the client.
+
+What an unhandled mid-stream error produces is framework-specific -
+a truncated document, a built-in fallback with client-side retry,
+or an error deferred to hydration - none of which substitutes for explicit handling.
+
+See [Error Boundaries](/frontend/error-boundaries) for how each framework's boundary behaves during server rendering.
+
+MDX and Svelte folders are unaffected: they render strings only,
+so every route recovers through the CSR fallback.
 
 ## Production Build
 

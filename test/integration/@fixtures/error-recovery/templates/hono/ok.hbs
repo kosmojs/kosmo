@@ -1,0 +1,7 @@
+import { defineRoute } from "_/api";
+
+export default defineRoute(({ GET }) => [
+  GET((ctx) => {
+    return ctx.json({ message: "{{OK_MESSAGE}}" });
+  }),
+]);

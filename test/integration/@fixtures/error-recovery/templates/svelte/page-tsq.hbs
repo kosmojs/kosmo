@@ -1,0 +1,27 @@
+<script module lang="ts">
+import { dehydrate } from "@tanstack/svelte-query";
+import { getQueryClient } from "_/query";
+import f from "_/fetch";
+
+export const queryOptions = () => ({
+  queryKey: ["{{endpoint}}"],
+  queryFn: () => f["{{endpoint}}"].GET(),
+});
+
+export const loader = async () => {
+  const client = getQueryClient();
+  await client.prefetchQuery(queryOptions());
+  return dehydrate(client);
+};
+</script>
+
+<script lang="ts">
+import { HydrationBoundary, createQuery, useQueryClient } from "@tanstack/svelte-query";
+import { useLoaderData } from "_/use";
+
+const query = createQuery(() => queryOptions());
+</script>
+
+<HydrationBoundary state={useLoaderData()} queryClient={useQueryClient()}>
+  <div data-ok>{query.data?.message}</div>
+</HydrationBoundary>

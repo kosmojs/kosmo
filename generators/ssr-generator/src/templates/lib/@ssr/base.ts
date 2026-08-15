@@ -1,8 +1,11 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 
+import type { FetchApp, NodeApp } from "@kosmojs/core";
+
 export type RequestContext = {
   headers?: HeadersInit;
   tsqClient?: unknown;
+  error?: unknown;
 };
 
 export const redirectCodes = [
@@ -35,3 +38,7 @@ export const maxRedirects = 5;
  * Server-only module - never reaches browser bundles.
  * */
 export const store = new AsyncLocalStorage<RequestContext>();
+
+export const isFetchApp = (app: FetchApp | NodeApp): app is FetchApp => {
+  return typeof (app as FetchApp).fetch === "function";
+};

@@ -1,0 +1,30 @@
+<script lang="ts">
+import { dehydrate } from "@tanstack/vue-query";
+import { getQueryClient } from "_/query";
+import f from "_/fetch";
+
+export const queryOptions = () => ({
+  queryKey: ["{{endpoint}}"],
+  queryFn: () => f["{{endpoint}}"].GET(),
+});
+
+export const loader = async () => {
+  const client = getQueryClient();
+  await client.prefetchQuery(queryOptions());
+  return dehydrate(client);
+};
+</script>
+
+<script setup lang="ts">
+import { hydrate, useQuery } from "@tanstack/vue-query";
+import { getQueryClient } from "_/query";
+import { useLoaderData } from "_/use";
+
+hydrate(getQueryClient(), useLoaderData());
+
+const { data } = useQuery(queryOptions());
+</script>
+
+<template>
+<div data-ok v-html="data?.message"></div>
+</template>
