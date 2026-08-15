@@ -127,7 +127,7 @@ export const createRouters = (
       // would otherwise skip the guard
       installLoaderGuard(router);
 
-      await router.push(url.pathname.replace(base, ""));
+      await router.push(url.pathname + url.search);
 
       await router.isReady();
 

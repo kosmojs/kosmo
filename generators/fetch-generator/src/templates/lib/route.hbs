@@ -1,4 +1,4 @@
-import fetchFactory, { join, stringify } from "@kosmojs/core/fetch";
+import fetchFactory, { join } from "@kosmojs/core/fetch";
 
 import { base, apiBase, apiRouteMap } from "{{ createImport 'libCore' }}";
 import { transport, fetchHelpers } from "{{ createImport 'lib' '@fetch' }}";
@@ -48,7 +48,7 @@ const {
 
 const fetchApi = fetchFactory(
   join(base, apiBase),
-  { transport, stringify },
+  { transport },
 );
 
 {{#each routeMethods}}

@@ -5,11 +5,11 @@ import { RouterContext } from "./mdx";
 import type { ParamsMap, paramNames } from "{{ createImport 'lib' 'params' }}";
 
 export function useRoute() {
-  return useContext(RouterContext);
+  return structuredClone(useContext(RouterContext));
 }
 
 export function useParams<T extends keyof ParamsMap>(): ParamsMap[T] {
-  return useContext(RouterContext).params as ParamsMap[T];
+  return useRoute().params as ParamsMap[T];
 }
 
 type SameLengthTuple<T extends readonly unknown[], U> = { [K in keyof T]: U };
@@ -18,7 +18,11 @@ export function useParamsEntries<T extends keyof ParamsMap>(): [
   (typeof paramNames)[T],
   SameLengthTuple<(typeof paramNames)[T], unknown>,
 ] {
-  return useContext(RouterContext).paramsEntries as never;
+  return useRoute().paramsEntries as never;
+}
+
+export function useSearchParams() {
+  return useRoute().searchParams;
 }
 
 /**
@@ -28,7 +32,7 @@ export function useParamsEntries<T extends keyof ParamsMap>(): [
  * a hook can't tell which layout it runs in.
  * */
 export const useLoaderData = <T>(key?: string): T | undefined => {
-  const route = useContext(RouterContext);
+  const route = useRoute();
   return route.loaderData?.[key || route.name] as T;
 };
 
@@ -38,5 +42,5 @@ export const useLoaderData = <T>(key?: string): T | undefined => {
 export const useFrontmatter = <
   T extends Record<string, unknown> = Record<string, unknown>,
 >(): T => {
-  return useContext(RouterContext).frontmatter as T;
+  return useRoute().frontmatter as T;
 };

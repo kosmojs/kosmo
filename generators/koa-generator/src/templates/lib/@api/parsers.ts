@@ -4,8 +4,12 @@ import type { RouterContext } from "@koa/router";
 import Formidable, { type Options as FormidableOptions } from "formidable";
 import rawParser from "raw-body";
 
-import type { RequestBodyTarget, RequestMetadataTarget } from "@kosmojs/core";
-import { parseCookies, parseQuerystring } from "@kosmojs/core/api";
+import {
+  parseCookies,
+  parseSearchParams,
+  type RequestBodyTarget,
+  type RequestMetadataTarget,
+} from "@kosmojs/core";
 
 import type {
   DefaultContext,
@@ -17,7 +21,7 @@ export const metaparsers: {
   [T in RequestMetadataTarget]: (ctx: RouterContext) => unknown;
 } = {
   query(ctx) {
-    return parseQuerystring(ctx.req.url ?? "");
+    return parseSearchParams(ctx.req.url ?? "");
   },
 
   headers(ctx) {

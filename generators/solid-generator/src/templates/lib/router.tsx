@@ -23,7 +23,7 @@ export const createRouters = (
 
   const serverRouter = (url: URL) => {
     const component = (
-      <Router root={app} base={base} url={url.pathname}>
+      <Router root={app} base={base} url={url.pathname + url.search}>
         {routes}
       </Router>
     );

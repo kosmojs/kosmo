@@ -1,8 +1,12 @@
 import { compile } from "path-to-regexp";
 
-import type { ApiRouteSerialized, ValidationTarget } from "@kosmojs/core";
+import {
+  type ApiRouteSerialized,
+  stringifySearchParams,
+  type ValidationTarget,
+} from "@kosmojs/core";
 import type { HTTPMethod } from "@kosmojs/core/api";
-import { createHost, type HostOpt, join, stringify } from "@kosmojs/core/fetch";
+import { createHost, type HostOpt, join } from "@kosmojs/core/fetch";
 
 export * from "./transport";
 
@@ -47,7 +51,7 @@ export const fetchHelpers = <ParamsT extends readonly unknown[]>(
 
   const base = (params: ParamsT, query?: Record<string, unknown>) => {
     const path = join("/", parametrize(params));
-    return query ? [path, stringify(query)].join("?") : path;
+    return query ? [path, stringifySearchParams(query)].join("?") : path;
   };
 
   const path = (params: ParamsT, query?: Record<string, unknown>) => {

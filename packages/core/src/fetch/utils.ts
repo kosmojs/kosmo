@@ -1,12 +1,4 @@
-import { stringify as stringifier } from "picoquery";
-
-import { querystringOptions } from "#/generic";
-
 import type { HostOpt } from "./types";
-
-export const stringify = (data: Record<string, unknown>) => {
-  return stringifier(data, querystringOptions);
-};
 
 export const join = (...args: Array<unknown>): string => {
   for (const a of args) {
@@ -14,7 +6,7 @@ export const join = (...args: Array<unknown>): string => {
       continue;
     }
     throw new Error(
-      `The "path" argument must be of type string or number. Received type ${typeof a} (${JSON.stringify(a)})`,
+      `The path argument must be of type string or number, received ${typeof a}`,
     );
   }
   return args.join("/").replace(/\/+/g, "/");

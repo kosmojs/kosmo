@@ -1,7 +1,11 @@
 import type { Context } from "hono";
 
-import type { RequestBodyTarget, RequestMetadataTarget } from "@kosmojs/core";
-import { parseCookies, parseQuerystring } from "@kosmojs/core/api";
+import {
+  parseCookies,
+  parseSearchParams,
+  type RequestBodyTarget,
+  type RequestMetadataTarget,
+} from "@kosmojs/core";
 
 export type BodyparserOptions = {
   json: never;
@@ -13,7 +17,7 @@ export const metaparsers: {
   [T in RequestMetadataTarget]: (ctx: Context) => unknown;
 } = {
   query(ctx) {
-    return parseQuerystring(ctx.req.url);
+    return parseSearchParams(ctx.req.url);
   },
 
   headers(ctx) {

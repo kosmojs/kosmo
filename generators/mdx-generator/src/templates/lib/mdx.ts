@@ -2,6 +2,8 @@ import { MDXProvider } from "@mdx-js/preact";
 import { match, pathToRegexp } from "path-to-regexp";
 import { type ComponentType, createContext, h, type VNode } from "preact";
 
+import { parseSearchParams } from "@kosmojs/core";
+
 import { paramNames } from "{{ createImport 'lib' 'params' }}";
 import { base } from "{{ createImport 'libCore' }}";
 
@@ -15,7 +17,7 @@ export type RawRoute = {
 };
 
 type Loader = (
-  route: Pick<Route, "name" | "params" | "paramsEntries">,
+  route: Pick<Route, "name" | "params" | "paramsEntries" | "searchParams">,
 ) => Promise<unknown> | undefined;
 
 type LayoutModule = {
@@ -35,6 +37,7 @@ export type Route = {
   name: string;
   params: Record<string, string | Array<string>>;
   paramsEntries: [keys: Array<string>, values: Array<unknown>];
+  searchParams: Record<string, unknown>;
   frontmatter: Record<string, unknown>;
   loaderData: Record<string, unknown>;
 };
@@ -43,6 +46,7 @@ export const RouterContext = createContext<Route>({
   name: "",
   params: {},
   paramsEntries: [[], []],
+  searchParams: {},
   frontmatter: {},
   loaderData: {},
 });
@@ -72,6 +76,7 @@ export const createRouter = (
 
   return {
     async resolve(url: URL = new URL(window.location.href)) {
+      const searchParams = parseSearchParams(url);
       const urlSegments = url.pathname.split("/").filter(Boolean).length;
 
       // 1: use lightweight `RegExp.test()` on linear scan - no capture allocation
@@ -116,7 +121,7 @@ export const createRouter = (
 
       loaderData[name] = await runLoader(name, () => {
         return routeModule.loader
-          ? routeModule.loader({ name, params, paramsEntries })
+          ? routeModule.loader({ name, params, paramsEntries, searchParams })
           : undefined; // should not survive serialization if no loader defined
       });
 
@@ -131,7 +136,7 @@ export const createRouter = (
         const key = `${name}/layout`;
         loaderData[key] = await runLoader(key, () => {
           return layoutModule.loader
-            ? layoutModule.loader({ name, params, paramsEntries })
+            ? layoutModule.loader({ name, params, paramsEntries, searchParams })
             : undefined; // should not survive serialization if no loader defined
         });
       }
@@ -140,6 +145,7 @@ export const createRouter = (
         name,
         params,
         paramsEntries,
+        searchParams,
         frontmatter,
         loaderData,
       };

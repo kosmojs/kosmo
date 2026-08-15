@@ -24,6 +24,10 @@ export function useParamsEntries<T extends keyof ParamsMap>(): [
   return useRoute().paramsEntries as never;
 }
 
+export function useSearchParams() {
+  return useRoute().searchParams;
+}
+
 /**
  * Reads loader data for the current page or one of its layouts.
  * Without a key, returns the page's own data.

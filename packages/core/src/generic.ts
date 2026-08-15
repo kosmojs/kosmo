@@ -1,15 +1,34 @@
+// WARN: keep this file isomorphic! it is loaded from both browser and server.
+
+import type { IncomingMessage } from "node:http";
+
+import { parseCookie } from "cookie";
 import picomatch, { type Matcher } from "picomatch";
+import { parse, stringify } from "picoquery";
 
-import type { FetchApp, GeneratorCustomTemplates, NodeApp } from "./types";
+import type { GeneratorCustomTemplates } from "./types";
 
-export const querystringOptions: Partial<import("picoquery").Options> = {
+export const searchParamsOptions: Partial<import("picoquery").Options> = {
   nestingSyntax: "index",
   arrayRepeat: true,
   arrayRepeatSyntax: "bracket",
 };
 
-export const isFetchApp = (app: FetchApp | NodeApp): app is FetchApp => {
-  return typeof (app as FetchApp).fetch === "function";
+export const parseCookies = (headers: IncomingMessage["headers"]) => {
+  return parseCookie((headers.cookie ?? headers.Cookie ?? "") as never);
+};
+
+export const parseSearchParams = (url: string | URL) => {
+  return parse(
+    new URL(url, "http://localhost").search.slice(1),
+    searchParamsOptions,
+  );
+};
+
+export const stringifySearchParams = (
+  searchParams: Record<string, unknown>,
+) => {
+  return stringify(searchParams, searchParamsOptions);
 };
 
 // Route names contain literal [param] / {param} segments, which picomatch would

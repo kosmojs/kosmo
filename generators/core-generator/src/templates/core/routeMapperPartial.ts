@@ -1,7 +1,7 @@
 import { compile } from "path-to-regexp";
 
-import type { PageRouteSerialized } from "@kosmojs/core";
-import { createHost, type HostOpt, join, stringify } from "@kosmojs/core/fetch";
+import { type PageRouteSerialized, stringifySearchParams } from "@kosmojs/core";
+import { createHost, type HostOpt, join } from "@kosmojs/core/fetch";
 
 export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
   basePath: string,
@@ -31,7 +31,7 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
 
   const base = (params: ParamsT, query?: Record<string, unknown>) => {
     const path = join("/", parametrize(params));
-    return query ? [path, stringify(query)].join("?") : path;
+    return query ? [path, stringifySearchParams(query)].join("?") : path;
   };
 
   const path = (params: ParamsT, query?: Record<string, unknown>) => {

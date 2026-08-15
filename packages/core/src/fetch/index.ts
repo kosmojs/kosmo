@@ -1,4 +1,4 @@
-import { defaults } from "./defaults";
+import { stringifySearchParams as defaultStringifySearchParams } from "../generic";
 import type {
   FetchMapper,
   FetchMethod,
@@ -7,7 +7,6 @@ import type {
   Options,
 } from "./types";
 
-export * from "./defaults";
 export * from "./types";
 export * from "./utils";
 
@@ -22,22 +21,19 @@ const bodylessMethods = ["GET", "DELETE"];
  * Keeping the factory transport-agnostic keeps server-only modules out of
  * browser bundles.
  * */
-export default (base: string | URL, opts?: Options): FetchMapper => {
-  const { transport, ...globalOpts } = { ...opts };
-
+export default (base: string | URL, factoryOpts?: Options): FetchMapper => {
   // Factory function that creates HTTP method implementations
   function factory(method: HTTPMethod): FetchMethod {
     return async (...args: Partial<Parameters<FetchMethod>>) => {
       const [path, data, opts] = args;
 
       const {
-        responseMode,
-        stringify,
-        errorHandler,
+        stringifySearchParams = defaultStringifySearchParams,
+        transport = globalThis.fetch,
+        responseMode = "json",
         ...fetchOpts // Remaining options passed directly to fetch
       } = {
-        ...defaults,
-        ...globalOpts,
+        ...factoryOpts,
         ...opts,
       };
 
@@ -71,7 +67,7 @@ export default (base: string | URL, opts?: Options): FetchMapper => {
           body = data.form;
         } else {
           contentType = "application/x-www-form-urlencoded";
-          body = stringify(data.form as never);
+          body = stringifySearchParams(data.form as never);
         }
       } else if (data?.raw) {
         // no Content-Type needed
@@ -92,10 +88,10 @@ export default (base: string | URL, opts?: Options): FetchMapper => {
       };
 
       const searchParams = data?.query
-        ? `?${stringify(data.query as never)}`
+        ? `?${stringifySearchParams(data.query as never)}`
         : "";
 
-      return (transport ?? globalThis.fetch)
+      return transport
         .call(globalThis, url + searchParams, config as never)
         .then((response) => {
           // Return both response and parsed data based on responseMode
@@ -116,9 +112,6 @@ export default (base: string | URL, opts?: Options): FetchMapper => {
           ) as HTTPError;
           error.response = response;
           error.body = data;
-          if (errorHandler) {
-            return errorHandler(error);
-          }
           throw error;
         });
     };

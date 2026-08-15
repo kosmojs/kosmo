@@ -1,8 +1,4 @@
-export interface Defaults {
-  responseMode: ResponseMode;
-  stringify: (d: Record<string, unknown>) => string;
-  errorHandler: (e: unknown) => void;
-}
+import type { stringifySearchParams } from "../generic";
 
 export type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -14,21 +10,23 @@ export type ResponseMode =
   | "arrayBuffer"
   | "raw";
 
-export type Options = Partial<Defaults> & {
+export type Options = {
+  stringifySearchParams?: typeof stringifySearchParams;
   transport?: Transport | undefined;
+  responseMode?: ResponseMode;
 } & Pick<
-    RequestInit,
-    | "cache"
-    | "credentials"
-    | "integrity"
-    | "keepalive"
-    | "mode"
-    | "redirect"
-    | "referrer"
-    | "referrerPolicy"
-    | "signal"
-    | "window"
-  >;
+  RequestInit,
+  | "cache"
+  | "credentials"
+  | "integrity"
+  | "keepalive"
+  | "mode"
+  | "redirect"
+  | "referrer"
+  | "referrerPolicy"
+  | "signal"
+  | "window"
+>;
 
 // Path can be a string, number, or array of these
 export type PathEntry = string | number;
