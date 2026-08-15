@@ -103,13 +103,18 @@ export default (base: string | URL, factoryOpts?: Options): FetchMapper => {
           ]);
         })
         .then(([response, data]) => {
-          if (response.ok) {
-            return data instanceof Error ? undefined : data;
-          }
           // Create enhanced error object for HTTP errors
-          const error = new Error(
-            data?.error || response.statusText,
-          ) as HTTPError;
+          let error = new Error(response.statusText) as HTTPError;
+
+          if (response.ok) {
+            if (data instanceof Error) {
+              // response parsing failed, rethrow
+              error = data as never;
+            } else {
+              return data;
+            }
+          }
+
           error.response = response;
           error.body = data;
           throw error;
