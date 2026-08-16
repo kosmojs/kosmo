@@ -1,5 +1,3 @@
-import { inject } from "light-my-request";
-
 import type { FetchApp, NodeApp } from "@kosmojs/core";
 import type { Transport } from "@kosmojs/core/fetch";
 
@@ -24,6 +22,8 @@ const createDispatch = (app: FetchApp | NodeApp) => {
   return isFetchApp(app)
     ? app.fetch
     : async (request: Request): Promise<Response> => {
+        const { inject } = await import("light-my-request");
+
         /**
          * Node dispatch: serializes the web Request into light-my-request's
          * injection format and lifts the injected response back into a web Response.
