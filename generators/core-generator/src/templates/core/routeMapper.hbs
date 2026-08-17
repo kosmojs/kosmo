@@ -1,13 +1,14 @@
 {{> routeMapperPartial}}
 
-import type { ApiRouteSerialized } from "@kosmojs/core";
-
-import { base } from "./config";
+import { base, apiBase } from "./config";
 
 // used by backend generators and fetch clients
-export const apiRouteMap: Record<string, ApiRouteSerialized> = {
+export const apiRouteMap = {
   {{#each apiRoutes}}
-  "{{name}}": {{serializeApiRoute .}},
+  "{{name}}": apiRouteMapper<[{{serializeParamsTupleElements .}}]>(
+    apiBase,
+    {{serializeApiRoute .}},
+  ),
   {{/each}}
 };
 

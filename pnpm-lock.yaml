@@ -89,10 +89,6 @@ importers:
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../packages/lib
-    devDependencies:
-      path-to-regexp:
-        specifier: ^8.4.2
-        version: 8.4.2
 
   generators/hono-generator:
     dependencies:
@@ -112,9 +108,6 @@ importers:
       hono:
         specifier: ^4.13.1
         version: 4.13.1
-      path-to-regexp:
-        specifier: ^8.4.2
-        version: 8.4.2
       vite:
         specifier: ^8.2.1
         version: 8.2.1(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0)
@@ -155,9 +148,6 @@ importers:
       light-my-request:
         specifier: ^6.6.0
         version: 6.6.0
-      path-to-regexp:
-        specifier: ^8.4.2
-        version: 8.4.2
       raw-body:
         specifier: ^4.0.0
         version: 4.0.0

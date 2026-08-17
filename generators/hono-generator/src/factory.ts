@@ -112,16 +112,13 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         const baseRoute = {
           ...entry,
           path: entry.honoPattern,
+          basename: entry.name,
           cascadingMiddleware: cascadingMiddleware.flatMap((e) => {
             return pathVariations.some((path) => e.name === path) ? [e] : [];
           }),
         };
 
-        const aliases: Array<
-          ApiRoute & {
-            fullpath: string;
-          }
-        > = Object.entries({ ...options?.alias }).flatMap(
+        const aliases = Object.entries({ ...options?.alias }).flatMap(
           ([url, routeName]) => {
             const pathTokens = pathTokensFactory(url);
             return routeName === entry.name
@@ -129,8 +126,9 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
                   {
                     ...baseRoute,
                     name: url,
+                    basename: entry.name,
                     id: `${baseRoute.id}_${crc(url)}`,
-                    fullpath: createHonoPattern(pathTokens),
+                    alias: createHonoPattern(pathTokens),
                     pathTokens,
                   },
                 ]

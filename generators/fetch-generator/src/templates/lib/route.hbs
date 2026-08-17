@@ -1,7 +1,7 @@
 import fetchFactory, { join } from "@kosmojs/core/fetch";
 
 import { base, apiBase, apiRouteMap } from "{{ createImport 'libCore' }}";
-import { transport, fetchHelpers } from "{{ createImport 'lib' '@fetch' }}";
+import { transport } from "{{ createImport 'lib' '@fetch' }}";
 
 import {
   type MaybeWrapped,
@@ -41,10 +41,7 @@ const {
   payloadResolver,
   path,
   href,
-} = fetchHelpers<[{{serializeParamsTupleElements route}}]>(
-  apiBase,
-  apiRouteMap["{{route.name}}"],
-);
+} = apiRouteMap["{{route.name}}"];
 
 const fetchApi = fetchFactory(
   join(base, apiBase),

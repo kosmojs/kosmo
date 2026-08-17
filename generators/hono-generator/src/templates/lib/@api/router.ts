@@ -3,7 +3,6 @@ import type { Router } from "hono/router";
 import { RegExpRouter } from "hono/router/reg-exp-router";
 import { SmartRouter } from "hono/router/smart-router";
 import { TrieRouter } from "hono/router/trie-router";
-import { match } from "path-to-regexp";
 
 import type {
   RequestBodyTarget,
@@ -31,7 +30,6 @@ import { type BodyparserOptions, bodyparsers, metaparsers } from "./parsers";
 import { routeSources } from "./routes";
 
 import globalMiddleware from "{{ createImport 'api' 'use' }}";
-import { apiRouteMap } from "{{ createImport 'libCore' }}";
 
 /**
  * Create route-level middleware stack that handles:
@@ -48,33 +46,7 @@ import { apiRouteMap } from "{{ createImport 'libCore' }}";
  * */
 export const createRouteMiddleware: CreateRouteMiddleware<
   ParameterizedMiddleware
-> = ({ name, pathPattern, validationSchemas }) => {
-  const route = apiRouteMap[name];
-
-  if (!route) {
-    throw new Error(`createRouteMiddleware: ${name} route does not exists`);
-  }
-
-  const { params, numericProperties } = route;
-
-  const pathMatcher = match(pathPattern);
-
-  const matchPath = (path: string) => {
-    try {
-      return pathMatcher(path);
-    } catch (_e) {
-      return undefined;
-    }
-  };
-
-  const maybeNumber = (val: unknown) => {
-    if (val === undefined || val === null) {
-      return val;
-    }
-    const n = Number(val);
-    return Number.isFinite(n) ? n : val;
-  };
-
+> = ({ name, validationSchemas, normalizeParams, normalizeSearchParams }) => {
   const validationMiddleware = [
     /**
      * Extends Hono context with:
@@ -115,15 +87,9 @@ export const createRouteMiddleware: CreateRouteMiddleware<
                   ctx[StateKey].set(
                     target,
                     target === "query"
-                      ? Object.fromEntries(
-                          Object.entries(parser(ctx)).map(([k, v]) => [
-                            k,
-                            numericProperties.query[ctx.req.method]?.includes(k)
-                              ? Array.isArray(v)
-                                ? v.map((e) => maybeNumber(e))
-                                : maybeNumber(v)
-                              : v,
-                          ]),
+                      ? normalizeSearchParams(
+                          parser(ctx),
+                          ctx.req.method as never,
                         )
                       : parser(ctx),
                   );
@@ -176,23 +142,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
      * */
     use(
       function useValidateParams(ctx, next) {
-        const matched = matchPath(ctx.req.path);
-        const normalizedParams = params.reduce(
-          (map: Record<string, unknown>, name) => {
-            const value = matched ? matched.params[name] : undefined;
-            if (Array.isArray(value)) {
-              map[name] = numericProperties.params.includes(name)
-                ? value.map((e) => maybeNumber(e))
-                : value;
-            } else if (value) {
-              map[name] = numericProperties.params.includes(name)
-                ? maybeNumber(value)
-                : value;
-            }
-            return map;
-          },
-          {},
-        );
+        const normalizedParams = normalizeParams(ctx.req.path);
         validationSchemas.params?.validate(normalizedParams);
         ctx[StateKey].set("params", normalizedParams);
         return next();

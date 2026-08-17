@@ -20,6 +20,9 @@ describe("createRouterRoutes", () => {
                 return ctx.json(ctx.validated.params);
               }),
             ]) as never,
+            normalizeParams() {
+              return { path: ["a", "b", "c"] };
+            },
           },
         ],
         {},
@@ -51,6 +54,9 @@ describe("createRouterRoutes", () => {
                 return ctx.json(ctx.validated.params);
               }),
             ]) as never,
+            normalizeParams() {
+              return { id: 0, name: "name" };
+            },
           },
         ],
         {},
@@ -82,6 +88,9 @@ describe("createRouterRoutes", () => {
                 return ctx.json(ctx.validated.params);
               }),
             ]) as never,
+            normalizeParams() {
+              return { ids: [1, 2, 3] };
+            },
           },
         ],
         {},

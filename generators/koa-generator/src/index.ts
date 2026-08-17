@@ -13,7 +13,6 @@ export default defineGenerator<Options>({
   dependencies: {
     koa: self.devDependencies.koa,
     "@koa/router": self.devDependencies["@koa/router"],
-    "path-to-regexp": self.devDependencies["path-to-regexp"],
     formidable: self.devDependencies.formidable,
     "raw-body": self.devDependencies["raw-body"],
   },

@@ -1,12 +1,51 @@
 import type {
+  ApiRoute,
+  ApiRouteSerialized,
   CSRFactory,
   PageRoute,
+  PageRouteSerialized,
   RouterFactoryReturn,
   SSRFactory,
 } from "../types";
 
 export const routeRenderHelpers = () => {
   return {
+    serializeApiRoute({
+      name,
+      pathPattern,
+      params,
+      validationDefinitions,
+    }: ApiRoute) {
+      return JSON.stringify({
+        name,
+        pathPattern,
+        params: params.schema.map((e) => e.name),
+        numericProperties: {
+          params: params.schema.flatMap(({ name }) => {
+            return params.resolvedType?.numericProperties?.includes(name)
+              ? [name]
+              : [];
+          }),
+          query: validationDefinitions.reduce<
+            ApiRouteSerialized["numericProperties"]["query"]
+          >((map, e) => {
+            if (e.target === "query") {
+              map[e.method] = e.schema.resolvedType?.numericProperties || [];
+            }
+            return map;
+          }, {}),
+        },
+      } satisfies ApiRouteSerialized);
+    },
+
+    serializePageRoute({ name, pathPattern, params }: PageRoute) {
+      return JSON.stringify({
+        name,
+        pathPattern,
+        params: params.schema.map((e) => e.name),
+      } satisfies PageRouteSerialized);
+    },
+
     serializeParamsTupleElements: (route: PageRoute) => {
       return route.params.schema
         .map((p, i) => {
@@ -21,6 +60,7 @@ export const routeRenderHelpers = () => {
         })
         .join(", ");
     },
+
     serializeParamsLiteral(route: PageRoute) {
       const elements = route.params.schema.map((e) => {
         return [

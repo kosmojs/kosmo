@@ -68,6 +68,11 @@ export type RouteSource<MiddlewareT> = {
   cascadingMiddleware: [...a: Array<MiddlewareDefinition<MiddlewareT>>];
   definitionItems: Array<RouteDefinitionItem<MiddlewareT>>;
   validationSchemas: ValidationSchemas;
+  normalizeParams: (path: string) => Record<string, unknown>;
+  normalizeSearchParams: (
+    searchParams: Record<string, unknown>,
+    method: HTTPMethod,
+  ) => Record<string, unknown>;
   meta?: Record<string, unknown>;
 };
 

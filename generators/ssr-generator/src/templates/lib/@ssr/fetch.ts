@@ -142,7 +142,7 @@ const createTransport = (app: FetchApp | NodeApp): Transport => {
   };
 };
 
-const ssrTransport = apiApp ? createTransport(apiApp) : undefined;
+const ssrTransport = apiApp ? createTransport(apiApp as never) : undefined;
 
 export const transport = ssrTransport
   ? async (input: RequestInfo | URL, init?: RequestInit) => {

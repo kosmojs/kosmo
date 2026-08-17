@@ -40,6 +40,12 @@ export const middlewareStackBuilder = (
           GET(async function get() {}),
         ]) as never,
         validationSchemas: {},
+        normalizeParams: () => {
+          return {};
+        },
+        normalizeSearchParams: () => {
+          return {};
+        },
         ...(e as Partial<RouteSource<ParameterizedMiddleware>>),
       };
     }),

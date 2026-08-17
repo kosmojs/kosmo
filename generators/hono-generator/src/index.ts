@@ -12,7 +12,6 @@ export default defineGenerator<Options>({
   dependencies: {
     hono: self.devDependencies.hono,
     "@hono/node-server": self.devDependencies["@hono/node-server"],
-    "path-to-regexp": self.devDependencies["path-to-regexp"],
   },
   factory,
 });

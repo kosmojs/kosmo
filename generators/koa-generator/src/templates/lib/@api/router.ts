@@ -1,5 +1,4 @@
 import KoaRouter, { type RouterMiddleware } from "@koa/router";
-import { match } from "path-to-regexp";
 
 import type {
   RequestBodyTarget,
@@ -27,7 +26,6 @@ import { type BodyparserOptions, bodyparsers, metaparsers } from "./parsers";
 import { routeSources } from "./routes";
 
 import globalMiddleware from "{{ createImport 'api' 'use' }}";
-import { apiRouteMap } from "{{ createImport 'libCore' }}";
 
 export type Router = import("@koa/router").Router<DefaultState, DefaultContext>;
 export type RouterOptions = import("@koa/router").RouterOptions;
@@ -47,33 +45,7 @@ export type RouterOptions = import("@koa/router").RouterOptions;
  * */
 export const createRouteMiddleware: CreateRouteMiddleware<
   ParameterizedMiddleware
-> = ({ name, pathPattern, validationSchemas }) => {
-  const route = apiRouteMap[name];
-
-  if (!route) {
-    throw new Error(`createRouteMiddleware: ${name} route does not exists`);
-  }
-
-  const { params, numericProperties } = route;
-
-  const pathMatcher = match(pathPattern);
-
-  const matchPath = (path: string) => {
-    try {
-      return pathMatcher(path);
-    } catch (e) {
-      return undefined;
-    }
-  };
-
-  const maybeNumber = (val: unknown) => {
-    if (val === undefined || val === null) {
-      return val;
-    }
-    const n = Number(val);
-    return Number.isFinite(n) ? n : val;
-  };
-
+> = ({ name, validationSchemas, normalizeParams, normalizeSearchParams }) => {
   const validationMiddleware = [
     /**
      * Extends Koa context with:
@@ -114,16 +86,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
                   ctx[StateKey].set(
                     target,
                     target === "query"
-                      ? Object.fromEntries(
-                          Object.entries(parser(ctx)).map(([k, v]) => [
-                            k,
-                            numericProperties.query[ctx.method]?.includes(k)
-                              ? Array.isArray(v)
-                                ? v.map((e) => maybeNumber(e))
-                                : maybeNumber(v)
-                              : v,
-                          ]),
-                        )
+                      ? normalizeSearchParams(parser(ctx), ctx.method as never)
                       : parser(ctx),
                   );
                 }
@@ -175,23 +138,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
      * */
     use(
       function useValidateParams(ctx, next) {
-        const matched = matchPath(ctx.path);
-        const normalizedParams = params.reduce(
-          (map: Record<string, unknown>, name) => {
-            const value = matched ? matched.params[name] : undefined;
-            if (Array.isArray(value)) {
-              map[name] = numericProperties.params.includes(name)
-                ? value.map((e) => maybeNumber(e))
-                : value;
-            } else if (value) {
-              map[name] = numericProperties.params.includes(name)
-                ? maybeNumber(value)
-                : value;
-            }
-            return map;
-          },
-          {},
-        );
+        const normalizedParams = normalizeParams(ctx.path);
         validationSchemas.params?.validate(normalizedParams);
         ctx[StateKey].set("params", normalizedParams);
         return next();
