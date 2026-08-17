@@ -16,6 +16,7 @@ import {
   type GeneratorSignature,
 } from "@kosmojs/core";
 import {
+  coreGenerator,
   fetchGenerator,
   honoGenerator,
   koaGenerator,
@@ -79,6 +80,7 @@ export const createProject = async (
     },
     dependencies: {
       "@kosmojs/core": SELF_VERSION,
+      ...coreGenerator.dependencies,
       ...assets?.dependencies,
     },
     devDependencies: {
@@ -86,6 +88,7 @@ export const createProject = async (
       "@kosmojs/dev": SELF_VERSION,
       "@types/node": self.devDependencies["@types/node"],
       vite: self.devDependencies["vite"],
+      ...coreGenerator.devDependencies,
       ...assets?.devDependencies,
     },
   };

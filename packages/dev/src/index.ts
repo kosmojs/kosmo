@@ -7,6 +7,7 @@ import {
   type SourceFolder,
 } from "@kosmojs/core";
 
+export { default as coreGenerator } from "@kosmojs/core-generator";
 export { default as fetchGenerator } from "@kosmojs/fetch-generator";
 export { default as honoGenerator } from "@kosmojs/hono-generator";
 export { default as koaGenerator } from "@kosmojs/koa-generator";
