@@ -86,15 +86,3 @@ export const serverFactory: ServerFactory<App> = (factory) => {
   });
 };
 
-process.on("unhandledRejection", (reason) => {
-  console.error("💥 UNHANDLED REJECTION - This is likely caused by:");
-  console.error("   - Middleware not awaiting next()");
-  console.error("   - Middleware not returning next()");
-  console.error("");
-  console.error("Reason:", reason);
-  console.error("");
-  // In development, crash hard
-  if (process.env.NODE_ENV === "development") {
-    process.exit(1);
-  }
-});
