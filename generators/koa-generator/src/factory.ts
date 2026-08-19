@@ -182,17 +182,10 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         ["router.ts", templates.srcRouter],
         ["server.ts", templates.srcServer],
         ["use.ts", templates.srcUse],
+        ["env.d.ts", templates.srcEnv],
       ]) {
         await deploySrcFile(createPath.api(file), template, {}, { overwrite });
       }
-
-      // rendering api/env.d.ts using lib mappings
-      await deployLibFile(
-        createPath.api("env.d.ts"),
-        templates.srcEnv,
-        {},
-        { overwrite },
-      );
     },
 
     async watch(entries, event) {
