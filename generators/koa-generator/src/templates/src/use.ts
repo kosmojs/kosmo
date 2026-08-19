@@ -1,11 +1,11 @@
-import defaultErrorHandler from "./errors";
-
 import { use } from "{{ createImport 'libApi' }}";
 
+/**
+ * Define global middleware applied to all routes.
+ * Can be overridden on a per-route basis using the slot key.
+ * */
 export default [
-  /**
-   * Define global middleware applied to all routes.
-   * Can be overridden on a per-route basis using the slot key.
-   * */
-  use(defaultErrorHandler, { slot: "errorHandler" }),
+  use(async function useExample(ctx, next) {
+    return next();
+  }),
 ];

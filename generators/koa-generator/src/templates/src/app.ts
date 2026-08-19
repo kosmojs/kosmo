@@ -2,6 +2,7 @@ import router from "./router";
 
 import { appFactory } from "{{ createImport 'lib' 'api:factory' }}";
 
+  app.on("error", defaultErrorHandler);
 export default appFactory(({ createApp }) => {
   const app = createApp();
 
