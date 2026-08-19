@@ -1,0 +1,5 @@
+[
+  "shop/use",
+  "shop/product/[id]/use",
+  "shop/product/[id]/reviews/index"
+]

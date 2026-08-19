@@ -1,0 +1,5 @@
+[
+  "projects/use",
+  "projects/[projectId]/use",
+  "projects/[projectId]/index"
+]

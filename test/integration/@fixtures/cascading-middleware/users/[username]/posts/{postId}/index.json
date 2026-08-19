@@ -1,0 +1,7 @@
+[
+  "users/use",
+  "users/[username]/use",
+  "users/[username]/posts/use",
+  "users/[username]/posts/{postId}/use",
+  "users/[username]/posts/{postId}/index"
+]

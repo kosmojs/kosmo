@@ -1,0 +1,6 @@
+[
+  "shop/use",
+  "shop/checkout/use",
+  "shop/checkout/confirm/use",
+  "shop/checkout/confirm/index"
+]

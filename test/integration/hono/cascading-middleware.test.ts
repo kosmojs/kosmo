@@ -1,23 +1,11 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-import { pathResolver } from "@kosmojs/lib";
+import { defaults } from "@kosmojs/core";
 
-import { nestedRoutes, type RouteName } from "../@fixtures/generic/routes";
-import { setupTestProject, snapshotNameFor } from "../setup";
-
-const apiRoutes: Array<{
-  name: RouteName;
-  file: "index" | "use";
-  params: Record<string, unknown>;
-}> = nestedRoutes.map(({ file = "index", ...route }) => {
-  return {
-    ...route,
-    file: file === "layout" ? "use" : file,
-  };
-});
+import { routes } from "../@fixtures/cascading-middleware";
+import { setupTestProject } from "../setup";
 
 const {
-  sourceFolder,
   bootstrapProject,
   createApiRoutes,
   withApiResponse,
@@ -27,34 +15,31 @@ const {
   backend: "hono",
 });
 
-const { createImport } = pathResolver(sourceFolder);
-
 beforeAll(async () => {
   await bootstrapProject();
 
-  await createApiRoutes(apiRoutes, async ({ name, file }) => {
+  await createApiRoutes(routes, async ({ name, file }) => {
     return () => {
       if (file === "use") {
         return `
-          import { use } from "${createImport.libApi([], { origin: "src" })}";
+          import { use } from "${defaults.libPrefix}/api";
           export type UseT = { stack: Array<string> };
           export default [
             use<UseT>((ctx, next) => {
               if (!ctx.var.stack) {
                 ctx.set("stack", []);
               }
-              ctx.var.stack.push("${name}/${file}");
+              ctx.var.stack.push("${name}/use");
               return next();
             }),
           ];
         `;
       }
       return `
-        import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
+        import { defineRoute } from "${defaults.libPrefix}/api";
         export default defineRoute<"${name}">(({ GET }) => [
           GET(async (ctx) => {
-            ctx.var.stack?.push("${name}/${file}");
-            return ctx.json(ctx.var.stack || [ "${name}/${file}" ]);
+            return ctx.json([ ...ctx.var.stack, "${name}/index" ]);
           }),
         ]);
       `;
@@ -67,15 +52,13 @@ beforeAll(async () => {
 afterAll(teardown);
 
 describe("cascading middleware", async () => {
-  for (const { name, params } of apiRoutes.filter(
-    ({ file }) => file === "index",
-  )) {
-    const snapshotName = snapshotNameFor(name, params);
-    test(snapshotName, async () => {
-      const { response } = await withApiResponse([name, params]);
-      await expect(response.body).toMatchFileSnapshot(
-        `../@snapshots/cascading-middleware/${snapshotName}.json`,
-      );
+  for (const route of routes) {
+    if (route.file !== "index") {
+      continue;
+    }
+    test(route.name, async () => {
+      const { response } = await withApiResponse([route.name, route.params]);
+      expect(JSON.parse(response.body)).toEqual(route.use);
     });
   }
 });
