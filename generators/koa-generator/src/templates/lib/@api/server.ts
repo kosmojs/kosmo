@@ -1,47 +1,43 @@
 import { chmod, unlink } from "node:fs/promises";
 import { parseArgs, styleText } from "node:util";
 
-import type { ServerFactory } from "@kosmojs/core/api";
-
 import type { App } from "./app";
 
-export const serverFactory: ServerFactory<App> = (factory) => {
-  const { values } = parseArgs({
-    options: {
-      port: {
-        type: "string",
-        short: "p",
-      },
-      sock: {
-        type: "string",
-        short: "s",
-      },
-    },
-  });
+type Handles = {
+  port?: number | undefined;
+  sock?: string | undefined;
+  onListen?: () => Promise<void>;
+};
 
-  const getListenHandles = async () => {
-    const { port, sock } = { ...values };
+const getListenHandles = async (opt?: Handles): Promise<Handles> => {
+  const { port, sock } = opt
+    ? opt
+    : parseArgs({
+        options: {
+          port: {
+            type: "string",
+            short: "p",
+          },
+          sock: {
+            type: "string",
+            short: "s",
+          },
+        },
+      }).values;
 
-    if (![port, sock].some(Boolean)) {
-      console.error("Please provide either -p/--port number or -s/--sock path");
-      process.exit(1);
-    }
+  if (![port, sock].some(Boolean)) {
+    throw new Error("Please provide either -p/--port number or -s/--sock path");
+  }
 
-    if (sock) {
-      await unlink(sock).catch((error) => {
-        if (error.code === "ENOENT") {
-          return;
-        }
-        console.error(error.message);
-        process.exit(1);
-      });
-    }
-
-    return { port, sock };
-  };
+  if (sock) {
+    await unlink(sock).catch((error) => {
+      if (error.code !== "ENOENT") {
+        throw error;
+      }
+    });
+  }
 
   const onListen = async () => {
-    const { port, sock } = await getListenHandles();
     if (sock) {
       // Make Unix socket world-writable so other processes (e.g. a reverse proxy)
       // can connect without permission issues.
@@ -53,14 +49,15 @@ export const serverFactory: ServerFactory<App> = (factory) => {
     );
   };
 
-  return factory({
-    async createServer(app) {
-      const { port, sock } = await getListenHandles();
-      const server = app.listen(port || sock, onListen);
-      return server as never;
-    },
-    getListenHandles,
-    onListen,
-  });
+  return {
+    port: port ? Number(port) : undefined,
+    sock,
+    onListen: opt?.onListen || onListen,
+  };
 };
 
+export const serve = async <T extends App>(app: T, opt?: Handles) => {
+  const { port, sock, onListen } = await getListenHandles(opt);
+  const server = app.listen(port || sock, onListen);
+  return server as never;
+};
