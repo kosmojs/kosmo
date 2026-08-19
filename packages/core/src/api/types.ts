@@ -80,7 +80,7 @@ export type Route<MiddlewareT> = {
   name: string;
   path: string;
   file: string;
-  methods: Array<string>;
+  methods: Array<HTTPMethod>;
   middleware: Array<MiddlewareT>;
   debug: {
     headline: string;
@@ -104,7 +104,7 @@ export type DevSetup = {
   requestHandler: () => (
     req: IncomingMessage,
     res: ServerResponse,
-  ) => Promise<void>;
+  ) => Promise<unknown> | unknown;
 
   /**
    * Custom function to determine if a request should be handled by the API.
@@ -120,28 +120,9 @@ export type DevSetup = {
   teardownHandler?: () => void | Promise<void>;
 };
 
-export type AppFactory<App, AppOptions = unknown> = (
-  factory: (a: { createApp: (o?: AppOptions) => App }) => App,
-) => App;
-
-export type RouterFactory<Router, RouterOptions = unknown> = (
-  factory: (a: { createRouter: (o?: RouterOptions) => Router }) => Router,
-) => Router;
-
 export type CreateRouteMiddleware<MiddlewareT> = (
   routeSource: RouteSource<MiddlewareT>,
 ) => Array<MiddlewareDefinition<MiddlewareT>>;
-
-export type ServerFactory<App> = (
-  factory: (a: {
-    createServer: <Server>(app: App) => Promise<Server>;
-    getListenHandles: () => Promise<{
-      port?: string | undefined;
-      sock?: string | undefined;
-    }>;
-    onListen: () => Promise<void>;
-  }) => void,
-) => void;
 
 export const StateKey: unique symbol = Symbol("kosmo.state");
 
@@ -149,16 +130,18 @@ export type ExtendContext<
   ParamsT,
   VDefs extends ValidationDefmap,
   VOpts extends ValidationOptmap,
-  BodyparserOptions extends Record<RequestBodyTarget, unknown>,
+  BodyparserOptions extends
+    | Record<RequestBodyTarget, unknown>
+    | undefined = undefined,
 > = {
   [StateKey]: Map<ValidationTarget, unknown>;
   metaparser: {
     [T in RequestMetadataTarget]: <R = unknown>() => R;
   };
   bodyparser: {
-    [T in RequestBodyTarget]: <R = unknown>(
-      opts?: BodyparserOptions[T],
-    ) => Promise<R>;
+    [T in RequestBodyTarget]: BodyparserOptions extends undefined
+      ? <R = unknown>() => Promise<R>
+      : <R = unknown>(opts?: NonNullable<BodyparserOptions>[T]) => Promise<R>;
   };
   validated: {
     // Only iterate over defined keys
