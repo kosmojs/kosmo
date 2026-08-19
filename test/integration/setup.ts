@@ -4,7 +4,6 @@ import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
 import { styleText } from "node:util";
 
-import { serve } from "@hono/node-server";
 import crc from "crc/crc32";
 import got from "got";
 import { createJiti } from "jiti";
@@ -14,6 +13,7 @@ import { inject } from "vitest";
 import { createProject, createSourceFolder } from "@kosmojs/cli";
 import {
   BACKENDS,
+  defaults,
   type FRAMEWORKS,
   type ProjectSettings,
   type SourceFolder,
@@ -163,15 +163,12 @@ export const setupTestProject = async ({
 
   const createDevServer = async () => {
     if (mode === "backend") {
-      const app = await jiti.import<{ fetch: never; listen: Function }>(
-        createPath.distDir("api/app.js"),
+      const serve = await jiti.import<() => Promise<{ close: Function }>>(
+        createPath.distDir("api/server.js"),
         { default: true },
       );
 
-      const server =
-        backend === "hono"
-          ? serve({ fetch: app.fetch, port: devPort })
-          : app.listen(devPort);
+      const server = await serve();
 
       return async () => {
         await server.close();
@@ -369,6 +366,16 @@ export const setupTestProject = async ({
           ssr: mode === "ssr",
         },
         generatorOptions,
+      );
+
+      await writeFile(
+        createPath.api("server.ts"),
+        `
+          import { serve } from "${defaults.libPrefix}/api:factory";
+          import app from "./app";
+          export default () => serve(app, { port: ${devPort} });
+        `,
+        "utf8",
       );
 
       if (framework) {
