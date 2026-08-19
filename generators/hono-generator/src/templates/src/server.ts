@@ -1,7 +1,4 @@
+import { serve } from "{{ createImport 'lib' 'api:factory' }}";
 import app from "./app";
 
-import { serverFactory } from "{{ createImport 'lib' 'api:factory' }}";
-
-serverFactory(async ({ createServer }) => {
-  await createServer(app);
-});
+await serve(app);

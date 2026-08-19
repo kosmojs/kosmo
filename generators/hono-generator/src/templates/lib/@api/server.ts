@@ -3,47 +3,43 @@ import { parseArgs, styleText } from "node:util";
 
 import { createAdaptorServer } from "@hono/node-server";
 
-import type { ServerFactory } from "@kosmojs/core/api";
-
 import type { App } from "./app";
 
-export const serverFactory: ServerFactory<App> = (factory) => {
-  const { values } = parseArgs({
-    options: {
-      port: {
-        type: "string",
-        short: "p",
-      },
-      sock: {
-        type: "string",
-        short: "s",
-      },
-    },
-  });
+type Handles = {
+  port?: number | undefined;
+  sock?: string | undefined;
+  onListen?: () => Promise<void>;
+};
 
-  const getListenHandles = async () => {
-    const { port, sock } = { ...values };
+const getListenHandles = async (opt?: Handles) => {
+  const { port, sock } = opt
+    ? opt
+    : parseArgs({
+        options: {
+          port: {
+            type: "string",
+            short: "p",
+          },
+          sock: {
+            type: "string",
+            short: "s",
+          },
+        },
+      }).values;
 
-    if (![port, sock].some(Boolean)) {
-      console.error("Please provide either -p/--port number or -s/--sock path");
-      process.exit(1);
-    }
+  if (![port, sock].some(Boolean)) {
+    throw new Error("Please provide either -p/--port number or -s/--sock path");
+  }
 
-    if (sock) {
-      await unlink(sock).catch((error) => {
-        if (error.code === "ENOENT") {
-          return;
-        }
-        console.error(error.message);
-        process.exit(1);
-      });
-    }
-
-    return { port, sock };
-  };
+  if (sock) {
+    await unlink(sock).catch((error) => {
+      if (error.code !== "ENOENT") {
+        throw error;
+      }
+    });
+  }
 
   const onListen = async () => {
-    const { port, sock } = await getListenHandles();
     if (sock) {
       // Make Unix socket world-writable so other processes (e.g. a reverse proxy)
       // can connect without permission issues.
@@ -55,34 +51,35 @@ export const serverFactory: ServerFactory<App> = (factory) => {
     );
   };
 
-  return factory({
-    async createServer(app) {
-      const { port, sock } = await getListenHandles();
-
-      if (typeof Bun !== "undefined") {
-        const server = Bun.serve(
-          sock
-            ? { unix: sock, fetch: app.fetch }
-            : { port: Number(port), fetch: app.fetch },
-        );
-        await onListen();
-        return server as never;
-      }
-
-      if (typeof Deno !== "undefined") {
-        const server = sock
-          ? Deno.serve({ path: sock, onListen }, app.fetch)
-          : Deno.serve({ port: Number(port), onListen }, app.fetch);
-        return server as never;
-      }
-
-      const server = createAdaptorServer(app);
-      server.listen(sock || port, onListen);
-
-      return server as never;
-    },
-    getListenHandles,
-    onListen,
-  });
+  return {
+    port: Number(port),
+    sock,
+    onListen: opt?.onListen || onListen,
+  };
 };
 
+export const serve = async <T extends App>(app: T, opt?: Handles) => {
+  const { port, sock, onListen } = await getListenHandles(opt);
+
+  if (typeof Bun !== "undefined") {
+    const server = Bun.serve(
+      sock
+        ? { unix: sock, fetch: app.fetch }
+        : { port: Number(port), fetch: app.fetch },
+    );
+    await onListen();
+    return server as never;
+  }
+
+  if (typeof Deno !== "undefined") {
+    const server = sock
+      ? Deno.serve({ path: sock, onListen }, app.fetch)
+      : Deno.serve({ port: Number(port), onListen }, app.fetch);
+    return server as never;
+  }
+
+  const server = createAdaptorServer(app);
+  server.listen(sock || port, onListen);
+
+  return server as never;
+};
