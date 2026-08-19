@@ -1,8 +1,4 @@
 import type { MiddlewareHandler } from "hono";
-import type { Router } from "hono/router";
-import { RegExpRouter } from "hono/router/reg-exp-router";
-import { SmartRouter } from "hono/router/smart-router";
-import { TrieRouter } from "hono/router/trie-router";
 
 import type {
   RequestBodyTarget,
@@ -14,7 +10,6 @@ import {
   type CreateRouteMiddleware,
   createRoutes,
   type HTTPMethod,
-  type RouterFactory,
   StateKey,
 } from "@kosmojs/core/api";
 import { ValidationError } from "@kosmojs/core/errors";
@@ -370,12 +365,3 @@ export const routes = createRoutes<ParameterizedMiddleware, MiddlewareHandler>(
     createRouteMiddleware,
   },
 );
-
-export const routerFactory: RouterFactory<Router<never>, never> = (factory) => {
-  const createRouter = () => {
-    return new SmartRouter({
-      routers: [new RegExpRouter(), new TrieRouter()],
-    }) as Router<never>;
-  };
-  return factory({ createRouter });
-};

@@ -6,6 +6,7 @@ declare module "{{ createImport 'libApi' }}" {
 
 declare module "{{ createImport 'lib' 'api:factory' }}" {
   export * from "#/templates/lib/api:factory";
+  export { default } from "#/templates/lib/api:factory";
 }
 
 declare module "{{ createImport 'api' 'use' }}" {

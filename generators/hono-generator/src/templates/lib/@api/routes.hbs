@@ -13,8 +13,6 @@ import { validationSchemas as {{id}}_schemas } from "{{ createImport 'libApi' ba
 import {{id}}, { type UseT as UseT{{id}} } from "{{ createImport 'api' file }}";
 {{/each}}
 
-type Override<A, B> = Omit<A, keyof B> & B;
-
 export type RouteMap = {
 {{#each routes}}
   "{{name}}": {
