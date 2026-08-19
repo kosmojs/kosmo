@@ -13,6 +13,5 @@ export { default as srcEnv } from "#templates/src/env.d";
 export { default as srcErrors } from "#templates/src/errors";
 export { default as srcRouteIndex } from "#templates/src/route/index";
 export { default as srcRouteUse } from "#templates/src/route/use";
-export { default as srcRouter } from "#templates/src/router";
 export { default as srcServer } from "#templates/src/server";
 export { default as srcUse } from "#templates/src/use";

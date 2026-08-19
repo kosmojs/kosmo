@@ -1,13 +1,11 @@
-import router from "./router";
+import appFactory, { routes } from "{{ createImport 'lib' 'api:factory' }}";
+import defaultErrorHandler from "./errors";
 
-import { appFactory } from "{{ createImport 'lib' 'api:factory' }}";
+export default appFactory(routes, ({ app, router }) => {
 
   app.on("error", defaultErrorHandler);
-export default appFactory(({ createApp }) => {
-  const app = createApp();
 
   // NOTE: Routes should be added last, after any middleware
   app.use(router.routes());
 
-  return app;
 });

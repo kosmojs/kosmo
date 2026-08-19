@@ -179,7 +179,6 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         ["app.ts", templates.srcApp],
         ["dev.ts", templates.srcDev],
         ["errors.ts", templates.srcErrors],
-        ["router.ts", templates.srcRouter],
         ["server.ts", templates.srcServer],
         ["use.ts", templates.srcUse],
         ["env.d.ts", templates.srcEnv],

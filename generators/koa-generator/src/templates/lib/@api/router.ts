@@ -1,4 +1,4 @@
-import KoaRouter, { type RouterMiddleware } from "@koa/router";
+import type { RouterMiddleware } from "@koa/router";
 
 import type {
   RequestBodyTarget,
@@ -10,7 +10,6 @@ import {
   type CreateRouteMiddleware,
   createRoutes,
   type HTTPMethod,
-  type RouterFactory,
   StateKey,
 } from "@kosmojs/core/api";
 import { ValidationError } from "@kosmojs/core/errors";
@@ -26,9 +25,6 @@ import { type BodyparserOptions, bodyparsers, metaparsers } from "./parsers";
 import { routeSources } from "./routes";
 
 import globalMiddleware from "{{ createImport 'api' 'use' }}";
-
-export type Router = import("@koa/router").Router<DefaultState, DefaultContext>;
-export type RouterOptions = import("@koa/router").RouterOptions;
 
 /**
  * Create route-level middleware stack that handles:
@@ -367,12 +363,3 @@ export const routes = createRoutes<ParameterizedMiddleware, RouterMiddleware>(
     createRouteMiddleware,
   },
 );
-
-export const routerFactory: RouterFactory<Router, RouterOptions> = (
-  factory,
-) => {
-  const createRouter = (options?: RouterOptions): Router => {
-    return new KoaRouter(options);
-  };
-  return factory({ createRouter });
-};
