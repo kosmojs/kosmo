@@ -76,19 +76,25 @@ export type RouteSource<MiddlewareT> = {
   meta?: Record<string, unknown>;
 };
 
+export type RouteDebugLevel =
+  | "headline"
+  | "methods"
+  | "middleware"
+  | "handler"
+  | "full";
+
+export type RouteDebugOption =
+  | boolean
+  | RouteDebugLevel
+  | ((log: Record<RouteDebugLevel, string>, route: Route<never>) => void);
+
 export type Route<MiddlewareT> = {
   name: string;
   path: string;
   file: string;
   methods: Array<HTTPMethod>;
   middleware: Array<MiddlewareT>;
-  debug: {
-    headline: string;
-    methods: string;
-    middleware: string;
-    handler: string;
-    full: string;
-  };
+  debug: Record<RouteDebugLevel, string>;
 };
 
 export type DevSetup = {
