@@ -2,16 +2,36 @@
   <img src="https://kosmojs.dev/kosmo-mark.png" width="96" alt="KosmoJS">
 </p>
 <h1 align="center">KosmoJS</h1>
-<p align="center">The composable meta-framework</p>
+<h3 align="center">the composable meta-framework</h3>
 
-KosmoJS composes several apps in a scalable codebase, offering both consistency and flexibility.
+---
 
-#### Notable Features
+**KosmoJS composes several apps in a scalable codebase, offering both consistency and flexibility.**
 
-Multiple source folders. Directory-based routing. Cascading middleware. Nested layouts.
-End-to-end validation. Typed fetch clients. Isomorphic fetch. Streaming SSR. TanStack Query. OpenAPI spec.
+### Notable Features
 
-Hono, H3, Koa, React, Vue, SolidJS, Svelte, MDX and more.
+- Multiple source folders
+- Directory-based routing
+- Cascading middleware
+- Nested layouts
+- End-to-end validation
+- Typed fetch clients
+- Isomorphic fetch
+- Streaming SSR
+- TanStack Query
+- OpenAPI spec
+
+### Supported frameworks
+- Hono
+- H3
+- Koa
+- React
+- Vue
+- SolidJS
+- Svelte
+- MDX
+
+...more to come
 
 📘 [Documentation: kosmojs.dev](https://kosmojs.dev)
 
