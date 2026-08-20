@@ -1,0 +1,158 @@
+import { writeFile } from "node:fs/promises";
+
+import { afterAll, beforeAll, describe, it } from "vitest";
+
+import type { UseSlots } from "@kosmojs/core/api";
+import { pathResolver } from "@kosmojs/lib";
+
+import { setupTestProject } from "../setup";
+
+const {
+  sourceFolder,
+  bootstrapProject,
+  createApiRoutes,
+  withApiResponse,
+  startServer,
+  teardown,
+} = await setupTestProject({
+  backend: "h3",
+});
+
+const coreSlots: Array<keyof UseSlots> = [
+  "validate:params",
+  "validate:json",
+  "validate:response",
+];
+
+const createRouteName = (slot: keyof UseSlots) => slot.replace(/\W/g, "_");
+
+const { createPath, createImport } = pathResolver(sourceFolder);
+
+beforeAll(async () => {
+  await bootstrapProject();
+
+  // make sure core slots throws if not overridden
+  const coreSlotsMapper = (slot: string) => {
+    return `use(
+      () => { throw new Error("${slot} slot supposed to be overridden"); },
+      { slot: "${slot}" }
+    )`;
+  };
+
+  await writeFile(
+    createPath.api("use.ts"),
+    `
+      import { use } from "${createImport.libApi([], { origin: "src" })}";
+      export default [
+        use(
+          async (event, next) => {
+            try {
+              return await next();
+            } catch (error) {
+              return error.message || error, 400;
+            }
+          },
+          { slot: "errorHandler" },
+        ),
+        ${coreSlots.map(coreSlotsMapper).join(",\n")}
+      ]
+    `,
+  );
+
+  for (const slot of coreSlots) {
+    const route = {
+      name: `should-throw/${createRouteName(slot)}`,
+      file: "index",
+    };
+
+    // override all but tested slot
+    const coreSlotsMapper = (s: string) => {
+      return s === slot
+        ? [
+            // not overriding tested slot, it should throw
+          ]
+        : [
+            `use(
+              (event, next) => { return next() }, // passthrough override
+              { slot: "${s}" }
+            )`,
+          ];
+    };
+
+    await createApiRoutes([route], async () => {
+      return () => {
+        return `
+          import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
+          export default defineRoute(({ use, GET }) => [
+            ${coreSlots.flatMap(coreSlotsMapper).join(",\n")},
+            GET(() => {
+              throw "should never reach ${slot}";
+            }),
+          ]);
+        `;
+      };
+    });
+  }
+
+  for (const slot of coreSlots) {
+    const route = {
+      name: `should-override/${createRouteName(slot)}`,
+      file: "index",
+    };
+
+    const coreSlotsMapper = (s: string) => {
+      return `use(
+        (event, next) => {
+          if ("${s}" === "${slot}") {
+            return "${slot}";
+          };
+          return next();
+        },
+        { slot: "${s}" }
+      )`;
+    };
+
+    await createApiRoutes([route], async () => {
+      return () => {
+        return `
+          import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
+          export default defineRoute(({ use, GET }) => [
+            ${coreSlots.map(coreSlotsMapper).join(",\n")},
+            GET(async (event) => {
+              // response handled by overridden slot
+            }),
+          ]);
+        `;
+      };
+    });
+  }
+
+  await startServer();
+});
+
+afterAll(teardown);
+
+describe("middleware slots", async () => {
+  describe("Override Core Slots", async () => {
+    for (const slot of coreSlots) {
+      it(`should throw if not overridden: ${slot}`, async ({ expect }) => {
+        try {
+          await withApiResponse(`should-throw/${createRouteName(slot)}`);
+        } catch (error: any) {
+          expect(error.response.body).toMatch(
+            new RegExp(`${slot} slot supposed to be overridden`),
+          );
+        }
+      });
+    }
+
+    for (const slot of coreSlots) {
+      it(`should override slotted middleware: ${slot}`, async ({ expect }) => {
+        const { response } = await withApiResponse(
+          `should-override/${createRouteName(slot)}`,
+        );
+        expect(response.body).toEqual(slot);
+      });
+    }
+  });
+});

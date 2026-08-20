@@ -14,11 +14,9 @@ export type TestGroup = {
   tests: Array<[path: string, runner: TestFunction]>;
 };
 
-// A failed fetch during SSR must not blow the render.
-// The ok route reads its loader data into #app server-side;
-// the fail route drives the loader fetch to reject,
-// and the server returns the CSR-fallback shell carrying a failure
-// marker instead of a data payload. Both assertions read the raw server HTML.
+// If SSR fails (due to loader/fetch error or render failure),
+// the server returns the CSR fallback (index.html) without data,
+// allowing client-side rendering to take over.
 // This is a server-render concern, so the suite only runs under SSR.
 export const skip = mode !== "ssr";
 

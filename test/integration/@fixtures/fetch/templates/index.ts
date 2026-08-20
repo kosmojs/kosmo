@@ -1,3 +1,4 @@
+export { default as h3 } from "./h3.hbs?raw";
 export { default as hono } from "./hono.hbs?raw";
 export { default as koa } from "./koa.hbs?raw";
 

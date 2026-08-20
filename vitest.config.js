@@ -57,11 +57,15 @@ export default defineConfig({
         globals: true,
       }),
 
-      setupFactory("generators/koa-generator", {
+      setupFactory("generators/hono-generator", {
         setupFiles: ["test/setup.ts"],
       }),
 
-      setupFactory("generators/hono-generator", {
+      setupFactory("generators/h3-generator", {
+        setupFiles: ["test/setup.ts"],
+      }),
+
+      setupFactory("generators/koa-generator", {
         setupFiles: ["test/setup.ts"],
       }),
 
@@ -90,7 +94,7 @@ export default defineConfig({
       }),
 
       setupFactory("integration:backend", {
-        include: ["integration/{koa,hono}/*.test.ts"],
+        include: ["integration/{hono,h3,koa}/*.test.ts"],
         provide: {
           MODE: "backend",
         },
