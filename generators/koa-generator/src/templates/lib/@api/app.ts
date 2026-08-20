@@ -1,7 +1,7 @@
 import Router, { type RouterMiddleware } from "@koa/router";
 import Koa from "koa";
 
-import type { Route } from "@kosmojs/core/api";
+import type { Route, RouteDebugOption } from "@kosmojs/core/api";
 
 import type { DefaultContext, DefaultState } from "../api";
 
@@ -9,7 +9,7 @@ export type App = Koa<DefaultState, DefaultContext>;
 
 export type AppOptions = ConstructorParameters<
   typeof Koa<DefaultState, DefaultContext>
->[0] & { router?: Router };
+>[0] & { router?: Router; debug?: RouteDebugOption };
 
 export function appFactory(
   routes: Array<Route<RouterMiddleware>>,
@@ -33,12 +33,21 @@ export function appFactory(
 ): App {
   const [options, fn] = typeof rest[0] === "function" ? [{}, rest[0]] : rest;
 
-  const { router = new Router(), ...appOptions } = {
+  const {
+    router = new Router(),
+    debug = undefined,
+    ...appOptions
+  } = {
     ...(options ? { ...options } : {}),
   };
 
-  for (const { name, path, methods, middleware } of routes) {
-    router.register(path, methods, middleware, { name });
+  for (const route of routes) {
+    if (typeof debug === "function") {
+      (debug as Function)(route.debug, route);
+    } else if (debug) {
+      console.log(route.debug[typeof debug === "string" ? debug : "full"]);
+    }
+    router.register(route.path, route.methods, route.middleware, route);
   }
 
   const app = new Koa(appOptions);
