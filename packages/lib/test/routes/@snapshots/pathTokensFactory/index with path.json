@@ -1,0 +1,29 @@
+{
+  "pathPattern": "with/path",
+  "honoPattern": "with/path",
+  "h3Pattern": "with/path",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "with",
+      "pattern": "with",
+      "parts": [
+        {
+          "type": "static",
+          "value": "with"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "path",
+      "pattern": "path",
+      "parts": [
+        {
+          "type": "static",
+          "value": "path"
+        }
+      ]
+    }
+  ]
+}

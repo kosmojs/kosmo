@@ -18,7 +18,8 @@
       }
     ],
     "pathPattern": "docs",
-    "honoPattern": "docs"
+    "honoPattern": "docs",
+    "h3Pattern": "docs"
   },
   "layout": {
     "id": "docs_layout_tsx_1612140628",
@@ -39,7 +40,8 @@
       }
     ],
     "pathPattern": "docs",
-    "honoPattern": "docs"
+    "honoPattern": "docs",
+    "h3Pattern": "docs"
   },
   "children": [
     {
@@ -64,7 +66,8 @@
           }
         ],
         "pathPattern": "docs{/*path}",
-        "honoPattern": "docs/*"
+        "honoPattern": "docs/*",
+        "h3Pattern": "docs/**:path?"
       },
       "parent": "docs",
       "children": []

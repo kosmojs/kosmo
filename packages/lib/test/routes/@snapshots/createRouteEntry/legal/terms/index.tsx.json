@@ -28,5 +28,6 @@
     }
   ],
   "pathPattern": "legal/terms",
-  "honoPattern": "legal/terms"
+  "honoPattern": "legal/terms",
+  "h3Pattern": "legal/terms"
 }

@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "about",
-  "honoPattern": "about"
+  "honoPattern": "about",
+  "h3Pattern": "about"
 }

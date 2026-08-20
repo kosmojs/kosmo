@@ -1,0 +1,31 @@
+{
+  "pathPattern": "srp/:param",
+  "honoPattern": "srp/:param",
+  "h3Pattern": "srp/:param",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "srp",
+      "pattern": "srp",
+      "parts": [
+        {
+          "type": "static",
+          "value": "srp"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[param]",
+      "pattern": ":param",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "param",
+          "const": "param"
+        }
+      ]
+    }
+  ]
+}

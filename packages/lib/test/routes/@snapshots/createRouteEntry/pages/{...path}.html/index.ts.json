@@ -34,5 +34,6 @@
     }
   ],
   "pathPattern": "pages{/*path}.html",
-  "honoPattern": "pages/:_1{(?:.+)?\\.html}"
+  "honoPattern": "pages/:_1{(?:.+)?.html}",
+  "h3Pattern": "pages/{**:path?}?.html"
 }

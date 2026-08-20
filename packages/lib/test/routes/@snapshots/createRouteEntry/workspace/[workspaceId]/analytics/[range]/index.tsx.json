@@ -54,5 +54,6 @@
     }
   ],
   "pathPattern": "workspace/:workspaceId/analytics/:range",
-  "honoPattern": "workspace/:workspaceId/analytics/:range"
+  "honoPattern": "workspace/:workspaceId/analytics/:range",
+  "h3Pattern": "workspace/:workspaceId/analytics/:range"
 }

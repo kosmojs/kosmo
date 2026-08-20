@@ -18,7 +18,8 @@
       }
     ],
     "pathPattern": "search",
-    "honoPattern": "search"
+    "honoPattern": "search",
+    "h3Pattern": "search"
   },
   "children": [
     {
@@ -43,7 +44,8 @@
           }
         ],
         "pathPattern": "search{/:query}",
-        "honoPattern": "search/:query?"
+        "honoPattern": "search/:query?",
+        "h3Pattern": "search/:query?"
       },
       "parent": "search",
       "children": [
@@ -69,7 +71,8 @@
               }
             ],
             "pathPattern": "search{/:query}{/:page}",
-            "honoPattern": "search/:query?/:page?"
+            "honoPattern": "search/:query?/:page?",
+            "h3Pattern": "search/:query?/:page?"
           },
           "parent": "search/{query}",
           "children": []

@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "portal",
-  "honoPattern": "portal"
+  "honoPattern": "portal",
+  "h3Pattern": "portal"
 }

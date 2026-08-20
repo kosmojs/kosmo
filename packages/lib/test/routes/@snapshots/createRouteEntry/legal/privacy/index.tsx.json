@@ -28,5 +28,6 @@
     }
   ],
   "pathPattern": "legal/privacy",
-  "honoPattern": "legal/privacy"
+  "honoPattern": "legal/privacy",
+  "h3Pattern": "legal/privacy"
 }

@@ -29,5 +29,6 @@
     }
   ],
   "pathPattern": ":category.:ext",
-  "honoPattern": ":_0{[^/]+\\.[^/]+}"
+  "honoPattern": ":_0{[^/]+.[^/]+}",
+  "h3Pattern": ":category.:ext"
 }

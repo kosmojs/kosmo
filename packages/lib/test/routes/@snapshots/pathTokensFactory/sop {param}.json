@@ -1,0 +1,31 @@
+{
+  "pathPattern": "sop{/:param}",
+  "honoPattern": "sop/:param?",
+  "h3Pattern": "sop/*",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "sop",
+      "pattern": "sop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "sop"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{param}",
+      "pattern": "{/:param}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "param",
+          "const": "param"
+        }
+      ]
+    }
+  ]
+}

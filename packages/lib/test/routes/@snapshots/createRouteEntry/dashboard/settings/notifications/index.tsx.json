@@ -39,5 +39,6 @@
     }
   ],
   "pathPattern": "dashboard/settings/notifications",
-  "honoPattern": "dashboard/settings/notifications"
+  "honoPattern": "dashboard/settings/notifications",
+  "h3Pattern": "dashboard/settings/notifications"
 }

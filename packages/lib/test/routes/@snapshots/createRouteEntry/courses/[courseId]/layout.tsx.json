@@ -30,5 +30,6 @@
     }
   ],
   "pathPattern": "courses/:courseId",
-  "honoPattern": "courses/:courseId"
+  "honoPattern": "courses/:courseId",
+  "h3Pattern": "courses/:courseId"
 }

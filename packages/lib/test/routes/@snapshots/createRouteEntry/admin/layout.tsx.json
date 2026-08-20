@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "admin",
-  "honoPattern": "admin"
+  "honoPattern": "admin",
+  "h3Pattern": "admin"
 }

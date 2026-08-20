@@ -40,7 +40,8 @@
       }
     ],
     "pathPattern": "dashboard/settings/billing",
-    "honoPattern": "dashboard/settings/billing"
+    "honoPattern": "dashboard/settings/billing",
+    "h3Pattern": "dashboard/settings/billing"
   },
   {
     "id": "dashboard_settings_notifications_index_tsx_3109498012",
@@ -83,7 +84,8 @@
       }
     ],
     "pathPattern": "dashboard/settings/notifications",
-    "honoPattern": "dashboard/settings/notifications"
+    "honoPattern": "dashboard/settings/notifications",
+    "h3Pattern": "dashboard/settings/notifications"
   },
   {
     "id": "dashboard_settings_profile_index_tsx_3821990919",
@@ -126,7 +128,8 @@
       }
     ],
     "pathPattern": "dashboard/settings/profile",
-    "honoPattern": "dashboard/settings/profile"
+    "honoPattern": "dashboard/settings/profile",
+    "h3Pattern": "dashboard/settings/profile"
   },
   {
     "id": "dashboard_settings_security_index_tsx_2219988972",
@@ -169,7 +172,8 @@
       }
     ],
     "pathPattern": "dashboard/settings/security",
-    "honoPattern": "dashboard/settings/security"
+    "honoPattern": "dashboard/settings/security",
+    "h3Pattern": "dashboard/settings/security"
   },
   {
     "id": "dashboard_settings_security_layout_tsx_3549196698",
@@ -212,7 +216,8 @@
       }
     ],
     "pathPattern": "dashboard/settings/security",
-    "honoPattern": "dashboard/settings/security"
+    "honoPattern": "dashboard/settings/security",
+    "h3Pattern": "dashboard/settings/security"
   },
   {
     "id": "shop_checkout_confirm_index_tsx_457300039",
@@ -255,7 +260,8 @@
       }
     ],
     "pathPattern": "shop/checkout/confirm",
-    "honoPattern": "shop/checkout/confirm"
+    "honoPattern": "shop/checkout/confirm",
+    "h3Pattern": "shop/checkout/confirm"
   },
   {
     "id": "shop_checkout_payment_index_tsx_2839585893",
@@ -298,7 +304,8 @@
       }
     ],
     "pathPattern": "shop/checkout/payment",
-    "honoPattern": "shop/checkout/payment"
+    "honoPattern": "shop/checkout/payment",
+    "h3Pattern": "shop/checkout/payment"
   },
   {
     "id": "shop_checkout_shipping_index_tsx_4218611208",
@@ -341,7 +348,8 @@
       }
     ],
     "pathPattern": "shop/checkout/shipping",
-    "honoPattern": "shop/checkout/shipping"
+    "honoPattern": "shop/checkout/shipping",
+    "h3Pattern": "shop/checkout/shipping"
   },
   {
     "id": "shop_checkout_shipping_layout_tsx_1955886922",
@@ -384,7 +392,8 @@
       }
     ],
     "pathPattern": "shop/checkout/shipping",
-    "honoPattern": "shop/checkout/shipping"
+    "honoPattern": "shop/checkout/shipping",
+    "h3Pattern": "shop/checkout/shipping"
   },
   {
     "id": "shop_product_id_reviews_index_tsx_1128969612",
@@ -440,7 +449,8 @@
       }
     ],
     "pathPattern": "shop/product/:id/reviews",
-    "honoPattern": "shop/product/:id/reviews"
+    "honoPattern": "shop/product/:id/reviews",
+    "h3Pattern": "shop/product/:id/reviews"
   },
   {
     "id": "blog_post_slug_index_tsx_4265829785",
@@ -485,7 +495,8 @@
       }
     ],
     "pathPattern": "blog/post/:slug",
-    "honoPattern": "blog/post/:slug"
+    "honoPattern": "blog/post/:slug",
+    "h3Pattern": "blog/post/:slug"
   },
   {
     "id": "blog_post_slug_layout_tsx_4086949147",
@@ -530,7 +541,8 @@
       }
     ],
     "pathPattern": "blog/post/:slug",
-    "honoPattern": "blog/post/:slug"
+    "honoPattern": "blog/post/:slug",
+    "h3Pattern": "blog/post/:slug"
   },
   {
     "id": "shop_orders_orderId_index_tsx_3645959700",
@@ -575,7 +587,8 @@
       }
     ],
     "pathPattern": "shop/orders/:orderId",
-    "honoPattern": "shop/orders/:orderId"
+    "honoPattern": "shop/orders/:orderId",
+    "h3Pattern": "shop/orders/:orderId"
   },
   {
     "id": "shop_product_id_index_tsx_3035235801",
@@ -620,7 +633,8 @@
       }
     ],
     "pathPattern": "shop/product/:id",
-    "honoPattern": "shop/product/:id"
+    "honoPattern": "shop/product/:id",
+    "h3Pattern": "shop/product/:id"
   },
   {
     "id": "shop_product_id_layout_tsx_2232356331",
@@ -665,7 +679,8 @@
       }
     ],
     "pathPattern": "shop/product/:id",
-    "honoPattern": "shop/product/:id"
+    "honoPattern": "shop/product/:id",
+    "h3Pattern": "shop/product/:id"
   },
   {
     "id": "about_careers_jobId_index_tsx_125723793",
@@ -710,7 +725,8 @@
       }
     ],
     "pathPattern": "about/careers{/:jobId}",
-    "honoPattern": "about/careers/:jobId?"
+    "honoPattern": "about/careers/:jobId?",
+    "h3Pattern": "about/careers/:jobId?"
   },
   {
     "id": "shop_products_category_index_tsx_130432150",
@@ -755,7 +771,8 @@
       }
     ],
     "pathPattern": "shop/products{/:category}",
-    "honoPattern": "shop/products/:category?"
+    "honoPattern": "shop/products/:category?",
+    "h3Pattern": "shop/products/:category?"
   },
   {
     "id": "about_careers_layout_tsx_3684129548",
@@ -787,7 +804,8 @@
       }
     ],
     "pathPattern": "about/careers",
-    "honoPattern": "about/careers"
+    "honoPattern": "about/careers",
+    "h3Pattern": "about/careers"
   },
   {
     "id": "about_team_index_tsx_3906889098",
@@ -819,7 +837,8 @@
       }
     ],
     "pathPattern": "about/team",
-    "honoPattern": "about/team"
+    "honoPattern": "about/team",
+    "h3Pattern": "about/team"
   },
   {
     "id": "account_profile_index_tsx_1987383209",
@@ -851,7 +870,8 @@
       }
     ],
     "pathPattern": "account/profile",
-    "honoPattern": "account/profile"
+    "honoPattern": "account/profile",
+    "h3Pattern": "account/profile"
   },
   {
     "id": "dashboard_analytics_index_tsx_2467463920",
@@ -883,7 +903,8 @@
       }
     ],
     "pathPattern": "dashboard/analytics",
-    "honoPattern": "dashboard/analytics"
+    "honoPattern": "dashboard/analytics",
+    "h3Pattern": "dashboard/analytics"
   },
   {
     "id": "dashboard_settings_index_tsx_2528451466",
@@ -915,7 +936,8 @@
       }
     ],
     "pathPattern": "dashboard/settings",
-    "honoPattern": "dashboard/settings"
+    "honoPattern": "dashboard/settings",
+    "h3Pattern": "dashboard/settings"
   },
   {
     "id": "dashboard_settings_layout_tsx_2001687227",
@@ -947,7 +969,8 @@
       }
     ],
     "pathPattern": "dashboard/settings",
-    "honoPattern": "dashboard/settings"
+    "honoPattern": "dashboard/settings",
+    "h3Pattern": "dashboard/settings"
   },
   {
     "id": "legal_privacy_index_tsx_603606551",
@@ -979,7 +1002,8 @@
       }
     ],
     "pathPattern": "legal/privacy",
-    "honoPattern": "legal/privacy"
+    "honoPattern": "legal/privacy",
+    "h3Pattern": "legal/privacy"
   },
   {
     "id": "legal_terms_index_tsx_3828107619",
@@ -1011,7 +1035,8 @@
       }
     ],
     "pathPattern": "legal/terms",
-    "honoPattern": "legal/terms"
+    "honoPattern": "legal/terms",
+    "h3Pattern": "legal/terms"
   },
   {
     "id": "properties_filters_index_tsx_1571931483",
@@ -1043,7 +1068,8 @@
       }
     ],
     "pathPattern": "properties/filters",
-    "honoPattern": "properties/filters"
+    "honoPattern": "properties/filters",
+    "h3Pattern": "properties/filters"
   },
   {
     "id": "shop_cart_index_tsx_3461971678",
@@ -1075,7 +1101,8 @@
       }
     ],
     "pathPattern": "shop/cart",
-    "honoPattern": "shop/cart"
+    "honoPattern": "shop/cart",
+    "h3Pattern": "shop/cart"
   },
   {
     "id": "shop_checkout_layout_tsx_2809742663",
@@ -1107,7 +1134,8 @@
       }
     ],
     "pathPattern": "shop/checkout",
-    "honoPattern": "shop/checkout"
+    "honoPattern": "shop/checkout",
+    "h3Pattern": "shop/checkout"
   },
   {
     "id": "shop_orders_index_tsx_3044215409",
@@ -1139,7 +1167,8 @@
       }
     ],
     "pathPattern": "shop/orders",
-    "honoPattern": "shop/orders"
+    "honoPattern": "shop/orders",
+    "h3Pattern": "shop/orders"
   },
   {
     "id": "shop_orders_layout_tsx_1560526654",
@@ -1171,7 +1200,8 @@
       }
     ],
     "pathPattern": "shop/orders",
-    "honoPattern": "shop/orders"
+    "honoPattern": "shop/orders",
+    "h3Pattern": "shop/orders"
   },
   {
     "id": "shop_products_index_tsx_3411274748",
@@ -1203,7 +1233,8 @@
       }
     ],
     "pathPattern": "shop/products",
-    "honoPattern": "shop/products"
+    "honoPattern": "shop/products",
+    "h3Pattern": "shop/products"
   },
   {
     "id": "shop_products_layout_tsx_3463733314",
@@ -1235,7 +1266,8 @@
       }
     ],
     "pathPattern": "shop/products",
-    "honoPattern": "shop/products"
+    "honoPattern": "shop/products",
+    "h3Pattern": "shop/products"
   },
   {
     "id": "users_id_json_index_ts_1074228995",
@@ -1273,7 +1305,8 @@
       }
     ],
     "pathPattern": "users/:id.json",
-    "honoPattern": "users/:_1{[^/]+\\.json}"
+    "honoPattern": "users/:_1{[^/]+.json}",
+    "h3Pattern": "users/:id.json"
   },
   {
     "id": "pages_path_html_index_ts_1431473415",
@@ -1311,7 +1344,8 @@
       }
     ],
     "pathPattern": "pages{/*path}.html",
-    "honoPattern": "pages/:_1{(?:.+)?\\.html}"
+    "honoPattern": "pages/:_1{(?:.+)?.html}",
+    "h3Pattern": "pages/{**:path?}?.html"
   },
   {
     "id": "admin_tenant_settings_general_index_tsx_4196017676",
@@ -1367,7 +1401,8 @@
       }
     ],
     "pathPattern": "admin/:tenant/settings/general",
-    "honoPattern": "admin/:tenant/settings/general"
+    "honoPattern": "admin/:tenant/settings/general",
+    "h3Pattern": "admin/:tenant/settings/general"
   },
   {
     "id": "admin_tenant_settings_permissions_index_tsx_3508365092",
@@ -1423,7 +1458,8 @@
       }
     ],
     "pathPattern": "admin/:tenant/settings/permissions",
-    "honoPattern": "admin/:tenant/settings/permissions"
+    "honoPattern": "admin/:tenant/settings/permissions",
+    "h3Pattern": "admin/:tenant/settings/permissions"
   },
   {
     "id": "portal_clientId_reports_reportType_data_dataView_index_tsx_245814616",
@@ -1505,7 +1541,8 @@
       }
     ],
     "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView",
-    "honoPattern": "portal/:clientId/reports/:reportType/data/:dataView"
+    "honoPattern": "portal/:clientId/reports/:reportType/data/:dataView",
+    "h3Pattern": "portal/:clientId/reports/:reportType/data/:dataView"
   },
   {
     "id": "portal_clientId_reports_reportType_data_dataView_layout_tsx_520811149",
@@ -1587,7 +1624,8 @@
       }
     ],
     "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView",
-    "honoPattern": "portal/:clientId/reports/:reportType/data/:dataView"
+    "honoPattern": "portal/:clientId/reports/:reportType/data/:dataView",
+    "h3Pattern": "portal/:clientId/reports/:reportType/data/:dataView"
   },
   {
     "id": "projects_projectId_tasks_taskId_comments_commentId_index_tsx_3891983433",
@@ -1669,7 +1707,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/tasks/:taskId/comments/:commentId",
-    "honoPattern": "projects/:projectId/tasks/:taskId/comments/:commentId"
+    "honoPattern": "projects/:projectId/tasks/:taskId/comments/:commentId",
+    "h3Pattern": "projects/:projectId/tasks/:taskId/comments/:commentId"
   },
   {
     "id": "projects_projectId_tasks_taskId_comments_index_tsx_2812732982",
@@ -1738,7 +1777,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/tasks/:taskId/comments",
-    "honoPattern": "projects/:projectId/tasks/:taskId/comments"
+    "honoPattern": "projects/:projectId/tasks/:taskId/comments",
+    "h3Pattern": "projects/:projectId/tasks/:taskId/comments"
   },
   {
     "id": "projects_projectId_tasks_taskId_comments_layout_tsx_3047800545",
@@ -1807,7 +1847,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/tasks/:taskId/comments",
-    "honoPattern": "projects/:projectId/tasks/:taskId/comments"
+    "honoPattern": "projects/:projectId/tasks/:taskId/comments",
+    "h3Pattern": "projects/:projectId/tasks/:taskId/comments"
   },
   {
     "id": "courses_courseId_lessons_lessonId_assignments_assignmentPath_index_tsx_1618613158",
@@ -1889,7 +1930,8 @@
       }
     ],
     "pathPattern": "courses/:courseId/lessons/:lessonId/assignments{/*assignmentPath}",
-    "honoPattern": "courses/:courseId/lessons/:lessonId/assignments/*"
+    "honoPattern": "courses/:courseId/lessons/:lessonId/assignments/*",
+    "h3Pattern": "courses/:courseId/lessons/:lessonId/assignments/**:assignmentPath?"
   },
   {
     "id": "profile_username_posts_postId_comments_thread_index_tsx_635455370",
@@ -1971,7 +2013,8 @@
       }
     ],
     "pathPattern": "profile/:username/posts/:postId/comments{/*thread}",
-    "honoPattern": "profile/:username/posts/:postId/comments/*"
+    "honoPattern": "profile/:username/posts/:postId/comments/*",
+    "h3Pattern": "profile/:username/posts/:postId/comments/**:thread?"
   },
   {
     "id": "workspace_workspaceId_team_memberId_permissions_permissionPath_index_tsx_3735406549",
@@ -2053,7 +2096,8 @@
       }
     ],
     "pathPattern": "workspace/:workspaceId/team/:memberId/permissions{/*permissionPath}",
-    "honoPattern": "workspace/:workspaceId/team/:memberId/permissions/*"
+    "honoPattern": "workspace/:workspaceId/team/:memberId/permissions/*",
+    "h3Pattern": "workspace/:workspaceId/team/:memberId/permissions/**:permissionPath?"
   },
   {
     "id": "admin_tenant_resources_type_index_tsx_2889345339",
@@ -2111,7 +2155,8 @@
       }
     ],
     "pathPattern": "admin/:tenant/resources/:type",
-    "honoPattern": "admin/:tenant/resources/:type"
+    "honoPattern": "admin/:tenant/resources/:type",
+    "h3Pattern": "admin/:tenant/resources/:type"
   },
   {
     "id": "admin_tenant_resources_type_layout_tsx_3407041363",
@@ -2169,7 +2214,8 @@
       }
     ],
     "pathPattern": "admin/:tenant/resources/:type",
-    "honoPattern": "admin/:tenant/resources/:type"
+    "honoPattern": "admin/:tenant/resources/:type",
+    "h3Pattern": "admin/:tenant/resources/:type"
   },
   {
     "id": "admin_tenant_users_userId_index_tsx_333896102",
@@ -2227,7 +2273,8 @@
       }
     ],
     "pathPattern": "admin/:tenant/users/:userId",
-    "honoPattern": "admin/:tenant/users/:userId"
+    "honoPattern": "admin/:tenant/users/:userId",
+    "h3Pattern": "admin/:tenant/users/:userId"
   },
   {
     "id": "portal_clientId_reports_reportType_layout_tsx_3694080843",
@@ -2285,7 +2332,8 @@
       }
     ],
     "pathPattern": "portal/:clientId/reports/:reportType",
-    "honoPattern": "portal/:clientId/reports/:reportType"
+    "honoPattern": "portal/:clientId/reports/:reportType",
+    "h3Pattern": "portal/:clientId/reports/:reportType"
   },
   {
     "id": "profile_username_posts_postId_layout_tsx_485444689",
@@ -2343,7 +2391,8 @@
       }
     ],
     "pathPattern": "profile/:username/posts/:postId",
-    "honoPattern": "profile/:username/posts/:postId"
+    "honoPattern": "profile/:username/posts/:postId",
+    "h3Pattern": "profile/:username/posts/:postId"
   },
   {
     "id": "projects_projectId_tasks_taskId_index_tsx_876882048",
@@ -2401,7 +2450,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/tasks/:taskId",
-    "honoPattern": "projects/:projectId/tasks/:taskId"
+    "honoPattern": "projects/:projectId/tasks/:taskId",
+    "h3Pattern": "projects/:projectId/tasks/:taskId"
   },
   {
     "id": "projects_projectId_tasks_taskId_layout_tsx_2537048726",
@@ -2459,7 +2509,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/tasks/:taskId",
-    "honoPattern": "projects/:projectId/tasks/:taskId"
+    "honoPattern": "projects/:projectId/tasks/:taskId",
+    "h3Pattern": "projects/:projectId/tasks/:taskId"
   },
   {
     "id": "projects_projectId_team_userId_index_tsx_1486831611",
@@ -2517,7 +2568,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/team/:userId",
-    "honoPattern": "projects/:projectId/team/:userId"
+    "honoPattern": "projects/:projectId/team/:userId",
+    "h3Pattern": "projects/:projectId/team/:userId"
   },
   {
     "id": "store_category_sort_sortBy_index_tsx_282881663",
@@ -2575,7 +2627,8 @@
       }
     ],
     "pathPattern": "store/:category/sort/:sortBy",
-    "honoPattern": "store/:category/sort/:sortBy"
+    "honoPattern": "store/:category/sort/:sortBy",
+    "h3Pattern": "store/:category/sort/:sortBy"
   },
   {
     "id": "users_username_posts_postId_index_tsx_2337624193",
@@ -2633,7 +2686,8 @@
       }
     ],
     "pathPattern": "users/:username/posts/:postId",
-    "honoPattern": "users/:username/posts/:postId"
+    "honoPattern": "users/:username/posts/:postId",
+    "h3Pattern": "users/:username/posts/:postId"
   },
   {
     "id": "users_username_posts_postId_layout_tsx_3766512504",
@@ -2691,7 +2745,8 @@
       }
     ],
     "pathPattern": "users/:username/posts/:postId",
-    "honoPattern": "users/:username/posts/:postId"
+    "honoPattern": "users/:username/posts/:postId",
+    "h3Pattern": "users/:username/posts/:postId"
   },
   {
     "id": "workspace_workspaceId_analytics_range_index_tsx_2469437584",
@@ -2749,7 +2804,8 @@
       }
     ],
     "pathPattern": "workspace/:workspaceId/analytics/:range",
-    "honoPattern": "workspace/:workspaceId/analytics/:range"
+    "honoPattern": "workspace/:workspaceId/analytics/:range",
+    "h3Pattern": "workspace/:workspaceId/analytics/:range"
   },
   {
     "id": "workspace_workspaceId_analytics_range_layout_tsx_2317889146",
@@ -2807,7 +2863,8 @@
       }
     ],
     "pathPattern": "workspace/:workspaceId/analytics/:range",
-    "honoPattern": "workspace/:workspaceId/analytics/:range"
+    "honoPattern": "workspace/:workspaceId/analytics/:range",
+    "h3Pattern": "workspace/:workspaceId/analytics/:range"
   },
   {
     "id": "admin_tenant_resources_type_path_index_tsx_3566128822",
@@ -2878,7 +2935,8 @@
       }
     ],
     "pathPattern": "admin/:tenant/resources/:type{/*path}",
-    "honoPattern": "admin/:tenant/resources/:type/*"
+    "honoPattern": "admin/:tenant/resources/:type/*",
+    "h3Pattern": "admin/:tenant/resources/:type/**:path?"
   },
   {
     "id": "admin_tenant_resources_index_tsx_1533280296",
@@ -2923,7 +2981,8 @@
       }
     ],
     "pathPattern": "admin/:tenant/resources",
-    "honoPattern": "admin/:tenant/resources"
+    "honoPattern": "admin/:tenant/resources",
+    "h3Pattern": "admin/:tenant/resources"
   },
   {
     "id": "admin_tenant_resources_layout_tsx_1331315044",
@@ -2968,7 +3027,8 @@
       }
     ],
     "pathPattern": "admin/:tenant/resources",
-    "honoPattern": "admin/:tenant/resources"
+    "honoPattern": "admin/:tenant/resources",
+    "h3Pattern": "admin/:tenant/resources"
   },
   {
     "id": "admin_tenant_settings_index_tsx_3198274446",
@@ -3013,7 +3073,8 @@
       }
     ],
     "pathPattern": "admin/:tenant/settings",
-    "honoPattern": "admin/:tenant/settings"
+    "honoPattern": "admin/:tenant/settings",
+    "h3Pattern": "admin/:tenant/settings"
   },
   {
     "id": "admin_tenant_settings_layout_tsx_1879736946",
@@ -3058,7 +3119,8 @@
       }
     ],
     "pathPattern": "admin/:tenant/settings",
-    "honoPattern": "admin/:tenant/settings"
+    "honoPattern": "admin/:tenant/settings",
+    "h3Pattern": "admin/:tenant/settings"
   },
   {
     "id": "admin_tenant_users_index_tsx_1262984270",
@@ -3103,7 +3165,8 @@
       }
     ],
     "pathPattern": "admin/:tenant/users",
-    "honoPattern": "admin/:tenant/users"
+    "honoPattern": "admin/:tenant/users",
+    "h3Pattern": "admin/:tenant/users"
   },
   {
     "id": "admin_tenant_users_layout_tsx_3952846485",
@@ -3148,7 +3211,8 @@
       }
     ],
     "pathPattern": "admin/:tenant/users",
-    "honoPattern": "admin/:tenant/users"
+    "honoPattern": "admin/:tenant/users",
+    "h3Pattern": "admin/:tenant/users"
   },
   {
     "id": "portal_clientId_reports_layout_tsx_1980481456",
@@ -3193,7 +3257,8 @@
       }
     ],
     "pathPattern": "portal/:clientId/reports",
-    "honoPattern": "portal/:clientId/reports"
+    "honoPattern": "portal/:clientId/reports",
+    "h3Pattern": "portal/:clientId/reports"
   },
   {
     "id": "projects_projectId_files_index_tsx_3641865118",
@@ -3238,7 +3303,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/files",
-    "honoPattern": "projects/:projectId/files"
+    "honoPattern": "projects/:projectId/files",
+    "h3Pattern": "projects/:projectId/files"
   },
   {
     "id": "projects_projectId_files_layout_tsx_1843012014",
@@ -3283,7 +3349,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/files",
-    "honoPattern": "projects/:projectId/files"
+    "honoPattern": "projects/:projectId/files",
+    "h3Pattern": "projects/:projectId/files"
   },
   {
     "id": "projects_projectId_tasks_index_tsx_2095702919",
@@ -3328,7 +3395,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/tasks",
-    "honoPattern": "projects/:projectId/tasks"
+    "honoPattern": "projects/:projectId/tasks",
+    "h3Pattern": "projects/:projectId/tasks"
   },
   {
     "id": "projects_projectId_tasks_layout_tsx_152335102",
@@ -3373,7 +3441,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/tasks",
-    "honoPattern": "projects/:projectId/tasks"
+    "honoPattern": "projects/:projectId/tasks",
+    "h3Pattern": "projects/:projectId/tasks"
   },
   {
     "id": "projects_projectId_team_index_tsx_1454304763",
@@ -3418,7 +3487,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/team",
-    "honoPattern": "projects/:projectId/team"
+    "honoPattern": "projects/:projectId/team",
+    "h3Pattern": "projects/:projectId/team"
   },
   {
     "id": "projects_projectId_team_layout_tsx_1351420135",
@@ -3463,7 +3533,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/team",
-    "honoPattern": "projects/:projectId/team"
+    "honoPattern": "projects/:projectId/team",
+    "h3Pattern": "projects/:projectId/team"
   },
   {
     "id": "store_category_sort_layout_tsx_1255246087",
@@ -3508,7 +3579,8 @@
       }
     ],
     "pathPattern": "store/:category/sort",
-    "honoPattern": "store/:category/sort"
+    "honoPattern": "store/:category/sort",
+    "h3Pattern": "store/:category/sort"
   },
   {
     "id": "users_username_followers_index_tsx_3491047874",
@@ -3553,7 +3625,8 @@
       }
     ],
     "pathPattern": "users/:username/followers",
-    "honoPattern": "users/:username/followers"
+    "honoPattern": "users/:username/followers",
+    "h3Pattern": "users/:username/followers"
   },
   {
     "id": "users_username_following_index_tsx_1569883917",
@@ -3598,7 +3671,8 @@
       }
     ],
     "pathPattern": "users/:username/following",
-    "honoPattern": "users/:username/following"
+    "honoPattern": "users/:username/following",
+    "h3Pattern": "users/:username/following"
   },
   {
     "id": "users_username_posts_index_tsx_3051146060",
@@ -3643,7 +3717,8 @@
       }
     ],
     "pathPattern": "users/:username/posts",
-    "honoPattern": "users/:username/posts"
+    "honoPattern": "users/:username/posts",
+    "h3Pattern": "users/:username/posts"
   },
   {
     "id": "users_username_posts_layout_tsx_90922222",
@@ -3688,7 +3763,8 @@
       }
     ],
     "pathPattern": "users/:username/posts",
-    "honoPattern": "users/:username/posts"
+    "honoPattern": "users/:username/posts",
+    "h3Pattern": "users/:username/posts"
   },
   {
     "id": "workspace_workspaceId_analytics_index_tsx_2441542851",
@@ -3733,7 +3809,8 @@
       }
     ],
     "pathPattern": "workspace/:workspaceId/analytics",
-    "honoPattern": "workspace/:workspaceId/analytics"
+    "honoPattern": "workspace/:workspaceId/analytics",
+    "h3Pattern": "workspace/:workspaceId/analytics"
   },
   {
     "id": "workspace_workspaceId_analytics_layout_tsx_2018023528",
@@ -3778,7 +3855,8 @@
       }
     ],
     "pathPattern": "workspace/:workspaceId/analytics",
-    "honoPattern": "workspace/:workspaceId/analytics"
+    "honoPattern": "workspace/:workspaceId/analytics",
+    "h3Pattern": "workspace/:workspaceId/analytics"
   },
   {
     "id": "workspace_workspaceId_team_layout_tsx_1903886921",
@@ -3823,7 +3901,8 @@
       }
     ],
     "pathPattern": "workspace/:workspaceId/team",
-    "honoPattern": "workspace/:workspaceId/team"
+    "honoPattern": "workspace/:workspaceId/team",
+    "h3Pattern": "workspace/:workspaceId/team"
   },
   {
     "id": "news_category_articles_articlePath_index_tsx_4049923491",
@@ -3881,7 +3960,8 @@
       }
     ],
     "pathPattern": "news/:category/articles{/*articlePath}",
-    "honoPattern": "news/:category/articles/*"
+    "honoPattern": "news/:category/articles/*",
+    "h3Pattern": "news/:category/articles/**:articlePath?"
   },
   {
     "id": "projects_projectId_files_path_index_tsx_3414316093",
@@ -3939,7 +4019,8 @@
       }
     ],
     "pathPattern": "projects/:projectId/files{/*path}",
-    "honoPattern": "projects/:projectId/files/*"
+    "honoPattern": "projects/:projectId/files/*",
+    "h3Pattern": "projects/:projectId/files/**:path?"
   },
   {
     "id": "properties_city_filters_filters_index_tsx_1192904431",
@@ -3997,7 +4078,8 @@
       }
     ],
     "pathPattern": "properties/:city/filters{/*filters}",
-    "honoPattern": "properties/:city/filters/*"
+    "honoPattern": "properties/:city/filters/*",
+    "h3Pattern": "properties/:city/filters/**:filters?"
   },
   {
     "id": "store_category_filters_filters_index_tsx_2600177157",
@@ -4055,7 +4137,8 @@
       }
     ],
     "pathPattern": "store/:category/filters{/*filters}",
-    "honoPattern": "store/:category/filters/*"
+    "honoPattern": "store/:category/filters/*",
+    "h3Pattern": "store/:category/filters/**:filters?"
   },
   {
     "id": "shop_category_productId_index_tsx_3761077416",
@@ -4102,7 +4185,8 @@
       }
     ],
     "pathPattern": "shop/:category/:productId",
-    "honoPattern": "shop/:category/:productId"
+    "honoPattern": "shop/:category/:productId",
+    "h3Pattern": "shop/:category/:productId"
   },
   {
     "id": "shop_category_productId_layout_tsx_2723777336",
@@ -4149,7 +4233,8 @@
       }
     ],
     "pathPattern": "shop/:category/:productId",
-    "honoPattern": "shop/:category/:productId"
+    "honoPattern": "shop/:category/:productId",
+    "h3Pattern": "shop/:category/:productId"
   },
   {
     "id": "books_category_author_index_ts_938545357",
@@ -4196,7 +4281,8 @@
       }
     ],
     "pathPattern": "books/:category{/:author}",
-    "honoPattern": "books/:category/:author?"
+    "honoPattern": "books/:category/:author?",
+    "h3Pattern": "books/:category/:author?"
   },
   {
     "id": "admin_tenant_index_tsx_144548962",
@@ -4230,7 +4316,8 @@
       }
     ],
     "pathPattern": "admin/:tenant",
-    "honoPattern": "admin/:tenant"
+    "honoPattern": "admin/:tenant",
+    "h3Pattern": "admin/:tenant"
   },
   {
     "id": "books_category_index_ts_3962519743",
@@ -4264,7 +4351,8 @@
       }
     ],
     "pathPattern": "books/:category",
-    "honoPattern": "books/:category"
+    "honoPattern": "books/:category",
+    "h3Pattern": "books/:category"
   },
   {
     "id": "courses_courseId_layout_tsx_15431109",
@@ -4298,7 +4386,8 @@
       }
     ],
     "pathPattern": "courses/:courseId",
-    "honoPattern": "courses/:courseId"
+    "honoPattern": "courses/:courseId",
+    "h3Pattern": "courses/:courseId"
   },
   {
     "id": "dashboard_view_index_tsx_3510080540",
@@ -4332,7 +4421,8 @@
       }
     ],
     "pathPattern": "dashboard/:view",
-    "honoPattern": "dashboard/:view"
+    "honoPattern": "dashboard/:view",
+    "h3Pattern": "dashboard/:view"
   },
   {
     "id": "news_category_layout_tsx_4074534343",
@@ -4366,7 +4456,8 @@
       }
     ],
     "pathPattern": "news/:category",
-    "honoPattern": "news/:category"
+    "honoPattern": "news/:category",
+    "h3Pattern": "news/:category"
   },
   {
     "id": "portal_clientId_layout_tsx_3114159634",
@@ -4400,7 +4491,8 @@
       }
     ],
     "pathPattern": "portal/:clientId",
-    "honoPattern": "portal/:clientId"
+    "honoPattern": "portal/:clientId",
+    "h3Pattern": "portal/:clientId"
   },
   {
     "id": "products_id_index_tsx_3698327518",
@@ -4434,7 +4526,8 @@
       }
     ],
     "pathPattern": "products/:id",
-    "honoPattern": "products/:id"
+    "honoPattern": "products/:id",
+    "h3Pattern": "products/:id"
   },
   {
     "id": "profile_username_layout_tsx_2113498186",
@@ -4468,7 +4561,8 @@
       }
     ],
     "pathPattern": "profile/:username",
-    "honoPattern": "profile/:username"
+    "honoPattern": "profile/:username",
+    "h3Pattern": "profile/:username"
   },
   {
     "id": "projects_projectId_index_tsx_2013112903",
@@ -4502,7 +4596,8 @@
       }
     ],
     "pathPattern": "projects/:projectId",
-    "honoPattern": "projects/:projectId"
+    "honoPattern": "projects/:projectId",
+    "h3Pattern": "projects/:projectId"
   },
   {
     "id": "projects_projectId_layout_tsx_2457576455",
@@ -4536,7 +4631,8 @@
       }
     ],
     "pathPattern": "projects/:projectId",
-    "honoPattern": "projects/:projectId"
+    "honoPattern": "projects/:projectId",
+    "h3Pattern": "projects/:projectId"
   },
   {
     "id": "users_username_index_tsx_2988217479",
@@ -4570,7 +4666,8 @@
       }
     ],
     "pathPattern": "users/:username",
-    "honoPattern": "users/:username"
+    "honoPattern": "users/:username",
+    "h3Pattern": "users/:username"
   },
   {
     "id": "users_username_layout_tsx_165316489",
@@ -4604,7 +4701,8 @@
       }
     ],
     "pathPattern": "users/:username",
-    "honoPattern": "users/:username"
+    "honoPattern": "users/:username",
+    "h3Pattern": "users/:username"
   },
   {
     "id": "files_folder_id_json_index_ts_1018240434",
@@ -4655,7 +4753,8 @@
       }
     ],
     "pathPattern": "files{/:folder}{/:id}.json",
-    "honoPattern": "files/:folder?/:_2{(?:[^/]+)?\\.json}"
+    "honoPattern": "files/:folder?/:_2{(?:[^/]+)?.json}",
+    "h3Pattern": "files/:folder?/{:id}?.json"
   },
   {
     "id": "blog_category_tag_index_tsx_1530717925",
@@ -4702,7 +4801,8 @@
       }
     ],
     "pathPattern": "blog{/:category}{/:tag}",
-    "honoPattern": "blog/:category?/:tag?"
+    "honoPattern": "blog/:category?/:tag?",
+    "h3Pattern": "blog/:category?/:tag?"
   },
   {
     "id": "search_query_page_index_tsx_238838277",
@@ -4749,7 +4849,8 @@
       }
     ],
     "pathPattern": "search{/:query}{/:page}",
-    "honoPattern": "search/:query?/:page?"
+    "honoPattern": "search/:query?/:page?",
+    "h3Pattern": "search/:query?/:page?"
   },
   {
     "id": "blog_category_index_tsx_2361523450",
@@ -4783,7 +4884,8 @@
       }
     ],
     "pathPattern": "blog{/:category}",
-    "honoPattern": "blog/:category?"
+    "honoPattern": "blog/:category?",
+    "h3Pattern": "blog/:category?"
   },
   {
     "id": "files_folder_index_ts_286600463",
@@ -4817,7 +4919,8 @@
       }
     ],
     "pathPattern": "files{/:folder}",
-    "honoPattern": "files/:folder?"
+    "honoPattern": "files/:folder?",
+    "h3Pattern": "files/:folder?"
   },
   {
     "id": "search_query_layout_tsx_3813281713",
@@ -4851,7 +4954,8 @@
       }
     ],
     "pathPattern": "search{/:query}",
-    "honoPattern": "search/:query?"
+    "honoPattern": "search/:query?",
+    "h3Pattern": "search/:query?"
   },
   {
     "id": "about_index_tsx_3061335318",
@@ -4872,7 +4976,8 @@
       }
     ],
     "pathPattern": "about",
-    "honoPattern": "about"
+    "honoPattern": "about",
+    "h3Pattern": "about"
   },
   {
     "id": "about_layout_tsx_2396405898",
@@ -4893,7 +4998,8 @@
       }
     ],
     "pathPattern": "about",
-    "honoPattern": "about"
+    "honoPattern": "about",
+    "h3Pattern": "about"
   },
   {
     "id": "account_layout_tsx_2977242696",
@@ -4914,7 +5020,8 @@
       }
     ],
     "pathPattern": "account",
-    "honoPattern": "account"
+    "honoPattern": "account",
+    "h3Pattern": "account"
   },
   {
     "id": "admin_index_tsx_1806534617",
@@ -4935,7 +5042,8 @@
       }
     ],
     "pathPattern": "admin",
-    "honoPattern": "admin"
+    "honoPattern": "admin",
+    "h3Pattern": "admin"
   },
   {
     "id": "admin_layout_tsx_2245020265",
@@ -4956,7 +5064,8 @@
       }
     ],
     "pathPattern": "admin",
-    "honoPattern": "admin"
+    "honoPattern": "admin",
+    "h3Pattern": "admin"
   },
   {
     "id": "blog_index_tsx_656698020",
@@ -4977,7 +5086,8 @@
       }
     ],
     "pathPattern": "blog",
-    "honoPattern": "blog"
+    "honoPattern": "blog",
+    "h3Pattern": "blog"
   },
   {
     "id": "blog_layout_tsx_2871578117",
@@ -4998,7 +5108,8 @@
       }
     ],
     "pathPattern": "blog",
-    "honoPattern": "blog"
+    "honoPattern": "blog",
+    "h3Pattern": "blog"
   },
   {
     "id": "books_index_ts_873720432",
@@ -5019,7 +5130,8 @@
       }
     ],
     "pathPattern": "books",
-    "honoPattern": "books"
+    "honoPattern": "books",
+    "h3Pattern": "books"
   },
   {
     "id": "contact_index_tsx_3970670992",
@@ -5040,7 +5152,8 @@
       }
     ],
     "pathPattern": "contact",
-    "honoPattern": "contact"
+    "honoPattern": "contact",
+    "h3Pattern": "contact"
   },
   {
     "id": "contact_layout_tsx_2321003899",
@@ -5061,7 +5174,8 @@
       }
     ],
     "pathPattern": "contact",
-    "honoPattern": "contact"
+    "honoPattern": "contact",
+    "h3Pattern": "contact"
   },
   {
     "id": "dashboard_index_tsx_3400391192",
@@ -5082,7 +5196,8 @@
       }
     ],
     "pathPattern": "dashboard",
-    "honoPattern": "dashboard"
+    "honoPattern": "dashboard",
+    "h3Pattern": "dashboard"
   },
   {
     "id": "dashboard_layout_tsx_1762834450",
@@ -5103,7 +5218,8 @@
       }
     ],
     "pathPattern": "dashboard",
-    "honoPattern": "dashboard"
+    "honoPattern": "dashboard",
+    "h3Pattern": "dashboard"
   },
   {
     "id": "docs_index_tsx_2030679828",
@@ -5124,7 +5240,8 @@
       }
     ],
     "pathPattern": "docs",
-    "honoPattern": "docs"
+    "honoPattern": "docs",
+    "h3Pattern": "docs"
   },
   {
     "id": "docs_layout_tsx_1612140628",
@@ -5145,7 +5262,8 @@
       }
     ],
     "pathPattern": "docs",
-    "honoPattern": "docs"
+    "honoPattern": "docs",
+    "h3Pattern": "docs"
   },
   {
     "id": "legal_layout_tsx_1366181041",
@@ -5166,7 +5284,8 @@
       }
     ],
     "pathPattern": "legal",
-    "honoPattern": "legal"
+    "honoPattern": "legal",
+    "h3Pattern": "legal"
   },
   {
     "id": "portal_layout_tsx_4243983674",
@@ -5187,7 +5306,8 @@
       }
     ],
     "pathPattern": "portal",
-    "honoPattern": "portal"
+    "honoPattern": "portal",
+    "h3Pattern": "portal"
   },
   {
     "id": "products_index_tsx_3492241869",
@@ -5208,7 +5328,8 @@
       }
     ],
     "pathPattern": "products",
-    "honoPattern": "products"
+    "honoPattern": "products",
+    "h3Pattern": "products"
   },
   {
     "id": "projects_index_tsx_1541817812",
@@ -5229,7 +5350,8 @@
       }
     ],
     "pathPattern": "projects",
-    "honoPattern": "projects"
+    "honoPattern": "projects",
+    "h3Pattern": "projects"
   },
   {
     "id": "projects_layout_tsx_4216421654",
@@ -5250,7 +5372,8 @@
       }
     ],
     "pathPattern": "projects",
-    "honoPattern": "projects"
+    "honoPattern": "projects",
+    "h3Pattern": "projects"
   },
   {
     "id": "properties_layout_tsx_4189224751",
@@ -5271,7 +5394,8 @@
       }
     ],
     "pathPattern": "properties",
-    "honoPattern": "properties"
+    "honoPattern": "properties",
+    "h3Pattern": "properties"
   },
   {
     "id": "search_index_tsx_960598595",
@@ -5292,7 +5416,8 @@
       }
     ],
     "pathPattern": "search",
-    "honoPattern": "search"
+    "honoPattern": "search",
+    "h3Pattern": "search"
   },
   {
     "id": "shop_index_tsx_2616003680",
@@ -5313,7 +5438,8 @@
       }
     ],
     "pathPattern": "shop",
-    "honoPattern": "shop"
+    "honoPattern": "shop",
+    "h3Pattern": "shop"
   },
   {
     "id": "shop_layout_tsx_933036490",
@@ -5334,7 +5460,8 @@
       }
     ],
     "pathPattern": "shop",
-    "honoPattern": "shop"
+    "honoPattern": "shop",
+    "h3Pattern": "shop"
   },
   {
     "id": "signup_index_tsx_1574634146",
@@ -5355,7 +5482,8 @@
       }
     ],
     "pathPattern": "signup",
-    "honoPattern": "signup"
+    "honoPattern": "signup",
+    "h3Pattern": "signup"
   },
   {
     "id": "store_layout_tsx_1661449985",
@@ -5376,7 +5504,8 @@
       }
     ],
     "pathPattern": "store",
-    "honoPattern": "store"
+    "honoPattern": "store",
+    "h3Pattern": "store"
   },
   {
     "id": "users_index_tsx_3827824650",
@@ -5397,7 +5526,8 @@
       }
     ],
     "pathPattern": "users",
-    "honoPattern": "users"
+    "honoPattern": "users",
+    "h3Pattern": "users"
   },
   {
     "id": "users_layout_tsx_2592424824",
@@ -5418,7 +5548,8 @@
       }
     ],
     "pathPattern": "users",
-    "honoPattern": "users"
+    "honoPattern": "users",
+    "h3Pattern": "users"
   },
   {
     "id": "articles_path_index_ts_3953351018",
@@ -5452,7 +5583,8 @@
       }
     ],
     "pathPattern": "articles{/*path}",
-    "honoPattern": "articles/*"
+    "honoPattern": "articles/*",
+    "h3Pattern": "articles/**:path?"
   },
   {
     "id": "docs_path_index_tsx_3119800738",
@@ -5486,7 +5618,8 @@
       }
     ],
     "pathPattern": "docs{/*path}",
-    "honoPattern": "docs/*"
+    "honoPattern": "docs/*",
+    "h3Pattern": "docs/**:path?"
   },
   {
     "id": "files_filePath_index_tsx_3346733359",
@@ -5520,7 +5653,8 @@
       }
     ],
     "pathPattern": "files{/*filePath}",
-    "honoPattern": "files/*"
+    "honoPattern": "files/*",
+    "h3Pattern": "files/**:filePath?"
   },
   {
     "id": "files_filePath_layout_tsx_3517107166",
@@ -5554,7 +5688,8 @@
       }
     ],
     "pathPattern": "files{/*filePath}",
-    "honoPattern": "files/*"
+    "honoPattern": "files/*",
+    "h3Pattern": "files/**:filePath?"
   },
   {
     "id": "_category_ext_index_ts_334710937",
@@ -5587,7 +5722,8 @@
       }
     ],
     "pathPattern": ":category.:ext",
-    "honoPattern": ":_0{[^/]+\\.[^/]+}"
+    "honoPattern": ":_0{[^/]+.[^/]+}",
+    "h3Pattern": ":category.:ext"
   },
   {
     "id": "v_version_index_ts_3868356826",
@@ -5614,7 +5750,8 @@
       }
     ],
     "pathPattern": "v:version",
-    "honoPattern": ":_0{v[^/]+}"
+    "honoPattern": ":_0{v[^/]+}",
+    "h3Pattern": "v:version"
   },
   {
     "id": "_format_index_ts_754561491",
@@ -5637,7 +5774,8 @@
       }
     ],
     "pathPattern": ":format",
-    "honoPattern": ":format"
+    "honoPattern": ":format",
+    "h3Pattern": ":format"
   },
   {
     "id": "index_index_ts_2109308135",
@@ -5646,6 +5784,7 @@
     "file": "index/index.ts",
     "pathTokens": [],
     "pathPattern": "",
-    "honoPattern": ""
+    "honoPattern": "",
+    "h3Pattern": ""
   }
 ]

@@ -78,5 +78,6 @@
     }
   ],
   "pathPattern": "portal/:clientId/reports/:reportType/data/:dataView",
-  "honoPattern": "portal/:clientId/reports/:reportType/data/:dataView"
+  "honoPattern": "portal/:clientId/reports/:reportType/data/:dataView",
+  "h3Pattern": "portal/:clientId/reports/:reportType/data/:dataView"
 }

@@ -54,5 +54,6 @@
     }
   ],
   "pathPattern": "store/:category/filters{/*filters}",
-  "honoPattern": "store/:category/filters/*"
+  "honoPattern": "store/:category/filters/*",
+  "h3Pattern": "store/:category/filters/**:filters?"
 }

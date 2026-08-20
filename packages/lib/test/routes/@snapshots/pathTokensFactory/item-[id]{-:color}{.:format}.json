@@ -1,0 +1,44 @@
+{
+  "pathPattern": "item-:id{-:color}{.:format}",
+  "honoPattern": ":_0{item-[^/]+(?:-[^/]+)?(?:.[^/]+)?}",
+  "h3Pattern": "item\\-:id{\\-:color}?{.:format}?",
+  "pathTokens": [
+    {
+      "kind": "mixed",
+      "orig": "item-[id]{-:color}{.:format}",
+      "pattern": "item-:id{-:color}{.:format}",
+      "parts": [
+        {
+          "type": "static",
+          "value": "item-"
+        },
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "id",
+          "const": "id"
+        },
+        {
+          "type": "static",
+          "value": "-"
+        },
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "color",
+          "const": "color"
+        },
+        {
+          "type": "static",
+          "value": "."
+        },
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "format",
+          "const": "format"
+        }
+      ]
+    }
+  ]
+}

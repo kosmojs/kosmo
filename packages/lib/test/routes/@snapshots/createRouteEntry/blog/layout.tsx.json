@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "blog",
-  "honoPattern": "blog"
+  "honoPattern": "blog",
+  "h3Pattern": "blog"
 }

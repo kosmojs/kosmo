@@ -28,5 +28,6 @@
     }
   ],
   "pathPattern": "shop/orders",
-  "honoPattern": "shop/orders"
+  "honoPattern": "shop/orders",
+  "h3Pattern": "shop/orders"
 }

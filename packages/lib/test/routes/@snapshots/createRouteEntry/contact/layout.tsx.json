@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "contact",
-  "honoPattern": "contact"
+  "honoPattern": "contact",
+  "h3Pattern": "contact"
 }

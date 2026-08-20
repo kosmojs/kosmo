@@ -41,5 +41,6 @@
     }
   ],
   "pathPattern": "portal/:clientId/reports",
-  "honoPattern": "portal/:clientId/reports"
+  "honoPattern": "portal/:clientId/reports",
+  "h3Pattern": "portal/:clientId/reports"
 }

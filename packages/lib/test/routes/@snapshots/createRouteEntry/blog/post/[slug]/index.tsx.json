@@ -41,5 +41,6 @@
     }
   ],
   "pathPattern": "blog/post/:slug",
-  "honoPattern": "blog/post/:slug"
+  "honoPattern": "blog/post/:slug",
+  "h3Pattern": "blog/post/:slug"
 }

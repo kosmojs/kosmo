@@ -18,7 +18,8 @@
       }
     ],
     "pathPattern": "properties",
-    "honoPattern": "properties"
+    "honoPattern": "properties",
+    "h3Pattern": "properties"
   },
   "children": [
     {
@@ -41,7 +42,8 @@
           }
         ],
         "pathPattern": "properties/filters",
-        "honoPattern": "properties/filters"
+        "honoPattern": "properties/filters",
+        "h3Pattern": "properties/filters"
       },
       "parent": "properties",
       "children": []
@@ -92,7 +94,8 @@
           }
         ],
         "pathPattern": "properties/:city/filters{/*filters}",
-        "honoPattern": "properties/:city/filters/*"
+        "honoPattern": "properties/:city/filters/*",
+        "h3Pattern": "properties/:city/filters/**:filters?"
       },
       "parent": "properties",
       "children": []

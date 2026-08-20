@@ -31,7 +31,8 @@
       }
     ],
     "pathPattern": "profile/:username",
-    "honoPattern": "profile/:username"
+    "honoPattern": "profile/:username",
+    "h3Pattern": "profile/:username"
   },
   "children": [
     {
@@ -67,7 +68,8 @@
           }
         ],
         "pathPattern": "profile/:username/posts/:postId",
-        "honoPattern": "profile/:username/posts/:postId"
+        "honoPattern": "profile/:username/posts/:postId",
+        "h3Pattern": "profile/:username/posts/:postId"
       },
       "parent": "profile/[username]",
       "children": [
@@ -104,7 +106,8 @@
               }
             ],
             "pathPattern": "profile/:username/posts/:postId/comments{/*thread}",
-            "honoPattern": "profile/:username/posts/:postId/comments/*"
+            "honoPattern": "profile/:username/posts/:postId/comments/*",
+            "h3Pattern": "profile/:username/posts/:postId/comments/**:thread?"
           },
           "parent": "profile/[username]/posts/[postId]",
           "children": []

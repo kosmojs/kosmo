@@ -1,0 +1,55 @@
+{
+  "pathPattern": "rws/:required/with{/*splat}",
+  "honoPattern": "rws/:required/with/*",
+  "h3Pattern": "rws/:required/with/**",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "rws",
+      "pattern": "rws",
+      "parts": [
+        {
+          "type": "static",
+          "value": "rws"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[required]",
+      "pattern": ":required",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "required",
+          "const": "required"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "with",
+      "pattern": "with",
+      "parts": [
+        {
+          "type": "static",
+          "value": "with"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{...splat}",
+      "pattern": "{/*splat}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "splat",
+          "const": "splat"
+        }
+      ]
+    }
+  ]
+}

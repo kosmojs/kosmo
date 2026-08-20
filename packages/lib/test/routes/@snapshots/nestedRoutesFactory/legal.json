@@ -18,7 +18,8 @@
       }
     ],
     "pathPattern": "legal",
-    "honoPattern": "legal"
+    "honoPattern": "legal",
+    "h3Pattern": "legal"
   },
   "children": [
     {
@@ -41,7 +42,8 @@
           }
         ],
         "pathPattern": "legal/privacy",
-        "honoPattern": "legal/privacy"
+        "honoPattern": "legal/privacy",
+        "h3Pattern": "legal/privacy"
       },
       "parent": "legal",
       "children": []
@@ -66,7 +68,8 @@
           }
         ],
         "pathPattern": "legal/terms",
-        "honoPattern": "legal/terms"
+        "honoPattern": "legal/terms",
+        "h3Pattern": "legal/terms"
       },
       "parent": "legal",
       "children": []

@@ -1,0 +1,24 @@
+{
+  "pathPattern": "book-:id",
+  "honoPattern": ":_0{book-[^/]+}",
+  "h3Pattern": "book\\-:id",
+  "pathTokens": [
+    {
+      "kind": "mixed",
+      "orig": "book-[id]",
+      "pattern": "book-:id",
+      "parts": [
+        {
+          "type": "static",
+          "value": "book-"
+        },
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "id",
+          "const": "id"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "pathPattern": "some/page",
+  "honoPattern": "some/page",
+  "h3Pattern": "some/page",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "some",
+      "pattern": "some",
+      "parts": [
+        {
+          "type": "static",
+          "value": "some"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "page",
+      "pattern": "page",
+      "parts": [
+        {
+          "type": "static",
+          "value": "page"
+        }
+      ]
+    }
+  ]
+}

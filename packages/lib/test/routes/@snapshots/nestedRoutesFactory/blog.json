@@ -18,7 +18,8 @@
       }
     ],
     "pathPattern": "blog",
-    "honoPattern": "blog"
+    "honoPattern": "blog",
+    "h3Pattern": "blog"
   },
   "layout": {
     "id": "blog_layout_tsx_2871578117",
@@ -39,7 +40,8 @@
       }
     ],
     "pathPattern": "blog",
-    "honoPattern": "blog"
+    "honoPattern": "blog",
+    "h3Pattern": "blog"
   },
   "children": [
     {
@@ -75,7 +77,8 @@
           }
         ],
         "pathPattern": "blog/post/:slug",
-        "honoPattern": "blog/post/:slug"
+        "honoPattern": "blog/post/:slug",
+        "h3Pattern": "blog/post/:slug"
       },
       "layout": {
         "id": "blog_post_slug_layout_tsx_4086949147",
@@ -109,7 +112,8 @@
           }
         ],
         "pathPattern": "blog/post/:slug",
-        "honoPattern": "blog/post/:slug"
+        "honoPattern": "blog/post/:slug",
+        "h3Pattern": "blog/post/:slug"
       },
       "parent": "blog",
       "children": []
@@ -136,7 +140,8 @@
           }
         ],
         "pathPattern": "blog{/:category}",
-        "honoPattern": "blog/:category?"
+        "honoPattern": "blog/:category?",
+        "h3Pattern": "blog/:category?"
       },
       "parent": "blog",
       "children": [
@@ -162,7 +167,8 @@
               }
             ],
             "pathPattern": "blog{/:category}{/:tag}",
-            "honoPattern": "blog/:category?/:tag?"
+            "honoPattern": "blog/:category?/:tag?",
+            "h3Pattern": "blog/:category?/:tag?"
           },
           "parent": "blog/{category}",
           "children": []

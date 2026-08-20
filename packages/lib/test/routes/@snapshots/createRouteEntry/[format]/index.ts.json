@@ -19,5 +19,6 @@
     }
   ],
   "pathPattern": ":format",
-  "honoPattern": ":format"
+  "honoPattern": ":format",
+  "h3Pattern": ":format"
 }

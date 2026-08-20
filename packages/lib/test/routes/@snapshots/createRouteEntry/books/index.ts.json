@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "books",
-  "honoPattern": "books"
+  "honoPattern": "books",
+  "h3Pattern": "books"
 }

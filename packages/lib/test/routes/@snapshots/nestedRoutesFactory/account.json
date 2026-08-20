@@ -18,7 +18,8 @@
       }
     ],
     "pathPattern": "account",
-    "honoPattern": "account"
+    "honoPattern": "account",
+    "h3Pattern": "account"
   },
   "children": [
     {
@@ -41,7 +42,8 @@
           }
         ],
         "pathPattern": "account/profile",
-        "honoPattern": "account/profile"
+        "honoPattern": "account/profile",
+        "h3Pattern": "account/profile"
       },
       "parent": "account",
       "children": []

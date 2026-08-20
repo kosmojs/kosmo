@@ -30,5 +30,6 @@
     }
   ],
   "pathPattern": "users/:username",
-  "honoPattern": "users/:username"
+  "honoPattern": "users/:username",
+  "h3Pattern": "users/:username"
 }

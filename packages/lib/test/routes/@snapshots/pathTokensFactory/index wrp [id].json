@@ -1,0 +1,31 @@
+{
+  "pathPattern": "wrp/:id",
+  "honoPattern": "wrp/:id",
+  "h3Pattern": "wrp/:id",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "wrp",
+      "pattern": "wrp",
+      "parts": [
+        {
+          "type": "static",
+          "value": "wrp"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[id]",
+      "pattern": ":id",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "id",
+          "const": "id"
+        }
+      ]
+    }
+  ]
+}

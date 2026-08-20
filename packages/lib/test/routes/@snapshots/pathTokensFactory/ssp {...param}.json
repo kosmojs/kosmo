@@ -1,0 +1,31 @@
+{
+  "pathPattern": "ssp{/*param}",
+  "honoPattern": "ssp/*",
+  "h3Pattern": "ssp/**",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "ssp",
+      "pattern": "ssp",
+      "parts": [
+        {
+          "type": "static",
+          "value": "ssp"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{...param}",
+      "pattern": "{/*param}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "param",
+          "const": "param"
+        }
+      ]
+    }
+  ]
+}

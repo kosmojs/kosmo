@@ -65,5 +65,6 @@
     }
   ],
   "pathPattern": "projects/:projectId/tasks/:taskId/comments",
-  "honoPattern": "projects/:projectId/tasks/:taskId/comments"
+  "honoPattern": "projects/:projectId/tasks/:taskId/comments",
+  "h3Pattern": "projects/:projectId/tasks/:taskId/comments"
 }

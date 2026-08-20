@@ -39,5 +39,6 @@
     }
   ],
   "pathPattern": "dashboard/settings/security",
-  "honoPattern": "dashboard/settings/security"
+  "honoPattern": "dashboard/settings/security",
+  "h3Pattern": "dashboard/settings/security"
 }

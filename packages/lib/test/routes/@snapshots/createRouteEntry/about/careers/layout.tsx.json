@@ -28,5 +28,6 @@
     }
   ],
   "pathPattern": "about/careers",
-  "honoPattern": "about/careers"
+  "honoPattern": "about/careers",
+  "h3Pattern": "about/careers"
 }

@@ -18,7 +18,8 @@
       }
     ],
     "pathPattern": "store",
-    "honoPattern": "store"
+    "honoPattern": "store",
+    "h3Pattern": "store"
   },
   "children": [
     {
@@ -54,7 +55,8 @@
           }
         ],
         "pathPattern": "store/:category/sort",
-        "honoPattern": "store/:category/sort"
+        "honoPattern": "store/:category/sort",
+        "h3Pattern": "store/:category/sort"
       },
       "parent": "store",
       "children": [
@@ -80,7 +82,8 @@
               }
             ],
             "pathPattern": "store/:category/sort/:sortBy",
-            "honoPattern": "store/:category/sort/:sortBy"
+            "honoPattern": "store/:category/sort/:sortBy",
+            "h3Pattern": "store/:category/sort/:sortBy"
           },
           "parent": "store/[category]/sort",
           "children": []
@@ -133,7 +136,8 @@
           }
         ],
         "pathPattern": "store/:category/filters{/*filters}",
-        "honoPattern": "store/:category/filters/*"
+        "honoPattern": "store/:category/filters/*",
+        "h3Pattern": "store/:category/filters/**:filters?"
       },
       "parent": "store",
       "children": []

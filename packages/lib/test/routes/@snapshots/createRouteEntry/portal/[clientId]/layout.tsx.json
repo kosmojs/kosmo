@@ -30,5 +30,6 @@
     }
   ],
   "pathPattern": "portal/:clientId",
-  "honoPattern": "portal/:clientId"
+  "honoPattern": "portal/:clientId",
+  "h3Pattern": "portal/:clientId"
 }

@@ -31,7 +31,8 @@
       }
     ],
     "pathPattern": "courses/:courseId",
-    "honoPattern": "courses/:courseId"
+    "honoPattern": "courses/:courseId",
+    "h3Pattern": "courses/:courseId"
   },
   "children": [
     {
@@ -91,7 +92,8 @@
           }
         ],
         "pathPattern": "courses/:courseId/lessons/:lessonId/assignments{/*assignmentPath}",
-        "honoPattern": "courses/:courseId/lessons/:lessonId/assignments/*"
+        "honoPattern": "courses/:courseId/lessons/:lessonId/assignments/*",
+        "h3Pattern": "courses/:courseId/lessons/:lessonId/assignments/**:assignmentPath?"
       },
       "parent": "courses/[courseId]",
       "children": []

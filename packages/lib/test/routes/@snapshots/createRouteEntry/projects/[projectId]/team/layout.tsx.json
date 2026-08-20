@@ -41,5 +41,6 @@
     }
   ],
   "pathPattern": "projects/:projectId/team",
-  "honoPattern": "projects/:projectId/team"
+  "honoPattern": "projects/:projectId/team",
+  "h3Pattern": "projects/:projectId/team"
 }

@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "account",
-  "honoPattern": "account"
+  "honoPattern": "account",
+  "h3Pattern": "account"
 }

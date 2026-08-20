@@ -30,5 +30,6 @@
     }
   ],
   "pathPattern": "dashboard/:view",
-  "honoPattern": "dashboard/:view"
+  "honoPattern": "dashboard/:view",
+  "h3Pattern": "dashboard/:view"
 }

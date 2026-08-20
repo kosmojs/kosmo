@@ -30,5 +30,6 @@
     }
   ],
   "pathPattern": "books/:category",
-  "honoPattern": "books/:category"
+  "honoPattern": "books/:category",
+  "h3Pattern": "books/:category"
 }

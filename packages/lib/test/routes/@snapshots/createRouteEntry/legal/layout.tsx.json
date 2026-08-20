@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "legal",
-  "honoPattern": "legal"
+  "honoPattern": "legal",
+  "h3Pattern": "legal"
 }

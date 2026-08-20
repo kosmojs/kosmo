@@ -41,5 +41,6 @@
     }
   ],
   "pathPattern": "shop/orders/:orderId",
-  "honoPattern": "shop/orders/:orderId"
+  "honoPattern": "shop/orders/:orderId",
+  "h3Pattern": "shop/orders/:orderId"
 }

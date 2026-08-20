@@ -30,5 +30,6 @@
     }
   ],
   "pathPattern": "projects/:projectId",
-  "honoPattern": "projects/:projectId"
+  "honoPattern": "projects/:projectId",
+  "h3Pattern": "projects/:projectId"
 }

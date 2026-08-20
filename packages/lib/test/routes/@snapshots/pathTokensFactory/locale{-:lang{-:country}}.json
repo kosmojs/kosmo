@@ -1,0 +1,38 @@
+{
+  "pathPattern": "locale{-:lang{-:country}}",
+  "honoPattern": ":_0{locale(?:-[^/]+(?:-[^/]+)?)?}",
+  "h3Pattern": "locale{\\-:lang{\\-:country}?}?",
+  "pathTokens": [
+    {
+      "kind": "mixed",
+      "orig": "locale{-:lang{-:country}}",
+      "pattern": "locale{-:lang{-:country}}",
+      "parts": [
+        {
+          "type": "static",
+          "value": "locale"
+        },
+        {
+          "type": "static",
+          "value": "-"
+        },
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "lang",
+          "const": "lang"
+        },
+        {
+          "type": "static",
+          "value": "-"
+        },
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "country",
+          "const": "country"
+        }
+      ]
+    }
+  ]
+}

@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "signup",
-  "honoPattern": "signup"
+  "honoPattern": "signup",
+  "h3Pattern": "signup"
 }

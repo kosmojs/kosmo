@@ -1,0 +1,44 @@
+{
+  "pathPattern": "static{/:optional}{/*splat}",
+  "honoPattern": "static/:optional?/*",
+  "h3Pattern": "static/*/**",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "static",
+      "pattern": "static",
+      "parts": [
+        {
+          "type": "static",
+          "value": "static"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{optional}",
+      "pattern": "{/:optional}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "optional",
+          "const": "optional"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{...splat}",
+      "pattern": "{/*splat}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "splat",
+          "name": "splat",
+          "const": "splat"
+        }
+      ]
+    }
+  ]
+}

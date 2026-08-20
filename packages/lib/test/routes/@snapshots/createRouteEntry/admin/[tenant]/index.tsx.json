@@ -30,5 +30,6 @@
     }
   ],
   "pathPattern": "admin/:tenant",
-  "honoPattern": "admin/:tenant"
+  "honoPattern": "admin/:tenant",
+  "h3Pattern": "admin/:tenant"
 }

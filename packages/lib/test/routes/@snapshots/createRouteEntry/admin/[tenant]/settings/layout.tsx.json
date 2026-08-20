@@ -41,5 +41,6 @@
     }
   ],
   "pathPattern": "admin/:tenant/settings",
-  "honoPattern": "admin/:tenant/settings"
+  "honoPattern": "admin/:tenant/settings",
+  "h3Pattern": "admin/:tenant/settings"
 }

@@ -1,0 +1,55 @@
+{
+  "pathPattern": "rwo/:required/with{/:optional}",
+  "honoPattern": "rwo/:required/with/:optional?",
+  "h3Pattern": "rwo/:required/with/*",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "rwo",
+      "pattern": "rwo",
+      "parts": [
+        {
+          "type": "static",
+          "value": "rwo"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[required]",
+      "pattern": ":required",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "required",
+          "const": "required"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "with",
+      "pattern": "with",
+      "parts": [
+        {
+          "type": "static",
+          "value": "with"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{optional}",
+      "pattern": "{/:optional}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "optional",
+          "const": "optional"
+        }
+      ]
+    }
+  ]
+}

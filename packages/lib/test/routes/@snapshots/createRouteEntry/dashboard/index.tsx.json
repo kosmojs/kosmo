@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "dashboard",
-  "honoPattern": "dashboard"
+  "honoPattern": "dashboard",
+  "h3Pattern": "dashboard"
 }

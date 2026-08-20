@@ -41,5 +41,6 @@
     }
   ],
   "pathPattern": "admin/:tenant/users",
-  "honoPattern": "admin/:tenant/users"
+  "honoPattern": "admin/:tenant/users",
+  "h3Pattern": "admin/:tenant/users"
 }

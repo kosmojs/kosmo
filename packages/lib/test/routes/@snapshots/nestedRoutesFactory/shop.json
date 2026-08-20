@@ -18,7 +18,8 @@
       }
     ],
     "pathPattern": "shop",
-    "honoPattern": "shop"
+    "honoPattern": "shop",
+    "h3Pattern": "shop"
   },
   "layout": {
     "id": "shop_layout_tsx_933036490",
@@ -39,7 +40,8 @@
       }
     ],
     "pathPattern": "shop",
-    "honoPattern": "shop"
+    "honoPattern": "shop",
+    "h3Pattern": "shop"
   },
   "children": [
     {
@@ -75,7 +77,8 @@
           }
         ],
         "pathPattern": "shop/product/:id",
-        "honoPattern": "shop/product/:id"
+        "honoPattern": "shop/product/:id",
+        "h3Pattern": "shop/product/:id"
       },
       "layout": {
         "id": "shop_product_id_layout_tsx_2232356331",
@@ -109,7 +112,8 @@
           }
         ],
         "pathPattern": "shop/product/:id",
-        "honoPattern": "shop/product/:id"
+        "honoPattern": "shop/product/:id",
+        "h3Pattern": "shop/product/:id"
       },
       "parent": "shop",
       "children": [
@@ -133,7 +137,8 @@
               }
             ],
             "pathPattern": "shop/product/:id/reviews",
-            "honoPattern": "shop/product/:id/reviews"
+            "honoPattern": "shop/product/:id/reviews",
+            "h3Pattern": "shop/product/:id/reviews"
           },
           "parent": "shop/product/[id]",
           "children": []
@@ -160,7 +165,8 @@
           }
         ],
         "pathPattern": "shop/cart",
-        "honoPattern": "shop/cart"
+        "honoPattern": "shop/cart",
+        "h3Pattern": "shop/cart"
       },
       "parent": "shop",
       "children": []
@@ -185,7 +191,8 @@
           }
         ],
         "pathPattern": "shop/checkout",
-        "honoPattern": "shop/checkout"
+        "honoPattern": "shop/checkout",
+        "h3Pattern": "shop/checkout"
       },
       "parent": "shop",
       "children": [
@@ -209,7 +216,8 @@
               }
             ],
             "pathPattern": "shop/checkout/confirm",
-            "honoPattern": "shop/checkout/confirm"
+            "honoPattern": "shop/checkout/confirm",
+            "h3Pattern": "shop/checkout/confirm"
           },
           "parent": "shop/checkout",
           "children": []
@@ -234,7 +242,8 @@
               }
             ],
             "pathPattern": "shop/checkout/payment",
-            "honoPattern": "shop/checkout/payment"
+            "honoPattern": "shop/checkout/payment",
+            "h3Pattern": "shop/checkout/payment"
           },
           "parent": "shop/checkout",
           "children": []
@@ -259,7 +268,8 @@
               }
             ],
             "pathPattern": "shop/checkout/shipping",
-            "honoPattern": "shop/checkout/shipping"
+            "honoPattern": "shop/checkout/shipping",
+            "h3Pattern": "shop/checkout/shipping"
           },
           "layout": {
             "id": "shop_checkout_shipping_layout_tsx_1955886922",
@@ -280,7 +290,8 @@
               }
             ],
             "pathPattern": "shop/checkout/shipping",
-            "honoPattern": "shop/checkout/shipping"
+            "honoPattern": "shop/checkout/shipping",
+            "h3Pattern": "shop/checkout/shipping"
           },
           "parent": "shop/checkout",
           "children": []
@@ -307,7 +318,8 @@
           }
         ],
         "pathPattern": "shop/orders",
-        "honoPattern": "shop/orders"
+        "honoPattern": "shop/orders",
+        "h3Pattern": "shop/orders"
       },
       "layout": {
         "id": "shop_orders_layout_tsx_1560526654",
@@ -328,7 +340,8 @@
           }
         ],
         "pathPattern": "shop/orders",
-        "honoPattern": "shop/orders"
+        "honoPattern": "shop/orders",
+        "h3Pattern": "shop/orders"
       },
       "parent": "shop",
       "children": [
@@ -354,7 +367,8 @@
               }
             ],
             "pathPattern": "shop/orders/:orderId",
-            "honoPattern": "shop/orders/:orderId"
+            "honoPattern": "shop/orders/:orderId",
+            "h3Pattern": "shop/orders/:orderId"
           },
           "parent": "shop/orders",
           "children": []
@@ -381,7 +395,8 @@
           }
         ],
         "pathPattern": "shop/products",
-        "honoPattern": "shop/products"
+        "honoPattern": "shop/products",
+        "h3Pattern": "shop/products"
       },
       "layout": {
         "id": "shop_products_layout_tsx_3463733314",
@@ -402,7 +417,8 @@
           }
         ],
         "pathPattern": "shop/products",
-        "honoPattern": "shop/products"
+        "honoPattern": "shop/products",
+        "h3Pattern": "shop/products"
       },
       "parent": "shop",
       "children": [
@@ -428,7 +444,8 @@
               }
             ],
             "pathPattern": "shop/products{/:category}",
-            "honoPattern": "shop/products/:category?"
+            "honoPattern": "shop/products/:category?",
+            "h3Pattern": "shop/products/:category?"
           },
           "parent": "shop/products",
           "children": []
@@ -470,7 +487,8 @@
           }
         ],
         "pathPattern": "shop/:category/:productId",
-        "honoPattern": "shop/:category/:productId"
+        "honoPattern": "shop/:category/:productId",
+        "h3Pattern": "shop/:category/:productId"
       },
       "layout": {
         "id": "shop_category_productId_layout_tsx_2723777336",
@@ -506,7 +524,8 @@
           }
         ],
         "pathPattern": "shop/:category/:productId",
-        "honoPattern": "shop/:category/:productId"
+        "honoPattern": "shop/:category/:productId",
+        "h3Pattern": "shop/:category/:productId"
       },
       "parent": "shop",
       "children": []

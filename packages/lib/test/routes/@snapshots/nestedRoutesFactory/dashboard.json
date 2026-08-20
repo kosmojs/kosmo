@@ -18,7 +18,8 @@
       }
     ],
     "pathPattern": "dashboard",
-    "honoPattern": "dashboard"
+    "honoPattern": "dashboard",
+    "h3Pattern": "dashboard"
   },
   "layout": {
     "id": "dashboard_layout_tsx_1762834450",
@@ -39,7 +40,8 @@
       }
     ],
     "pathPattern": "dashboard",
-    "honoPattern": "dashboard"
+    "honoPattern": "dashboard",
+    "h3Pattern": "dashboard"
   },
   "children": [
     {
@@ -62,7 +64,8 @@
           }
         ],
         "pathPattern": "dashboard/analytics",
-        "honoPattern": "dashboard/analytics"
+        "honoPattern": "dashboard/analytics",
+        "h3Pattern": "dashboard/analytics"
       },
       "parent": "dashboard",
       "children": []
@@ -87,7 +90,8 @@
           }
         ],
         "pathPattern": "dashboard/settings",
-        "honoPattern": "dashboard/settings"
+        "honoPattern": "dashboard/settings",
+        "h3Pattern": "dashboard/settings"
       },
       "layout": {
         "id": "dashboard_settings_layout_tsx_2001687227",
@@ -108,7 +112,8 @@
           }
         ],
         "pathPattern": "dashboard/settings",
-        "honoPattern": "dashboard/settings"
+        "honoPattern": "dashboard/settings",
+        "h3Pattern": "dashboard/settings"
       },
       "parent": "dashboard",
       "children": [
@@ -132,7 +137,8 @@
               }
             ],
             "pathPattern": "dashboard/settings/billing",
-            "honoPattern": "dashboard/settings/billing"
+            "honoPattern": "dashboard/settings/billing",
+            "h3Pattern": "dashboard/settings/billing"
           },
           "parent": "dashboard/settings",
           "children": []
@@ -157,7 +163,8 @@
               }
             ],
             "pathPattern": "dashboard/settings/notifications",
-            "honoPattern": "dashboard/settings/notifications"
+            "honoPattern": "dashboard/settings/notifications",
+            "h3Pattern": "dashboard/settings/notifications"
           },
           "parent": "dashboard/settings",
           "children": []
@@ -182,7 +189,8 @@
               }
             ],
             "pathPattern": "dashboard/settings/profile",
-            "honoPattern": "dashboard/settings/profile"
+            "honoPattern": "dashboard/settings/profile",
+            "h3Pattern": "dashboard/settings/profile"
           },
           "parent": "dashboard/settings",
           "children": []
@@ -207,7 +215,8 @@
               }
             ],
             "pathPattern": "dashboard/settings/security",
-            "honoPattern": "dashboard/settings/security"
+            "honoPattern": "dashboard/settings/security",
+            "h3Pattern": "dashboard/settings/security"
           },
           "layout": {
             "id": "dashboard_settings_security_layout_tsx_3549196698",
@@ -228,7 +237,8 @@
               }
             ],
             "pathPattern": "dashboard/settings/security",
-            "honoPattern": "dashboard/settings/security"
+            "honoPattern": "dashboard/settings/security",
+            "h3Pattern": "dashboard/settings/security"
           },
           "parent": "dashboard/settings",
           "children": []
@@ -257,7 +267,8 @@
           }
         ],
         "pathPattern": "dashboard/:view",
-        "honoPattern": "dashboard/:view"
+        "honoPattern": "dashboard/:view",
+        "h3Pattern": "dashboard/:view"
       },
       "parent": "dashboard",
       "children": []

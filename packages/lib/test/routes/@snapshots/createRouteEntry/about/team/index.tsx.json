@@ -28,5 +28,6 @@
     }
   ],
   "pathPattern": "about/team",
-  "honoPattern": "about/team"
+  "honoPattern": "about/team",
+  "h3Pattern": "about/team"
 }

@@ -39,5 +39,6 @@
     }
   ],
   "pathPattern": "dashboard/settings/profile",
-  "honoPattern": "dashboard/settings/profile"
+  "honoPattern": "dashboard/settings/profile",
+  "h3Pattern": "dashboard/settings/profile"
 }

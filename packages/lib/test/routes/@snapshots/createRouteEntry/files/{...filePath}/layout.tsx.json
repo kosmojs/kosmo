@@ -30,5 +30,6 @@
     }
   ],
   "pathPattern": "files{/*filePath}",
-  "honoPattern": "files/*"
+  "honoPattern": "files/*",
+  "h3Pattern": "files/**:filePath?"
 }

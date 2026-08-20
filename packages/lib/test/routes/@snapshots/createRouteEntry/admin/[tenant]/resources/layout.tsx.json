@@ -41,5 +41,6 @@
     }
   ],
   "pathPattern": "admin/:tenant/resources",
-  "honoPattern": "admin/:tenant/resources"
+  "honoPattern": "admin/:tenant/resources",
+  "h3Pattern": "admin/:tenant/resources"
 }

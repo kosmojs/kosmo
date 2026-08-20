@@ -1,0 +1,31 @@
+{
+  "pathPattern": "wop{/:id}",
+  "honoPattern": "wop/:id?",
+  "h3Pattern": "wop/*",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "wop",
+      "pattern": "wop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "wop"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "{id}",
+      "pattern": "{/:id}",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "id",
+          "const": "id"
+        }
+      ]
+    }
+  ]
+}

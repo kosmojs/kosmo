@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "search",
-  "honoPattern": "search"
+  "honoPattern": "search",
+  "h3Pattern": "search"
 }

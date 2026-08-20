@@ -41,5 +41,6 @@
     }
   ],
   "pathPattern": "store/:category/sort",
-  "honoPattern": "store/:category/sort"
+  "honoPattern": "store/:category/sort",
+  "h3Pattern": "store/:category/sort"
 }

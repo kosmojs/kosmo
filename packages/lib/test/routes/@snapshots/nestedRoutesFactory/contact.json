@@ -18,7 +18,8 @@
       }
     ],
     "pathPattern": "contact",
-    "honoPattern": "contact"
+    "honoPattern": "contact",
+    "h3Pattern": "contact"
   },
   "layout": {
     "id": "contact_layout_tsx_2321003899",
@@ -39,7 +40,8 @@
       }
     ],
     "pathPattern": "contact",
-    "honoPattern": "contact"
+    "honoPattern": "contact",
+    "h3Pattern": "contact"
   },
   "children": []
 }

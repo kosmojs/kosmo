@@ -30,5 +30,6 @@
     }
   ],
   "pathPattern": "docs{/*path}",
-  "honoPattern": "docs/*"
+  "honoPattern": "docs/*",
+  "h3Pattern": "docs/**:path?"
 }

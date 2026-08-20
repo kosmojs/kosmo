@@ -52,5 +52,6 @@
     }
   ],
   "pathPattern": "shop/product/:id/reviews",
-  "honoPattern": "shop/product/:id/reviews"
+  "honoPattern": "shop/product/:id/reviews",
+  "h3Pattern": "shop/product/:id/reviews"
 }

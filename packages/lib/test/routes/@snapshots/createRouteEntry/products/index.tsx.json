@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "products",
-  "honoPattern": "products"
+  "honoPattern": "products",
+  "h3Pattern": "products"
 }

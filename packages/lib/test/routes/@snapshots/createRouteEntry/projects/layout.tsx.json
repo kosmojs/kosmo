@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "projects",
-  "honoPattern": "projects"
+  "honoPattern": "projects",
+  "h3Pattern": "projects"
 }

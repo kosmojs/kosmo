@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "store",
-  "honoPattern": "store"
+  "honoPattern": "store",
+  "h3Pattern": "store"
 }

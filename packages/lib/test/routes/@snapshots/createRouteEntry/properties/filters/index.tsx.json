@@ -28,5 +28,6 @@
     }
   ],
   "pathPattern": "properties/filters",
-  "honoPattern": "properties/filters"
+  "honoPattern": "properties/filters",
+  "h3Pattern": "properties/filters"
 }

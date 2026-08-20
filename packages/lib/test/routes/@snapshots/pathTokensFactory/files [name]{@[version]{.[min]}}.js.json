@@ -1,0 +1,55 @@
+{
+  "pathPattern": "files/:name{@:version{.:min}}.js",
+  "honoPattern": "files/:_1{[^/]+(?:@[^/]+(?:.[^/]+)?)?.js}",
+  "h3Pattern": "files/:name{@:version{.:min}?}?.js",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "files",
+      "pattern": "files",
+      "parts": [
+        {
+          "type": "static",
+          "value": "files"
+        }
+      ]
+    },
+    {
+      "kind": "mixed",
+      "orig": "[name]{@[version]{.[min]}}.js",
+      "pattern": ":name{@:version{.:min}}.js",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "name",
+          "const": "name"
+        },
+        {
+          "type": "static",
+          "value": "@"
+        },
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "version",
+          "const": "version"
+        },
+        {
+          "type": "static",
+          "value": "."
+        },
+        {
+          "type": "param",
+          "kind": "optional",
+          "name": "min",
+          "const": "min"
+        },
+        {
+          "type": "static",
+          "value": ".js"
+        }
+      ]
+    }
+  ]
+}

@@ -17,5 +17,6 @@
     }
   ],
   "pathPattern": "docs",
-  "honoPattern": "docs"
+  "honoPattern": "docs",
+  "h3Pattern": "docs"
 }
