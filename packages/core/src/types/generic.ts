@@ -17,7 +17,7 @@ export type ResolvedTypeSignature = Omit<ResolvedType, "properties"> & {
 
 /**
  * Anything exposing a web-standard fetch handler:
- * Hono app or a plain `(request: Request) => Response` function wrapped in an object.
+ * Hono/H3 app or a plain `(request: Request) => Response` function wrapped in an object.
  * Extra parameters (env, executionCtx) are accepted and ignored.
  * */
 export type FetchApp = {

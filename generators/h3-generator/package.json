@@ -1,0 +1,30 @@
+{
+  "type": "module",
+  "private": true,
+  "name": "@kosmojs/h3-generator",
+  "version": "0.3.0",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "files": [
+    "pkg/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    }
+  },
+  "scripts": {
+    "build": "wsbuild src/index.ts",
+    "test": "vitest --root ../.. --project generators/h3-generator"
+  },
+  "dependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@kosmojs/lib": "workspace:^",
+    "crc": "^4.3.2"
+  },
+  "devDependencies": {
+    "h3": "2.0.1-rc.26",
+    "vite": "^8.2.1"
+  }
+}

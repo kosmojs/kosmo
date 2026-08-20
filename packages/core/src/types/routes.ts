@@ -50,6 +50,8 @@ export type RouteEntry = {
   pathPattern: string;
   // hono path pattern
   honoPattern: string;
+  // h3 path pattern
+  h3Pattern: string;
 };
 
 export type NestedRouteEntry = {

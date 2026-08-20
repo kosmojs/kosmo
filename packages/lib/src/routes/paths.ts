@@ -200,32 +200,22 @@ export const createPathPattern = (tokens: Array<PathToken>) => {
 };
 
 export const createHonoPattern = (tokens: Array<PathToken>) => {
-  const paramValue = (p: PathTokenParamPart) => {
-    if (p.kind === "splat") {
-      return `*`;
-    }
-    if (p.kind === "optional") {
-      return `:${p.name}?`;
-    }
-    return `:${p.name}`;
-  };
+  const escapeStatic = (s: string) => s.replace(/[*+?^${}()|[\]\\]/g, "\\$&");
 
-  const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-  const tokensToRegex = (tokens: Array<Token>): string => {
+  const tokensToPattern = (tokens: Array<Token>): string => {
     return tokens
       .flatMap((t) => {
         if (t.type === "text") {
-          return t.value === "/" ? [] : [escapeRegex(t.value)];
-        }
-        if (t.type === "wildcard") {
-          return [".+"];
+          return t.value === "/" ? [] : [escapeStatic(t.value)];
         }
         if (t.type === "param") {
           return ["[^/]+"];
         }
+        if (t.type === "wildcard") {
+          return [".+"];
+        }
         if (t.type === "group") {
-          return [`(?:${tokensToRegex(t.tokens)})?`];
+          return [`(?:${tokensToPattern(t.tokens)})?`];
         }
         return [];
       })
@@ -234,20 +224,78 @@ export const createHonoPattern = (tokens: Array<PathToken>) => {
 
   return tokens
     .flatMap((token, i) => {
+      // static segment
       if (token.kind === "static") {
         return [(token.parts[0] as PathTokenStaticPart).value];
       }
 
+      // pure param segment
       if (token.kind === "param") {
-        return [paramValue(token.parts[0] as PathTokenParamPart)];
+        const part = token.parts[0] as PathTokenParamPart;
+        if (part.kind === "splat") {
+          return ["*"];
+        }
+        if (part.kind === "optional") {
+          return [`:${part.name}?`];
+        }
+        return [`:${part.name}`];
       }
 
-      // mixed segment - parse pattern, build regex, emit disposable param
-      const { tokens } = parse(token.pattern.replace(/\//g, ""));
+      // mixed segment - convert path-to-regexp pattern to hono regex pattern
+      const { tokens } = parse(token.pattern);
 
-      const regex = tokensToRegex(tokens);
+      return [`:_${i}{${tokensToPattern(tokens)}}`];
+    })
+    .join("/");
+};
 
-      return [`:_${i}{${regex}}`];
+export const createH3Pattern = (tokens: Array<PathToken>): string => {
+  // WARN: escaping the dash is essential for correct param matching
+  const escapeStatic = (s: string) => s.replace(/[-*+?^${}()|[\]\\]/g, "\\$&");
+
+  const tokensToPattern = (tokens: Array<Token>): string => {
+    return tokens
+      .flatMap((t) => {
+        if (t.type === "text") {
+          return t.value === "/" ? [] : [escapeStatic(t.value)];
+        }
+        if (t.type === "param") {
+          return [`:${t.name}`];
+        }
+        if (t.type === "wildcard") {
+          return [`/**:${t.name}?`];
+        }
+        if (t.type === "group") {
+          return [`{${tokensToPattern(t.tokens)}}?`];
+        }
+        return [];
+      })
+      .join("");
+  };
+
+  return tokens
+    .flatMap((token) => {
+      // static segment
+      if (token.kind === "static") {
+        return [(token.parts[0] as PathTokenStaticPart).value];
+      }
+
+      // pure param segment
+      if (token.kind === "param") {
+        const part = token.parts[0] as PathTokenParamPart;
+        if (part.kind === "splat") {
+          return ["**"];
+        }
+        if (part.kind === "optional") {
+          return ["*"];
+        }
+        return [`:${part.name}`];
+      }
+
+      // mixed segment - convert path-to-regexp pattern to rou3 regex pattern
+      const { tokens } = parse(token.pattern);
+
+      return [tokensToPattern(tokens)];
     })
     .join("/");
 };

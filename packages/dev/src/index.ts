@@ -9,6 +9,7 @@ import {
 
 export { default as coreGenerator } from "@kosmojs/core-generator";
 export { default as fetchGenerator } from "@kosmojs/fetch-generator";
+export { default as h3Generator } from "@kosmojs/h3-generator";
 export { default as honoGenerator } from "@kosmojs/hono-generator";
 export { default as koaGenerator } from "@kosmojs/koa-generator";
 export { default as mdxGenerator } from "@kosmojs/mdx-generator";

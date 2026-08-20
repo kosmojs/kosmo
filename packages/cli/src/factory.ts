@@ -18,6 +18,7 @@ import {
 import {
   coreGenerator,
   fetchGenerator,
+  h3Generator,
   honoGenerator,
   koaGenerator,
   mdxGenerator,
@@ -276,17 +277,23 @@ export const createKosmoConfig = (
     });
   }
 
-  if (backend === "koa") {
-    generators.push({
-      name: "koaGenerator",
-      options: options[backend],
-      generator: koaGenerator as never,
-    });
-  } else if (backend === "hono") {
+  if (backend === "hono") {
     generators.push({
       name: "honoGenerator",
       options: options[backend],
       generator: honoGenerator as never,
+    });
+  } else if (backend === "h3") {
+    generators.push({
+      name: "h3Generator",
+      options: options[backend],
+      generator: h3Generator as never,
+    });
+  } else if (backend === "koa") {
+    generators.push({
+      name: "koaGenerator",
+      options: options[backend],
+      generator: koaGenerator as never,
     });
   }
 

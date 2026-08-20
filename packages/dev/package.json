@@ -45,6 +45,7 @@
   "devDependencies": {
     "@kosmojs/core-generator": "workspace:^",
     "@kosmojs/fetch-generator": "workspace:^",
+    "@kosmojs/h3-generator": "workspace:^",
     "@kosmojs/hono-generator": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
     "@kosmojs/mdx-generator": "workspace:^",

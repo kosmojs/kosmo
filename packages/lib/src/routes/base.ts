@@ -16,6 +16,7 @@ import {
 
 import { pathResolver } from "../paths";
 import {
+  createH3Pattern,
   createHonoPattern,
   createPathPattern,
   pathTokensFactory,
@@ -146,6 +147,7 @@ export const createRouteEntry = (
       pathTokens,
       pathPattern: createPathPattern(pathTokens),
       honoPattern: createHonoPattern(pathTokens),
+      h3Pattern: createH3Pattern(pathTokens),
     };
   } catch (
     // biome-ignore lint: any
@@ -218,7 +220,10 @@ const segmentWeight = (token: PathToken): number => {
  * At equal weight and length, lexicographic tiebreak ensures
  * deterministic ordering across JS engines.
  * */
-export const sortRoutes = (a: RouteEntry, b: RouteEntry): number => {
+export const sortRoutes = (
+  a: Pick<RouteEntry, "pathPattern" | "pathTokens">,
+  b: Pick<RouteEntry, "pathPattern" | "pathTokens">,
+): number => {
   const pairs = Array.from(
     { length: Math.max(a.pathTokens.length, b.pathTokens.length) },
     (_, i) => [a.pathTokens[i], b.pathTokens[i]] as const,

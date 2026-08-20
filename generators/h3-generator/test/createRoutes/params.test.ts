@@ -1,0 +1,111 @@
+import { describe, expect, test } from "vitest";
+
+import { createPathPattern, pathTokensFactory } from "@kosmojs/lib";
+
+import { defineRoute, middlewareStackBuilder, runMiddleware } from "..";
+
+describe("createRouterRoutes", () => {
+  describe("params", () => {
+    test("splat params", async () => {
+      const pathTokens = pathTokensFactory("{...path}");
+      const pathPattern = createPathPattern(pathTokens);
+
+      const stack = middlewareStackBuilder(
+        [
+          {
+            name: "{...path}",
+            pathPattern,
+            definitionItems: defineRoute(({ GET }) => [
+              GET((ctx) => {
+                return ctx.validated.params;
+              }),
+            ]) as never,
+            normalizeParams() {
+              return { path: ["a", "b", "c"] };
+            },
+          },
+        ],
+        {},
+      );
+
+      const res = await runMiddleware(
+        stack.flatMap((e) => e.middleware),
+        {
+          path: "/a/b/c",
+        },
+      );
+
+      const body = await res.json();
+
+      expect(body).toEqual({ path: ["a", "b", "c"] });
+    });
+
+    test("numeric params", async () => {
+      const pathTokens = pathTokensFactory("[id]/[name]");
+      const pathPattern = createPathPattern(pathTokens);
+
+      const stack = middlewareStackBuilder(
+        [
+          {
+            name: "[id]/[name]",
+            pathPattern: `/${pathPattern}`,
+            definitionItems: defineRoute(({ GET }) => [
+              GET((ctx) => {
+                return ctx.validated.params;
+              }),
+            ]) as never,
+            normalizeParams() {
+              return { id: 0, name: "name" };
+            },
+          },
+        ],
+        {},
+      );
+
+      const res = await runMiddleware(
+        stack.flatMap((e) => e.middleware),
+        {
+          path: "/0/name",
+        },
+      );
+
+      const body = await res.json();
+
+      expect(body).toEqual({ id: 0, name: "name" });
+    });
+
+    test("splat numeric params", async () => {
+      const pathTokens = pathTokensFactory("{...ids}");
+      const pathPattern = createPathPattern(pathTokens);
+
+      const stack = middlewareStackBuilder(
+        [
+          {
+            name: "{...ids}",
+            pathPattern,
+            definitionItems: defineRoute(({ GET }) => [
+              GET((ctx) => {
+                return ctx.validated.params;
+              }),
+            ]) as never,
+            normalizeParams() {
+              return { ids: [1, 2, 3] };
+            },
+          },
+        ],
+        {},
+      );
+
+      const res = await runMiddleware(
+        stack.flatMap((e) => e.middleware),
+        {
+          path: "/1/2/3",
+        },
+      );
+
+      const body = await res.json();
+
+      expect(body).toEqual({ ids: [1, 2, 3] });
+    });
+  });
+});

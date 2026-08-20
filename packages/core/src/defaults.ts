@@ -26,6 +26,7 @@ export enum FRAMEWORKS {
 
 export enum BACKENDS {
   hono = "Hono",
+  h3 = "H3",
   koa = "Koa",
 }
 

@@ -72,6 +72,7 @@ export const resolverFactory = (
         pathTokens,
         pathPattern,
         honoPattern,
+        h3Pattern,
       } = entry;
 
       const handler: ResolverSignature["handler"] = async () => {
@@ -81,6 +82,7 @@ export const resolverFactory = (
           pathTokens,
           pathPattern,
           honoPattern,
+          h3Pattern,
           params: {
             schema: pathTokens.flatMap((e) => {
               return e.parts.filter((p) => p.type === "param");
@@ -123,6 +125,7 @@ export const resolverFactory = (
         pathTokens,
         pathPattern,
         honoPattern,
+        h3Pattern,
       } = entry;
 
       const handler: ResolverSignature["handler"] = async (updatedFile) => {
@@ -349,6 +352,7 @@ export const resolverFactory = (
           pathTokens,
           pathPattern,
           honoPattern,
+          h3Pattern,
           params: cache.params,
           optionalParams,
           folder,
