@@ -9,13 +9,13 @@ head:
         typescript validation, type safety, validation generator, end-to-end validation
 ---
 
-`KosmoJS` uses the "runtype" validation approach - your `TypeScript` types are automatically
+KosmoJS uses the "runtype" validation approach - your types are automatically
 converted into JSON Schema and validated at runtime.
 
 No separate schema language to learn. No schemas drifting out of sync with your types.
 One type definition becomes the source of truth for:
 - runtime validation on the server
-- client-side validation in generated fetch clients
+- client-side validation in typed fetch clients
 - OpenAPI 3.1 specification
 
 ## Understanding Runtype Validation
@@ -50,7 +50,7 @@ Users also get instant feedback instead of waiting for a server response.
 
 ## How Generation Works
 
-`KosmoJS` uses AST parsing to extract types from your route files,
+KosmoJS uses AST parsing to extract types from your route files,
 then AOT compilation to generate high-performance validation routines in your `lib` directory.
 
 For each validated type, [TypeBox](https://github.com/sinclairzx81/typebox) produces a JSON Schema

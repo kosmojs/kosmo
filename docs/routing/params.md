@@ -9,13 +9,13 @@ head:
         optional parameters, splat parameters, bracket notation, path segments
 ---
 
-`KosmoJS` supports three parameter types, using the same syntax for both API routes and client pages:
+Parameter types supported out of the box, with same syntax for both API and client pages:
 
-| Syntax | Type | Matches |
-|---|---|---|
-| `[id]` | Required | Exactly one segment |
-| `{id}` | Optional | One segment or nothing |
-| `{...path}` | Splat | Any number of segments |
+| Syntax      | Type     | Matches                |
+|-------------|----------|------------------------|
+| `[id]`      | Required | Exactly one segment    |
+| `{id}`      | Optional | One segment or nothing |
+| `{...path}` | Splat    | Any number of segments |
 
 ## Required Parameters
 
@@ -102,8 +102,10 @@ profiles/[id]-[data].json     ➜ /profiles/1-posts.json
 files/[name].[ext]            ➜ /files/document.pdf
 ```
 
-Mixed segments work fully for backend routes (Koa/Hono). Frontend support varies:
+Mixed segments support varies by framework:
 
+- **Hono/H3** - partial support, with caveats
+- **Koa** - full support
 - **Vue, Svelte and MDX** - full support
 - **React Router** - `.ext` suffix only
 - **SolidJS Router** - not supported
@@ -113,7 +115,9 @@ Prefer simple segments for frontend routes.
 ## Power Syntax
 
 For advanced cases, `KosmoJS` passes `path-to-regexp v8` patterns through directly.
-**The rule:** if the param name contains non-alphanumeric characters, it's treated as a raw pattern.
+
+> **The rule:** if the param name contains non-alphanumeric characters,
+it is treated as a raw pattern.
 
 This unlocks things like optional static parts:
 
@@ -132,4 +136,8 @@ locale{-:lang{-:country}} ➜ /locale, /locale-en, /locale-en-US
 api/{v:version}/users     ➜ /api/users or /api/v2/users
 ```
 
-Use power syntax carefully - read the [path-to-regexp docs](https://github.com/pillarjs/path-to-regexp) before applying it to production routes.
+::: info Limited support across frameworks
+Power Syntax fully works with Koa routes only. Hono will match that routes
+but params will be registered using positional index + a hash, e.g. `_0abc` or `_1xyz`.
+H3 wont match any of these routes. For client pages use simple segments instead.
+:::

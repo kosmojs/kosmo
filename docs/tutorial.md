@@ -6,7 +6,7 @@ head:
   - - meta
     - name: keywords
       content: vite tutorial, typescript api tutorial, kosmojs walkthrough,
-        hono api, koa api, solidjs, react, vue, svelte, mdx
+        hono, h3, koa, solidjs, react, vue, svelte, mdx
 ---
 
 A step-by-step walkthrough covering everything `KosmoJS` provides.
@@ -81,20 +81,21 @@ Non-interactive mode is also supported:
 - `--name`
 - `--base`
 - `--framework solid|react|vue|svelte|mdx`
-- `--backend koa|hono`
+- `--backend hono|h3|koa`
 - `--ssr`
+- `--tsq` to enable TanStack Query
 
 ::: code-group
 ```sh [npm]
-npm run +folder -- --name front --base / --framework solid --backend koa
+npm run +folder -- --name front --base / --framework solid --backend hono
 ```
 
 ```sh [pnpm]
-pnpm +folder --name front --base / --framework solid --backend koa
+pnpm +folder --name front --base / --framework solid --backend hono
 ```
 
 ```sh [yarn]
-yarn +folder --name front --base / --framework solid --backend koa
+yarn +folder --name front --base / --framework solid --backend hono
 ```
 :::
 
@@ -175,22 +176,32 @@ You can add your own paths, but these prefixes are reserved:
 Create `api/users/[id]/index.ts` - `KosmoJS` detects the file and generates boilerplate:
 
 ::: code-group
-```ts [Koa]
-import { defineRoute } from "_/api";
-
-export default defineRoute<"users/[id]">(({ GET }) => [
-  GET(async (ctx) => {
-    ctx.body = "Automatically generated route: [ users/[id] ]"
-  }),
-]);
-```
-
 ```ts [Hono]
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
     return ctx.text("Automatically generated route: [ users/[id] ]");
+  }),
+]);
+```
+
+```ts [H3]
+import { defineRoute } from "_/api";
+
+export default defineRoute<"users/[id]">(({ GET }) => [
+  GET(async (event) => {
+    return "Automatically generated route: [ users/[id] ]"
+  }),
+]);
+```
+
+```ts [Koa]
+import { defineRoute } from "_/api";
+
+export default defineRoute<"users/[id]">(({ GET }) => [
+  GET(async (ctx) => {
+    ctx.body = "Automatically generated route: [ users/[id] ]"
   }),
 ]);
 ```
@@ -201,30 +212,38 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 Replace with real logic:
 
 ::: code-group
-```ts [Koa]
-import { defineRoute } from "_/api";
-
-type User = { id: number; name: string; email: string }
-
-export default defineRoute<"users/[id]">(({ GET }) => [
-  GET(async (ctx) => {
-    const { id } = ctx.params;
-    const user: User = { id: Number(id), name: "Jane Smith", email: "jane@example.com" };
-    ctx.body = user;
-  }),
-]);
-```
-
 ```ts [Hono]
 import { defineRoute } from "_/api";
-
-type User = { id: number; name: string; email: string }
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
     const { id } = ctx.req.param();
-    const user: User = { id: Number(id), name: "Jane Smith", email: "jane@example.com" };
+    const user = { id, name: "Jane Smith", email: "jane@example.com" };
     return ctx.json(user);
+  }),
+]);
+```
+
+```ts [H3]
+import { defineRoute } from "_/api";
+
+export default defineRoute<"users/[id]">(({ GET }) => [
+  GET(async (event) => {
+    const { id } = event.context.params;
+    const user = { id, name: "Jane Smith", email: "jane@example.com" };
+    return user;
+  }),
+]);
+```
+
+```ts [Koa]
+import { defineRoute } from "_/api";
+
+export default defineRoute<"users/[id]">(({ GET }) => [
+  GET(async (ctx) => {
+    const { id } = ctx.params;
+    const user = { id, name: "Jane Smith", email: "jane@example.com" };
+    ctx.body = user;
   }),
 ]);
 ```
@@ -252,33 +271,22 @@ yarn dev
 
 ### Parameter Validation
 
-Pass a tuple as the second type argument to refine params. Each position maps to a route parameter in order:
+Pass a tuple as the second type argument to refine params.
+Each position maps to a route parameter in order.
+Validation works identically across all frameworks, read validated params via `*.validated.params`:
 
-::: code-group
-```ts [Koa]
+```ts
+type User = { id: number; name: string; email: string }
+
 export default defineRoute<"users/[id]", [
   number // [!code hl]
 ]>(({ GET }) => [
   GET(async (ctx) => {
-    const { id } = ctx.validated.params; // number, not string [!code hl]
-    const user: User = { id, name: "Jane Smith", email: "jane@example.com" };
-    ctx.body = user;
+    const { id } = ctx.validated.params; // id is a validated number [!code hl]
+    // ...
   }),
 ]);
 ```
-
-```ts [Hono]
-export default defineRoute<"users/[id]", [
-  number // [!code hl]
-]>(({ GET }) => [
-  GET(async (ctx) => {
-    const { id } = ctx.validated.params; // number, not string [!code hl]
-    const user: User = { id, name: "Jane Smith", email: "jane@example.com" };
-    return ctx.json(user);
-  }),
-]);
-```
-:::
 
 Use `VRefine` for additional constraints (no import needed):
 
@@ -288,7 +296,8 @@ defineRoute<"users/[id]", [
 ]>
 ```
 
-`ctx.params`/`ctx.req.param()` still exist but return untyped strings - prefer `ctx.validated.params`.
+Raw params still can be accessed via `ctx.req.param()`/`event.context.params`/`ctx.params`,
+but they are untyped strings - prefer `ctx.validated.params`.
 
 ### Payload/Response Validation
 
@@ -299,12 +308,36 @@ Metadata targets (any method): `query` · `headers` · `cookies`
 Body targets (mutually exclusive, POST/PUT/PATCH/DELETE only): `json` · `form` · `raw`
 
 ::: code-group
+```ts [Hono]
+import type { CreateUserPayload, User } from "./types";
+
+export default defineRoute<"users">(({ POST }) => [
+  POST<{
+    json: CreateUserPayload, // [!code hl]
+    response: [200, "json", User] // [!code hl]
+  }>(async (ctx) => {
+    const { name, email, age } = ctx.validated.json;
+    return ctx.json({ id: 1, name, email, age });
+  }),
+]);
+```
+
+```ts [H3]
+import type { CreateUserPayload, User } from "./types";
+
+export default defineRoute<"users">(({ POST }) => [
+  POST<{
+    json: CreateUserPayload, // [!code hl]
+    response: [200, "json", User] // [!code hl]
+  }>(async (ctx) => {
+    const { name, email, age } = ctx.validated.json;
+    return { id: 1, name, email, age };
+  }),
+]);
+```
+
 ```ts [Koa]
-type CreateUserPayload = {
-  name: string;
-  email: VRefine<string, { format: "email" }>;
-  age?: number;
-}
+import type { CreateUserPayload, User } from "./types";
 
 export default defineRoute<"users">(({ POST }) => [
   POST<{
@@ -317,22 +350,14 @@ export default defineRoute<"users">(({ POST }) => [
 ]);
 ```
 
-```ts [Hono]
-type CreateUserPayload = {
+```ts [./types.ts]
+export type CreateUserPayload = {
   name: string;
   email: VRefine<string, { format: "email" }>;
   age?: number;
 }
 
-export default defineRoute<"users">(({ POST }) => [
-  POST<{
-    json: CreateUserPayload, // [!code hl]
-    response: [200, "json", User] // [!code hl]
-  }>(async (ctx) => {
-    const { name, email, age } = ctx.validated.json;
-    return ctx.json({ id: 1, name, email, age });
-  }),
-]);
+export type User = { id: number; name: string; email: string }
 ```
 :::
 

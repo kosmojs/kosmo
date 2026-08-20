@@ -14,65 +14,7 @@ with detailed information about what went wrong and where.
 
 Your `api/errors.ts` is the central place to handle it. The generated file gives you a working default;
 customize it freely to add logging, change response formats, or handle specific error types differently.
-
-## Default Error Handler
-
-::: code-group
-```ts [Koa: api/errors.ts]
-import { ValidationError } from "@kosmojs/core/errors";
-import { errorHandlerFactory } from "_/api:factory";
-
-export default errorHandlerFactory(
-  async function defaultErrorHandler(ctx, next) {
-    try {
-      await next();
-    } catch (error: any) {
-      const [errorMessage, status] =
-        error instanceof ValidationError
-          ? [`${error.target}: ${error.errorMessage}`, 400]
-          : [error.message, error.statusCode || 500];
-      if (ctx.accepts("json")) {
-        ctx.status = 400;
-        ctx.body = { error: errorMessage };
-      } else {
-        ctx.status = status;
-        ctx.body = errorMessage;
-      }
-    }
-  },
-);
-```
-
-```ts [Hono: api/errors.ts]
-import { accepts } from "hono/accepts";
-import { HTTPException } from "hono/http-exception";
-import { ValidationError } from "@kosmojs/core/errors";
-import { errorHandlerFactory } from "_/api:factory";
-
-export default errorHandlerFactory(
-  async function defaultErrorHandler(error, ctx) {
-    if (error instanceof HTTPException) {
-      return error.getResponse();
-    }
-
-    const [message, status] =
-      error instanceof ValidationError
-        ? [`${error.target}: ${error.errorMessage}`, 400]
-        : [error.message, error.statusCode || 500];
-
-    const type = accepts(ctx, {
-      header: "Accept",
-      supports: ["application/json", "text/plain"],
-      default: "text/plain",
-    });
-
-    return type === "application/json"
-      ? ctx.json({ error: message }, status)
-      : ctx.text(message, status);
-  },
-);
-```
-:::
+[Details ›](/backend/error-handling)
 
 ## ValidationError Properties
 

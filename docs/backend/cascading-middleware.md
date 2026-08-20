@@ -38,7 +38,9 @@ users/account/use.ts     → current folder
 users/account/index.ts   → route handler
 ```
 
-Parent middleware always runs before child middleware. Child routes cannot skip parent `use.ts`.
+Parent middleware always runs before child middleware.
+
+> Child routes can't skip parent `use.ts`
 
 The generated boilerplate when you create a new `use.ts`:
 
@@ -69,25 +71,7 @@ every route underneath should know about it without importing or declaring anyth
 `UseT` makes this work. Define what your middleware adds:
 
 ::: code-group
-```ts [Koa: api/admin/use.ts]
-import { use } from "_/api";
-
-export type UseT = {
-  user: { id: number; role: "admin" | "user" };
-};
-
-export default [
-  use<UseT>(async (ctx, next) => {
-    const token = ctx.headers.authorization?.replace("Bearer ", "");
-    // NOTE: validate before adding to state - UseT promises this property exists
-    ctx.assert(token, 401, "Authentication required");
-    ctx.state.user = await verifyToken(token);
-    return next();
-  })
-];
-```
-
-```ts [Hono: api/admin/use.ts]
+```ts [Hono]
 import { use } from "_/api";
 
 export type UseT = {
@@ -97,9 +81,45 @@ export type UseT = {
 export default [
   use<UseT>(async (ctx, next) => {
     const token = ctx.req.header("authorization")?.replace("Bearer ", "");
-    // NOTE: validate before adding to context - UseT promises this property exists
+    // validate before adding to context - UseT promises this property exists
     if (!token) throw new HTTPException(401, { message: "Authentication required" });
     ctx.set("user", await verifyToken(token));
+    return next();
+  })
+];
+```
+
+```ts [H3]
+import { use } from "_/api";
+
+export type UseT = {
+  user: { id: number; role: "admin" | "user" };
+};
+
+export default [
+  use<UseT>(async (event, next) => {
+    const token = event.req.headers.get("authorization")?.replace("Bearer ", "");
+    // validate before adding to context - UseT promises this property exists
+    if (!token) throw new HTTPError({ status: 401, message: "Authentication required" });
+    event.context.user = await verifyToken(token);
+    return next();
+  })
+];
+```
+
+```ts [Koa]
+import { use } from "_/api";
+
+export type UseT = {
+  user: { id: number; role: "admin" | "user" };
+};
+
+export default [
+  use<UseT>(async (ctx, next) => {
+    const token = ctx.headers.authorization?.replace("Bearer ", "");
+    // validate before adding to state - UseT promises this property exists
+    ctx.assert(token, 401, "Authentication required");
+    ctx.state.user = await verifyToken(token);
     return next();
   })
 ];
@@ -110,18 +130,26 @@ Now every route under `/api/admin` has `user` typed on the context automatically
 no imports, no type arguments on `defineRoute`:
 
 ::: code-group
-```ts [Koa: api/admin/dashboard/index.ts]
+```ts [Hono]
 export default defineRoute<"admin/dashboard">(({ GET }) => [
   GET(async (ctx) => {
-    const { user } = ctx.state;  // typed as { id: number; role: "admin" | "user" }
+    const user = ctx.get("user");  // typed as { id: number; role: "admin" | "user" }
   }),
 ]);
 ```
 
-```ts [Hono: api/admin/dashboard/index.ts]
+```ts [H3]
+export default defineRoute<"admin/dashboard">(({ GET }) => [
+  GET(async (event) => {
+    const { user } = event.context;  // typed as { id: number; role: "admin" | "user" }
+  }),
+]);
+```
+
+```ts [Koa]
 export default defineRoute<"admin/dashboard">(({ GET }) => [
   GET(async (ctx) => {
-    const user = ctx.get("user");  // typed as { id: number; role: "admin" | "user" }
+    const { user } = ctx.state;  // typed as { id: number; role: "admin" | "user" }
   }),
 ]);
 ```
@@ -132,162 +160,21 @@ and merges them into the context type for `defineRoute`. Inner definitions
 override outer ones - just like at runtime, where inner middleware runs after
 outer middleware and can overwrite context values.
 
-**Note:** the global `api/use.ts` does not need to export `UseT`.
-Even if it does, the export is ignored - global middleware operates on
-`DefaultState` (Koa) or `DefaultVariables` (Hono) defined in `api/env.d.ts`.
+> The global `api/use.ts` does not need to export `UseT`.
+Even if it does, the export is ignored - global middleware operates on types defined in `api/env.d.ts`.
 `UseT` is for folder-level `use.ts` files only, where the types cascade
 alongside the middleware itself.
 
-> **Tip:** inner `use.ts` files can import `UseT` from outer ones, extend it, and re-export -
-> avoiding duplicate type definitions across the hierarchy:
->
-> ```ts [api/admin/settings/use.ts]
-> import type { UseT as ParentT } from "../use";
->
-> export type UseT = ParentT & {
->   settingsAccess: "read" | "write";
-> };
-> ```
+**Tip:** inner `use.ts` files can import `UseT` from outer ones, extend it, and re-export -
+avoiding duplicate type definitions across the hierarchy:
 
-## Common Use Cases
+```ts [api/admin/settings/use.ts]
+import type { UseT as ParentT } from "../use";
 
-### Authentication
-
-::: code-group
-```ts [Koa: api/admin/use.ts]
-import { use } from "_/api";
-
-export type UseT = {
-  user: { id: number; name: string; role: string };
+export type UseT = ParentT & {
+  settingsAccess: "read" | "write";
 };
-
-export default [
-  use<UseT>(async (ctx, next) => {
-    const token = ctx.headers.authorization?.replace("Bearer ", "");
-    ctx.assert(token, 401, "Authentication required");
-
-    const user = await verifyToken(token);
-    ctx.assert(user.role === "admin", 403, "Admin access required");
-
-    ctx.state.user = user;
-    return next();
-  })
-];
 ```
-
-```ts [Hono: api/admin/use.ts]
-import { HTTPException } from "hono/http-exception";
-import { use } from "_/api";
-
-export type UseT = {
-  user: { id: number; name: string; role: string };
-};
-
-export default [
-  use<UseT>(async (ctx, next) => {
-    const token = ctx.req.header("authorization")?.replace("Bearer ", "");
-    if (!token) throw new HTTPException(401, { message: "Authentication required" });
-
-    const user = await verifyToken(token);
-    if (user.role !== "admin") throw new HTTPException(403, { message: "Admin access required" });
-
-    ctx.set("user", user);
-    return next();
-  })
-];
-```
-:::
-
-Every route under `/api/admin` now requires admin auth. Route handlers can assume
-the user is already validated (`ctx.state.user` for Koa, `ctx.get("user")` for Hono).
-
-### Request Logging
-
-::: code-group
-```ts [Koa: api/payments/use.ts]
-import { use } from "_/api";
-
-export type UseT = {
-  requestId: string;
-};
-
-export default [
-  use<UseT>(async (ctx, next) => {
-    const start = Date.now();
-    const requestId = crypto.randomUUID();
-
-    ctx.state.requestId = requestId;
-    console.log(`[${requestId}] ${ctx.method} ${ctx.path}`);
-
-    try {
-      await next();
-    } finally {
-      console.log(`[${requestId}] completed in ${Date.now() - start}ms`);
-    }
-  })
-];
-```
-
-```ts [Hono: api/payments/use.ts]
-import { use } from "_/api";
-
-export type UseT = {
-  requestId: string;
-};
-
-export default [
-  use<UseT>(async (ctx, next) => {
-    const start = Date.now();
-    const requestId = crypto.randomUUID();
-
-    ctx.set("requestId", requestId);
-    console.log(`[${requestId}] ${ctx.req.method} ${ctx.req.path}`);
-
-    await next();
-    console.log(`[${requestId}] completed in ${Date.now() - start}ms`);
-  })
-];
-```
-:::
-
-### Rate Limiting
-
-::: code-group
-```ts [Koa: api/public/use.ts]
-import rateLimit from "koa-ratelimit";
-import { use } from "_/api";
-
-export type UseT = {};
-
-export default [
-  use<UseT>(
-    rateLimit({
-      driver: "memory",
-      db: new Map(),
-      duration: 60000,
-      max: 100,
-    })
-  )
-];
-```
-
-```ts [Hono: api/public/use.ts]
-import { rateLimiter } from "hono-rate-limiter";
-import { use } from "_/api";
-
-export type UseT = {};
-
-export default [
-  use<UseT>(
-    rateLimiter({
-      windowMs: 60000,
-      limit: 100,
-      keyGenerator: (ctx) => ctx.req.header("x-forwarded-for") ?? "",
-    }),
-  )
-];
-```
-:::
 
 ## Parameter Availability
 
@@ -306,10 +193,10 @@ authentication, logging, rate limiting. Parameter-specific logic belongs in the 
 
 ## Multiple Middleware + Method Filtering
 
-A single `use.ts` can define multiple functions, and each supports the `on` option:
+A single `use.ts` can define multiple functions, and each supports the `on` option
+to run only on specific request method(s):
 
-::: code-group
-```ts [Koa: api/users/use.ts]
+```ts
 import { use } from "_/api";
 
 export type UseT = {
@@ -318,57 +205,15 @@ export type UseT = {
 
 export default [
   use<UseT>(async (ctx, next) => {
-    console.log(`${ctx.method} ${ctx.path}`);
+    // will run on ANY request method
     return next();
   }),
 
   use<UseT>(
     async (ctx, next) => {
-      const token = ctx.headers.authorization?.replace("Bearer ", "");
-      ctx.assert(token, 401, "Authentication required");
-      ctx.state.user = await verifyToken(token);
-      return next();
+      // will run only on POST
     },
-    { on: ["POST", "PUT", "PATCH", "DELETE"] },
+    { on: ["POST"] },
   ),
-
-  use<UseT>(async (ctx, next) => {
-    const start = Date.now();
-    await next();
-    ctx.set("X-Response-Time", `${Date.now() - start}ms`);
-  }),
 ];
 ```
-
-```ts [Hono: api/users/use.ts]
-import { HTTPException } from "hono/http-exception";
-import { use } from "_/api";
-
-export type UseT = {
-  user: { id: number; name: string };
-};
-
-export default [
-  use<UseT>(async (ctx, next) => {
-    console.log(`${ctx.req.method} ${ctx.req.path}`);
-    return next();
-  }),
-
-  use<UseT>(
-    async (ctx, next) => {
-      const token = ctx.req.header("authorization")?.replace("Bearer ", "");
-      if (!token) throw new HTTPException(401, { message: "Authentication required" });
-      ctx.set("user", await verifyToken(token));
-      return next();
-    },
-    { on: ["POST", "PUT", "PATCH", "DELETE"] },
-  ),
-
-  use<UseT>(async (ctx, next) => {
-    const start = Date.now();
-    await next();
-    ctx.header("X-Response-Time", `${Date.now() - start}ms`);
-  }),
-];
-```
-:::

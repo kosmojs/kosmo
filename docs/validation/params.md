@@ -44,9 +44,11 @@ A non-numeric value like `"abc"` is left as-is and fails the number check, produ
 So you write `number` (or a numeric `VRefine`) and read a real number from `ctx.validated.params`; no manual coercion needed.
 :::
 
-Access validated parameters through `ctx.validated.params` - it carries the refined type,
-not the raw string. The underlying `ctx.params` (Koa) or `ctx.req.param()` (Hono) still exists
-if you need the original.
+Access validated parameters through `ctx.validated.params` - it carries the refined type, not the raw string.
+The underlying raw params still exists if you need the original:
+- Hono - `ctx.req.param()`
+- H3 - `event.context.params`
+- Koa - `ctx.params`
 
 Refine further with `VRefine` (globally available, no import needed):
 

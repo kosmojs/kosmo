@@ -8,9 +8,7 @@ head:
       content: directory-based routing, url mapping, api routes, page routes, route organization
 ---
 
-`KosmoJS` uses directory-based routing: folder names become URL path segments,
-and `index` files define the actual endpoints or components.
-
+With directory-based routing, folder names become URL path segments, and `index` files define the actual endpoints or components.
 No separate routing configuration - your file structure is your route definition.
 
 ## How It Works
@@ -76,20 +74,21 @@ request and your framework's matching logic.
 build time                          runtime
 ──────────                          ───────
 directory structure                 native router registration
-  api/users/[id]/index.ts    ➜        Hono:  app.get("/users/:id", ...)
-  pages/users/[id]/index.tsx ➜        React Router / Solid Router / Vue Router
-        │                                       route definitions
+  api/users/[id]/index.ts    ➜        Hono/H3/Koa router
+  pages/users/[id]/index.tsx ➜        React/Solid/Vue router
+        │                                       │
         └── parsed via path-to-regexp ──────────┘
 ```
 
 The payoff is that you keep the full, native routing of whatever framework you chose -
 nothing is wrapped, shimmed, or reimplemented:
 
-* **Backend** - Hono's high-performance router, or Koa's, handles matching directly.
+* **Backend** - Hono/H3/Koa router handles your routes natively.
 * **Frontend** - React Router, Solid Router, and Vue Router each receive standard route
   definitions, so nested layouts, lazy loading, loaders/preloads, and navigation guards
   all behave exactly as documented by those frameworks.
 
-`KosmoJS` is the chassis, not the engine. It gives every source folder the same consistent,
-directory-based way to define routes; the engine doing the actual routing is the framework
-you picked.
+**`KosmoJS` is the chassis, not the engine.**
+
+It gives every source folder the same consistent, directory-based way to define routes;
+the engine doing the actual routing is the framework you picked.

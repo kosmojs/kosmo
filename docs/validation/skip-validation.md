@@ -26,8 +26,7 @@ export default defineRoute(({ POST }) => [
     }
   }>(async (ctx) => {
     // ctx.validated.json is not available - use the bodyparser directly
-    // Koa:  await ctx.bodyparser.json<User>()
-    // Hono: await ctx.req.json<User>()
+    const user = await ctx.bodyparser.json<User>()
   }),
 ]);
 ```

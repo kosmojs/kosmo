@@ -1,21 +1,20 @@
 ---
 title: API Server
-description: KosmoJS API layer supports both Koa and Hono frameworks with elegant middleware composition,
+description: KosmoJS API layer supports Hono, H3 and Koa frameworks, with elegant middleware composition,
     end-to-end type safety, and flexible route definitions inspired by Sinatra framework.
 head:
   - - meta
     - name: keywords
-      content: koa api, hono api, middleware composition, type-safe api, sinatra-style routing,
+      content: hono api, h3 api, koa api, middleware composition, type-safe api, sinatra-style routing,
         framework choice, typescript api, defineRoute, api middleware
 ---
 
-`KosmoJS`'s API layer supports two frameworks: [Koa](https://koajs.com/) and [Hono](https://hono.dev/).
+Supported backend frameworks:
+- [Hono](https://hono.dev) - exceptional performance, runs on Node/Deno/Bun/edge platforms unchanged.
+- [H3](https://h3.dev) - similar to Hono in performance and multi‑runtime support, focus on Web standards.
+- [Koa](https://koajs.com) - battle-tested, mature ecosystem, elegant async/await middleware, Node-focused.
 
-**Koa** - battle-tested, mature ecosystem, elegant async/await middleware, Node.js-focused.
-
-**Hono** - exceptional performance, runs on Node.js, Deno, Bun, Cloudflare Workers, and other edge platforms unchanged.
-
-Route organization, middleware patterns, and validation are identical between the two.
+Route organization, middleware composition, and validation are identical between frameworks.
 The difference is the context API inside handlers - each framework has its own.
 
 ## Defining Endpoints
@@ -55,7 +54,7 @@ the Ruby framework that pioneered it back in 2007.
 
 ## Type Safety
 
-Parameters, payloads, and responses are all typed through `TypeScript` type arguments -
+Parameters, payloads, and responses are all typed through type arguments -
 the same definitions drive both compile-time checking and runtime validation.
 No separate schema language, no DSL switching.
 [Details ›](/backend/type-safety)

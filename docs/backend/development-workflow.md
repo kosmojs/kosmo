@@ -38,6 +38,32 @@ Default port is `4556`, configured as `devPort` in `package.json`.
 Returns the API request handler. Generated default:
 
 ::: code-group
+```ts [Hono]
+import { getRequestListener } from "@hono/node-server";
+
+import { devSetup } from "_/api:factory";
+import app from "./app";
+
+export default devSetup({
+  requestHandler() {
+    return getRequestListener(app.fetch);
+  },
+});
+```
+
+```ts [H3]
+import { toNodeHandler } from "h3/node";
+
+import { devSetup } from "_/api:factory";
+import app from "./app";
+
+export default devSetup({
+  requestHandler() {
+    return toNodeHandler(app);
+  },
+});
+```
+
 ```ts [Koa]
 import { devSetup } from "_/api:factory";
 import app from "./app";
@@ -48,29 +74,19 @@ export default devSetup({
   },
 });
 ```
-
-```ts [Hono]
-import { getRequestListener } from "@hono/node-server";
-import { devSetup } from "_/api:factory";
-import app from "./app";
-
-export default devSetup({
-  requestHandler() {
-    return getRequestListener(app.fetch);
-  },
-});
-```
 :::
 
 Override this for custom routing logic - WebSocket handling, multi-handler dispatch, etc.
 
 ### requestMatcher
 
-Controls which requests go to your API vs Vite. Defaults to matching `apiurl` prefix:
+Controls which requests go to your API vs Vite.
 
 ```ts
 export default devSetup({
-  requestHandler() { return app.callback(); },
+  requestHandler() {
+    // ...
+  },
 
   requestMatcher(req) {
     return req.url?.startsWith("/api") ||
@@ -88,7 +104,9 @@ that would otherwise leak across rebuilds:
 let dbConnection;
 
 export default devSetup({
-  requestHandler() { return app.callback(); },
+  requestHandler() {
+    // ...
+  },
 
   async teardownHandler() {
     if (dbConnection) {
@@ -103,43 +121,66 @@ Without cleanup, frequent rebuilds during active development can exhaust databas
 
 ## Inspecting Routes
 
-Each route returned by `createRoutes` has a `debug` property. Enable it via `DEBUG=api`:
+Routes can be inspected by providing `debug` option to `appFactory` in `api/app.ts`:
 
-```ts [api/router.ts]
-import { routerFactory, routes } from "_/api:factory";
+```ts [api/api.ts]
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
 
-const DEBUG = /\bapi\b/.test(process.env.DEBUG ?? ""); // [!code ++]
-
-export default routerFactory(({ createRouter }) => {
-  const router = createRouter();
-
-  for (const { name, path, methods, middleware, debug } of routes) {
-    if (DEBUG) console.log(debug.full); // [!code ++]
-    router.register(path, methods, middleware, { name });
-  }
-
-  return router;
-});
-```
-
-```sh
-DEBUG=api pnpm dev
+export default appFactory(routes, { debug: true }, ({ app }) => {
+  // ...
+})
 ```
 
 Example output:
 
 ```txt
- /api/users  [ users/index.ts ]
-   methods: POST
-middleware: slot: params; exec: useParams
-            slot: validateParams; exec: useValidateParams
-            slot: bodyparser; exec: async (ctx, next) => {
-            slot: payload; exec: (ctx, next) => {
-   handler: postHandler
+      /api  [ index/index.ts ]
+   methods: GET|HEAD
+middleware: slot: @extendContext useExtendContext
+            slot: validate:params useValidateParams
+   handler: indexHandler
 ```
 
-Named middleware functions show by name; anonymous ones show their first line.
+> Named middleware functions show by name; anonymous ones show their first line.
 Name your middleware functions - it makes this output significantly easier to read.
 
 Individual `debug` properties are also available for targeted output:
-`debug.headline`, `debug.methods`, `debug.middleware`, `debug.handler`.
+`headline`, `methods`, `middleware`, `handler`.
+
+Use this to display only headline:
+
+```ts
+export default appFactory(routes, { debug: "headline" }, ({ app }) => {
+  // ...
+})
+```
+
+If you rather need a custom logger, provide a function instead;
+it will be provided with full debug object and the route itself.
+
+```ts [api/api.ts]
+export default appFactory(
+  routes,
+  {
+    debug(log, route) {
+      console.log(log.full);
+    },
+  },
+  ({ app }) => {
+    // ...
+  },
+);
+```
+
+The `log` signature:
+
+```ts
+{
+  headline: string;
+  methods: string;
+  middleware: string;
+  handler: string;
+  full: string;
+}
+```

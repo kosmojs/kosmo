@@ -5,8 +5,7 @@ description: KosmoJS automatically generates boilerplate code for new routes wit
 head:
   - - meta
     - name: keywords
-      content: code generation, route templates, defineRoute, auto-generated routes,
-        boilerplate code, koa context, page components
+      content: code generation, route templates, defineRoute, generated routes
 ---
 
 When you create a new route file, `KosmoJS` detects it and generates appropriate boilerplate immediately.
@@ -20,21 +19,31 @@ The output differs based on whether the file is an API route or a client page, a
 Creating `api/users/[id]/index.ts` generates:
 
 ::: code-group
-```ts [Koa]
-import { defineRoute } from "_/api";
 
-export default defineRoute<"users/[id]">(({ GET }) => [
-  GET(async (ctx) => {
-    ctx.body = "Automatically generated route: [ users/[id] ]";
-  }),
-]);
-```
 ```ts [Hono]
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
     return ctx.text("Automatically generated route: [ users/[id] ]");
+  }),
+]);
+```
+```ts [H3]
+import { defineRoute } from "_/api";
+
+export default defineRoute<"users/[id]">(({ GET }) => [
+  GET(async (ctx) => {
+    return "Automatically generated route: [ users/[id] ]";
+  }),
+]);
+```
+```ts [Koa]
+import { defineRoute } from "_/api";
+
+export default defineRoute<"users/[id]">(({ GET }) => [
+  GET(async (ctx) => {
+    ctx.body = "Automatically generated route: [ users/[id] ]";
   }),
 ]);
 ```

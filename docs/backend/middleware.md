@@ -1,12 +1,12 @@
 ---
 title: Middleware
-description: Understand middleware chains and Koa/Hono onion model execution pattern.
+description: Understand middleware chains and Hono/H3/Koa onion model execution pattern.
     Configure middleware to run only for specific HTTP methods.
     Override global middleware using slot system.
 head:
   - - meta
     - name: keywords
-      content: koa middleware, hono middleware, use function, middleware chain,
+      content: hono middleware, h3 middleware, koa middleware, use function, middleware chain,
         onion model, middleware composition, middleware slots.
 ---
 
@@ -16,9 +16,8 @@ logging, or data transformation.
 
 ## Basic Usage
 
-KosmoJS provides the `use` function for applying middleware,
-with the same API for both `Koa` and `Hono` routes.
-By default, middleware is applied to all HTTP methods:
+KosmoJS provides the `use` function for applying middleware.
+The same API applies identically to all frameworks, only the middleware internals slightly differs by framework:
 
 ```ts [api/example/index.ts]
 export default defineRoute<"example">(({ GET, POST, use }) => [
@@ -57,8 +56,7 @@ export default defineRoute<"example">(({ POST, use }) => [
 
   POST(async (ctx) => {
     console.log("POST handler");
-    ctx.body = { success: true }; // for Koa
-    // ctx.json({ success: true }); // for Hono
+    // ...
   }),
 ]);
 ```
@@ -75,7 +73,7 @@ First middleware after next
 
 Global middleware from `api/use.ts` runs first, then route-level `use` calls, then the handler.
 
-**Positioning note:** All `use` calls run before method handlers regardless of where they appear
+> **Positioning note:** All `use` calls run before method handlers regardless of where they appear
 in the array. Defining `use` after a handler doesn't change this:
 
 ```ts
@@ -92,12 +90,12 @@ export default defineRoute(({ use, GET, POST }) => [
 Use the `on` option to restrict middleware to specific HTTP methods:
 
 ```ts [api/example/index.ts]
-export default defineRoute<"example">(({ GET, POST, PUT, DELETE, use }) => [
+export default defineRoute<"example">(({ GET, POST, use }) => [
   use(async (ctx, next) => {
     ctx.state.user = await verifyToken(ctx.headers.authorization);
     return next();
   }, {
-    on: ["POST", "PUT", "DELETE"], // [!code hl]
+    on: ["POST"], // [!code hl]
   }),
 
   GET(async (ctx) => {
@@ -140,7 +138,7 @@ export default defineRoute<"upload">(({ POST, use }) => [
 ]);
 ```
 
-**Important:** When overriding via slot, explicitly set `on` if needed -
+> **Important:** When overriding via slot, explicitly set `on` if needed -
 it doesn't inherit from the middleware being replaced.
 
 Custom slot names, like `logger`, should be added to `api/env.d.ts`:

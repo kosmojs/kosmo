@@ -25,8 +25,8 @@ dev workflow, and build orchestration.
 [Details ›](/about)
 
 #### Is KosmoJS a runtime, a bundler, or a framework?
-A meta-framework that sits on top of Vite. There is no proprietary runtime, no custom bundler,
-and no framework lock-in - every layer (Vite, Koa/Hono, React/Vue/Solid/Svelte/MDX)
+Rather a meta-framework built on top of Vite. There is no proprietary runtime, no custom bundler,
+and no framework lock-in - every layer (Vite, Hono/H3/Koa, React/Vue/Solid/Svelte/MDX)
 is a tool you can use, debug, and replace independently.
 [Details ›](/about)
 
@@ -45,7 +45,7 @@ Run `npm run +folder` (or `pnpm +folder` / `yarn +folder`).
 
 #### What am I prompted for when adding a source folder?
 Folder name, base URL, framework, backend, and SSR. Non-interactive flags:
-`--name`, `--base`, `--framework solid|react|vue|svelte|mdx`, `--backend koa|hono`, `--ssr`.
+`--name`, `--base`, `--framework solid|react|vue|svelte|mdx`, `--backend hono|h3|koa`, `--ssr`.
 [Details ›](/start)
 
 #### Why isn't a source folder created automatically?
@@ -81,8 +81,8 @@ A self-contained app inside the project with its own framework stack, base URL,
 routing, middleware, layouts, config, and build output -
 but sharing one `package.json`, one `node_modules`, one database layer, and one set of types.
 Example layout:
-- `src/app` (React + Hono, base `/app`)
-- `src/admin` (Vue + Koa, base `/admin`)
+- `src/app` (React + Hono, base `/`)
+- `src/admin` (Vue + H3, base `/admin`)
 - `src/marketing` (MDX, no backend, base `/`)
 
 [Details ›](/features)
@@ -94,7 +94,7 @@ You get monorepo-like structure and microservice-like independence with single-p
 [Details ›](/about)
 
 #### Can different folders use different frameworks/backends at the same time?
-Yes. Each folder picks its own backend (Koa/Hono) and frontend (React/Vue/SolidJS/Svelte/MDX),
+Yes. Each folder picks its own backend (Hono/H3/Koa) and frontend (React/Vue/SolidJS/Svelte/MDX),
 and they coexist in one project.
 [Details ›](/features)
 
@@ -238,9 +238,15 @@ The folder is named with the mixed segment and `index.ts` lives inside it like a
 [Details ›](/routing/params#mixed-segments)
 
 #### Which frontends support mixed segments?
-Backend (Koa/Hono): full support. Vue, Svelte, and MDX: full support. React Router: `.ext` suffix only.
-SolidJS: not supported. Prefer simple segments for frontend routes
-and keep mixed segments to the API side where support is complete.
+- *Backend*
+    - Hono and H3: partial support with caveats.
+    - Koa: full support.
+- *Frontend*:
+    - Vue, Svelte, and MDX: full support.
+    - React Router: `.ext` suffix only.
+    - SolidJS: not supported.
+
+Prefer simple segments for frontend routes and keep mixed segments to the API side where support is complete.
 [Details ›](/routing/params#mixed-segments)
 
 #### What is power syntax?
@@ -337,36 +343,49 @@ The style draws on Sinatra (2007), the Ruby framework that pioneered defining ro
 brought into a typed, directory-based structure.
 [Details ›](/backend/intro#defining-endpoints)
 
-### Backend: Koa vs Hono
+### Backend: Hono / H3 / Koa
 
-#### Koa or Hono - which should I pick, and when does it matter?
-Koa: battle-tested, mature ecosystem, Node-focused. Hono: exceptional performance,
-runs on Node/Deno/Bun/Cloudflare Workers and edge platforms unchanged.
-Pick Hono if you need edge/multi-runtime. Route organization, middleware patterns,
-and validation are identical between them; only the in-handler context API differs.
+#### Hono/H3/Koa - which should I pick, and when does it matter?
+- *Hono*: Maximum performance, run unchanged across runtimes (Node, Deno, Bun, Workers), and prefer a clean, return‑based API.
+- *H3*: Similar to Hono in performance and multi‑runtime support, but with a stronger focus on Web standards and framework‑agnostic design.
+- *Koa*: Battle-tested, mature ecosystem, Node-focused. Great for traditional Node.js servers where you value stability and a large library ecosystem.
+
 [Details ›](/backend/intro)
 
-#### What's identical and what differs between Koa and Hono?
+#### What's identical and what differs between Hono/H3/Koa implementation?
 Identical: route organization, middleware patterns, validation,
 the `use` API, slots, cascading middleware.
 Different: the context API inside handlers (body, params, state, error model).
 [Details ›](/backend/intro)
 
-#### How do params differ in Koa vs Hono?
-`ctx.params` (Koa) vs `ctx.req.param()` (Hono); prefer `ctx.validated.params` in both -
-it carries the refined, validated type.
+#### How do params differ in Hono vs H3 vs Koa?
+Raw params: `ctx.req.param()` (Hono), `event.context.params` (H3), `ctx.params` (Koa) - all return untyped strings.
+
+Always prefer `*.validated.params` - the validated, refined type (e.g., number) with runtime validation automatically enforced.
+The validation logic is identical across all frameworks.
 [Details ›](/backend/context#route-parameters)
 
-#### How do I set the response body in each?
-`ctx.body = ...` (Koa) vs `ctx.json(...)` / `ctx.text(...)` (Hono).
+#### How do I set the response in Hono/H3/Koa implementation?
+The native way for every framework:
+- *Hono*: `ctx.json(...)` / `ctx.text(...)` (return a Response‑like object)
+- *H3*: Return the value directly - an object is serialized as JSON (application/json),
+a string is sent as plain text (text/plain). You can also return a Response for full control.
+- *Koa*: `ctx.body = ...` (mutate the context)
+
+All three frameworks support setting status codes and headers as well
+(e.g., `ctx.res.status = 201` in Hono, `event.res.status = 201` in H3, `ctx.status = 201` in Koa).
 [Details ›](/backend/intro)
 
 #### How do the error models differ?
-Koa: middleware try-catch that bubbles up (`await next()` throws);
-response via mutating `ctx.body`/`ctx.status`; per-route override via the `errorHandler` slot.
-Hono: `app.onError()` catches everything (`await next()` doesn't throw);
-response by returning a `Response`; per-route behavior by branching inside `app.onError()`.
-[Details ›](/backend/error-handling#koa-vs-hono-key-differences)
+- *Hono*: `app.onError()` catches everything (`await next()` does not throw).
+It captures any error thrown in handlers; returns a `Response`.
+- *H3*: Uses `app.use(onError(errorHandler))` as the global error handler.
+It captures any error thrown in handlers; returns a `Response`, plain object or string.
+- *Koa*: Errors bubble up through `await next()`. Koa emits an `error` event (for logging),
+but doesn't send a response automatically. Use `app.on("error", errorHandler)` to react on `error` event.
+Use `try`/`catch` around `await next()` in middleware to set `ctx.status`/`ctx.body`.
+
+[Details ›](/backend/error-handling)
 
 ### Backend: Context & Bodyparser
 
@@ -386,7 +405,7 @@ The validated, typed result for each target you defined:
 [Details ›](/backend/context#validated-data-access)
 
 #### Do the raw params still work?
-Yes - `ctx.params` (Koa) and `ctx.req.param()` (Hono) still return raw strings if you need them.
+Yes - `ctx.req.param()` (Hono), `event.context.params` (H3), `ctx.params` (Koa) still return raw strings if you need them.
 [Details ›](/backend/context#route-parameters)
 
 ### Backend: Middleware
@@ -462,7 +481,7 @@ avoiding duplicate definitions across the hierarchy.
 [Details ›](/backend/cascading-middleware#type-safe-context-extension)
 
 #### Why does the global `api/use.ts` ignore `UseT`?
-Global middleware operates on `DefaultState` (Koa) / `DefaultVariables` (Hono) from `api/env.d.ts`;
+Global middleware operates on types defined in from `api/env.d.ts`;
 `UseT` is for folder-level files only, where the types cascade alongside the middleware.
 [Details ›](/backend/cascading-middleware#type-safe-context-extension)
 
@@ -476,18 +495,15 @@ where the param is guaranteed to exist.
 
 #### How do I implement auth / logging / rate limiting?
 However your framework already does it - KosmoJS imposes nothing here and stays fully transparent.
-Any Koa or Hono middleware package works unchanged (`koa-ratelimit`, `hono-rate-limiter`, your own
-token check, a logger), wired the native way for your framework. You can wire it directly in a
-route's `index.ts` via `use(...)`, or in a folder-level `use.ts` to cascade it over a subtree.
-Nothing is KosmoJS-specific about the middleware itself; it's plain Koa/Hono.
+Any Hono/H3/Koa middleware package works unchanged, wired the native way for your framework.
+You can wire it directly in a route's `index.ts` via `use(...)`, or in a folder-level `use.ts` to cascade it over a subtree.
+Nothing is KosmoJS-specific about the middleware itself; it's plain Hono/H3/Koa.
 [Details ›](/backend/cascading-middleware#common-use-cases)
 
 ### Backend: Error Handling
 
 #### Where is the default error handler?
 `api/errors.ts`, generated per source folder - a regular file you can customize freely.
-The Koa handler is wired into global middleware via the `errorHandler` slot;
-the Hono handler into `app.onError()`.
 [Details ›](/backend/error-handling#default-error-handler)
 
 #### How do I distinguish a ValidationError?
@@ -496,17 +512,20 @@ otherwise use `error.statusCode || 500`.
 [Details ›](/backend/error-handling#default-error-handler)
 
 #### How do I do route-level error overrides?
-Koa: override per-route or per-subtree via the `errorHandler` slot
-(inline `use` or a cascading `use.ts`). Hono: there's a single `app.onError()` -
-branch on `ctx.req.path` inside it for route-specific behavior.
-[Details ›](/backend/error-handling#route-level-overrides-koa)
+- *Hono*: There's a single `app.onError()` - branch on `ctx.req.path` inside it for route‑specific behavior.
+- *H3*: Use `app.use(onError(errorHandler))` - branch inside based on `event.url`
+or `event.context` to return route‑specific responses (a Response, plain object, or string).
+- *Koa*: Use `app.on("error", errorHandler)` for global error events.
+For per‑route or per‑subtree overrides, you can either:
+    - Branch inside the global `errorHandler` based on `ctx.path`, or
+    - Use middleware with `try/catch` around `await next()` and set `ctx.status`/`ctx.body`.
+
+The default error handler lives in `api/errors.ts` for all frameworks.
+
+[Details ›](/backend/error-handling)
 
 #### Why shouldn't I wrap handler logic in try-catch?
 Let errors propagate to the central error handler instead of swallowing them per-route.
-[Details ›](/backend/error-handling#let-handlers-fail)
-
-#### What do I use instead of try-catch?
-`ctx.assert` / `ctx.throw` (Koa) and `throw new HTTPException(...)` (Hono).
 [Details ›](/backend/error-handling#let-handlers-fail)
 
 ### Validation
@@ -687,8 +706,13 @@ runtime validation is what catches mismatched DB responses, unexpected payloads,
 ### Type Safety
 
 #### What type arguments does defineRoute accept?
-RouteName (required), ParamsTuple, then State + Context (Koa) or Variables + Bindings (Hono).
-The 3rd/4th are for types unique to one route.
+- RouteName (required)
+- Params refinemets tuple
+- Types unique to this specific route
+    - Variables and Bindings for Hono
+    - Context for H3
+    - State and Context for Koa
+
 [Details ›](/backend/type-safety#typing-state-context)
 
 #### How do I type Cloudflare bindings (e.g. D1) in Hono?
@@ -697,8 +721,11 @@ or `DefaultBindings` in `api/env.d.ts` globally; read via `ctx.env.DB`.
 [Details ›](/backend/type-safety#typing-state-context)
 
 #### How do I add global context/state types?
-Declare them in `api/env.d.ts` via module augmentation: `DefaultState`/`DefaultContext` (Koa)
-or `DefaultVariables`/`DefaultBindings` (Hono).
+Declare them in `api/env.d.ts` via module augmentation:
+- `DefaultVariables`/`DefaultBindings` (Hono)
+- `DefaultContext` (H3)
+- `DefaultState`/`DefaultContext` (Koa)
+
 [Details ›](/backend/type-safety#global-context-types-apienvdts)
 
 ### Fetch Clients
@@ -1111,10 +1138,11 @@ bundle), so there's no network hop, just the full validation/handler chain. A fe
 [Details ›](/backend/building-for-production#running-in-production)
 
 #### How do I mount the app factory per runtime?
-Koa: `app.callback()` is a Node `(req,res)` handler -
-on Deno/Bun use it via the `node:http` compat layer (`createServer(app.callback())`),
-not their native serve APIs. Hono: `app.fetch` is a Web Fetch handler -
-Node via `@hono/node-server`'s `getRequestListener`, Deno via `Deno.serve`, Bun via `Bun.serve`.
+- *Hono*: `app.fetch` is a Web Fetch handler - on Node use `getRequestListener` from `@hono/node-server`.
+Deno via `Deno.serve`, Bun via `Bun.serve`.
+- *H3*: `app.fetch` is a Web Fetch handler - on Node use `toNodeHandler` from `h3/node` (then createServer).
+Deno via `Deno.serve`, Bun via `Bun.serve`.
+- *Koa*: On Node use `app.listen()`. On Deno/Bun use `app.callback()` via a compat layer, not their native serve APIs.
 [Details ›](/backend/building-for-production#running-in-production)
 
 #### Why are the API and SSR servers separate?
@@ -1510,9 +1538,8 @@ so client-valid and server-accepted stay in sync.
 
 #### Next Route Handlers (`route.ts`) / Start `createAPIFileRoute` equivalent?
 `defineRoute` returning an array of method handlers in `api/.../index.ts` - same idea,
-plus validation and a generated client for free. You don't write `Response.json()`;
-use Koa `ctx.body` or Hono `ctx.json()`. There's no `NextRequest`/`NextResponse` -
-it's the native Koa/Hono context extended with `ctx.bodyparser` and `ctx.validated`.
+plus validation and a generated client for free. You don't write `Response.json()`.
+There's no `NextRequest`/`NextResponse` - it's the native Hono/H3/Koa context.
 [Details ›](/backend/intro#defining-endpoints)
 
 #### Why an array instead of named method exports?
@@ -1521,9 +1548,9 @@ and methods together with shared types.
 [Details ›](/backend/intro#defining-endpoints)
 
 #### Run on the edge / Cloudflare / Deno / Bun?
-With Hono the API runs on Node/Deno/Bun/Cloudflare Workers and edge platforms unchanged (`app.fetch`).
-Koa runs via the `node:http` compat layer. There's no automatic serverless/edge function
-packaging like Next - you run the bundled server or wire `app.fetch` into an edge runtime yourself.
+With Hono and H3 the API runs on Node/Deno/Bun/Cloudflare Workers and edge platforms unchanged (`app.fetch`).
+Koa runs via the `node:http` compat layer. There's no automatic serverless/edge function packaging like Next -
+you run the bundled server or wire `app.fetch` into an edge runtime yourself.
 [Details ›](/backend/building-for-production#running-in-production)
 
 #### Edge middleware (`middleware.ts`) vs cascading `use.ts`?
@@ -1639,8 +1666,8 @@ plus standard Vite config. There's no `app/` vs `pages/` debate - you're in `src
 #### Output vs `.next/`, and a `next start` equivalent?
 `dist/<folder>/` with `api/`, `client/`, and `ssr/`.
 Run the bundled server: `node dist/front/api/server.js` (API)
-or `node dist/front/ssr/server.js -p 4556` (SSR). No adapter system - Koa via `node:http`,
-Hono via native runtime servers.
+or `node dist/front/ssr/server.js -p 4556` (SSR).
+No adapter system - Hono/H3 via native runtime servers, Koa via `node:http`.
 [Details ›](/backend/building-for-production#build-output)
 
 #### `next/image` / `next/font` / `next/link` / `next/head` equivalents?
@@ -1669,16 +1696,9 @@ Serve it with Swagger UI, Redoc, or Stoplight Elements.
 
 An LLM agent must answer these before emitting KosmoJS code that compiles and runs.
 
-#### A1. Which backend is this folder - Koa or Hono?
-Check the folder's `kosmo.config.ts`: a `koaGenerator()` or `honoGenerator()`
+#### A1. Which backend is this folder - Hono/H3/Koa?
+Check the folder's `kosmo.config.ts`: a `honoGenerator()` or `h3Generator()` or `koaGenerator()`
 in the `generators` array tells you which backend is in use.
-It matters because the handler context API differs fundamentally:
-body (`ctx.body =` vs `ctx.json()`), params (`ctx.params` vs `ctx.req.param()`),
-state (`ctx.state.x` vs `ctx.set("x")`/`ctx.get("x")`),
-and error model (bubbling try-catch vs `app.onError()`).
-Koa bubbles errors up through middleware try-catch and responds by mutating `ctx.body`/`ctx.status`;
-Hono catches everything in `app.onError()` and responds by returning a `Response`.
-Guessing wrong produces code that won't run.
 
 #### A2. Which frontend framework is this folder - React, SolidJS, Vue, Svelte, or MDX?
 Check the folder's `kosmo.config.ts` for the framework generator

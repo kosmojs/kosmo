@@ -89,7 +89,7 @@ onMounted(() => {
               <a class="btn btn-ghost" href="#loop" @click.prevent="scrollToLoop">Take the 60-second tour</a>
             </div>
             <div class="hero-meta">
-              <span>Koa · Hono</span>
+              <span>Hono · H3 · Koa</span>
               <span>React · Solid · Vue · Svelte · MDX</span>
               <span>Node · Bun · Deno · Workers</span>
               <span>MIT</span>
@@ -106,10 +106,10 @@ onMounted(() => {
                 <div class="language-txt active">
   <pre><code><span class="tb">src/</span>
   <span class="tb">├─ </span><span class="td">shop/</span>       <span class="tp">/</span>          <span class="ts">React + Hono</span>
-  <span class="tb">├─ </span><span class="td">admin/</span>      <span class="tp">/admin</span>     <span class="ts">Solid + Koa</span>
+  <span class="tb">├─ </span><span class="td">admin/</span>      <span class="tp">/admin</span>     <span class="ts">Solid + H3</span>
   <span class="tb">├─ </span><span class="td">webhooks/</span>   <span class="tp">/hooks</span>     <span class="ts">Hono, no UI</span>
   <span class="tb">├─ </span><span class="td">docs/</span>       <span class="tp">/docs</span>      <span class="ts">MDX, no API</span>
-  <span class="tb">└─ </span><span class="td">status/</span>     <span class="tp">/status</span>    <span class="ts">Vue + Hono</span></code></pre>
+  <span class="tb">└─ </span><span class="td">status/</span>     <span class="tp">/status</span>    <span class="ts">Vue + Koa</span></code></pre>
                   <div class="tree-cap">- any number of folders, any stack each</div>
                 </div>
               </div>

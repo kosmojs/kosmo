@@ -5,11 +5,10 @@ description: Learn about KosmoJS's enhanced context with unified bodyparser API
 head:
   - - meta
     - name: keywords
-      content: koa context, hono context, ctx.validated, typed parameters,
-        request body parsing, koa bodyparser, hono bodyparser
+      content: ctx.validated, typed parameters, request body parsing
 ---
 
-`KosmoJS` extends the standard Koa/Hono context with two additions:
+`KosmoJS` extends the standard Hono/H3/Koa context with two additions:
 a unified bodyparser API and `ctx.validated` for type-safe access to validated request data.
 
 ## Unified Bodyparser
@@ -67,4 +66,8 @@ export default defineRoute<"users/[id]", [number]>(({ GET, POST }) => [
 ]);
 ```
 
-The underlying `ctx.params` (Koa) and `ctx.req.param()` (Hono) still exist if you need the raw strings.
+The underlying raw params still exist if you need them:
+- Hono - `ctx.req.param()`
+- H3 - `event.context.params`
+- Koa - `ctx.params`
+

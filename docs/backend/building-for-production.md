@@ -22,13 +22,13 @@ pnpm build front    # specific folder
 dist/
 └── front
     ├── api
-    │   ├── app.js       # app factory (Koa) / app instance (Hono)
-    │   └── server.js    # bundled API server
+    │   ├── app.js       # app instance
+    │   └── server.js    # ready-to-use API server
     ├── client
     │   ├── assets/      # scripts, styles, images
     │   └── index.html
     └── ssr
-        ├── app.js       # SSR app factory (Vite)
+        ├── app.js       # SSR app instance
         └── server.js    # SSR server bundle
 ```
 
@@ -44,27 +44,25 @@ node dist/front/api/server.js
 
 For more control, use the app factory at `dist/*/api/app.js`.
 
-**Koa** - `app.callback()` is a Node.js `(IncomingMessage, ServerResponse)` handler.
-Deno and Bun support it via their `node:http` compat layer, not via their native serve APIs:
-
-```js [Node / Deno / Bun]
-import { createServer } from "node:http";
-
-import app from "./dist/front/api/app.js";
-
-createServer(app.callback()).listen(3000);
-```
-
-**Hono** - `app.fetch` is a Web Fetch API handler, so it plugs into each runtime's native server directly:
+**Hono / H3** - `app.fetch` is a Web Fetch API handler, so it plugs into each runtime's native server directly:
 
 ::: code-group
-```js [Node]
+```js [Hono on Node]
 import { createServer } from "node:http";
 import { getRequestListener } from "@hono/node-server";
 
 import app from "./dist/front/api/app.js";
 
 createServer(getRequestListener(app.fetch)).listen(3000);
+```
+
+```js [H3 on Node]
+import { createServer } from "node:http";
+import { toNodeHandler } from "h3/node";
+
+import app from "./dist/front/api/app.js";
+
+createServer(toNodeHandler(app)).listen(3000);
 ```
 
 ```ts [Deno]
@@ -79,3 +77,22 @@ import app from "./dist/front/api/app.js";
 Bun.serve({ port: 3000, fetch: app.fetch });
 ```
 :::
+
+**Koa** - `app.callback()` is a Node.js `(IncomingMessage, ServerResponse)` handler.
+Deno and Bun support it via their `node:http` compat layer, not via their native serve APIs:
+
+```js [Node / Deno / Bun]
+import { createServer } from "node:http";
+
+import app from "./dist/front/api/app.js";
+
+createServer(app.callback()).listen(3000);
+```
+
+Or use `app.listen()` directly for Node only support:
+
+```js [Node]
+import app from "./dist/front/api/app.js";
+
+app.listen(3000);
+```

@@ -91,28 +91,35 @@ and generates starter code automatically.
 Replace the generated content with something real:
 
 ::: code-group
-```ts [Koa]
-import { defineRoute } from "_/api";
-
-type User = { id: number; name: string; email: string }
-
-export default defineRoute<"users/[id]">(({ GET }) => [
-  GET(async (ctx) => {
-    const { id } = ctx.params;
-    ctx.body = { id: Number(id), name: "Jane Smith", email: "jane@example.com" };
-  }),
-]);
-```
-
 ```ts [Hono]
 import { defineRoute } from "_/api";
-
-type User = { id: number; name: string; email: string }
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
     const { id } = ctx.req.param();
-    return ctx.json({ id: Number(id), name: "Jane Smith", email: "jane@example.com" });
+    return ctx.json({ id, name: "Jane Smith", email: "jane@example.com" });
+  }),
+]);
+```
+
+```ts [H3]
+import { defineRoute } from "_/api";
+
+export default defineRoute<"users/[id]">(({ GET }) => [
+  GET(async (event) => {
+    const { id } = event.context.params;
+    return { id, name: "Jane Smith", email: "jane@example.com" };
+  }),
+]);
+```
+
+```ts [Koa]
+import { defineRoute } from "_/api";
+
+export default defineRoute<"users/[id]">(({ GET }) => [
+  GET(async (ctx) => {
+    const { id } = ctx.params;
+    ctx.body = { id, name: "Jane Smith", email: "jane@example.com" };
   }),
 ]);
 ```

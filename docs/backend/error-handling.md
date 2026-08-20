@@ -1,211 +1,123 @@
 ---
 title: Error Handling
-description: Handle errors gracefully in KosmoJS with customizable error handlers for Koa and Hono.
+description: Handle errors gracefully in KosmoJS with customizable error handlers for Hono, H3 and Koa.
     Learn about default error handling, route-level overrides, and framework differences.
 head:
   - - meta
     - name: keywords
-      content: error handling, koa errors, hono errors, ValidationError, HTTPException,
+      content: error handling, hono errors, h3 errors, koa errors, ValidationError, HTTPException,
         error handler slot, custom error handler, error logging
 ---
 
-`KosmoJS` generates `api/errors.ts` file with a working default error handler when you create a source folder.
-It's a regular file - customize it freely.
+Error handling starts with `api/errors.ts` file, customize it at your needs:
 
 ## Default Error Handler
 
 ::: code-group
-```ts [Koa: api/errors.ts]
-import { ValidationError } from "@kosmojs/core/errors";
-import { errorHandlerFactory } from "_/api:factory";
-
-export default errorHandlerFactory(
-  async function defaultErrorHandler(ctx, next) {
-    try {
-      await next();
-    } catch (error: any) {
-      const [errorMessage, status] =
-        error instanceof ValidationError
-          ? [`${error.target}: ${error.errorMessage}`, 400]
-          : [error.message, error.statusCode || 500];
-
-      if (ctx.accepts("json")) {
-        ctx.status = status;
-        ctx.body = { error: errorMessage };
-      } else {
-        ctx.status = status;
-        ctx.body = errorMessage;
-      }
-    }
-  },
-);
-```
-
-```ts [Hono: api/errors.ts]
+```ts [Hono]
 import { accepts } from "hono/accepts";
 import { HTTPException } from "hono/http-exception";
-import { ValidationError } from "@kosmojs/core/errors";
+
+import { ValidationError, HTTPError } from "@kosmojs/core/errors";
+
 import { errorHandlerFactory } from "_/api:factory";
 
-export default errorHandlerFactory(
-  async function defaultErrorHandler(error, ctx) {
-    // HTTPException knows how to render itself
-    if (error instanceof HTTPException) {
-      return error.getResponse();
-    }
-
-    const [message, status] =
-      error instanceof ValidationError
-        ? [`${error.target}: ${error.errorMessage}`, 400]
-        : [error.message, error.statusCode || 500];
-
-    const type = accepts(ctx, {
-      header: "Accept",
-      supports: ["application/json", "text/plain"],
-      default: "text/plain",
-    });
-
-    return type === "application/json"
-      ? ctx.json({ error: message }, status)
-      : ctx.text(message, status);
-  },
-);
-```
-:::
-
-The Koa handler is wired into global middleware at `api/use.ts` via `errorHandler` slot.
-The Hono handler is wired into `app.onError()` in the `api/app.ts`.
-
-## Customization
-
-Add logging, monitoring, or structured error responses directly in `api/errors.ts`:
-
-::: code-group
-```ts [Koa]
-async function defaultErrorHandler(ctx, next) {
-  try {
-    await next();
-  } catch (error: any) {
-    ctx.app.emit("error", error, ctx); // [!code ++]
-    // ... rest of error handling
+export default errorHandlerFactory(async (error, ctx) => {
+  if (error instanceof HTTPException) {
+    return error.getResponse();
   }
-}
-```
 
-```ts [Hono]
-async function defaultErrorHandler(error, ctx) {
-  console.error(`[${ctx.req.method}] ${ctx.req.path}:`, error); // [!code ++]
-  await reportToSentry(error); // [!code ++]
+  const [status, message] = Array.isArray(error)
+    ? error
+    : error instanceof HTTPError
+      ? [error.status, error.message]
+      : error instanceof ValidationError
+        ? [400, `${error.target}: ${error.errorMessage}`]
+        : [error.statusCode || 500, error.message];
 
-  if (error instanceof HTTPException) return error.getResponse();
-  // ... rest of error handling
-}
-```
-:::
-
-For Koa, you can listen to app-level error events in `api/app.ts`:
-
-```ts [api/app.ts]
-export default appFactory(({ createApp }) => {
-  const app = createApp();
-
-  app.on("error", (error) => { // [!code focus:3]
-    console.error("API Error:", error);
+  const type = accepts(ctx, {
+    header: "Accept",
+    supports: ["application/json", "text/plain"],
+    default: "text/plain",
   });
 
-  app.use(router.routes());
-  return app;
+  return type === "application/json"
+    ? ctx.json({ error: message }, status)
+    : ctx.text(message, status);
 });
 ```
 
-## Route-Level Overrides (Koa)
+```ts [H3]
+import { ValidationError } from "@kosmojs/core/errors";
+import { HTTPError } from "h3";
 
-Koa supports overriding the error handler per-route or per-subtree via `errorHandler` slot:
+import { errorHandlerFactory } from "_/api:factory";
 
-```ts [api/webhooks/github/index.ts]
-export default defineRoute(({ use, POST }) => [
-  use(async (ctx, next) => {
-    try {
-      await next();
-    } catch (error: any) {
-      ctx.status = error.statusCode || 500;
-      ctx.body = error.message; // plain text for webhooks
-    }
-  }, { slot: "errorHandler" }), // [!code hl]
+export default errorHandlerFactory(async (error, event) => {
+  const [status, message = "Unknown error occurred"] = Array.isArray(error)
+    ? error
+    : error instanceof HTTPError
+      ? [error.status, error.message]
+      : error instanceof ValidationError
+        ? [400, `${error.target}: ${error.errorMessage}`]
+        : [error.statusCode || 500, error.message];
 
-  POST(async (ctx) => { /* ... */ }),
-]);
+  const accept = event.req.headers.get("accept");
+
+  return accept?.includes("application/json")
+    ? new Response(JSON.stringify({ error: message }), {
+        status,
+        headers: { "Content-Type": "application/json" },
+      })
+    : new Response(message, {
+        status,
+        headers: { "Content-Type": "text/plain" },
+      });
+});
 ```
 
-For multiple routes, use a cascading `use.ts`:
-
-```ts [api/webhooks/use.ts]
-export default [
-  use(async (ctx, next) => {
-    try {
-      await next();
-    } catch (error: any) {
-      ctx.status = error.statusCode || 500;
-      ctx.body = error.message;
-      console.error(`Webhook error: ${ctx.path}`, error);
-    }
-  }, { slot: "errorHandler" }),
-];
-```
-
-Hono has a single `app.onError()` for the entire application - branch on `ctx.req.path`
-inside the handler if you need route-specific behavior.
-
-## Let Handlers Fail
-
-Don't wrap handler logic in try-catch. Let errors propagate to the error handler:
-
-::: code-group
 ```ts [Koa]
-// ❌ unnecessary
-GET(async (ctx) => {
-  try {
-    const user = await fetchUser(ctx.params.id);
-    ctx.body = user;
-  } catch (error) {
-    ctx.status = 500;
-    ctx.body = { error: "Failed to fetch user" };
+import { HTTPError, ValidationError } from "@kosmojs/core/errors";
+
+import { errorHandlerFactory } from "_/api:factory";
+
+export default errorHandlerFactory(async (error, ctx) => {
+  const [status, message] = Array.isArray(error)
+    ? error
+    : error instanceof HTTPError
+      ? [error.status, error.message]
+      : error instanceof ValidationError
+        ? [400, `${error.target}: ${error.errorMessage}`]
+        : [error.statusCode || 500, error.message];
+
+  ctx.status = status;
+
+  if (ctx.accepts("json")) {
+    ctx.body = { error: message };
+  } else {
+    ctx.body = message;
   }
 });
-
-// ✅ use ctx.assert / ctx.throw
-GET(async (ctx) => {
-  const user = await fetchUser(ctx.params.id);
-  ctx.assert(user, 404, "User not found");
-  ctx.body = user;
-});
-```
-
-```ts [Hono]
-// ❌ unnecessary
-GET(async (ctx) => {
-  try {
-    const user = await fetchUser(ctx.validated.params.id);
-    return ctx.json(user);
-  } catch (error) {
-    return ctx.json({ error: "Failed to fetch user" }, 500);
-  }
-}),
-
-// ✅ use HTTPException
-GET(async (ctx) => {
-  const user = await fetchUser(ctx.validated.params.id);
-  if (!user) throw new HTTPException(404, { message: "User not found" });
-  return ctx.json(user);
-}),
 ```
 :::
 
-## Koa vs Hono - Key Differences
+It's a regular file - customize it freely. It is then wired into `api/app.ts`:
+- *Hono*: `app.onError(defaultErrorHandler)`
+- *H3*: `app.use(onError(defaultErrorHandler))`
+- *Koa*: `app.on("error", defaultErrorHandler)`
 
-| | Koa | Hono |
-|---|---|---|
-| Error model | Middleware try-catch, bubbles up | `app.onError()` catches everything |
-| `await next()` throws? | Yes | No |
-| Response style | Mutate `ctx.body` / `ctx.status` | Return a `Response` |
-| Per-route override | `errorHandler` slot | Branch inside `app.onError()` |
+## Key differences by framework
+
+| Framework | Details       |
+|-----------|---------------|
+| **Hono** | `app.onError()` catches everything (`await next()` does **not** throw); returns a `Response`. Per‑route behavior by branching inside `app.onError()`. |
+| **H3** | `app.use(onError(errorHandler))` captures any thrown error; returns a `Response`, plain object or string. Branch inside `errorHandler` based on `event.url` or other properties. |
+| **Koa** | Errors bubble up through `await next()`. Koa emits an `error` event (for logging), but doesn't send a response automatically. Use `app.on("error", errorHandler)` to react on `error` event. Use `try`/`catch` around `await next()` in middleware to set `ctx.status`/`ctx.body`. |
+
+---
+
+#### Summary
+
+- **Hono** - `onError` is the single entry point; you return a `Response`.
+- **H3** - `onError` behaves like Hono's: you return the response directly.
+- **Koa** - The error is emitted as an event, but you must handle the response yourself (typically by catching in middleware). The event is only for logging/debugging.

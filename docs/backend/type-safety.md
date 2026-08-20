@@ -26,8 +26,10 @@ export default defineRoute<"users/[id]/{action}", [
   UserAction,  // action
 ]>(({ GET }) => [
   GET(async (ctx) => {
-    const { id, action } = ctx.validated.params;
-    // id: number, action: UserAction | undefined
+    const {
+      id,     // number
+      action, // UserAction | undefined
+    } = ctx.validated.params;
   }),
 ]);
 ```
@@ -51,7 +53,7 @@ defineRoute<"[id]/[action]", Params>
 Refinements also generate runtime validation - invalid params are rejected before your handler runs.
 [Details ›](/validation/params)
 
-## Typing Payload & Response
+## Typing Payload and Response
 
 The first type argument to each method handler defines payload and response schemas:
 
@@ -66,8 +68,9 @@ export default defineRoute<"example">(({ POST }) => [
     const { name, email, status } = ctx.validated.json;
     const user = await createUser({ name, email, status });
 
-    ctx.body = user;     // Koa
-    // ctx.json(user);   // Hono
+    // return ctx.json(user);   // Hono
+    // return user              // H3
+    // ctx.body = user;         // Koa
   }),
 ]);
 ```
@@ -80,21 +83,29 @@ Both payload and response are validated at runtime, not just at compile time.
 `defineRoute` accepts four type arguments:
 
 ::: code-group
-```ts [Koa]
+```ts [Hono]
 defineRoute<
-  RouteName,        // required
+  "route-name",
   ParamsTuple,      // param refinements
-  State,            // route-specific state/locals
+  Variables,        // route-specific locals
+  Bindings,         // route-specific bindings
+>
+```
+
+```ts [H3]
+defineRoute<
+  "route-name",
+  ParamsTuple,      // param refinements
   Context,          // route-specific context properties
 >
 ```
 
-```ts [Hono]
+```ts [Koa]
 defineRoute<
-  RouteName,        // required
+  "route-name",
   ParamsTuple,      // param refinements
-  Variables,        // route-specific locals
-  Bindings,         // route-specific bindings
+  State,            // route-specific state/locals
+  Context,          // route-specific context properties
 >
 ```
 :::
@@ -102,21 +113,6 @@ defineRoute<
 Use the third and fourth arguments for types that are unique to a specific route:
 
 ::: code-group
-```ts [Koa]
-export default defineRoute<
-  "users/[id]",
-  [number],
-  { permissions: Array<"read" | "write"> },  // ctx.state.permissions
-  { authorizedUser: User },                  // ctx.authorizedUser
->(({ GET }) => [
-  GET(async (ctx) => {
-    const { id } = ctx.validated.params;
-    const { permissions } = ctx.state;
-    const { authorizedUser } = ctx;
-  }),
-]);
-```
-
 ```ts [Hono]
 export default defineRoute<
   "users/[id]",
@@ -131,6 +127,34 @@ export default defineRoute<
   }),
 ]);
 ```
+
+```ts [H3]
+export default defineRoute<
+  "users/[id]",
+  [number],
+  { permissions: Array<"read" | "write"> },  // event.context.permissions
+>(({ GET }) => [
+  GET(async (event) => {
+    const { id } = event.validated.params;
+    const { permissions } = event.context;
+  }),
+]);
+```
+
+```ts [Koa]
+export default defineRoute<
+  "users/[id]",
+  [number],
+  { permissions: Array<"read" | "write"> },  // ctx.state.permissions
+  { authorizedUser: User },                  // ctx.authorizedUser
+>(({ GET }) => [
+  GET(async (ctx) => {
+    const { id } = ctx.validated.params;
+    const { permissions } = ctx.state;
+    const { authorizedUser } = ctx;
+  }),
+]);
+```
 :::
 
 If you find yourself declaring the same properties across many routes,
@@ -142,19 +166,8 @@ move them to the global declarations in `api/env.d.ts` instead.
 so every route handler picks them up automatically:
 
 ::: code-group
-```ts [Koa: api/env.d.ts]
-export declare module "@/lib/admin/api" {
-  interface DefaultState {
-    permissions: Array<"read" | "write" | "admin">;
-  }
-  interface DefaultContext {
-    authorizedUser: User;
-  }
-}
-```
-
-```ts [Hono: api/env.d.ts]
-export declare module "@/lib/admin/api" {
+```ts [Hono]
+export declare module "_/api" {
   interface DefaultVariables {
     permissions: Array<"read" | "write" | "admin">;
   }
@@ -163,22 +176,64 @@ export declare module "@/lib/admin/api" {
   }
 }
 ```
+
+```ts [H3]
+export declare module "_/api" {
+  interface DefaultContext {
+    permissions: Array<"read" | "write" | "admin">;
+  }
+}
+```
+
+```ts [Koa]
+export declare module "_/api" {
+  interface DefaultState {
+    permissions: Array<"read" | "write" | "admin">;
+  }
+  interface DefaultContext {
+    authorizedUser: User;
+  }
+}
+```
 :::
 
-`api/use.ts` defines global middleware that runs for every endpoint -
-the right place to set these properties so they're always available:
+> **Important:** declaring types in `env.d.ts` doesn't set the values -
+you still need the middleware that actually populates them.
 
-```ts [api/use.ts]
+The right place to set global properties is `api/use.ts` file.
+It runs for every endpoint, so properties becomes available for all routes:
+
+::: code-group
+```ts [Hono]
 import { use } from "_/api";
 
 export default [
   use(async (ctx, next) => {
-    ctx.state.permissions = await getPermissions(ctx);  // Koa
-    // ctx.set("permissions", await getPermissions(ctx)); // Hono
+    ctx.set("permissions", await getPermissions(ctx)); // [!code hl]
     return next();
   }),
 ];
 ```
 
-**Important:** declaring types in `env.d.ts` doesn't set the values -
-you still need the middleware that actually populates them.
+```ts [H3]
+import { use } from "_/api";
+
+export default [
+  use(async (event, next) => {
+    event.context.permissions = await getPermissions(ctx);  // [!code hl]
+    return next();
+  }),
+];
+```
+
+```ts [Koa]
+import { use } from "_/api";
+
+export default [
+  use(async (ctx, next) => {
+    ctx.state.permissions = await getPermissions(ctx);  // [!code hl]
+    return next();
+  }),
+];
+```
+:::

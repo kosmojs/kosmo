@@ -47,7 +47,7 @@ while routing and validation patterns statys the same across all frameworks:
 ```
 src/
 ├── app/          - React, Hono backend, base "/app"
-├── admin/        - Vue, Koa backend, base "/admin"
+├── admin/        - Vue, H3 backend, base "/admin"
 └── marketing/    - MDX, no backend, base "/"
 ```
 
@@ -61,7 +61,7 @@ And you can build or deploy a single folder when that's all you need.
 
 ### 🛠️ Under the hood
 
-Add a source folder, pick a backend (`Koa` or `Hono`) and a frontend (`React`, `Vue`, `SolidJS`, or `MDX`).
+Add a source folder, pick a backend (`Hono`, `H3`, `Koa`) and a frontend (`React`, `Vue`, `SolidJS`, `Svelte`, `MDX`).
 Create files in `api/` and `pages/`, and they become routes automatically:
 
 ```

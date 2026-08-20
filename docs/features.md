@@ -2,13 +2,13 @@
 title: Features
 description: Explore KosmoJS features including multiple source folders,
     directory-based routing, end-to-end type safety, generated fetch clients,
-    OpenAPI specs, and framework freedom - Koa, Hono, React, Solid, Vue, MDX.
+    OpenAPI specs, and framework freedom - Hono, H3, Koa, React, Solid, Svelte, Vue, MDX.
 head:
   - - meta
     - name: keywords
       content: typescript validation, vite multi-app, type-safe routing,
         fetch client generator, isomorphic fetch, ssr, streaming ssr, openapi 3.1,
-        tanstack query, react query, solidjs, react, vue, mdx, koa, hono
+        tanstack query, react query, solidjs, react, vue, mdx, hono, h3, koa
 ---
 
 Everything `KosmoJS` provides, at a glance.
@@ -198,7 +198,7 @@ the rest: advanced SSR warmup uses TanStack's own `dehydrate` and
 
 ## Multiple Frameworks
 
-- **Backend:** `Koa` or `Hono` - same routing architecture, same type safety.
+- **Backend:** `Hono`, `H3`, `Koa` - same routing architecture, middleware, validation and type safety.
 - **Frontend:** `React`, `Vue`, `SolidJS`, `Svelte`, `MDX` - same routing/layout/SSR.
 
 Different source folders can use different framework combinations.
