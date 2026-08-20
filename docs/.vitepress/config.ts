@@ -45,9 +45,26 @@ export default defineConfig({
   },
 
   head: [
-    // scheme-aware mark; the SVG resolves light and dark itself
     ["link", { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
-    ["link", { rel: "apple-touch-icon", href: "/apple-touch-icon.png" }],
+    [
+      "link",
+      {
+        rel: "icon",
+        type: "image/x-icon",
+        href: "/favicon.ico",
+        sizes: "48x48",
+      },
+    ],
+    [
+      "link",
+      {
+        rel: "apple-touch-icon",
+        sizes: "180x180",
+        href: "/apple-touch-icon.png",
+      },
+    ],
+    ["link", { rel: "manifest", href: "/site.webmanifest" }],
+    ["meta", { name: "theme-color", content: "#1e1e2e" }],
     [
       "script",
       {

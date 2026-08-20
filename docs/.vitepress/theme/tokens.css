@@ -16,7 +16,7 @@
     bg    -> the page itself
     lift  -> cards, panels, elevated blocks     - comes forward
     code  -> every code surface                 - the deepest / brightest one
-*/
+* */
 
 :root {
   /* ---------- Catppuccin Latte (light scheme) ---------- */
@@ -56,6 +56,24 @@
 
   --kx-shadow-card: 0 1px 5px rgba(76, 79, 105, 0.05), 0 18px 40px -32px rgba(76, 79, 105, 0.4);
   --kx-shadow-code: 0 1px 5px rgba(76, 79, 105, 0.05), 0 16px 32px -28px rgba(76, 79, 105, 0.28);
+
+  /*
+    ---------- brand mark (Latte cut) ----------
+
+    The mark is inlined rather than served through an <img>, so it reads these
+    directly and flips with the scheme. Two stops, one ramp, running down the
+    artwork - the frame and the rocket each get their own span of it.
+
+    Latte mirrors the ramp rather than translating it stop for stop. The
+    drawing runs strong at the top and eases toward the bottom; on #eff1f5
+    that means the teal end is the one that has to go deep, and Latte blue
+    then lands almost exactly where the lower stop wants to be.
+  * */
+
+  /* teal, deepened until it holds the top of the mark against the page */
+  --kosmo-mark-from: #00505a;
+  /* Latte blue, unchanged */
+  --kosmo-mark-to: #1e66f5;
 
   /* ---------- shape and motion ---------- */
 
@@ -110,6 +128,16 @@
 
   --kx-shadow-card: 0 1px 5px rgba(0, 0, 0, 0.4), 0 24px 48px -34px rgba(0, 0, 0, 0.8);
   --kx-shadow-code: 0 1px 5px rgba(0, 0, 0, 0.32), 0 18px 36px -28px rgba(0, 0, 0, 0.68);
+
+  /*
+    ---------- brand mark (Mocha cut) ----------
+
+    Straight palette here: on a #181825 page both accents already carry the
+    separation the artwork needs.
+  * */
+
+  --kosmo-mark-from: #94e2d5;
+  --kosmo-mark-to: #89b4fa;
 }
 
 /*
@@ -192,11 +220,4 @@
   --vp-button-brand-hover-text: var(--kx-bg-inset);
 
   --vp-custom-block-font-size: 15px;
-
-  /*
-    The mark's satellite reads this; its body rides on currentColor. Both
-    follow the scheme because the artwork is inlined rather than served
-    through an <img>.
-  */
-  --kosmo-accent: var(--kx-accent);
 }
