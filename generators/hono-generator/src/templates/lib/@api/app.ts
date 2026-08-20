@@ -4,7 +4,7 @@ import { RegExpRouter } from "hono/router/reg-exp-router";
 import { SmartRouter } from "hono/router/smart-router";
 import { TrieRouter } from "hono/router/trie-router";
 
-import type { Route } from "@kosmojs/core/api";
+import type { Route, RouteDebugOption } from "@kosmojs/core/api";
 
 import type { DefaultBindings, DefaultVariables } from "../api";
 
@@ -15,7 +15,9 @@ export type AppEnv = {
 
 export type App = Hono<AppEnv>;
 
-export type AppOptions = ConstructorParameters<typeof Hono<AppEnv>>[0];
+export type AppOptions = ConstructorParameters<typeof Hono<AppEnv>>[0] & {
+  debug?: RouteDebugOption;
+};
 
 export function appFactory(
   routes: Array<Route<MiddlewareHandler>>,
@@ -43,18 +45,27 @@ export function appFactory(
     routers: [new RegExpRouter(), new TrieRouter()],
   }) as Router<never>;
 
+  const { debug = undefined, ...appOptions } = {
+    ...(options ? { ...options } : {}),
+  };
+
   const app = new Hono({
     strict: false,
     router,
-    ...(options ? { ...options } : {}),
+    ...appOptions,
   });
 
   if (typeof fn === "function") {
     fn({ app, router });
   }
 
-  for (const { path, methods, middleware } of routes) {
-    app.on(methods, [path], ...middleware);
+  for (const route of routes) {
+    if (typeof debug === "function") {
+      (debug as Function)(route.debug, route);
+    } else if (debug) {
+      console.log(route.debug[typeof debug === "string" ? debug : "full"]);
+    }
+    app.on(route.methods, [route.path], ...route.middleware);
   }
 
   return app as never;
