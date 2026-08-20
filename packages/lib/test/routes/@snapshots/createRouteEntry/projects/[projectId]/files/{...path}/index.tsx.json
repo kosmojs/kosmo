@@ -55,5 +55,5 @@
   ],
   "pathPattern": "projects/:projectId/files{/*path}",
   "honoPattern": "projects/:projectId/files/*",
-  "h3Pattern": "projects/:projectId/files/**:path?"
+  "h3Pattern": "projects/:projectId/files/**"
 }

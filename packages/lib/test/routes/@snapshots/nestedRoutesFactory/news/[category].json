@@ -69,7 +69,7 @@
         ],
         "pathPattern": "news/:category/articles{/*articlePath}",
         "honoPattern": "news/:category/articles/*",
-        "h3Pattern": "news/:category/articles/**:articlePath?"
+        "h3Pattern": "news/:category/articles/**"
       },
       "parent": "news/[category]",
       "children": []

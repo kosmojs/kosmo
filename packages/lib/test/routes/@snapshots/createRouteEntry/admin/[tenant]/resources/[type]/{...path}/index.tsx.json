@@ -68,5 +68,5 @@
   ],
   "pathPattern": "admin/:tenant/resources/:type{/*path}",
   "honoPattern": "admin/:tenant/resources/:type/*",
-  "h3Pattern": "admin/:tenant/resources/:type/**:path?"
+  "h3Pattern": "admin/:tenant/resources/:type/**"
 }

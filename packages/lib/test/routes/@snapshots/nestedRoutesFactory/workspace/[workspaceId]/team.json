@@ -93,7 +93,7 @@
         ],
         "pathPattern": "workspace/:workspaceId/team/:memberId/permissions{/*permissionPath}",
         "honoPattern": "workspace/:workspaceId/team/:memberId/permissions/*",
-        "h3Pattern": "workspace/:workspaceId/team/:memberId/permissions/**:permissionPath?"
+        "h3Pattern": "workspace/:workspaceId/team/:memberId/permissions/**"
       },
       "parent": "workspace/[workspaceId]/team",
       "children": []

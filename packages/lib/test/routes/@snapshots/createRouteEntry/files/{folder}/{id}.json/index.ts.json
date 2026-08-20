@@ -48,5 +48,5 @@
   ],
   "pathPattern": "files{/:folder}{/:id}.json",
   "honoPattern": "files/:folder?/:_2{(?:[^/]+)?.json}",
-  "h3Pattern": "files/:folder?/{:id}?.json"
+  "h3Pattern": "files/*/{:id}?.json"
 }

@@ -1,0 +1,12 @@
+import {
+  defineConfig,
+  solidGenerator,
+  h3Generator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/solid-h3",
+  generators: [solidGenerator(), h3Generator(), fetchGenerator(), typeboxGenerator()],
+});

@@ -45,7 +45,7 @@
         ],
         "pathPattern": "search{/:query}",
         "honoPattern": "search/:query?",
-        "h3Pattern": "search/:query?"
+        "h3Pattern": "search/*"
       },
       "parent": "search",
       "children": [
@@ -72,7 +72,7 @@
             ],
             "pathPattern": "search{/:query}{/:page}",
             "honoPattern": "search/:query?/:page?",
-            "h3Pattern": "search/:query?/:page?"
+            "h3Pattern": "search/*/*"
           },
           "parent": "search/{query}",
           "children": []

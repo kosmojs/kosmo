@@ -67,7 +67,7 @@
         ],
         "pathPattern": "docs{/*path}",
         "honoPattern": "docs/*",
-        "h3Pattern": "docs/**:path?"
+        "h3Pattern": "docs/**"
       },
       "parent": "docs",
       "children": []

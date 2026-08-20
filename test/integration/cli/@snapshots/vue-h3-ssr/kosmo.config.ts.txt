@@ -1,0 +1,13 @@
+import {
+  defineConfig,
+  vueGenerator,
+  h3Generator,
+  ssrGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/vue-h3-ssr",
+  generators: [vueGenerator(), h3Generator(), ssrGenerator(), fetchGenerator(), typeboxGenerator()],
+});

@@ -31,5 +31,5 @@
   ],
   "pathPattern": "files{/:folder}",
   "honoPattern": "files/:folder?",
-  "h3Pattern": "files/:folder?"
+  "h3Pattern": "files/*"
 }

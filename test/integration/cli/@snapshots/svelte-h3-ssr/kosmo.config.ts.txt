@@ -1,0 +1,19 @@
+import {
+  defineConfig,
+  svelteGenerator,
+  h3Generator,
+  ssrGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/svelte-h3-ssr",
+  generators: [
+    svelteGenerator(),
+    h3Generator(),
+    ssrGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

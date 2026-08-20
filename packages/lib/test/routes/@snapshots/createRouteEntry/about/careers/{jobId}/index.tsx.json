@@ -42,5 +42,5 @@
   ],
   "pathPattern": "about/careers{/:jobId}",
   "honoPattern": "about/careers/:jobId?",
-  "h3Pattern": "about/careers/:jobId?"
+  "h3Pattern": "about/careers/*"
 }

@@ -726,7 +726,7 @@
     ],
     "pathPattern": "about/careers{/:jobId}",
     "honoPattern": "about/careers/:jobId?",
-    "h3Pattern": "about/careers/:jobId?"
+    "h3Pattern": "about/careers/*"
   },
   {
     "id": "shop_products_category_index_tsx_130432150",
@@ -772,7 +772,7 @@
     ],
     "pathPattern": "shop/products{/:category}",
     "honoPattern": "shop/products/:category?",
-    "h3Pattern": "shop/products/:category?"
+    "h3Pattern": "shop/products/*"
   },
   {
     "id": "about_careers_layout_tsx_3684129548",
@@ -1345,7 +1345,7 @@
     ],
     "pathPattern": "pages{/*path}.html",
     "honoPattern": "pages/:_1{(?:.+)?.html}",
-    "h3Pattern": "pages/{**:path?}?.html"
+    "h3Pattern": "pages/{/**:path?}?.html"
   },
   {
     "id": "admin_tenant_settings_general_index_tsx_4196017676",
@@ -1931,7 +1931,7 @@
     ],
     "pathPattern": "courses/:courseId/lessons/:lessonId/assignments{/*assignmentPath}",
     "honoPattern": "courses/:courseId/lessons/:lessonId/assignments/*",
-    "h3Pattern": "courses/:courseId/lessons/:lessonId/assignments/**:assignmentPath?"
+    "h3Pattern": "courses/:courseId/lessons/:lessonId/assignments/**"
   },
   {
     "id": "profile_username_posts_postId_comments_thread_index_tsx_635455370",
@@ -2014,7 +2014,7 @@
     ],
     "pathPattern": "profile/:username/posts/:postId/comments{/*thread}",
     "honoPattern": "profile/:username/posts/:postId/comments/*",
-    "h3Pattern": "profile/:username/posts/:postId/comments/**:thread?"
+    "h3Pattern": "profile/:username/posts/:postId/comments/**"
   },
   {
     "id": "workspace_workspaceId_team_memberId_permissions_permissionPath_index_tsx_3735406549",
@@ -2097,7 +2097,7 @@
     ],
     "pathPattern": "workspace/:workspaceId/team/:memberId/permissions{/*permissionPath}",
     "honoPattern": "workspace/:workspaceId/team/:memberId/permissions/*",
-    "h3Pattern": "workspace/:workspaceId/team/:memberId/permissions/**:permissionPath?"
+    "h3Pattern": "workspace/:workspaceId/team/:memberId/permissions/**"
   },
   {
     "id": "admin_tenant_resources_type_index_tsx_2889345339",
@@ -2936,7 +2936,7 @@
     ],
     "pathPattern": "admin/:tenant/resources/:type{/*path}",
     "honoPattern": "admin/:tenant/resources/:type/*",
-    "h3Pattern": "admin/:tenant/resources/:type/**:path?"
+    "h3Pattern": "admin/:tenant/resources/:type/**"
   },
   {
     "id": "admin_tenant_resources_index_tsx_1533280296",
@@ -3961,7 +3961,7 @@
     ],
     "pathPattern": "news/:category/articles{/*articlePath}",
     "honoPattern": "news/:category/articles/*",
-    "h3Pattern": "news/:category/articles/**:articlePath?"
+    "h3Pattern": "news/:category/articles/**"
   },
   {
     "id": "projects_projectId_files_path_index_tsx_3414316093",
@@ -4020,7 +4020,7 @@
     ],
     "pathPattern": "projects/:projectId/files{/*path}",
     "honoPattern": "projects/:projectId/files/*",
-    "h3Pattern": "projects/:projectId/files/**:path?"
+    "h3Pattern": "projects/:projectId/files/**"
   },
   {
     "id": "properties_city_filters_filters_index_tsx_1192904431",
@@ -4079,7 +4079,7 @@
     ],
     "pathPattern": "properties/:city/filters{/*filters}",
     "honoPattern": "properties/:city/filters/*",
-    "h3Pattern": "properties/:city/filters/**:filters?"
+    "h3Pattern": "properties/:city/filters/**"
   },
   {
     "id": "store_category_filters_filters_index_tsx_2600177157",
@@ -4138,7 +4138,7 @@
     ],
     "pathPattern": "store/:category/filters{/*filters}",
     "honoPattern": "store/:category/filters/*",
-    "h3Pattern": "store/:category/filters/**:filters?"
+    "h3Pattern": "store/:category/filters/**"
   },
   {
     "id": "shop_category_productId_index_tsx_3761077416",
@@ -4282,7 +4282,7 @@
     ],
     "pathPattern": "books/:category{/:author}",
     "honoPattern": "books/:category/:author?",
-    "h3Pattern": "books/:category/:author?"
+    "h3Pattern": "books/:category/*"
   },
   {
     "id": "admin_tenant_index_tsx_144548962",
@@ -4754,7 +4754,7 @@
     ],
     "pathPattern": "files{/:folder}{/:id}.json",
     "honoPattern": "files/:folder?/:_2{(?:[^/]+)?.json}",
-    "h3Pattern": "files/:folder?/{:id}?.json"
+    "h3Pattern": "files/*/{:id}?.json"
   },
   {
     "id": "blog_category_tag_index_tsx_1530717925",
@@ -4802,7 +4802,7 @@
     ],
     "pathPattern": "blog{/:category}{/:tag}",
     "honoPattern": "blog/:category?/:tag?",
-    "h3Pattern": "blog/:category?/:tag?"
+    "h3Pattern": "blog/*/*"
   },
   {
     "id": "search_query_page_index_tsx_238838277",
@@ -4850,7 +4850,7 @@
     ],
     "pathPattern": "search{/:query}{/:page}",
     "honoPattern": "search/:query?/:page?",
-    "h3Pattern": "search/:query?/:page?"
+    "h3Pattern": "search/*/*"
   },
   {
     "id": "blog_category_index_tsx_2361523450",
@@ -4885,7 +4885,7 @@
     ],
     "pathPattern": "blog{/:category}",
     "honoPattern": "blog/:category?",
-    "h3Pattern": "blog/:category?"
+    "h3Pattern": "blog/*"
   },
   {
     "id": "files_folder_index_ts_286600463",
@@ -4920,7 +4920,7 @@
     ],
     "pathPattern": "files{/:folder}",
     "honoPattern": "files/:folder?",
-    "h3Pattern": "files/:folder?"
+    "h3Pattern": "files/*"
   },
   {
     "id": "search_query_layout_tsx_3813281713",
@@ -4955,7 +4955,7 @@
     ],
     "pathPattern": "search{/:query}",
     "honoPattern": "search/:query?",
-    "h3Pattern": "search/:query?"
+    "h3Pattern": "search/*"
   },
   {
     "id": "about_index_tsx_3061335318",
@@ -5584,7 +5584,7 @@
     ],
     "pathPattern": "articles{/*path}",
     "honoPattern": "articles/*",
-    "h3Pattern": "articles/**:path?"
+    "h3Pattern": "articles/**"
   },
   {
     "id": "docs_path_index_tsx_3119800738",
@@ -5619,7 +5619,7 @@
     ],
     "pathPattern": "docs{/*path}",
     "honoPattern": "docs/*",
-    "h3Pattern": "docs/**:path?"
+    "h3Pattern": "docs/**"
   },
   {
     "id": "files_filePath_index_tsx_3346733359",
@@ -5654,7 +5654,7 @@
     ],
     "pathPattern": "files{/*filePath}",
     "honoPattern": "files/*",
-    "h3Pattern": "files/**:filePath?"
+    "h3Pattern": "files/**"
   },
   {
     "id": "files_filePath_layout_tsx_3517107166",
@@ -5689,7 +5689,7 @@
     ],
     "pathPattern": "files{/*filePath}",
     "honoPattern": "files/*",
-    "h3Pattern": "files/**:filePath?"
+    "h3Pattern": "files/**"
   },
   {
     "id": "_category_ext_index_ts_334710937",

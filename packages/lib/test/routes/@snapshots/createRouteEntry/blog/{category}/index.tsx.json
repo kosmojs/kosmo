@@ -31,5 +31,5 @@
   ],
   "pathPattern": "blog{/:category}",
   "honoPattern": "blog/:category?",
-  "h3Pattern": "blog/:category?"
+  "h3Pattern": "blog/*"
 }

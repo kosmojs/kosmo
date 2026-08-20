@@ -95,7 +95,7 @@
         ],
         "pathPattern": "properties/:city/filters{/*filters}",
         "honoPattern": "properties/:city/filters/*",
-        "h3Pattern": "properties/:city/filters/**:filters?"
+        "h3Pattern": "properties/:city/filters/**"
       },
       "parent": "properties",
       "children": []

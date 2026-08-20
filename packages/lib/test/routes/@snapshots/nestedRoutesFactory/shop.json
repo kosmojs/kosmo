@@ -445,7 +445,7 @@
             ],
             "pathPattern": "shop/products{/:category}",
             "honoPattern": "shop/products/:category?",
-            "h3Pattern": "shop/products/:category?"
+            "h3Pattern": "shop/products/*"
           },
           "parent": "shop/products",
           "children": []

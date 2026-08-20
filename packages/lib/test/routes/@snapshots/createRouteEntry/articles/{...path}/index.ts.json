@@ -31,5 +31,5 @@
   ],
   "pathPattern": "articles{/*path}",
   "honoPattern": "articles/*",
-  "h3Pattern": "articles/**:path?"
+  "h3Pattern": "articles/**"
 }

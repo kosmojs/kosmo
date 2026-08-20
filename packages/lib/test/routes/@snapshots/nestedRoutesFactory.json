@@ -242,7 +242,7 @@
           ],
           "pathPattern": "workspace/:workspaceId/team/:memberId/permissions{/*permissionPath}",
           "honoPattern": "workspace/:workspaceId/team/:memberId/permissions/*",
-          "h3Pattern": "workspace/:workspaceId/team/:memberId/permissions/**:permissionPath?"
+          "h3Pattern": "workspace/:workspaceId/team/:memberId/permissions/**"
         },
         "parent": "workspace/[workspaceId]/team",
         "children": []
@@ -344,7 +344,7 @@
           ],
           "pathPattern": "courses/:courseId/lessons/:lessonId/assignments{/*assignmentPath}",
           "honoPattern": "courses/:courseId/lessons/:lessonId/assignments/*",
-          "h3Pattern": "courses/:courseId/lessons/:lessonId/assignments/**:assignmentPath?"
+          "h3Pattern": "courses/:courseId/lessons/:lessonId/assignments/**"
         },
         "parent": "courses/[courseId]",
         "children": []
@@ -422,7 +422,7 @@
           ],
           "pathPattern": "news/:category/articles{/*articlePath}",
           "honoPattern": "news/:category/articles/*",
-          "h3Pattern": "news/:category/articles/**:articlePath?"
+          "h3Pattern": "news/:category/articles/**"
         },
         "parent": "news/[category]",
         "children": []
@@ -538,7 +538,7 @@
               ],
               "pathPattern": "profile/:username/posts/:postId/comments{/*thread}",
               "honoPattern": "profile/:username/posts/:postId/comments/*",
-              "h3Pattern": "profile/:username/posts/:postId/comments/**:thread?"
+              "h3Pattern": "profile/:username/posts/:postId/comments/**"
             },
             "parent": "profile/[username]/posts/[postId]",
             "children": []
@@ -641,7 +641,7 @@
               ],
               "pathPattern": "about/careers{/:jobId}",
               "honoPattern": "about/careers/:jobId?",
-              "h3Pattern": "about/careers/:jobId?"
+              "h3Pattern": "about/careers/*"
             },
             "parent": "about/careers",
             "children": []
@@ -922,7 +922,7 @@
                       ],
                       "pathPattern": "admin/:tenant/resources/:type{/*path}",
                       "honoPattern": "admin/:tenant/resources/:type/*",
-                      "h3Pattern": "admin/:tenant/resources/:type/**:path?"
+                      "h3Pattern": "admin/:tenant/resources/:type/**"
                     },
                     "parent": "admin/[tenant]/resources/[type]",
                     "children": []
@@ -1256,7 +1256,7 @@
           ],
           "pathPattern": "blog{/:category}",
           "honoPattern": "blog/:category?",
-          "h3Pattern": "blog/:category?"
+          "h3Pattern": "blog/*"
         },
         "parent": "blog",
         "children": [
@@ -1283,7 +1283,7 @@
               ],
               "pathPattern": "blog{/:category}{/:tag}",
               "honoPattern": "blog/:category?/:tag?",
-              "h3Pattern": "blog/:category?/:tag?"
+              "h3Pattern": "blog/*/*"
             },
             "parent": "blog/{category}",
             "children": []
@@ -1685,7 +1685,7 @@
           ],
           "pathPattern": "docs{/*path}",
           "honoPattern": "docs/*",
-          "h3Pattern": "docs/**:path?"
+          "h3Pattern": "docs/**"
         },
         "parent": "docs",
         "children": []
@@ -2176,7 +2176,7 @@
                   ],
                   "pathPattern": "projects/:projectId/files{/*path}",
                   "honoPattern": "projects/:projectId/files/*",
-                  "h3Pattern": "projects/:projectId/files/**:path?"
+                  "h3Pattern": "projects/:projectId/files/**"
                 },
                 "parent": "projects/[projectId]/files",
                 "children": []
@@ -2540,7 +2540,7 @@
           ],
           "pathPattern": "properties/:city/filters{/*filters}",
           "honoPattern": "properties/:city/filters/*",
-          "h3Pattern": "properties/:city/filters/**:filters?"
+          "h3Pattern": "properties/:city/filters/**"
         },
         "parent": "properties",
         "children": []
@@ -2594,7 +2594,7 @@
           ],
           "pathPattern": "search{/:query}",
           "honoPattern": "search/:query?",
-          "h3Pattern": "search/:query?"
+          "h3Pattern": "search/*"
         },
         "parent": "search",
         "children": [
@@ -2621,7 +2621,7 @@
               ],
               "pathPattern": "search{/:query}{/:page}",
               "honoPattern": "search/:query?/:page?",
-              "h3Pattern": "search/:query?/:page?"
+              "h3Pattern": "search/*/*"
             },
             "parent": "search/{query}",
             "children": []
@@ -3077,7 +3077,7 @@
               ],
               "pathPattern": "shop/products{/:category}",
               "honoPattern": "shop/products/:category?",
-              "h3Pattern": "shop/products/:category?"
+              "h3Pattern": "shop/products/*"
             },
             "parent": "shop/products",
             "children": []
@@ -3328,7 +3328,7 @@
           ],
           "pathPattern": "store/:category/filters{/*filters}",
           "honoPattern": "store/:category/filters/*",
-          "h3Pattern": "store/:category/filters/**:filters?"
+          "h3Pattern": "store/:category/filters/**"
         },
         "parent": "store",
         "children": []
@@ -3623,7 +3623,7 @@
       ],
       "pathPattern": "files{/*filePath}",
       "honoPattern": "files/*",
-      "h3Pattern": "files/**:filePath?"
+      "h3Pattern": "files/**"
     },
     "layout": {
       "id": "files_filePath_layout_tsx_3517107166",
@@ -3658,7 +3658,7 @@
       ],
       "pathPattern": "files{/*filePath}",
       "honoPattern": "files/*",
-      "h3Pattern": "files/**:filePath?"
+      "h3Pattern": "files/**"
     },
     "children": []
   }

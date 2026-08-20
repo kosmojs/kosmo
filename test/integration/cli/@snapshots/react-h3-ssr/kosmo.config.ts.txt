@@ -1,0 +1,19 @@
+import {
+  defineConfig,
+  reactGenerator,
+  h3Generator,
+  ssrGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/react-h3-ssr",
+  generators: [
+    reactGenerator(),
+    h3Generator(),
+    ssrGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

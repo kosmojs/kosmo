@@ -141,7 +141,7 @@
         ],
         "pathPattern": "blog{/:category}",
         "honoPattern": "blog/:category?",
-        "h3Pattern": "blog/:category?"
+        "h3Pattern": "blog/*"
       },
       "parent": "blog",
       "children": [
@@ -168,7 +168,7 @@
             ],
             "pathPattern": "blog{/:category}{/:tag}",
             "honoPattern": "blog/:category?/:tag?",
-            "h3Pattern": "blog/:category?/:tag?"
+            "h3Pattern": "blog/*/*"
           },
           "parent": "blog/{category}",
           "children": []

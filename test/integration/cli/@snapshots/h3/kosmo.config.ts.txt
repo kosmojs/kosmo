@@ -1,0 +1,6 @@
+import { defineConfig, h3Generator, fetchGenerator, typeboxGenerator } from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/h3",
+  generators: [h3Generator(), fetchGenerator(), typeboxGenerator()],
+});
