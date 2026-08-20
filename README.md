@@ -1,13 +1,17 @@
-## KosmoJS - the composable meta-framework
+<p align="center">
+  <img src="https://kosmojs.dev/kosmo-mark.png" width="96" alt="KosmoJS">
+</p>
+<h1 align="center">KosmoJS</h1>
+<p align="center">The composable meta-framework</p>
 
 KosmoJS composes several apps in a scalable codebase, offering both consistency and flexibility.
 
 #### Notable Features
 
 Multiple source folders. Directory-based routing. Cascading middleware. Nested layouts.
-End-to-end validation. Typed fetch clients. OpenAPI spec. Isomorphic fetch. Streaming SSR. TanStack Query.
+End-to-end validation. Typed fetch clients. Isomorphic fetch. Streaming SSR. TanStack Query. OpenAPI spec.
 
-Koa, Hono, React, Vue, SolidJS, Svelte, MDX and more.
+Hono, H3, Koa, React, Vue, SolidJS, Svelte, MDX and more.
 
 📘 [Documentation: kosmojs.dev](https://kosmojs.dev)
 
@@ -95,7 +99,7 @@ Each source folder runs its own set of frameworks with its own base URL, config 
 
 - **TanStack Query Integration** - opt in per source folder and KosmoJS wires the query client for you (per-request on the server, singleton in the browser). Enabling it is one option; using it is just importing `useQuery`. Works across React, SolidJS, Vue, and Svelte.
 
-- **Multiple Frameworks** - `Koa` or `Hono` for backend; `React`, `Vue`, `SolidJS`, `Svelte`, or `MDX` for frontend. Different source folders can use different combinations.
+- **Multiple Frameworks** - `Hono`, `H3`, `Koa` for backend; `React`, `Vue`, `SolidJS`, `Svelte`, `MDX` for frontend. Different source folders can use different combinations.
 
 - **Built on Proven Tools** - no proprietary runtime, no custom bundler, no framework lock-in.
 
