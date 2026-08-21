@@ -28,6 +28,18 @@ export type SourceFolder = {
 
 export const CREATE_OPTIONS = ["project", "folder"] as const;
 
+export const introText = () => {
+  const greets = [
+    "Great! Let's add a new source folder 📁",
+    "Right! It's perfect time for a new source folder ✨",
+    "Nice! A fresh source folder coming right up 🛠️",
+  ];
+  return styleText(
+    ["bold", "green"],
+    greets[Math.floor(Math.random() * greets.length)],
+  );
+};
+
 export const copyFiles = async (
   src: string,
   dst: string,
@@ -48,13 +60,13 @@ export const copyFiles = async (
   });
 };
 
-export const compareDependencies = async (
+type DependencyEntry = ["dependencies" | "devDependencies", string, string];
+
+export const compareDependencies = (
   oldPackageJson: PackageJSON,
   newPackageJson: PackageJSON,
-) => {
-  const newDependencies: Array<
-    ["dependencies" | "devDependencies", string, string]
-  > = [];
+): Array<DependencyEntry> => {
+  const newDependencies: Array<DependencyEntry> = [];
 
   for (const key of ["dependencies", "devDependencies"] as const) {
     for (const [pkg, ver] of Object.entries(newPackageJson[key] || {}) as Array<
@@ -66,27 +78,32 @@ export const compareDependencies = async (
     }
   }
 
-  if (newDependencies.length) {
-    console.warn();
-    console.warn(
-      [
-        "💡 ",
-        styleText(["bold", "italic", "red"], "New dependencies added: "),
-        styleText("dim", newDependencies.map(([, pkg]) => pkg).join(", ")),
-      ].join(""),
-    );
-    console.warn(
-      "📦",
-      [
-        styleText(["bold", "blueBright"], "Install them before continue: "),
-        styleText(
-          "dim",
-          ["npm", "pnpm", "yarn"].map((e) => `\`${e} install\``).join(" / "),
-        ),
-      ].join(""),
-    );
-    console.warn();
-  }
+  return newDependencies;
+};
+
+export const newDependenciesText = (
+  newDependencies: Array<DependencyEntry>,
+) => {
+  return [
+    "💡 ",
+    styleText(["bold", "italic", "red"], "New dependencies added: "),
+    styleText("dim", newDependencies.map(([, pkg]) => pkg).join(", ")),
+  ].join("");
+};
+
+export const installHintText = () => {
+  return [
+    "📦 ",
+    styleText(["bold", "blueBright"], "Install them before continue: "),
+    styleText(
+      "dim",
+      ["npm", "pnpm", "yarn"].map((e) => `\`${e} install\``).join(" / "),
+    ),
+  ].join("");
+};
+
+export const readyText = () => {
+  return styleText(["bold", "green"], "Source folder ready ✅");
 };
 
 export const validateName = (name: string | undefined) => {

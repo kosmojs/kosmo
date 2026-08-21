@@ -4,8 +4,8 @@ import { readFile } from "node:fs/promises";
 import { basename, dirname, resolve } from "node:path";
 import { parseArgs } from "node:util";
 
+import * as prompts from "@clack/prompts";
 import { createJiti } from "jiti";
-import prompts, { type PromptObject } from "prompts";
 import { glob } from "tinyglobby";
 
 import {
@@ -20,7 +20,11 @@ import { pathExists } from "@kosmojs/lib";
 import {
   assertNoError,
   compareDependencies,
+  installHintText,
+  introText,
+  newDependenciesText,
   printUsage,
+  readyText,
   type SourceFolder,
   validateBase,
   validateName,
@@ -58,6 +62,16 @@ const packageJson = packageFileExists
   ? await import(packageFile, { with: { type: "json" } }).then((e) => e.default)
   : undefined;
 
+// Resolve a clack prompt, exiting cleanly on ctrl-c / escape
+const answer = async <T>(input: Promise<T | symbol>) => {
+  const value = await input;
+  if (prompts.isCancel(value)) {
+    prompts.cancel("Cancelled");
+    process.exit(0);
+  }
+  return value;
+};
+
 const run = async () => {
   const commands = ["folder", "serve", "build"] as const;
 
@@ -86,7 +100,19 @@ const run = async () => {
       // cached content, and adding a cache-busting query string causes
       // Vite's module runner to treat JSON as JavaScript, failing to parse
       const json = await readFile(packageFile, "utf8");
-      await compareDependencies(packageJson, JSON.parse(json));
+
+      const newDependencies = compareDependencies(
+        packageJson,
+        JSON.parse(json),
+      );
+
+      if (newDependencies.length) {
+        prompts.log.info(
+          [newDependenciesText(newDependencies), installHintText()].join("\n"),
+        );
+      } else {
+        prompts.outro(readyText());
+      }
     }
 
     return;
@@ -166,86 +192,87 @@ const createFolder = async () => {
 
   // interactive mode
 
-  const onState: PromptObject["onState"] = (state) => {
-    if (state.aborted) {
-      process.nextTick(() => process.exit(1));
-    }
-  };
+  if (!options.values.quiet) {
+    prompts.intro(introText());
+  }
 
-  const folder = await prompts<keyof SourceFolder>([
-    {
-      type: "text",
-      name: "name",
+  const name = await answer(
+    prompts.text({
       message: "Folder Name",
-      onState,
-      validate: (name) => validateName(name) || true,
-    },
+      validate: validateName,
+    }),
+  );
 
-    {
-      type: "text",
-      name: "base",
+  const base = await answer(
+    prompts.text({
       message: "Base URL",
-      initial: "/",
-      onState,
-      validate: (base) => validateBase(base || "/") || true,
-    },
+      initialValue: "/",
+      validate: (base) => validateBase(base || "/"),
+    }),
+  );
 
-    {
-      type: "select",
-      name: "backend",
+  const backend = (await answer(
+    prompts.select({
       message: "Backend Framework",
-      onState,
-      choices: [
-        ...Object.entries(BACKENDS).map(([value, title]) => {
-          return { value, title };
+      options: [
+        ...Object.entries(BACKENDS).map(([value, label]) => {
+          return { value, label };
         }),
-        { value: "none", title: "None (client-only folder)" },
+        { value: "none", label: "None (client-only folder)" },
       ],
-    },
+    }),
+  )) as SourceFolder["backend"];
 
-    {
-      type: "select",
-      name: "framework",
+  const framework = (await answer(
+    prompts.select({
       message: "Framework",
-      onState,
-      choices: [
-        ...Object.entries(FRAMEWORKS).map(([value, title]) => {
-          return { value, title };
+      options: [
+        ...Object.entries(FRAMEWORKS).map(([value, label]) => {
+          return { value, label };
         }),
-        { value: "none", title: "None (API-only folder)" },
+        { value: "none", label: "None (API-only folder)" },
       ],
-    },
+    }),
+  )) as SourceFolder["framework"];
 
-    {
-      type: (prev: SourceFolder["framework"]) => {
-        return ["none", "mdx"].includes(prev as never) // skip if...
-          ? undefined
-          : "toggle";
-      },
-      name: "ssr",
-      message: "Enable server-side rendering (SSR)?",
-      initial: false,
-      active: "yes",
-      inactive: "no",
-    },
+  // SSR and TanStack Query only apply to frameworks with a client runtime
+  const promptExtras = !["none", "mdx"].includes(framework as never);
 
-    {
-      type: (prev: SourceFolder["framework"]) => {
-        return ["none", "mdx"].includes(prev as never) // skip if...
-          ? undefined
-          : "toggle";
-      },
-      name: "tsq",
-      message: "Enable TanStack Query?",
-      initial: false,
-      active: "yes",
-      inactive: "no",
-    },
-  ]);
+  let ssr: boolean | undefined;
+  let tsq: boolean | undefined;
+
+  if (promptExtras) {
+    ssr = await answer(
+      prompts.confirm({
+        message: "Enable server-side rendering (SSR)?",
+        initialValue: false,
+        active: "yes",
+        inactive: "no",
+      }),
+    );
+
+    tsq = await answer(
+      prompts.confirm({
+        message: "Enable TanStack Query?",
+        initialValue: false,
+        active: "yes",
+        inactive: "no",
+      }),
+    );
+  }
+
+  const folder: SourceFolder = {
+    name,
+    base,
+    ...(backend ? { backend } : {}),
+    ...(framework ? { framework } : {}),
+    ...(ssr ? { ssr } : {}),
+    ...(tsq ? { tsq } : {}),
+  };
 
   await createSourceFolder(root, folder);
 
-  return folder as SourceFolder;
+  return folder;
 };
 
 try {

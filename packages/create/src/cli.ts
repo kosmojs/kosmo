@@ -2,7 +2,7 @@
 
 import { parseArgs, styleText } from "node:util";
 
-import prompts, { type PromptObject } from "prompts";
+import * as prompts from "@clack/prompts";
 
 import {
   assertNoError,
@@ -11,7 +11,7 @@ import {
   validateName,
 } from "@kosmojs/cli";
 
-import { messageFactory } from "./base";
+import { docsText, introText, nextStepsText, successText } from "./base";
 
 const usage = [
   "",
@@ -57,16 +57,24 @@ const cwd = process.cwd();
 
 let { name } = values;
 
-const messages = messageFactory(name || values.quiet ? () => {} : console.log);
+// Session framing (intro / next steps / outro) renders only for
+// interactive sessions not silenced by --quiet
+const verbose = !name && !values.quiet;
+
+// Resolve a clack prompt, exiting cleanly on ctrl-c / escape
+const answer = async <T>(input: Promise<T | symbol>) => {
+  const value = await input;
+  if (prompts.isCancel(value)) {
+    prompts.cancel("Cancelled");
+    process.exit(0);
+  }
+  return value;
+};
 
 if (!name) {
-  messages.preamble();
-
-  const onState: PromptObject["onState"] = (state) => {
-    if (state.aborted) {
-      process.nextTick(() => process.exit(1));
-    }
-  };
+  if (verbose) {
+    prompts.intro(introText());
+  }
 
   const validateName = (name: string | undefined) => {
     if (!name) {
@@ -78,17 +86,12 @@ if (!name) {
     return undefined;
   };
 
-  const input = await prompts<"name">([
-    {
-      type: "text",
-      name: "name",
+  name = await answer(
+    prompts.text({
       message: "Project Name",
-      onState,
-      validate: (name) => validateName(name) || true,
-    },
-  ]);
-
-  name = input.name;
+      validate: validateName,
+    }),
+  );
 }
 
 try {
@@ -100,7 +103,11 @@ try {
 
   await createProject(cwd, project);
 
-  messages.projectCreated(project);
+  if (verbose) {
+    prompts.log.success(successText());
+    prompts.note(nextStepsText(project), "Next Steps");
+    prompts.outro(docsText());
+  }
 
   process.exit(0);
 } catch (
