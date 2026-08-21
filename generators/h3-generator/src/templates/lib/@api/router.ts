@@ -185,18 +185,39 @@ export const createRouteMiddleware: CreateRouteMiddleware<
         // run all downstream middleware (including the route handler)
         const body = await next();
 
+        /**
+         * H3 builds the actual Response AFTER the middleware chain completes,
+         * so at this point event.res only reflects what handlers set explicitly.
+         * Reconstruct what will be sent instead: a returned Response is authoritative;
+         * otherwise an unset status means 200, and the content type follows H3's
+         * serialization rules for the returned value (string -> text, object -> JSON).
+         * */
+        const rawResponse = body instanceof Response ? body : undefined;
+
         const response: {
           status: number;
           contentType: string | null;
           body?: unknown;
         } = {
-          status: event.res.status ?? -1,
-          contentType: event.res.headers.get("Content-Type"),
+          status: rawResponse?.status ?? event.res.status ?? 200,
+          contentType:
+            rawResponse?.headers.get("Content-Type") ??
+            event.res.headers.get("Content-Type") ??
+            (typeof body === "string"
+              ? "text/plain"
+              : body === undefined || body === null
+                ? null
+                : "application/json"),
         };
 
         // Validate body only for JSON variants
         if (variants.some((e) => e.contentType?.includes("json"))) {
-          response.body = body;
+          response.body = rawResponse
+            ? await rawResponse
+                .clone()
+                .json()
+                .catch(() => undefined)
+            : body;
         }
 
         /**
@@ -216,7 +237,7 @@ export const createRouteMiddleware: CreateRouteMiddleware<
                 : {
                     keyword: "Status",
                     path: `Variant #${i}`,
-                    message: `expected: ${schema.status}; actual: ${event.res.status}`,
+                    message: `expected: ${schema.status}; actual: ${response.status}`,
                   };
             },
             (i) => {
