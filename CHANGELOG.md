@@ -1,4 +1,32 @@
-## [0.3.0](https://github.com/kosmojs/kosmo/compare/v0.2.10...v) (2026-08-15)
+## [0.4.0](https://github.com/kosmojs/kosmo/compare/v0.3.0...v0.4.0) (2026-08-21)
+
+### ⚠ BREAKING CHANGES
+
+* **koa-generator:** register defaultErrorHandler via app.on("error") hook
+* **koa-generator:** revamp app factory
+* **hono-generator:** revamp app factory
+* **koa-generator:** revamp server
+* **hono-generator:** revamp server
+
+### Features
+
+* **backend:** add H3 as a supported backend framework ([d9c87b1](https://github.com/kosmojs/kosmo/commit/d9c87b1042a3472c6db0321ee13e03a3b36d3139))
+
+### Bug Fixes
+
+* **cli:** wire dependencies declared by coreGenerator ([231668a](https://github.com/kosmojs/kosmo/commit/231668a13f265dba9d5dedf521a1433cff4f5d30))
+* **hono-generator:** render correct import path for env.d.ts ([4df49fd](https://github.com/kosmojs/kosmo/commit/4df49fd0e0a6747ca087307ed3fa84ac83df4c5e))
+* **koa-generator:** render correct import path for env.d.ts ([9f61a27](https://github.com/kosmojs/kosmo/commit/9f61a27fe9168f2a78bb44e9216711a948d4a9fd))
+
+### Code Refactoring
+
+* **hono-generator:** revamp app factory ([526fea7](https://github.com/kosmojs/kosmo/commit/526fea7317ae592f4378838fe15359dcd9e310b6))
+* **hono-generator:** revamp server ([1a7f795](https://github.com/kosmojs/kosmo/commit/1a7f795f85d6a1467d358c165e9315ce28b7a7df))
+* **koa-generator:** register defaultErrorHandler via app.on("error") hook ([283e296](https://github.com/kosmojs/kosmo/commit/283e296447b1e269938acaf194bba718c7824ff1))
+* **koa-generator:** revamp app factory ([e4ffd76](https://github.com/kosmojs/kosmo/commit/e4ffd7686c7b04819328ecd75ff84190c29f9f68))
+* **koa-generator:** revamp server ([060b268](https://github.com/kosmojs/kosmo/commit/060b2688c6d279bb16fb1ba3e5be7562542cc975))
+
+## [0.3.0](https://github.com/kosmojs/kosmo/compare/v0.2.10...v0.3.0) (2026-08-15)
 
 ### ⚠ BREAKING CHANGES
 
