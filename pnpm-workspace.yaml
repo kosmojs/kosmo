@@ -18,6 +18,7 @@ packages:
   - "generators/*"
   - "packages/*"
   - "wsbuild"
+  - "tsconfig"
   - "test"
   - "docs"
 

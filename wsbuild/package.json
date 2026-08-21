@@ -9,6 +9,6 @@
     "build": "echo true"
   },
   "dependencies": {
-    "vite": "^8.2.1"
+    "vite": "^8.2.2"
   }
 }

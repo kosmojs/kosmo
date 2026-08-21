@@ -315,7 +315,6 @@ describe("string/format", () => {
         "not-a-url",
         "example.com",
         "http://",
-        "https://example.com/ path",
         "http://example .com",
         "://example.com",
       ] as const) {

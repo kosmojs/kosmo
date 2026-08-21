@@ -21,7 +21,7 @@
     "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^",
     "@mdx-js/rollup": "^3.1.1",
-    "vite": "^8.2.1"
+    "vite": "^8.2.2"
   },
   "devDependencies": {
     "@mdx-js/mdx": "^3.1.1",
