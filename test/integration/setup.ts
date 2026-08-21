@@ -45,7 +45,25 @@ const apiClient = got.extend({
   },
 });
 
-const PORT_RANGE = [40_000, 60_000];
+// Ports are allocated long before servers actually bind(dependency install and build run in between),
+// so the range must sit below the kernel's ephemeral source-port range (32768-60999 on Linux);
+// otherwise outbound connections made by pnpm/got/playwright during that window
+// can take a port that was already checked as free.
+const PORT_RANGE = [20_000, 29_999];
+
+// Width of the sub-range reserved for each vitest worker process.
+const PORTS_PER_WORKER = 500;
+
+// Parallel workers each run their own copy of this module;
+// scanning a worker-specific sub-range prevents two workers from picking the same port
+// between the check and the actual bind.
+const workerOffset =
+  (Number(process.env.VITEST_POOL_ID ?? 0) * PORTS_PER_WORKER) %
+  (PORT_RANGE[1] - PORT_RANGE[0] + 1);
+
+// Cursor advancing through the worker's sub-range so the same port is
+// never handed out twice within a worker, even before servers bind.
+let portCursor = 0;
 
 export const setupTestProject = async ({
   framework,
@@ -468,31 +486,22 @@ export const snapshotNameFor = (
 };
 
 const findFreePort = async (): Promise<number> => {
-  const [minPort, maxPort] = PORT_RANGE;
+  const [minPort] = PORT_RANGE;
 
-  const range = maxPort - minPort + 1;
-  const startOffset = Math.floor(Math.random() * range);
+  for (let i = 0; i < PORTS_PER_WORKER; i++) {
+    const port = minPort + workerOffset + ((portCursor + i) % PORTS_PER_WORKER);
 
-  const ports = Array.from({ length: range }, (_, i) => {
-    return minPort + ((startOffset + i) % range);
-  });
-
-  const result = await ports.reduce(
-    async (prevPromise, port) => {
-      const prev = await prevPromise;
-      if (prev !== null) return prev;
-
-      const isFree = await isPortFree(port);
-      return isFree ? port : null;
-    },
-    Promise.resolve(null as number | null),
-  );
-
-  if (result === null) {
-    throw new Error(`No free ports found in range ${minPort}-${maxPort}`);
+    if (await isPortFree(port)) {
+      portCursor = (portCursor + i + 1) % PORTS_PER_WORKER;
+      return port;
+    }
   }
 
-  return result;
+  throw new Error(
+    `No free ports found in worker range ${minPort + workerOffset}-${
+      minPort + workerOffset + PORTS_PER_WORKER - 1
+    }`,
+  );
 };
 
 const createBackendPicker = () => {
@@ -517,6 +526,8 @@ const isPortFree = (port: number): Promise<boolean> => {
       resolve(true);
     });
 
-    server.listen(port, "127.0.0.1");
+    // Bind the unspecified host, same as the servers under test do;
+    // checking 127.0.0.1 alone misses ports taken only on "::".
+    server.listen(port);
   });
 };
