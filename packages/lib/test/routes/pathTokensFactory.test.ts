@@ -13,7 +13,7 @@ import {
   createPathPattern,
   pathTokensFactory,
   sortRoutes,
-} from "#/routes";
+} from "@kosmojs/lib";
 
 describe("pathTokensFactory", () => {
   const routes = Object.entries(routeMap)
