@@ -46,7 +46,23 @@ Run `npm run +folder` (or `pnpm +folder` / `yarn +folder`).
 #### What am I prompted for when adding a source folder?
 Folder name, base URL, framework, backend, and SSR. Non-interactive flags:
 `--name`, `--base`, `--framework solid|react|vue|svelte|mdx`, `--backend hono|h3|koa`, `--ssr`.
+Framework and backend are both optional - see the next question.
 [Details ›](/start)
+
+#### How do I create a backend-only (API) folder, or a frontend-only folder?
+A source folder doesn't have to ship both sides - framework and backend are independent, and each is optional.
+In interactive mode, choose `None (API-only folder)` in the framework select,
+or `None (client-only folder)` in the backend select.
+
+In non-interactive mode there is no `none` value to pass - simply omit the flag:
+
+```sh
+pnpm +folder --name api --base / --backend hono        # backend-only, no UI
+pnpm +folder --name docs --base /docs --framework mdx  # frontend-only, no backend
+```
+
+The generated `kosmo.config.ts` contains only the generators that side needs.
+[Details ›](/tutorial#create-a-source-folder)
 
 #### Why isn't a source folder created automatically?
 By design - you add folders as needed, one per distinct concern, each independent.

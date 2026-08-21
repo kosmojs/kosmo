@@ -99,6 +99,32 @@ yarn +folder --name front --base / --framework solid --backend hono
 ```
 :::
 
+`--framework` and `--backend` are both optional - a source folder doesn't have to ship both sides.
+Omit `--framework` to create a backend-only folder (an API service with no UI),
+or omit `--backend` for a frontend-only folder (a static docs or marketing site).
+
+There is no `none` value to pass - leaving the flag out is all it takes:
+
+::: code-group
+```sh [npm]
+npm run +folder -- --name api --base / --backend hono        # API only, no UI
+npm run +folder -- --name docs --base /docs --framework mdx  # UI only, no backend
+```
+
+```sh [pnpm]
+pnpm +folder --name api --base / --backend hono        # API only, no UI
+pnpm +folder --name docs --base /docs --framework mdx  # UI only, no backend
+```
+
+```sh [yarn]
+yarn +folder --name api --base / --backend hono        # API only, no UI
+yarn +folder --name docs --base /docs --framework mdx  # UI only, no backend
+```
+:::
+
+In interactive mode the same is available through the `None (API-only folder)`
+and `None (client-only folder)` choices in the framework and backend selects.
+The generated `kosmo.config.ts` simply contains only the generators that side needs.
 
 Creating a source folder adds framework-specific dependencies. Install them:
 

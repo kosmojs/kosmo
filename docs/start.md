@@ -51,7 +51,14 @@ yarn +folder
 
 You'll be prompted for a folder name, base URL, framework, and backend.
 
-*Install newly added dependencies:*
+Framework and backend are both optional - each select offers a `None` choice:
+- for a backend-only service pick `None` as the framework.
+- for a client-only folder pick `None` as the backend.
+
+In non-interactive mode there is no `none` value to pass -
+simply omit `--framework` or `--backend` and that side is skipped.
+
+**Next:** *Install newly added dependencies:*
 
 ::: code-group
 ```sh [npm]
