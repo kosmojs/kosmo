@@ -1,3 +1,5 @@
+import { join } from "node:path";
+
 import { load } from "cheerio";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -35,6 +37,7 @@ const navigationTemplate = `
 `;
 
 const {
+  sourceFolder,
   bootstrapProject,
   withPageContent,
   createPageRoutes,
@@ -76,7 +79,7 @@ describe("Svelte - Link Component", async () => {
 
       // Verify href attribute
       const href = element.attr("href");
-      expect(href).toEqual(link.href);
+      expect(href).toBe(join(sourceFolder.config.base, link.href));
 
       // Verify text content
       const text = element.text().trim(); // trim() removes whitespace

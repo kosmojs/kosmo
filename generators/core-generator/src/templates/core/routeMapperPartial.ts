@@ -7,14 +7,26 @@ import {
   type ValidationTarget,
 } from "@kosmojs/core";
 import type { HTTPMethod } from "@kosmojs/core/api";
-import { createHost, type HostOpt, join } from "@kosmojs/core/fetch";
+import { createHost, join } from "@kosmojs/core/fetch";
+import type { RoutePathMethods } from "@kosmojs/core/generators";
 
 export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
-  basePath: string,
+  base: string,
   { name, pathPattern, params, numericProperties }: ApiRouteSerialized,
-) => {
+): RoutePathMethods<ParamsT> & {
+  normalizeParams: (path: string) => Record<string, unknown>;
+  normalizeSearchParams: (
+    searchParams: Record<string, unknown>,
+    method: HTTPMethod,
+  ) => Record<string, unknown>;
+  payloadResolver: <T>(
+    payload: Record<ValidationTarget, T> | undefined,
+    target: ValidationTarget,
+    method: HTTPMethod,
+  ) => T | Record<string, unknown> | undefined;
+} => {
   const toPath = compile(pathPattern);
-  const pathMatcher = match(join(basePath, pathPattern));
+  const pathMatcher = match(join(base, pathPattern));
 
   const maybeNumber = (val: unknown) => {
     if (val === undefined || val === null) {
@@ -65,7 +77,10 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     }, {});
   };
 
-  const paramsMapper = (input: ParamsT, opt?: { coerceNumbers?: boolean }) => {
+  const paramsMapper: RoutePathMethods<ParamsT>["paramsMapper"] = (
+    input,
+    opt,
+  ) => {
     return params.reduce<Record<string, unknown>>((map, name, i) => {
       const coerceNumbers = opt?.coerceNumbers
         ? numericProperties.params.includes(name)
@@ -81,7 +96,7 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     }, {});
   };
 
-  const parametrize = (params: ParamsT) => {
+  const parametrize: RoutePathMethods<ParamsT>["parametrize"] = (params) => {
     try {
       return toPath(paramsMapper(params) as never);
     } catch (error) {
@@ -90,21 +105,27 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     }
   };
 
-  const base = (params: ParamsT, query?: Record<string, unknown>) => {
-    const path = join("/", parametrize(params));
-    return query ? [path, stringifySearchParams(query)].join("?") : path;
+  const path: RoutePathMethods<ParamsT>["path"] = (params, query, opt) => {
+    const path = join(
+      opt?.prefix === false
+        ? "/"
+        : typeof opt?.prefix === "string"
+          ? opt.prefix
+          : base,
+      parametrize(params),
+    );
+    return query //
+      ? [path, stringifySearchParams(query)].join("?")
+      : path;
   };
 
-  const path = (params: ParamsT, query?: Record<string, unknown>) => {
-    return join(basePath, base(params, query));
-  };
-
-  const href = (
-    host: HostOpt,
-    params: ParamsT,
-    query?: Record<string, unknown>,
+  const href: RoutePathMethods<ParamsT>["href"] = (
+    host,
+    params,
+    query,
+    opt,
   ) => {
-    return createHost(host) + path(params, query);
+    return createHost(host) + path(params, query, opt);
   };
 
   const payloadResolver = <T>(
@@ -148,22 +169,21 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
   return {
     normalizeParams,
     normalizeSearchParams,
+    payloadResolver,
     paramsMapper,
     parametrize,
-    base,
     path,
     href,
-    payloadResolver,
   };
 };
 
 export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
-  basePath: string,
+  base: string,
   route: PageRouteSerialized,
-) => {
+): RoutePathMethods<ParamsT> => {
   const toPath = compile(route.pathPattern);
 
-  const paramsMapper = (params: ParamsT) => {
+  const paramsMapper: RoutePathMethods<ParamsT>["paramsMapper"] = (params) => {
     return route.params.reduce<Record<string, unknown>>((map, name, i) => {
       if (Array.isArray(params[i])) {
         map[name] = params[i].map(String);
@@ -174,7 +194,7 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
     }, {});
   };
 
-  const parametrize = (params: ParamsT) => {
+  const parametrize: RoutePathMethods<ParamsT>["parametrize"] = (params) => {
     try {
       return toPath(paramsMapper(params) as never);
     } catch (error) {
@@ -183,27 +203,32 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
     }
   };
 
-  const base = (params: ParamsT, query?: Record<string, unknown>) => {
-    const path = join("/", parametrize(params));
-    return query ? [path, stringifySearchParams(query)].join("?") : path;
+  const path: RoutePathMethods<ParamsT>["path"] = (params, query, opt) => {
+    const path = join(
+      opt?.prefix === false
+        ? "/"
+        : typeof opt?.prefix === "string"
+          ? opt.prefix
+          : base,
+      parametrize(params),
+    );
+    return query //
+      ? [path, stringifySearchParams(query)].join("?")
+      : path;
   };
 
-  const path = (params: ParamsT, query?: Record<string, unknown>) => {
-    return join(basePath, base(params, query));
-  };
-
-  const href = (
-    host: HostOpt,
-    params: ParamsT,
-    query?: Record<string, unknown>,
+  const href: RoutePathMethods<ParamsT>["href"] = (
+    host,
+    params,
+    query,
+    opt,
   ) => {
-    return createHost(host) + path(params, query);
+    return createHost(host) + path(params, query, opt);
   };
 
   return {
     paramsMapper,
     parametrize,
-    base,
     path,
     href,
   };

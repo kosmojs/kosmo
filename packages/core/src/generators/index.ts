@@ -1,3 +1,4 @@
+import type { HostOpt } from "../fetch";
 import type {
   ApiRoute,
   ApiRouteSerialized,
@@ -120,4 +121,26 @@ export const clientRenderFactory: () => CSRFactory = () => {
       }
     }
   };
+};
+
+export type RoutePathMethods<ParamsT extends readonly unknown[]> = {
+  paramsMapper: (
+    params: ParamsT,
+    opt?: { coerceNumbers?: boolean },
+  ) => Record<string, unknown>;
+
+  parametrize: (params: ParamsT) => string;
+
+  path: (
+    params: ParamsT,
+    query?: Record<string, unknown>,
+    opt?: { prefix?: boolean | string },
+  ) => string;
+
+  href: (
+    host: HostOpt,
+    params: ParamsT,
+    query?: Record<string, unknown>,
+    opt?: { prefix?: boolean | string },
+  ) => string;
 };

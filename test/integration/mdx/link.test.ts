@@ -1,3 +1,5 @@
+import { join } from "node:path";
+
 import { load } from "cheerio";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -30,6 +32,7 @@ import Link from "${defaults.srcPrefix}/components/Link.tsx";
 `;
 
 const {
+  sourceFolder,
   bootstrapProject,
   withPageContent,
   createPageRoutes,
@@ -70,7 +73,7 @@ describe("MDX - Link Component", async () => {
 
       // Verify href attribute
       const href = element.attr("href");
-      expect(href).toEqual(link.href);
+      expect(href).toBe(join(sourceFolder.config.base, link.href));
 
       // Verify text content
       const text = element.text().trim(); // trim() removes whitespace

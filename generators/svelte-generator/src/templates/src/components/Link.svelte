@@ -17,7 +17,7 @@
 
   const href = $derived.by(() => {
     const [key, ...params] = to;
-    return pageRouteMap[key]?.base(params as never, query);
+    return pageRouteMap[key]?.path(params as never, query);
   });
 </script>
 

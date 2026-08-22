@@ -18,7 +18,7 @@ export default function Link(
 
   const href = () => {
     const [key, ...params] = knownProps.to;
-    return pageRouteMap[key]?.base(params as never, knownProps.query);
+    return pageRouteMap[key]?.path(params as never, knownProps.query, { prefix: false });
   };
 
   return <A {...{ ...restProps, href: href() }}>{knownProps.children}</A>;

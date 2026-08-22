@@ -4,29 +4,30 @@ import { RouterLink } from "vue-router";
 
 import { pageRouteMap, type LinkProps } from "{{ createImport 'libCore' }}";
 
-interface Props {
-  to: T
-  query?: Record<string | number, unknown>
-  replace?: boolean
-  activeClass?: string
-  exactActiveClass?: string
+type Props = {
+  to: T;
+  query?: Record<string | number, unknown>;
+  replace?: boolean;
+  activeClass?: string;
+  exactActiveClass?: string;
 }
 
 const props = defineProps<Props>();
 
 const href = computed(() => {
-  const [key, ...params] = props.to
-  return pageRouteMap[key]?.base(params as never, props.query)
+  const [key, ...params] = props.to;
+  return pageRouteMap[key]?.path(params as never, props.query, { prefix: false });
 })
+
+const linkProps = computed(() => ({
+  ...(props.replace !== undefined ? { replace: props.replace } : {}),
+  ...(props.activeClass !== undefined ? { activeClass: props.activeClass } : {}),
+  ...(props.exactActiveClass !== undefined ? { exactActiveClass: props.exactActiveClass } : {}),
+}))
 </script>
 
 <template>
-  <RouterLink
-    :to="href"
-    :replace="replace"
-    :active-class="activeClass"
-    :exact-active-class="exactActiveClass"
-  >
+  <RouterLink :to="href" v-bind="linkProps">
     <slot />
   </RouterLink>
 </template>

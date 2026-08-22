@@ -1,8 +1,8 @@
 declare module "{{ createImport 'libCore' }}" {
-  import type { PathMapper } from "@kosmojs/core/generators";
+  import type { RoutePathMethods } from "@kosmojs/core/generators";
   export type LinkProps = [""];
   export const base: string;
-  export const pageRouteMap: ReturnType<PathMapper>;
+  export const pageRouteMap: Record<string, RoutePathMethods<[]>>;
 }
 
 declare module "{{ createImport 'lib' '@ssr/base' }}" {
