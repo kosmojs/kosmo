@@ -200,7 +200,11 @@ export const createRoute = (
   loader: RawRoute["loader"],
   layouts: RawRoute["layouts"],
 ): RawRoute => {
-  const path = `${base}/${pathPattern}`.replace(/\/+/g, "/");
+  // strip trailing slash (keeping a sole "/") so the base-joined index route
+  // matches both with and without it - "/docs/" as a pattern rejects "/docs"
+  const path = `${base}/${pathPattern}`
+    .replace(/\/+/g, "/")
+    .replace(/(.+)\/$/, "$1");
 
   const { regexp } = pathToRegexp(path, { sensitive: true });
   const matcher = match<Route["params"]>(path);
@@ -208,9 +212,11 @@ export const createRoute = (
   return {
     name,
     regexp,
+    // count segments of the same base-joined path the regexp matches against;
+    // resolve() compares this against the full url pathname's segment count
     pathSegments: name.includes("...")
       ? undefined
-      : name.replace(/^index(\/?|$)/, "").split("/").length,
+      : path.split("/").filter(Boolean).length,
     extractParams: (path) => {
       const match = matcher(path);
       return match ? match.params : {};
