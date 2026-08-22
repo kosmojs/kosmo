@@ -1,3 +1,15 @@
+## [0.4.1](https://github.com/kosmojs/kosmo/compare/v0.4.0...v0.4.1) (2026-08-22)
+
+### Bug Fixes
+
+* **core-generator:** apiRouteMap should use base as prefix ([41488e8](https://github.com/kosmojs/kosmo/commit/41488e83ec694ba84885e7b48ef13435d547fb2c))
+* **dev:** prevent dev server from crash when a transiently-invalid module parsed ([70cc381](https://github.com/kosmojs/kosmo/commit/70cc381914d88e791735f922c0dab6005da40555))
+* **generators:** handle created files beside updated ones ([37fc582](https://github.com/kosmojs/kosmo/commit/37fc582549468f33d42b8d581550bf637330df37))
+* **h3:** correctly resolve/validate response body and status ([c61d41a](https://github.com/kosmojs/kosmo/commit/c61d41a10fef8c25796ed0306106c67fb0f2bb53))
+* **mdx-generator:** prioritize static routes over dynamic routes ([30097af](https://github.com/kosmojs/kosmo/commit/30097aff986a0fa1a1f5d03714e744ac5f194abc))
+* **svelte-generator:** prioritize static routes over dynamic routes ([26d046c](https://github.com/kosmojs/kosmo/commit/26d046ca579e057c2ec8f1ed2e98257156ca69b6))
+* **vue-generator:** strip the base from pushed paths ([25c0caa](https://github.com/kosmojs/kosmo/commit/25c0caa540f80f3167d808a16dbcee1cdc9a1e19))
+
 ## [0.4.0](https://github.com/kosmojs/kosmo/compare/v0.3.0...v0.4.0) (2026-08-21)
 
 ### ⚠ BREAKING CHANGES
