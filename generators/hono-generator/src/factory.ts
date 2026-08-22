@@ -11,6 +11,7 @@ import {
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   createHonoPattern,
+  createWatchedApiRouteEntriesFilter,
   defineGeneratorFactory,
   pathResolver,
   pathTokensFactory,
@@ -189,13 +190,10 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
 
     async watch(entries, event) {
       // fill empty src files with proper content.
-      // handle 2 cases:
-      // - event is undefined (means initial call): process all routes
-      // - `create` event given: process newly added route
-      if (!event || event.kind === "create") {
-        // always generateSrcFiles before generateLibFiles
-        await generateSrcFiles(entries);
-      }
+      // always generateSrcFiles before generateLibFiles.
+      await generateSrcFiles(
+        entries.filter(createWatchedApiRouteEntriesFilter(event, ["create"])),
+      );
 
       await generateLibFiles(entries);
 

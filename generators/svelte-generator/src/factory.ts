@@ -7,6 +7,7 @@ import {
 } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
+  createWatchedPageRouteEntriesFilter,
   defineGeneratorFactory,
   pathResolver,
   renderFactory,
@@ -194,12 +195,11 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
 
     async watch(entries, event) {
       // fill empty src files with proper content.
-      // handle 2 cases:
-      // - event is undefined (means initial call): process all routes
-      // - `create` event given: process newly added route
-      if (!event || event.kind === "create") {
-        await generateSrcFiles(entries);
-      }
+      // always generateSrcFiles before generateLibFiles.
+      await generateSrcFiles(
+        entries.filter(createWatchedPageRouteEntriesFilter(event, ["create"])),
+      );
+
       await generateLibFiles(entries);
     },
 

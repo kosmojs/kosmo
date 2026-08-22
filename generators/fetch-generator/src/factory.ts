@@ -6,6 +6,7 @@ import {
 } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
+  createWatchedApiRouteEntriesFilter,
   defineGeneratorFactory,
   pathResolver,
   renderFactory,
@@ -137,18 +138,9 @@ export default defineGeneratorFactory((sourceFolder) => {
       await generateLibFiles(
         entries,
         // create/overwrite lib files with proper content.
-        // handle 2 cases:
-        // - event is undefined (means initial call): process all routes
-        // - `update` event given: process updated route
-        event
-          ? entries.filter(({ kind, entry }) => {
-              return event.kind === "update"
-                ? kind === "apiRoute"
-                  ? entry.fileFullpath === event.file
-                  : false
-                : false;
-            })
-          : entries,
+        entries.filter(
+          createWatchedApiRouteEntriesFilter(event, ["create", "update"]),
+        ),
       );
 
       // TODO: handle `delete` event, cleanup lib files
