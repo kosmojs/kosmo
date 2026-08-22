@@ -1,3 +1,5 @@
+import { join } from "node:path";
+
 import { load } from "cheerio";
 import got from "got";
 import type { TestFunction } from "vitest";
@@ -124,7 +126,7 @@ const serverHtml = async (
   project: Awaited<ReturnType<typeof setupTestProject>>,
   path: string,
 ) => {
-  return got(`${project.baseURL}/${path}`, {
+  return got(project.baseURL + join(project.sourceFolder.config.base, path), {
     retry: { limit: 0 },
     timeout: { request: 500 },
   }).text();
