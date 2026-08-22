@@ -127,7 +127,18 @@ export const createRouters = (
       // would otherwise skip the guard
       installLoaderGuard(router);
 
-      await router.push(url.pathname + url.search);
+      let { pathname } = url;
+
+      if (base !== "/") {
+        // strip the base from pushed paths
+        if (pathname === base) {
+          pathname = "/";
+        } else if (pathname.startsWith(`${base}/`)) {
+          pathname = pathname.slice(base.length);
+        }
+      }
+
+      await router.push(pathname + url.search);
 
       await router.isReady();
 

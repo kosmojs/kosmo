@@ -17,7 +17,6 @@ export const loader = async () => {
 
 <script setup lang="ts">
 import { hydrate, useQuery } from "@tanstack/vue-query";
-import { getQueryClient } from "_/query";
 import { useLoaderData } from "_/use";
 
 hydrate(getQueryClient(), useLoaderData());
