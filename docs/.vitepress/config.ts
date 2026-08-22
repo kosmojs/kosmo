@@ -19,6 +19,25 @@ export default defineConfig({
   // Force .html on all URLs
   cleanUrls: false,
 
+  transformHead({ pageData }) {
+    if (pageData.relativePath === "index.md") {
+      return [
+        [
+          "script",
+          { type: "application/ld+json" },
+          JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "KosmoJS",
+            url: "https://kosmojs.dev",
+            logo: "https://kosmojs.dev/kosmo-logo.png",
+          }),
+        ],
+      ];
+    }
+    return [];
+  },
+
   transformPageData(pageData) {
     pageData.frontmatter.head ??= [];
 
@@ -46,6 +65,15 @@ export default defineConfig({
 
   head: [
     ["link", { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
+    [
+      "link",
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "96x96",
+        href: "/favicon-96.png",
+      },
+    ],
     [
       "link",
       {
