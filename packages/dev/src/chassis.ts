@@ -299,9 +299,24 @@ export default async (
         viteServer.watcher.on(evt, async (file) => {
           const mods = env.moduleGraph.getModulesByFile(file);
           if (mods?.size) {
-            await handler(file);
-            await devSetup?.teardownHandler?.();
-            devSetup = await loadDevSetup();
+            try {
+              await handler(file);
+              await devSetup?.teardownHandler?.();
+              devSetup = await loadDevSetup();
+            } catch (error) {
+              /**
+               * A transiently-invalid module (half-saved file, atomic rewrite mid-flight, syntax error)
+               * must not take the dev server down: an uncaught rejection here is fatal to the whole process.
+               * Keep serving the previous api program; the next successful change reloads it.
+               * */
+              console.error(
+                styleText(
+                  "red",
+                  `${sourceFolder.name}: api reload failed - keeping previous api program`,
+                ),
+              );
+              console.error(error);
+            }
           }
         });
       }
