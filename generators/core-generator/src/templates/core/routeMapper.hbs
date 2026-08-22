@@ -6,7 +6,7 @@ import { base, apiBase } from "./config";
 export const apiRouteMap = {
   {{#each apiRoutes}}
   "{{name}}": apiRouteMapper<[{{serializeParamsTupleElements .}}]>(
-    apiBase,
+    join(base, apiBase),
     {{serializeApiRoute .}},
   ),
   {{/each}}

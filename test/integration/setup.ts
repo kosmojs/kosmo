@@ -1,7 +1,7 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import net from "node:net";
 import { tmpdir } from "node:os";
-import { dirname, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { styleText } from "node:util";
 
 import crc from "crc/crc32";
@@ -89,10 +89,12 @@ export const setupTestProject = async ({
   const projectName = "app";
   const projectRoot = resolve(tempDir, projectName);
 
+  const baseVariants = ["/", `/${framework}`, tempDir];
+
   const sourceFolder: SourceFolder = {
     name: "test",
     config: {
-      base: "/",
+      base: baseVariants[Math.floor(Math.random() * baseVariants.length)],
       apiBase: "/api",
     },
     root: projectRoot,
@@ -240,12 +242,12 @@ export const setupTestProject = async ({
       ? createRoutePath(pathSource[0], pathSource[1])
       : pathSource;
 
-    const url =
+    const url = [
+      baseURL,
       path === ""
-        ? baseURL
-        : path === "/"
-          ? `${baseURL}/`
-          : `${baseURL}/${path}`;
+        ? sourceFolder.config.base
+        : join(sourceFolder.config.base, path as never),
+    ].join("");
 
     let maybeContent: string | undefined;
 
@@ -333,7 +335,7 @@ export const setupTestProject = async ({
     const path = Array.isArray(pathSource)
       ? createRoutePath(pathSource[0], pathSource[1])
       : pathSource;
-    const url = `${baseURL}/api/${path}`;
+    const url = baseURL + join(sourceFolder.config.base, "api", path as never);
     const response = await apiClient(url);
     return { response };
   };
