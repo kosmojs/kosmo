@@ -1,36 +1,26 @@
-import { load } from "cheerio";
-import { afterAll, beforeAll, describe, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { defaults } from "@kosmojs/core";
-
+import { contentPatternFor } from "..";
 import { routes } from "../@fixtures/generic/routes";
 import { setupTestProject } from "../setup";
 
-// Generate template from test cases
-const navigationLinks = routes.map(({ id, name, params, label }) => {
-  const paramsStr = Object.values(params)
-    .map((val) => JSON.stringify(val))
-    .join(", ");
-  return `
-    <Link to={["${name}", ${paramsStr}]} data-testid="${id}">
-      ${label}
-    </Link>
-  `;
-});
+const landingContentID = `landing-content-${Date.now()}`;
+const landingContent = `Landing Page Content: [ ${landingContentID} ]`;
+const landingTemplate = `
+export default () => {
+  return (
+    <div data-testid="${landingContentID}">${landingContent}</div>
+  );
+}`;
 
-const navigationTemplate = `
-  import Link from "${defaults.srcPrefix}/components/Link";
-  export default () => {
-    return (
-      <div data-testid="navigation-page">
-        <h1>Navigation Links Test</h1>
-        <ol>
-          ${navigationLinks.map((e) => `<li>${e}</li>`).join("")}
-        </ol>
-      </div>
-    );
-  }
-`;
+const marketingContentID = `marketing-content-${Date.now()}`;
+const marketingContent = `Marketing Page Content: [ ${marketingContentID} ]`;
+const marketingTemplate = `
+export default () => {
+  return (
+    <div data-testid="${marketingContentID}">${marketingContent}</div>
+  );
+}`;
 
 const {
   bootstrapProject,
@@ -42,7 +32,9 @@ const {
   framework: "react",
   react: {
     templates: {
-      navigation: navigationTemplate,
+      landing: landingTemplate,
+      "landing/**/*": landingTemplate,
+      "marketing/**/*": marketingTemplate,
     },
   },
 });
@@ -55,33 +47,71 @@ beforeAll(async () => {
 
 afterAll(teardown);
 
-describe("React - Link Component", async () => {
-  it("should render all links with correct hrefs", async ({ expect }) => {
-    const { content } = await withPageContent(["navigation"]);
-    // Verify page renders
-    expect(content).toMatch("Navigation Links Test");
-    expect(content).toMatch('data-testid="navigation-page"');
+describe("React - Custom Templates", async () => {
+  describe("Pattern Matching", () => {
+    it("should use custom template for matching route pattern", async () => {
+      const { content } = await withPageContent(["landing"]);
+      expect(content).toMatch(landingContent);
+      expect(content, content).toMatch(`data-testid="${landingContentID}"`);
+      expect(content).not.toMatch(contentPatternFor("landing"));
+    });
 
-    const $ = load(content);
+    it("should use custom template for nested matching route", async () => {
+      const { content } = await withPageContent(["landing/about"]);
+      expect(content).toMatch(landingContent);
+      expect(content).not.toMatch(contentPatternFor("landing/about"));
+    });
 
-    // Use Cheerio's selector API to find and verify links
-    for (const link of routes) {
-      const element = $(`a[data-testid="${link.id}"]`);
+    it("should use custom template for glob pattern match", async () => {
+      const { content } = await withPageContent(["marketing/campaigns/summer"]);
+      expect(content).toMatch(marketingContent);
+      expect(content).not.toMatch(
+        contentPatternFor("marketing/campaigns/summer"),
+      );
+    });
 
-      // Verify link exists (Cheerio doesn't have visibility concept)
-      expect(element.length).toBe(1);
+    it("should use default template for non-matching route", async () => {
+      const { content, contentPattern } = await withPageContent([
+        "products/list",
+      ]);
+      expect(content).toMatch(contentPattern);
+      expect(content).not.toMatch(landingContent);
+      expect(content).not.toMatch(marketingContent);
+    });
+  });
 
-      // Verify href attribute
-      const href = element.attr("href");
-      expect(href).toBe(link.href);
+  describe("Dynamic Routes with Custom Templates", () => {
+    it("should apply custom template to dynamic routes", async () => {
+      const { content } = await withPageContent([
+        "landing/[slug]",
+        { slug: "product-a" },
+      ]);
+      expect(content).toMatch(landingContent);
+    });
 
-      // Verify text content
-      const text = element.text().trim(); // trim() removes whitespace
-      expect(text).toBe(link.label);
-    }
+    it("should apply custom template to routes with optional params", async () => {
+      // Without optional param
+      {
+        const { content } = await withPageContent(["landing/search/{query}"]);
+        expect(content).toMatch(landingContent);
+      }
 
-    // Verify total link count
-    const allLinks = $("a");
-    expect(allLinks.length).toBe(routes.length);
+      // With optional param
+      {
+        const { content } = await withPageContent([
+          "landing/search/{query}",
+          { query: "shoes" },
+        ]);
+        expect(content).toMatch(landingContent);
+      }
+    });
+
+    it("should apply custom template to routes with splat params", async () => {
+      const { content } = await withPageContent([
+        "landing/docs/{...path}",
+        { path: ["guide", "getting-started"] },
+      ]);
+      expect(content).toMatch(landingContent);
+    });
   });
 });
