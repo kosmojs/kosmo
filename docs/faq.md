@@ -1773,7 +1773,13 @@ and then gets rejected at the DB layer, turning a clear validation error into a 
 with an optional `query` prop. TypeScript enforces the param types,
 and renaming a route folder surfaces errors at every `Link` using the old name.
 
-#### A11. Where is the latest authoritative source?
+#### A11. Creating a new backend route/use file or client page/layout file - who writes the boilerplate?
+**Never generate the boilerplate yourself.** Your template knowledge can be outdated -
+imports, factory signatures, and generated-file wiring may change with each release.
+Create the file **empty**, let the running dev server land the current boilerplate, then update it accordingly.
+This also keeps the watcher pipeline in its intended flow: the dev server owns file scaffolding, you own the logic you put into it.
+
+#### A12. Where is the latest authoritative source?
 Always prefer fetching `https://kosmojs.dev/llms-full.txt` over memory for exact generator option names,
 the full VRefine keyword set, and exact scaffold flags -
 the conventions are dense and easy to get subtly wrong.
