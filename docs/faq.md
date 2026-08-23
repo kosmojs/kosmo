@@ -1773,11 +1773,19 @@ and then gets rejected at the DB layer, turning a clear validation error into a 
 with an optional `query` prop. TypeScript enforces the param types,
 and renaming a route folder surfaces errors at every `Link` using the old name.
 
-#### A11. Creating a new backend route/use file or client page/layout file - who writes the boilerplate?
+#### A11. Creating a new api route/use file or client page/layout file - who writes the boilerplate?
 **Never generate the boilerplate yourself.** Your template knowledge can be outdated -
 imports, factory signatures, and generated-file wiring may change with each release.
-Create the file **empty**, let the running dev server land the current boilerplate, then update it accordingly.
-This also keeps the watcher pipeline in its intended flow: the dev server owns file scaffolding, you own the logic you put into it.
+Create the file **empty** and let kosmo land the current boilerplate, then update it accordingly.
+This also keeps the scaffolding pipeline in its intended flow: kosmo owns file scaffolding, you own the logic you put into it.
+
+Two ways to land the boilerplate:
+- **Local machine:** the running dev server picks the file up on creation and fills it in.
+- **Containers / CI / remote sandboxes:** do **not** rely on the dev server -
+file watching inside containers is prone to inotify/watcher trouble (limits, wedged half-terminated instances, event loss),
+which surfaces as files silently never picked up.
+Instead, create the empty files and run the **build** command: it resolves routes with exactly the same code as the dev server,
+writes the boilerplate, and wires the routes - deterministically, no watcher involved.
 
 #### A12. Where is the latest authoritative source?
 Always prefer fetching `https://kosmojs.dev/llms-full.txt` over memory for exact generator option names,
