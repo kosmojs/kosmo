@@ -615,13 +615,23 @@ GET<{ query: { page: number } }>((ctx) => {
 [Details ›](/validation/payload#validation-targets)
 
 #### Can validation targets hold booleans?
-Only `json` carries booleans natively, other targets will fail validation if boolean used directly.
+Only the `query` target will coerce booleans before validation - `"true"`/`"false"` become `true`/`false`:
+
+```ts
+GET<{ query: { draft?: boolean } }>((ctx) => {
+  const { draft } = ctx.validated.query // draft is a boolean (or undefined)
+});
+```
+
+`params` (path segments, where a boolean is meaningless), `headers`/`cookies`/`form`/`raw` never coerce booleans.
 
 ::: warning will never pass validation
 `POST<{ form: { consented: boolean } }>`
 :::
 
-Use a string union instead:
+`json` carries booleans natively, no coercion needed.
+
+For a non-`query` target, use a string union instead:
 ```ts
 POST<{ form: { consented: "true" | "false" | "on" | "off" } }>
 ```

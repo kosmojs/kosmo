@@ -33,23 +33,14 @@ Each target maps to a part of the incoming HTTP request.
 - `form` - URL-encoded or multipart form
 - `raw` - plain text, binary, Buffer, ArrayBuffer, Blob
 
-Any combination of metadata targets is valid. Body targets are mutually exclusive - one per handler.
+Any combination of metadata targets is valid.
 
-::: tip Where numeric coercion applies (and where it doesn't)
-Everything off the wire is a string. `KosmoJS` coerces numeric values in exactly two places -
-route **params** and **`query`** - typing a `query` field or a param as `number` turns `"10"` into `10`.
-
-Non-numeric input stays as is and fails validation cleanly - `abc` not coerced, validation fails.
-
-`headers`/`cookies`/`form`/`raw` never coerce numbers.
-
-`json` carries real numbers natively, no coercion needed.
-:::
+> Body targets are mutually exclusive - one per handler.
 
 ```ts
 // ✅ Multiple metadata targets + one body target
 POST<{
-  query: { page: number }; // coerced: "2" -> 2
+  query: { page?: number };
   headers: { authorization: string };
   json: { title: string };
 }>
@@ -73,7 +64,44 @@ GET<{
 }>
 ```
 
-Invalid configurations are detected at dev time - `KosmoJS` warns and disables affected schemas automatically.
+Invalid configurations are detected at dev time and disabled automatically.
+
+## Coerced values
+
+Everything off the wire is a string.
+Some primitive values are coerced automatically, when typed accordingly and content is appropriate.
+
+**Numbers - coerced in route params and `query`.**
+
+Typing a field as `number` turns `"10"` into `10`.
+
+```ts
+GET<{
+  query: { page?: number; }; // coerced: "2" -> 2
+}>
+```
+
+**Booleans** - coerced in **`query`** only.
+
+Typing a field as `boolean` turns `"true"`/`"false"` into `true`/`false`.
+
+```ts
+GET<{
+  query: { draft?: boolean; }; // coerced: "true" -> true
+}>
+```
+
+> Params are path segments where a boolean is meaningless, so they never coerce booleans.
+
+Coercion only maps the exact expected forms:
+- a `number` field coerce only numeric values
+- a `boolean` field coerce only `"true"`/`"false"` values
+
+Everything else stays a string and fails validation cleanly.
+
+`headers`/`cookies`/`form`/`raw` never coerce.
+
+`json` carries real numbers and booleans natively, no coercion needed.
 
 ## Basic Payload Validation
 
