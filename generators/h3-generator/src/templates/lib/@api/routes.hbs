@@ -2,7 +2,14 @@ import { join } from "node:path";
 
 import type { RouteSource } from "@kosmojs/core/api";
 
-import { base, apiBase, apiRouteMap, apiRouteMapper } from "{{ createImport 'libCore' }}";
+import {
+  base,
+  apiBase,
+  apiRouteMap,
+  apiRouteMapper,
+  // needed for cascadingMiddleware
+  type Override,
+} from "{{ createImport 'libCore' }}";
 
 {{#each routes}}
 import {{id}} from "{{ createImport 'api' file }}";

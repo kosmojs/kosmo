@@ -227,6 +227,7 @@ export default defineGeneratorFactory((sourceFolder) => {
 
     for (const [file, template] of [
       ["config.ts", templates.coreConfig],
+      ["types.ts", templates.coreTypes],
       ["index.ts", templates.coreIndex],
     ]) {
       await renderToFile(createPath.libCore(file), template, sourceFolder);

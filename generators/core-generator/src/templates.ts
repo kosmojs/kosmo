@@ -2,6 +2,7 @@ export { default as coreConfig } from "#templates/core/config";
 export { default as coreIndex } from "#templates/core/index.hbs";
 export { default as coreRouteMapper } from "#templates/core/routeMapper.hbs";
 export { default as coreRouteMapperPartial } from "#templates/core/routeMapperPartial";
+export { default as coreTypes } from "#templates/core/types";
 export { default as envD } from "#templates/env.d";
 export { default as gitignore } from "#templates/gitignore.hbs";
 export { default as globalD } from "#templates/global.d";
