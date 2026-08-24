@@ -71,7 +71,7 @@ export const renderToStream: RenderToStreamWrapper<
    * and surfaces the error to the stream consumer; catching here only keeps
    * the rejection from escaping as an unhandled one.
    * */
-  stream.pipeTo(writable).catch(() => {});
+  void Promise.resolve(stream.pipeTo(writable)).catch(() => {});
   return {
     head: [...headerTags, generateHydrationScript()].join("\n"),
     html: readable,
