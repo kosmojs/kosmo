@@ -26,13 +26,13 @@ export default defineGeneratorFactory((sourceFolder) => {
   const start = async () => {
     const { generators = [] } = sourceFolder.config;
 
+    const { dependencies = {}, devDependencies = {} } = await import(
+      resolve(sourceFolder.root, "package.json"),
+      { with: { type: "json" } }
+    ).then((m) => m.default);
+
     // check dependencies
     {
-      const { dependencies = {}, devDependencies = {} } = await import(
-        resolve(sourceFolder.root, "package.json"),
-        { with: { type: "json" } }
-      ).then((m) => m.default);
-
       const missing: Array<[string, string, string]> = [];
       const outdated: Array<[string, string, string]> = [];
 
@@ -111,7 +111,11 @@ export default defineGeneratorFactory((sourceFolder) => {
       // deploy a tsconfig file for root tsconfig to extend from
       await renderToFile(
         createPath.lib("../tsconfig.json"),
-        JSON.stringify(generateTsconfig(), undefined, 2),
+        JSON.stringify(
+          generateTsconfig({ dependencies, devDependencies }),
+          undefined,
+          2,
+        ),
         {},
       );
 
@@ -131,7 +135,10 @@ export default defineGeneratorFactory((sourceFolder) => {
 
       // deploy a tsconfig file for sourceFolder tsconfig to extend from
 
-      const tsconfig = generateTsconfig(sourceFolder.name);
+      const tsconfig = generateTsconfig(
+        { dependencies, devDependencies },
+        sourceFolder.name,
+      );
 
       const compilerOptions: {
         jsx?: string;

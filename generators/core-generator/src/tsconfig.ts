@@ -1,11 +1,24 @@
 import { defaults } from "@kosmojs/core";
 
-export const generateTsconfig = (sourceFolder?: string) => {
+export const generateTsconfig = (
+  {
+    dependencies,
+    devDependencies,
+  }: Record<"dependencies" | "devDependencies", Record<string, string>>,
+  sourceFolder?: string,
+) => {
   // biome-ignore lint: noTemplateCurlyInString
   const rootDir = "${configDir}";
 
+  const deps = Object.keys({ ...dependencies, ...devDependencies });
+
   const compilerOptions = {
-    types: ["@types/node", "vite/client"],
+    types: [
+      "vite/client",
+      ...["node", "deno", "bun"].flatMap((e) => {
+        return deps.includes(`@types/${e}`) ? [`@types/${e}`] : [];
+      }),
+    ],
     moduleResolution: "bundler",
     module: "ESNext",
     target: "ESNext",
