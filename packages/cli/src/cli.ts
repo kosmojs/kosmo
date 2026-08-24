@@ -1,7 +1,9 @@
 #!/usr/bin/env -S node --enable-source-maps --no-warnings=ExperimentalWarning
 
+import { execFile } from "node:child_process";
 import { readFile } from "node:fs/promises";
-import { basename, dirname, resolve } from "node:path";
+import { createRequire } from "node:module";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import { parseArgs } from "node:util";
 
 import * as prompts from "@clack/prompts";
@@ -15,7 +17,7 @@ import {
   type ProjectSettings,
 } from "@kosmojs/core";
 import chassis from "@kosmojs/dev/chassis";
-import { pathExists } from "@kosmojs/lib";
+import { pathExists, spinnerFactory } from "@kosmojs/lib";
 
 import {
   assertNoError,
@@ -73,7 +75,7 @@ const answer = async <T>(input: Promise<T | symbol>) => {
 };
 
 const run = async () => {
-  const commands = ["folder", "serve", "build"] as const;
+  const commands = ["folder", "serve", "build", "typecheck"] as const;
 
   const [command, ...optedFolders] = options.positionals as [
     command: (typeof commands)[number],
@@ -122,10 +124,7 @@ const run = async () => {
     optedFolders.length
       ? optedFolders.map((e) => `${defaults.srcDir}/${e}/kosmo.config.ts`)
       : `${defaults.srcDir}/*/kosmo.config.ts`,
-    {
-      cwd: root,
-      absolute: true,
-    },
+    { cwd: root, absolute: true },
   );
 
   assertNoError(() => {
@@ -139,6 +138,46 @@ const run = async () => {
       ? "No source folders detected"
       : undefined;
   });
+
+  if (command === "typecheck") {
+    const spinner = spinnerFactory("Typecheck in progress");
+
+    const require = createRequire(packageFile);
+    const pkgDir = dirname(require.resolve("typescript/package.json"));
+    const { bin } = require("typescript/package.json");
+    const tscBin = join(pkgDir, typeof bin === "string" ? bin : bin.tsc);
+
+    const runTsc = async (cwd: string) => {
+      const tsconfig = resolve(cwd, "tsconfig.json");
+      spinner.append(relative(root, tsconfig));
+
+      const { error } = await new Promise<{ error?: string }>((r) => {
+        execFile(
+          process.execPath,
+          [tscBin, "--project", tsconfig, "--noEmit", "--pretty"],
+          { cwd },
+          (error, stdout) => {
+            r(error ? { error: stdout } : {});
+          },
+        );
+      });
+
+      if (error) {
+        spinner.failed();
+        console.error(error);
+        process.exit(1);
+      }
+    };
+
+    for (const file of configFiles) {
+      await runTsc(dirname(file));
+    }
+
+    spinner.text("Typecheck done ✨");
+    spinner.succeed();
+
+    return;
+  }
 
   const settings: ProjectSettings = {
     root,

@@ -47,6 +47,6 @@ export type SourceFolder = {
 export type ProjectSettings = {
   root: string;
   sourceFolders: Array<SourceFolder>;
-  command: "serve" | "build";
+  command: "serve" | "build" | "typecheck";
   devPort: number;
 };

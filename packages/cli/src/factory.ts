@@ -32,28 +32,26 @@ import {
 } from "@kosmojs/dev";
 import { pathExists, render, renderToFile } from "@kosmojs/lib";
 
-import { copyFiles, type Project, type SourceFolder } from "./base";
+import self from "../package.json" with { type: "json" };
+import type { Project, SourceFolder } from "./base";
 import * as templates from "./templates";
 
 /**
  * Read the installed package.json at runtime to get the actual version.
- * A static `import ... with { type: "json" }` would be inlined by the
- * bundler with the pre-bump version, defeating the point.
+ * A static import would be inlined by the bundler with the pre-bump version.
  *
  * INFO: For best compatibility, all packages should share the same version.
- * When bumping the version (even a patch) for a single package, bump it for all packages
- * to keep versions fully synchronized across the project.
+ * When bumping the version (even a patch) for a single package,
+ * bump it for all packages to keep versions fully synchronized across the project.
  * */
-const self = JSON.parse(
+const { version } = JSON.parse(
   readFileSync(
     createRequire(import.meta.url).resolve("@kosmojs/cli/package.json"),
     "utf-8",
   ),
 );
 
-const TPL_DIR = resolve(import.meta.dirname, "templates");
-
-const SELF_VERSION = `^${self.version}`;
+const SELF_VERSION = `^${version}`;
 
 type GeneratorOptions = Partial<
   Record<
@@ -77,6 +75,7 @@ export const createProject = async (
     scripts: {
       dev: "kosmo serve",
       build: "kosmo build",
+      typecheck: "kosmo typecheck",
       "+folder": "kosmo folder",
     },
     dependencies: {
@@ -88,6 +87,8 @@ export const createProject = async (
       "@kosmojs/cli": SELF_VERSION,
       "@kosmojs/dev": SELF_VERSION,
       "@types/node": self.devDependencies["@types/node"],
+      "@types/deno": self.devDependencies["@types/deno"],
+      "@types/bun": self.devDependencies["@types/bun"],
       vite: self.devDependencies["vite"],
       ...coreGenerator.devDependencies,
       ...assets?.devDependencies,
@@ -121,9 +122,7 @@ export const createSourceFolder = async (
     throw new Error(`${folder.name} already exists`);
   }
 
-  await copyFiles(resolve(TPL_DIR, "src"), folderPath, {
-    exclude: [/.+\.hbs/],
-  });
+  await renderToFile(resolve(folderPath, "index.html"), templates.index, {});
 
   const packageFile = resolve(projectRoot, "package.json");
 
