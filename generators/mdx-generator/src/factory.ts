@@ -116,7 +116,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   return {
     config({ command }) {
       return {
-        oxc: { jsx: { importSource: "preact" } },
+        oxc: { jsx: { runtime: "automatic", importSource: "preact" } },
         plugins: plugins(sourceFolder, command, options),
       };
     },

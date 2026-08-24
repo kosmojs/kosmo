@@ -27,10 +27,11 @@ export type GeneratorMeta = {
   resolveTypes?: boolean;
 
   /**
-   * jsx option per folder; needed on react/solid folders,
-   * should be missing on mdx folders.
+   * jsx option per folder.
+   * react and solid plugins compiles JSX, preserve works.
+   * mdx does not compile JSX, react-jsx needed.
    * */
-  jsx?: "preserve";
+  jsx?: "preserve" | "react-jsx";
 
   /**
    * JSX transform target for this generator's source folder.

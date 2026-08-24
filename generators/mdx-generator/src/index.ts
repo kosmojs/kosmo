@@ -7,7 +7,7 @@ import type { Options } from "./types";
 export default defineGenerator<Options>({
   meta: {
     name: "MDX",
-    jsx: "preserve",
+    jsx: "react-jsx",
     jsxImportSource: "preact",
   },
   dependencies: {
