@@ -36,6 +36,16 @@ export const routeRenderHelpers = () => {
             return map;
           }, {}),
         },
+        booleanProperties: {
+          query: validationDefinitions.reduce<
+            ApiRouteSerialized["booleanProperties"]["query"]
+          >((map, e) => {
+            if (e.target === "query") {
+              map[e.method] = e.schema.resolvedType?.booleanProperties || [];
+            }
+            return map;
+          }, {}),
+        },
       } satisfies ApiRouteSerialized);
     },
 

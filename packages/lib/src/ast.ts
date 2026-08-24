@@ -602,6 +602,7 @@ export const astFactory = () => {
 
         const properties = [];
         const numericProperties = [];
+        const booleanProperties = [];
 
         for (const prop of type.properties || []) {
           const propNode = typeNode.isKind(SyntaxKind.TypeLiteral)
@@ -620,12 +621,17 @@ export const astFactory = () => {
           if (isNumericTypeNode(propNode)) {
             numericProperties.push(prop.name);
           }
+
+          if (isBooleanTypeNode(propNode)) {
+            booleanProperties.push(prop.name);
+          }
         }
 
         return {
           ...type,
           properties,
           numericProperties,
+          booleanProperties,
           typeboxSchema: renderTypeboxSchema(typeNode),
         };
       });
@@ -758,6 +764,55 @@ const isNumericTypeNode = (
 
   // plain `number` keyword
   return typeNode.isKind(SyntaxKind.NumberKeyword);
+};
+
+/**
+ * Whether type node reduces to `boolean`.
+ *
+ *   boolean               -> true
+ *   Array<boolean>        -> true
+ *   boolean[]             -> true
+ *   readonly boolean[]    -> true
+ *   true, false           -> true (literal types)
+ *
+ * Does NOT descend into object properties or nested tuple elements.
+ * */
+const isBooleanTypeNode = (typeNode: TypeNode): boolean => {
+  // (T) -> T (peel off parentheses)
+  if (typeNode.isKind(SyntaxKind.ParenthesizedType)) {
+    return isBooleanTypeNode(typeNode.getTypeNode());
+  }
+
+  // Array<T> -> T
+  if (typeNode.isKind(SyntaxKind.TypeReference)) {
+    return typeNode.getTypeName().getText() === "Array"
+      ? isBooleanTypeNode(typeNode.getTypeArguments()[0])
+      : false;
+  }
+
+  // T[] -> T
+  if (typeNode.isKind(SyntaxKind.ArrayType)) {
+    return isBooleanTypeNode(typeNode.getElementTypeNode());
+  }
+
+  // readonly T[] -> T
+  if (typeNode.isKind(SyntaxKind.TypeOperator)) {
+    return typeNode.getOperator() === SyntaxKind.ReadonlyKeyword
+      ? isBooleanTypeNode(typeNode.getTypeNode())
+      : false;
+  }
+
+  // literal true / false
+  if (typeNode.isKind(SyntaxKind.LiteralType)) {
+    const literal = typeNode.getLiteral();
+    return (
+      literal.isKind(SyntaxKind.TrueKeyword) ||
+      literal.isKind(SyntaxKind.FalseKeyword)
+    );
+  }
+
+  // plain boolean
+  return typeNode.isKind(SyntaxKind.BooleanKeyword);
 };
 
 /**

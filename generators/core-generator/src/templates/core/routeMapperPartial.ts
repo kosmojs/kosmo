@@ -12,7 +12,13 @@ import type { RoutePathMethods } from "@kosmojs/core/generators";
 
 export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
   base: string,
-  { name, pathPattern, params, numericProperties }: ApiRouteSerialized,
+  {
+    name,
+    pathPattern,
+    params,
+    numericProperties,
+    booleanProperties,
+  }: ApiRouteSerialized,
 ): RoutePathMethods<ParamsT> & {
   normalizeParams: (path: string) => Record<string, unknown>;
   normalizeSearchParams: (
@@ -36,6 +42,12 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     return Number.isFinite(n) ? n : val;
   };
 
+  const maybeBoolean = (val: unknown) => {
+    return [true, false, "true", "false"].includes(val as never) //
+      ? JSON.parse(val as never)
+      : val;
+  };
+
   const resolveParam = (path: string, param: (typeof params)[number]) => {
     try {
       const match = pathMatcher(path);
@@ -50,14 +62,21 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     method: HTTPMethod,
   ) => {
     return Object.fromEntries(
-      Object.entries(searchParams).map(([k, v]) => [
-        k,
-        numericProperties.query?.[method]?.includes(k)
-          ? Array.isArray(v)
-            ? v.map((e) => maybeNumber(e))
-            : maybeNumber(v)
-          : v,
-      ]),
+      Object.entries(searchParams).map(([k, v]) => {
+        if (numericProperties.query?.[method]?.includes(k)) {
+          return [
+            k,
+            Array.isArray(v) ? v.map((e) => maybeNumber(e)) : maybeNumber(v),
+          ];
+        }
+        if (booleanProperties.query?.[method]?.includes(k)) {
+          return [
+            k,
+            Array.isArray(v) ? v.map((e) => maybeBoolean(e)) : maybeBoolean(v),
+          ];
+        }
+        return [k, v];
+      }),
     );
   };
 

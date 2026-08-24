@@ -43,6 +43,23 @@ describe("typeResolverFactory", { timeout: 10_000 }, () => {
     return type.numericProperties;
   };
 
+  const booleanOf = (
+    types: Array<ResolvedTypeSignature>,
+    name: string,
+  ): Array<string> => {
+    const type = types.find((e) => e.name === name);
+
+    if (!type) {
+      throw new Error(`${name} type not found`);
+    }
+
+    if (!type.booleanProperties) {
+      throw new Error(`${name} type has no booleanProperties`);
+    }
+
+    return type.booleanProperties;
+  };
+
   // tfusion reformats flattened type text, so schemas carry non-semantic whitespace;
   // compare on collapsed whitespace.
   const compact = (text: string | undefined) => {
@@ -136,6 +153,41 @@ describe("typeResolverFactory", { timeout: 10_000 }, () => {
           `export type ParamsT = { "id": VRefine<number, { minimum: 1 }>; "slug": string };`,
         );
         expect(numericOf(types, "ParamsT")).toEqual(["id"]);
+      });
+    });
+
+    describe("booleanProperties", () => {
+      test("detects bare boolean", () => {
+        const types = resolveLiterals(`export type query = { a: boolean };`);
+        expect(booleanOf(types, "query")).toEqual(["a"]);
+      });
+
+      test("detects array-wrapped booleans", () => {
+        const types = resolveLiterals(
+          `export type query = { a: Array<boolean>; b: boolean[]; c: readonly boolean[] };`,
+        );
+        expect(booleanOf(types, "query")).toEqual(["a", "b", "c"]);
+      });
+
+      test("detects literal true / false", () => {
+        const types = resolveLiterals(
+          `export type query = { a: true; b: false };`,
+        );
+        expect(booleanOf(types, "query")).toEqual(["a", "b"]);
+      });
+
+      test("detects boolean through a local alias", () => {
+        const types = resolveLiterals(
+          `type FlagT = boolean; export type query = { a: FlagT };`,
+        );
+        expect(booleanOf(types, "query")).toEqual(["a"]);
+      });
+
+      test("empty array when object literal has no boolean elements", () => {
+        const types = resolveLiterals(
+          `export type query = { a: string; b: "x" | "y"; c: number };`,
+        );
+        expect(booleanOf(types, "query")).toEqual([]);
       });
     });
   });

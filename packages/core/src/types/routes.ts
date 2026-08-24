@@ -161,6 +161,13 @@ export type ApiRouteSerialized = RouteSerialized & {
       Array<string>
     >;
   };
+  booleanProperties: {
+    query: Record<
+      // GET, POST etc.
+      string,
+      Array<string>
+    >;
+  };
 };
 
 export type PageRouteSerialized = RouteSerialized;

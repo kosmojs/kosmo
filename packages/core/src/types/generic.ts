@@ -11,8 +11,10 @@ export type ResolvedTypeSignature = Omit<ResolvedType, "properties"> & {
       typeboxSchema?: string;
     }
   >;
-  // needed to coerce numeric params
+  // needed to coerce numeric params and numeric props in query validation target
   numericProperties?: Array<string>;
+  // needed to coerce boolean props in query validation target
+  booleanProperties?: Array<string>;
 };
 
 /**
