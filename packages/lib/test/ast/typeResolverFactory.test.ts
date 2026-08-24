@@ -83,9 +83,9 @@ describe("typeResolverFactory", { timeout: 10_000 }, () => {
 
       test("detects array-wrapped number", () => {
         const types = resolveLiterals(
-          `export type query = { a: Array<number>; b: number[] };`,
+          `export type query = { a: Array<number>; b: number[]; c: readonly number[] };`,
         );
-        expect(numericOf(types, "query")).toEqual(["a", "b"]);
+        expect(numericOf(types, "query")).toEqual(["a", "b", "c"]);
       });
 
       test("detects number through a local alias", () => {
@@ -108,6 +108,25 @@ describe("typeResolverFactory", { timeout: 10_000 }, () => {
       test("empty array when object literal has no numeric elements", () => {
         const types = resolveLiterals(
           `export type query = { a: string; b: "x" | "y"; c: boolean };`,
+        );
+        expect(numericOf(types, "query")).toEqual([]);
+      });
+
+      test("detects numeric literals, sign included", () => {
+        const types = resolveLiterals(`export type query = { a: 2; b: -2 };`);
+        expect(numericOf(types, "query")).toEqual(["a", "b"]);
+      });
+
+      test("detects unions where every member is numeric", () => {
+        const types = resolveLiterals(
+          `export type query = { a: 1 | 2 | 3; b: 1 | -2 | 3 };`,
+        );
+        expect(numericOf(types, "query")).toEqual(["a", "b"]);
+      });
+
+      test("rejects mixed unions", () => {
+        const types = resolveLiterals(
+          `export type query = { a: 1 | "x"; b: string | number };`,
         );
         expect(numericOf(types, "query")).toEqual([]);
       });

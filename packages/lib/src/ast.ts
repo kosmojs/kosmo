@@ -697,10 +697,7 @@ const propertyName = (property: PropertySignature): string => {
 };
 
 /**
- * Whether a top-level type node reduces to `number`.
- *
- * Peels the wrappers tfusion leaves intact after flattening
- * (aliases are already inlined by then, VRefine is preserved via self-override):
+ * Whether type node reduces to `number`.
  *
  *   number                      -> true
  *   VRefine<number, {}>         -> true (peel to first type argument)
@@ -708,41 +705,58 @@ const propertyName = (property: PropertySignature): string => {
  *   number[]                    -> true (peel to element type)
  *   readonly number[]           -> true (peel the type operator, then array)
  *   VRefine<Array<number>, {}>  -> true (peels compose)
- *   string | number             -> false (unions are not a single number)
+ *   2, -2                       -> true (literal types, sign included)
+ *   1 | -2 | 3                  -> true (union with every member numeric)
+ *   number | string             -> false (mixed unions are not numeric)
  *
- * Does NOT descend into object properties or nested tuple elements -
- * it judges the single node handed to it, so callers control which top-level elements are tested.
- *
- * @param typeNode   the node to test
- * @param refineTypeName the configured refine type name
+ * Does NOT descend into object properties or nested tuple elements.
  * */
 const isNumericTypeNode = (
   typeNode: TypeNode,
   refineTypeName = defaults.refineTypeName,
 ): boolean => {
-  // VRefine<T, Opts> -> T; Array<T> -> T
+  // (T) -> T (peel off parentheses)
+  if (typeNode.isKind(SyntaxKind.ParenthesizedType)) {
+    return isNumericTypeNode(typeNode.getTypeNode(), refineTypeName);
+  }
+
+  // VRefine<T, Opts> -> T
+  // Array<T> -> T
   if (typeNode.isKind(SyntaxKind.TypeReference)) {
     const name = typeNode.getTypeName().getText();
     return name === refineTypeName || name === "Array"
-      ? isNumericTypeNode(typeNode.getTypeArguments()[0])
+      ? isNumericTypeNode(typeNode.getTypeArguments()[0], refineTypeName)
       : false;
   }
 
   // T[] -> T
   if (typeNode.isKind(SyntaxKind.ArrayType)) {
-    return isNumericTypeNode(typeNode.getElementTypeNode());
+    return isNumericTypeNode(typeNode.getElementTypeNode(), refineTypeName);
   }
 
-  // readonly T[] -> element type (other type operators like keyof / unique
-  // are not numeric, so they correctly fall through to the final check)
-  if (
-    typeNode.isKind(SyntaxKind.TypeOperator) &&
-    typeNode.getOperator() === SyntaxKind.ReadonlyKeyword
-  ) {
-    return isNumericTypeNode(typeNode.getTypeNode());
+  // readonly T[] -> T
+  if (typeNode.isKind(SyntaxKind.TypeOperator)) {
+    return typeNode.getOperator() === SyntaxKind.ReadonlyKeyword
+      ? isNumericTypeNode(typeNode.getTypeNode(), refineTypeName)
+      : false;
   }
 
-  // plain number
+  // 1 | -2 | 3 - numeric when every member is numeric
+  if (typeNode.isKind(SyntaxKind.UnionType)) {
+    return typeNode
+      .getTypeNodes()
+      .every((node) => isNumericTypeNode(node, refineTypeName));
+  }
+
+  // literal 2, -2 (the only prefix allowed in a literal type is the sign)
+  if (typeNode.isKind(SyntaxKind.LiteralType)) {
+    const literal = typeNode.getLiteral();
+    return literal.isKind(SyntaxKind.PrefixUnaryExpression)
+      ? literal.getOperand().isKind(SyntaxKind.NumericLiteral)
+      : literal.isKind(SyntaxKind.NumericLiteral);
+  }
+
+  // plain `number` keyword
   return typeNode.isKind(SyntaxKind.NumberKeyword);
 };
 
