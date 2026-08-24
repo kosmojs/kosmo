@@ -1,3 +1,18 @@
+## [0.4.2](https://github.com/kosmojs/kosmo/compare/v0.4.1...v0.4.2) (2026-08-24)
+
+### Features
+
+* allow boolean in query validation target ([9cdd94a](https://github.com/kosmojs/kosmo/commit/9cdd94a991ca0c54e66dfa35b3536f2378999852))
+* **cli:** add typecheck command ([f0bfcf6](https://github.com/kosmojs/kosmo/commit/f0bfcf646cad16d869f296271d5ad3d803c17dee))
+
+### Bug Fixes
+
+* **backend:** cascadingMiddleware was missing Override type ([198def8](https://github.com/kosmojs/kosmo/commit/198def806a6f1b259693634f4683c3ae74f60c9e))
+* **isNumericTypeNode:** consider numeric literals, signed or not, and unions of numeric literals ([409484b](https://github.com/kosmojs/kosmo/commit/409484bac6a9eecac47cc749e8605019470a4757))
+* **mdx-generator:** add jsx:preserve ([86236dc](https://github.com/kosmojs/kosmo/commit/86236dc4d02dada6a26c6aeb9134eec87486fd55))
+* **mdx-generator:** mdx folders need jsx:react-jsx in compilerOptions ([45db712](https://github.com/kosmojs/kosmo/commit/45db712b8e5b1dab3b836652340c48bc9c3cd669))
+* **types:** solid renderToStream ([d060c43](https://github.com/kosmojs/kosmo/commit/d060c43e41b528e9f94ccd98e8b9f351b60047d2))
+
 ## [0.4.1](https://github.com/kosmojs/kosmo/compare/v0.4.0...v0.4.1) (2026-08-22)
 
 ### Bug Fixes
