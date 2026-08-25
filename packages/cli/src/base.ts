@@ -1,5 +1,3 @@
-import { cp } from "node:fs/promises";
-import { basename } from "node:path";
 import { styleText } from "node:util";
 
 import { BACKENDS, FRAMEWORKS } from "@kosmojs/core";
@@ -20,45 +18,23 @@ export type Project = {
 export type SourceFolder = {
   name: string;
   base: string;
-  framework?: keyof typeof FRAMEWORKS | "none";
-  backend?: keyof typeof BACKENDS | "none";
-  ssr?: boolean;
-  tsq?: boolean;
+  framework?: keyof typeof FRAMEWORKS | undefined;
+  backend?: keyof typeof BACKENDS | undefined;
+  ssr?: boolean | undefined;
+  tsq?: boolean | undefined;
 };
+
+export type MaybePromise<T> = T | Promise<T>;
 
 export const CREATE_OPTIONS = ["project", "folder"] as const;
 
-export const introText = () => {
-  const greets = [
-    "Great! Let's add a new source folder 📁",
-    "Right! It's perfect time for a new source folder ✨",
-    "Nice! A fresh source folder coming right up 🛠️",
-  ];
-  return styleText(
-    ["bold", "green"],
-    greets[Math.floor(Math.random() * greets.length)],
-  );
-};
-
-export const copyFiles = async (
-  src: string,
-  dst: string,
-  { exclude = [] }: { exclude?: Array<string | RegExp> } = {},
-): Promise<void> => {
-  const filter = exclude.length
-    ? (path: string) => {
-        return !exclude.some((e) => {
-          return typeof e === "string" ? e === basename(path) : e.test(path);
-        });
-      }
-    : undefined;
-
-  await cp(src, dst, {
-    recursive: true,
-    force: true,
-    filter,
-  });
-};
+export const FOLDER_OPTIONS = {
+  base: { type: "string" },
+  backend: { type: "string" },
+  framework: { type: "string" },
+  ssr: { type: "boolean" },
+  tsq: { type: "boolean" },
+} as const;
 
 type DependencyEntry = ["dependencies" | "devDependencies", string, string];
 
@@ -81,37 +57,16 @@ export const compareDependencies = (
   return newDependencies;
 };
 
-export const newDependenciesText = (
-  newDependencies: Array<DependencyEntry>,
-) => {
-  return [
-    "💡 ",
-    styleText(["bold", "italic", "red"], "New dependencies added: "),
-    styleText("dim", newDependencies.map(([, pkg]) => pkg).join(", ")),
-  ].join("");
-};
-
-export const installHintText = () => {
-  return [
-    "📦 ",
-    styleText(["bold", "blueBright"], "Install them before continue: "),
-    styleText(
-      "dim",
-      ["npm", "pnpm", "yarn"].map((e) => `\`${e} install\``).join(" / "),
-    ),
-  ].join("");
-};
-
-export const readyText = () => {
-  return styleText(["bold", "green"], "Source folder ready ✅");
+export const isCLI = (unconditionalCLI?: unknown) => {
+  return unconditionalCLI ? true : !process.stdout.isTTY;
 };
 
 export const validateName = (name: string | undefined) => {
   if (!name?.trim()) {
     return "Invalid name";
   }
-  if (/[^\w.@$+-]/.test(name)) {
-    return "May contain only alphanumerics, hyphens, periods or any of @ $ +";
+  if (/[^\w@$+-]/.test(name)) {
+    return "May contain only alphanumerics or any of - + $ @";
   }
   return undefined;
 };
@@ -155,27 +110,29 @@ export const printUsage = () => {
     "",
     styleText(
       "bold",
-      "  Use these options to create a Source Folder in non-interactive mode:",
+      "  Use these options to create a Source Folder in CLI mode:",
     ),
     "",
     `  ${styleText("cyan", "--name")} ${styleText("dim", "<name>")}`,
-    `  Source folder name`,
+    `  Source folder name ${styleText("dim", "(required)")}`,
     "",
     `  ${styleText("cyan", "--base")} ${styleText("dim", "<path>")}`,
-    `  Base URL`,
+    `  Base URL ${styleText("dim", "(required)")}`,
     "",
     `  ${styleText("cyan", "--framework")} ${styleText("dim", "<framework>")}`,
-    `  Framework: ${Object.keys(FRAMEWORKS)
-      .map((e) => styleText("yellow", e))
-      .join(", ")} ${styleText("dim", "(omit for API-only folders)")}`,
+    `  Framework: ${styleText("yellow", Object.keys(FRAMEWORKS).join("|"))} ${styleText("dim", "(omit for API-only folders)")}`,
     "",
     `  ${styleText("cyan", "--backend")} ${styleText("dim", "<framework>")}`,
-    `  Backend framework: ${Object.keys(BACKENDS)
-      .map((e) => styleText("yellow", e))
-      .join(", ")} ${styleText("dim", "(omit for client-only folders)")}`,
+    `  Backend framework: ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(omit for client-only folders)")}`,
+    "",
+    `  ${styleText("cyan", "--overwrite")}`,
+    `  Overwrite existing files ${styleText("dim", "(use with caution)")}`,
     "",
     `  ${styleText("cyan", "--ssr")}`,
     `  Enable server-side rendering (SSR)`,
+    "",
+    `  ${styleText("cyan", "--tsq")}`,
+    `  Enable TanStack Query`,
     "",
 
     styleText("bold", "SERVE COMMAND"),
@@ -202,12 +159,24 @@ export const printUsage = () => {
     `  Build multiple source folders`,
     "",
 
+    styleText("bold", "TYPECHECK COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo typecheck")}`,
+    `  Typecheck all source folders`,
+    "",
+    `  ${styleText("blue", "kosmo typecheck")} ${styleText("magenta", "admin")}`,
+    `  Typecheck single source folder`,
+    "",
+    `  ${styleText("blue", "kosmo typecheck")} ${styleText("magenta", "admin front")}`,
+    `  Typecheck multiple source folders`,
+    "",
+
     styleText("bold", "COMMON OPTIONS"),
     "",
-    `  ${styleText("magenta", "-q, --quiet")}`,
-    `  Suppress all output in non-interactive mode (errors still shown)`,
+    `  ${styleText("cyan", "-q, --quiet")}`,
+    `  Suppress all output in CLI mode (errors still shown)`,
     "",
-    `  ${styleText("magenta", "-h, --help")}`,
+    `  ${styleText("cyan", "-h, --help")}`,
     `  Display this help message and exit`,
     "",
   ];

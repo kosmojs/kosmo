@@ -1,18 +1,18 @@
 import { readFileSync } from "node:fs";
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
+import { styleText } from "node:util";
 
+import * as prompts from "@clack/prompts";
 import { format } from "oxfmt";
 
 import {
-  type BACKENDS,
-  DEFAULT_BACKEND,
+  BACKENDS,
   DEFAULT_DIST,
-  DEFAULT_FRAMEWORK,
   DEFAULT_PORT,
   defaults,
-  type FRAMEWORKS,
+  FRAMEWORKS,
   type GeneratorSignature,
 } from "@kosmojs/core";
 import {
@@ -30,10 +30,18 @@ import {
   typeboxGenerator,
   vueGenerator,
 } from "@kosmojs/dev";
-import { pathExists, render, renderToFile } from "@kosmojs/lib";
+import { render, renderToFile } from "@kosmojs/lib";
 
 import self from "../package.json" with { type: "json" };
-import type { Project, SourceFolder } from "./base";
+import {
+  assertNoError,
+  isCLI,
+  type MaybePromise,
+  type Project,
+  type SourceFolder,
+  validateBase,
+  validateName,
+} from "./base";
 import * as templates from "./templates";
 
 /**
@@ -60,14 +68,72 @@ type GeneratorOptions = Partial<
   >
 >;
 
+// Resolve a clack prompt, exiting cleanly on ctrl-c / escape
+const readAnswer = async <T>(input: Promise<T | symbol>) => {
+  const value = await input;
+  if (prompts.isCancel(value)) {
+    prompts.cancel("Cancelled");
+    process.exit(0);
+  }
+  return value;
+};
+
 export const createProject = async (
   path: string,
   project: Project,
   assets?: {
     dependencies?: Record<string, string>;
     devDependencies?: Record<string, string>;
+    input?: {
+      overwrite?: boolean;
+    };
   },
 ) => {
+  await mkdir(path, { recursive: true });
+
+  const entries = await readdir(path);
+
+  const exemptPatterns = [/^\.git/, /^readme/i, /^license/i];
+
+  if (entries.some((e) => !exemptPatterns.some((r) => r.test(e)))) {
+    if (isCLI(assets?.input)) {
+      // cli mode
+      assertNoError(() => {
+        return assets?.input?.overwrite
+          ? undefined
+          : "Target dir is not empty. Either remove dir contents or provide --overwrite flag";
+      });
+    } else {
+      // interactive mode
+      const answer = await readAnswer(
+        prompts.select({
+          message: "Target dir is not empty",
+          options: [
+            { value: "remove", label: "Remove existing files" },
+            {
+              value: "overwrite",
+              label: "Keep existing files, overwrite as needed",
+            },
+            { value: "cancel", label: "Cancel" },
+          ],
+        }),
+      );
+
+      if (answer === "remove") {
+        for (const entry of entries) {
+          if (!exemptPatterns.some((r) => r.test(entry))) {
+            await rm(resolve(path, entry), { recursive: true });
+          }
+        }
+      } else if (answer === "cancel") {
+        prompts.cancel("Cancelled");
+        process.exit(0);
+      }
+
+      prompts.outro();
+    }
+  }
+
   const packageJson = {
     type: "module",
     distDir: project.distDir || DEFAULT_DIST,
@@ -76,7 +142,7 @@ export const createProject = async (
       dev: "kosmo serve",
       build: "kosmo build",
       typecheck: "kosmo typecheck",
-      "+folder": "kosmo folder",
+      folder: "kosmo folder",
     },
     dependencies: {
       "@kosmojs/core": SELF_VERSION,
@@ -89,25 +155,228 @@ export const createProject = async (
       "@types/node": self.devDependencies["@types/node"],
       "@types/deno": self.devDependencies["@types/deno"],
       "@types/bun": self.devDependencies["@types/bun"],
+      typescript: self.devDependencies["typescript"],
       vite: self.devDependencies["vite"],
       ...coreGenerator.devDependencies,
       ...assets?.devDependencies,
     },
   };
 
-  const projectPath = resolve(path, project.name);
-
-  if (await pathExists(projectPath)) {
-    throw new Error(`${project.name} already exists`);
-  }
-
   for (const [file, template] of [
     ["package.json", JSON.stringify(packageJson, undefined, 2)],
   ]) {
-    await renderToFile(resolve(projectPath, file), template, {
-      defaults,
-      distDir: project.distDir || DEFAULT_DIST,
-    });
+    await renderToFile(
+      resolve(path, file),
+      template,
+      {
+        defaults,
+        distDir: project.distDir || DEFAULT_DIST,
+      },
+      {
+        // overwrite regardless, project should start with a clean package.json
+        overwrite: true,
+      },
+    );
+  }
+};
+
+export const createFolder = async (
+  root: string,
+  {
+    intro,
+    outro,
+    note,
+    input,
+  }: {
+    input?: {
+      name?: string;
+      base?: string;
+      backend?: string;
+      framework?: string;
+      ssr?: boolean;
+      tsq?: boolean;
+      quiet?: boolean;
+      overwrite?: boolean;
+    };
+    intro?: () => MaybePromise<string | undefined>;
+    outro?: (f: SourceFolder) => MaybePromise<string | undefined>;
+    note?: (f: SourceFolder) => MaybePromise<string | undefined>;
+  },
+): Promise<SourceFolder> => {
+  const srcDir = resolve(root, defaults.srcDir);
+
+  await mkdir(srcDir, { recursive: true });
+  const entries = await readdir(srcDir);
+
+  if (isCLI(input)) {
+    // cli mode
+
+    if (intro) {
+      input?.quiet || console.log(await intro());
+    }
+
+    assertNoError(() => validateName(input?.name));
+
+    if (!input?.overwrite) {
+      assertNoError(() => {
+        return entries.includes(input?.name ?? "") //
+          ? `./${defaults.srcDir}/${input?.name} already exists. Either remove it or provide --overwrite flag.`
+          : undefined;
+      });
+    }
+
+    assertNoError(() => validateBase(input?.base));
+
+    for (const [key, values] of [
+      ["framework", FRAMEWORKS],
+      ["backend", BACKENDS],
+    ] as const) {
+      if (input?.[key]) {
+        assertNoError(() => {
+          return !Object.keys(values).includes(input[key] as never)
+            ? `Invalid ${key}, use one of: ${Object.keys(values).join(", ")}`
+            : undefined;
+        });
+      }
+    }
+
+    const folder = input as SourceFolder;
+
+    await createSourceFolder(root, folder);
+
+    if (note) {
+      input?.quiet || console.log(await note(folder));
+    }
+
+    if (outro) {
+      input?.quiet || console.log(await outro(folder));
+    }
+
+    return folder;
+  }
+
+  // interactive mode
+  {
+    if (intro) {
+      const output = await intro();
+      !output || prompts.intro(output);
+    }
+
+    const name = await readAnswer(
+      prompts.text({
+        message: "Folder Name",
+        validate: validateName,
+      }),
+    );
+
+    if (entries.includes(name)) {
+      const answer = await readAnswer(
+        prompts.select({
+          message: [
+            styleText(["blue", "bold"], `./${defaults.srcDir}/${name}`),
+            "already exists",
+          ].join(" "),
+          options: [
+            { value: "remove", label: "Remove existing files" },
+            {
+              value: "overwrite",
+              label: "Keep existing files, overwrite as needed",
+            },
+            { value: "cancel", label: "Cancel" },
+          ],
+        }),
+      );
+      if (answer === "remove") {
+        await rm(resolve(srcDir, name), { recursive: true });
+      } else if (answer === "cancel") {
+        prompts.cancel("Cancelled");
+        process.exit(0);
+      }
+    }
+
+    const base = await readAnswer(
+      prompts.text({
+        message: "Base URL",
+        initialValue: "/",
+        validate: (base) => validateBase(base || "/"),
+      }),
+    );
+
+    const backend = await readAnswer(
+      prompts.select({
+        message: "Backend Framework",
+        options: [
+          ...Object.entries(BACKENDS).map(([value, label]) => {
+            return { value, label };
+          }),
+          { value: undefined, label: "None (client-only folder)" },
+        ],
+      }),
+    );
+
+    const framework = await readAnswer(
+      prompts.select({
+        message: "Framework",
+        options: [
+          ...Object.entries(FRAMEWORKS).map(([value, label]) => {
+            return { value, label };
+          }),
+          { value: undefined, label: "None (API-only folder)" },
+        ],
+      }),
+    );
+
+    // SSR and TanStack Query only apply to frameworks with a client runtime
+    const promptExtras =
+      !framework || ["mdx"].includes(framework) //
+        ? false
+        : true;
+
+    let ssr: boolean | undefined;
+    let tsq: boolean | undefined;
+
+    if (promptExtras) {
+      ssr = await readAnswer(
+        prompts.confirm({
+          message: "Enable server-side rendering (SSR)?",
+          initialValue: false,
+          active: "yes",
+          inactive: "no",
+        }),
+      );
+
+      tsq = await readAnswer(
+        prompts.confirm({
+          message: "Enable TanStack Query?",
+          initialValue: false,
+          active: "yes",
+          inactive: "no",
+        }),
+      );
+    }
+
+    const folder: SourceFolder = {
+      name,
+      base,
+      ...(framework ? ({ framework } as never) : {}),
+      ...(backend ? ({ backend } as never) : {}),
+      ssr,
+      tsq,
+    };
+
+    await createSourceFolder(root, folder);
+
+    if (note) {
+      const output = await note(folder);
+      !output || prompts.note(output);
+    }
+
+    if (outro) {
+      const output = await outro(folder);
+      !output || prompts.outro(output);
+    }
+
+    return folder;
   }
 };
 
@@ -118,22 +387,26 @@ export const createSourceFolder = async (
 ) => {
   const folderPath = resolve(projectRoot, defaults.srcDir, folder.name);
 
-  if (await pathExists(folderPath)) {
-    throw new Error(`${folder.name} already exists`);
-  }
+  await mkdir(folderPath, { recursive: true });
 
-  await renderToFile(resolve(folderPath, "index.html"), templates.index, {});
+  if (folder.framework) {
+    await renderToFile(
+      resolve(folderPath, "index.html"),
+      templates.index,
+      {},
+      {
+        // do not overwrite real files with a stub!
+        // if at any point file should be regenerated,
+        // just empty or delete it and dev server will generate a clean version.
+        overwrite: false,
+      },
+    );
+  }
 
   const packageFile = resolve(projectRoot, "package.json");
 
-  // Using readFile instead of import() because reimporting returns
-  // cached content, and adding a cache-busting query string causes
-  // Vite's module runner to treat JSON as JavaScript, failing to parse
-  const packageFileContent = await readFile(packageFile, "utf8");
-
-  const packageJson = JSON.parse(packageFileContent);
-
-  const framework = folder.framework || DEFAULT_FRAMEWORK;
+  // Using readFile cause import() returns cached content
+  const packageJson = JSON.parse(await readFile(packageFile, "utf8"));
 
   const [kosmoConfig, { generators }] = createKosmoConfig(
     folder,
@@ -151,33 +424,43 @@ export const createSourceFolder = async (
   for (const file of [
     // stub files for initial build to pass;
     // generators will fill them with appropriate content.
-    `${defaults.apiDir}/index/index.ts`,
-    ...(["solid", "react"].includes(framework as never)
+    ...(folder.backend ? [`${defaults.apiDir}/index/index.ts`] : []),
+    ...(["solid", "react"].includes(folder.framework ?? "")
       ? [
           `${defaults.pagesDir}/index/index.tsx`,
           `${defaults.entryDir}/client.ts`,
         ]
       : []),
-    ...(["vue"].includes(framework as never)
+    ...(["vue"].includes(folder.framework ?? "")
       ? [
           `${defaults.pagesDir}/index/index.vue`,
           `${defaults.entryDir}/client.ts`,
         ]
       : []),
-    ...(["svelte"].includes(framework as never)
+    ...(["svelte"].includes(folder.framework ?? "")
       ? [
           `${defaults.pagesDir}/index/index.svelte`,
           `${defaults.entryDir}/client.ts`,
         ]
       : []),
-    ...(["mdx"].includes(framework as never)
+    ...(["mdx"].includes(folder.framework ?? "")
       ? [
           `${defaults.pagesDir}/index/index.mdx`,
           `${defaults.entryDir}/client.ts`,
         ]
       : []),
   ] as const) {
-    await renderToFile(resolve(folderPath, file), "", {});
+    await renderToFile(
+      resolve(folderPath, file),
+      "",
+      {},
+      {
+        // do not overwrite real files with a stub!
+        // if at any point file should be regenerated,
+        // just empty or delete it and dev server will generate a clean version.
+        overwrite: false,
+      },
+    );
   }
 
   for (const { generator } of generators) {
@@ -192,8 +475,6 @@ export const createSourceFolder = async (
   }
 
   await writeFile(packageFile, JSON.stringify(packageJson, undefined, 2));
-
-  return folder;
 };
 
 export const createKosmoConfig = (
@@ -208,11 +489,7 @@ export const createKosmoConfig = (
     generator: GeneratorSignature;
   }> = [];
 
-  const {
-    base,
-    framework = DEFAULT_FRAMEWORK,
-    backend = DEFAULT_BACKEND,
-  } = folder;
+  const { base, framework = "", backend = "" } = folder;
 
   const options = Object.entries({
     ...generatorOptions,

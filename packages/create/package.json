@@ -20,7 +20,7 @@
     "postbuild": "chmod +x pkg/cli.js"
   },
   "dependencies": {
-    "@clack/prompts": "^1.7.0",
-    "@kosmojs/cli": "workspace:^"
+    "@kosmojs/cli": "workspace:^",
+    "@kosmojs/core": "workspace:^"
   }
 }

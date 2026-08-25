@@ -452,6 +452,9 @@ importers:
       '@types/node':
         specifier: ^26.2.0
         version: 26.2.0
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
       vite:
         specifier: ^8.2.2
         version: 8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)
@@ -492,12 +495,12 @@ importers:
 
   packages/create:
     dependencies:
-      '@clack/prompts':
-        specifier: ^1.7.0
-        version: 1.7.0
       '@kosmojs/cli':
         specifier: workspace:^
         version: link:../cli
+      '@kosmojs/core':
+        specifier: workspace:^
+        version: link:../core
 
   packages/dev:
     dependencies:

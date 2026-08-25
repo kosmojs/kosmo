@@ -4,132 +4,145 @@ import { execFile } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { basename, dirname, join, relative, resolve } from "node:path";
-import { parseArgs } from "node:util";
+import { parseArgs, styleText } from "node:util";
 
-import * as prompts from "@clack/prompts";
 import { createJiti } from "jiti";
 import { glob } from "tinyglobby";
 
-import {
-  BACKENDS,
-  defaults,
-  FRAMEWORKS,
-  type ProjectSettings,
-} from "@kosmojs/core";
+import { defaults, type ProjectSettings } from "@kosmojs/core";
 import chassis from "@kosmojs/dev/chassis";
 import { pathExists, spinnerFactory } from "@kosmojs/lib";
 
 import {
   assertNoError,
   compareDependencies,
-  installHintText,
-  introText,
-  newDependenciesText,
+  FOLDER_OPTIONS,
+  type PackageJSON,
   printUsage,
-  readyText,
   type SourceFolder,
-  validateBase,
-  validateName,
 } from "./base";
-import { createSourceFolder } from "./factory";
+import { createFolder } from "./factory";
 
-const options = parseArgs({
+const COMMANDS = ["folder", "serve", "build", "typecheck"] as const;
+
+const { values, positionals } = parseArgs({
   options: {
+    ...FOLDER_OPTIONS,
     name: { type: "string" },
-    base: { type: "string" },
-    backend: { type: "string" },
-    framework: { type: "string" },
-    ssr: { type: "boolean" },
-    tsq: { type: "boolean" },
+    overwrite: { type: "boolean" },
     quiet: { type: "boolean", short: "q" },
     help: { type: "boolean", short: "h" },
   },
-  allowPositionals: true,
   strict: true,
+  allowPositionals: true,
 });
 
-if (options.values.help) {
+if (values.help) {
   printUsage();
   process.exit(0);
 }
 
-const root = process.cwd();
-
-const jiti = createJiti(root);
-
-const packageFile = resolve(root, "package.json");
-const packageFileExists = await pathExists(packageFile);
-
-const packageJson = packageFileExists
-  ? await import(packageFile, { with: { type: "json" } }).then((e) => e.default)
-  : undefined;
-
-// Resolve a clack prompt, exiting cleanly on ctrl-c / escape
-const answer = async <T>(input: Promise<T | symbol>) => {
-  const value = await input;
-  if (prompts.isCancel(value)) {
-    prompts.cancel("Cancelled");
-    process.exit(0);
-  }
-  return value;
-};
-
 const run = async () => {
-  const commands = ["folder", "serve", "build", "typecheck"] as const;
+  const root = process.cwd();
 
-  const [command, ...optedFolders] = options.positionals as [
-    command: (typeof commands)[number],
+  const jiti = createJiti(root);
+
+  const packageFile = resolve(root, "package.json");
+  const packageFileExists = await pathExists(packageFile);
+
+  const packageJson = packageFileExists
+    ? await jiti.import<PackageJSON>(packageFile, { default: true })
+    : undefined;
+
+  const [command, ...rest] = positionals as [
+    command: (typeof COMMANDS)[number],
     ...optedFolders: Array<string>,
   ];
 
-  assertNoError(() => {
-    return !packageJson?.distDir || !packageJson.devPort
-      ? "package.json does not exist or some of `distDir` / `devPort` is not set"
-      : undefined;
-  });
+  if (!packageJson?.distDir || !packageJson?.devPort) {
+    assertNoError(() => {
+      return "package.json does not exist or some of `distDir` / `devPort` is not set";
+    });
+    return;
+  }
 
   assertNoError(() => {
-    return !commands.includes(command)
-      ? `Invalid command, use one of ${commands.join(", ")}`
+    return !COMMANDS.includes(command)
+      ? `Invalid command, use one of ${COMMANDS.join(", ")}`
       : undefined;
   });
 
   if (command === "folder") {
-    await createFolder();
+    const intro = () => {
+      return styleText(
+        ["blue", "bold"],
+        "› Ready to create a new Source Folder",
+      );
+    };
 
-    if (!options.values.quiet) {
-      // Using readFile instead of import() because reimporting returns
-      // cached content, and adding a cache-busting query string causes
-      // Vite's module runner to treat JSON as JavaScript, failing to parse
-      const json = await readFile(packageFile, "utf8");
-
-      const newDependencies = compareDependencies(
-        packageJson,
-        JSON.parse(json),
+    const note = async () => {
+      // Using readFile cause import() returns cached content
+      const { dependencies, devDependencies } = JSON.parse(
+        await readFile(packageFile, "utf8"),
       );
 
-      if (newDependencies.length) {
-        prompts.log.info(
-          [newDependenciesText(newDependencies), installHintText()].join("\n"),
-        );
-      } else {
-        prompts.outro(readyText());
+      const newDependencies = compareDependencies(packageJson, {
+        dependencies,
+        devDependencies,
+      });
+
+      if (!newDependencies.length) {
+        return;
       }
+
+      return [
+        `💡 ${styleText(["bold", "italic", "red"], "New dependencies added: ")}`,
+        styleText("dim", newDependencies.map(([, pkg]) => pkg).join(", ")),
+        "",
+        `📦 ${styleText(["bold", "blueBright"], "Install them before continue: ")}`,
+        `$ npm install ${styleText(["dim"], "# pnpm install / yarn install")}`,
+      ].join("\n");
+    };
+
+    const outro = (folder: SourceFolder) => {
+      return [
+        styleText(["green"], `✨ Well done! A new Source Folder created:`),
+        styleText(["blue", "bold"], `./${defaults.srcDir}/${folder.name}`),
+      ].join(" ");
+    };
+
+    const input = Object.keys(values).length ? values : undefined;
+
+    if (input) {
+      // cli mode
+      await createFolder(root, {
+        input,
+        intro: () => "",
+        note: () => "",
+        outro: async (f: SourceFolder) => {
+          const output = outro(f);
+          const notes = await note();
+          return notes ? [output, notes].join("\n\n") : output;
+        },
+      });
+    } else {
+      // interactive mode
+      await createFolder(root, { intro, note, outro });
     }
 
     return;
   }
 
   const configFiles = await glob(
-    optedFolders.length
-      ? optedFolders.map((e) => `${defaults.srcDir}/${e}/kosmo.config.ts`)
+    rest.length
+      ? rest.map((e) => `${defaults.srcDir}/${e}/kosmo.config.ts`)
       : `${defaults.srcDir}/*/kosmo.config.ts`,
-    { cwd: root, absolute: true },
+    { cwd: root, absolute: true, deep: 2 },
   );
 
   assertNoError(() => {
-    if (optedFolders.length) {
-      return optedFolders.length !== configFiles.length
+    if (rest.length) {
+      return rest.length !== configFiles.length
         ? "Some of given names does not contain a valid KosmoJS source folder"
         : undefined;
     }
@@ -200,118 +213,6 @@ const run = async () => {
   }
 
   await chassis(settings);
-};
-
-const createFolder = async () => {
-  if ("name" in options.values) {
-    // non-interactive mode
-
-    assertNoError(() => validateName(options.values.name));
-    assertNoError(() => validateBase(options.values.base));
-
-    for (const [key, values] of [
-      ["framework", FRAMEWORKS],
-      ["backend", BACKENDS],
-    ] as const) {
-      if (options.values[key]) {
-        assertNoError(() => {
-          return !Object.keys(values).includes(options.values[key] as never)
-            ? `Invalid ${key}, use one of: ${Object.keys(values).join(", ")}`
-            : undefined;
-        });
-      }
-    }
-
-    const folder = options.values as SourceFolder;
-
-    await createSourceFolder(root, folder);
-
-    return folder;
-  }
-
-  // interactive mode
-
-  if (!options.values.quiet) {
-    prompts.intro(introText());
-  }
-
-  const name = await answer(
-    prompts.text({
-      message: "Folder Name",
-      validate: validateName,
-    }),
-  );
-
-  const base = await answer(
-    prompts.text({
-      message: "Base URL",
-      initialValue: "/",
-      validate: (base) => validateBase(base || "/"),
-    }),
-  );
-
-  const backend = (await answer(
-    prompts.select({
-      message: "Backend Framework",
-      options: [
-        ...Object.entries(BACKENDS).map(([value, label]) => {
-          return { value, label };
-        }),
-        { value: "none", label: "None (client-only folder)" },
-      ],
-    }),
-  )) as SourceFolder["backend"];
-
-  const framework = (await answer(
-    prompts.select({
-      message: "Framework",
-      options: [
-        ...Object.entries(FRAMEWORKS).map(([value, label]) => {
-          return { value, label };
-        }),
-        { value: "none", label: "None (API-only folder)" },
-      ],
-    }),
-  )) as SourceFolder["framework"];
-
-  // SSR and TanStack Query only apply to frameworks with a client runtime
-  const promptExtras = !["none", "mdx"].includes(framework as never);
-
-  let ssr: boolean | undefined;
-  let tsq: boolean | undefined;
-
-  if (promptExtras) {
-    ssr = await answer(
-      prompts.confirm({
-        message: "Enable server-side rendering (SSR)?",
-        initialValue: false,
-        active: "yes",
-        inactive: "no",
-      }),
-    );
-
-    tsq = await answer(
-      prompts.confirm({
-        message: "Enable TanStack Query?",
-        initialValue: false,
-        active: "yes",
-        inactive: "no",
-      }),
-    );
-  }
-
-  const folder: SourceFolder = {
-    name,
-    base,
-    ...(backend ? { backend } : {}),
-    ...(framework ? { framework } : {}),
-    ...(ssr ? { ssr } : {}),
-    ...(tsq ? { tsq } : {}),
-  };
-
-  await createSourceFolder(root, folder);
-
-  return folder;
 };
 
 try {

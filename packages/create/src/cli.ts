@@ -1,17 +1,18 @@
 #!/usr/bin/env -S node --enable-source-maps --no-warnings=ExperimentalWarning
 
+import { basename, resolve } from "node:path";
 import { parseArgs, styleText } from "node:util";
-
-import * as prompts from "@clack/prompts";
 
 import {
   assertNoError,
+  createFolder,
   createProject,
+  FOLDER_OPTIONS,
+  isCLI,
   type Project,
   validateName,
 } from "@kosmojs/cli";
-
-import { docsText, introText, nextStepsText, successText } from "./base";
+import { BACKENDS, FRAMEWORKS } from "@kosmojs/core";
 
 const usage = [
   "",
@@ -19,17 +20,34 @@ const usage = [
   "",
   styleText("bold", "BASIC USAGE"),
   "",
-  `  ${styleText("blue", "npm create kosmo")}`,
-  "  Create a new Project - interactive mode",
+  ` ${styleText("blue", "npm create kosmo <name>")}`,
+  ` Create a project in ${styleText("blue", "./<name>")} ${styleText("dim", "(interactive mode)")}`,
   "",
-  `  ${styleText("blue", "npm create kosmo")} ${styleText("dim", "--name <name>")}`,
-  "  Create a new Project - non-interactive mode",
+  ` ${styleText("blue", "npm create kosmo .")}`,
+  " Create a project in current folder",
   "",
-  `  ${styleText("magenta", "-q, --quiet")}`,
-  "  Suppress all output (errors still shown)",
+  ` ${styleText("blue", "npm create kosmo <name> -- --folder ...")}`,
+  ` Create a project in ${styleText("blue", "./<name>")} ${styleText("dim", "(CLI mode)")}`,
   "",
-  `  ${styleText("magenta", "-h, --help")}`,
-  "  Display this help message and exit",
+  ` ${styleText("blue", "npm create kosmo . -- --folder ...")}`,
+  ` Create a project in current folder`,
+  "",
+  " pnpm and yarn do not need an extra --",
+  ` ${styleText("dim", "pnpm create kosmo . --folder ...")}`,
+  ` ${styleText("dim", "yarn create kosmo . --folder ...")}`,
+  "",
+  " CLI mode arguments:",
+  `   ${styleText("cyan", "--folder")} ${styleText("dim", "folder name, required")}`,
+  `   ${styleText("cyan", "--base")} ${styleText("dim", "folder base, required")}`,
+  `   ${styleText("cyan", `--framework`)} ${styleText("yellow", Object.keys(FRAMEWORKS).join("|"))} ${styleText("dim", "(omit for API-only folders)")}`,
+  `   ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(omit for client-only folders)")}`,
+  `   ${styleText("cyan", "--ssr")} ${styleText("dim", "enable SSR")}`,
+  `   ${styleText("cyan", "--tsq")} ${styleText("dim", "enable TanStack Query")}`,
+  `   ${styleText("cyan", "--overwrite")} ${styleText("dim", "overwrite existing files (use with caution)")}`,
+  `   ${styleText("cyan", "--quiet")} ${styleText("dim", "suppress all output (errors still shown)")}`,
+  "",
+  ` ${styleText("blue", "-h, --help")}`,
+  " Display this help message and exit",
   "",
 ];
 
@@ -39,13 +57,16 @@ const printUsage = () => {
   }
 };
 
-const { values } = parseArgs({
+const { values, positionals } = parseArgs({
   options: {
-    name: { type: "string", short: "n" },
-    help: { type: "boolean", short: "h" },
+    ...FOLDER_OPTIONS,
+    folder: { type: "string" },
+    overwrite: { type: "boolean" },
     quiet: { type: "boolean", short: "q" },
+    help: { type: "boolean", short: "h" },
   },
   strict: true,
+  allowPositionals: true,
 });
 
 if (values.help) {
@@ -53,67 +74,72 @@ if (values.help) {
   process.exit(0);
 }
 
-const cwd = process.cwd();
+const run = async () => {
+  const [name] = positionals;
 
-let { name } = values;
-
-// Session framing (intro / next steps / outro) renders only for
-// interactive sessions not silenced by --quiet
-const verbose = !name && !values.quiet;
-
-// Resolve a clack prompt, exiting cleanly on ctrl-c / escape
-const answer = async <T>(input: Promise<T | symbol>) => {
-  const value = await input;
-  if (prompts.isCancel(value)) {
-    prompts.cancel("Cancelled");
-    process.exit(0);
-  }
-  return value;
-};
-
-if (!name) {
-  if (verbose) {
-    prompts.intro(introText());
+  if (name !== ".") {
+    assertNoError(() => validateName(name));
   }
 
-  const validateName = (name: string | undefined) => {
-    if (!name) {
-      return "Invalid name provided";
-    }
-    if (/[^\w.@$+-]/.test(name)) {
-      return "May contain only alphanumerics, hyphens, periods or any of @ $ +";
-    }
-    return undefined;
-  };
-
-  name = await answer(
-    prompts.text({
-      message: "Project Name",
-      validate: validateName,
-    }),
-  );
-}
-
-try {
-  assertNoError(() => validateName(name));
+  const root = resolve(process.cwd(), name);
 
   const project: Project = {
-    name: name as string,
+    name: basename(root),
   };
 
-  await createProject(cwd, project);
+  const readyText = styleText(
+    ["blue", "bold"],
+    "› Project ready, let's add a Source Folder",
+  );
 
-  if (verbose) {
-    prompts.log.success(successText());
-    prompts.note(nextStepsText(project), "Next Steps");
-    prompts.outro(docsText());
+  const doneText = styleText(
+    ["green", "bold"],
+    "✨ Well done! Your KosmoJS project is scaffolded",
+  );
+
+  const nextStepsText = [
+    `${styleText(["blue"], "Next steps: install dependencies and start the dev server.")}`,
+    styleText(
+      ["dim"],
+      "On first start it generates the remaining files and wires everything together.",
+    ),
+    "\n",
+    ...(name === "." ? [] : [`$ cd ./${project.name}`, "\n"]),
+    `📦 ${styleText(["blue", "bold"], "Install Dependencies")}`,
+    `$ npm install ${styleText(["dim"], "# pnpm install / yarn install")}`,
+    "\n",
+    `🚀 ${styleText(["blue", "bold"], "Start the dev server")}`,
+    `$ npm run dev ${styleText(["dim"], "# pnpm dev / yarn dev")}`,
+    "\n",
+    styleText(["dim"], "📘 Docs: https://kosmojs.dev"),
+  ]
+    .map((e) => e.trimEnd())
+    .join("\n");
+
+  if (isCLI(values.folder)) {
+    // cli mode
+
+    await createProject(root, project, { input: values });
+
+    const { folder, ...input } = values;
+
+    await createFolder(root, {
+      input: { ...input, name: folder } as never,
+      intro: () => doneText,
+      note: () => nextStepsText,
+    });
+  } else {
+    // interactive mode
+    await createProject(root, project);
+    await createFolder(root, {
+      intro: () => readyText,
+      note: () => nextStepsText,
+      outro: () => doneText,
+    });
   }
+};
 
-  process.exit(0);
-} catch (
-  // biome-ignore lint: any
-  error: any
-) {
-  console.error(error.message);
+await run().catch((error) => {
+  console.error(styleText("red", error.message));
   process.exit(1);
-}
+});
