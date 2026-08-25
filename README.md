@@ -10,16 +10,14 @@
 
 ### Notable Features
 
-- Multiple source folders
-- Directory-based routing
-- Cascading middleware
-- Nested layouts
-- End-to-end validation
-- Typed fetch clients
-- Isomorphic fetch
-- Streaming SSR
-- TanStack Query
-- OpenAPI spec
+- [Multiple source folders](https://kosmojs.dev/about.html)
+- [Directory-based routing](https://kosmojs.dev/routing/rationale.html)
+- [Cascading middleware](https://kosmojs.dev/backend/cascading-middleware.html)
+- [Nested layouts](https://kosmojs.dev/frontend/layouts.html)
+- [End-to-end validation](https://kosmojs.dev/validation/intro.html)
+- [Typed, isomorphic fetch clients](https://kosmojs.dev/fetch/intro.html)
+- [Streaming SSR](https://kosmojs.dev/frontend/server-side-render.html)
+- [OpenAPI spec](https://kosmojs.dev/openapi.html)
 
 ### Supported frameworks
 - Hono

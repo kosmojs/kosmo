@@ -10,7 +10,7 @@ head:
         multi-app vite, directory-based routing
 ---
 
-`KosmoJS` is named after the Greek "Kosmos" (κόσμος) - "order" or "world" -
+Named after the Greek "Kosmos" (κόσμος) - "order" or "world" -
 reflecting the focus on organized, structured project architecture.
 
 ### 💡 What it does and how
