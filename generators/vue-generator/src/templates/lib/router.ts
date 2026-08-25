@@ -129,7 +129,7 @@ export const createRouters = (
 
       let { pathname } = url;
 
-      if (base !== "/") {
+      if ((base as string) !== "/") {
         // strip the base from pushed paths
         if (pathname === base) {
           pathname = "/";
