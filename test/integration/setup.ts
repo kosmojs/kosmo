@@ -14,7 +14,7 @@ import { createProject, createSourceFolder } from "@kosmojs/cli";
 import {
   BACKENDS,
   defaults,
-  type FRAMEWORKS,
+  FRAMEWORKS,
   type ProjectSettings,
   type SourceFolder,
 } from "@kosmojs/core";
@@ -65,29 +65,39 @@ const workerOffset =
 // never handed out twice within a worker, even before servers bind.
 let portCursor = 0;
 
-export const setupTestProject = async ({
-  framework,
-  backend = mode === "ssr" ? pickBackend() : undefined,
-  tsq,
-  skip,
-  ...generatorOptions
-}: {
-  framework?: keyof typeof FRAMEWORKS;
-  backend?: keyof typeof BACKENDS;
-  tsq?: boolean;
-  skip?: boolean;
-} & Partial<
-  Record<
-    keyof typeof FRAMEWORKS | keyof typeof BACKENDS | "ssr",
-    Record<string, unknown>
-  >
->) => {
+export const setupTestProject = async (
+  setup: {
+    framework?: keyof typeof FRAMEWORKS | "random";
+    backend?: keyof typeof BACKENDS;
+    tsq?: boolean;
+    skip?: boolean;
+  } & Partial<
+    Record<
+      keyof typeof FRAMEWORKS | keyof typeof BACKENDS | "ssr",
+      Record<string, unknown>
+    >
+  >,
+) => {
   const devPort = await findFreePort();
   const baseURL = `http://localhost:${devPort}`;
   const tempDir = await mkdtemp(resolve(tmpdir(), ".kosmojs-"));
 
   const projectName = "app";
   const projectRoot = resolve(tempDir, projectName);
+
+  const {
+    backend = mode === "ssr" ? pickBackend() : undefined,
+    tsq,
+    skip,
+    ...generatorOptions
+  } = setup;
+
+  const framework =
+    setup.framework === "random"
+      ? Object.keys(FRAMEWORKS)[
+          Math.floor(Math.random() * Object.keys(FRAMEWORKS).length)
+        ]
+      : setup.framework;
 
   const baseVariants = ["/", `/${framework}`, tempDir];
 
@@ -360,7 +370,7 @@ export const setupTestProject = async ({
       const pkgsDir = resolve(import.meta.dirname, "../../packages");
 
       await createProject(
-        tempDir,
+        resolve(tempDir, projectName),
         { name: projectName, devPort },
         {
           dependencies: {
@@ -380,13 +390,15 @@ export const setupTestProject = async ({
         {
           name: sourceFolder.name,
           base: sourceFolder.config.base,
-          ...(framework ? { framework } : {}),
+          ...(framework ? ({ framework } as never) : {}),
           ...(backend ? { backend } : {}),
           ...(tsq ? { tsq } : {}),
           ssr: mode === "ssr",
         },
         generatorOptions,
       );
+
+      await mkdir(createPath.api(), { recursive: true });
 
       await writeFile(
         createPath.api("server.ts"),
@@ -409,7 +421,7 @@ export const setupTestProject = async ({
 
         await writeFile(
           createPath.src(`app.${ext}`),
-          templates[`${framework}App`],
+          templates[`${framework as never}App`],
           "utf8",
         );
       }
