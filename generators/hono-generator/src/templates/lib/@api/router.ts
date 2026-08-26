@@ -199,8 +199,10 @@ export const createRouteMiddleware: CreateRouteMiddleware<
 
         // Validate body only for JSON variants
         if (variants.some((e) => e.contentType?.includes("json"))) {
-          const cloned = ctx.res.clone();
-          response.body = await cloned.json();
+          response.body = await ctx.res
+            .clone()
+            .json()
+            .catch(() => undefined);
         }
 
         /**
