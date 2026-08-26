@@ -162,22 +162,22 @@ export const createProject = async (
     },
   };
 
-  for (const [file, template] of [
-    ["package.json", JSON.stringify(packageJson, undefined, 2)],
-  ]) {
-    await renderToFile(
-      resolve(path, file),
-      template,
-      {
-        defaults,
-        distDir: project.distDir || DEFAULT_DIST,
-      },
-      {
-        // overwrite regardless, project should start with a clean package.json
-        overwrite: true,
-      },
-    );
-  }
+  await renderToFile(
+    resolve(path, "package.json"),
+    JSON.stringify(packageJson, undefined, 2),
+    {},
+    {
+      // overwrite regardless, project should start with a clean package.json
+      overwrite: true,
+    },
+  );
+
+  await renderToFile(
+    resolve(path, ".gitignore"),
+    templates.gitignore,
+    {},
+    { overwrite: false },
+  );
 };
 
 export const createFolder = async (
