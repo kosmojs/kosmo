@@ -1,11 +1,5 @@
 [
   [
-    "with-source-folders/src/with-vue/api/index/index.ts",
-    [
-      ""
-    ]
-  ],
-  [
     "with-source-folders/src/with-vue/entry/client.ts",
     [
       ""

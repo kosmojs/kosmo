@@ -1,11 +1,5 @@
 [
   [
-    "with-source-folders/src/with-svelte-tanstack-query/api/index/index.ts",
-    [
-      ""
-    ]
-  ],
-  [
     "with-source-folders/src/with-svelte-tanstack-query/entry/client.ts",
     [
       ""

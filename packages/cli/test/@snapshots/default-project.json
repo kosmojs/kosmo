@@ -20,7 +20,7 @@
           "dev": "kosmo serve",
           "build": "kosmo build",
           "typecheck": "kosmo typecheck",
-          "+folder": "kosmo folder"
+          "folder": "kosmo folder"
         }
       ]
     ]

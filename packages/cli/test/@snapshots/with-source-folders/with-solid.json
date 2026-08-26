@@ -1,11 +1,5 @@
 [
   [
-    "with-source-folders/src/with-solid/api/index/index.ts",
-    [
-      ""
-    ]
-  ],
-  [
     "with-source-folders/src/with-solid/entry/client.ts",
     [
       ""

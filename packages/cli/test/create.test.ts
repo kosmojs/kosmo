@@ -112,7 +112,7 @@ const cliFactory = async (project: Project) => {
     tempDir,
     generateSnapshot,
     createProject: async () => {
-      await createProject(tempDir, project);
+      await createProject(resolve(tempDir, project.name), project);
       return generateSnapshot();
     },
     createSourceFolder: async (folder: SourceFolder) => {
