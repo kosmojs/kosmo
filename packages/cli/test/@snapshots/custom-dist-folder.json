@@ -1,5 +1,19 @@
 [
   [
+    "custom-dist-folder/.gitignore",
+    [
+      "# build output dir; if you edit distDir in package.json, make sure to update here too",
+      "/dist/",
+      "",
+      "# used for Vite cache",
+      "/var/",
+      "",
+      "# =========================================================#",
+      "# do not add lib/ here, there is a lib/.gitignore on purpose",
+      "# =========================================================#"
+    ]
+  ],
+  [
     "custom-dist-folder/package.json",
     [
       [
