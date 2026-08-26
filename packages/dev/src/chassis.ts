@@ -79,45 +79,56 @@ export default async (
         spinner.succeed("ready ✨");
       }
 
+      const plugins = [
+        vitePlugins.tsconfigPaths(sourceFolder),
+        vitePlugins.nodePrefix(),
+      ];
+
       const generators = folderGenerators(sourceFolder);
 
       for (const generator of generators) {
         await generator.factory(sourceFolder).build?.(resolvedRoutes);
       }
 
-      const plugins = [
-        vitePlugins.tsconfigPaths(sourceFolder),
-        vitePlugins.nodePrefix(),
-      ];
-
-      // INFO: === build client ===
-      await build(
-        mergeConfigs(
-          // user-provided config - lowest priority
-          sourceFolder.config,
-          // generators configs - higher priority
-          ...generators.map(({ factory }) => {
-            return factory(sourceFolder).config?.({ kind: "client", command });
-          }),
-          // main config - highest priority
-          {
-            // base provided by sourceFolder.config
-            root: createPath.src(),
-            cacheDir: cacheDir(sourceFolder, command, "client"),
-            plugins,
-            build: {
-              outDir: createPath.distDir("client"),
-              manifest: true,
-              emptyOutDir: true,
-            },
-          },
-        ),
+      const frontendGenerator = generators.find(
+        (e) => e.meta.slot === "frontend",
       );
 
-      const apiGenerator = generators.find((e) => e.meta.slot === "backend");
+      const backendGenerator = generators.find(
+        (e) => e.meta.slot === "backend",
+      );
+
+      // INFO: === build client ===
+      if (frontendGenerator) {
+        await build(
+          mergeConfigs(
+            // user-provided config - lowest priority
+            sourceFolder.config,
+            // generators configs - higher priority
+            ...generators.map(({ factory }) => {
+              return factory(sourceFolder).config?.({
+                kind: "client",
+                command,
+              });
+            }),
+            // main config - highest priority
+            {
+              // base provided by sourceFolder.config
+              root: createPath.src(),
+              cacheDir: cacheDir(sourceFolder, command, "client"),
+              plugins,
+              build: {
+                outDir: createPath.distDir("client"),
+                manifest: true,
+                emptyOutDir: true,
+              },
+            },
+          ),
+        );
+      }
 
       // INFO: === build backend ===
-      if (apiGenerator) {
+      if (backendGenerator) {
         const dir = createPath.distDir("api");
 
         // NOTE: sourceFolder.config is client-specific config - not using for backend!
@@ -125,9 +136,9 @@ export default async (
         await build(
           mergeConfigs(
             // user-provided config - lowest priority
-            apiGenerator.options,
+            backendGenerator.options,
             // generator config - higher priority
-            apiGenerator
+            backendGenerator
               .factory(sourceFolder)
               .config?.({ kind: "backend", command }),
             // main config - highest priority
@@ -203,8 +214,14 @@ export default async (
       vitePlugins.nodePrefix(),
     ];
 
+    const frontendGenerator = generators.find(
+      (e) => e.meta.slot === "frontend",
+    );
+
+    const backendGenerator = generators.find((e) => e.meta.slot === "backend");
+
     // INFO: === start client server ===
-    {
+    if (frontendGenerator) {
       const viteServer = await createServer(
         mergeConfigs(
           // user-provided config - lowest priority
@@ -243,18 +260,16 @@ export default async (
       teardownHandlers.push(viteServer.close);
     }
 
-    const apiGenerator = generators.find((e) => e.meta.slot === "backend");
-
     // INFO: === start backend server ===
-    if (apiGenerator) {
+    if (backendGenerator) {
       // NOTE: sourceFolder.config is client-specific config - not using for backend!
       // To provide backend-specific config pass it as api generator options.
       const viteServer = await createServer(
         mergeConfigs(
           // user-provided config - lowest priority
-          apiGenerator.options,
+          backendGenerator.options,
           // generator config - higher priority
-          apiGenerator
+          backendGenerator
             .factory(sourceFolder)
             .config?.({ kind: "backend", command }),
           // main config - highest priority
@@ -408,19 +423,17 @@ const cacheDir = (
 const folderGenerators = (
   sourceFolder: SourceFolder,
 ): Array<GeneratorSignature> => {
-  const { generators = [] } = sourceFolder.config;
+  const generators: Array<GeneratorSignature> = [];
 
-  const baseGenerators: Partial<
+  const generatorsBySlot: Partial<
     Record<NonNullable<GeneratorMeta["slot"]>, GeneratorSignature>
   > = {};
 
-  const userGenerators: Array<GeneratorSignature> = [];
-
-  for (const generator of generators) {
+  for (const generator of sourceFolder.config.generators || []) {
     if (generator.meta.slot) {
-      baseGenerators[generator.meta.slot] = generator;
+      generatorsBySlot[generator.meta.slot] = generator;
     } else {
-      userGenerators.push(generator);
+      generators.push(generator);
     }
   }
 
@@ -428,17 +441,19 @@ const folderGenerators = (
     // core generator should run first
     coreGenerator(),
     // then backend generator
-    ...(baseGenerators.backend ? [baseGenerators.backend] : []),
+    ...(generatorsBySlot.backend ? [generatorsBySlot.backend] : []),
     // then fetch generator, only if backend generator also enabled
-    ...(baseGenerators.fetch && baseGenerators.backend
-      ? [baseGenerators.fetch]
+    ...(generatorsBySlot.fetch && generatorsBySlot.backend
+      ? [generatorsBySlot.fetch]
       : []),
-    // then user generators in the order they were added
-    ...userGenerators,
+    // then frontend generator
+    ...(generatorsBySlot.frontend ? [generatorsBySlot.frontend] : []),
+    // then slotless generators in the order they were added
+    ...generators,
     // ssr generator should run after user generators
-    ...(baseGenerators.ssr ? [baseGenerators.ssr] : []),
+    ...(generatorsBySlot.ssr ? [generatorsBySlot.ssr] : []),
     // ssg generator should run after ssr generator
-    ...(baseGenerators.ssg ? [baseGenerators.ssg] : []),
+    ...(generatorsBySlot.ssg ? [generatorsBySlot.ssg] : []),
   ];
 };
 

@@ -7,6 +7,7 @@ import type { Options } from "./types";
 export default defineGenerator<Options>({
   meta: {
     name: "SolidJS",
+    slot: "frontend",
     jsx: "preserve",
     jsxImportSource: "solid-js",
   },

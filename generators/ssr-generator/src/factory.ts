@@ -68,6 +68,11 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
     },
 
     async postBuild() {
+      if (!generators.some((e) => e.meta.slot === "frontend")) {
+        // no frontend generator, nothing to build
+        return;
+      }
+
       const dir = createPath.distDir("ssr");
 
       const plugins = [

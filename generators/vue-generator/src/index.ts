@@ -7,6 +7,7 @@ import type { Options } from "./types";
 export default defineGenerator<Options>({
   meta: {
     name: "Vue",
+    slot: "frontend",
     jsxImportSource: "vue",
   },
   dependencies(options?: Options) {
