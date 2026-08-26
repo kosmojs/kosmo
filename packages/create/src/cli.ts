@@ -78,7 +78,7 @@ const run = async () => {
   const [name] = positionals;
 
   if (name !== ".") {
-    assertNoError(() => validateName(name));
+    assertNoError(() => validateName(name, "Please provide project name"));
   }
 
   const root = resolve(process.cwd(), name);
@@ -123,11 +123,15 @@ const run = async () => {
 
     const { folder, ...input } = values;
 
-    await createFolder(root, {
-      input: { ...input, name: folder } as never,
-      intro: () => doneText,
-      note: () => nextStepsText,
-    });
+    if (folder) {
+      await createFolder(root, {
+        input: { ...input, name: folder } as never,
+        intro: () => doneText,
+        note: () => nextStepsText,
+      });
+    } else {
+      console.log(nextStepsText);
+    }
   } else {
     // interactive mode
     await createProject(root, project);

@@ -28,11 +28,10 @@ describe("should create the project and folders", async () => {
   test("create the project", async ({ expect }) => {
     await mkdir(tempDir, { recursive: true });
 
-    await exec(
-      "node",
-      [`${pkgsDir}/create-kosmo/pkg/cli.js`, "--name", projectName],
-      { cwd: tempDir, env },
-    );
+    await exec("node", [`${pkgsDir}/create-kosmo/pkg/cli.js`, projectName], {
+      cwd: tempDir,
+      env,
+    });
 
     const packageJsonFile = resolve(projectRoot, "package.json");
 
@@ -94,7 +93,7 @@ describe("should create the project and folders", async () => {
       await exec(
         "pnpm",
         [
-          "+folder",
+          "folder",
           "--name",
           name,
           "--base",

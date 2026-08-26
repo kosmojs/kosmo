@@ -215,7 +215,9 @@ export const createFolder = async (
       input?.quiet || console.log(await intro());
     }
 
-    assertNoError(() => validateName(input?.name));
+    assertNoError(() => {
+      return validateName(input?.name, "Please provide folder name");
+    });
 
     if (!input?.overwrite) {
       assertNoError(() => {

@@ -61,9 +61,12 @@ export const isCLI = (unconditionalCLI?: unknown) => {
   return unconditionalCLI ? true : !process.stdout.isTTY;
 };
 
-export const validateName = (name: string | undefined) => {
+export const validateName = (
+  name: string | undefined,
+  noNameError: string = "No name provided",
+) => {
   if (!name?.trim()) {
-    return "Invalid name";
+    return noNameError;
   }
   if (/[^\w@$+-]/.test(name)) {
     return "May contain only alphanumerics or any of - + $ @";
