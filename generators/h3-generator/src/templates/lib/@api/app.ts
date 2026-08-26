@@ -46,15 +46,51 @@ export function appFactory(
     } else if (debug) {
       console.log(route.debug[typeof debug === "string" ? debug : "full"]);
     }
-    for (const method of route.methods) {
-      // last middleware is the handler
-      const handler = route.middleware.at(-1);
-      if (handler) {
-        app.on(method, route.path, handler as never, {
-          middleware: route.middleware.slice(0, -1),
-        });
-      }
+
+    // last middleware is the handler
+    const handler = route.middleware.at(-1);
+
+    if (handler) {
+      app.on(route.method, route.path, handler as never, {
+        middleware: route.middleware.slice(0, -1),
+      });
     }
+  }
+
+  const routesByPath = routes.reduce<Record<string, Array<Route<Middleware>>>>(
+    (map, route) => {
+      if (!map[route.path]) {
+        map[route.path] = [];
+      }
+      map[route.path].push(route);
+      return map;
+    },
+    {},
+  );
+
+  for (const [path, routes] of Object.entries(routesByPath)) {
+    const methods = routes.map((e) => e.method);
+
+    if (methods.includes("GET") && !methods.includes("HEAD")) {
+      app.on("HEAD", path, () => {
+        return new Response(undefined, { status: 200 });
+      });
+    }
+
+    app.all(path, (event) => {
+      const allowedMethods = new Set([...methods, "OPTIONS"]);
+
+      if (methods.includes("GET")) {
+        allowedMethods.add("HEAD");
+      }
+
+      const status = event.req.method === "OPTIONS" ? 204 : 405;
+
+      return new Response(undefined, {
+        status,
+        headers: { Allow: [...allowedMethods].join(", ") },
+      });
+    });
   }
 
   return app;

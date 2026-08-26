@@ -24,13 +24,13 @@ describe("createRouterRoutes", () => {
         {},
       );
 
-      expect(getStack.methods).toEqual(["GET"]);
+      expect(getStack.method).toEqual("GET");
       expect(getStack.middleware[2]).toEqual(preMiddleware);
       expect(getStack.middleware[3]).toEqual(postMiddleware);
       expect(getStack.middleware[4]).toEqual(get);
       expect(getStack.middleware.length).toEqual(5);
 
-      expect(postStack.methods).toEqual(["POST"]);
+      expect(postStack.method).toEqual("POST");
       expect(postStack.middleware[2]).toEqual(preMiddleware);
       expect(postStack.middleware[3]).toEqual(postMiddleware);
       expect(postStack.middleware[4]).toEqual(post);

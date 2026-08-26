@@ -92,7 +92,7 @@ export type Route<MiddlewareT> = {
   name: string;
   path: string;
   file: string;
-  methods: Array<HTTPMethod>;
+  method: HTTPMethod;
   middleware: Array<MiddlewareT>;
   debug: Record<RouteDebugLevel, string>;
 };

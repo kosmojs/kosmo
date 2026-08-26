@@ -123,7 +123,7 @@ export const createRoutes = <MiddlewareT, MiddlewareR>(
           name,
           path,
           file,
-          methods: [entry.method],
+          method: entry.method,
           middleware: [
             ...middleware.flatMap((e) => e.middleware),
             ...entry.middleware,
@@ -132,7 +132,7 @@ export const createRoutes = <MiddlewareT, MiddlewareR>(
             name,
             path,
             file,
-            methods: [entry.method],
+            method: entry.method,
             middleware,
             handler: entry,
           }),

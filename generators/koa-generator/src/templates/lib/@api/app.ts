@@ -1,3 +1,5 @@
+import { styleText } from "node:util";
+
 import Router, { type RouterMiddleware } from "@koa/router";
 import Koa from "koa";
 
@@ -9,7 +11,7 @@ export type App = Koa<DefaultState, DefaultContext>;
 
 export type AppOptions = ConstructorParameters<
   typeof Koa<DefaultState, DefaultContext>
->[0] & { router?: Router; debug?: RouteDebugOption };
+>[0] & { debug?: RouteDebugOption };
 
 export function appFactory(
   routes: Array<Route<RouterMiddleware>>,
@@ -33,13 +35,12 @@ export function appFactory(
 ): App {
   const [options, fn] = typeof rest[0] === "function" ? [{}, rest[0]] : rest;
 
-  const {
-    router = new Router(),
-    debug = undefined,
-    ...appOptions
-  } = {
+  const { debug = undefined, ...appOptions } = {
     ...(options ? { ...options } : {}),
   };
+
+  const app = new Koa(appOptions);
+  const router = new Router();
 
   for (const route of routes) {
     if (typeof debug === "function") {
@@ -47,14 +48,52 @@ export function appFactory(
     } else if (debug) {
       console.log(route.debug[typeof debug === "string" ? debug : "full"]);
     }
-    router.register(route.path, route.methods, route.middleware, route);
+    router.register(route.path, [route.method], route.middleware, route);
   }
 
-  const app = new Koa(appOptions);
+  const routesByPath = routes.reduce<
+    Record<string, Array<Route<RouterMiddleware>>>
+  >((map, route) => {
+    if (!map[route.path]) {
+      map[route.path] = [];
+    }
+    map[route.path].push(route);
+    return map;
+  }, {});
+
+  for (const [path, routes] of Object.entries(routesByPath)) {
+    const methods = routes.map((e) => e.method);
+
+    if (
+      methods.includes("GET") &&
+      methods.indexOf("HEAD") > methods.indexOf("GET")
+    ) {
+      console.warn("----");
+      console.warn(
+        `${styleText("yellow", "WARN")}: HEAD handler for ${styleText("blue", routes[0].name)} route is unreachable - ${styleText("magenta", "define HEAD before GET")}`,
+      );
+      console.warn("----");
+    }
+
+    router.all(path, (ctx) => {
+      const allowedMethods = new Set([...methods, "OPTIONS"]);
+
+      if (methods.includes("GET")) {
+        allowedMethods.add("HEAD");
+      }
+
+      ctx.status = ctx.method === "OPTIONS" ? 204 : 405;
+
+      ctx.set("Allow", [...allowedMethods].join(", "));
+    });
+  }
 
   if (typeof fn === "function") {
     fn({ app, router });
   }
+
+  // NOTE: Routes should be added last, after any middleware
+  app.use(router.routes());
 
   return app;
 }

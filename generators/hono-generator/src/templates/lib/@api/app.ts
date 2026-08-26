@@ -65,7 +65,37 @@ export function appFactory(
     } else if (debug) {
       console.log(route.debug[typeof debug === "string" ? debug : "full"]);
     }
-    app.on(route.methods, [route.path], ...route.middleware);
+
+    app.on(route.method, [route.path], ...route.middleware);
+  }
+
+  const routesByPath = routes.reduce<
+    Record<string, Array<Route<MiddlewareHandler>>>
+  >((map, route) => {
+    if (!map[route.path]) {
+      map[route.path] = [];
+    }
+    map[route.path].push(route);
+    return map;
+  }, {});
+
+  for (const [path, routes] of Object.entries(routesByPath)) {
+    const methods = routes.map((e) => e.method);
+
+    app.all(path, (ctx) => {
+      const allowedMethods = new Set([...methods, "OPTIONS"]);
+
+      if (methods.includes("GET")) {
+        allowedMethods.add("HEAD");
+      }
+
+      const status = ctx.req.method === "OPTIONS" ? 204 : 405;
+
+      return new Response(undefined, {
+        status,
+        headers: { Allow: [...allowedMethods].join(", ") },
+      });
+    });
   }
 
   return app as never;

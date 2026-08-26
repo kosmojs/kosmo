@@ -22,7 +22,7 @@ export const debugRouteEntry = <MiddlewareT>(entry: {
   name: string;
   path: string;
   file: string;
-  methods: Array<string>;
+  method: string;
   middleware: Array<{
     middleware: Array<MiddlewareT>;
     options?: UseOptions | undefined;
@@ -35,7 +35,7 @@ export const debugRouteEntry = <MiddlewareT>(entry: {
 }): Route<MiddlewareT>["debug"] => {
   const { path, file } = entry;
 
-  const methodLines = entry.methods.flatMap((method) => {
+  const methodLines = [entry.method].flatMap((method) => {
     const coloredMethod = colorizeMethod(method);
     return method === "GET"
       ? [coloredMethod + styleText("gray", "|HEAD")]

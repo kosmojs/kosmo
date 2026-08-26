@@ -5,7 +5,7 @@ import { dirname, join, resolve } from "node:path";
 import { styleText } from "node:util";
 
 import crc from "crc/crc32";
-import got from "got";
+import got, { type Method } from "got";
 import { createJiti } from "jiti";
 import { chromium } from "playwright";
 import { inject } from "vitest";
@@ -99,7 +99,7 @@ export const setupTestProject = async (
         ]
       : setup.framework;
 
-  const baseVariants = ["/", `/${framework}`, tempDir];
+  const baseVariants = ["/", tempDir, ...(framework ? [`/${framework}`] : [])];
 
   const sourceFolder: SourceFolder = {
     name: "test",
@@ -341,12 +341,13 @@ export const setupTestProject = async (
       | [route: string, params?: Record<string, unknown> | undefined],
   >(
     pathSource: T,
+    { method = "GET" }: { method?: Method } = {},
   ) => {
     const path = Array.isArray(pathSource)
       ? createRoutePath(pathSource[0], pathSource[1])
       : pathSource;
     const url = baseURL + join(sourceFolder.config.base, "api", path as never);
-    const response = await apiClient(url);
+    const response = await apiClient(url, { method });
     return { response };
   };
 
