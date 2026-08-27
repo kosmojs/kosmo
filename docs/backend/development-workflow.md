@@ -37,8 +37,9 @@ Default port is `4556`, configured as `devPort` in `package.json`.
 
 Returns the API request handler. Generated default:
 
-::: code-group
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 import { getRequestListener } from "@hono/node-server";
 
 import { devSetup } from "_/api:factory";
@@ -51,7 +52,8 @@ export default devSetup({
 });
 ```
 
-```ts [H3]
+== H3
+```ts
 import { toNodeHandler } from "h3/node";
 
 import { devSetup } from "_/api:factory";
@@ -64,7 +66,8 @@ export default devSetup({
 });
 ```
 
-```ts [Koa]
+== Koa
+```ts
 import { devSetup } from "_/api:factory";
 import app from "./app";
 

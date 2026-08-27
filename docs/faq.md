@@ -31,23 +31,33 @@ is a tool you can use, debug, and replace independently.
 [Details ›](/about)
 
 #### How do I create a new KosmoJS project?
-Run `npm create kosmo` (or `pnpm create kosmo` / `yarn create kosmo`),
-then `cd my-app` and install dependencies.
+Run `npm create kosmo app` (or `pnpm create kosmo app` / `yarn create kosmo app`).
+An interactive setup creates the project together with your first source folder.
+Then `cd ./app` and install dependencies.
+
+Use `.` as the name to scaffold into the current folder (e.g. a freshly cloned repo).
 [Details ›](/start)
 
-#### How do I run create non-interactively?
-Pass `--name`, e.g. `npm create kosmo --name my-app`.
+#### How do I create a project non-interactively?
+Pass the source folder options up front - when flags are present no prompts appear:
+`npm create kosmo app -- --folder main --base / --framework react --backend hono`
+(pnpm and yarn forward flags without the extra `--`: `pnpm create kosmo app --folder ...`).
+
+Required flags: `--folder`, `--base`.
+
+Optional flags: `--framework`, `--backend`, `--ssr`, `--tsq`, `--overwrite`.
+
+Use `.` as the name to scaffold into the current folder: `npm create kosmo . -- --folder ...`
 [Details ›](/start)
 
 #### How do I add a source folder?
-Run `npm run +folder` (or `pnpm +folder` / `yarn +folder`).
-[Details ›](/start)
+Run `npm run folder` (or `pnpm folder` / `yarn folder`).
+[Details ›](/tutorial#add-more-source-folders)
 
 #### What am I prompted for when adding a source folder?
-Folder name, base URL, framework, backend, and SSR. Non-interactive flags:
-`--name`, `--base`, `--framework solid|react|vue|svelte|mdx`, `--backend hono|h3|koa`, `--ssr`.
-Framework and backend are both optional - see the next question.
-[Details ›](/start)
+Folder name, base URL, framework, backend, and SSR.
+Non-interactive flags: `--name`, `--base`, `--framework solid|react|vue|svelte|mdx`, `--backend hono|h3|koa`, `--ssr`, `--tsq`.
+[Details ›](/tutorial#add-more-source-folders)
 
 #### How do I create a backend-only (API) folder, or a frontend-only folder?
 A source folder doesn't have to ship both sides - framework and backend are independent, and each is optional.
@@ -57,17 +67,18 @@ or `None (client-only folder)` in the backend select.
 In non-interactive mode there is no `none` value to pass - simply omit the flag:
 
 ```sh
-pnpm +folder --name api --base / --backend hono        # backend-only, no UI
-pnpm +folder --name docs --base /docs --framework mdx  # frontend-only, no backend
+pnpm folder --name api --base / --backend hono        # backend-only, no UI
+pnpm folder --name docs --base /docs --framework mdx  # frontend-only, no backend
 ```
 
 The generated `kosmo.config.ts` contains only the generators that side needs.
-[Details ›](/tutorial#create-a-source-folder)
+[Details ›](/tutorial#add-more-source-folders)
 
-#### Why isn't a source folder created automatically?
-By design - you add folders as needed, one per distinct concern, each independent.
-This keeps intent explicit.
-[Details ›](/about)
+#### Can I create a project without a source folder?
+Yes - in non-interactive mode omit `--folder` and only the project shell is created;
+add folders later with `npm run folder`. The interactive setup always walks you
+through creating the first folder - a project needs at least one to do anything.
+[Details ›](/start)
 
 #### Why install again after adding a source folder?
 Adding a folder pulls in framework-specific dependencies that need to be installed.
@@ -1477,7 +1488,7 @@ For real caching, enable TanStack Query (a first-class option).
 
 #### How do I enable TanStack Query?
 Turn it on when you create the source folder - interactive mode asks,
-or pass `--tsq` non-interactively (`pnpm +folder --name front --base / --framework react --tsq`).
+or pass `--tsq` non-interactively (`pnpm folder --name front --base / --framework react --tsq`).
 
 To add it later, set the `tanstack` option on the framework generator in `kosmo.config.ts`
 (`reactGenerator({ tanstack: { query: true } })`).

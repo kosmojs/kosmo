@@ -117,9 +117,9 @@ Templates work with all parameter types:
 Templates are plain strings written to disk as component files. Each framework
 has its own component structure:
 
-::: code-group
-
-```ts [React]
+:::tabs key:frontend variant:code
+== React
+```ts
 const customTemplate = `
 import { useParams } from "react-router";
 
@@ -136,7 +136,8 @@ export default function Page() {
 `;
 ```
 
-```ts [SolidJS]
+== Solid
+```ts
 const customTemplate = `
 import { useParams } from "@solidjs/router";
 
@@ -153,7 +154,8 @@ export default function Page() {
 `;
 ```
 
-```ts [Vue]
+== Vue
+```ts
 const customTemplate = `
 <template>
   <div>
@@ -169,7 +171,8 @@ const route = useRoute();
 `;
 ```
 
-```ts [Svelte]
+== Svelte
+```ts
 const customTemplate = `
 <script lang="ts">
 import { useParams } from "_/use";
@@ -183,7 +186,8 @@ const params = useParams();
 `;
 ```
 
-```mdx [MDX]
+== MDX
+```mdx
 import { useParams } from "_/use";
 
 # Custom Template
@@ -192,10 +196,9 @@ Route params: {JSON.stringify(useParams())}
 ```
 :::
 
-> **Vue templates** use Handlebars syntax for any dynamic content injected
-> during generation. Avoid raw Vue interpolation <code>{{"{{"}}</code><code>}}</code> inside template
-> strings - wrap in quotes or escape as needed to prevent accidental
-> Handlebars evaluation.
+> Templates use Handlebars syntax for any dynamic content injected during generation.
+Avoid raw Vue interpolation <code>{{"{{"}}</code><code>}}</code> inside template strings -
+wrap in quotes or escape as needed to prevent accidental Handlebars evaluation.
 
 ## Common Use Cases
 

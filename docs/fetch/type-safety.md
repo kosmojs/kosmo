@@ -101,31 +101,33 @@ ResponseT["users"]["POST"]; // User | { queued: true }
 The out-of-band cases in practice, e.g. React's `useLoaderData()` annotated at its untyped boundary,
 and a shared helper naming the type once:
 
-::: code-group
-
-```tsx [React]
+:::tabs variant:code
+== React
+```tsx
 import { useLoaderData } from "react-router";
-import f, { type ResponseT } from "_/fetch";
+import f from "_/fetch";
+import { formatUser, type User } from "./helpers";
 
 const { GET } = f["users/[id]"];
 
 export const loader = ({ params }) => GET([params.id]);
 
 export default function UserProfile() {
-  // useLoaderData is untyped at the boundary - annotate it with ResponseT
-  const user = useLoaderData<ResponseT["users/[id]"]["GET"]>();
-  return <div>{user.name}</div>;
+  // useLoaderData is untyped at the boundary - annotate it with User type
+  const user = useLoaderData<User>();
+  return <div>{formatUser(user)}</div>;
 }
 ```
 
-```ts [helpers.ts]
-import f, { type ResponseT } from "_/fetch";
+== helpers.ts
+```ts
+import type { ResponseT } from "_/fetch";
 
 // name the type once, reuse it across components
-type User = ResponseT["users/[id]"]["GET"];
+export type User = ResponseT["users/[id]"]["GET"];
 
-function formatUser(user: User) {
-  return `${user.name} <${user.email}>`;
+export const formatUser = (user: User) => {
+  return `${user.name} [${user.email}]`;
 }
 ```
 :::
@@ -135,5 +137,4 @@ Change the route's `response` shape and every consumer - loaders, resources, hel
 updates with it, surfacing mismatches at compile time instead of in production.
 
 See [Fetch Client Integration](/fetch/integration) for the full set of framework patterns,
-and [Response Validation](/validation/response) for declaring the `response` schema on the
-backend.
+and [Response Validation](/validation/response) for declaring the `response` schema on the backend.

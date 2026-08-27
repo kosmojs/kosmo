@@ -23,9 +23,9 @@ The API is consistent across all frameworks - a `to` prop accepting a
 typed tuple, an optional `query` prop for search parameters, and standard
 router props passed through:
 
-::: code-group
-
-```tsx [Menu.tsx]
+:::tabs variant:code
+== Menu.tsx
+```tsx
 import Link from "~/components/Link";
 
 export default function Menu() {
@@ -46,7 +46,8 @@ export default function Menu() {
 }
 ```
 
-```vue [Menu.vue]
+== Menu.vue
+```vue
 <script setup lang="ts">
 import Link from "~/components/Link.vue";
 </script>
@@ -67,7 +68,8 @@ import Link from "~/components/Link.vue";
 </template>
 ```
 
-```svelte [Menu.svelte]
+== Menu.svelte
+```svelte
 <script lang="ts">
 import Link from "~/components/Link.svelte";
 </script>

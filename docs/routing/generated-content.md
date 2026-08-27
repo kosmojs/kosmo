@@ -18,9 +18,9 @@ The output differs based on whether the file is an API route or a client page, a
 
 Creating `api/users/[id]/index.ts` generates:
 
-::: code-group
-
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -29,7 +29,9 @@ export default defineRoute<"users/[id]">(({ GET }) => [
   }),
 ]);
 ```
-```ts [H3]
+
+== H3
+```ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -38,7 +40,9 @@ export default defineRoute<"users/[id]">(({ GET }) => [
   }),
 ]);
 ```
-```ts [Koa]
+
+== Koa
+```ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [

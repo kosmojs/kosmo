@@ -29,9 +29,9 @@ The shell composes `AppProvider`, imported from `_/app`, around the routed tree.
 By default it is a pass-through (it renders its children unchanged),
 so out of the box your app behaves exactly like a plain shell.
 
-::: code-group
-
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 // app.tsx
 import { Outlet } from "react-router";
 import { AppProvider } from "_/app";
@@ -45,7 +45,8 @@ export default function App() {
 }
 ```
 
-```tsx [SolidJS]
+== Solid
+```tsx
 // app.tsx
 import type { ParentComponent } from "solid-js";
 import { AppProvider } from "_/app";
@@ -57,7 +58,8 @@ const app: ParentComponent = (props) => {
 export default app;
 ```
 
-```vue [Vue]
+== Vue
+```vue
 <!-- app.vue -->
 <script setup lang="ts">
 import { AppProvider } from "_/app";
@@ -70,7 +72,8 @@ import { AppProvider } from "_/app";
 </template>
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 <!-- app.svelte -->
 <script lang="ts">
   import type { Snippet } from "svelte";
@@ -83,7 +86,8 @@ import { AppProvider } from "_/app";
 </AppProvider>
 ```
 
-```mdx [MDX]
+== MDX
+```mdx
 // app.mdx
 import { AppProvider } from "_/app";
 
@@ -114,9 +118,9 @@ The callback must return two functions:
 - `clientRouter()` - browser-based routing for client-side navigation
 - `serverRouter(url)` - server-side routing for SSR, receiving the requested URL
 
-::: code-group
-
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 import routerFactory, { createRouters } from "_/router";
 
 import app from "./app";
@@ -134,7 +138,8 @@ export default routerFactory((routes) => {
 });
 ```
 
-```tsx [SolidJS]
+== Solid
+```tsx
 import routerFactory, { createRouters } from "_/router";
 
 import app from "./app";
@@ -152,7 +157,8 @@ export default routerFactory((routes) => {
 });
 ```
 
-```ts [Vue]
+== Vue
+```ts
 import routerFactory, { createRouters } from "_/router";
 import { appProvider } from "_/app";
 
@@ -174,7 +180,8 @@ export default routerFactory((routes) => {
 });
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 import routerFactory, { createRouters } from "_/router";
 
 import app from "./app.svelte";
@@ -192,7 +199,8 @@ export default routerFactory((routes) => {
 });
 ```
 
-```tsx [MDX]
+== MDX
+```tsx
 import routerFactory, { createRouters } from "_/router";
 
 import app from "./app.mdx";
@@ -236,9 +244,9 @@ that must return:
 On page load, `renderFactory` reads `__KOSMO_HYDRATION_BOOL__` flag to select the
 correct method: `hydrate()` for SSR hydration, `mount()` for a fresh client-only mount.
 
-::: code-group
-
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -268,7 +276,8 @@ if (root) {
 }
 ```
 
-```tsx [SolidJS]
+== Solid
+```tsx
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -298,7 +307,8 @@ if (root) {
 }
 ```
 
-```ts [Vue]
+== Vue
+```ts
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -328,7 +338,8 @@ if (root) {
 }
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -358,7 +369,8 @@ if (root) {
 }
 ```
 
-```tsx [MDX]
+== MDX
+```tsx
 import renderFactory, {
   createRoutes,
   hydrate,

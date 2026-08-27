@@ -13,8 +13,9 @@ Error handling starts with `api/errors.ts` file, customize it at your needs:
 
 ## Default Error Handler
 
-::: code-group
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 import { accepts } from "hono/accepts";
 import { HTTPException } from "hono/http-exception";
 
@@ -47,7 +48,8 @@ export default errorHandlerFactory(async (error, ctx) => {
 });
 ```
 
-```ts [H3]
+== H3
+```ts
 import { ValidationError } from "@kosmojs/core/errors";
 import { HTTPError } from "h3";
 
@@ -76,7 +78,8 @@ export default errorHandlerFactory(async (error, event) => {
 });
 ```
 
-```ts [Koa]
+== Koa
+```ts
 import { HTTPError, ValidationError } from "@kosmojs/core/errors";
 
 import { errorHandlerFactory } from "_/api:factory";

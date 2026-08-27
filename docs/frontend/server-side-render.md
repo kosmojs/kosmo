@@ -55,9 +55,9 @@ Which method runs for a given route is controlled by `renderMode` (see
 [Selecting the render mode](#selecting-the-render-mode)) - both are implemented,
 and the mode decides which one the server calls per route.
 
-::: code-group
-
-```ts [React]
+:::tabs key:frontend variant:code
+== React
+```ts
 import renderFactory, {
   createRoutes,
   renderToStream,
@@ -87,7 +87,8 @@ export default renderFactory(() => {
 });
 ```
 
-```ts [SolidJS]
+== Solid
+```ts
 import renderFactory, {
   createRoutes,
   renderToStream,
@@ -117,7 +118,8 @@ export default renderFactory(() => {
 });
 ```
 
-```ts [Vue]
+== Vue
+```ts
 import renderFactory, {
   createRoutes,
   renderToStream,
@@ -147,7 +149,8 @@ export default renderFactory(() => {
 });
 ```
 
-```svelte [Svelte]
+== Svelte
+```ts
 import renderFactory, {
   createRoutes,
   renderToString,
@@ -171,7 +174,8 @@ export default renderFactory(() => {
 });
 ```
 
-```tsx [MDX]
+== MDX
+```ts
 import renderFactory, {
   createRoutes,
   renderToString,
@@ -356,17 +360,19 @@ so every route recovers through the CSR fallback.
 
 ## Production Build
 
-::: code-group
-
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 npm run build
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 pnpm build
 ```
 
-```sh [yarn]
+== yarn
+```sh
 yarn build
 ```
 :::
@@ -398,14 +404,19 @@ Navigate to `http://localhost:4556` to verify server-side rendering.
 The SSR server uses `node:http` which is natively supported by Node, Bun, and Deno.
 Same bundle, same behavior, just pick your runtime:
 
-::: code-group
-```sh [Node]
+:::tabs key:runtime variant:code
+== Node
+```sh
 node dist/front/ssr/server.js -p 4556
 ```
-```sh [Bun]
+
+== Bun
+```sh
 bun dist/front/ssr/server.js -p 4556
 ```
-```sh [Deno]
+
+== Deno
+```sh
 deno run -A dist/front/ssr/server.js -p 4556
 ```
 :::

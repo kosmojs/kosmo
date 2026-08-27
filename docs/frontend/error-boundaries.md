@@ -25,9 +25,9 @@ while leaving siblings elsewhere unaffected.
 
 Wrap the layout's child slot - the same slot that renders the nested route - in your framework's boundary:
 
-::: code-group
-
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 // layout.tsx
 import { Component, type ReactNode } from "react";
 import { Outlet } from "react-router";
@@ -53,7 +53,8 @@ export default function Layout() {
 }
 ```
 
-```tsx [SolidJS]
+== Solid
+```tsx
 // layout.tsx
 import type { ParentComponent } from "solid-js";
 import { ErrorBoundary } from "solid-js";
@@ -69,7 +70,8 @@ const Layout: ParentComponent = (props) => {
 export default Layout;
 ```
 
-```vue [Vue]
+== Vue
+```vue
 // layout.vue
 <script setup lang="ts">
 import { ref, onErrorCaptured } from "vue";
@@ -87,7 +89,8 @@ onErrorCaptured(() => {
 </template>
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 // layout.svelte
 <script lang="ts">
 let { children } = $props();
@@ -102,7 +105,8 @@ let { children } = $props();
 </svelte:boundary>
 ```
 
-```mdx [MDX]
+== MDX
+```mdx
 // layout.mdx
 import { Boundary } from "~/components/Boundary";
 
@@ -110,7 +114,6 @@ import { Boundary } from "~/components/Boundary";
   {props.children}
 </Boundary>
 ```
-
 :::
 
 MDX renders through a Preact host, so its boundary is a small Preact component

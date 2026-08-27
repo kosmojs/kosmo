@@ -81,8 +81,9 @@ It drives `<head>` injection and is accessible in pages and layouts via
 Import Preact components directly into MDX files. TypeScript, props, hooks -
 everything works in the `.tsx` file. The MDX file stays focused on content:
 
-::: code-group
-```tsx [pages/blog/Alert.tsx]
+:::tabs variant:code
+== pages/blog/Alert.tsx
+```tsx
 import type { JSX } from "preact";
 
 export default function Alert(props: {
@@ -97,7 +98,8 @@ export default function Alert(props: {
 }
 ```
 
-```mdx [pages/blog/index.mdx]
+== pages/blog/index.mdx
+```mdx
 import Alert from "./Alert.tsx"
 
 <Alert type="warning">
@@ -238,25 +240,7 @@ pages/
 
 Access parameters inside a component using `useParams()`:
 
-::: code-group
-```tsx [pages/blog/[slug]/PostHeader.tsx]
-import { useParams } from "_/use";
-
-export default function PostHeader() {
-  const { slug } = useParams();
-  return <h1>{slug}</h1>;
-}
-```
-
-```mdx [pages/blog/[slug]/index.mdx]
----
-title: Blog Post
----
-
-import PostHeader from "./PostHeader.tsx"
-
-<PostHeader />
-```
+:::tabs key:pm variant:code
 :::
 
 `useRoute()` provides the full route context including name, params, frontmatter, and loader data:
@@ -462,9 +446,9 @@ Both client and server entries follow the same `renderFactory` pattern as React/
   static content, so it implements only `renderToString` - it is the one framework
   that omits `renderToStream`.
 
-:::code-group
-
-```tsx [entry/client.tsx]
+:::tabs variant:code
+== entry/client.tsx
+```tsx
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -495,7 +479,8 @@ if (root) {
 
 ```
 
-```ts [entry/server.ts]
+== entry/server.ts
+```ts
 import renderFactory, {
   createRoutes,
   renderToString,

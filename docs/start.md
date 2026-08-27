@@ -13,16 +13,19 @@ Zero to a working route in under five minutes.
 
 ## Create a Project
 
-::: code-group
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 npm create kosmo app
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 pnpm create kosmo app
 ```
 
-```sh [yarn]
+== yarn
+```sh
 yarn create kosmo app
 ```
 :::
@@ -42,18 +45,21 @@ a `package.json` and your source folder's config with a few empty stub files.
 The project is not runnable yet - installing dependencies brings in the
 KosmoJS toolchain that turns this skeleton into a working app:
 
-::: code-group
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 cd ./app
 npm install
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 cd ./app
 pnpm install
 ```
 
-```sh [yarn]
+== yarn
+```sh
 cd ./app
 yarn install
 ```
@@ -65,16 +71,19 @@ The dev server completes the setup: on first start it generates the remaining pr
 routers, typed fetch clients, validators - fills the stub files with starter code, and wires everything together.
 From then on it watches your routes and regenerates as you work:
 
-::: code-group
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 npm run dev
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 pnpm dev
 ```
 
-```sh [yarn]
+== yarn
+```sh
 yarn dev
 ```
 :::
@@ -88,8 +97,9 @@ and generates starter code automatically.
 
 Replace the generated content with something real:
 
-::: code-group
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -100,7 +110,8 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ]);
 ```
 
-```ts [H3]
+== H3
+```ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -111,7 +122,8 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ]);
 ```
 
-```ts [Koa]
+== Koa
+```ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -133,8 +145,9 @@ With the dev server still running, create `pages/users/[id]/index.tsx`
 React, SolidJS, and Vue fetch in the component here; Svelte and MDX read through a
 `loader` export instead (resolved before render), so they need no loading state:
 
-::: code-group
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import fetchClients from "_/fetch";
@@ -153,7 +166,8 @@ export default function UserPage() {
 }
 ```
 
-```tsx [SolidJS]
+== Solid
+```tsx
 import { useParams } from "@solidjs/router";
 import { createAsync } from "@solidjs/router";
 import fetchClients from "_/fetch";
@@ -170,7 +184,8 @@ export default function UserPage() {
 }
 ```
 
-```vue [Vue]
+== Vue
+```vue
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
@@ -189,7 +204,8 @@ onMounted(async () => { user.value = await GET([route.params.id]); });
 </template>
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
@@ -207,7 +223,8 @@ const user = useLoaderData();
 <div><h1>{user.name}</h1><p>{user.email}</p></div>
 ```
 
-```mdx [MDX]
+== MDX
+```mdx
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 

@@ -70,8 +70,9 @@ every route underneath should know about it without importing or declaring anyth
 
 `UseT` makes this work. Define what your middleware adds:
 
-::: code-group
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 import { use } from "_/api";
 
 export type UseT = {
@@ -89,7 +90,8 @@ export default [
 ];
 ```
 
-```ts [H3]
+== H3
+```ts
 import { use } from "_/api";
 
 export type UseT = {
@@ -107,7 +109,8 @@ export default [
 ];
 ```
 
-```ts [Koa]
+== Koa
+```ts
 import { use } from "_/api";
 
 export type UseT = {
@@ -129,8 +132,9 @@ export default [
 Now every route under `/api/admin` has `user` typed on the context automatically -
 no imports, no type arguments on `defineRoute`:
 
-::: code-group
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 export default defineRoute<"admin/dashboard">(({ GET }) => [
   GET(async (ctx) => {
     const user = ctx.get("user");  // typed as { id: number; role: "admin" | "user" }
@@ -138,7 +142,8 @@ export default defineRoute<"admin/dashboard">(({ GET }) => [
 ]);
 ```
 
-```ts [H3]
+== H3
+```ts
 export default defineRoute<"admin/dashboard">(({ GET }) => [
   GET(async (event) => {
     const { user } = event.context;  // typed as { id: number; role: "admin" | "user" }
@@ -146,7 +151,8 @@ export default defineRoute<"admin/dashboard">(({ GET }) => [
 ]);
 ```
 
-```ts [Koa]
+== Koa
+```ts
 export default defineRoute<"admin/dashboard">(({ GET }) => [
   GET(async (ctx) => {
     const { user } = ctx.state;  // typed as { id: number; role: "admin" | "user" }

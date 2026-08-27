@@ -82,8 +82,9 @@ Both payload and response are validated at runtime, not just at compile time.
 
 `defineRoute` accepts four type arguments:
 
-::: code-group
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 defineRoute<
   "route-name",
   ParamsTuple,      // param refinements
@@ -92,7 +93,8 @@ defineRoute<
 >
 ```
 
-```ts [H3]
+== H3
+```ts
 defineRoute<
   "route-name",
   ParamsTuple,      // param refinements
@@ -100,7 +102,8 @@ defineRoute<
 >
 ```
 
-```ts [Koa]
+== Koa
+```ts
 defineRoute<
   "route-name",
   ParamsTuple,      // param refinements
@@ -112,8 +115,9 @@ defineRoute<
 
 Use the third and fourth arguments for types that are unique to a specific route:
 
-::: code-group
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 export default defineRoute<
   "users/[id]",
   [number],
@@ -128,7 +132,8 @@ export default defineRoute<
 ]);
 ```
 
-```ts [H3]
+== H3
+```ts
 export default defineRoute<
   "users/[id]",
   [number],
@@ -141,7 +146,8 @@ export default defineRoute<
 ]);
 ```
 
-```ts [Koa]
+== Koa
+```ts
 export default defineRoute<
   "users/[id]",
   [number],
@@ -165,8 +171,9 @@ move them to the global declarations in `api/env.d.ts` instead.
 `api/env.d.ts` extends the default context and state interfaces globally,
 so every route handler picks them up automatically:
 
-::: code-group
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 export declare module "_/api" {
   interface DefaultVariables {
     permissions: Array<"read" | "write" | "admin">;
@@ -177,7 +184,8 @@ export declare module "_/api" {
 }
 ```
 
-```ts [H3]
+== H3
+```ts
 export declare module "_/api" {
   interface DefaultContext {
     permissions: Array<"read" | "write" | "admin">;
@@ -185,7 +193,8 @@ export declare module "_/api" {
 }
 ```
 
-```ts [Koa]
+== Koa
+```ts
 export declare module "_/api" {
   interface DefaultState {
     permissions: Array<"read" | "write" | "admin">;
@@ -203,8 +212,9 @@ you still need the middleware that actually populates them.
 The right place to set global properties is `api/use.ts` file.
 It runs for every endpoint, so properties becomes available for all routes:
 
-::: code-group
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 import { use } from "_/api";
 
 export default [
@@ -215,7 +225,8 @@ export default [
 ];
 ```
 
-```ts [H3]
+== H3
+```ts
 import { use } from "_/api";
 
 export default [
@@ -226,7 +237,8 @@ export default [
 ];
 ```
 
-```ts [Koa]
+== Koa
+```ts
 import { use } from "_/api";
 
 export default [

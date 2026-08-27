@@ -12,8 +12,26 @@ head:
 
 The fetch client returns standard promises, so it fits naturally into whatever async pattern your framework uses.
 
-::: code-group
-```tsx [SolidJS]
+:::tabs key:frontend variant:code
+== React
+```tsx
+import { useLoaderData } from "react-router";
+import fetchClients from "_/fetch";
+
+const { GET } = fetchClients["users/[id]"];
+
+// React Router passes { params, request } into the loader; read params the
+// native way and pass them to the client as an array
+export const loader = ({ params }) => GET([params.id]);
+
+export default function UserProfile() {
+  const user = useLoaderData();
+  return <div>{user.name}</div>;
+}
+```
+
+== Solid
+```tsx
 import { Suspense } from "solid-js";
 import { createAsync, query, useParams } from "@solidjs/router";
 import fetchClients from "_/fetch";
@@ -34,23 +52,8 @@ export default function UserProfile() {
 }
 ```
 
-```tsx [React]
-import { useLoaderData } from "react-router";
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["users/[id]"];
-
-// React Router passes { params, request } into the loader; read params the
-// native way and pass them to the client as an array
-export const loader = ({ params }) => GET([params.id]);
-
-export default function UserProfile() {
-  const user = useLoaderData();
-  return <div>{user.name}</div>;
-}
-```
-
-```vue [Vue]
+== Vue
+```vue
 <script lang="ts">
 import fetchClients from "_/fetch";
 
@@ -72,7 +75,8 @@ const user = useLoaderData();
 </template>
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
@@ -91,7 +95,8 @@ const user = useLoaderData();
 <div>{user.name}</div>
 ```
 
-```mdx [MDX]
+== MDX
+```mdx
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 

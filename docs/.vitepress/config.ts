@@ -1,9 +1,6 @@
 import { defineConfig } from "vitepress";
-import {
-  groupIconMdPlugin,
-  groupIconVitePlugin,
-} from "vitepress-plugin-group-icons";
 import llmstxt from "vitepress-plugin-llms";
+import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 
 const redirects: Array<[string, string]> = [];
 
@@ -117,12 +114,12 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [llmstxt() as never, groupIconVitePlugin() as never],
+    plugins: [llmstxt() as never],
   },
 
   markdown: {
     config(md) {
-      md.use(groupIconMdPlugin);
+      md.use(tabsMarkdownPlugin);
     },
     theme: {
       light: "catppuccin-latte",

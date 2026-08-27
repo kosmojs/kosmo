@@ -70,9 +70,9 @@ load the generated content.
 
 Each framework renders child routes differently:
 
-::: code-group
-
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 // layout.tsx
 import { Outlet } from "react-router";
 
@@ -89,7 +89,8 @@ export default function Layout() {
 }
 ```
 
-```tsx [SolidJS]
+== Solid
+```tsx
 // layout.tsx
 import type { ParentComponent } from "solid-js";
 
@@ -108,7 +109,8 @@ const Layout: ParentComponent = (props) => {
 export default Layout;
 ```
 
-```vue [Vue]
+== Vue
+```vue
 // layout.vue
 <script setup lang="ts">
 // layout-specific logic
@@ -125,7 +127,8 @@ export default Layout;
 </template>
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 // layout.svelte
 <script lang="ts">
 let { children } = $props();
@@ -140,7 +143,8 @@ let { children } = $props();
 </div>
 ```
 
-```mdx [MDX]
+== MDX
+```mdx
 // layout.mdx
 <nav>
   <a href="/">Home</a>
@@ -174,9 +178,9 @@ but how a layout's data stays distinct from its child page's differs:
   passes its path-qualified name to `useLoaderData` (a page passes nothing) -
   the hook can't tell which layout it runs in.
 
-::: code-group
-
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 // layout.tsx
 import { Outlet, useLoaderData } from "react-router";
 import fetchClients from "_/fetch";
@@ -192,7 +196,8 @@ export default function Layout() {
 }
 ```
 
-```tsx [SolidJS]
+== Solid
+```tsx
 // layout.tsx
 import { Suspense, type ParentComponent } from "solid-js";
 import { createAsync, query } from "@solidjs/router";
@@ -214,7 +219,8 @@ const Layout: ParentComponent = (props) => {
 export default Layout;
 ```
 
-```vue [Vue]
+== Vue
+```vue
 <!-- layout.vue -->
 <script lang="ts">
 import fetchClients from "_/fetch";
@@ -237,7 +243,8 @@ const data = useLoaderData("dashboard/layout");
 </template>
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 <!-- layout.svelte -->
 <script module lang="ts">
 import fetchClients from "_/fetch";
@@ -263,7 +270,8 @@ const data = useLoaderData("dashboard/layout");
 </main>
 ```
 
-```mdx [MDX]
+== MDX
+```mdx
 // layout.mdx
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";

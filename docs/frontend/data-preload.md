@@ -33,9 +33,9 @@ export default defineRoute<"users/data">(({ GET }) => [
 
 ## Page Integration
 
-::: code-group
-
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 import { useLoaderData } from "react-router";
 import fetchClients from "_/fetch";
 
@@ -57,7 +57,8 @@ export default function Page() {
 }
 ```
 
-```tsx [SolidJS]
+== Solid
+```tsx
 import { Suspense } from "solid-js";
 import { createAsync, query } from "@solidjs/router";
 import fetchClients from "_/fetch";
@@ -85,7 +86,8 @@ export default function Page() {
 }
 ```
 
-```vue [Vue]
+== Vue
+```vue
 <script lang="ts">
 import fetchClients from "_/fetch";
 
@@ -110,7 +112,8 @@ const data = useLoaderData();
 </template>
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
@@ -133,7 +136,8 @@ const data = useLoaderData();
 {/if}
 ```
 
-```mdx [MDX]
+== MDX
+```mdx
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 

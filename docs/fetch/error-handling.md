@@ -73,9 +73,9 @@ Each framework provides its own boundary; mount it where you want failures to be
 
 A layout-level boundary for each framework:
 
-::: code-group
-
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 import { ErrorBoundary } from "react-error-boundary";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -94,7 +94,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 }
 ```
 
-```tsx [Solid]
+== Solid
+```tsx
 import { ErrorBoundary, type ParentProps } from "solid-js";
 
 export default function Layout(props: ParentProps) {
@@ -113,7 +114,8 @@ export default function Layout(props: ParentProps) {
 }
 ```
 
-```vue [Vue]
+== Vue
+```vue
 <script setup lang="ts">
 import { ref, onErrorCaptured } from "vue";
 
@@ -136,7 +138,8 @@ const reset = () => (error.value = null);
 </template>
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 <script lang="ts">
   let { children } = $props();
 </script>
@@ -153,7 +156,8 @@ const reset = () => (error.value = null);
 </svelte:boundary>
 ```
 
-```tsx [MDX]
+== MDX
+```tsx
 import { useErrorBoundary } from "preact/hooks";
 import type { ComponentChildren } from "preact";
 
@@ -171,7 +175,6 @@ export default function ErrorBoundary(props: { children: ComponentChildren }) {
   return props.children;
 }
 ```
-
 :::
 
 A boundary catches errors thrown **during render**.

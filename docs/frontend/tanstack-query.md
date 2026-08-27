@@ -16,7 +16,7 @@ Enable TanStack Query when you create the source folder.
 Interactive mode asks whether to enable it; for non-interactive runs pass `--tsq`:
 
 ```sh [CLI mode]
-pnpm +folder --name front --base / --framework react --tsq
+pnpm folder --name front --base / --framework react --tsq
 ```
 
 Opting in adds the `tanstack` option to your framework generator.
@@ -80,9 +80,9 @@ This runs on the client - the query fetches after the component mounts.
 It is the right starting point; reach for the loader (next section) only when you want the
 data ready during SSR.
 
-::: code-group
-
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 import { useQuery } from "@tanstack/react-query";
 import fetchClients from "_/fetch";
 
@@ -99,7 +99,8 @@ export default function User({ id }: { id: string }) {
 }
 ```
 
-```tsx [SolidJS]
+== Solid
+```tsx
 import { Show } from "solid-js";
 import { useQuery } from "@tanstack/solid-query";
 import fetchClients from "_/fetch";
@@ -121,7 +122,8 @@ export default function User(props: { id: string }) {
 }
 ```
 
-```vue [Vue]
+== Vue
+```vue
 <script setup lang="ts">
 import { useQuery } from "@tanstack/vue-query";
 import fetchClients from "_/fetch";
@@ -141,7 +143,8 @@ const { data, isPending } = useQuery({
 </template>
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 <script lang="ts">
   // Svelte uses createQuery (not useQuery) and takes a thunk
   import { createQuery } from "@tanstack/svelte-query";
@@ -201,9 +204,9 @@ prefetch under one key and read under another and the cache misses, forcing a re
 
 Sketches per framework - see the official guides above for the full picture:
 
-::: code-group
-
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 // Prefetch in the loader, dehydrate, then wrap the page in HydrationBoundary.
 // https://tanstack.com/query/latest/docs/framework/react/guides/ssr
 import { dehydrate, HydrationBoundary, useQuery } from "@tanstack/react-query";
@@ -240,7 +243,8 @@ export default function Page() {
 }
 ```
 
-```tsx [SolidJS]
+== Solid
+```tsx
 // Solid Query rehydrates through Solid's generateHydrationScript(),
 // which the SSR entry already emits - so there is no HydrationBoundary to place.
 // Prefetch into the request client and the cache crosses to the browser automatically.
@@ -267,7 +271,8 @@ export default function Page() {
 }
 ```
 
-```vue [Vue]
+== Vue
+```vue
 <!-- Prefetch + dehydrate in the loader; hydrate the page's script setup.
      https://tanstack.com/query/latest/docs/framework/vue/guides/ssr -->
 <script lang="ts">
@@ -305,7 +310,8 @@ const { data } = useQuery(queryOptions(params.id));
 </template>
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 <!-- Prefetch + dehydrate in the loader; wrap the page in HydrationBoundary.
      https://tanstack.com/query/latest/docs/framework/svelte/ssr -->
 <script module lang="ts">
@@ -390,9 +396,9 @@ so every later `getQueryClient()` returns that same instance.
 
 Where you call it differs slightly by framework - it goes wherever your app is composed:
 
-::: code-group
-
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 // app.tsx - pass the configured client to the provider's `client` prop
 import { AppProvider } from "_/app";
 import { createQueryClient } from "_/query";
@@ -411,7 +417,8 @@ export default function App() {
 }
 ```
 
-```tsx [SolidJS]
+== Solid
+```tsx
 // app.tsx - pass the configured client to the provider's `client` prop
 import { AppProvider } from "_/app";
 import { createQueryClient } from "_/query";
@@ -428,7 +435,8 @@ const app: ParentComponent = (props) => {
 export default app;
 ```
 
-```vue [Vue]
+== Vue
+```vue
 <!-- app.vue - call createQueryClient in <script setup>; the provider resolves it -->
 <script setup lang="ts">
 import { AppProvider } from "_/app";
@@ -444,7 +452,8 @@ createQueryClient({ defaultOptions: { queries: { staleTime: 60_000 } } });
 </template>
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 <!-- app.svelte - pass the configured client to the provider's `client` prop -->
 <script lang="ts">
   import { AppProvider } from "_/app";
@@ -462,7 +471,6 @@ createQueryClient({ defaultOptions: { queries: { staleTime: 60_000 } } });
   {@render children()}
 </AppProvider>
 ```
-
 :::
 
 The `client` prop is typed as the adapter's `QueryClient` and exists only when the

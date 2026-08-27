@@ -10,8 +10,8 @@
   "devDependencies": {
     "vite": "^8.2.2",
     "vitepress": "2.0.0-alpha.17",
-    "vitepress-plugin-group-icons": "^1.7.6",
     "vitepress-plugin-llms": "^1.13.5",
+    "vitepress-plugin-tabs": "^0.9.1",
     "vue": "^3.5.41"
   }
 }

@@ -13,16 +13,19 @@ A step-by-step walkthrough covering everything `KosmoJS` provides.
 
 ## Create a Project
 
-::: code-group
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 npm create kosmo app
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 pnpm create kosmo app
 ```
 
-```sh [yarn]
+== yarn
+```sh
 yarn create kosmo app
 ```
 :::
@@ -32,16 +35,19 @@ prompting for a folder name, base URL, framework, and backend.
 
 Prefer a fully scripted setup? Pass the folder options up front and no prompts appear:
 
-::: code-group
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 npm create kosmo app -- --folder main --base / --framework solid --backend hono
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 pnpm create kosmo app --folder main --base / --framework solid --backend hono
 ```
 
-```sh [yarn]
+== yarn
+```sh
 yarn create kosmo app --folder main --base / --framework solid --backend hono
 ```
 :::
@@ -54,16 +60,19 @@ cd ./app
 
 Install Dependencies:
 
-::: code-group
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 npm install
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 pnpm install
 ```
 
-```sh [yarn]
+== yarn
+```sh
 yarn install
 ```
 :::
@@ -77,16 +86,19 @@ one per distinct concern (main app, admin panel, marketing site, etc.).
 
 Each is independent with its own set of frameworks, config, base URL, etc.
 
-::: code-group
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 npm run folder
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 pnpm folder
 ```
 
-```sh [yarn]
+== yarn
+```sh
 yarn folder
 ```
 :::
@@ -102,16 +114,19 @@ Non-interactive mode is also supported:
 - `--ssr`
 - `--tsq` to enable TanStack Query
 
-::: code-group
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 npm run folder -- --name front --base / --framework solid --backend hono
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 pnpm folder --name front --base / --framework solid --backend hono
 ```
 
-```sh [yarn]
+== yarn
+```sh
 yarn folder --name front --base / --framework solid --backend hono
 ```
 :::
@@ -122,18 +137,21 @@ or omit `--backend` for a frontend-only folder (a static docs or marketing site)
 
 There is no `none` value to pass - leaving the flag out is all it takes:
 
-::: code-group
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 npm run folder -- --name api --base / --backend hono        # API only, no UI
 npm run folder -- --name docs --base /docs --framework mdx  # UI only, no backend
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 pnpm folder --name api --base / --backend hono        # API only, no UI
 pnpm folder --name docs --base /docs --framework mdx  # UI only, no backend
 ```
 
-```sh [yarn]
+== yarn
+```sh
 yarn folder --name api --base / --backend hono        # API only, no UI
 yarn folder --name docs --base /docs --framework mdx  # UI only, no backend
 ```
@@ -145,16 +163,19 @@ The generated `kosmo.config.ts` simply contains only the generators that side ne
 
 Creating a source folder adds framework-specific dependencies. Install them:
 
-::: code-group
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 npm install
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 pnpm install
 ```
 
-```sh [yarn]
+== yarn
+```sh
 yarn install
 ```
 :::
@@ -165,16 +186,19 @@ The dev server completes the setup: on first start it generates the remaining
 project files - routers, typed fetch clients, validators - and wires everything together.
 From then on it watches your routes and regenerates as you work:
 
-::: code-group
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 npm run dev
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 pnpm dev
 ```
 
-```sh [yarn]
+== yarn
+```sh
 yarn dev
 ```
 :::
@@ -202,7 +226,7 @@ pages/
 Parameters: `[id]` required · `{id}` optional · `{...path}` splat.
 Same pattern for API and pages - learn once, use everywhere.
 
-[Read more ›](/routing/intro)
+[Details ›](/routing/intro)
 
 ## Path Mappings
 
@@ -224,8 +248,9 @@ You can add your own paths, but these prefixes are reserved:
 
 Create `api/users/[id]/index.ts` - `KosmoJS` detects the file and generates boilerplate:
 
-::: code-group
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -235,7 +260,8 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ]);
 ```
 
-```ts [H3]
+== H3
+```ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -245,7 +271,8 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ]);
 ```
 
-```ts [Koa]
+== Koa
+```ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -260,8 +287,9 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 
 Replace with real logic:
 
-::: code-group
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -273,7 +301,8 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ]);
 ```
 
-```ts [H3]
+== H3
+```ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -285,7 +314,8 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ]);
 ```
 
-```ts [Koa]
+== Koa
+```ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -300,21 +330,24 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 
 Start the dev server and visit `http://localhost:4556/api/users/123`:
 
-::: code-group
-```sh [npm]
+:::tabs key:pm variant:code
+== npm
+```sh
 npm run dev
 ```
 
-```sh [pnpm]
+== pnpm
+```sh
 pnpm dev
 ```
 
-```sh [yarn]
+== yarn
+```sh
 yarn dev
 ```
 :::
 
-[Read more ›](/backend/intro)
+[Details ›](/backend/intro)
 
 ## Add Validation
 
@@ -356,8 +389,9 @@ Metadata targets (any method): `query` · `headers` · `cookies`
 
 Body targets (mutually exclusive, POST/PUT/PATCH/DELETE only): `json` · `form` · `raw`
 
-::: code-group
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 import type { CreateUserPayload, User } from "./types";
 
 export default defineRoute<"users">(({ POST }) => [
@@ -371,7 +405,8 @@ export default defineRoute<"users">(({ POST }) => [
 ]);
 ```
 
-```ts [H3]
+== H3
+```ts
 import type { CreateUserPayload, User } from "./types";
 
 export default defineRoute<"users">(({ POST }) => [
@@ -385,7 +420,8 @@ export default defineRoute<"users">(({ POST }) => [
 ]);
 ```
 
-```ts [Koa]
+== Koa
+```ts
 import type { CreateUserPayload, User } from "./types";
 
 export default defineRoute<"users">(({ POST }) => [
@@ -398,6 +434,7 @@ export default defineRoute<"users">(({ POST }) => [
   }),
 ]);
 ```
+:::
 
 ```ts [./types.ts]
 export type CreateUserPayload = {
@@ -408,11 +445,10 @@ export type CreateUserPayload = {
 
 export type User = { id: number; name: string; email: string }
 ```
-:::
 
 Payload is validated before your handler runs. Response is validated before it's sent.
 
-[Read more ›](/validation/intro)
+[Details ›](/validation/intro)
 
 ## Add Middleware
 
@@ -443,7 +479,7 @@ export default [
 
 No imports in route files, no repetition. Parent `use.ts` files wrap child routes automatically.
 
-[Read more ›](/backend/middleware)
+[Details ›](/backend/middleware)
 
 ## Fetch Clients
 
@@ -452,21 +488,9 @@ TypeBox validators as the server - identical results, no duplication, no drift.
 
 Invalid requests are caught before they leave the browser:
 
-::: code-group
-```tsx [SolidJS]
-import { useParams, createAsync } from "@solidjs/router";
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["users/[id]"];
-
-export default function UserPage() {
-  const params = useParams();
-  const user = createAsync(() => GET([params.id]));
-  // ...
-}
-```
-
-```tsx [React]
+:::tabs key:frontend variant:code
+== React
+```tsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import fetchClients from "_/fetch";
@@ -481,7 +505,22 @@ export default function UserPage() {
 }
 ```
 
-```vue [Vue]
+== Solid
+```tsx
+import { useParams, createAsync } from "@solidjs/router";
+import fetchClients from "_/fetch";
+
+const { GET } = fetchClients["users/[id]"];
+
+export default function UserPage() {
+  const params = useParams();
+  const user = createAsync(() => GET([params.id]));
+  // ...
+}
+```
+
+== Vue
+```vue
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
@@ -494,7 +533,8 @@ onMounted(async () => { user.value = await GET([route.params.id]); });
 </script>
 ```
 
-```svelte [Svelte]
+== Svelte
+```svelte
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
@@ -511,7 +551,8 @@ const user = useLoaderData();
 </script>
 ```
 
-```mdx [MDX]
+== MDX
+```mdx
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 
@@ -530,7 +571,7 @@ export const User = () => {
 
 Server-side validation still runs even when endpoints are called directly - client validation is additive, not a substitute.
 
-[Read more ›](/fetch/intro)
+[Details ›](/fetch/intro)
 
 ## Create Client Pages
 
@@ -548,7 +589,7 @@ pages/
 
 Layouts can be nested - deeper layouts wrap inner layouts, matching your route hierarchy.
 
-[Read more ›](/frontend/routing)
+[Details ›](/frontend/routing)
 
 ## Server-Side Rendering
 
@@ -579,7 +620,7 @@ node dist/front/ssr/server.js -p 4556
 
 The API server and SSR server are bundled separately - deploy, scale, and run them independently.
 
-[Read more ›](/frontend/server-side-render)
+[Details ›](/frontend/server-side-render)
 
 ## Multiple Source Folders
 
