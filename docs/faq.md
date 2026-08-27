@@ -964,10 +964,17 @@ Other casings are treated as regular components.
 Each folder runs one framework and ignores other frameworks' files (a Vue folder ignores `.tsx`, etc.).
 [Details&nbsp;›](/frontend/layouts#layout-file-naming)
 
-#### What does the root App file wrap, and how is it different from a layout?
-`App.{tsx,vue,svelte,mdx}` at the source-folder root wraps every route -
+#### Why isn't my pages/layout.* file loaded?
+Layout files only apply inside route folders.
+A layout outside a route folder is not picked up. `page/layout.*` files are simply ignored.
+If you look for a global layout that wraps every route, that's the `src/<folder>/app.*` file.
+[Details&nbsp;›](/frontend/layouts#global-layout-via-app-file)
+
+#### What does the root app file wrap, and how is it different from a layout?
+`src/<folder>/app.*` at the source-folder root wraps every route -
 the place for truly global concerns (auth checks, analytics, error boundaries).
-A `layout` file scopes shared UI to a folder subtree.
+A `layout` file only works inside a route folder, wrapping the whole subtree.
+Place it outside a route folder and it does nothing.
 [Details&nbsp;›](/frontend/layouts#global-layout-via-app-file)
 
 #### How does each framework render the child route?
@@ -1290,9 +1297,10 @@ in `teardownHandler`, which runs before each reload.
 [Details&nbsp;›](/backend/development-workflow#apidevts)
 
 #### How do I inspect registered routes and their middleware?
-Each route has a `debug` property; enable with `DEBUG=api pnpm dev` to print path,
-methods, middleware chain (by slot), and handler.
-Targeted properties: `debug.headline`, `debug.methods`, `debug.middleware`, `debug.handler`.
+Pass the `debug` option to `appFactory` in `api/app.ts`:
+`debug: true` prints each route's path, methods, middleware chain (by slot), and handler.
+For targeted output pass one of `"headline"` / `"methods"` / `"middleware"` / `"handler"`,
+or pass a function `debug(log, route)` for a custom logger - `log` carries all four parts plus `full`.
 [Details&nbsp;›](/backend/development-workflow#inspecting-routes)
 
 #### Why should I name my middleware functions?
@@ -1457,10 +1465,11 @@ that KosmoJS registers routes with. A layout only remounts when navigation moves
 #### `loading.tsx` / `error.tsx` / `not-found.tsx`?
 There are no per-route special files for these, because they're handled with each framework's
 own primitives rather than a KosmoJS file convention.
-Global loading, suspense, and error boundaries live at the `App.{tsx,vue}` level,
+
+Global loading, suspense, and error boundaries live at the `app.*` level,
 using the native principles of your chosen framework.
 
-Not-found has a built-in: a `pages/404.{tsx,vue}` component is rendered for unmatched routes.
+Not-found has a built-in: a `pages/404.*` component is rendered for unmatched routes.
 Backend errors are separate - they centralize in `api/errors.ts`.
 [Details&nbsp;›](/frontend/layouts#global-layout-via-app-file)
 

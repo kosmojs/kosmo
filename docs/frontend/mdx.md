@@ -157,7 +157,7 @@ pages/
 For `/docs/guide/setup` the render order is:
 
 ```
-App.mdx (root layout)
+app.mdx (root layout)
 └── pages/docs/layout.mdx
     └── pages/docs/guide/layout.mdx
         └── pages/docs/guide/setup/index.mdx
@@ -207,15 +207,15 @@ export const Header = () => {
 
 Layouts must be `.mdx` files - `.md` files cannot render `{props.children}`.
 
-### Global Layout via App.mdx
+### Global Layout via app.mdx
 
-`App.mdx` at the source folder root wraps every page - the right place
+`app.mdx` at the source folder root wraps every page - the right place
 for truly global concerns like site-wide navigation, footer, or
 analytics scripts:
 
 ```txt
 src/content/
-├── App.mdx              ← wraps everything
+├── app.mdx              ← wraps everything
 └── pages/
     ├── layout.mdx
     └── index/
@@ -401,7 +401,7 @@ maintaining a consistent project structure:
 
 ```txt
 src/content/
-├── App.mdx                ← global layout
+├── app.mdx                ← global layout
 ├── router.tsx             ← Actual router using createRouter
 ├── index.html             ← HTML shell with placeholders
 ├── components/
@@ -422,7 +422,7 @@ The MDX router uses `createRouter` to resolve routes at render time.
 import { createRouter } from "_/mdx";
 import routerFactory from "_/router";
 
-import App from "./App.mdx";
+import App from "./app.mdx";
 import { components } from "./components/mdx"
 
 export default routerFactory((routes) => {

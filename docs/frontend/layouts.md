@@ -35,7 +35,7 @@ pages/
 For `/dashboard/settings/profile`, the render order is:
 
 ```
-App.tsx (global wrapper)
+app.tsx (global wrapper)
 └── dashboard/layout.tsx
     └── dashboard/settings/layout.tsx
         └── dashboard/settings/profile/index.tsx
@@ -46,6 +46,12 @@ No configuration, no imports - the file system defines the hierarchy.
 Child routes cannot escape parent layouts. Once a layout is established at a
 folder level, all routes beneath it inherit it - keeping the UI hierarchy
 predictable.
+
+::: tip Looking for a layout that wraps every page?
+That role belongs to the [app file](#global-layout-via-app-file),
+not to a layout at the root of `pages/` - a root-level `pages/layout.*` is not picked up.
+Layout files scope shared UI to a folder subtree; the app file wraps the whole app.
+:::
 
 ## Layout File Naming
 
@@ -303,15 +309,15 @@ Keeping a layout's data distinct from its page's is automatic in React (per-rout
 and Solid (via the `query()` key); in Vue, Svelte, and MDX you pass the layout's
 path-qualified name (e.g. `"dashboard/layout"` for `pages/dashboard/layout.*`) to the hook.
 
-## Global Layout via App File
+## Global Layout via app File
 
-The `App.{tsx,vue,svelte,mdx}` at the source folder root wraps every route - the right
+The `app.{tsx,vue,svelte,mdx}` at the source folder root wraps every route - the right
 place for truly global concerns like authentication checks, analytics tracking
 or error boundaries.
 
 ```txt
 front/
-├── App.tsx              ← wraps everything
+├── app.tsx              ← wraps everything
 └── pages/
     ├── dashboard/
     │   └── layout.tsx
@@ -325,7 +331,7 @@ For a deeply nested route like `/dashboard/settings/security`:
 
 ```txt
 front/
-├── App.tsx                        ← Level 1: global wrapper
+├── app.tsx                        ← Level 1: global wrapper
 └── pages/
     └── dashboard/
         ├── layout.tsx             ← Level 2: dashboard wrapper
