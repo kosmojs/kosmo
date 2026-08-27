@@ -206,6 +206,16 @@ export default defineGeneratorFactory((sourceFolder) => {
     ]) {
       await renderToFile(createPath.lib(file), template, {});
     }
+
+    if (generators.some((e) => e.meta.slot === "frontend")) {
+      // deploy default index.html file; generators may override as needed
+      await renderToFile(
+        createPath.src("index.html"),
+        templates.index,
+        { entryDir: defaults.entryDir },
+        { overwrite: (c) => !c?.trim() /** overwrite only if empty */ },
+      );
+    }
   };
 
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {

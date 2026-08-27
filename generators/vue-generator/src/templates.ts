@@ -18,7 +18,6 @@ export { default as srcApp } from "#templates/src/app.vue";
 export { default as srcComponentsLink } from "#templates/src/components/Link.vue";
 export { default as srcEntryClient } from "#templates/src/entry/client";
 export { default as srcEntryServer } from "#templates/src/entry/server";
-export { default as srcIndex } from "#templates/src/index.html";
 export { default as srcPageSamples404 } from "#templates/src/pageSamples/404.vue";
 export { default as srcPageSamplesLayout } from "#templates/src/pageSamples/layout.hbs";
 export { default as srcPageSamplesPage } from "#templates/src/pageSamples/page.hbs";

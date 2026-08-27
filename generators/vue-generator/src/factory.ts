@@ -144,20 +144,6 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         );
       }
 
-      await deploySrcFile(
-        createPath.src("index.html"),
-        templates.srcIndex,
-        { entryDir: defaults.entryDir },
-        {
-          overwrite: (c) => {
-            // override only if file is blank or contains only comments
-            return c?.trim().length
-              ? !c.replace(/<!--[\s\S]*?-->/g, "").trim().length
-              : true;
-          },
-        },
-      );
-
       for (const [file, template] of [
         ["client.ts", templates.srcEntryClient],
         ["server.ts", templates.srcEntryServer],

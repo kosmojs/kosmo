@@ -6,4 +6,5 @@ export { default as coreTypes } from "#templates/core/types";
 export { default as envD } from "#templates/env.d";
 export { default as gitignore } from "#templates/gitignore.hbs";
 export { default as globalD } from "#templates/global.d";
+export { default as index } from "#templates/index.html";
 export { default as schemas } from "#templates/schemas.hbs";
