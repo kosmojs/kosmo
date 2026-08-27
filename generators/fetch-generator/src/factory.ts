@@ -48,15 +48,18 @@ export default defineGeneratorFactory((sourceFolder) => {
 
         for (const def of entry.validationDefinitions) {
           if (def.target === "response") {
-            for (const { id, body, resolvedType } of def.variants) {
-              if (body) {
-                validationTypes.push({
-                  id,
-                  target: def.target,
-                  method: def.method,
-                  resolvedType,
-                });
+            for (const { id, status, body, resolvedType } of def.variants) {
+              if (!body || Math.floor(status / 100) !== 2) {
+                // only consider 2xx body types.
+                // providing non-2xx types to fetch clients is meaningless/confusing.
+                continue;
               }
+              validationTypes.push({
+                id,
+                target: def.target,
+                method: def.method,
+                resolvedType,
+              });
             }
           } else {
             const { id, resolvedType } = def.schema;
