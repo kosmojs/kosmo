@@ -11,32 +11,48 @@ head:
 
 A step-by-step walkthrough covering everything `KosmoJS` provides.
 
-## Create Your Project
+## Create a Project
 
 ::: code-group
 ```sh [npm]
-npm create kosmo
-# non-interactive: npm create kosmo -- --name my-app
+npm create kosmo app
 ```
 
 ```sh [pnpm]
-pnpm create kosmo
-# non-interactive: pnpm create kosmo --name my-app
+pnpm create kosmo app
 ```
 
 ```sh [yarn]
-yarn create kosmo
-# non-interactive: yarn create kosmo --name my-app
+yarn create kosmo app
+```
+:::
+
+A short interactive setup creates the project together with your first source folder,
+prompting for a folder name, base URL, framework, and backend.
+
+Prefer a fully scripted setup? Pass the folder options up front and no prompts appear:
+
+::: code-group
+```sh [npm]
+npm create kosmo app -- --folder main --base / --framework solid --backend hono
+```
+
+```sh [pnpm]
+pnpm create kosmo app --folder main --base / --framework solid --backend hono
+```
+
+```sh [yarn]
+yarn create kosmo app --folder main --base / --framework solid --backend hono
 ```
 :::
 
 `cd` into your brand-new project:
 
 ```sh
-cd ./my-app
+cd ./app
 ```
 
-*Install Dependencies:*
+Install Dependencies:
 
 ::: code-group
 ```sh [npm]
@@ -54,23 +70,24 @@ yarn install
 
 Project ready, add features!
 
-## Create a Source Folder
+## Add More Source Folders
 
-`KosmoJS` doesn't create a source folder automatically - you add them as needed,
+Your project starts with the source folder created above. As the app grows, add more -
 one per distinct concern (main app, admin panel, marketing site, etc.).
+
 Each is independent with its own set of frameworks, config, base URL, etc.
 
 ::: code-group
 ```sh [npm]
-npm run +folder
+npm run folder
 ```
 
 ```sh [pnpm]
-pnpm +folder
+pnpm folder
 ```
 
 ```sh [yarn]
-yarn +folder
+yarn folder
 ```
 :::
 
@@ -87,15 +104,15 @@ Non-interactive mode is also supported:
 
 ::: code-group
 ```sh [npm]
-npm run +folder -- --name front --base / --framework solid --backend hono
+npm run folder -- --name front --base / --framework solid --backend hono
 ```
 
 ```sh [pnpm]
-pnpm +folder --name front --base / --framework solid --backend hono
+pnpm folder --name front --base / --framework solid --backend hono
 ```
 
 ```sh [yarn]
-yarn +folder --name front --base / --framework solid --backend hono
+yarn folder --name front --base / --framework solid --backend hono
 ```
 :::
 
@@ -107,18 +124,18 @@ There is no `none` value to pass - leaving the flag out is all it takes:
 
 ::: code-group
 ```sh [npm]
-npm run +folder -- --name api --base / --backend hono        # API only, no UI
-npm run +folder -- --name docs --base /docs --framework mdx  # UI only, no backend
+npm run folder -- --name api --base / --backend hono        # API only, no UI
+npm run folder -- --name docs --base /docs --framework mdx  # UI only, no backend
 ```
 
 ```sh [pnpm]
-pnpm +folder --name api --base / --backend hono        # API only, no UI
-pnpm +folder --name docs --base /docs --framework mdx  # UI only, no backend
+pnpm folder --name api --base / --backend hono        # API only, no UI
+pnpm folder --name docs --base /docs --framework mdx  # UI only, no backend
 ```
 
 ```sh [yarn]
-yarn +folder --name api --base / --backend hono        # API only, no UI
-yarn +folder --name docs --base /docs --framework mdx  # UI only, no backend
+yarn folder --name api --base / --backend hono        # API only, no UI
+yarn folder --name docs --base /docs --framework mdx  # UI only, no backend
 ```
 :::
 
@@ -144,6 +161,10 @@ yarn install
 
 ## Start the dev server
 
+The dev server completes the setup: on first start it generates the remaining
+project files - routers, typed fetch clients, validators - and wires everything together.
+From then on it watches your routes and regenerates as you work:
+
 ::: code-group
 ```sh [npm]
 npm run dev
@@ -157,6 +178,8 @@ pnpm dev
 yarn dev
 ```
 :::
+
+Your app is now running at `http://localhost:4556`.
 
 ## Directory-Based Routing
 
@@ -565,7 +588,7 @@ base URL, and build output. They develop and deploy independently
 but share types, validation logic, and infrastructure.
 
 ```sh
-pnpm +folder          # add a new source folder
+pnpm folder           # add a new source folder
 pnpm dev              # runs all source folders in parallel
 pnpm build admin      # build a specific folder
 ```

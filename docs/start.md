@@ -9,72 +9,61 @@ head:
 
 Zero to a working route in under five minutes.
 
-[![asciicast](https://asciinema.org/a/968086.svg)](https://asciinema.org/a/968086)
+<!-- [![asciicast](https://asciinema.org/a/968086.svg)](https://asciinema.org/a/968086) -->
 
-## Create & install
+## Create a Project
 
 ::: code-group
 ```sh [npm]
-npm create kosmo
-cd my-app
+npm create kosmo app
+```
+
+```sh [pnpm]
+pnpm create kosmo app
+```
+
+```sh [yarn]
+yarn create kosmo app
+```
+:::
+
+A short interactive setup walks you through the choices:
+a name for your first source folder, the URL it lives under,
+and the frontend framework and backend you want to build with.
+
+Pick whatever feels familiar - nothing here is set in stone,
+and any folder you add later can make entirely different choices.
+
+## Install dependencies
+
+What you have at this point is deliberately minimal:
+a `package.json` and your source folder's config with a few empty stub files.
+
+The project is not runnable yet - installing dependencies brings in the
+KosmoJS toolchain that turns this skeleton into a working app:
+
+::: code-group
+```sh [npm]
+cd ./app
 npm install
 ```
 
 ```sh [pnpm]
-pnpm create kosmo
-cd my-app
+cd ./app
 pnpm install
 ```
 
 ```sh [yarn]
-yarn create kosmo
-cd my-app
-yarn install
-```
-:::
-
-## Add a source folder
-
-::: code-group
-```sh [npm]
-npm run +folder
-```
-
-```sh [pnpm]
-pnpm +folder
-```
-
-```sh [yarn]
-yarn +folder
-```
-:::
-
-You'll be prompted for a folder name, base URL, framework, and backend.
-
-Framework and backend are both optional - each select offers a `None` choice:
-- for a backend-only service pick `None` as the framework.
-- for a client-only folder pick `None` as the backend.
-
-In non-interactive mode there is no `none` value to pass -
-simply omit `--framework` or `--backend` and that side is skipped.
-
-**Next:** *Install newly added dependencies:*
-
-::: code-group
-```sh [npm]
-npm install
-```
-
-```sh [pnpm]
-pnpm install
-```
-
-```sh [yarn]
+cd ./app
 yarn install
 ```
 :::
 
 ## Start the dev server
+
+The dev server completes the setup: on first start it generates the remaining project files -
+routers, typed fetch clients, validators - fills the stub files with starter code, and wires everything together.
+From then on it watches your routes and regenerates as you work:
 
 ::: code-group
 ```sh [npm]
@@ -89,6 +78,8 @@ pnpm dev
 yarn dev
 ```
 :::
+
+Your app is now running at `http://localhost:4556`.
 
 ## Create a route
 
