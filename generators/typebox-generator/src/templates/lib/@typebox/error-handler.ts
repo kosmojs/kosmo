@@ -4,7 +4,7 @@ import type { ValidationErrorEntry } from "@kosmojs/core";
 
 /**
  * Message codes for i18n/l10n support
- */
+ * */
 export const MESSAGE_CODES = {
   // Generic messages
 
@@ -194,7 +194,7 @@ export type ValidationMessages = typeof MESSAGE_CODES;
  *
  * Usage: format(ERROR_MESSAGES[ErrorCode.STRING_MIN_LENGTH], 5)
  * Result: "must be at least 5 characters long"
- */
+ * */
 const MESSAGE_MAP: Record<keyof ValidationMessages, string> = {
   // Generic messages
 
@@ -314,7 +314,7 @@ const MESSAGE_MAP: Record<keyof ValidationMessages, string> = {
  * Comprehensive error handler for TypeBox validation errors.
  * Supports most JSON Schema validation keywords and produces human-friendly messages
  * with i18n/l10n support through message code mapping.
- */
+ * */
 export const errorHandlerFactory = (
   customMessages?: Partial<Record<keyof ValidationMessages, string>>,
 ) => {
@@ -322,7 +322,7 @@ export const errorHandlerFactory = (
 
   /**
    * Formats the instancePath into a human-readable field name
-   */
+   * */
   function formatFieldPath(instancePath: string, schemaPath?: string): string {
     if (!instancePath?.trim?.()) {
       return "root";
@@ -360,7 +360,7 @@ export const errorHandlerFactory = (
 
   /**
    * Pluralizes a word based on count
-   */
+   * */
   function pluralize(
     count: number,
     plural: string = messageMap[MESSAGE_CODES.PLURAL_SUFFIX],
@@ -370,7 +370,7 @@ export const errorHandlerFactory = (
 
   /**
    * Maps validation error to error code and formats message
-   */
+   * */
   function getErrorCodeAndMessage(error: TValidationError): {
     code: keyof ValidationMessages;
     message: string;
@@ -790,7 +790,7 @@ export const errorHandlerFactory = (
        * TODO: Periodically check the TypeBox repository for implementation updates.
        * Some validation cases (minContains, prefixItems, etc.) are not yet
        * implemented by TypeBox, so they are commented out below.
-       */
+       * */
 
       /**
       case "minContains": {
@@ -944,7 +944,7 @@ export const errorHandlerFactory = (
           ),
         };
       }
-      */
+    * */
 
       // Default fallback
       default: {
@@ -955,7 +955,7 @@ export const errorHandlerFactory = (
 
   /**
    * Groups errors by field to avoid duplicate messages
-   */
+   * */
   function groupErrorsByField(
     errors: TValidationError[],
   ): Map<string, TValidationError[]> {
@@ -974,7 +974,7 @@ export const errorHandlerFactory = (
 
   /**
    * Prioritizes errors to show the most important one per field
-   */
+   * */
   function prioritizeErrors(errors: TValidationError[]): TValidationError {
     // Priority order: required > type > format > const/enum > other constraints
     const priority: Record<string, number> = {
@@ -1003,13 +1003,51 @@ export const errorHandlerFactory = (
     })[0];
   }
 
+  /**
+   * A failed union of literals arrives as one `anyOf` error plus one `const` error per branch,
+   * all at the same instancePath.
+   * Collapse them into a single synthetic `enum` error so the message reflects the whole union.
+   * */
+  function collapseLiteralUnion(
+    fieldErrors: TValidationError[],
+  ): TValidationError[] {
+    const anyOfError = fieldErrors.find((e) => e.keyword === "anyOf");
+    if (!anyOfError) {
+      return fieldErrors;
+    }
+    const branchConsts = fieldErrors.filter((e) => {
+      return e.keyword === "const"
+        ? e.schemaPath.startsWith(`${anyOfError.schemaPath}/anyOf/`)
+        : false;
+    });
+    // bail unless EVERY sibling is a const branch of this anyOf -
+    // mixed unions (literal | object) keep their current behavior
+    if (
+      !branchConsts.length ||
+      fieldErrors.length !== branchConsts.length + 1
+    ) {
+      return fieldErrors;
+    }
+    return [
+      {
+        ...anyOfError,
+        keyword: "enum",
+        params: {
+          allowedValues: branchConsts.map(
+            (e) => (e.params as never)["allowedValue"],
+          ),
+        },
+      },
+    ];
+  }
+
   // ============================================================================
   // Public API
   // ============================================================================
 
   /**
    * Main function to format validation errors
-   */
+   * */
   function formatValidationErrors(
     errors: TValidationError[],
     options: {
@@ -1044,7 +1082,7 @@ export const errorHandlerFactory = (
       const formatted: ValidationErrorEntry[] = [];
 
       for (const [_, fieldErrors] of grouped) {
-        const prioritized = prioritizeErrors(fieldErrors);
+        const prioritized = prioritizeErrors(collapseLiteralUnion(fieldErrors));
         const { code, message } = getErrorCodeAndMessage(prioritized);
         formatted.push({
           keyword: prioritized.keyword,
@@ -1076,7 +1114,7 @@ export const errorHandlerFactory = (
 
   /**
    * Formats errors into a single human-readable message
-   */
+   * */
   function formatValidationErrorMessage(
     errors: TValidationError[],
     options: {
@@ -1105,7 +1143,7 @@ export const errorHandlerFactory = (
 
   /**
    * Gets a simple error summary for quick feedback
-   */
+   * */
   function getErrorSummary(errors: TValidationError[]): string {
     if (!errors?.length) {
       return messageMap[MESSAGE_CODES.VALIDATION_PASSED];

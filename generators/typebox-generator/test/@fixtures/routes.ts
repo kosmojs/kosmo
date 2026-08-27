@@ -20,6 +20,7 @@ export type RouteName =
   | "errors/string"
   | "errors/tuple"
   | "errors/type"
+  | "errors/union"
   | "number"
   | "params/[intersection]"
   | "params/[numberWithRefinements]"
