@@ -29,6 +29,26 @@ Default port is `4556`, configured as `devPort` in `package.json`.
 3. Requests are routed between Vite and your API
 4. File watcher monitors API files for changes
 
+## Hot Reload vs HMR
+
+The two sides of a source folder reload differently:
+
+- **Client**: HMR - changed modules are patched in place, component state survives the edit.
+- **API**: hot reload - on change, the API *program* restarts as a whole.
+There is no HMR for the backend, and reloads fire on more than route edits
+(config changes, shared types etc.)
+
+A full restart means module-level state resets on every reload.
+This is by design, not a limitation to work around:
+a backend should be stateless, in development for fast reliable reloads
+and in production so it can restart, scale, and run as multiple instances.
+
+Keep anything that must survive a restart in a real store from day one -
+the dev reload cycle is simply an early rehearsal of what production restarts do anyway.
+
+What *does* need care across reloads is resources: open connections leak when
+the program restarts around them. Close them in the [`teardownHandler`](#teardownhandler) hook.
+
 ## api/dev.ts
 
 `api/dev.ts` exposes three hooks for customizing the dev experience.
