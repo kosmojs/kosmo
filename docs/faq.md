@@ -92,6 +92,15 @@ Adding a folder pulls in framework-specific dependencies that need to be install
 It's the `devPort` value in `package.json`.
 [Details ›](/backend/development-workflow#starting-the-dev-server)
 
+#### How do I typecheck?
+`pnpm typecheck` - same shape as `dev` and `build`: no arguments checks every source folder,
+folder names check just those (`pnpm typecheck admin front`).
+
+Each folder is checked against its own `tsconfig.json` - that's where JSX and framework settings live.
+
+There is no project-level typecheck because there is no project-level deliverable:
+source folders are what you build and deploy, so they are also the unit of typechecking.
+
 #### How does this compare to Next.js / Nuxt / SolidStart / tRPC / a hand-rolled Vite setup?
 Unlike Next/Nuxt/SolidStart it doesn't choose your frontend or own your deploy model;
 unlike tRPC it's route-based (not procedure-based) and also generates OpenAPI and runtime validators;
@@ -774,6 +783,24 @@ Declare them in `api/env.d.ts` via module augmentation:
 - `DefaultState`/`DefaultContext` (Koa)
 
 [Details ›](/backend/type-safety#global-context-types-apienvdts)
+
+#### Can I relax TypeScript strictness, e.g. `exactOptionalPropertyTypes`?
+Yes, per source folder - the folder's `tsconfig.json` (`src/<folder>/tsconfig.json`)
+extends the generated base config, so anything you set in its `compilerOptions` wins:
+
+```json [src/front/tsconfig.json]
+{
+  "extends": "../../lib/front/tsconfig.json",
+  "compilerOptions": { // [!code ++:3]
+    "exactOptionalPropertyTypes": false
+  }
+}
+```
+
+`exactOptionalPropertyTypes: true` is the deliberate default:
+validated optional params round-trip exactly as declared (`status?: T` means *absent*, not `status: undefined`),
+which most codebases coming from looser configs notice immediately.
+Relaxing it - or any other strictness flag - is a per-folder choice and only affects that folder's typecheck.
 
 ### Fetch Clients
 
