@@ -1148,7 +1148,7 @@ content and implements only `renderToString`.
 
 #### What do the render methods receive?
 Both share the same first two arguments - the requested URL plus `SSROptions`:
-`template` (client `index.html` with `<!--app-head-->`/`<!--app-html-->` placeholders),
+`template` (client `index.html` with `<!--app-html-->` placeholder),
 `manifest` (Vite's dependency graph),
 and `assets` (SSR assets you inject manually, each offering `kind`/`tag`/`content`/`size`,
 plus an optional `path` - content-only assets like inlined scripts have no URL).

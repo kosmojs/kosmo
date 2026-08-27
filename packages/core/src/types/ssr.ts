@@ -13,8 +13,7 @@ import type { Manifest } from "vite";
 export type RenderToStringOptions = {
   /**
    * The original client index.html output from Vite build.
-   * Contains <!--app-head--> and <!--app-html--> placeholders
-   * where SSR content is injected by the server.
+   * Contains <!--app-html--> placeholder where SSR content is injected by the server.
    * */
   template: string;
 

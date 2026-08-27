@@ -22,6 +22,7 @@ import { routeMap } from "{{ createImport 'lib' '@ssr/routes' }}";
 import { apiBase, base } from "{{ createImport 'libCore' }}";
 
 const ROOT = import.meta.dirname;
+const HEAD_CLOSE_PATTERN = /<\/head\s*>/i;
 
 type AssetInfo = {
   file: string;
@@ -48,8 +49,7 @@ export const createApp = async () => {
     errorProvider: () => Error | undefined;
   } = await import(`${ROOT}/app.js`);
 
-  // Read the client index.html that includes <!--app-head--> and <!--app-html-->
-  // placeholders used for SSR injection.
+  // Read the client index.html that includes <!--app-html--> placeholder
   const template = await readFile(`${ROOT}/index.html`, "utf8");
 
   // Load the Vite manifest
@@ -58,7 +58,8 @@ export const createApp = async () => {
   }).then((e) => e.default);
 
   const { renderToString, renderToStream } = ssrApp;
-  const [htmlStart, htmlEnd] = template.split("<!--app-html-->");
+
+  const [htmlStart, htmlEnd = ""] = template.split(/<!--\s*app-html\s*-->/);
 
   const assets = await loadAssets(ROOT);
 
@@ -104,6 +105,17 @@ export const createApp = async () => {
     };
   };
 
+  const injectHead = (html: string, head: string) => {
+    const error = "WARN: missing </head> - required for SSR head injection";
+    if (HEAD_CLOSE_PATTERN.test(html)) {
+      return html.replace(HEAD_CLOSE_PATTERN, (headEnd) => {
+        return [head, headEnd].join("\n");
+      });
+    }
+    console.error(error);
+    return `${html}\n<script>console.error("${error}")</script>`;
+  };
+
   const renderPage = async (url: URL, ctx: Context) => {
     const {
       head = "",
@@ -134,23 +146,20 @@ export const createApp = async () => {
     );
 
     if (error) {
-      console.error("WARN: SSR failed, fallback to CSR");
+      const errorMessage = "WARN: SSR failed, fallback to CSR";
+      console.error(errorMessage);
       console.error(error);
       console.error();
       return [
-        htmlStart.replace(
-          "<!--app-head-->",
-          `<script>console.error("WARN: SSR failed, fallback to CSR")</script>`,
+        injectHead(
+          htmlStart,
+          `<script>console.error("${errorMessage}")</script>`,
         ),
         htmlEnd,
       ].join("");
     }
 
-    return [
-      htmlStart.replace("<!--app-head-->", head),
-      html ?? "",
-      htmlEnd,
-    ].join("");
+    return [injectHead(htmlStart, head), html ?? "", htmlEnd].join("");
   };
 
   const app = new Hono({ strict: false });
@@ -175,7 +184,7 @@ export const createApp = async () => {
               },
               () => renderToStream(url, ssrOptions(), stream as never),
             );
-            await stream.write(htmlStart.replace("<!--app-head-->", head));
+            await stream.write(injectHead(htmlStart, head));
             await stream.pipe(html);
             await stream.write(htmlEnd);
           });

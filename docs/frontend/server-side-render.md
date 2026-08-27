@@ -51,9 +51,8 @@ Both methods return the same `{ head, html }` shape - the only difference is tha
 to a `ReadableStream`. Both renderers are imported from `_/entry/server`, and each
 method returns rendered content the server assembles into the full response.
 
-Which method runs for a given route is controlled by `renderMode` (see
-[Selecting the render mode](#selecting-the-render-mode)) - both are implemented,
-and the mode decides which one the server calls per route.
+Which method runs for a given route is controlled by [renderMode](#selecting-the-render-mode) -
+both are implemented, and the mode decides which one the server calls per route.
 
 :::tabs key:frontend variant:code
 == React
@@ -217,41 +216,12 @@ MDX because it renders static content, Svelte because its folder ships string re
 
 ## Render Factory Arguments
 
-Both methods receive the same first two arguments - the URL and `SSROptions`.
-`renderToStream` receives a third, the stream, for custom flushing control:
-
-```ts
-export type SSROptions = {
-  // The original client index.html output from Vite build.
-  // Contains <!--app-head--> and <!--app-html--> placeholders
-  // where SSR content is injected by the server.
-  template: string;
-
-  // Vite's final manifest.json - the full dependency graph for
-  // client modules, dynamic imports, and related CSS.
-  manifest: Manifest;
-
-  // SSR-related assets, must be injected manually (unlike CSR assets that are injected by Vite).
-  // Each entry provides ways to consume the asset:
-  //   - `tag`: ready-to-use HTML tag (<script> or <link>) for direct injection
-  //   - `content`: raw file contents for inlining as <style> or inline <script>
-  //   - `path`: asset URL for building custom tags with additional attributes.
-  //     Optional - some assets are content-only (eg. an inlined script or style)
-  //     and have no standalone URL.
-  // `size` is included for Content-Length or preload hints.
-  assets: Array<{
-    kind: "js" | "css";
-    tag: string;
-    content: string;
-    size: number;
-    path?: string;
-  }>;
-};
-```
+Both methods receive the same first two arguments - the URL and options.
+Options is an object with following properties:
 
 | Property | Description |
 |----------|-------------|
-| `template` | Client `index.html` from the Vite build, with <code style="white-space: nowrap">\<!--app-head--></code> and <code style="white-space: nowrap">\<!--app-html--></code> placeholders for SSR injection |
+| `template` | Client `index.html` from the Vite build, with <code style="white-space: nowrap">\<!--app-html--></code> placeholder for SSR injection |
 | `manifest` | Vite's `manifest.json` - the full dependency graph for client modules |
 | `assets` | SSR-related assets, must be injected manually |
 
@@ -259,6 +229,8 @@ Most renderers only need `assets` to build `head`. `template` and `manifest` are
 available for advanced cases. The stream passed to `renderToStream` is a Hono
 `StreamingApi` instance - an escape hatch for custom flushing; default renderers
 resolve `html` to a `ReadableStream` and leave the writing to the server.
+
+`renderToStream` receives a third argument, the stream, for custom flushing control.
 
 ## Stream Rendering
 
@@ -274,8 +246,7 @@ differing only in the renderer it calls and the `ReadableStream` it resolves to.
 so streaming works the same on Node, Bun, and Deno.
 
 Streaming a route is opt-in per route via [`renderMode`](#selecting-the-render-mode).
-MDX and Svelte are the exceptions: they provide no `renderToStream`, and their
-folders do not expose the streaming mode.
+MDX and Svelte are the exceptions: they provide no `renderToStream`, and their folders do not expose the streaming mode.
 
 ## Selecting the Render Mode
 
