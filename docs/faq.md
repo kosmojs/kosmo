@@ -656,6 +656,12 @@ It validates before sending (catching handlers that return incomplete objects
 or drifted DB/third-party shapes) and enables automatic OpenAPI generation.
 [Details ›](/validation/response)
 
+#### Does response validation run in production?
+Not by default: in production, response validation is disabled by default.
+To enable, set `runtimeValidation: true` on the response target.
+There is no global switch: each handler enable its own response validation.
+[Details ›](/validation/response#development-vs-production)
+
 #### Can I use referenced types and generics?
 Fully supported - import shared types, use generic wrappers like `Payload<User>`.
 The generator resolves generics, traces all referenced types,
@@ -724,9 +730,13 @@ The full list is in the TFusion builtins reference.
 
 #### How do I skip runtime validation but keep types?
 Per-target `runtimeValidation: false` in the second type argument (works for payload and response).
-You then read the body via the bodyparser directly. Param validation cannot be skipped -
-params are part of the URL structure. Use sparingly:
-runtime validation is what catches mismatched DB responses, unexpected payloads, and API drift.
+You then read the body via the bodyparser directly.
+
+Param validation cannot be skipped - params are part of the URL structure.
+
+For response targets the same flag is also the production opt-in: response validation only runs in production when set to `true`.
+
+Use sparingly: runtime validation is what catches mismatched DB responses, unexpected payloads, and API drift.
 [Details ›](/validation/skip-validation)
 
 ### Type Safety

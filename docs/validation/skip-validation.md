@@ -34,6 +34,10 @@ export default defineRoute(({ POST }) => [
 This works for both payload and response targets. Route parameter validation cannot be skipped -
 parameters are part of the URL structure and always validated.
 
+For response targets the flag also works the other way: production builds skip response
+validation unless you set `runtimeValidation: true` on the handler.
+[Details ›](/validation/response)
+
 Use this sparingly. Runtime validation is what catches the bugs `TypeScript` can't -
 mismatched database responses, unexpected client payloads, API drift.
 Skipping it is a conscious tradeoff, not a default.
