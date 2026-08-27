@@ -95,11 +95,15 @@ const cliFactory = async (project: Project) => {
     for (const path of files) {
       const key = relative(tempDir, path);
       if (path.endsWith("package.json")) {
-        const json = await import(path, { with: { type: "json" } }).then((e) =>
-          Object.entries(e.default).filter(([k]) => !/dependencies/i.test(k)),
+        const json = await import(path, { with: { type: "json" } }).then(
+          (e) => {
+            return Object.entries(e.default).filter(
+              ([k]) => !/dependencies/i.test(k),
+            );
+          },
         );
         snapshot[key] = json;
-      } else {
+      } else if (!/\.svg$/.test(path)) {
         const content = await readFile(path, "utf8");
         snapshot[key] = content.trim().split("\n");
       }

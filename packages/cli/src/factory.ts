@@ -391,20 +391,6 @@ export const createSourceFolder = async (
 
   await mkdir(folderPath, { recursive: true });
 
-  if (folder.framework) {
-    await renderToFile(
-      resolve(folderPath, "index.html"),
-      templates.index,
-      {},
-      {
-        // do not overwrite real files with a stub!
-        // if at any point file should be regenerated,
-        // just empty or delete it and dev server will generate a clean version.
-        overwrite: false,
-      },
-    );
-  }
-
   const packageFile = resolve(projectRoot, "package.json");
 
   // Using readFile cause import() returns cached content
@@ -477,6 +463,13 @@ export const createSourceFolder = async (
   }
 
   await writeFile(packageFile, JSON.stringify(packageJson, undefined, 2));
+
+  await renderToFile(
+    resolve(folderPath, "public/favicon.svg"),
+    templates.favicon,
+    {},
+    { overwrite: false },
+  );
 };
 
 export const createKosmoConfig = (

@@ -6,15 +6,6 @@
     ]
   ],
   [
-    "with-source-folders/src/with-svelte-tanstack-query/index.html",
-    [
-      "<!--",
-      "Do not remove! Build process requires this file for framework-less source folders.",
-      "Framework generators will override this stub with their own setup.",
-      "-->"
-    ]
-  ],
-  [
     "with-source-folders/src/with-svelte-tanstack-query/kosmo.config.ts",
     [
       "import { defineConfig, svelteGenerator } from \"@kosmojs/dev\";",
