@@ -4,6 +4,7 @@ import {
   type ResolvedTypeSignature,
   type ValidationTarget,
 } from "@kosmojs/core";
+import { HTTPMethods } from "@kosmojs/core/fetch";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   createWatchedApiRouteEntriesFilter,
@@ -72,7 +73,12 @@ export default defineGeneratorFactory((sourceFolder) => {
           }
         }
 
-        const routeMethods = entry.methods.map((method) => {
+        const supportedMethods = Object.keys(HTTPMethods);
+
+        const routeMethods = entry.methods.flatMap((method) => {
+          if (!supportedMethods.includes(method)) {
+            return [];
+          }
           const payloadTypes = validationTypes.filter((e) => {
             return e.method === method
               ? ![
@@ -83,13 +89,15 @@ export default defineGeneratorFactory((sourceFolder) => {
                 ].includes(e.target)
               : false;
           });
-          return {
-            method,
-            payloadTypes,
-            responseType: validationTypes.find((e) => {
-              return e.target === "response" ? e.method === method : false;
-            }),
-          };
+          return [
+            {
+              method,
+              payloadTypes,
+              responseType: validationTypes.find((e) => {
+                return e.target === "response" ? e.method === method : false;
+              }),
+            },
+          ];
         });
 
         const responseTypes = Object.values(

@@ -1,6 +1,14 @@
 import type { stringifySearchParams } from "../generic";
 
-export type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+export enum HTTPMethods {
+  GET = "GET",
+  POST = "POST",
+  PUT = "PUT",
+  PATCH = "PATCH",
+  DELETE = "DELETE",
+}
+
+export type HTTPMethod = keyof typeof HTTPMethods;
 
 export type ResponseMode =
   | "json"
