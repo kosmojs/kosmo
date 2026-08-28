@@ -195,6 +195,11 @@ export const createRouteMiddleware: CreateRouteMiddleware<
           contentType: ctx.type,
         };
 
+        // validate only 2xx responses
+        if (Math.floor(response.status / 100) !== 2) {
+          return;
+        }
+
         // Validate body only for JSON variants
         if (variants.some((e) => e.contentType?.includes("json"))) {
           response.body = ctx.body;
