@@ -83,7 +83,9 @@ export const createRouteMiddleware: CreateRouteMiddleware<
                     target === "query"
                       ? normalizeSearchParams(
                           parser(event),
-                          event.req.method as never,
+                          event.req.method === "HEAD"
+                            ? "GET"
+                            : event.req.method,
                         )
                       : parser(event),
                   );
@@ -161,7 +163,10 @@ export const createRouteMiddleware: CreateRouteMiddleware<
      * */
     use(
       async function useValidateResponse(event, next) {
-        const variants = validationSchemas.response?.[event.req.method] || [];
+        const variants =
+          validationSchemas.response?.[
+            event.req.method === "HEAD" ? "GET" : event.req.method
+          ] || [];
 
         if (!Array.isArray(variants) || !variants.length) {
           return next();
@@ -353,7 +358,9 @@ export const createRouteMiddleware: CreateRouteMiddleware<
       use(
         async (event, next) => {
           const schema = {
-            ...validationSchemas[target]?.[event.req.method],
+            ...validationSchemas[target]?.[
+              event.req.method === "HEAD" ? "GET" : event.req.method
+            ],
           };
           if (schema.validate && schema.runtimeValidation !== false) {
             schema.validate(await loadData(event as never));

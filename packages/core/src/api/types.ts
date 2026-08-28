@@ -71,7 +71,7 @@ export type RouteSource<MiddlewareT> = {
   normalizeParams: (path: string) => Record<string, unknown>;
   normalizeSearchParams: (
     searchParams: Record<string, unknown>,
-    method: HTTPMethod,
+    method: string,
   ) => Record<string, unknown>;
   meta?: Record<string, unknown>;
 };

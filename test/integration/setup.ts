@@ -337,13 +337,16 @@ export const setupTestProject = async (
       | [route: string, params?: Record<string, unknown> | undefined],
   >(
     pathSource: T,
-    { method = "GET" }: { method?: Method } = {},
+    {
+      method = "GET",
+      searchParams,
+    }: { method?: Method; searchParams?: Record<string, string | number> } = {},
   ) => {
     const path = Array.isArray(pathSource)
       ? createRoutePath(pathSource[0], pathSource[1])
       : pathSource;
     const url = baseURL + join(sourceFolder.config.base, "api", path as never);
-    const response = await apiClient(url, { method });
+    const response = await apiClient(url, { method, searchParams });
     return { response };
   };
 

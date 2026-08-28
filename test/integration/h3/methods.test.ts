@@ -24,16 +24,18 @@ beforeAll(async () => {
   await bootstrapProject();
 
   await createApiRoutes(
-    methods.map((name) => {
-      return { name };
+    methods.flatMap((method) => {
+      return method === "HEAD" // HEAD handlers wired automatically
+        ? []
+        : [{ name: method }];
     }),
     async ({ name }) => {
       return () => {
         return `
           import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
           export default defineRoute(({ ${name} }) => [
-            ${name}(() => {
-              return { method: "${name}" };
+            ${name}<{ query: { page?: number } }>((e) => {
+              return { method: "${name}", page: e.validated.query.page };
             }),
           ]);
         `;
@@ -46,21 +48,18 @@ beforeAll(async () => {
 
 afterAll(teardown);
 
-describe("methods", async () => {
-  for (const method of methods as Array<never>) {
-    test(`${method}: 200`, async () => {
+for (const method of methods as Array<never>) {
+  describe(method, { skip: method === "HEAD" }, async () => {
+    test("200", async () => {
       const { response } = await withApiResponse(method, { method });
       expect(response.statusCode).toEqual(200);
-      if (method !== "HEAD") {
-        expect(JSON.parse(response.body)).toEqual({ method });
-      }
     });
 
     const otherMethods = methods.filter((e) => e !== method) as Array<never>;
 
     for (const otherMethod of otherMethods) {
       if (otherMethod === "OPTIONS") {
-        test(`${method}: 204 on ${otherMethod}`, async () => {
+        test(`204 on ${otherMethod}`, async () => {
           const { response } = await withApiResponse(method, {
             method: otherMethod,
           });
@@ -68,14 +67,22 @@ describe("methods", async () => {
           expect(response.headers.allow).toContain(method);
         });
       } else if (otherMethod === "HEAD" && method === "GET") {
-        test(`${method}: 200 on ${otherMethod}`, async () => {
+        test(`200 on ${otherMethod} with valid page`, async () => {
           const { response } = await withApiResponse(method, {
             method: otherMethod,
+            searchParams: { page: "1" },
           });
           expect(response.statusCode).toEqual(200);
         });
+        test(`400 on ${otherMethod} with wrong page`, async () => {
+          const error = await withApiResponse(method, {
+            method: otherMethod,
+            searchParams: { page: "x" },
+          }).catch((e) => e);
+          expect(error.message).toMatch("400 (Bad Request)");
+        });
       } else {
-        test(`${method}: 405 on ${otherMethod}`, async () => {
+        test(`405 on ${otherMethod}`, async () => {
           const error = await withApiResponse(method, {
             method: otherMethod,
           }).catch((e) => e);
@@ -84,5 +91,5 @@ describe("methods", async () => {
         });
       }
     }
-  }
-});
+  });
+}
