@@ -54,6 +54,18 @@ export function appFactory(
       app.on(route.method, route.path, handler as never, {
         middleware: route.middleware.slice(0, -1),
       });
+      if (
+        route.method === "GET" &&
+        !routes.some((e) => e.path === route.path && e.method === "HEAD")
+      ) {
+        /**
+         * Register HEAD against the sibling GET handler,
+         * matching the HEAD-via-GET dispatch hono and koa provide natively.
+         * */
+        app.on("HEAD", route.path, handler as never, {
+          middleware: route.middleware.slice(0, -1),
+        });
+      }
     }
   }
 
@@ -70,12 +82,6 @@ export function appFactory(
 
   for (const [path, routes] of Object.entries(routesByPath)) {
     const methods = routes.map((e) => e.method);
-
-    if (methods.includes("GET") && !methods.includes("HEAD")) {
-      app.on("HEAD", path, () => {
-        return new Response(undefined, { status: 200 });
-      });
-    }
 
     app.all(path, (event) => {
       const allowedMethods = new Set([...methods, "OPTIONS"]);
