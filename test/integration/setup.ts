@@ -21,13 +21,7 @@ import {
 import chassis from "@kosmojs/dev/chassis";
 import { pathResolver } from "@kosmojs/lib";
 
-import {
-  contentPatternFor,
-  createRoutePath,
-  env,
-  exec,
-  installDependencies,
-} from ".";
+import { contentPatternFor, createRoutePath, env, exec } from ".";
 import * as templates from "./@fixtures/templates";
 
 export const mode = inject("MODE");
@@ -35,6 +29,8 @@ export const mode = inject("MODE");
 const browser = await chromium.launch({
   headless: process.env.DEBUG !== "browser",
 });
+
+const pnpmDir = resolve(tmpdir(), ".kosmojs/pnpm-store");
 
 const apiClient = got.extend({
   retry: {
@@ -545,4 +541,19 @@ const isPortFree = (port: number): Promise<boolean> => {
     // checking 127.0.0.1 alone misses ports taken only on "::".
     server.listen(port);
   });
+};
+
+const installDependencies = async (cwd: string, args?: Array<string>) => {
+  await exec(
+    "pnpm",
+    [
+      "install",
+      "--store-dir",
+      pnpmDir,
+      "--no-frozen-lockfile",
+      "--prefer-offline",
+      ...(args || []),
+    ],
+    { cwd, env },
+  );
 };

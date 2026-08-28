@@ -25,24 +25,23 @@ import { createFolder } from "./factory";
 
 const COMMANDS = ["folder", "serve", "build", "typecheck"] as const;
 
-const { values, positionals } = parseArgs({
-  options: {
-    ...FOLDER_OPTIONS,
-    name: { type: "string" },
-    overwrite: { type: "boolean" },
-    quiet: { type: "boolean", short: "q" },
-    help: { type: "boolean", short: "h" },
-  },
-  strict: true,
-  allowPositionals: true,
-});
-
-if (values.help) {
-  printUsage();
-  process.exit(0);
-}
-
 const run = async () => {
+  const { values, positionals } = parseArgs({
+    options: {
+      ...FOLDER_OPTIONS,
+      overwrite: { type: "boolean" },
+      quiet: { type: "boolean", short: "q" },
+      help: { type: "boolean", short: "h" },
+    },
+    strict: true,
+    allowPositionals: true,
+  });
+
+  if (values.help) {
+    printUsage();
+    process.exit(0);
+  }
+
   const root = process.cwd();
 
   const jiti = createJiti(root);

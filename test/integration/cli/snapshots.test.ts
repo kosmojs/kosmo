@@ -1,5 +1,4 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { mkdir, readFile, rm } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import { format } from "oxfmt";
@@ -12,13 +11,12 @@ import {
   FRAMEWORKS,
 } from "@kosmojs/core";
 
-import { env, exec, installDependencies, pkgsDir } from ".";
+import { createBin, createTempDir, kosmoBin, run } from ".";
 
-const tempDir = await mkdtemp(resolve(tmpdir(), ".kosmojs-"));
+const tempDir = await createTempDir();
 
 afterAll(async () => {
   await rm(tempDir, { recursive: true, force: true });
-  await rm(pkgsDir, { recursive: true, force: true });
 });
 
 describe("should create the project and folders", async () => {
@@ -28,30 +26,15 @@ describe("should create the project and folders", async () => {
   test("create the project", async ({ expect }) => {
     await mkdir(tempDir, { recursive: true });
 
-    await exec("node", [`${pkgsDir}/create-kosmo/pkg/cli.js`, projectName], {
-      cwd: tempDir,
-      env,
-    });
+    await run(
+      createBin,
+      [projectName, "--framework", "react", "--backend", "hono"],
+      tempDir,
+    );
 
-    const packageJsonFile = resolve(projectRoot, "package.json");
-
-    const packageJson = await import(packageJsonFile, {
+    const packageJson = await import(resolve(projectRoot, "package.json"), {
       with: { type: "json" },
     }).then((e) => e.default);
-
-    for (const key of ["dependencies", "devDependencies"]) {
-      for (const pkg of Object.keys(packageJson[key]) as Array<string>) {
-        if (pkg.includes("kosmo")) {
-          packageJson[key][pkg] = resolve(pkgsDir, pkg);
-        }
-      }
-    }
-
-    await writeFile(
-      packageJsonFile,
-      JSON.stringify(packageJson, undefined, 2),
-      "utf8",
-    );
 
     expect(packageJson.devPort).toEqual(DEFAULT_PORT);
     expect(packageJson.distDir).toEqual(DEFAULT_DIST);
@@ -89,21 +72,24 @@ describe("should create the project and folders", async () => {
 
   for (const { name, base, framework, backend, ssr } of folders) {
     test(`create ${name} folder`, async ({ expect }) => {
-      await installDependencies(projectRoot);
-      await exec(
-        "pnpm",
+      // the bin directly rather than the project's folder script:
+      // the scaffolded project has no node_modules installed
+      const { code, stderr } = await run(
+        kosmoBin,
         [
           "folder",
           "--name",
           name,
           "--base",
           base,
-          ...(framework ? ["--framework", framework] : []),
-          ...(backend ? ["--backend", backend] : []),
+          ...(framework ? ["--framework", framework] : ["--no-framework"]),
+          ...(backend ? ["--backend", backend] : ["--no-backend"]),
           ...(ssr ? ["--ssr"] : []),
+          "-q",
         ],
-        { cwd: projectRoot, env },
+        projectRoot,
       );
+      expect(code, stderr).toEqual(0);
       for (const file of [
         //
         "kosmo.config.ts",

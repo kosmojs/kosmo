@@ -1,14 +1,9 @@
 import child_process from "node:child_process";
-import { tmpdir } from "node:os";
-import { resolve } from "node:path";
 import { promisify } from "node:util";
 
 import { compile } from "path-to-regexp";
 
 import { createPathPattern, pathTokensFactory } from "@kosmojs/lib";
-export const rootDir = resolve(import.meta.dirname, "../..");
-
-export const pnpmDir = resolve(tmpdir(), ".kosmojs/pnpm-store");
 
 export const execFile = promisify(child_process.execFile);
 
@@ -21,24 +16,6 @@ export const env = Object.fromEntries(
 // fixture deps' build scripts are irrelevant for integration tests;
 // keep ERR_PNPM_IGNORED_BUILDS from failing the install
 env.PNPM_CONFIG_STRICT_DEP_BUILDS = "false";
-
-export const installDependencies = async (
-  cwd: string,
-  args?: Array<string>,
-) => {
-  await exec(
-    "pnpm",
-    [
-      "install",
-      "--store-dir",
-      pnpmDir,
-      "--no-frozen-lockfile",
-      "--prefer-offline",
-      ...(args || []),
-    ],
-    { cwd, env },
-  );
-};
 
 export const exec = async (
   cmd: string,

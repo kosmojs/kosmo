@@ -26,12 +26,18 @@ export type SourceFolder = {
 
 export type MaybePromise<T> = T | Promise<T>;
 
+export const DEFAULT_NAME = "app";
+export const DEFAULT_BASE = "/";
+
 export const CREATE_OPTIONS = ["project", "folder"] as const;
 
 export const FOLDER_OPTIONS = {
+  name: { type: "string" },
   base: { type: "string" },
-  backend: { type: "string" },
   framework: { type: "string" },
+  "no-framework": { type: "boolean" },
+  backend: { type: "string" },
+  "no-backend": { type: "boolean" },
   ssr: { type: "boolean" },
   tsq: { type: "boolean" },
 } as const;
@@ -63,13 +69,19 @@ export const isCLI = (unconditionalCLI?: unknown) => {
 
 export const validateName = (
   name: string | undefined,
-  noNameError: string = "No name provided",
+  emptyNameError: string = "No name provided",
 ) => {
   if (!name?.trim()) {
-    return noNameError;
+    return emptyNameError;
   }
-  if (/[^\w@$+-]/.test(name)) {
-    return "May contain only alphanumerics or any of - + $ @";
+  if (/[^\w.@$+-]/.test(name)) {
+    return "May contain only alphanumerics or any of . - + $ @";
+  }
+  if (containsPathTraversalPatterns(name)) {
+    return "Should not contain path traversal patterns";
+  }
+  if (name.startsWith("-")) {
+    return "Should not start with a dash";
   }
   return undefined;
 };
@@ -81,16 +93,18 @@ export const validateBase = (base: string | undefined) => {
   if (base.includes(" ")) {
     return "Should not contain spaces";
   }
-  if (
-    [
-      // path traversal patterns
-      /\.\.\//,
-      /\/\.\//,
-    ].some((e) => e.test(base.trim()))
-  ) {
+  if (containsPathTraversalPatterns(base)) {
     return "Should not contain path traversal patterns";
   }
   return undefined;
+};
+
+export const containsPathTraversalPatterns = (str: string): boolean => {
+  return [
+    // path traversal patterns
+    /\.\.\//,
+    /\/\.\//,
+  ].some((e) => e.test(str));
 };
 
 export const assertNoError = (validator: () => string | undefined) => {

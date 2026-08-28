@@ -16,59 +16,67 @@ Zero to a working route in under five minutes.
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm create kosmo app
+npm create kosmo demo
 ```
 
 == pnpm
 ```sh
-pnpm create kosmo app
+pnpm create kosmo demo
 ```
 
 == yarn
 ```sh
-yarn create kosmo app
+yarn create kosmo demo
 ```
 :::
 
-A short interactive setup walks you through the choices:
-a name for your first source folder, the URL it lives under,
-and the frontend framework and backend you want to build with.
+A short interactive setup walks you through the choices that matter:
+the frontend framework and the backend you want to build with.
+Everything else starts with sensible defaults.
 
 Pick whatever feels familiar - nothing here is set in stone,
 and any folder you add later can make entirely different choices.
 
-## Install dependencies
+It is also possible to bootstrap in the current folder, just use `.` as name:
 
-What you have at this point is deliberately minimal:
-a `package.json` and your source folder's config with a few empty stub files.
+```sh
+npm create kosmo .
+```
 
-The project is not runnable yet - installing dependencies brings in the
-KosmoJS toolchain that turns this skeleton into a working app:
+---
+
+After bootstrap, `cd` into freshly created project (unless project bootstraped in current folder):
+
+```sh
+cd ./demo
+```
+
+#### Install Dependencies
 
 :::tabs key:pm variant:code
 == npm
 ```sh
-cd ./app
 npm install
 ```
 
 == pnpm
 ```sh
-cd ./app
 pnpm install
 ```
 
 == yarn
 ```sh
-cd ./app
 yarn install
 ```
 :::
 
+What you have at this point is deliberately minimal:
+a `package.json` and your source folder's config with a few empty stub files.
+Follow next steps to turn this skeleton into a working app.
+
 ## Start the dev server
 
-The dev server completes the setup: on first start it generates the remaining project files -
-routers, typed fetch clients, validators - fills the stub files with starter code, and wires everything together.
+The dev server completes the setup: it generates the remaining project files and wires everything together.
 From then on it watches your routes and regenerates as you work:
 
 :::tabs key:pm variant:code

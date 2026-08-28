@@ -16,152 +16,103 @@ A step-by-step walkthrough covering everything `KosmoJS` provides.
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm create kosmo app
+npm create kosmo demo
 ```
 
 == pnpm
 ```sh
-pnpm create kosmo app
+pnpm create kosmo demo
 ```
 
 == yarn
 ```sh
-yarn create kosmo app
+yarn create kosmo demo
 ```
 :::
 
 A short interactive setup creates the project together with your first source folder,
-prompting for a folder name, base URL, framework, and backend.
+prompting for the framework and backend.
 
-Prefer a fully scripted setup? Pass the folder options up front and no prompts appear:
+The folder itself defaults to `app` at base `/` (override later, or via flags in CLI mode).
+
+It is also possible to bootstrap in the current folder, just use `.` as name:
+
+```sh
+npm create kosmo .
+```
+
+<details class="details custom-block">
+<summary>Prefer a scripted setup?</summary>
+
+Provide the framework/backend up front and no prompts appear:
 
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm create kosmo app -- --folder main --base / --framework solid --backend hono
+npm create kosmo demo -- --framework solid --backend hono
 ```
 
 == pnpm
 ```sh
-pnpm create kosmo app --folder main --base / --framework solid --backend hono
+pnpm create kosmo demo --framework solid --backend hono
 ```
 
 == yarn
 ```sh
-yarn create kosmo app --folder main --base / --framework solid --backend hono
+yarn create kosmo demo --framework solid --backend hono
 ```
 :::
 
-`cd` into your brand-new project:
-
-```sh
-cd ./app
-```
-
-Install Dependencies:
+Want a custom name/base for the source folder? Provide `--name`/`--base`:
 
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm install
+npm create kosmo demo -- --name <name> --base <base> --framework ...
 ```
 
 == pnpm
 ```sh
-pnpm install
+pnpm create kosmo demo --name <name> --base <base> --framework ...
 ```
 
 == yarn
 ```sh
-yarn install
+yarn create kosmo demo --name <name> --base <base> --framework ...
 ```
 :::
 
-Project ready, add features!
-
-## Add More Source Folders
-
-Your project starts with the source folder created above. As the app grows, add more -
-one per distinct concern (main app, admin panel, marketing site, etc.).
-
-Each is independent with its own set of frameworks, config, base URL, etc.
+Need no backend? Provide `--no-backend` flag:
 
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm run folder
+npm create kosmo demo -- --framework solid --no-backend
 ```
 
 == pnpm
 ```sh
-pnpm folder
+pnpm create kosmo demo --framework solid --no-backend
 ```
 
 == yarn
 ```sh
-yarn folder
+yarn create kosmo demo --framework solid --no-backend
 ```
 :::
 
-You'll be prompted for folder name, base URL, framework, backend, and SSR.
+Same for framework, provide the `--no-framework` flag to get a backend-only setup.
+</details>
 
-Non-interactive mode is also supported:
+---
 
-- `--name`
-- `--base`
-- `--framework solid|react|vue|svelte|mdx`
-- `--backend hono|h3|koa`
-- `--ssr`
-- `--tsq` to enable TanStack Query
+After bootstrap, `cd` into freshly created project (unless project bootstraped in current folder):
 
-:::tabs key:pm variant:code
-== npm
 ```sh
-npm run folder -- --name front --base / --framework solid --backend hono
+cd ./demo
 ```
 
-== pnpm
-```sh
-pnpm folder --name front --base / --framework solid --backend hono
-```
-
-== yarn
-```sh
-yarn folder --name front --base / --framework solid --backend hono
-```
-:::
-
-`--framework` and `--backend` are both optional - a source folder doesn't have to ship both sides.
-Omit `--framework` to create a backend-only folder (an API service with no UI),
-or omit `--backend` for a frontend-only folder (a static docs or marketing site).
-
-There is no `none` value to pass - leaving the flag out is all it takes:
-
-:::tabs key:pm variant:code
-== npm
-```sh
-npm run folder -- --name api --base / --backend hono        # API only, no UI
-npm run folder -- --name docs --base /docs --framework mdx  # UI only, no backend
-```
-
-== pnpm
-```sh
-pnpm folder --name api --base / --backend hono        # API only, no UI
-pnpm folder --name docs --base /docs --framework mdx  # UI only, no backend
-```
-
-== yarn
-```sh
-yarn folder --name api --base / --backend hono        # API only, no UI
-yarn folder --name docs --base /docs --framework mdx  # UI only, no backend
-```
-:::
-
-In interactive mode the same is available through the `None (API-only folder)`
-and `None (client-only folder)` choices in the framework and backend selects.
-The generated `kosmo.config.ts` simply contains only the generators that side needs.
-
-Creating a source folder adds framework-specific dependencies. Install them:
+#### Install Dependencies
 
 :::tabs key:pm variant:code
 == npm
@@ -179,11 +130,14 @@ pnpm install
 yarn install
 ```
 :::
+
+What you have at this point is deliberately minimal:
+a `package.json` and your source folder's config with a few empty stub files.
+Follow next steps to turn this skeleton into a working app.
 
 ## Start the dev server
 
-The dev server completes the setup: on first start it generates the remaining
-project files - routers, typed fetch clients, validators - and wires everything together.
+The dev server completes the setup: it generates the remaining project files and wires everything together.
 From then on it watches your routes and regenerates as you work:
 
 :::tabs key:pm variant:code
@@ -204,45 +158,6 @@ yarn dev
 :::
 
 Your app is now running at `http://localhost:4556`.
-
-## Directory-Based Routing
-
-Folder names become URL segments. Each route requires an `index` file:
-
-```txt
-api/
-  users/
-    index.ts          ➜ /api/users
-    [id]/
-      index.ts        ➜ /api/users/:id
-
-pages/
-  users/
-    index.tsx         ➜ /users
-    [id]/
-      index.tsx       ➜ /users/:id
-```
-
-Parameters: `[id]` required · `{id}` optional · `{...path}` splat.
-Same pattern for API and pages - learn once, use everywhere.
-
-[Details ›](/routing/intro)
-
-## Path Mappings
-
-Your project starts with a minimal `tsconfig.json`:
-
-```json [tsconfig.json]
-{ "extends": "./lib/tsconfig.json" }
-```
-
-The extended config provides path mappings used throughout the framework.
-You can add your own paths, but these prefixes are reserved:
-
-- `@/*` - Root-level imports
-- `~/*` - Source folder imports
-- `_/*` - Generated code imports
-
 
 ## Create Your First API Route
 
@@ -328,24 +243,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ```
 :::
 
-Start the dev server and visit `http://localhost:4556/api/users/123`:
-
-:::tabs key:pm variant:code
-== npm
-```sh
-npm run dev
-```
-
-== pnpm
-```sh
-pnpm dev
-```
-
-== yarn
-```sh
-yarn dev
-```
-:::
+With dev server running, visit `http://localhost:4556/api/users/123`:
 
 [Details ›](/backend/intro)
 
@@ -622,17 +520,142 @@ The API server and SSR server are bundled separately - deploy, scale, and run th
 
 [Details ›](/frontend/server-side-render)
 
-## Multiple Source Folders
+## Add More Source Folders
 
-Add more source folders as your project grows - each with its own framework stack,
-base URL, and build output. They develop and deploy independently
-but share types, validation logic, and infrastructure.
+Your project starts with the source folder created at bootstrap.
+As the app grows, add more - one per distinct concern (main app, admin panel, marketing site, etc.).
 
+Each is independent with its own set of frameworks, config, base URL, etc.
+
+:::tabs key:pm variant:code
+== npm
 ```sh
-pnpm folder           # add a new source folder
-pnpm dev              # runs all source folders in parallel
-pnpm build admin      # build a specific folder
+npm run folder
 ```
+
+== pnpm
+```sh
+pnpm folder
+```
+
+== yarn
+```sh
+yarn folder
+```
+:::
+
+You'll be prompted for folder name, base URL, framework, backend, and more.
+
+Non-interactive mode is also supported; just provide arguments and no prompts appear:
+
+- `--name` - folder name (required)
+- `--base` - base URL (required)
+- `--framework solid|react|vue|svelte|mdx` or `--no-framework` (one required)
+- `--backend hono|h3|koa` or `--no-backend` (one required)
+- `--ssr` to enable server-side rendering
+- `--tsq` to enable TanStack Query
+
+:::tabs key:pm variant:code
+== npm
+```sh
+npm run folder -- --name front --base / --framework solid --backend hono
+```
+
+== pnpm
+```sh
+pnpm folder --name front --base / --framework solid --backend hono
+```
+
+== yarn
+```sh
+yarn folder --name front --base / --framework solid --backend hono
+```
+:::
+
+Need no backend? Provide the `--no-backend` flag for a frontend-only folder (a static docs or marketing site).
+
+Need no client? Provide the `--no-framework` flag for a backend-only folder (an API service with no UI).
+
+The choice is always explicit - a forgotten flag is an error, never a silent default:
+
+:::tabs key:pm variant:code
+== npm
+```sh
+npm run folder -- --name api --base / --backend hono --no-framework    # API only, no UI
+npm run folder -- --name docs --base /docs --framework mdx --no-backend  # UI only, no backend
+```
+
+== pnpm
+```sh
+pnpm folder --name api --base / --backend hono --no-framework    # API only, no UI
+pnpm folder --name docs --base /docs --framework mdx --no-backend  # UI only, no backend
+```
+
+== yarn
+```sh
+yarn folder --name api --base / --backend hono --no-framework    # API only, no UI
+yarn folder --name docs --base /docs --framework mdx --no-backend  # UI only, no backend
+```
+:::
+
+Creating a source folder adds framework-specific dependencies. Install them:
+
+:::tabs key:pm variant:code
+== npm
+```sh
+npm install
+```
+
+== pnpm
+```sh
+pnpm install
+```
+
+== yarn
+```sh
+yarn install
+```
+:::
+
+## Directory-Based Routing
+
+Folder names become URL segments. Each route requires an `index` file:
+
+```txt
+api/
+  users/
+    index.ts          ➜ /api/users
+    [id]/
+      index.ts        ➜ /api/users/:id
+
+pages/
+  users/
+    index.tsx         ➜ /users
+    [id]/
+      index.tsx       ➜ /users/:id
+```
+
+Parameters: `[id]` required · `{id}` optional · `{...path}` splat.
+Same pattern for API and pages - learn once, use everywhere.
+
+[Details ›](/routing/intro)
+
+## Path Mappings
+
+Your project starts with a minimal `tsconfig.json`:
+
+```json [tsconfig.json]
+{ "extends": "./lib/tsconfig.json" }
+```
+
+The extended config provides path mappings used throughout the framework.
+You can add your own paths, but these prefixes are reserved:
+
+- `@/*` - Root-level imports
+- `~/*` - Source folder imports
+- `_/*` - Generated code imports
+
+
 
 ---
 

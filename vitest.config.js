@@ -88,9 +88,7 @@ export default defineConfig({
       setupFactory("generators/vue-generator"),
 
       setupFactory("integration:cli", {
-        globalSetup: ["integration/cli/setup.global.ts"],
         include: ["integration/cli/*.test.ts"],
-        testTimeout: 60_000,
       }),
 
       setupFactory("integration:backend", {

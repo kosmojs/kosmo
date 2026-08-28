@@ -7,6 +7,8 @@ import {
   assertNoError,
   createFolder,
   createProject,
+  DEFAULT_BASE,
+  DEFAULT_NAME,
   FOLDER_OPTIONS,
   isCLI,
   type Project,
@@ -21,26 +23,26 @@ const usage = [
   styleText("bold", "BASIC USAGE"),
   "",
   ` ${styleText("blue", "npm create kosmo <name>")}`,
-  ` Create a project in ${styleText("blue", "./<name>")} ${styleText("dim", "(interactive mode)")}`,
+  ` Create a project at ${styleText("blue", "./<name>")} path ${styleText("dim", "(interactive mode)")}`,
   "",
   ` ${styleText("blue", "npm create kosmo .")}`,
   " Create a project in current folder",
   "",
-  ` ${styleText("blue", "npm create kosmo <name> -- --folder ...")}`,
-  ` Create a project in ${styleText("blue", "./<name>")} ${styleText("dim", "(CLI mode)")}`,
+  ` ${styleText("blue", "npm create kosmo <name> -- --framework ...")}`,
+  ` Create a project at ${styleText("blue", "./<name>")} path ${styleText("dim", "(CLI mode)")}`,
   "",
-  ` ${styleText("blue", "npm create kosmo . -- --folder ...")}`,
+  ` ${styleText("blue", "npm create kosmo . -- --framework ...")}`,
   ` Create a project in current folder`,
   "",
-  " pnpm and yarn do not need an extra --",
-  ` ${styleText("dim", "pnpm create kosmo . --folder ...")}`,
-  ` ${styleText("dim", "yarn create kosmo . --folder ...")}`,
+  " pnpm/yarn works without extra --",
+  ` ${styleText("dim", "pnpm create kosmo . --framework ...")}`,
+  ` ${styleText("dim", "yarn create kosmo . --framework ...")}`,
   "",
   " CLI mode arguments:",
-  `   ${styleText("cyan", "--folder")} ${styleText("dim", "folder name, required")}`,
-  `   ${styleText("cyan", "--base")} ${styleText("dim", "folder base, required")}`,
-  `   ${styleText("cyan", `--framework`)} ${styleText("yellow", Object.keys(FRAMEWORKS).join("|"))} ${styleText("dim", "(omit for API-only folders)")}`,
-  `   ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(omit for client-only folders)")}`,
+  `   ${styleText("cyan", "--name")} ${styleText("dim", "folder name, default:")} ${DEFAULT_NAME}`,
+  `   ${styleText("cyan", "--base")} ${styleText("dim", "folder base, default:")} ${DEFAULT_BASE}`,
+  `   ${styleText("cyan", `--framework`)} ${styleText("yellow", Object.keys(FRAMEWORKS).join("|"))} ${styleText("dim", "(--no-framework for API-only folders)")}`,
+  `   ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(--no-backend for client-only folders)")}`,
   `   ${styleText("cyan", "--ssr")} ${styleText("dim", "enable SSR")}`,
   `   ${styleText("cyan", "--tsq")} ${styleText("dim", "enable TanStack Query")}`,
   `   ${styleText("cyan", "--overwrite")} ${styleText("dim", "overwrite existing files (use with caution)")}`,
@@ -57,28 +59,27 @@ const printUsage = () => {
   }
 };
 
-const { values, positionals } = parseArgs({
-  options: {
-    ...FOLDER_OPTIONS,
-    folder: { type: "string" },
-    overwrite: { type: "boolean" },
-    quiet: { type: "boolean", short: "q" },
-    help: { type: "boolean", short: "h" },
-  },
-  strict: true,
-  allowPositionals: true,
-});
-
-if (values.help) {
-  printUsage();
-  process.exit(0);
-}
-
 const run = async () => {
+  const { values, positionals } = parseArgs({
+    options: {
+      ...FOLDER_OPTIONS,
+      overwrite: { type: "boolean" },
+      quiet: { type: "boolean", short: "q" },
+      help: { type: "boolean", short: "h" },
+    },
+    strict: true,
+    allowPositionals: true,
+  });
+
+  if (values.help) {
+    printUsage();
+    return;
+  }
+
   const [name] = positionals;
 
   if (name !== ".") {
-    assertNoError(() => validateName(name, "Please provide project name"));
+    assertNoError(() => validateName(name, "No project name provided"));
   }
 
   const root = resolve(process.cwd(), name);
@@ -89,12 +90,12 @@ const run = async () => {
 
   const readyText = styleText(
     ["blue", "bold"],
-    "› Project ready, let's add a Source Folder",
+    "› Ready to bootstrap a new KosmoJS project",
   );
 
   const doneText = styleText(
     ["green", "bold"],
-    "✨ Well done! Your KosmoJS project is scaffolded",
+    "✨ Well done! Your KosmoJS project is ready to perform",
   );
 
   const nextStepsText = [
@@ -104,7 +105,7 @@ const run = async () => {
       "On first start it generates the remaining files and wires everything together.",
     ),
     "\n",
-    ...(name === "." ? [] : [`$ cd ./${project.name}`, "\n"]),
+    ...(name === "." ? [] : [`$ cd ./${name}`, "\n"]),
     `📦 ${styleText(["blue", "bold"], "Install Dependencies")}`,
     `$ npm install ${styleText(["dim"], "# pnpm install / yarn install")}`,
     "\n",
@@ -116,26 +117,20 @@ const run = async () => {
     .map((e) => e.trimEnd())
     .join("\n");
 
-  if (isCLI(values.folder)) {
+  if (isCLI(Object.keys(values).length)) {
     // cli mode
-
     await createProject(root, project, { input: values });
-
-    const { folder, ...input } = values;
-
-    if (folder) {
-      await createFolder(root, {
-        input: { ...input, name: folder } as never,
-        intro: () => doneText,
-        note: () => nextStepsText,
-      });
-    } else {
-      console.log(nextStepsText);
-    }
+    await createFolder(root, {
+      input: { name: DEFAULT_NAME, base: DEFAULT_BASE, ...values },
+      intro: () => doneText,
+      note: () => nextStepsText,
+    });
   } else {
     // interactive mode
     await createProject(root, project);
     await createFolder(root, {
+      name: DEFAULT_NAME,
+      base: DEFAULT_BASE,
       intro: () => readyText,
       note: () => nextStepsText,
       outro: () => doneText,

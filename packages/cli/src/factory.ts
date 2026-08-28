@@ -99,9 +99,9 @@ export const createProject = async (
     if (isCLI(assets?.input)) {
       // cli mode
       assertNoError(() => {
-        return assets?.input?.overwrite
-          ? undefined
-          : "Target dir is not empty. Either remove dir contents or provide --overwrite flag";
+        return !assets?.input?.overwrite
+          ? "Target dir is not empty. Either remove dir contents or provide --overwrite flag"
+          : undefined;
       });
     } else {
       // interactive mode
@@ -187,17 +187,22 @@ export const createFolder = async (
     outro,
     note,
     input,
+    ...rest
   }: {
     input?: {
       name?: string;
       base?: string;
-      backend?: string;
       framework?: string;
+      "no-framework"?: boolean;
+      backend?: string;
+      "no-backend"?: boolean;
       ssr?: boolean;
       tsq?: boolean;
       quiet?: boolean;
       overwrite?: boolean;
     };
+    name?: string;
+    base?: string;
     intro?: () => MaybePromise<string | undefined>;
     outro?: (f: SourceFolder) => MaybePromise<string | undefined>;
     note?: (f: SourceFolder) => MaybePromise<string | undefined>;
@@ -215,9 +220,7 @@ export const createFolder = async (
       input?.quiet || console.log(await intro());
     }
 
-    assertNoError(() => {
-      return validateName(input?.name, "Please provide folder name");
-    });
+    assertNoError(() => validateName(input?.name, "No folder name provided"));
 
     if (!input?.overwrite) {
       assertNoError(() => {
@@ -239,7 +242,16 @@ export const createFolder = async (
             ? `Invalid ${key}, use one of: ${Object.keys(values).join(", ")}`
             : undefined;
         });
+      } else if (!input?.[`no-${key}`]) {
+        assertNoError(() => {
+          return `${key} is required: either provide --${key} <name> or --no-${key} flag`;
+        });
       }
+      assertNoError(() => {
+        return !input?.[key] || !input?.[`no-${key}`]
+          ? undefined
+          : `--${key} and --no-${key} are mutually exclusive; use only one`;
+      });
     }
 
     const folder = input as SourceFolder;
@@ -264,12 +276,16 @@ export const createFolder = async (
       !output || prompts.intro(output);
     }
 
-    const name = await readAnswer(
-      prompts.text({
-        message: "Folder Name",
-        validate: validateName,
-      }),
-    );
+    let { name, base } = rest;
+
+    if (!name) {
+      name = await readAnswer(
+        prompts.text({
+          message: "Folder Name",
+          validate: validateName,
+        }),
+      );
+    }
 
     if (entries.includes(name)) {
       const answer = await readAnswer(
@@ -296,11 +312,25 @@ export const createFolder = async (
       }
     }
 
-    const base = await readAnswer(
-      prompts.text({
-        message: "Base URL",
-        initialValue: "/",
-        validate: (base) => validateBase(base || "/"),
+    if (!base) {
+      base = await readAnswer(
+        prompts.text({
+          message: "Base URL",
+          initialValue: "/",
+          validate: (base) => validateBase(base || "/"),
+        }),
+      );
+    }
+
+    const framework = await readAnswer(
+      prompts.select({
+        message: "Framework",
+        options: [
+          ...Object.entries(FRAMEWORKS).map(([value, label]) => {
+            return { value, label };
+          }),
+          { value: undefined, label: "None (API-only folder)" },
+        ],
       }),
     );
 
@@ -312,18 +342,6 @@ export const createFolder = async (
             return { value, label };
           }),
           { value: undefined, label: "None (client-only folder)" },
-        ],
-      }),
-    );
-
-    const framework = await readAnswer(
-      prompts.select({
-        message: "Framework",
-        options: [
-          ...Object.entries(FRAMEWORKS).map(([value, label]) => {
-            return { value, label };
-          }),
-          { value: undefined, label: "None (API-only folder)" },
         ],
       }),
     );

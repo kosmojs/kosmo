@@ -19,7 +19,7 @@ export const defaults = {
 export enum FRAMEWORKS {
   react = "React",
   vue = "Vue",
-  solid = "SolidJS",
+  solid = "Solid",
   svelte = "Svelte",
   mdx = "MDX",
 }

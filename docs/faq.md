@@ -31,23 +31,26 @@ is a tool you can use, debug, and replace independently.
 [Details&nbsp;›](/about)
 
 #### How do I create a new KosmoJS project?
-Run `npm create kosmo app` (or `pnpm create kosmo app` / `yarn create kosmo app`).
-An interactive setup creates the project together with your first source folder.
-Then `cd ./app` and install dependencies.
+Run `npm create kosmo demo` (or `pnpm create kosmo demo` / `yarn create kosmo demo`).
+An interactive setup creates the project together with your first source folder,
+asking only for the framework and backend - the folder defaults to `app` at base `/`.
+Then `cd ./demo` and install dependencies.
 
-Use `.` as the name to scaffold into the current folder (e.g. a freshly cloned repo).
+Use `.` as the name to bootstrap into the current folder (e.g. a freshly cloned repo).
 [Details&nbsp;›](/start)
 
 #### How do I create a project non-interactively?
-Pass the source folder options up front - when flags are present no prompts appear:
-`npm create kosmo app -- --folder main --base / --framework react --backend hono`
-(pnpm and yarn forward flags without the extra `--`: `pnpm create kosmo app --folder ...`).
+Choose the framework and backend up front - when flags are present no prompts appear:
+`npm create kosmo demo -- --framework react --backend hono`
+(pnpm and yarn forward flags without the extra `--`: `pnpm create kosmo demo --framework ...`).
 
-Required flags: `--folder`, `--base`.
+Required: `--framework <name>` or `--no-framework`, and `--backend <name>` or `--no-backend` -
+the choice is always explicit; a missing flag is an error, never a silent default.
 
-Optional flags: `--framework`, `--backend`, `--ssr`, `--tsq`, `--overwrite`.
+Optional: `--name` (folder name, default `app`), `--base` (default `/`),
+`--ssr`, `--tsq`, `--overwrite`.
 
-Use `.` as the name to scaffold into the current folder: `npm create kosmo . -- --folder ...`
+Use `.` as the project name to scaffold into the current folder: `npm create kosmo . -- --framework ...`
 [Details&nbsp;›](/start)
 
 #### How do I add a source folder?
@@ -56,7 +59,10 @@ Run `npm run folder` (or `pnpm folder` / `yarn folder`).
 
 #### What am I prompted for when adding a source folder?
 Folder name, base URL, framework, backend, and SSR.
-Non-interactive flags: `--name`, `--base`, `--framework solid|react|vue|svelte|mdx`, `--backend hono|h3|koa`, `--ssr`, `--tsq`.
+Non-interactive flags: `--name`, `--base`,
+`--framework solid|react|vue|svelte|mdx` or `--no-framework`,
+`--backend hono|h3|koa` or `--no-backend`, `--ssr`, `--tsq`.
+Framework and backend each require a value or its negation flag.
 [Details&nbsp;›](/tutorial#add-more-source-folders)
 
 #### How do I create a backend-only (API) folder, or a frontend-only folder?
@@ -64,20 +70,20 @@ A source folder doesn't have to ship both sides - framework and backend are inde
 In interactive mode, choose `None (API-only folder)` in the framework select,
 or `None (client-only folder)` in the backend select.
 
-In non-interactive mode there is no `none` value to pass - simply omit the flag:
+In non-interactive mode, pass the matching negation flag for the side you skip:
 
 ```sh
-pnpm folder --name api --base / --backend hono        # backend-only, no UI
-pnpm folder --name docs --base /docs --framework mdx  # frontend-only, no backend
+pnpm folder --name api --base / --backend hono --no-framework    # backend-only, no UI
+pnpm folder --name docs --base /docs --framework mdx --no-backend  # frontend-only, no backend
 ```
 
 The generated `kosmo.config.ts` contains only the generators that side needs.
 [Details&nbsp;›](/tutorial#add-more-source-folders)
 
 #### Can I create a project without a source folder?
-Yes - in non-interactive mode omit `--folder` and only the project shell is created;
-add folders later with `npm run folder`. The interactive setup always walks you
-through creating the first folder - a project needs at least one to do anything.
+No - every project starts with its first source folder (name defaults to `app` and base to `/`).
+A project without folders has nothing to serve or build,: the source folder is the unit of everything in KosmoJS.
+Add more folders any time with `npm run folder`.
 [Details&nbsp;›](/start)
 
 #### Why install again after adding a source folder?
