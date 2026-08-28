@@ -5,9 +5,9 @@ import type {
 } from "../api";
 
 type ErrorHandler = (
-  error: any,
   ctx: ParameterizedContext<unknown, DefaultState, DefaultContext>,
-) => Promise<void> | void;
+  next: Function,
+) => Promise<void>;
 
 export type ErrorHandlerFactory = (handler: ErrorHandler) => ErrorHandler;
 

@@ -84,21 +84,25 @@ import { HTTPError, ValidationError } from "@kosmojs/core/errors";
 
 import { errorHandlerFactory } from "_/api:factory";
 
-export default errorHandlerFactory(async (error, ctx) => {
-  const [status, message] = Array.isArray(error)
-    ? error
-    : error instanceof HTTPError
-      ? [error.status, error.message]
-      : error instanceof ValidationError
-        ? [400, `${error.target}: ${error.errorMessage}`]
-        : [error.statusCode || 500, error.message];
+export default errorHandlerFactory(async (ctx, next) => {
+  try {
+    await next();
+  } catch (error: any) {
+    const [status, message] = Array.isArray(error)
+      ? error
+      : error instanceof HTTPError
+        ? [error.status, error.message]
+        : error instanceof ValidationError
+          ? [400, `${error.target}: ${error.errorMessage}`]
+          : [error.statusCode || 500, error.message];
 
-  ctx.status = status;
+    ctx.status = status;
 
-  if (ctx.accepts("json")) {
-    ctx.body = { error: message };
-  } else {
-    ctx.body = message;
+    if (ctx.accepts("json")) {
+      ctx.body = { error: message };
+    } else {
+      ctx.body = message;
+    }
   }
 });
 ```
@@ -107,7 +111,7 @@ export default errorHandlerFactory(async (error, ctx) => {
 It's a regular file - customize it freely. It is then wired into `api/app.ts`:
 - *Hono*: `app.onError(defaultErrorHandler)`
 - *H3*: `app.use(onError(defaultErrorHandler))`
-- *Koa*: `app.on("error", defaultErrorHandler)`
+- *Koa*: `app.use(defaultErrorHandler)`
 
 ## Key differences by framework
 
@@ -115,7 +119,7 @@ It's a regular file - customize it freely. It is then wired into `api/app.ts`:
 |-----------|---------------|
 | **Hono** | `app.onError()` catches everything (`await next()` does **not** throw); returns a `Response`. Per‑route behavior by branching inside `app.onError()`. |
 | **H3** | `app.use(onError(errorHandler))` captures any thrown error; returns a `Response`, plain object or string. Branch inside `errorHandler` based on `event.url` or other properties. |
-| **Koa** | Errors bubble up through `await next()`. Koa emits an `error` event (for logging), but doesn't send a response automatically. Use `app.on("error", errorHandler)` to react on `error` event. Use `try`/`catch` around `await next()` in middleware to set `ctx.status`/`ctx.body`. |
+| **Koa** | `defaultErrorHandler` is a middleware that wraps `await next()` in a `try`/`catch` and set `ctx.status`/`ctx.body` when errors thrown. |
 
 ---
 
@@ -123,4 +127,4 @@ It's a regular file - customize it freely. It is then wired into `api/app.ts`:
 
 - **Hono** - `onError` is the single entry point; you return a `Response`.
 - **H3** - `onError` behaves like Hono's: you return the response directly.
-- **Koa** - The error is emitted as an event, but you must handle the response yourself (typically by catching in middleware). The event is only for logging/debugging.
+- **Koa** - `await next()` throws. Errors captured in a middleware.

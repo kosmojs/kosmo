@@ -558,16 +558,8 @@ otherwise use `error.statusCode || 500`.
 [Details&nbsp;›](/backend/error-handling#default-error-handler)
 
 #### How do I do route-level error overrides?
-- *Hono*: There's a single `app.onError()` - branch on `ctx.req.path` inside it for route‑specific behavior.
-- *H3*: Use `app.use(onError(errorHandler))` - branch inside based on `event.url`
-or `event.context` to return route‑specific responses (a Response, plain object, or string).
-- *Koa*: Use `app.on("error", errorHandler)` for global error events.
-For per‑route or per‑subtree overrides, you can either:
-    - Branch inside the global `errorHandler` based on `ctx.path`, or
-    - Use middleware with `try/catch` around `await next()` and set `ctx.status`/`ctx.body`.
-
-The default error handler lives in `api/errors.ts` for all frameworks.
-
+The default error handler lives in `api/errors.ts`, the same across all frameworks.
+The approach is uniform too: branch on the request path or context.
 [Details&nbsp;›](/backend/error-handling)
 
 #### Why shouldn't I wrap handler logic in try-catch?
