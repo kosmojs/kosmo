@@ -67,4 +67,4 @@ would be worse than a thrown error, that endpoint is a candidate for `runtimeVal
 
 Defining a response schema also enables automatic `OpenAPI` generation -
 type safety and documentation in one step.
-[Details ›](/openapi)
+[Details&nbsp;›](/openapi)

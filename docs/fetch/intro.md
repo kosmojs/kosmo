@@ -23,16 +23,16 @@ Each route's client module exports:
 
 🔹 **HTTP method functions** - `GET`, `POST`, `PUT`, etc., accepting parameters and payloads
 typed to match your route definition and returning typed response promises.
-[Details ›](/fetch/start)
+[Details&nbsp;›](/fetch/start)
 
 🔹 **`path` and `href` utilities** - construct relative or absolute URLs with proper
 parameter substitution and optional query string support.
-[Details ›](/fetch/utilities)
+[Details&nbsp;›](/fetch/utilities)
 
 🔹 **`validationSchemas`** - the same schemas used for server-side validation,
 exposed for client-side form validation with `check`, `errors`, `errorMessage`,
 `errorSummary`, and `validate` methods.
-[Details ›](/fetch/validation)
+[Details&nbsp;›](/fetch/validation)
 
 ## Using the Generated Client
 

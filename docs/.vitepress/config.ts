@@ -157,10 +157,40 @@ export default defineConfig({
         link: "/tutorial",
         activeMatch: "^/tutorial",
       },
+      {
+        text: "Config",
+        link: "/config",
+        activeMatch: "^/config",
+      },
     ],
 
     sidebar: {
       "/": [
+        {
+          text: "Essentials",
+          collapsed: false,
+          items: [
+            {
+              text: "Project Structure",
+              link: "/essentials/project-structure",
+            },
+            {
+              text: "Why Codegen",
+              docFooterText: "Why Codegen",
+              link: "/essentials/codegen",
+            },
+            {
+              text: "Configuration",
+              docFooterText: "kosmo.config.ts",
+              link: "/essentials/config",
+            },
+            {
+              text: "Framework Support",
+              docFooterText: "Framework Support Matrix",
+              link: "/essentials/frameworks",
+            },
+          ],
+        },
         {
           text: "Routing",
           collapsed: false,
@@ -219,6 +249,10 @@ export default defineConfig({
               link: "/backend/error-handling",
             },
             {
+              text: "Custom Templates",
+              link: "/backend/custom-templates",
+            },
+            {
               text: "Development Workflow",
               link: "/backend/development-workflow",
             },
@@ -252,6 +286,11 @@ export default defineConfig({
             {
               text: "Data / Preload",
               link: "/frontend/data-preload",
+            },
+            {
+              text: "The _/use Hooks",
+              docFooterText: "Frontend - _/use Hooks",
+              link: "/frontend/hooks",
             },
             {
               text: "Server-Side Render",
@@ -316,6 +355,11 @@ export default defineConfig({
             {
               text: "Naming Conventions",
               link: "/validation/naming-conventions",
+            },
+            {
+              text: "Silent Failure Checklist",
+              docFooterText: "Validation - Silent Failures",
+              link: "/validation/gotchas",
             },
             {
               text: "About Performance",

@@ -76,3 +76,11 @@ placed in the `lib/` directory for the source folder to extend:
 ```
 
 Each config supplies the correct `jsxImportSource`, path mappings, and core settings.
+
+## What Differs Between Frameworks
+
+Routing, layouts, validation and the fetch clients behave identically everywhere.
+Data loading, streaming support, SSG, TanStack Query and the exotic routing syntaxes do not -
+those differences are collected in one table:
+
+[Framework Support Matrix ›](/essentials/frameworks)

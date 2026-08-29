@@ -144,7 +144,7 @@ an array must be an array, but no additional constraints apply.
 Since validation rules are just `TypeScript` types, nested objects, union types,
 conditional fields, referenced types - all work naturally:
 
-```ts [api/example/index.ts]
+```ts [api/checkout/index.ts]
 import type { BillingAddress } from "~/types/checkout";
 
 type PaymentMethod = {
@@ -170,7 +170,7 @@ type Payload = {
   billingAddress: BillingAddress;
 };
 
-export default defineRoute(({ POST }) => [
+export default defineRoute<"checkout">(({ POST }) => [
   POST<{
     json: Payload,
   }>(async (ctx) => {

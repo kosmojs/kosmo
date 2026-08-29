@@ -14,7 +14,7 @@ with detailed information about what went wrong and where.
 
 Your `api/errors.ts` is the central place to handle it. The generated file gives you a working default;
 customize it freely to add logging, change response formats, or handle specific error types differently.
-[Details ›](/backend/error-handling)
+[Details&nbsp;›](/backend/error-handling)
 
 ## ValidationError Properties
 

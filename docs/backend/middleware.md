@@ -77,7 +77,7 @@ Global middleware from `api/use.ts` runs first, then route-level `use` calls, th
 in the array. Defining `use` after a handler doesn't change this:
 
 ```ts
-export default defineRoute(({ use, GET, POST }) => [
+export default defineRoute<"example">(({ use, GET, POST }) => [
   use(firstMiddleware),
   GET(async (ctx) => { /* ... */ }),
   POST(async (ctx) => { /* ... */ }),

@@ -111,6 +111,7 @@ Mixed segments support varies by framework:
 - **SolidJS Router** - not supported
 
 Prefer simple segments for frontend routes.
+[Full support matrix ›](/essentials/frameworks#routing-syntax-support)
 
 ## Power Syntax
 

@@ -16,7 +16,7 @@ The second type argument to your handler accepts per-target options.
 Set `runtimeValidation: false` to keep compile-time types while skipping runtime checks for that target:
 
 ```ts [api/example/index.ts]
-export default defineRoute(({ POST }) => [
+export default defineRoute<"example">(({ POST }) => [
   POST<{
     json: Payload<User>,
   },
@@ -36,7 +36,7 @@ parameters are part of the URL structure and always validated.
 
 For response targets the flag also works the other way: production builds skip response
 validation unless you set `runtimeValidation: true` on the handler.
-[Details ›](/validation/response)
+[Details&nbsp;›](/validation/response)
 
 Use this sparingly. Runtime validation is what catches the bugs `TypeScript` can't -
 mismatched database responses, unexpected client payloads, API drift.

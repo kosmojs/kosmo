@@ -31,7 +31,7 @@ and the appropriate parser runs automatically, placing the result in `ctx.valida
 `ctx.validated` holds the validated, typed result for each target you defined:
 
 ```ts
-export default defineRoute(({ POST }) => [
+export default defineRoute<"users">(({ POST }) => [
   POST<{
     json: Payload<CreateUser>,
     query: { limit: number },
@@ -70,4 +70,3 @@ The underlying raw params still exist if you need them:
 - Hono - `ctx.req.param()`
 - H3 - `event.context.params`
 - Koa - `ctx.params`
-

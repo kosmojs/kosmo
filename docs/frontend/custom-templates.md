@@ -16,11 +16,25 @@ configured pattern, the generator writes your custom template instead of the
 default - useful for standardizing structure across landing pages, admin tools,
 or any section requiring a consistent starting point.
 
-Templates are particularly powerful for batch route generation. A common
-scenario is scaffolding CRUD API routes for multiple database tables: create
-one template capturing the standard boilerplate, define your routes, and each
-generated file starts with the right structure ready to adapt - instead of
-writing the same skeleton N times by hand.
+This is the frontend half of the feature; API routes have their own.
+[Custom Route Templates ›](/backend/custom-templates)
+
+## What It Overrides
+
+Only page components - and not quite all of them:
+
+| File | Templatable? |
+|---|:---:|
+| `pages/**/index.*` - page components | ✅ |
+| `pages/index/index.*` - the root route | ❌ always the built-in welcome page |
+| `pages/**/layout.*` - layouts | ❌ always the built-in layout |
+| `pages/404.*` | ❌ deployed once at folder creation |
+
+::: warning Templates only fill blank files
+The generator writes boilerplate into a file **only when that file is empty**.
+It never overwrites work you have already done - which is also why changing a template does not retroactively rewrite existing pages.
+To re-scaffold one, empty the file and let it be regenerated.
+:::
 
 ## Configuration
 
@@ -87,21 +101,32 @@ Targets a single specific route:
 
 ## Resolution Priority
 
-When multiple patterns match, the first matching pattern wins:
+When multiple patterns match, the first matching pattern wins - in the order the keys are
+written, so order them most specific first:
 
 ```ts
 generator({
   templates: {
     "landing/home": homeTemplate,   // highest specificity
     "landing/*": landingTemplate,   // medium specificity
-    "**": fallbackTemplate,       // lowest specificity
+    "**": fallbackTemplate,         // lowest specificity
   },
 })
 ```
 
+::: warning Numeric-looking patterns jump the queue
+JavaScript objects order integer-like keys first, regardless of where you wrote them - so
+a pattern such as `"2024/**"` is hoisted to the front and matches before anything above
+it. Prefix it with `./` to keep your written order: `"./2024/**"`.
+The `./` is stripped before matching.
+
+The same applies to [`renderMode`](/frontend/server-side-render#selecting-the-render-mode), which uses the same resolver.
+:::
+
 ## Parameter Compatibility
 
-Templates work with all parameter types:
+Route parameters are escaped before matching, so `[id]`, `{id}` and `{...path}` mean
+themselves rather than glob syntax:
 
 ```ts
 {
@@ -114,8 +139,24 @@ Templates work with all parameter types:
 
 ## Template Format
 
-Templates are plain strings written to disk as component files. Each framework
-has its own component structure:
+Templates are written to disk as the page component file.
+A template can be either a **plain string**, or a **function** receiving the resolved route and returning the string -
+useful when the output depends on the route itself:
+
+```ts
+templates: {
+  // a plain string
+  "landing/*": landingTemplate,
+
+  // or a function of the route
+  "admin/**": (route) => `
+export default function Page() {
+  return <h1>${route.name}</h1>;
+}`,
+}
+```
+
+Each framework has its own component structure:
 
 :::tabs key:frontend variant:code
 == React
@@ -236,3 +277,6 @@ generator({
   },
 })
 ```
+
+Note this still does not reach the root `index` route or `layout` files -
+see [What It Overrides](#what-it-overrides).

@@ -21,15 +21,53 @@ with `KosmoJS`'s generated fetch clients.
 Start by creating an API endpoint that provides the data.
 The same endpoint is used across every framework:
 
-```ts [api/users/data/index.ts]
+```ts [api/users/data/types.ts]
+export type UserData = {
+  users: Array<{ id: number; name: string }>;
+};
+```
+
+:::tabs key:backend variant:code
+== Hono
+```ts
 import { defineRoute } from "_/api";
+import type { UserData } from "./types";
 
 export default defineRoute<"users/data">(({ GET }) => [
-  GET<{ response: [200, "json", Data] }>(async (ctx) => {
+  GET<{ response: [200, "json", UserData] }>(async (ctx) => {
+    return ctx.json(await fetchUserData());
+  }),
+]);
+```
+
+== H3
+```ts
+import { defineRoute } from "_/api";
+import type { UserData } from "./types";
+
+export default defineRoute<"users/data">(({ GET }) => [
+  GET<{ response: [200, "json", UserData] }>(async (event) => {
+    return await fetchUserData();
+  }),
+]);
+```
+
+== Koa
+```ts
+import { defineRoute } from "_/api";
+import type { UserData } from "./types";
+
+export default defineRoute<"users/data">(({ GET }) => [
+  GET<{ response: [200, "json", UserData] }>(async (ctx) => {
     ctx.body = await fetchUserData();
   }),
 ]);
 ```
+:::
+
+Declaring `response` is what gives the generated client a typed return value here -
+and, on the client, an entry in the `ResponseT` map.
+[Details&nbsp;›](/fetch/type-safety#response-types)
 
 ## Page Integration
 

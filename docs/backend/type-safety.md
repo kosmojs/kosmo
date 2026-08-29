@@ -36,22 +36,29 @@ export default defineRoute<"users/[id]/{action}", [
 
 Positions are optional - but to refine the second param you must also provide the first.
 
-### ❗ Inline Tuple Requirement
+### ❗ Keep the Tuple Brackets Literal
 
-The refinement tuple must be declared inline. Individual type aliases are fine,
-but a pre-defined tuple type won't work:
+The refinement tuple's `[]` must be written inline. Type aliases used *inside* it are fine;
+extracting the whole tuple to a named type is not:
 
 ```ts
-// ✅ works
+// ✅ works - brackets literal, contents aliased
 defineRoute<"[id]/[action]", [UserID, UserAction]>
 
-// ❌ won't work - tuple reference loses structural info needed for schema generation
+// ❌ won't work - the brackets themselves are behind an alias
 type Params = [UserID, UserAction];
 defineRoute<"[id]/[action]", Params>
 ```
 
+The generator reads this position structurally from the source, mapping each slot to a route parameter,
+so an alias leaves it nothing to destructure.
+It fails silently: the schema does not build and **every** request is rejected.
+
+The same rule covers the `response` tuple and the `VRefine` constraint object.
+[The bracket rule&nbsp;›](/validation/refine#keep-the-wrapping-brackets-literal)
+
 Refinements also generate runtime validation - invalid params are rejected before your handler runs.
-[Details ›](/validation/params)
+[Details&nbsp;›](/validation/params)
 
 ## Typing Payload and Response
 
@@ -76,7 +83,7 @@ export default defineRoute<"example">(({ POST }) => [
 ```
 
 Both payload and response are validated at runtime, not just at compile time.
-[Details ›](/validation/payload)
+[Details&nbsp;›](/validation/payload)
 
 ## Typing State & Context
 

@@ -48,7 +48,7 @@ Write `TypeScript` types once - `KosmoJS` generates runtime validators automatic
 The same definition drives compile-time checking, runtime validation, type-safe fetch clients, and OpenAPI specs.
 
 ```ts
-export default defineRoute(({ POST }) => [
+export default defineRoute<"users">(({ POST }) => [
   POST<{
     json: {
       email: VRefine<string, { format: "email" }>;

@@ -275,5 +275,8 @@ Change the API types, and the client updates with them - no manual sync.
 That's the foundation. From here:
 
 - [Tutorial](/tutorial) - validation, middleware, fetch clients, pages, SSR
+- [Project Structure](/essentials/project-structure) - what lives where, and what `@/` `~/` `_/` mean
+- [Configuration](/essentials/config) - every `kosmo.config.ts` option and generator
 - [Routing](/routing/intro) - parameters, mixed segments, power syntax
+- [Framework Support](/essentials/frameworks) - what each framework does and doesn't support
 - [Features](/features) - everything KosmoJS provides, at a glance

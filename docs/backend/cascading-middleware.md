@@ -223,3 +223,114 @@ export default [
   ),
 ];
 ```
+
+## Common Use Cases
+
+Cascading middleware is where cross-cutting concerns belong: authentication, logging, rate limiting, CORS, request IDs.
+
+KosmoJS imposes nothing here - `use` accepts your framework's own middleware signature,
+so **any Hono/H3/Koa middleware package works unchanged**.
+There is nothing KosmoJS-specific about the middleware itself.
+
+### Third-party middleware
+
+Add middleware to `use.ts` and it will run on every route underneath:
+
+:::tabs key:backend variant:code
+== Hono
+```ts
+import { cors } from "hono/cors";
+import { rateLimiter } from "hono-rate-limiter";
+
+import { use } from "_/api";
+
+export default [
+  use(cors({ origin: "https://example.com" })),
+
+  use(
+    rateLimiter({
+      windowMs: 15 * 60 * 1000,
+      limit: 100,
+      keyGenerator: (ctx) => ctx.req.header("x-forwarded-for") ?? "anonymous",
+    }),
+  ),
+];
+```
+
+== H3
+```ts
+import { use } from "_/api";
+
+export default [
+  use(async function cors(event, next) {
+    event.res.headers.set("access-control-allow-origin", "https://example.com");
+    return next();
+  }),
+];
+```
+
+== Koa
+```ts
+import koaCors from "@koa/cors";
+import ratelimit from "koa-ratelimit";
+
+import { use } from "_/api";
+
+const db = new Map();
+
+export default [
+  use(koaCors({ origin: "https://example.com" })),
+
+  use(ratelimit({ driver: "memory", db, duration: 15 * 60 * 1000, max: 100 })),
+];
+```
+:::
+
+### Authentication for a subtree
+
+Gate a whole section of the API by dropping a `use.ts` into its folder.
+Everything under `/api/admin` is now behind the check,
+and every route beneath it gets `user` typed on the context through [`UseT`](#type-safe-context-extension) -
+no imports, no type arguments:
+
+```txt
+api/
+├── use.ts              → global: CORS, request id, rate limit
+└── admin/
+    ├── use.ts          → auth: everything under /api/admin
+    ├── index.ts
+    └── users/
+        └── index.ts
+```
+
+```ts [api/admin/use.ts]
+import { use } from "_/api";
+
+export type UseT = {
+  user: { id: number; role: "admin" | "user" };
+};
+
+export default [
+  use<UseT>(async function requireAdmin(ctx, next) {
+    // verify, then populate - UseT promises the property exists downstream
+    return next();
+  }),
+];
+```
+
+There is no bundled auth solution and no `NextAuth`-style integration:
+you verify the token and populate the context yourself, the native way for your framework
+(`ctx.set("user", ...)` on Hono, `event.context.user = ...` on H3, `ctx.state.user = ...` on Koa).
+
+### Choosing between `use.ts` and route-level `use`
+
+| | Use a cascading `use.ts` | Use an inline `use` |
+|---|---|---|
+| Scope | a folder and everything beneath it | one route file |
+| Wiring | automatic - no imports | explicit, inside `defineRoute` |
+| Context types | cascade via `UseT` | via `defineRoute` type arguments |
+| Good for | auth, logging, rate limiting, CORS | one-off concerns for a single endpoint |
+
+Keep cascading middleware **generic**. It runs for sibling routes too,
+so a param like `id` may be undefined there - see [Parameter Availability](#parameter-availability).
+Parameter-specific logic belongs in the route handler.

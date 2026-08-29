@@ -157,34 +157,68 @@ VRefine<number, { minimum: 1000, maximum: 1_000_000, multipleOf: 1 }>
 This matters especially for database IDs, where a float would pass validation
 but get rejected at the query level - turning a clear validation error into a confusing DB error.
 
-## Inline the constraints, never reference them
+## Keep the Wrapping Brackets Literal
 
-The second argument to `VRefine` must always be written inline as an object literal.
-Do not extract it into a named type and reference it - not a local `type` alias,
-not an imported one:
+One rule covers every place KosmoJS reads structure out of your type arguments:
+
+::: tip The rule
+**The wrapping `[]` and `{}` must be written literally. Anything *inside* them can be aliased.**
+:::
+
+That applies to three positions:
 
 ```ts
-// ✅ works - constraints inlined
+// the VRefine constraint object
 VRefine<string, { pattern: "^[A-Z]{3}$" }>
 
-// ❌ broken - constraint referenced by name
-type CurrencyConstraints = { pattern: "^[A-Z]{3}$" };
-VRefine<string, CurrencyConstraints>
+// the params refinement tuple
+defineRoute<"users/[id]/[action]", [UserID, UserAction]>
+
+// the response tuple
+POST<{ response: [200, "json", User] }>
 ```
 
-Both forms typecheck and look equivalent, but only the inlined one produces a working
-runtime schema. This is the same rule that applies to the tuples in `params` refinements
-and `response` bodies: those must be inlined too, for the same underlying reason.
+In each case the brackets stay where you can see them, while the values inside are free to be named types - local or imported:
 
-The reason is that the second argument is not consumed as a TypeScript type at runtime.
-The generator flattens your route types and emits the constraints as schema text,
-which is then re-parsed by TypeBox's `Type.Script` against a fixed set of known identifiers
-(`VRefine`, `TDate`, and the other custom types).
+```ts
+// ✅ contents aliased, brackets kept
+type Pattern = "^[A-Z]{3}$";
+VRefine<string, { pattern: Pattern }>
 
-A named reference like `CurrencyConstraints` survives flattening as a bare identifier that `Type.Script` has no definition for,
-so the schema fails to build and every value is rejected -
-a validation that silently says "no" to everything rather than raising a clear error.
+type UserID = VRefine<number, { minimum: 1, multipleOf: 1 }>;
+defineRoute<"users/[id]", [UserID]>
 
-The base type (the first argument) has no such restriction - it is flattened normally, so
-`VRefine<MyStringAlias, { ... }>` and imported base types resolve as expected.
-The constraint object is the one position that must stay literal.
+type User = { id: number; name: string };
+POST<{ response: [200, "json", User] }>
+```
+
+```ts
+// ❌ the brackets themselves hidden behind an alias
+type Params = [UserID, UserAction];
+defineRoute<"users/[id]/[action]", Params>
+
+type ResponseT = [200, "json", User];
+POST<{ response: ResponseT }>
+```
+
+The base type of `VRefine` (its first argument) is unrestricted either way -
+`VRefine<MyStringAlias, { ... }>` and imported base types resolve normally.
+
+### Why the brackets matter
+
+The generator reads these positions **structurally**, from the source: which tuple slot maps to which route parameter,
+which slot carries the status code versus the body.
+An alias that hides the brackets gives it an identifier where it expected a shape, and there is nothing to destructure.
+
+That failure is silent, and it differs by position:
+
+| Position | If the brackets are hidden behind an alias |
+|---|---|
+| `params` tuple | the schema does not build - **every** request is rejected with a 400 |
+| `response`&nbsp;tuple | **no schema is generated at all** - response validation never runs, and the route gets no [`ResponseT`](/fetch/type-safety#response-types) entry |
+
+Neither raises a compile error, so nothing points at the alias.
+If a route rejects input you know is valid, or a response you declared is silently not validated, check the brackets first.
+
+> This is one of the mistakes that typecheck cleanly and fail at runtime.
+[Silent Failure Checklist ›](/validation/gotchas)

@@ -58,7 +58,7 @@ types, and tests without affecting siblings.
 
 For client pages, nested routes support layout components that wrap child routes
 with shared UI like navigation or headers.
-[Details ›](/frontend/routing)
+[Details&nbsp;›](/frontend/routing)
 
 ## Native Routing Under the Hood
 

@@ -36,6 +36,22 @@ export default defineConfig({
 });
 ```
 
+<details class="details custom-block">
+<summary>SSR runs in production builds only</summary>
+
+`pnpm dev` is **always** Vite + HMR + client-side rendering, whether or not SSR enabled.
+
+To see, test or debug anything server-rendered you must build first:
+
+```sh
+pnpm build front
+node dist/front/ssr/server.js -p 4556
+```
+
+This trips up people arriving from Next/Nuxt/TanStack Start, where dev mirrors prod rendering.
+See [Debugging SSR](#testing-debugging-ssr) for the working loop.
+</details>
+
 ## Server Entry Point
 
 The SSR generator creates `entry/server.ts` file with a default implementation.
@@ -351,24 +367,56 @@ yarn build
 Produces an SSR bundle at `dist/<folder>/ssr/server.js`
 and the `dist/<folder>/ssr/assets/` folder for hydration.
 
-Static files in `assets/` folder are served by the SSR server out of the box.
-If you need them served otherwise, use a reverse proxy or CDN to serve `assets/` folder.
-
 The SSR bundle also includes the API app. During server rendering the generated
 fetch client dispatches to API routes in-process rather than over the network,
 so data loading on the server has no HTTP round-trip - and the same bundle serves
 API requests on its own port, no separate API process required.
 [Isomorphic Fetch ›](/fetch/integration#isomorphic-fetch)
 
-## Local Testing
+## Static Asset Handling
 
-Test your SSR bundle before deploying:
+The SSR server serves `dist/<folder>/ssr/assets/` itself, out of the box, from memory.
+There is no option to turn that off - and no need to: to keep asset requests away from the SSR process entirely,
+put a reverse proxy or CDN in front and let it serve the `assets/` folder directly.
+
+```nginx
+location /assets/ {
+  alias /srv/app/dist/front/ssr/assets/;
+  expires 1y;
+  add_header Cache-Control "public, immutable";
+}
+
+location / {
+  proxy_pass http://ssr_backend;
+}
+```
+
+Asset filenames are content-hashed by Vite, so they are safe to cache indefinitely.
+
+## Testing / Debugging SSR
+
+Because SSR never runs under `pnpm dev`, the loop for anything server-rendered is build-then-run:
 
 ```sh
+pnpm build front
 node dist/front/ssr/server.js -p 4556
 ```
 
-Navigate to `http://localhost:4556` to verify server-side rendering.
+A few things that make that loop less painful:
+
+- **Build one folder.** `pnpm build front` skips every other source folder.
+- **Confirm you are actually seeing SSR.** View source (not the inspector):
+a server-rendered page arrives with real markup in `<div id="app">`.
+If it arrives empty, the render was skipped or it fell back to CSR.
+- **Watch the server's stderr.** A failed fetch during a string render aborts that render
+and silently serves the CSR shell - the page still "works",
+so the terminal is where the failure shows up.
+- **Isolate browser-only code.** `window`/`document` access during render is the most
+common SSR-only crash. Move it into an effect (`useEffect`/`onMounted`) or guard it
+with `typeof window !== "undefined"`.
+- **Reach for a string render first.** If a route misbehaves only when streamed,
+drop it back to `"string"` in [`renderMode`](#selecting-the-render-mode)
+to find out whether the bug is in your render or in the streaming path.
 
 ## Runtime
 

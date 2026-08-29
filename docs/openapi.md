@@ -38,6 +38,10 @@ export default defineConfig({
 
 ## Configuration
 
+`openapiGenerator` is the only generator whose options are mandatory.
+For how it sits alongside the other generators, see the
+[configuration reference](/essentials/config#generators-1).
+
 ### Required Options
 
 **`outfile`** - Path where the spec is written, relative to your `kosmo.config.ts`.

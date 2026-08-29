@@ -43,3 +43,6 @@ If validation fails unexpectedly despite correct type definitions, a naming conf
 **Node.js:** `Buffer`, `Stream`, `EventEmitter`, `Timeout`
 
 For the full list, see the [TFusion builtins reference](https://github.com/sleewoo/tfusion/blob/main/src/builtins.ts).
+
+> This is one of four mistakes that typecheck cleanly and fail at runtime.
+[Silent Failure Checklist ›](/validation/gotchas)

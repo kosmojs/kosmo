@@ -45,7 +45,8 @@ Three failure kinds reach that `catch`:
 - **`ValidationError`** - parameters or payload failed client-side validation.
 Thrown before any network request, so nothing was sent.
 Carries the same structured detail as a server-side `ValidationError`,
-so you can surface field-level feedback immediately. [Details ›](/validation/error-handling)
+so you can surface field-level feedback immediately.
+[Details&nbsp;›](/validation/error-handling)
 - **HTTP error status** - the request was sent and the server responded with a non-2xx status.
 The thrown error carries the response and the parsed error body.
 - **Network / transport failure** - the request never completed
@@ -224,4 +225,4 @@ but it is a UX convenience, not a security boundary.
 
 The server always re-validates with the same schemas.
 Treat client validation as fast feedback and the server's `ValidationError` response as the authority.
-[Details ›](/fetch/validation)
+[Details&nbsp;›](/fetch/validation)

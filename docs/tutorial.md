@@ -245,7 +245,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 
 With dev server running, visit `http://localhost:4556/api/users/123`:
 
-[Details ›](/backend/intro)
+[Details&nbsp;›](/backend/intro)
 
 ## Add Validation
 
@@ -346,7 +346,7 @@ export type User = { id: number; name: string; email: string }
 
 Payload is validated before your handler runs. Response is validated before it's sent.
 
-[Details ›](/validation/intro)
+[Details&nbsp;›](/validation/intro)
 
 ## Add Middleware
 
@@ -377,7 +377,7 @@ export default [
 
 No imports in route files, no repetition. Parent `use.ts` files wrap child routes automatically.
 
-[Details ›](/backend/middleware)
+[Details&nbsp;›](/backend/middleware)
 
 ## Fetch Clients
 
@@ -469,7 +469,7 @@ export const User = () => {
 
 Server-side validation still runs even when endpoints are called directly - client validation is additive, not a substitute.
 
-[Details ›](/fetch/intro)
+[Details&nbsp;›](/fetch/intro)
 
 ## Create Client Pages
 
@@ -487,7 +487,7 @@ pages/
 
 Layouts can be nested - deeper layouts wrap inner layouts, matching your route hierarchy.
 
-[Details ›](/frontend/routing)
+[Details&nbsp;›](/frontend/routing)
 
 ## Server-Side Rendering
 
@@ -518,7 +518,7 @@ node dist/front/ssr/server.js -p 4556
 
 The API server and SSR server are bundled separately - deploy, scale, and run them independently.
 
-[Details ›](/frontend/server-side-render)
+[Details&nbsp;›](/frontend/server-side-render)
 
 ## Add More Source Folders
 
@@ -638,7 +638,7 @@ pages/
 Parameters: `[id]` required · `{id}` optional · `{...path}` splat.
 Same pattern for API and pages - learn once, use everywhere.
 
-[Details ›](/routing/intro)
+[Details&nbsp;›](/routing/intro)
 
 ## Path Mappings
 
@@ -654,6 +654,9 @@ You can add your own paths, but these prefixes are reserved:
 - `@/*` - Root-level imports
 - `~/*` - Source folder imports
 - `_/*` - Generated code imports
+
+[Project Structure ›](/essentials/project-structure#path-mappings) walks the whole layout - what
+lives in `src/` versus `lib/`, and what each alias resolves to.
 
 
 

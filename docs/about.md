@@ -77,10 +77,10 @@ src/app/
 ```
 
 
-`KosmoJS` acts as a universal chassis - providing the same consistent way to define routes
+KosmoJS acts as a universal chassis - providing the same consistent way to define routes
 for all source folders, regardless of framework, backend or frontend.
 
-Thanks to this architecture, `KosmoJS` provides:
+Thanks to this architecture, KosmoJS provides:
 
 - [End-to-End Type Safety](/validation/intro)
 - [Generated Fetch Clients + OpenAPI](/fetch/intro)
@@ -96,14 +96,18 @@ Monorepo tools give you flexibility but bury you in configuration.
 Microservices give you independence but fragment your codebase.
 DIY glue works until it doesn't - and by then it's load-bearing.
 
-`KosmoJS` takes the best of each: the structure of a monorepo,
+KosmoJS takes the best of each: the structure of a monorepo,
 the simplicity of a single project, and the independence of separate apps -
 without the overhead of any of them.
 
 You keep full control over backend, frontend, state management, styling, database, and deploy target.
-`KosmoJS` handles routing conventions, validation pipeline, middleware composition, development workflow  and build orchestration.
+KosmoJS handles routing conventions, validation pipeline, middleware composition, development workflow  and build orchestration.
 
-You focus on features, `KosmoJS` takes care of infrastructure.
+You focus on features, KosmoJS takes care of infrastructure.
+
+Part of how it does that is by generating code - validators, typed clients, route tables, an OpenAPI spec.
+If that sets off alarms, it should: most code generation has earned its reputation.
+[Why Codegen](/essentials/codegen) explains why this kind is the compiler kind rather than the scaffolding kind.
 
 ---
 

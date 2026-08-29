@@ -57,6 +57,58 @@ pages/
 Layouts stack outward-in and cannot be escaped by child routes.
 [More on Layouts ›](/frontend/layouts)
 
+## Generated Route Shape
+
+There is no central route tree for you to register or maintain -
+no `routeTree.gen.ts` to import, no route config object to keep in sync.
+
+The generator writes route definitions into `lib/<folder>/` and the framework's own router consumes them;
+you reach them only through `createRoutes()` in your entry file, which the scaffold already wires up.
+
+What it emits is a plain, **framework-native** route definition -
+the same object you would have hand-written:
+
+:::tabs key:frontend variant:code
+== React
+```ts
+// shape produced for React Router
+{
+  id: "users/[id]",
+  path: "users/:id",
+  Component: users_id_component,
+  loader: users_id_loader,      // present only when the page exports one
+  children: [ /* nested routes and layouts */ ],
+}
+```
+
+== Solid
+```ts
+// shape produced for Solid Router
+{
+  path: "users/:id",
+  component: users_id_component,
+  load: users_id_preload,       // present only when the page exports one
+  children: [ /* nested routes and layouts */ ],
+}
+```
+:::
+
+Two consequences worth internalising:
+
+- **Nesting is structural.** A `layout` file becomes a parent route
+whose `children` are the routes beneath it -
+which is why layouts stack outward-in and why a child cannot escape one.
+- **It is a build artifact.** `lib/` is generated, regenerated on every relevant change,
+and bundled like any other dependency at build time.
+You don't need to read it, and you should never edit it -
+treat it the way you treat a generated Prisma client.
+If you do read it (to see exactly what `createRoutes` hands your router, say),
+read it as output, not as source.
+
+Because the output is native, everything your router documents keeps working:
+lazy loading, nested layouts, navigation guards, `loader`/`preload`, error elements.
+[Details&nbsp;›](/routing/intro#native-routing-under-the-hood)
+
 ## Lazy Loading
 
 All page components are lazy-loaded by default. Route code is excluded from

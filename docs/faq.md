@@ -158,6 +158,64 @@ A useful rule for SSR vs CSR: deploy an SSR folder for marketing content
 and a CSR folder for the app rather than mixing SSR/CSR within one folder.
 [Details&nbsp;›](/frontend/server-side-render#technical-considerations)
 
+### Configuration
+
+#### Where does configuration live, and is there a `vite.config.ts`?
+Per source folder, in `src/<folder>/kosmo.config.ts` -
+there is no project-wide kosmo config and **no separate `vite.config.ts`**.
+`kosmo.config.ts` *is* the Vite config for that folder:
+it accepts everything Vite's `UserConfig` accepts (`plugins`, `resolve`, `css`, `define`, ...) alongside the KosmoJS options.
+A few Vite keys are excluded because KosmoJS derives them from the folder layout:
+`root`, `base`, `cacheDir`, `mode`, `builder`, `future`, `legacy`.
+Project-wide settings (`distDir`, `devPort`, scripts) live in the root `package.json`.
+[Details&nbsp;›](/essentials/config)
+
+#### What options does a source folder config take?
+`base` (required - a string, or a per-environment map like `{ development: "/", production: "/app" }`),
+`apiBase` (default `"/api"`), `generators` (default `[]`),
+`refineTypeName` (default `"VRefine"`), plus any Vite option.
+[Details&nbsp;›](/essentials/config#folder-options)
+
+#### What is the full list of generators?
+Backend: `honoGenerator`, `h3Generator`, `koaGenerator`.
+Frontend: `reactGenerator`, `solidGenerator`, `vueGenerator`, `svelteGenerator`, `mdxGenerator`.
+Plus `fetchGenerator`, `typeboxGenerator`, `openapiGenerator`, `ssrGenerator`, `ssgGenerator`.
+`coreGenerator` is exported too but always runs first automatically - never list it.
+All are imported from `@kosmojs/dev`.
+[Details&nbsp;›](/essentials/config#generators-1)
+
+#### Does the order of generators in the array matter?
+Mostly no - they are sorted by slot before running:
+`core → backend → fetch → frontend → (slotless, in array order) → ssr → ssg`.
+Only the slotless ones (`typeboxGenerator`, `openapiGenerator`) respect the order you write.
+Note `fetchGenerator()` runs only when a backend generator is also present.
+[Details&nbsp;›](/essentials/config#ordering-doesn-t-depend-on-array-order)
+
+#### Should I add my framework's Vite plugin to `plugins`?
+No - the framework generator inserts its own already-configured Vite plugin.
+Adding `@vitejs/plugin-react` (or the Solid/Vue/Svelte equivalent) yourself runs the transform twice.
+Pass plugin options through the generator instead: every framework generator's options
+extend its Vite plugin's options, e.g. `reactGenerator({ jsxRuntime: "classic" })`.
+[Details&nbsp;›](/essentials/config#vite-options)
+
+#### How do I change the `/api` prefix, and where does it come from?
+It is `apiBase` in the folder's `kosmo.config.ts`, defaulting to `"/api"`.
+A route's URL is `base` + `apiBase` + route name, so `base: "/admin"` with the default
+`apiBase` serves `users/[id]` at `/admin/api/users/:id`.
+The `api/` **directory** name never appears in the URL - it only separates server routes from `pages/` on disk.
+[Details&nbsp;›](/essentials/config#apibase)
+
+#### Can I rename `VRefine`?
+Yes - set `refineTypeName` in the folder's config.
+It stays globally available and import-free under whatever name you choose.
+[Details&nbsp;›](/essentials/config#refinetypename)
+
+#### How do I map an extra URL onto an existing route?
+The `alias` option on the backend generator: `honoGenerator({ alias: { "/feed.xml": "rss" } })`.
+Keys are absolute URLs, not prefixed by the router's base; if a key has dynamic segments,
+their names must match the target route's parameters exactly or the request 404s.
+[Details&nbsp;›](/essentials/config#backend-generators)
+
 ### Directory-Based Routing
 
 #### How does routing map files to URLs?
@@ -323,9 +381,25 @@ they default-export `defineRoute(...)`, which is already a named call.
 [Details&nbsp;›](/routing/generated-content#client-pages)
 
 #### How do I override the default generated template?
-Pass `templates` in the generator options in `kosmo.config.ts`, keyed by glob pattern,
-each value a template string written to disk as the component/route file.
-[Details&nbsp;›](/frontend/custom-templates#configuration)
+Pass `templates` in the generator options in `kosmo.config.ts`, keyed by route-name glob pattern.
+Each value is either a template string or a function of the route returning one.
+Both frontend and backend generators accept it:
+[Custom Page Templates&nbsp;›](/frontend/custom-templates#configuration) ·
+[Custom Route Templates&nbsp;›](/backend/custom-templates#configuration)
+
+#### Which generated files can templates override?
+Only route files. On the frontend that means `pages/**/index.*` - **not** layouts and **not** the root `index` route,
+which always get their built-ins.
+On the backend it means `api/**/index.ts` - **not** `use.ts`.
+Folder-level files (`app.ts`, `errors.ts`, `dev.ts`) are deployed once at folder creation and are not templatable.
+[Frontend&nbsp;›](/frontend/custom-templates#what-it-overrides) ·
+[Backend&nbsp;›](/backend/custom-templates#what-it-overrides)
+
+#### Why didn't my new template change an existing route file?
+Boilerplate is written **only into blank files** - the generator never overwrites work you have already done,
+so changing a template does not retroactively rewrite existing routes.
+Empty the file and let it be regenerated.
+[Details&nbsp;›](/backend/custom-templates#what-it-overrides)
 
 #### How does glob matching work for templates?
 `*` matches exactly one nesting level, `**` matches any depth,
@@ -334,16 +408,30 @@ and an exact string targets a single route. Templates work with all parameter ty
 [Details&nbsp;›](/frontend/custom-templates#pattern-syntax)
 
 #### When multiple template patterns match, which wins?
-The first matching pattern - order them most-specific first
-(`landing/home` before `landing/*` before `**/*`).
+The first matching pattern, in the order the keys are written - so order them
+most-specific first (`landing/home` before `landing/*` before `**`).
+Caveat: JavaScript hoists integer-like keys to the front of an object, so a pattern such
+as `"2024/**"` matches before anything written above it; prefix it with `./` to keep your
+order. The same applies to `renderMode`, which uses the same resolver.
 [Details&nbsp;›](/frontend/custom-templates#resolution-priority)
 
 #### How do templates help with CRUD scaffolding?
-Define one template with the standard boilerplate; each generated file across many tables
-starts with the right structure instead of rewriting the skeleton N times by hand.
-[Details&nbsp;›](/frontend/custom-templates)
+Define one backend route template with the standard boilerplate - method handlers,
+validation targets, a declared `response` - and every generated `api/**/index.ts` across
+many tables starts with the right structure instead of the skeleton being retyped N times.
+[Details&nbsp;›](/backend/custom-templates#scaffolding-crud-endpoints)
 
 ### Backend
+
+#### Why does `defineRoute` repeat the route path I'm already in?
+Because TypeScript can't see the file system. Routing itself never uses the string -
+the URL comes from the file's location. The name is the key into the generated `RouteMap`,
+and that lookup is what types `ctx.validated.params` and the cascading `use.ts` context
+for that route. Since no runtime argument carries it, nothing can be inferred, so the
+type argument is required - and the generated boilerplate already contains it.
+It cannot drift silently: `R extends keyof RouteMap`, so a stale name after a folder
+rename is a compile error.
+[Details&nbsp;›](/backend/intro#the-route-name-type-argument)
 
 #### How do I define an endpoint?
 Default-export a `defineRoute` definition; the factory receives HTTP method builders and `use`,
@@ -389,7 +477,7 @@ That's normal for a backend - it should be stateless so it can restart and scale
 
 Keep persistent state in a real store (a database, even a local SQLite file),
 and close connections in `teardownHandler` so they don't leak across reloads.
-[Details&nbsp;›](/backend/development-workflow#hot-reload-not-hmr)
+[Details&nbsp;›](/backend/development-workflow#hot-reload-vs-hmr)
 
 ### Backend: Hono / H3 / Koa
 
@@ -784,7 +872,7 @@ Declare them in `api/env.d.ts` via module augmentation:
 - `DefaultContext` (H3)
 - `DefaultState`/`DefaultContext` (Koa)
 
-[Details&nbsp;›](/backend/type-safety#global-context-types-apienvdts)
+[Details&nbsp;›](/backend/type-safety#global-context-types-api-env-d-ts)
 
 #### Can I relax TypeScript strictness, e.g. `exactOptionalPropertyTypes`?
 Yes, per source folder - the folder's `tsconfig.json` (`src/<folder>/tsconfig.json`)
@@ -863,14 +951,14 @@ it matters for complex forms validating in real time.
 `path([123])` -> `/api/users/123`; `path([123], { query: { include: "posts" } })` adds a query string;
 `href("https://api.example.com", [123])` builds an absolute URL.
 Multiple params follow path order.
-[Details&nbsp;›](/fetch/validation)
+[Details&nbsp;›](/fetch/utilities)
 
 #### How do I distinguish ValidationError from network errors on the client?
-`import fetchMap, { ValidationError } from "_/fetch"`;
+`import fetchClients, { ValidationError } from "_/fetch"`;
 `error instanceof ValidationError` means data failed validation and no request was made
 (it carries `target`/`errors`/`errorMessage`/`errorSummary`);
 anything else is a network or server error.
-[Details&nbsp;›](/fetch/utilities)
+[Details&nbsp;›](/fetch/error-handling#catching-errors)
 
 #### How does it integrate with framework data patterns?
 Clients return standard promises, so they drop into SolidJS `createResource`,
@@ -887,6 +975,13 @@ For out-of-band typing - a `createAsync` accessor, a `useLoaderData()` result,
 a prop, a shared helper - import `ResponseT` from `_/fetch`, keyed by route name then method:
 `ResponseT["users"]["GET"]`.
 [Details&nbsp;›](/fetch/type-safety#response-types)
+
+#### What does a fetch client return if the handler declares no `response`?
+`Promise<unknown>`. Params and payload are always typed from the route definition,
+but the **return** value is opt-in: declare `response` on the handler and you get the typed result,
+response validation and the OpenAPI response schema together.
+`unknown` rather than `any` is deliberate - nothing was declared, so nothing is claimed.
+[Details&nbsp;›](/fetch/type-safety#without-a-response-the-result-is-unknown)
 
 #### Why is my route missing from `ResponseT`?
 `ResponseT` is opt-in: an entry exists only for routes whose handler declares a `response` type.
@@ -1056,6 +1151,13 @@ primarily interactive with occasional content -> a framework.
 Import Preact components directly.
 [Details&nbsp;›](/frontend/mdx#writing-pages)
 
+#### Is `_/use` available in my framework?
+Only in **Vue, Svelte and MDX** folders. React and SolidJS folders generate no `_/use` -
+use `react-router` / `@solidjs/router` hooks instead.
+Vue's `_/use` exports `useLoaderData` **only**; Svelte and MDX also export `useRoute`, `useParams`, `useParamsEntries`
+and `useSearchParams`, and MDX adds `useFrontmatter`.
+[Details&nbsp;›](/frontend/hooks)
+
 #### How do I access the current route inside a component?
 Call the `useRoute()` hook from `_/use`. It returns the route `name`, the validated `params`,
 and the page's `frontmatter` together, so a shared component (a breadcrumb, a title bar) can
@@ -1084,10 +1186,10 @@ ready to pass straight to a parametrized endpoint (`GET(params)`).
 [Details&nbsp;›](/frontend/mdx#loaders-with-route-parameters)
 
 #### Is SSG enabled on MDX folders?
-Yes, by default - SSG is MDX-only, so there is nothing to enable.
-Each route renders to its own static HTML file at build time,
-with staticParams supplying the entries for dynamic routes.
-[Details&nbsp;›](/frontend/mdx#static-site-generation)
+Yes - there is nothing for you to enable, because the scaffolder does it:
+creating an MDX folder writes `ssgGenerator()` (alongside `mdxGenerator()` and `ssrGenerator()`) into that folder's `kosmo.config.ts`.
+SSG is MDX-only. Each route renders to its own static HTML file at build time, with staticParams supplying the entries for dynamic routes.
+[Details&nbsp;›](/frontend/mdx#static-site-generation) · [Scaffolded configs&nbsp;›](/essentials/config#what-the-scaffolder-writes)
 
 #### How does SSG handle dynamic routes?
 Declare variants via `staticParams` in frontmatter; the build renders one HTML file per entry.
@@ -1227,7 +1329,7 @@ bundle), so there's no network hop, just the full validation/handler chain. A fe
 
 #### What's the simplest way to run the API in production?
 `node dist/front/api/server.js`. For more control, use the app factory at `dist/<folder>/api/app.js`.
-[Details&nbsp;›](/backend/building-for-production#running-in-production)
+[Details&nbsp;›](/backend/building-for-production#running-the-api-server)
 
 #### How do I mount the app factory per runtime?
 - *Hono*: `app.fetch` is a Web Fetch handler - on Node use `getRequestListener` from `@hono/node-server`.
@@ -1235,7 +1337,7 @@ Deno via `Deno.serve`, Bun via `Bun.serve`.
 - *H3*: `app.fetch` is a Web Fetch handler - on Node use `toNodeHandler` from `h3/node` (then createServer).
 Deno via `Deno.serve`, Bun via `Bun.serve`.
 - *Koa*: On Node use `app.listen()`. On Deno/Bun use `app.callback()` via a compat layer, not their native serve APIs.
-[Details&nbsp;›](/backend/building-for-production#running-in-production)
+[Details&nbsp;›](/backend/building-for-production#running-the-api-server)
 
 #### Why are the API and SSR servers separate?
 They're built as separate bundles so you can deploy, scale, and run them independently. But the
@@ -1287,12 +1389,12 @@ requests are routed between Vite and your API; a file watcher monitors API files
 #### How do I add custom request routing (e.g. WebSockets)?
 Override `requestHandler` in `api/dev.ts` for custom dispatch, WebSocket handling,
 multi-handler setups, etc.
-[Details&nbsp;›](/backend/development-workflow#apidevts)
+[Details&nbsp;›](/backend/development-workflow#api-dev-ts)
 
 #### Why are my DB connections leaking during development?
 Frequent rebuilds can exhaust connections. Close connections and release resources
 in `teardownHandler`, which runs before each reload.
-[Details&nbsp;›](/backend/development-workflow#apidevts)
+[Details&nbsp;›](/backend/development-workflow#api-dev-ts)
 
 #### How do I inspect registered routes and their middleware?
 Pass the `debug` option to `appFactory` in `api/app.ts`:
@@ -1370,7 +1472,7 @@ No platform lock-in. It's a standard Node/Vite app -
 deploy the bundled servers to Node/Bun/Deno/edge yourself.
 You can still deploy to Vercel as a Node app, but there are no Vercel-specific features
 (and no dependence on them).
-[Details&nbsp;›](/backend/building-for-production#running-in-production)
+[Details&nbsp;›](/backend/building-for-production#running-the-api-server)
 
 #### What does it give me over Vite + React Router + Hono wired by hand?
 Directory routing for both sides, generated runtime validators from TS types,
@@ -1645,7 +1747,7 @@ and methods together with shared types.
 With Hono and H3 the API runs on Node/Deno/Bun/Cloudflare Workers and edge platforms unchanged (`app.fetch`).
 Koa runs via the `node:http` compat layer. There's no automatic serverless/edge function packaging like Next -
 you run the bundled server or wire `app.fetch` into an edge runtime yourself.
-[Details&nbsp;›](/backend/building-for-production#running-in-production)
+[Details&nbsp;›](/backend/building-for-production#running-the-api-server)
 
 #### Edge middleware (`middleware.ts`) vs cascading `use.ts`?
 There's no global edge-middleware file or client-route interception layer.
@@ -1682,16 +1784,19 @@ The generated fetch clients validate with the exact server schemas,
 so client and server stay in sync with nothing to keep aligned by hand.
 [Details&nbsp;›](/validation/skip-validation)
 
-#### Can I extract a `VRefine` constraint object into a named type?
-No - the constraint (the second argument) must always be written inline as an object literal,
-never referenced by name (local `type` alias or imported). Both forms typecheck,
-but only the inlined one produces a working schema: the constraint is emitted as schema text
-and re-parsed by TypeBox against a fixed set of known identifiers,
-so a named reference survives as an unresolved identifier and every value is silently rejected.
-This is the same inline-or-break rule as the `params` refinement and `response` body tuples.
-The base type (the first argument) has no such restriction -
-`VRefine<MyStringAlias, { ... }>` and imported base types flatten normally.
-[Details&nbsp;›](/validation/refine#inline-the-constraints-never-reference-them)
+#### Can I alias the types used in a `VRefine` constraint, a params tuple or a response tuple?
+The contents, yes. The wrapping brackets, no.
+
+**The rule: `[]` and `{}` must be written literally; anything inside them can be aliased**,
+local or imported. So `VRefine<string, { pattern: Pattern }>`,
+`defineRoute<"users/[id]", [UserID]>` and `response: [200, "json", User]` are all fine -
+but hiding the brackets themselves (`defineRoute<"users/[id]", Params>`, `response: ResponseT`) is not.
+
+The generator reads those positions structurally from the source - which tuple slot is which parameter,
+which slot is the status versus the body - so an alias gives it an identifier where it expected a shape.
+Both forms typecheck; the failure is silent.
+`VRefine`'s base type (first argument) is unrestricted either way.
+[Details&nbsp;›](/validation/refine#keep-the-wrapping-brackets-literal)
 
 #### Is type safety runtime-enforced or compile-only?
 Both - the same TS type drives compile-time checks and generated runtime validators.
@@ -1704,8 +1809,26 @@ Validators are AOT-compiled from types (TanStack users used to instant route typ
 should expect a brief generation pass, cached per file, running alongside Vite).
 A slow full rebuild only happens when you delete `lib/` or a cache-version bump occurs -
 akin to regenerating `routeTree.gen.ts` from scratch, but heavier.
-Treat generated code as a black box, like the generated route tree.
+Treat generated code as a build artifact, like the generated route tree.
 [Details&nbsp;›](/validation/performance#machine-time-vs-human-time)
+
+#### Isn't generated code a red flag?
+Usually, yes - but the bad reputation belongs to *scaffolding*: code generated once that
+you then edit and own, so it drifts from its input.
+KosmoJS's `lib/` output is *derivation* - recomputed from a single source on every change, never edited,
+in the same category as what `tsc`, the JSX transform and Vite already generate for you.
+The `src/` boilerplate it does seed is written **only into blank files**,
+so regeneration can never overwrite your work.
+And nothing generated is proprietary: `lib/` holds ordinary Hono/React/TypeBox code you could walk away with.
+[The full argument, including the costs&nbsp;›](/essentials/codegen)
+
+#### Is generated code committed to git?
+Mostly no. `lib/.gitignore` ignores everything except `cache.json` and `types.ts`,
+so generated output is treated as a build artifact. What *is* committed is the per-route
+generation cache (`cache.json`, keyed by content hashes of the route and its type dependencies)
+so a fresh clone or CI run skips a full rebuild.
+Don't add `lib/` to the root `.gitignore` - that would drop the cache and make every clone slow.
+[Details&nbsp;›](/essentials/project-structure#inside-lib)
 
 ### Rendering & SSR
 
@@ -1791,8 +1914,10 @@ Serve it with Swagger UI, Redoc, or Stoplight Elements.
 An LLM agent must answer these before emitting KosmoJS code that compiles and runs.
 
 #### A1. Which backend is this folder - Hono/H3/Koa?
-Check the folder's `kosmo.config.ts`: a `honoGenerator()` or `h3Generator()` or `koaGenerator()`
-in the `generators` array tells you which backend is in use.
+Check the folder's `kosmo.config.ts` (`src/<folder>/kosmo.config.ts`): a `honoGenerator()`
+or `h3Generator()` or `koaGenerator()` in the `generators` array tells you which backend is
+in use. A folder with none is frontend-only and has no `api/` directory.
+[Configuration reference&nbsp;›](/essentials/config)
 
 #### A2. Which frontend framework is this folder - React, SolidJS, Vue, Svelte, or MDX?
 Check the folder's `kosmo.config.ts` for the framework generator
@@ -1810,11 +1935,12 @@ API routes default-export `defineRoute(...)` returning an array of method handle
 pages default-export a component function (named, not an anonymous arrow, which would break Vite HMR).
 KosmoJS generates the correct boilerplate when the file is created.
 
-#### A4. Is the params refinement tuple inline?
-It must be written inline on `defineRoute` (e.g. `defineRoute<"users/[id]", [number]>`) -
-extracting the whole tuple to a named type alias loses the structural info
-the generator needs and breaks schema generation.
-Individual type aliases used *inside* the inline tuple are fine.
+#### A4. Are the wrapping brackets literal?
+The params tuple, the response tuple and the `VRefine` constraint object must each have their `[]`/`{}` written inline -
+`defineRoute<"users/[id]", [number]>`, not `defineRoute<"users/[id]", Params>`.
+Type aliases used *inside* the brackets are fine.
+Hiding the brackets loses the structural info the generator reads from the source:
+a params tuple then rejects every request, a response tuple silently generates no schema.
 
 #### A5. Does any user-defined type collide with a JS/DOM/TS built-in name?
 `Event`, `Response`, `Request`, `Error`, `Date`, `Partial`, `Record`, `Buffer`, etc.
@@ -1865,7 +1991,35 @@ which surfaces as files silently never picked up.
 Instead, create the empty files and run the **build** command: it resolves routes with exactly the same code as the dev server,
 writes the boilerplate, and wires the routes - deterministically, no watcher involved.
 
-#### A12. Where is the latest authoritative source?
+#### A12. Is `_/use` available here, and what does it export?
+Only Vue, Svelte and MDX folders generate `_/use`. React and SolidJS folders have none -
+importing from it there will not resolve; use `react-router` / `@solidjs/router` instead.
+Vue exports `useLoaderData` only. Svelte and MDX also export `useRoute`, `useParams`,
+`useParamsEntries`, `useSearchParams`; MDX adds `useFrontmatter`.
+`useLoaderData` returns `T | undefined`, and a **layout** must pass its path-qualified name
+(`useLoaderData("dashboard/layout")`) while a page passes nothing.
+[Details&nbsp;›](/frontend/hooks)
+
+#### A13. Does this handler declare a `response`?
+If not, the generated fetch client returns `Promise<unknown>` for that method,
+there is no `ResponseT` entry, and no response validation or OpenAPI response schema.
+Declaring `response: [200, "json", T]` turns on all four at once.
+Add one to any handler whose result the frontend consumes.
+[Details&nbsp;›](/fetch/type-safety#without-a-response-the-result-is-unknown)
+
+#### A14. Will this validation fail silently?
+Four mistakes typecheck cleanly and misbehave at runtime:
+- a wrapping `[]` or `{}` hidden behind a type alias (contents may be aliased, brackets may not) -
+a params tuple then rejects *everything*, a response tuple generates *no schema at all*
+- a type named after a JS/DOM/TS built-in
+- plain `number` where an integer is required
+- and a non-string type on a target that doesn't coerce
+(only `query` coerces numbers and booleans; `params` coerce numbers only; `headers`/`cookies`/`form`/`raw` never coerce).
+
+Check these before debugging anything else.
+[Details&nbsp;›](/validation/gotchas)
+
+#### A15. Where is the latest authoritative source?
 Always prefer fetching `https://kosmojs.dev/llms-full.txt` over memory for exact generator option names,
 the full VRefine keyword set, and exact scaffold flags -
 the conventions are dense and easy to get subtly wrong.

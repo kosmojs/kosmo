@@ -238,10 +238,37 @@ pages/
         index.mdx        ➜ /blog/:category/:tag (both optional)
 ```
 
-Access parameters inside a component using `useParams()`:
+Access parameters inside a component using `useParams()` from `_/use`.
+Pass the route name as a type argument and the returned params are typed for that route:
 
-:::tabs key:pm variant:code
-:::
+```mdx [pages/blog/post/[slug]/index.mdx]
+import { useParams } from "_/use";
+
+export const Post = () => {
+  const { slug } = useParams<"blog/post/[slug]">();
+  return <p>Reading: {slug}</p>;
+};
+
+# Blog post
+
+<Post />
+```
+
+Optional parameters come back possibly-undefined, and a splat parameter comes back
+as an array of segments:
+
+```mdx [pages/blog/{category}/{tag}/index.mdx]
+import { useParams } from "_/use";
+
+export const Filters = () => {
+  const { category, tag } = useParams<"blog/{category}/{tag}">();
+  return <p>{category ?? "all"} / {tag ?? "all"}</p>;
+};
+
+<Filters />
+```
+
+Note the call sits **inside a component**, not at module scope - see the warning below.
 
 `useRoute()` provides the full route context including name, params, frontmatter, and loader data:
 

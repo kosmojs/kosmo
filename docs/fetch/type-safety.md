@@ -68,6 +68,43 @@ If a route defines no response type, it has no `ResponseT` entry -
 just as it has no response validation. Declare a `response` to get both.
 :::
 
+### Without a `response`, the result is `unknown`
+
+This is worth being explicit about, because it is the one case where the client is *not* typed for you.
+A method whose handler declares no `response` returns `Promise<unknown>`:
+
+```ts
+// api/users/index.ts - no `response` declared
+export default defineRoute<"users">(({ GET }) => [
+  GET(async (ctx) => ctx.json(await listUsers())),
+]);
+```
+
+```ts
+const users = await fetchClients["users"].GET();
+users.length;  // ❌ 'users' is of type 'unknown'
+```
+
+`unknown` is deliberate rather than `any`: nothing was declared, so nothing is claimed,
+and TypeScript makes you say what you expect instead of silently trusting it.
+
+Declaring `response` on the handler is what fixes it - and it is the same one line that
+turns on response validation and the OpenAPI response schema:
+
+```ts
+GET<{
+  response: [200, "json", Array<User>] // [!code hl]
+}>(async (ctx) => { /* ... */ })
+```
+
+```ts
+const users = await fetchClients["users"].GET();
+users.length;  // ✅ Array<User>
+```
+
+So the practical rule: **declare `response` on any handler whose result the frontend consumes.**
+Params and payload are typed from the route definition regardless - it is only the return value that depends on `response`.
+
 ## Multiple Responses
 
 A handler can declare a union of responses - different status codes returning different bodies.

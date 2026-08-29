@@ -250,7 +250,7 @@ export default function Page() {
 // Prefetch into the request client and the cache crosses to the browser automatically.
 // https://tanstack.com/query/latest/docs/framework/solid/guides/ssr
 import { useQuery } from "@tanstack/solid-query";
-import { useParams } from "_/use";
+import { useParams } from "@solidjs/router";
 import { getQueryClient } from "_/query";
 import fetchClients from "_/fetch";
 
@@ -265,7 +265,8 @@ export const preload = ({ params }: { params: { id: string } }) =>
   getQueryClient().prefetchQuery(queryOptions(params.id));
 
 export default function Page() {
-  const params = useParams<"users/[id]">();
+  // Solid folders read params through Solid Router's own hook
+  const params = useParams();
   const query = useQuery(() => queryOptions(params.id));
   return <div>{query.data?.name}</div>;
 }
@@ -296,13 +297,16 @@ export const loader = async ({ params }: { params: { id: string } }) => {
 
 <script setup lang="ts">
 import { hydrate, useQuery } from "@tanstack/vue-query";
+import { useRoute } from "vue-router";
 import { getQueryClient } from "_/query";
-import { useParams, useLoaderData } from "_/use";
+import { useLoaderData } from "_/use";
 
 hydrate(getQueryClient(), useLoaderData());
 
-const params = useParams<"users/[id]">();
-const { data } = useQuery(queryOptions(params.id));
+// Vue folders read params through Vue Router's own hook;
+// `_/use` on Vue exports useLoaderData only
+const route = useRoute();
+const { data } = useQuery(queryOptions(route.params.id as string));
 </script>
 
 <template>

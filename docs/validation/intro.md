@@ -9,8 +9,12 @@ head:
         typescript validation, type safety, validation generator, end-to-end validation
 ---
 
-KosmoJS uses the "runtype" validation approach - your types are automatically
-converted into JSON Schema and validated at runtime.
+KosmoJS calls its approach **runtype validation**: your TypeScript types are
+automatically converted into JSON Schema and validated at runtime.
+
+> "Runtype" is a shorthand, not an industry standard you're expected to already know - a *run*time check derived from a *type*.
+If you've used Zod or Yup, this inverts the direction: instead of writing a schema and inferring a type from it,
+you write the type and the schema is generated from it.
 
 No separate schema language to learn. No schemas drifting out of sync with your types.
 One type definition becomes the source of truth for:
