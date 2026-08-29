@@ -1,3 +1,17 @@
+## [0.4.3](https://github.com/kosmojs/kosmo/compare/v0.4.2...v0.4.3) (2026-08-29)
+
+### Bug Fixes
+
+* **backend:** return 405 if HTTP method is not implemented ([fa4358d](https://github.com/kosmojs/kosmo/commit/fa4358d50a8db7c3c25ab946671cf3a22a65ed03))
+* **backend:** serve HEAD via sibling GET handler with GET validation schemas ([7cdfcb1](https://github.com/kosmojs/kosmo/commit/7cdfcb10a873fc63710acbca375e07f65f938a5e))
+* **backend:** validate only 2xx responses ([f61572d](https://github.com/kosmojs/kosmo/commit/f61572d4b3d1c23157c1c2e7826e46313cd2a391))
+* **core-generator:** import ValidationSchemas from correct path ([40edc73](https://github.com/kosmojs/kosmo/commit/40edc733dfb54539a2dcc60e524e76e91e7e2679))
+* **fetch-generator:** deploy only supported request methods ([e1d9106](https://github.com/kosmojs/kosmo/commit/e1d9106e84ef46bb21da1b08d15629d28ae7c73a))
+* **fetch-generator:** ignore non-2xx response types ([28ac480](https://github.com/kosmojs/kosmo/commit/28ac48036ce80d38c673897706494d1b04568b91))
+* **h3-generator:** serve HEAD through the sibling GET handler ([9b58091](https://github.com/kosmojs/kosmo/commit/9b5809184bc13222bc4fc5de543be13187297aee))
+* **hono-generator:** catch body parsing error on response validation ([2dbfe3f](https://github.com/kosmojs/kosmo/commit/2dbfe3f2887f17f5b70ca53dddb95441bc899459))
+* **types:** safely compare base against a string ([1d01d47](https://github.com/kosmojs/kosmo/commit/1d01d47ff8258eb9f0d3b18054784887df5ec551))
+
 ## [0.4.2](https://github.com/kosmojs/kosmo/compare/v0.4.1...v0.4.2) (2026-08-24)
 
 ### Features
