@@ -53,9 +53,7 @@ export const {{method}} = (
   _params{{#if ../route.optionalParams}}?{{/if}}: MaybeWrapped<ParamsT>,
   _payload?: {
     {{#each payloadTypes}}
-    {{target}}: {{id}} extends { {{method}}: unknown }
-      ? MaybeWrapped<{{id}}["{{method}}"]>
-      : unknown,
+    {{target}}: MaybeWrapped<{{id}}>,
     {{/each}}
   },
   opt?: {
