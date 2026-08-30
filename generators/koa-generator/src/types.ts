@@ -16,7 +16,7 @@ export type Options = {
    * Example:
    *   alias: {
    *     "/feed.xml": "rssFeed",        // served at /feed.xml, handled by "rssFeed" route
-   *     "/members/:id": "users/:id",  // :id param must match exactly
+   *     "/members/[id]": "users/[id]", // params must match exactly
    *   }
    * */
   alias?: Record<

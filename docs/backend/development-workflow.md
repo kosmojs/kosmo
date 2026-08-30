@@ -144,13 +144,17 @@ Without cleanup, frequent rebuilds during active development can exhaust databas
 
 ## Inspecting Routes
 
-Routes can be inspected by providing `debug` option to `appFactory` in `api/app.ts`:
+Routes can be inspected by providing `debug` option to `appFactory` in `api/app.ts`
+(omitted by default, feel free to add it as needed):
 
-```ts [api/api.ts]
+```ts [api/app.ts]
 import appFactory, { routes } from "_/api:factory";
 import defaultErrorHandler from "./errors";
 
-export default appFactory(routes, { debug: true }, ({ app }) => {
+export default appFactory(
+  routes,
+  { debug: true }, // [!code ++]
+  ({ app }) => {
   // ...
 })
 ```
@@ -182,7 +186,7 @@ export default appFactory(routes, { debug: "headline" }, ({ app }) => {
 If you rather need a custom logger, provide a function instead;
 it will be provided with full debug object and the route itself.
 
-```ts [api/api.ts]
+```ts [api/app.ts]
 export default appFactory(
   routes,
   {

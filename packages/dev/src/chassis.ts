@@ -546,7 +546,7 @@ const eventFactory = async (
   await runGenerators();
 
   return {
-    async add(file: string) {
+    async add(file) {
       const [resolver] = resolversFactory([file]).values();
 
       if (!resolver) {
@@ -563,7 +563,7 @@ const eventFactory = async (
       }
     },
 
-    async change(file: string) {
+    async change(file) {
       if (resolvedRoutes.has(file)) {
         // route updated
         await updateResolvedEntry(file);

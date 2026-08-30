@@ -285,7 +285,7 @@ The first type argument to each method handler defines validation targets.
 
 Metadata targets (any method): `query` · `headers` · `cookies`
 
-Body targets (mutually exclusive, POST/PUT/PATCH/DELETE only): `json` · `form` · `raw`
+Body targets (mutually exclusive, POST/PUT/PATCH only): `json` · `form` · `raw`
 
 :::tabs key:backend variant:code
 == Hono
