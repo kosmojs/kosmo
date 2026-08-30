@@ -6,9 +6,21 @@ import {
   stringifySearchParams,
   type ValidationTarget,
 } from "@kosmojs/core";
-import type { HTTPMethod } from "@kosmojs/core/api";
 import { createHost, join } from "@kosmojs/core/fetch";
 import type { RoutePathMethods } from "@kosmojs/core/generators";
+
+type NormalizeParams = (path: string) => Record<string, unknown>;
+
+type NormalizeSearchParams = (
+  searchParams: Record<string, unknown>,
+  method: string,
+) => Record<string, unknown>;
+
+type PayloadResolver = <T>(
+  payload: Record<ValidationTarget, T> | undefined,
+  target: ValidationTarget,
+  method: string,
+) => T | Record<string, unknown> | undefined;
 
 export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
   base: string,
@@ -20,16 +32,9 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     booleanProperties,
   }: ApiRouteSerialized,
 ): RoutePathMethods<ParamsT> & {
-  normalizeParams: (path: string) => Record<string, unknown>;
-  normalizeSearchParams: (
-    searchParams: Record<string, unknown>,
-    method: HTTPMethod,
-  ) => Record<string, unknown>;
-  payloadResolver: <T>(
-    payload: Record<ValidationTarget, T> | undefined,
-    target: ValidationTarget,
-    method: HTTPMethod,
-  ) => T | Record<string, unknown> | undefined;
+  normalizeParams: NormalizeParams;
+  normalizeSearchParams: NormalizeSearchParams;
+  payloadResolver: PayloadResolver;
 } => {
   const toPath = compile(pathPattern);
   const pathMatcher = match(join(base, pathPattern));
@@ -57,9 +62,9 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     }
   };
 
-  const normalizeSearchParams = (
-    searchParams: Record<string, unknown>,
-    method: HTTPMethod,
+  const normalizeSearchParams: NormalizeSearchParams = (
+    searchParams,
+    method,
   ) => {
     return Object.fromEntries(
       Object.entries(searchParams).map(([k, v]) => {
@@ -80,7 +85,7 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     );
   };
 
-  const normalizeParams = (path: string) => {
+  const normalizeParams: NormalizeParams = (path) => {
     return params.reduce((map: Record<string, unknown>, param) => {
       const value = resolveParam(path, param);
       if (Array.isArray(value)) {
@@ -147,11 +152,7 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     return createHost(host) + path(params, query, opt);
   };
 
-  const payloadResolver = <T>(
-    payload: Record<ValidationTarget, T> | undefined,
-    target: ValidationTarget,
-    method: HTTPMethod,
-  ) => {
+  const payloadResolver: PayloadResolver = (payload, target, method) => {
     const data = payload?.[target];
 
     if (target === "query") {
@@ -179,7 +180,7 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
           map[key] = val;
         }
         return map;
-      }, {}) as T;
+      }, {});
     }
 
     return data;
