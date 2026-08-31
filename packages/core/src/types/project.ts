@@ -34,9 +34,10 @@ export type SourceFolder = {
   /** Source folder name, e.g. "front", "admin", "app" */
   name: string;
   /** Resolved folder configuration */
-  config: Omit<FolderConfig, "base" | "apiBase"> & {
+  config: Omit<FolderConfig, "base" | "apiBase" | "generators"> & {
     base: string;
     apiBase: string;
+    generators: Array<GeneratorSignature>;
   };
   /** Absolute path to the project root */
   root: string;

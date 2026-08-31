@@ -8,8 +8,6 @@ import { build, createServer, type RunnableDevEnvironment } from "vite";
 import {
   defaults,
   type GeneratorFactory,
-  type GeneratorMeta,
-  type GeneratorSignature,
   type ProjectSettings,
   type ResolvedEntry,
   type SourceFolder,
@@ -24,8 +22,6 @@ import {
   vitePlugins,
 } from "@kosmojs/lib";
 
-import coreGenerator from "@kosmojs/core-generator";
-
 import { cacheFactory } from "./cache";
 
 export default async (
@@ -35,7 +31,7 @@ export default async (
 
   // NOTE: initialize generators before anything else, regardless command
   for (const sourceFolder of projectSettings.sourceFolders) {
-    for (const generator of folderGenerators(sourceFolder)) {
+    for (const generator of sourceFolder.config.generators) {
       if (!generator.meta?.name || typeof generator.factory !== "function") {
         throw new Error(
           `${sourceFolder.name}: Unrecognized generator - must be created via defineGenerator()`,
@@ -59,6 +55,7 @@ export default async (
   if (command === "build") {
     for (const sourceFolder of projectSettings.sourceFolders) {
       const { createPath } = pathResolver(sourceFolder);
+      const { generators } = sourceFolder.config;
 
       const resolvedRoutes = [];
 
@@ -83,8 +80,6 @@ export default async (
         vitePlugins.tsconfigPaths(sourceFolder),
         vitePlugins.nodePrefix(),
       ];
-
-      const generators = folderGenerators(sourceFolder);
 
       for (const generator of generators) {
         await generator.factory(sourceFolder).build?.(resolvedRoutes);
@@ -204,10 +199,9 @@ export default async (
 
   for (const sourceFolder of projectSettings.sourceFolders) {
     const { createPath } = pathResolver(sourceFolder);
+    const { generators } = sourceFolder.config;
 
     const requestMatchers = matchersFactory(sourceFolder);
-
-    const generators = folderGenerators(sourceFolder);
 
     const plugins = [
       vitePlugins.tsconfigPaths(sourceFolder),
@@ -420,43 +414,6 @@ const cacheDir = (
   return resolve(root, `var/.vite/${name}/${command}/${mode}`);
 };
 
-const folderGenerators = (
-  sourceFolder: SourceFolder,
-): Array<GeneratorSignature> => {
-  const generators: Array<GeneratorSignature> = [];
-
-  const generatorsBySlot: Partial<
-    Record<NonNullable<GeneratorMeta["slot"]>, GeneratorSignature>
-  > = {};
-
-  for (const generator of sourceFolder.config.generators || []) {
-    if (generator.meta.slot) {
-      generatorsBySlot[generator.meta.slot] = generator;
-    } else {
-      generators.push(generator);
-    }
-  }
-
-  return [
-    // core generator should run first
-    coreGenerator(),
-    // then backend generator
-    ...(generatorsBySlot.backend ? [generatorsBySlot.backend] : []),
-    // then fetch generator, only if backend generator also enabled
-    ...(generatorsBySlot.fetch && generatorsBySlot.backend
-      ? [generatorsBySlot.fetch]
-      : []),
-    // then frontend generator
-    ...(generatorsBySlot.frontend ? [generatorsBySlot.frontend] : []),
-    // then slotless generators in the order they were added
-    ...generators,
-    // ssr generator should run after user generators
-    ...(generatorsBySlot.ssr ? [generatorsBySlot.ssr] : []),
-    // ssg generator should run after ssr generator
-    ...(generatorsBySlot.ssg ? [generatorsBySlot.ssg] : []),
-  ];
-};
-
 const eventFactory = async (
   sourceFolder: SourceFolder,
 ): Promise<
@@ -474,7 +431,7 @@ const eventFactory = async (
     factory: GeneratorFactory;
   }> = [];
 
-  for (const generator of folderGenerators(sourceFolder)) {
+  for (const generator of sourceFolder.config.generators) {
     const factory = generator.factory(sourceFolder);
     generators.push({ name: generator.meta.name, factory });
   }
