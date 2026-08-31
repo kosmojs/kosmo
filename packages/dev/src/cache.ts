@@ -102,7 +102,12 @@ export const cacheFactory: RouteResolverCacheFactory = (
        * Two kosmo processes on one project resolve the same routes to the same bytes,
        * so this keeps them from rewriting each other's cache files.
        * */
-      await renderToFile(cacheFile, JSON.stringify(value, undefined, 2), {});
+      await renderToFile(
+        cacheFile,
+        JSON.stringify(value, undefined, 2),
+        {},
+        { render: (content) => content },
+      );
 
       return value;
     },
