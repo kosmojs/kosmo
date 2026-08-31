@@ -77,7 +77,7 @@ export type GeneratorFactory = {
 
   /**
    * Modules whose content should not touch the fs.
-   * Content pottentially differs between the CSR and SSR graphs.
+   * Content potentially differs between the CSR and SSR graphs.
    *
    * Declared once and resolved per build by the `kosmo:virtualModules` Vite plugin,
    * so the choice is made at resolution time and nothing written on disk.
