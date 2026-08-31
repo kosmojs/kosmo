@@ -159,8 +159,8 @@ export default defineConfig({
       },
       {
         text: "Config",
-        link: "/config",
-        activeMatch: "^/config",
+        link: "/essentials/config",
+        activeMatch: "^/essentials/config",
       },
     ],
 
