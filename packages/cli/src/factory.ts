@@ -146,7 +146,6 @@ export const createProject = async (
     },
     dependencies: {
       "@kosmojs/core": SELF_VERSION,
-      ...coreGenerator.dependencies,
       ...assets?.dependencies,
     },
     devDependencies: {
@@ -157,7 +156,6 @@ export const createProject = async (
       "@types/bun": self.devDependencies["@types/bun"],
       typescript: self.devDependencies["typescript"],
       vite: self.devDependencies["vite"],
-      ...coreGenerator.devDependencies,
       ...assets?.devDependencies,
     },
   };
@@ -463,13 +461,13 @@ export const createSourceFolder = async (
       {
         // do not overwrite real files with a stub!
         // if at any point file should be regenerated,
-        // just empty or delete it and dev server will generate a clean version.
+        // just empty or delete it and dev server will seed a clean version.
         overwrite: false,
       },
     );
   }
 
-  for (const { generator } of generators) {
+  for (const { generator } of [{ generator: coreGenerator() }, ...generators]) {
     for (const key of ["dependencies", "devDependencies"] as const) {
       packageJson[key] = {
         ...packageJson[key],
