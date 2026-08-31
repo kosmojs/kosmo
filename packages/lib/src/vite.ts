@@ -173,7 +173,6 @@ export const virtualModules = (
   const VIRTUAL_PREFIX = "\0";
 
   const virtualSources = new Map<string, { csr: string; ssr: string }>();
-  const moduleAliases = new Map<string, string>();
 
   for (const { specifier, csr, ssr } of modules) {
     virtualSources.set(specifier, { csr, ssr });
@@ -183,32 +182,8 @@ export const virtualModules = (
     name: "kosmo:virtualModules",
     enforce: "pre",
 
-    async resolveId(source, importer, options) {
-      if (virtualSources.has(source)) {
-        return `${VIRTUAL_PREFIX}${source}`;
-      }
-
-      // File-pair variants ship the CSR file as the real module,
-      // so only the SSR graph needs a redirect.
-      if (kind !== "ssr" || !moduleAliases.size) {
-        return undefined;
-      }
-
-      if (!importer || source.startsWith(VIRTUAL_PREFIX)) {
-        return undefined;
-      }
-
-      /**
-       * Variants are keyed by absolute path, so the specifier has to go through normal resolution first -
-       * `./transport` and `_/@fetch/transport` must land on the same entry.
-       * `skipSelf` keeps this from re-entering here.
-       * */
-      const resolved = await this.resolve(source, importer, {
-        ...options,
-        skipSelf: true,
-      });
-
-      return resolved ? moduleAliases.get(resolved.id) : undefined;
+    resolveId(source) {
+      return virtualSources.has(source) ? VIRTUAL_PREFIX + source : undefined;
     },
 
     load(id) {
