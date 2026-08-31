@@ -1,14 +1,12 @@
-import { type RequestContext, store } from "./base";
-
+import { type RequestContext, store } from "{{ createImport 'libCore' 'ssr' }}";
 import { renderWrapper } from "{{ createImport 'libEntry' 'server' }}";
 
+export { default as backendApp } from "virtual:kosmo/backend-app";
+
 export { default as ssrApp } from "{{ createImport 'entry' 'server' }}";
-export { apiApp } from "{{ createImport 'lib' '@ssr/api' }}";
 
 /**
- * Wraps a render call, making the given context visible to every
- * fetch dispatch that happens during it - across await points,
- * stream chunks and parallel component data loads.
+ * Wrap a render call, making the given context visible to every component
  * */
 export const withSsrContext = <T>(
   context: RequestContext,

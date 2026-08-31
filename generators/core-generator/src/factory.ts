@@ -22,10 +22,9 @@ import { generateTsconfig } from "./tsconfig";
  * */
 export default defineGeneratorFactory((sourceFolder) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
+  const { generators } = sourceFolder.config;
 
   const start = async () => {
-    const { generators = [] } = sourceFolder.config;
-
     const { dependencies = {}, devDependencies = {} } = await import(
       resolve(sourceFolder.root, "package.json"),
       { with: { type: "json" } }
@@ -147,7 +146,7 @@ export default defineGeneratorFactory((sourceFolder) => {
 
       const types = new Set<string>(tsconfig.compilerOptions.types || []);
 
-      for (const { meta } of sourceFolder.config.generators || []) {
+      for (const { meta } of generators) {
         if (meta.jsx) {
           compilerOptions.jsx = meta.jsx;
         }
@@ -245,6 +244,7 @@ export default defineGeneratorFactory((sourceFolder) => {
     for (const [file, template] of [
       ["config.ts", templates.coreConfig],
       ["types.ts", templates.coreTypes],
+      ["ssr.ts", templates.coreSSR],
       ["index.ts", templates.coreIndex],
     ]) {
       await renderToFile(createPath.libCore(file), template, sourceFolder);
@@ -269,5 +269,19 @@ export default defineGeneratorFactory((sourceFolder) => {
     start,
     watch: generateLibFiles,
     build: generateLibFiles,
+    virtualModules() {
+      const backendGenerator = generators.some(
+        (e) => e.meta.slot === "backend",
+      );
+      return [
+        {
+          specifier: "virtual:kosmo/backend-app",
+          csr: "export default undefined;",
+          ssr: backendGenerator
+            ? `export { default } from "${createPath.api("app")}";`
+            : "export default undefined;",
+        },
+      ];
+    },
   };
 });

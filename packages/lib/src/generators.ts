@@ -4,6 +4,7 @@ import type {
   GeneratorSignature,
   ResolvedEntry,
   SourceFolder,
+  VirtualModule,
   WatcherEvent,
 } from "@kosmojs/core";
 
@@ -94,4 +95,18 @@ export const createWatchedPageRouteEntriesFilter = (
       ? entry.fileFullpath === event.file
       : false;
   };
+};
+
+/**
+ * Gather virtual modules declared by a folder's generators.
+ * Feed the result to `vitePlugins.virtualModules()`,
+ * with `kind: "ssr"` on the SSR builds and `kind: "csr"` everywhere else.
+ * */
+export const collectVirtualModules = (
+  sourceFolder: SourceFolder,
+  generators: Array<GeneratorSignature>,
+): Array<VirtualModule> => {
+  return generators.flatMap(({ factory }) => {
+    return factory(sourceFolder).virtualModules?.() || [];
+  });
 };

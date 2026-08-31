@@ -76,14 +76,24 @@ export type GeneratorFactory = {
   postBuild?: (entries: Array<ResolvedEntry>) => Promise<void>;
 
   /**
-   * Runs only on the SSR build, to update files that differ between CSR and SSR.
-   * The pattern: have all consumers import the env-sensitive value from a single file,
-   * ship a CSR default, and rewrite that one file here for SSR.
-   * e.g. the fetch generator points every fetch client at a shared transport
-   * module that exports `transport = fetch` by default; ssrBuild rewrites it to
-   * export the SSR transport instead.
+   * Modules whose content should not touch the fs.
+   * Content pottentially differs between the CSR and SSR graphs.
+   *
+   * Declared once and resolved per build by the `kosmo:virtualModules` Vite plugin,
+   * so the choice is made at resolution time and nothing written on disk.
+   * That is what lets a dev server and a production build share a project directory:
+   * neither can flip a file under the other.
    * */
-  ssrBuild?: () => Promise<void>;
+  virtualModules?: () => Array<VirtualModule>;
+};
+
+export type VirtualModule = {
+  // Bare specifier the plugin owns, e.g. "virtual:kosmo/fetch-transport"
+  specifier: string;
+  // Source served on every graph except the SSR bundle
+  csr: string;
+  // Source served on the SSR bundle
+  ssr: string;
 };
 
 /**

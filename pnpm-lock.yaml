@@ -90,6 +90,10 @@ importers:
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../packages/lib
+    devDependencies:
+      light-my-request:
+        specifier: ^6.6.0
+        version: 6.6.0
 
   generators/h3-generator:
     dependencies:
@@ -270,9 +274,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.5
         version: 19.2.5(@types/react@19.2.18)
-      path-to-regexp:
-        specifier: ^8.4.2
-        version: 8.4.2
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -301,9 +302,6 @@ importers:
       '@tanstack/solid-query':
         specifier: ^5.102.2
         version: 5.102.2(solid-js@1.9.15)
-      path-to-regexp:
-        specifier: ^8.4.2
-        version: 8.4.2
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
@@ -338,9 +336,6 @@ importers:
       hono:
         specifier: ^4.13.3
         version: 4.13.3
-      light-my-request:
-        specifier: ^6.6.0
-        version: 6.6.0
       tinyglobby:
         specifier: ^0.2.17
         version: 0.2.17
@@ -410,9 +405,6 @@ importers:
       '@tanstack/vue-query':
         specifier: ^5.102.2
         version: 5.102.2(vue@3.5.41(typescript@7.0.2))
-      path-to-regexp:
-        specifier: ^8.4.2
-        version: 8.4.2
       vue:
         specifier: ^3.5.41
         version: 3.5.41(typescript@7.0.2)

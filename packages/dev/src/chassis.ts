@@ -15,6 +15,7 @@ import {
 } from "@kosmojs/core";
 import type { DevSetup } from "@kosmojs/core/api";
 import {
+  collectVirtualModules,
   mergeConfigs,
   pathResolver,
   routesFactory,
@@ -79,6 +80,14 @@ export default async (
       const plugins = [
         vitePlugins.tsconfigPaths(sourceFolder),
         vitePlugins.nodePrefix(),
+        vitePlugins.virtualModules(
+          collectVirtualModules(sourceFolder, generators),
+          {
+            // `kind: "csr"` everywhere except the SSR bundle,
+            // which installs its own copy with `kind: "ssr"`
+            kind: "csr",
+          },
+        ),
       ];
 
       for (const generator of generators) {
@@ -206,6 +215,15 @@ export default async (
     const plugins = [
       vitePlugins.tsconfigPaths(sourceFolder),
       vitePlugins.nodePrefix(),
+      vitePlugins.virtualModules(
+        collectVirtualModules(sourceFolder, generators),
+        {
+          // The dev server is always a CSR graph - SSR runs in production builds only -
+          // so env-sensitive modules resolve to their client variants here,
+          // whatever a concurrent build is doing.
+          kind: "csr",
+        },
+      ),
     ];
 
     const frontendGenerator = generators.find(

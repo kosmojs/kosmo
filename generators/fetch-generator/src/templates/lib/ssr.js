@@ -1,27 +1,27 @@
-import type { FetchApp, NodeApp } from "@kosmojs/core";
-import type { Transport } from "@kosmojs/core/fetch";
+import backend from "virtual:kosmo/backend-app";
 
 import {
-  isFetchApp,
-  maxRedirects,
   redirectCodes,
   ssrOrigin,
   store,
-} from "./base";
+} from "{{ createImport 'libCore' 'ssr' }}";
 
-import { apiApp } from "{{ createImport 'lib' '@ssr/api' }}";
+/**
+ * Maximum redirect hops, mirroring the fetch spec limit.
+ * */
+export const maxRedirects = 5;
 
 /**
  * HeadersProvider for createTransport.
  * */
-const headersProvider = (): HeadersInit | undefined => {
+const headersProvider = () => {
   return store.getStore()?.headers;
 };
 
-const createDispatch = (app: FetchApp | NodeApp) => {
-  return isFetchApp(app)
+const createDispatch = (app) => {
+  return typeof app.fetch === "function"
     ? app.fetch
-    : async (request: Request): Promise<Response> => {
+    : async (request) => {
         const { inject } = await import("light-my-request");
 
         /**
@@ -34,8 +34,8 @@ const createDispatch = (app: FetchApp | NodeApp) => {
           ? undefined
           : Buffer.from(await request.arrayBuffer());
 
-        const result = await inject(app.callback() as never, {
-          method: request.method as never,
+        const result = await inject(app.callback(), {
+          method: request.method,
           url: url.pathname + url.search,
           headers: Object.fromEntries(request.headers),
           ...(payload?.length ? { payload } : {}),
@@ -67,7 +67,7 @@ const createDispatch = (app: FetchApp | NodeApp) => {
       };
 };
 
-const createTransport = (app: FetchApp | NodeApp): Transport => {
+const createTransport = (app) => {
   const dispatch = createDispatch(app);
 
   /**
@@ -142,10 +142,10 @@ const createTransport = (app: FetchApp | NodeApp): Transport => {
   };
 };
 
-const ssrTransport = apiApp ? createTransport(apiApp as never) : undefined;
+const ssrTransport = backend ? createTransport(backend) : undefined;
 
 export const transport = ssrTransport
-  ? async (input: RequestInfo | URL, init?: RequestInit) => {
+  ? async (input, init) => {
       try {
         const response = await ssrTransport(input, init);
         if (response?.ok) {
@@ -175,11 +175,7 @@ export const transport = ssrTransport
   : undefined; // let fetch clients pick the transport
 
 class SSRFetchError extends Error {
-  constructor([input, response, message]: [
-    input: RequestInfo | URL,
-    response: Response,
-    message: string | undefined,
-  ]) {
+  constructor([input, response, message]) {
     const pathname = pathnameOf(input);
     const status = response.status ?? "unknown";
     super(`${pathname}: ${status} [ ${message} ]`.trim());
@@ -187,7 +183,7 @@ class SSRFetchError extends Error {
   }
 }
 
-const pathnameOf = (input: RequestInfo | URL): string => {
+const pathnameOf = (input) => {
   try {
     if (typeof input === "string") {
       return new URL(input, "http://x").pathname;

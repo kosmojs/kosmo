@@ -5,6 +5,7 @@ import { styleText } from "node:util";
 import { build } from "vite";
 
 import {
+  collectVirtualModules,
   defineGeneratorFactory,
   mergeConfigs,
   pathResolver,
@@ -76,6 +77,11 @@ export default defineGeneratorFactory((sourceFolder) => {
             plugins: [
               vitePlugins.tsconfigPaths(sourceFolder),
               vitePlugins.nodePrefix(),
+              // routes bundle, not the SSR graph - client variants apply
+              vitePlugins.virtualModules(
+                collectVirtualModules(sourceFolder, generators),
+                { kind: "csr" },
+              ),
             ],
             resolve: {
               conditions: ["node"],

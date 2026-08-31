@@ -5,6 +5,7 @@ import { build } from "vite";
 
 import { createRouteResolver } from "@kosmojs/core";
 import {
+  collectVirtualModules,
   defineGeneratorFactory,
   mergeConfigs,
   pathResolver,
@@ -20,9 +21,8 @@ const RENDER_MODES = ["string", "stream"] as const;
 const DEFAULT_RENDER_MODE = RENDER_MODES[0];
 
 export default defineGeneratorFactory<Options>((sourceFolder, options) => {
-  const { generators = [], refineTypeName, ...config } = sourceFolder.config;
-
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
+  const { generators, refineTypeName, ...config } = sourceFolder.config;
 
   const { renderToFile: deployLibFile } = renderFactory({
     helpers: {
@@ -57,10 +57,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
 
       for (const [file, template] of [
         ["ssr.ts", templates.ssr],
-        ["@ssr/api.ts", templates.ssrApi],
         ["@ssr/__kosmo_ssr_bundle.ts", templates.ssrBundle],
-        ["@ssr/base.ts", templates.ssrBase],
-        ["@ssr/fetch.ts", templates.ssrFetch],
         ["@ssr/routes.ts", templates.ssrRotues],
       ]) {
         await deployLibFile(createPath.lib(file), template, context);
@@ -78,19 +75,18 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
       const plugins = [
         vitePlugins.tsconfigPaths(sourceFolder),
         vitePlugins.nodePrefix(),
+        vitePlugins.virtualModules(
+          collectVirtualModules(sourceFolder, generators),
+          {
+            // The SSR graph is the only one that resolves the SSR side of every env-sensitive module -
+            // the fetch transport, the query client.
+            // The choice is made here, by the plugin, and never written to disk,
+            // so the client build above and any concurrently running dev server keep the CSR variants,
+            // no matter what order things run in.
+            kind: "ssr",
+          },
+        ),
       ];
-
-      /**
-       * Before the SSR bundle is built, give each generator a chance to rewrite its
-       * env-sensitive files for the server. The CSR build shipped the client defaults
-       * (e.g. transport = fetch); ssrBuild swaps in the SSR variants
-       * (e.g. the SSR transport) in place.
-       * Runs only here, on the SSR pass - never on the client build -
-       * so the client keeps its defaults and only the server copy is patched.
-       * */
-      for (const generator of generators) {
-        await generator.factory(sourceFolder).ssrBuild?.();
-      }
 
       // INFO: === Build the SSR client bundle using `entry/server` as the entry point ===
       await build(

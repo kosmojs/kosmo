@@ -1,8 +1,7 @@
-import {
-  defaults,
-  type ResolvedEntry,
-  type ResolvedTypeSignature,
-  type ValidationTarget,
+import type {
+  ResolvedEntry,
+  ResolvedTypeSignature,
+  ValidationTarget,
 } from "@kosmojs/core";
 import { HTTPMethods } from "@kosmojs/core/fetch";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
@@ -19,7 +18,7 @@ import * as templates from "./templates";
 export default defineGeneratorFactory((sourceFolder) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
-  const { renderToFile: deployLibFile } = renderFactory({
+  const { render: renderLibTpl, renderToFile: deployLibFile } = renderFactory({
     helpers: {
       ...createImportHelpers({ origin: "lib" }),
       ...routeRenderHelpers(),
@@ -138,8 +137,6 @@ export default defineGeneratorFactory((sourceFolder) => {
         // fetch generator always runs before other generators
         // so it is safe to re-initialize this file before specialized generators update it.
         ["unwrap.ts", templates.unwrap],
-        ["@fetch/transport.ts", templates.libFetchTransport],
-        ["@fetch/index.ts", templates.libFetchIndex],
       ]) {
         await deployLibFile(createPath.lib(file), template, {});
       }
@@ -161,15 +158,17 @@ export default defineGeneratorFactory((sourceFolder) => {
       await generateLibFiles(entries, entries);
     },
 
-    async ssrBuild() {
-      for (const [file, template] of [
-        [
-          "@fetch/transport.ts",
-          `export { transport } from "${defaults.libPrefix}/@ssr/fetch";`,
-        ],
-      ]) {
-        await deployLibFile(createPath.lib(file), template, {});
-      }
+    virtualModules() {
+      return [
+        {
+          // The transport must differ between the browser and the SSR bundle
+          specifier: "virtual:kosmo/fetch-transport",
+          // `undefined` on the client, so fetch clients fall back to global fetch
+          csr: `export const transport = undefined;`,
+          // an in-process dispatch into the api app on the server
+          ssr: renderLibTpl(templates.ssr, {}),
+        },
+      ];
     },
   };
 });

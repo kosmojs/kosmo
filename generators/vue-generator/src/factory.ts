@@ -22,7 +22,7 @@ import type { Options } from "./types";
 export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
-  const { renderToFile: deployLibFile } = renderFactory({
+  const { render: renderLibTpl, renderToFile: deployLibFile } = renderFactory({
     helpers: {
       ...createImportHelpers({ origin: "lib" }),
       ...routeRenderHelpers(),
@@ -175,14 +175,17 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
       await generateLibFiles(entries);
     },
 
-    async ssrBuild() {
-      await deployLibFile(
-        createPath.lib("query.ts"),
-        options?.tanstack?.query
-          ? templates.libQuerySSR
-          : "/** tanstack query disabled */",
-        { ssrBundle: true },
-      );
+    virtualModules() {
+      return options?.tanstack?.query
+        ? [
+            {
+              // The tsq client must differ between the browser and the SSR bundle
+              specifier: "virtual:kosmo/tsq-client",
+              csr: renderLibTpl(templates.libQueryCSR, {}),
+              ssr: renderLibTpl(templates.libQuerySSR, {}),
+            },
+          ]
+        : [];
     },
   };
 });

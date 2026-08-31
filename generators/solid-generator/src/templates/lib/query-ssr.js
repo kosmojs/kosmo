@@ -1,8 +1,8 @@
-import { QueryClient, type QueryClientConfig } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/solid-query";
 
-import { store } from "{{ createImport 'lib' '@ssr/base' }}";
+import { store } from "{{ createImport 'libCore' 'ssr' }}";
 
-export const createQueryClient = (options?: QueryClientConfig): QueryClient => {
+export const createQueryClient = (options) => {
   const client = new QueryClient(options);
   const ctx = store?.getStore();
   if (ctx) {
@@ -11,7 +11,7 @@ export const createQueryClient = (options?: QueryClientConfig): QueryClient => {
   return client;
 };
 
-export const getQueryClient = (): QueryClient => {
+export const getQueryClient = () => {
   const ctx = store?.getStore();
   if (!ctx) {
     throw new Error("getQueryClient(): called outside an SSR request scope");
@@ -19,5 +19,5 @@ export const getQueryClient = (): QueryClient => {
   if (!ctx.tsqClient) {
     ctx.tsqClient = new QueryClient();
   }
-  return ctx.tsqClient as QueryClient;
+  return ctx.tsqClient;
 };

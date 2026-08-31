@@ -1,5 +1,21 @@
 declare const KOSMO_PRODUCTION_BUILD: boolean;
 
+declare module "virtual:kosmo/backend-app" {
+  import type { FetchApp, NodeApp } from "@kosmojs/core";
+  const backend: FetchApp | NodeApp | undefined;
+  export default backend;
+}
+
+declare module "virtual:kosmo/fetch-transport" {
+  import type { Transport } from "@kosmojs/core/fetch";
+  /**
+   * Undefined on the client, where fetch clients fall back to global fetch.
+   * On the SSR bundle it dispatches straight into the backend app, in process.
+   * Supplied by the `kosmo:virtualModules` Vite plugin - there is no file.
+   * */
+  export const transport: Transport | undefined;
+}
+
 /**
  * Enhances base TypeScript types with JSON Schema validation constraints.
  * Allows declaring refined types that carry validation metadata for runtime

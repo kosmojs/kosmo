@@ -9,7 +9,8 @@ export { default as libPageSamplesPage } from "#templates/lib/pageSamples/page.h
 export { default as libPageSamplesStyles } from "#templates/lib/pageSamples/styles.css";
 export { default as libPageSamplesWelcome } from "#templates/lib/pageSamples/welcome.hbs";
 export { default as libQuery } from "#templates/lib/query";
-export { default as libQuerySSR } from "#templates/lib/query-ssr";
+export { default as libQueryCSR } from "#templates/lib/query-csr.js";
+export { default as libQuerySSR } from "#templates/lib/query-ssr.js";
 export { default as libRouter } from "#templates/lib/router";
 export { default as libSolid } from "#templates/lib/solid";
 export { default as libUnwrap } from "#templates/lib/unwrap";

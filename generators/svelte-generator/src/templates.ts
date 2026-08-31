@@ -10,7 +10,8 @@ export { default as libPageSamplesStyles } from "#templates/lib/pageSamples/styl
 export { default as libPageSamplesWelcome } from "#templates/lib/pageSamples/welcome.hbs";
 export { default as libParams } from "#templates/lib/params.hbs";
 export { default as libQuery } from "#templates/lib/query";
-export { default as libQuerySSR } from "#templates/lib/query-ssr";
+export { default as libQueryCSR } from "#templates/lib/query-csr.js";
+export { default as libQuerySSR } from "#templates/lib/query-ssr.js";
 export { default as libRouter } from "#templates/lib/router";
 export { default as libSvelte } from "#templates/lib/svelte";
 export { default as libUse } from "#templates/lib/use";

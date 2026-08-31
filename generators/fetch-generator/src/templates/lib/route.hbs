@@ -1,7 +1,7 @@
 import fetchFactory, { join } from "@kosmojs/core/fetch";
 
 import { base, apiBase, apiRouteMap } from "{{ createImport 'libCore' }}";
-import { transport } from "{{ createImport 'lib' '@fetch' }}";
+import { transport } from "virtual:kosmo/fetch-transport";
 
 import {
   type MaybeWrapped,

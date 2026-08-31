@@ -4,7 +4,7 @@ import { isAbsolute, join, parse } from "node:path";
 
 import type { Plugin } from "vite";
 
-import { defaults, type SourceFolder } from "@kosmojs/core";
+import { defaults, type SourceFolder, type VirtualModule } from "@kosmojs/core";
 
 import { pathResolver } from "./paths";
 
@@ -148,9 +148,81 @@ const nodePrefix = (): Plugin => {
   };
 };
 
+/**
+ * Resolves the CSR/SSR variant of env-sensitive modules.
+ *
+ * WHY THIS EXISTS
+ * ---------------
+ * A handful of generated modules must differ between the client graph and the SSR bundle -
+ * the fetch transport (a no-op in the browser, an in-process dispatch on the server)
+ * and the TanStack Query client (a singleton in the browser, per-request on the server).
+ *
+ * Every build installs this plugin; but only the SSR bundle installs it with `kind: "ssr"`.
+ * Nothing is written, so concurrent processes cannot disturb each other.
+ *
+ * Generators declare their modules via `factory.virtualModules()`.
+ * */
+export const virtualModules = (
+  modules: Array<VirtualModule>,
+  { kind }: { kind: "csr" | "ssr" },
+): Plugin => {
+  /**
+   * Rollup's / Rolldown's convention for ids owned by a plugin:
+   * the NUL prefix keeps other plugins and Node resolution from touching them.
+   * */
+  const VIRTUAL_PREFIX = "\0";
+
+  const virtualSources = new Map<string, { csr: string; ssr: string }>();
+  const moduleAliases = new Map<string, string>();
+
+  for (const { specifier, csr, ssr } of modules) {
+    virtualSources.set(specifier, { csr, ssr });
+  }
+
+  return {
+    name: "kosmo:virtualModules",
+    enforce: "pre",
+
+    async resolveId(source, importer, options) {
+      if (virtualSources.has(source)) {
+        return `${VIRTUAL_PREFIX}${source}`;
+      }
+
+      // File-pair variants ship the CSR file as the real module,
+      // so only the SSR graph needs a redirect.
+      if (kind !== "ssr" || !moduleAliases.size) {
+        return undefined;
+      }
+
+      if (!importer || source.startsWith(VIRTUAL_PREFIX)) {
+        return undefined;
+      }
+
+      /**
+       * Variants are keyed by absolute path, so the specifier has to go through normal resolution first -
+       * `./transport` and `_/@fetch/transport` must land on the same entry.
+       * `skipSelf` keeps this from re-entering here.
+       * */
+      const resolved = await this.resolve(source, importer, {
+        ...options,
+        skipSelf: true,
+      });
+
+      return resolved ? moduleAliases.get(resolved.id) : undefined;
+    },
+
+    load(id) {
+      return id.startsWith(VIRTUAL_PREFIX)
+        ? virtualSources.get(id.slice(VIRTUAL_PREFIX.length))?.[kind]
+        : undefined;
+    },
+  };
+};
+
 export const vitePlugins = {
   tsconfigPaths,
   nodePrefix,
+  virtualModules,
 };
 
 const isFile = async (path: string) => {

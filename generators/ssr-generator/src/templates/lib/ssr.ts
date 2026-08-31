@@ -16,10 +16,9 @@ import { glob } from "tinyglobby";
 
 import type { FetchApp, NodeApp, SSRSetup } from "@kosmojs/core";
 
-import { isFetchApp, redirectCodes, ssrOrigin } from "./@ssr/base";
-
 import { routeMap } from "{{ createImport 'lib' '@ssr/routes' }}";
 import { apiBase, base } from "{{ createImport 'libCore' }}";
+import { redirectCodes, ssrOrigin } from "{{ createImport 'libCore' 'ssr' }}";
 
 const ROOT = import.meta.dirname;
 const HEAD_CLOSE_PATTERN = /<\/head\s*>/i;
@@ -307,7 +306,7 @@ const loadAssets = async (
 type NodeListener = (req: IncomingMessage, res: ServerResponse) => void;
 
 const createNodeListener = (app: FetchApp | NodeApp): NodeListener => {
-  return isFetchApp(app)
+  return typeof (app as FetchApp).fetch === "function"
     ? getRequestListener((app as FetchApp).fetch)
     : (app as NodeApp).callback();
 };
@@ -324,9 +323,9 @@ export const startServer = async ({
   }
 
   const {
-    apiApp,
+    backendApp,
   }: {
-    apiApp: FetchApp | NodeApp;
+    backendApp: FetchApp | NodeApp;
   } = await import(`${ROOT}/app.js`);
 
   if (sock) {
@@ -350,8 +349,8 @@ export const startServer = async ({
 
   const ssrListener = createNodeListener(ssrApp as never);
 
-  const apiListener = apiApp
-    ? createNodeListener(apiApp as never)
+  const apiListener = backendApp
+    ? createNodeListener(backendApp as never)
     : async () => {};
 
   const gatewayListener: NodeListener = (req, res) => {
