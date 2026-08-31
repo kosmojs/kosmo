@@ -38,9 +38,14 @@ export const renderToFile = async <Context = object>(
   file: string,
   template: string,
   context: Context,
-  options?: RenderOptions & Pick<FactoryOptions, "overwrite">,
+  options?: RenderOptions &
+    Pick<FactoryOptions, "overwrite"> & {
+      render?: typeof render;
+    },
 ): Promise<void> => {
-  const content = render(template, context, options);
+  const content = options?.render
+    ? options.render(template, context, options)
+    : render(template, context, options);
 
   /**
    * Two fs calls (exists + read) are worth it to avoid touching the file
