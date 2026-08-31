@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 
@@ -9,7 +9,7 @@ import type {
   RouteResolverCache,
   RouteResolverCacheFactory,
 } from "@kosmojs/core";
-import { pathExists, pathResolver } from "@kosmojs/lib";
+import { pathExists, pathResolver, renderToFile } from "@kosmojs/lib";
 
 /**
  * Read the installed package.json at runtime to get the actual version.
@@ -97,8 +97,12 @@ export const cacheFactory: RouteResolverCacheFactory = (
 
       const value = { ...cache, hash, referencedFiles };
 
-      await mkdir(dirname(cacheFile), { recursive: true });
-      await writeFile(cacheFile, JSON.stringify(value, null, 2), "utf8");
+      /**
+       * use renderToFile to skip the write when nothing changed.
+       * Two kosmo processes on one project resolve the same routes to the same bytes,
+       * so this keeps them from rewriting each other's cache files.
+       * */
+      await renderToFile(cacheFile, JSON.stringify(value, undefined, 2), {});
 
       return value;
     },
