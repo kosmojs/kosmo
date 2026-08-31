@@ -509,16 +509,17 @@ export default defineConfig({
 `KosmoJS` generates `entry/server.ts` - your SSR orchestration file.
 Critical CSS is extracted and inlined automatically; remaining styles load asynchronously.
 
-Build and run:
+See it running - `pnpm preview` builds and serves the production output, and rebuilds whenever you save:
 
 ```sh
-pnpm build
-node dist/front/ssr/server.js -p 4556
+pnpm preview
 ```
 
-The API server and SSR server are bundled separately - deploy, scale, and run them independently.
+For deployment, `pnpm build` writes `dist/run.js`, which serves every source folder from one process.
+Folders are also bundled separately, so they can be deployed, scaled and run independently when that suits you better.
 
-[Details&nbsp;›](/frontend/server-side-render)
+[Details&nbsp;›](/frontend/server-side-render) ·
+[Dev / Build / Run&nbsp;›](/dev-build-run/building-for-production)
 
 ## Add More Source Folders
 
@@ -666,4 +667,4 @@ lives in `src/` versus `lib/`, and what each alias resolves to.
 
 **Core patterns:** [Routing](/routing/intro) · [Validation](/validation/intro) · [Middleware](/backend/middleware) · [Layouts](/frontend/routing) · [Fetch Clients](/fetch/start)
 
-**Advanced:** [VRefine](/validation/refine) · [OpenAPI](/openapi) · [Production Builds](/backend/building-for-production)
+**Advanced:** [VRefine](/validation/refine) · [OpenAPI](/openapi) · [Production Builds](/dev-build-run/building-for-production)

@@ -14,7 +14,7 @@ Once that clicks, the rest of the docs read much faster.
 
 ```txt
 my-app/
-├── package.json          → project settings: distDir, devPort, scripts
+├── package.json          → project settings: distDir, devPort, previewPort, scripts
 ├── tsconfig.json         → { "extends": "./lib/tsconfig.json" }
 │
 ├── src/                  ✍️  YOU WRITE THIS
@@ -27,6 +27,7 @@ my-app/
 │   └── admin/            →   generated code for src/admin
 │
 ├── dist/                 📦 BUILD OUTPUT
+│   ├── run.js            → runs every folder, one process
 │   ├── front/
 │   └── admin/
 │
@@ -176,8 +177,12 @@ dist/front/
     └── assets/
 ```
 
-What you actually deploy depends on the folder's rendering mode -
-and for SSR folders it is **not** everything in the directory. [Details&nbsp;›](/backend/building-for-production#what-to-deploy)
+The simplest way to run all of this is `node dist/run.js`, which dispatches across every folder in one process.
+[Details&nbsp;›](/dev-build-run/building-for-production#one-entry-point-for-the-whole-project)
+
+Folders can also be deployed separately, in which case what you deploy depends on the folder's rendering mode -
+and for SSR folders it is **not** everything in the directory.
+[Details&nbsp;›](/dev-build-run/building-for-production#what-to-deploy)
 
 ## Multiple Folders
 

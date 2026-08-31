@@ -92,11 +92,11 @@ Adding a folder pulls in framework-specific dependencies that need to be install
 
 #### How do I start the dev server and what's the default port?
 `pnpm dev` (all folders) or `pnpm dev front` (one folder). Default port is `4556`.
-[Details&nbsp;›](/backend/development-workflow#starting-the-dev-server)
+[Details&nbsp;›](/dev-build-run/development-workflow#starting-the-dev-server)
 
 #### How do I change the dev port?
 It's the `devPort` value in `package.json`.
-[Details&nbsp;›](/backend/development-workflow#starting-the-dev-server)
+[Details&nbsp;›](/dev-build-run/development-workflow#starting-the-dev-server)
 
 #### How does this compare to Next.js / Nuxt / SolidStart / tRPC / a hand-rolled Vite setup?
 Unlike Next/Nuxt/SolidStart it doesn't choose your frontend or own your deploy model;
@@ -141,11 +141,11 @@ and every folder sees it immediately. No publishing, no workspace protocols.
 Yes - `pnpm build front` builds just that folder. Folders develop together as one project,
 but can be built all at once or one at a time, and each build is a self-contained entity you
 can deploy independently.
-[Details&nbsp;›](/backend/building-for-production)
+[Details&nbsp;›](/dev-build-run/building-for-production)
 
 #### How do I run/build all folders vs one?
 `pnpm dev` / `pnpm build` for all; append a folder name (`pnpm dev front`, `pnpm build admin`) for one.
-[Details&nbsp;›](/backend/development-workflow#starting-the-dev-server)
+[Details&nbsp;›](/dev-build-run/development-workflow#starting-the-dev-server)
 
 #### Do routes/types leak between folders?
 No - generated types and utilities are scoped per folder.
@@ -167,7 +167,7 @@ there is no project-wide kosmo config and **no separate `vite.config.ts`**.
 it accepts everything Vite's `UserConfig` accepts (`plugins`, `resolve`, `css`, `define`, ...) alongside the KosmoJS options.
 A few Vite keys are excluded because KosmoJS derives them from the folder layout:
 `root`, `base`, `cacheDir`, `mode`, `builder`, `future`, `legacy`.
-Project-wide settings (`distDir`, `devPort`, scripts) live in the root `package.json`.
+Project-wide settings (`distDir`, `devPort`, `previewPort`, scripts) live in the root `package.json`.
 [Details&nbsp;›](/essentials/config)
 
 #### What options does a source folder config take?
@@ -477,7 +477,7 @@ That's normal for a backend - it should be stateless so it can restart and scale
 
 Keep persistent state in a real store (a database, even a local SQLite file),
 and close connections in `teardownHandler` so they don't leak across reloads.
-[Details&nbsp;›](/backend/development-workflow#hot-reload-vs-hmr)
+[Details&nbsp;›](/dev-build-run/development-workflow#hot-reload-vs-hmr)
 
 ### Backend: Hono / H3 / Koa
 
@@ -1243,6 +1243,7 @@ mode), or add it later by registering `ssrGenerator()` in `kosmo.config.ts` and 
 No - in dev, Vite handles all requests with HMR and CSR for immediate feedback.
 SSR activates exclusively in production builds.
 (This commonly surprises Next/TanStack migrators who expect dev to mirror prod rendering.)
+To see server-rendered output locally, run `pnpm preview`.
 [Details&nbsp;›](/frontend/server-side-render#development-experience)
 
 #### renderToString vs renderToStream?
@@ -1284,9 +1285,9 @@ folders render static content and don't accept the streaming mode.
 [Details&nbsp;›](/frontend/server-side-render#selecting-the-render-mode)
 
 #### How do I build and run the SSR bundle, and on which runtimes?
-`pnpm build` produces `dist/<folder>/ssr/server.js`. Run it with `node`, `bun`,
-or `deno run -A` (`... -p 4556`). Unix sockets are supported across all three (`-s /tmp/app.sock`).
-It uses `node:http`, natively supported by all three runtimes.
+`pnpm build` produces `dist/<folder>/ssr/server.js`, and `dist/run.js` if you'd rather run every folder from one entry.
+Both work with `node`, `bun`, or `deno run -A` (`... -p 4556`); Unix sockets are supported across all three (`-s /tmp/app.sock`).
+They use `node:http`, natively supported by all three runtimes.
 [Details&nbsp;›](/frontend/server-side-render#runtime)
 
 #### Can I serve the SSR static assets so they don't hit the SSR server?
@@ -1320,16 +1321,40 @@ bundle), so there's no network hop, just the full validation/handler chain. A fe
 
 #### How do I build all folders vs one?
 `pnpm build` (all) or `pnpm build front` (one).
-[Details&nbsp;›](/backend/building-for-production)
+[Details&nbsp;›](/dev-build-run/building-for-production)
+
+#### How do I run the production build locally?
+`pnpm preview` (all) or `pnpm preview front` (one). It builds, serves the result through `dist/run.js`,
+and rebuilds on every change.
+Server-rendered pages, bundled assets and the production validation policy - the real thing, not the dev server.
+[Details&nbsp;›](/dev-build-run/production-preview)
+
+#### Does preview have HMR?
+No. A change triggers a full rebuild and a full page reload.
+HMR patches modules in a running graph, which a production bundle doesn't have -
+and a preview you can't trust is worse than none.
+Use `pnpm dev` to iterate, `pnpm preview` to verify.
+[Details&nbsp;›](/dev-build-run/production-preview#hot-reload-not-hmr)
+
+#### Can I run preview and the dev server at the same time?
+Yes - preview listens on `previewPort` (`4558` by default), separate from `devPort`.
+[Details&nbsp;›](/dev-build-run/production-preview)
 
 #### What's the build output layout?
-`dist/<folder>/` with `api/` (`app.js` factory + `server.js` bundled server),
-`client/` (`assets/` + `index.html`), and `ssr/` (`app.js` + `server.js` + `assets/` folder, only when SSR is enabled).
-[Details&nbsp;›](/backend/building-for-production#build-output)
+`dist/run.js` (dispatcher over every folder) plus one directory per folder:
+`api/` (`app.js` factory + `server.js` bundled server), `client/` (`assets/` + `index.html`),
+and `ssr/` (`app.js` + `server.js` + `assets/` folder, only when SSR is enabled).
+[Details&nbsp;›](/dev-build-run/building-for-production#build-output)
 
-#### What's the simplest way to run the API in production?
-`node dist/front/api/server.js`. For more control, use the app factory at `dist/<folder>/api/app.js`.
-[Details&nbsp;›](/backend/building-for-production#running-the-api-server)
+#### What's the simplest way to run my app in production?
+`node dist/run.js -p 4556` - one process serving every source folder, dispatched by `base` + `apiBase`.
+It's built on `node:http`, so `bun` and `deno run -A` work too.
+[Details&nbsp;›](/dev-build-run/building-for-production#one-entry-point-for-the-whole-project)
+
+#### Can I run a single folder's API instead?
+Yes - `node dist/front/api/server.js`. For more control, use the app factory at `dist/<folder>/api/app.js`.
+Useful when folders have separate lifecycles.
+[Details&nbsp;›](/dev-build-run/building-for-production#running-the-api-server)
 
 #### How do I mount the app factory per runtime?
 - *Hono*: `app.fetch` is a Web Fetch handler - on Node use `getRequestListener` from `@hono/node-server`.
@@ -1337,14 +1362,14 @@ Deno via `Deno.serve`, Bun via `Bun.serve`.
 - *H3*: `app.fetch` is a Web Fetch handler - on Node use `toNodeHandler` from `h3/node` (then createServer).
 Deno via `Deno.serve`, Bun via `Bun.serve`.
 - *Koa*: On Node use `app.listen()`. On Deno/Bun use `app.callback()` via a compat layer, not their native serve APIs.
-[Details&nbsp;›](/backend/building-for-production#running-the-api-server)
+[Details&nbsp;›](/dev-build-run/building-for-production#running-the-api-server)
 
 #### Why are the API and SSR servers separate?
 They're built as separate bundles so you can deploy, scale, and run them independently. But the
 SSR bundle already includes the API and serves it on the same port, so an SSR deployment doesn't
 need a separate API process. Running the API server on its own is only needed for CSR folders,
 where there's no SSR bundle to carry it.
-[Details&nbsp;›](/backend/building-for-production#build-output)
+[Details&nbsp;›](/dev-build-run/building-for-production#build-output)
 
 ### OpenAPI
 
@@ -1379,34 +1404,34 @@ Point Swagger UI, Redoc, or Stoplight Elements at the generated file.
 #### What happens when the dev server starts?
 Vite compiles `api/app.ts`; the dev server serves both client pages and your API routes;
 requests are routed between Vite and your API; a file watcher monitors API files for changes.
-[Details&nbsp;›](/backend/development-workflow#what-happens-on-start)
+[Details&nbsp;›](/dev-build-run/development-workflow#what-happens-on-start)
 
 #### What are the api/dev.ts hooks?
 `requestHandler` (returns the API request handler) and `teardownHandler`
 (runs before each API reload).
-[Details&nbsp;›](/backend/development-workflow#api-dev-ts)
+[Details&nbsp;›](/dev-build-run/development-workflow#api-dev-ts)
 
 #### How do I add custom request routing (e.g. WebSockets)?
 Override `requestHandler` in `api/dev.ts` for custom dispatch, WebSocket handling,
 multi-handler setups, etc.
-[Details&nbsp;›](/backend/development-workflow#api-dev-ts)
+[Details&nbsp;›](/dev-build-run/development-workflow#api-dev-ts)
 
 #### Why are my DB connections leaking during development?
 Frequent rebuilds can exhaust connections. Close connections and release resources
 in `teardownHandler`, which runs before each reload.
-[Details&nbsp;›](/backend/development-workflow#api-dev-ts)
+[Details&nbsp;›](/dev-build-run/development-workflow#api-dev-ts)
 
 #### How do I inspect registered routes and their middleware?
 Pass the `debug` option to `appFactory` in `api/app.ts`:
 `debug: true` prints each route's path, methods, middleware chain (by slot), and handler.
 For targeted output pass one of `"headline"` / `"methods"` / `"middleware"` / `"handler"`,
 or pass a function `debug(log, route)` for a custom logger - `log` carries all four parts plus `full`.
-[Details&nbsp;›](/backend/development-workflow#inspecting-routes)
+[Details&nbsp;›](/dev-build-run/development-workflow#inspecting-routes)
 
 #### Why should I name my middleware functions?
 Named functions print by name in the debug output; anonymous ones print only their first line,
 which is much harder to read.
-[Details&nbsp;›](/backend/development-workflow#inspecting-routes)
+[Details&nbsp;›](/dev-build-run/development-workflow#inspecting-routes)
 
 #### How does validation generation performance scale?
 With type complexity - simple routes are near-instant, deep hierarchies with many dependencies
@@ -1472,7 +1497,7 @@ No platform lock-in. It's a standard Node/Vite app -
 deploy the bundled servers to Node/Bun/Deno/edge yourself.
 You can still deploy to Vercel as a Node app, but there are no Vercel-specific features
 (and no dependence on them).
-[Details&nbsp;›](/backend/building-for-production#running-the-api-server)
+[Details&nbsp;›](/dev-build-run/building-for-production#running-the-api-server)
 
 #### What does it give me over Vite + React Router + Hono wired by hand?
 Directory routing for both sides, generated runtime validators from TS types,
@@ -1747,7 +1772,7 @@ and methods together with shared types.
 With Hono and H3 the API runs on Node/Deno/Bun/Cloudflare Workers and edge platforms unchanged (`app.fetch`).
 Koa runs via the `node:http` compat layer. There's no automatic serverless/edge function packaging like Next -
 you run the bundled server or wire `app.fetch` into an edge runtime yourself.
-[Details&nbsp;›](/backend/building-for-production#running-the-api-server)
+[Details&nbsp;›](/dev-build-run/building-for-production#running-the-api-server)
 
 #### Edge middleware (`middleware.ts`) vs cascading `use.ts`?
 There's no global edge-middleware file or client-route interception layer.
@@ -1882,10 +1907,10 @@ plus standard Vite config. There's no `app/` vs `pages/` debate - you're in `src
 
 #### Output vs `.next/`, and a `next start` equivalent?
 `dist/<folder>/` with `api/`, `client/`, and `ssr/`.
-Run the bundled server: `node dist/front/api/server.js` (API)
-or `node dist/front/ssr/server.js -p 4556` (SSR).
+Run `node dist/run.js -p 4556` for the whole project, or a single folder's bundled server:
+`node dist/front/api/server.js` (API) or `node dist/front/ssr/server.js -p 4556` (SSR).
 No adapter system - Hono/H3 via native runtime servers, Koa via `node:http`.
-[Details&nbsp;›](/backend/building-for-production#build-output)
+[Details&nbsp;›](/dev-build-run/building-for-production#build-output)
 
 #### `next/image` / `next/font` / `next/link` / `next/head` equivalents?
 A generated typed `Link` exists. Head injection is via MDX frontmatter and the SSR `head`.
@@ -1965,7 +1990,8 @@ so a param like `id` may be undefined there.
 SSR only runs in production builds; dev is always Vite CSR + HMR
 regardless of whether `ssrGenerator()` is registered.
 Don't reason about "the SSR code path" while looking at the dev server -
-the server entry (`renderToString`/`renderToStream`) executes only after `pnpm build`.
+the server entry (`renderToString`/`renderToStream`) executes only in a production build.
+Use `pnpm preview` to look at the real thing.
 
 #### A9. For numeric constraints, is an integer required?
 Plain `number` allows floats - use `VRefine<number, { minimum: 1, multipleOf: 1 }>`

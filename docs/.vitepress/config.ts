@@ -252,14 +252,6 @@ export default defineConfig({
               text: "Custom Templates",
               link: "/backend/custom-templates",
             },
-            {
-              text: "Development Workflow",
-              link: "/backend/development-workflow",
-            },
-            {
-              text: "Building for Production",
-              link: "/backend/building-for-production",
-            },
           ],
         },
         {
@@ -401,6 +393,25 @@ export default defineConfig({
               text: "Utilities",
               docFooterText: "Fetch Utilities",
               link: "/fetch/utilities",
+            },
+          ],
+        },
+        {
+          text: "Dev / Build / Run",
+          collapsed: false,
+          items: [
+            {
+              text: "Development Workflow",
+              docFooterText: "Development Workflow",
+              link: "/dev-build-run/development-workflow",
+            },
+            {
+              text: "Production Preview",
+              link: "/dev-build-run/production-preview",
+            },
+            {
+              text: "Building for Production",
+              link: "/dev-build-run/building-for-production",
             },
           ],
         },

@@ -5,7 +5,7 @@ description: Complete reference for kosmo.config.ts - source folder options, the
 head:
   - - meta
     - name: keywords
-      content: kosmo.config.ts, defineConfig, generators, apiBase, base url, devPort, distDir,
+      content: kosmo.config.ts, defineConfig, generators, apiBase, base url, devPort, previewPort, distDir,
         vite config, reactGenerator, ssrGenerator, openapiGenerator, typeboxGenerator, refineTypeName
 ---
 
@@ -398,9 +398,11 @@ A few settings are project-wide rather than per-folder, and live in the root `pa
   "type": "module",
   "distDir": "dist", // [!code hl:2]
   "devPort": 4556,
+  "previewPort": 4558,
   "scripts": {
     "dev": "kosmo serve",
     "build": "kosmo build",
+    "preview": "kosmo preview",
     "typecheck": "kosmo typecheck",
     "folder": "kosmo folder"
   }
@@ -411,11 +413,15 @@ A few settings are project-wide rather than per-folder, and live in the root `pa
 |---|---|---|
 | `distDir` | `"dist"` | Build output directory for every folder |
 | `devPort` | `4556` | Port the dev server listens on |
+| `previewPort` | `4558` | Port [`kosmo preview`](/dev-build-run/production-preview) listens on |
 
 > Changing `distDir` also means updating `.gitignore`, which the scaffolder points at the default `/dist/`.
 
-Three scripts taking optional folder names - `pnpm dev front`, `pnpm build admin`,
-`pnpm typecheck admin front` - and act on every source folder when given none.
+Four scripts take optional folder names -
+`pnpm dev front`, `pnpm build admin`, `pnpm preview front`, `pnpm typecheck admin front` -
+and act on every source folder when given none.
+
+`previewPort` is separate from `devPort` so preview and the dev server can run at the same time.
 
 ## TypeScript Config
 

@@ -41,11 +41,11 @@ export default defineConfig({
 
 `pnpm dev` is **always** Vite + HMR + client-side rendering, whether or not SSR enabled.
 
-To see, test or debug anything server-rendered you must build first:
+To see, test or debug anything server-rendered, use [`kosmo preview`](/dev-build-run/production-preview) -
+it serves the production build and rebuilds on change:
 
 ```sh
-pnpm build front
-node dist/front/ssr/server.js -p 4556
+pnpm preview front
 ```
 
 This trips up people arriving from Next/Nuxt/TanStack Start, where dev mirrors prod rendering.
@@ -395,16 +395,19 @@ Asset filenames are content-hashed by Vite, so they are safe to cache indefinite
 
 ## Testing / Debugging SSR
 
-Because SSR never runs under `pnpm dev`, the loop for anything server-rendered is build-then-run:
+Because SSR never runs under `pnpm dev`, anything server-rendered is checked against the production build.
+[`kosmo preview`](/dev-build-run/production-preview) does the build for you and rebuilds whenever you save:
 
 ```sh
-pnpm build front
-node dist/front/ssr/server.js -p 4556
+pnpm preview front
 ```
 
-A few things that make that loop less painful:
+Preview listens on `previewPort` (`4558` by default), so it runs alongside
+`pnpm dev` rather than replacing it - keep both open and compare.
 
-- **Build one folder.** `pnpm build front` skips every other source folder.
+A few things that make debugging less painful:
+
+- **Preview one folder.** `pnpm preview front` skips every other source folder.
 - **Confirm you are actually seeing SSR.** View source (not the inspector):
 a server-rendered page arrives with real markup in `<div id="app">`.
 If it arrives empty, the render was skipped or it fell back to CSR.
@@ -473,9 +476,13 @@ SSR activates exclusively in production builds. During development:
 - Vite handles all requests with HMR
 - Client-side rendering provides immediate feedback
 
+When you need the server-rendered page, run [`pnpm preview`](/dev-build-run/production-preview) -
+the production build, rebuilt on every save, on its own port so it sits alongside `pnpm dev`.
+
 ## Production Guidelines
 
-- **Test locally before deploying.** Always verify your production bundle renders correctly before pushing to live servers.
+- **Test locally before deploying.** Always verify your production bundle renders correctly before pushing to live servers -
+`pnpm preview` exists for exactly this.
 - **Use streaming for large pages.** Applications with substantial HTML or complex data-fetching chains benefit from `renderToStream` -
 users see content faster as it arrives progressively.
 - **Monitor process resources.** SSR keeps Node.js processes running continuously. Track memory consumption and implement error handling to prevent leaks.
