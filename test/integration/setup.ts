@@ -102,6 +102,7 @@ export const setupTestProject = async (
     config: {
       base: baseVariants[Math.floor(Math.random() * baseVariants.length)],
       apiBase: "/api",
+      generators: [],
     },
     root: projectRoot,
     distDir: "dist",
@@ -111,7 +112,9 @@ export const setupTestProject = async (
     root: projectRoot,
     sourceFolders: [sourceFolder],
     command: "serve",
+    distDir: sourceFolder.distDir,
     devPort,
+    previewPort: devPort + 1,
   };
 
   let closeServer: () => Promise<void> | undefined;

@@ -4,6 +4,7 @@ import { BACKENDS, FRAMEWORKS } from "@kosmojs/core";
 
 export type PackageJSON = {
   devPort?: number;
+  previewPort?: number;
   distDir?: string;
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
@@ -13,6 +14,7 @@ export type Project = {
   name: string;
   distDir?: string;
   devPort?: number;
+  previewPort?: number;
 };
 
 export type SourceFolder = {
@@ -162,6 +164,15 @@ export const printUsage = () => {
     "",
     `  ${styleText("blue", "kosmo serve")} ${styleText("magenta", "admin front")}`,
     `  Start dev server for multiple source folders`,
+    "",
+
+    styleText("bold", "PREVIEW COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo preview")}`,
+    `  Build all source folders and serve the build output, rebuilding on change`,
+    "",
+    `  ${styleText("blue", "kosmo preview")} ${styleText("magenta", "admin front")}`,
+    `  Preview selected source folders only`,
     "",
 
     styleText("bold", "BUILD COMMAND"),

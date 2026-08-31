@@ -311,6 +311,35 @@ const createNodeListener = (app: FetchApp | NodeApp): NodeListener => {
     : (app as NodeApp).callback();
 };
 
+/**
+ * The folder's complete request surface as a single node:http listener:
+ * API requests under `apiBase` go to the bundled backend, everything else to the SSR app.
+ * `startServer` binds it to a port/socket; `dist/run.js` mounts it next to other folders.
+ * */
+export const createListener = async (): Promise<NodeListener> => {
+  const {
+    backendApp,
+  }: {
+    backendApp: FetchApp | NodeApp;
+  } = await import(`${ROOT}/app.js`);
+
+  const ssrApp = await createApp();
+  const apiPrefix = join(base, apiBase);
+
+  const ssrListener = createNodeListener(ssrApp as never);
+
+  const apiListener = backendApp
+    ? createNodeListener(backendApp as never)
+    : async () => {};
+
+  return (req, res) => {
+    const { pathname } = new URL(req.url ?? "/", ssrOrigin);
+    return pathname === apiPrefix || pathname.startsWith(`${apiPrefix}/`)
+      ? apiListener(req, res)
+      : ssrListener(req, res);
+  };
+};
+
 export const startServer = async ({
   sock,
   port,
@@ -321,12 +350,6 @@ export const startServer = async ({
   if (![sock, port].some(Boolean)) {
     throw new Error("Please provide either -p/--port or -s/--sock");
   }
-
-  const {
-    backendApp,
-  }: {
-    backendApp: FetchApp | NodeApp;
-  } = await import(`${ROOT}/app.js`);
 
   if (sock) {
     // Clean up any stale socket file before binding.
@@ -344,23 +367,7 @@ export const startServer = async ({
     sock ? `sock: ${sock}` : `port: ${port}`,
   );
 
-  const ssrApp = await createApp();
-  const apiPrefix = join(base, apiBase);
-
-  const ssrListener = createNodeListener(ssrApp as never);
-
-  const apiListener = backendApp
-    ? createNodeListener(backendApp as never)
-    : async () => {};
-
-  const gatewayListener: NodeListener = (req, res) => {
-    const { pathname } = new URL(req.url ?? "/", ssrOrigin);
-    return pathname === apiPrefix || pathname.startsWith(`${apiPrefix}/`)
-      ? apiListener(req, res)
-      : ssrListener(req, res);
-  };
-
-  const server = createServer(gatewayListener);
+  const server = createServer(await createListener());
 
   server.listen(sock || port, async () => {
     if (sock) {

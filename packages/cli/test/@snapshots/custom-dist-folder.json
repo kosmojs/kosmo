@@ -32,9 +32,14 @@
         4556
       ],
       [
+        "previewPort",
+        4558
+      ],
+      [
         "scripts",
         {
           "dev": "kosmo serve",
+          "preview": "kosmo preview",
           "build": "kosmo build",
           "typecheck": "kosmo typecheck",
           "folder": "kosmo folder"

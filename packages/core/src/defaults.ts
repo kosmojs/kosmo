@@ -33,3 +33,4 @@ export enum BACKENDS {
 export const DEFAULT_DIST = "dist";
 export const DEFAULT_APIBASE = "/api";
 export const DEFAULT_PORT = 4556;
+export const DEFAULT_PREVIEW_PORT = 4558;

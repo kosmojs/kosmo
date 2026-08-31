@@ -169,6 +169,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         ["@api/parsers.ts", templates.libApiParsers],
         ["@api/dev.ts", templates.libApiDev],
         ["@api/errors.ts", templates.libApiErrors],
+        ["@api/listener.ts", templates.libApiListener],
         ["@api/router.ts", templates.libApiRouter],
         ["@api/server.ts", templates.libApiServer],
       ]) {

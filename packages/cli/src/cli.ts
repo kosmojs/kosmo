@@ -23,7 +23,7 @@ import {
 } from "./base";
 import { createFolder } from "./factory";
 
-const COMMANDS = ["folder", "serve", "build", "typecheck"] as const;
+const COMMANDS = ["folder", "serve", "build", "preview", "typecheck"] as const;
 
 const run = async () => {
   const { values, positionals } = parseArgs({
@@ -58,10 +58,15 @@ const run = async () => {
     ...optedFolders: Array<string>,
   ];
 
-  if (!packageJson?.distDir || !packageJson?.devPort) {
+  if (
+    !packageJson?.distDir ||
+    !packageJson?.devPort ||
+    !packageJson?.previewPort
+  ) {
     assertNoError(() => {
-      return "package.json does not exist or some of `distDir` / `devPort` is not set";
+      return "package.json does not exist or some of `distDir` / `devPort` / `previewPort` is not set";
     });
+    // needed for typecheck to pass
     return;
   }
 
@@ -195,7 +200,9 @@ const run = async () => {
     root,
     command,
     sourceFolders: [],
+    distDir: packageJson.distDir,
     devPort: packageJson.devPort,
+    previewPort: packageJson.previewPort,
   };
 
   for (const file of configFiles) {

@@ -24,6 +24,8 @@ import {
 } from "@kosmojs/lib";
 
 import { cacheFactory } from "./cache";
+import { previewFactory } from "./preview";
+import { deployRunner, writeFolderManifest } from "./runner";
 
 export default async (
   projectSettings: ProjectSettings,
@@ -53,135 +55,19 @@ export default async (
     }
   }
 
-  if (command === "build") {
+  if (command === "build" || command === "preview") {
     for (const sourceFolder of projectSettings.sourceFolders) {
-      const { createPath } = pathResolver(sourceFolder);
-      const { generators } = sourceFolder.config;
-
-      const resolvedRoutes = [];
-
-      {
-        const { resolvers } = await routesFactory(sourceFolder, cacheFactory);
-
-        const spinner = spinnerFactory(
-          `${sourceFolder.name}: resolving routes`,
-        );
-
-        for (const { name, handler } of resolvers.values()) {
-          spinner.append(
-            `[ ${resolvedRoutes.length + 1} of ${resolvers.size} ] ${name}`,
-          );
-          resolvedRoutes.push(await handler());
-        }
-
-        spinner.succeed("ready ✨");
-      }
-
-      const plugins = [
-        vitePlugins.tsconfigPaths(sourceFolder),
-        vitePlugins.nodePrefix(),
-        vitePlugins.virtualModules(
-          collectVirtualModules(sourceFolder, generators),
-          {
-            // `kind: "csr"` everywhere except the SSR bundle,
-            // which installs its own copy with `kind: "ssr"`
-            kind: "csr",
-          },
-        ),
-      ];
-
-      for (const generator of generators) {
-        await generator.factory(sourceFolder).build?.(resolvedRoutes);
-      }
-
-      const frontendGenerator = generators.find(
-        (e) => e.meta.slot === "frontend",
-      );
-
-      const backendGenerator = generators.find(
-        (e) => e.meta.slot === "backend",
-      );
-
-      // INFO: === build client ===
-      if (frontendGenerator) {
-        await build(
-          mergeConfigs(
-            // user-provided config - lowest priority
-            sourceFolder.config,
-            // generators configs - higher priority
-            ...generators.map(({ factory }) => {
-              return factory(sourceFolder).config?.({
-                kind: "client",
-                command,
-              });
-            }),
-            // main config - highest priority
-            {
-              // base provided by sourceFolder.config
-              root: createPath.src(),
-              cacheDir: cacheDir(sourceFolder, command, "client"),
-              plugins,
-              build: {
-                outDir: createPath.distDir("client"),
-                manifest: true,
-                emptyOutDir: true,
-              },
-            },
-          ),
-        );
-      }
-
-      // INFO: === build backend ===
-      if (backendGenerator) {
-        const dir = createPath.distDir("api");
-
-        // NOTE: sourceFolder.config is client-specific config - not using for backend!
-        // To provide backend-specific config pass it as api generator options.
-        await build(
-          mergeConfigs(
-            // user-provided config - lowest priority
-            backendGenerator.options,
-            // generator config - higher priority
-            backendGenerator
-              .factory(sourceFolder)
-              .config?.({ kind: "backend", command }),
-            // main config - highest priority
-            {
-              base: "./",
-              root: createPath.src(),
-              appType: "custom",
-              plugins,
-              resolve: {
-                conditions: ["node"],
-              },
-              build: {
-                ssr: true,
-                target: "esnext",
-                sourcemap: true,
-                emptyOutDir: true,
-                rolldownOptions: {
-                  input: [
-                    createPath.api("app.ts"),
-                    createPath.api("server.ts"),
-                  ],
-                  output: {
-                    dir,
-                    format: "esm",
-                  },
-                },
-              },
-              cacheDir: cacheDir(sourceFolder, command, "backend"),
-            },
-          ),
-        );
-      }
-
-      for (const generator of generators) {
-        await generator.factory(sourceFolder).postBuild?.(resolvedRoutes);
-      }
+      await buildSourceFolder(sourceFolder);
+      await writeFolderManifest(sourceFolder);
     }
 
-    return async () => {};
+    await deployRunner(projectSettings);
+
+    if (command === "build") {
+      return async () => {};
+    }
+
+    return previewFactory(projectSettings, buildSourceFolder);
   }
 
   type RequestMatcher = (req: IncomingMessage) => boolean;
@@ -430,6 +316,137 @@ const cacheDir = (
   mode: "client" | "backend",
 ) => {
   return resolve(root, `var/.vite/${name}/${command}/${mode}`);
+};
+
+/**
+ * Production build of one source folder - generators, client bundle, api bundle,
+ * then the generators' post-build steps (ssr, ssg).
+ * Shared by `build` and `preview`: preview is a production build that reruns on change,
+ * so generators are told `command: "build"` and the build cache is the same.
+ * */
+const buildSourceFolder = async (sourceFolder: SourceFolder) => {
+  const command = "build";
+
+  const { createPath } = pathResolver(sourceFolder);
+  const { generators } = sourceFolder.config;
+
+  const resolvedRoutes = [];
+
+  {
+    const { resolvers } = await routesFactory(sourceFolder, cacheFactory);
+
+    const spinner = spinnerFactory(`${sourceFolder.name}: resolving routes`);
+
+    for (const { name, handler } of resolvers.values()) {
+      spinner.append(
+        `[ ${resolvedRoutes.length + 1} of ${resolvers.size} ] ${name}`,
+      );
+      resolvedRoutes.push(await handler());
+    }
+
+    spinner.succeed("ready ✨");
+  }
+
+  const plugins = [
+    vitePlugins.tsconfigPaths(sourceFolder),
+    vitePlugins.nodePrefix(),
+    vitePlugins.virtualModules(
+      collectVirtualModules(sourceFolder, generators),
+      {
+        // `kind: "csr"` everywhere except the SSR bundle,
+        // which installs its own copy with `kind: "ssr"`
+        kind: "csr",
+      },
+    ),
+  ];
+
+  for (const generator of generators) {
+    await generator.factory(sourceFolder).build?.(resolvedRoutes);
+  }
+
+  const frontendGenerator = generators.find((e) => e.meta.slot === "frontend");
+
+  const backendGenerator = generators.find((e) => e.meta.slot === "backend");
+
+  // INFO: === build client ===
+  if (frontendGenerator) {
+    await build(
+      mergeConfigs(
+        // user-provided config - lowest priority
+        sourceFolder.config,
+        // generators configs - higher priority
+        ...generators.map(({ factory }) => {
+          return factory(sourceFolder).config?.({
+            kind: "client",
+            command,
+          });
+        }),
+        // main config - highest priority
+        {
+          // base provided by sourceFolder.config
+          root: createPath.src(),
+          cacheDir: cacheDir(sourceFolder, command, "client"),
+          plugins,
+          build: {
+            outDir: createPath.distDir("client"),
+            manifest: true,
+            emptyOutDir: true,
+          },
+        },
+      ),
+    );
+  }
+
+  // INFO: === build backend ===
+  if (backendGenerator) {
+    const dir = createPath.distDir("api");
+
+    // NOTE: sourceFolder.config is client-specific config - not using for backend!
+    // To provide backend-specific config pass it as api generator options.
+    await build(
+      mergeConfigs(
+        // user-provided config - lowest priority
+        backendGenerator.options,
+        // generator config - higher priority
+        backendGenerator
+          .factory(sourceFolder)
+          .config?.({ kind: "backend", command }),
+        // main config - highest priority
+        {
+          base: "./",
+          root: createPath.src(),
+          appType: "custom",
+          plugins,
+          resolve: {
+            conditions: ["node"],
+          },
+          build: {
+            ssr: true,
+            target: "esnext",
+            sourcemap: true,
+            emptyOutDir: true,
+            rolldownOptions: {
+              input: [
+                createPath.api("app.ts"),
+                createPath.api("server.ts"),
+                // node listener for dist/run.js - the app without a port
+                createPath.lib("@api/listener.ts"),
+              ],
+              output: {
+                dir,
+                format: "esm",
+              },
+            },
+          },
+          cacheDir: cacheDir(sourceFolder, command, "backend"),
+        },
+      ),
+    );
+  }
+
+  for (const generator of generators) {
+    await generator.factory(sourceFolder).postBuild?.(resolvedRoutes);
+  }
 };
 
 const eventFactory = async (

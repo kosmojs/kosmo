@@ -11,6 +11,7 @@ import {
   BACKENDS,
   DEFAULT_DIST,
   DEFAULT_PORT,
+  DEFAULT_PREVIEW_PORT,
   defaults,
   FRAMEWORKS,
   type GeneratorSignature,
@@ -138,8 +139,10 @@ export const createProject = async (
     type: "module",
     distDir: project.distDir || DEFAULT_DIST,
     devPort: project.devPort || DEFAULT_PORT,
+    previewPort: project.previewPort || DEFAULT_PREVIEW_PORT,
     scripts: {
       dev: "kosmo serve",
+      preview: "kosmo preview",
       build: "kosmo build",
       typecheck: "kosmo typecheck",
       folder: "kosmo folder",
