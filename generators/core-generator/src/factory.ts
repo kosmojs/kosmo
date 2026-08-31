@@ -270,15 +270,18 @@ export default defineGeneratorFactory((sourceFolder) => {
     watch: generateLibFiles,
     build: generateLibFiles,
     virtualModules() {
+      const { createImport } = pathResolver(sourceFolder);
+
       const backendGenerator = generators.some(
         (e) => e.meta.slot === "backend",
       );
+
       return [
         {
           specifier: "virtual:kosmo/backend-app",
           csr: "export default undefined;",
           ssr: backendGenerator
-            ? `export { default } from "${createPath.api("app")}";`
+            ? `export { default } from "${createImport.api(["app"], { origin: "lib" })}";`
             : "export default undefined;",
         },
       ];
