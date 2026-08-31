@@ -24,6 +24,7 @@
   },
   "scripts": {
     "build": "wsbuild src/cli.ts src/index.ts",
+    "postbuild": "chmod +x pkg/cli.js",
     "test": "vitest --root ../.. --project packages/cli"
   },
   "dependencies": {
