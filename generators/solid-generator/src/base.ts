@@ -38,16 +38,16 @@ export const traverseFactory = () => {
       const { pathTokens } = { ...index, ...layout } as RouteEntry;
 
       const path = pathFactory(
-        pathTokens.map((token, i) => {
+        pathTokens.map((token) => {
           if (token.kind !== "param") {
             return token;
           }
 
-          // force convert to required if:
-          // - next token is optional/splat
-          // - there is a children with an optional/splat param
+          // Force convert to required if a child route carries an optional/splat param -
+          // an optional parent segment plus such children is ambiguous in solid-router's nested expansion.
+          // Adjacent optionals within one route need no demotion: solid-router
+          // expands them natively (`/:a?/:b?` -> `/`, `/:a`, `/:a/:b`).
           if (
-            hasOptionalParam(pathTokens[i + 1]) ||
             children.some((e) => e.index?.pathTokens.some(hasOptionalParam))
           ) {
             return {
