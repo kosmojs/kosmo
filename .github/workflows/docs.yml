@@ -37,7 +37,7 @@ jobs:
         working-directory: ./docs # Run in docs directory
 
       - name: Build with VitePress
-        run: pnpm build
+        run: pnpm vitepress build
         working-directory: ./docs # Run in docs directory
 
       - name: Upload artifact

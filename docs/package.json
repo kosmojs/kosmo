@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vitepress dev",
-    "build": "vitepress build",
+    "build": "echo true",
     "preview": "vitepress preview"
   },
   "devDependencies": {
