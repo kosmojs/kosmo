@@ -107,7 +107,6 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
     for (const [file, template] of [
       ["params.ts", templates.libParams],
       ["router.ts", templates.libRouter],
-      ["ssg:routes.ts", templates.libSsgRoutes],
     ]) {
       await deployLibFile(createPath.lib(file), template, { pageRoutes });
     }
@@ -128,7 +127,6 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         ["app.ts", templates.libApp],
         ["mdx.ts", templates.libMdx],
         ["use.ts", templates.libUse],
-        ["ssg.ts", templates.libSsg],
         ["pageSamples/styles.module.css", templates.libPageSamplesStyles],
         ["pageSamples/welcome.tsx", templates.libPageSamplesWelcome],
         ["pageSamples/page.tsx", templates.libPageSamplesPage],

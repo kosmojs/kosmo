@@ -47,7 +47,7 @@ Koa for a mature Node ecosystem - and it is the only backend with complete mixed
 | Needs `<Suspense>` | ❌ | ✅ | ❌ | ❌ | ❌ |
 | [`_/use` module](/frontend/hooks) | ❌ | ❌ | ⚠️ `useLoaderData` only | ✅ | ✅ |
 | [Streaming SSR](/frontend/server-side-render#stream-rendering) | ✅ | ✅ | ✅ | ❌ | ❌ |
-| [SSG](/frontend/mdx#static-site-generation) | ❌ | ❌ | ❌ | ❌ | ✅ |
+| [SSG](/frontend/static-site-generation) | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [TanStack Query](/frontend/tanstack-query) | ✅ | ✅ | ✅ | ✅ | ❌ |
 | TanStack read hook | `useQuery(opts)` | `useQuery(() => opts)` | `useQuery(opts)` | `createQuery(() => opts)` | – |
 | [Mixed segments](/routing/params#mixed-segments) | ⚠️ `.ext` suffix only | ❌ | ✅ | ✅ | ✅ |
@@ -61,7 +61,6 @@ Koa for a mature Node ecosystem - and it is the only backend with complete mixed
 [Why&nbsp;›](/frontend/data-preload#suspense-is-your-responsibility)
 - **Svelte and MDX render to strings only.** They implement `renderToString` but not `renderToStream`,
 and their folders don't accept the streaming [`renderMode`](/frontend/server-side-render#selecting-the-render-mode).
-- **SSG is MDX-only.** For other frameworks, use SSR - or put an MDX folder next to your app folder, which is the intended shape.
 - **MDX has no client runtime**, so TanStack Query is unavailable there. Fetch with an MDX `loader` instead.
 - **Svelte does not use SvelteKit.** `KosmoJS` uses only Svelte's UI layer,
 so data loading is the `loader` export, not SvelteKit's `load`, and there are no `+page` files.

@@ -289,6 +289,10 @@ export default defineConfig({
               link: "/frontend/server-side-render",
             },
             {
+              text: "Static Site Generation",
+              link: "/frontend/static-site-generation",
+            },
+            {
               text: "Error Boundaries",
               link: "/frontend/error-boundaries",
             },

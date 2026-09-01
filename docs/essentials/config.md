@@ -145,7 +145,7 @@ fetch clients, an OpenAPI spec, SSR, SSG. All are imported from `@kosmojs/dev`.
 | `mdxGenerator()` | frontend | optional | MDX content pages (Preact) |
 | `openapiGenerator(cfg)` | – | **required** | OpenAPI 3.1 spec |
 | `ssrGenerator()` | ssr | optional | `entry/server.ts`, SSR build |
-| `ssgGenerator()` | ssg | – | Static HTML at build time (MDX folders) |
+| `ssgGenerator()` | ssg | – | Static HTML at build time |
 
 `coreGenerator()` is exported too, but you never list it - the chassis always runs it first.
 
@@ -381,10 +381,10 @@ openapiGenerator({
 
 Take no options.
 
-`ssgGenerator()` renders every route to a static HTML file at build time and is meaningful on **MDX folders** -
-the scaffolder adds it there by default.
-Remove it to stop emitting static routes.
-[Details&nbsp;›](/frontend/mdx#static-site-generation)
+`ssgGenerator()` renders routes to static HTML files at build time,
+on any folder that has a frontend and [SSR enabled](/frontend/server-side-render).
+Dynamic routes declare their variants with `staticParams`.
+[Details&nbsp;›](/frontend/static-site-generation)
 
 `fetchGenerator()` produces the typed clients in `_/fetch`,
 and runs only when a backend generator is present. [Details&nbsp;›](/fetch/intro)

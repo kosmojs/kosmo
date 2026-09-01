@@ -1,0 +1,21 @@
+import {
+  defineConfig,
+  reactGenerator,
+  koaGenerator,
+  ssrGenerator,
+  ssgGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/react-koa-ssg-tsq",
+  generators: [
+    reactGenerator({ tanstack: { query: true } }),
+    koaGenerator(),
+    ssrGenerator(),
+    ssgGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

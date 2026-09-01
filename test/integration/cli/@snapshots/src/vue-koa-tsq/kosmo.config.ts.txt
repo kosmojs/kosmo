@@ -1,0 +1,17 @@
+import {
+  defineConfig,
+  vueGenerator,
+  koaGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/vue-koa-tsq",
+  generators: [
+    vueGenerator({ tanstack: { query: true } }),
+    koaGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

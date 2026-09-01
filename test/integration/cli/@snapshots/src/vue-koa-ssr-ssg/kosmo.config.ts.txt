@@ -1,0 +1,21 @@
+import {
+  defineConfig,
+  vueGenerator,
+  koaGenerator,
+  ssrGenerator,
+  ssgGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/vue-koa-ssr-ssg",
+  generators: [
+    vueGenerator(),
+    koaGenerator(),
+    ssrGenerator(),
+    ssgGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

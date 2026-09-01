@@ -1,0 +1,21 @@
+import {
+  defineConfig,
+  svelteGenerator,
+  koaGenerator,
+  ssrGenerator,
+  ssgGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/svelte-koa-ssr-ssg",
+  generators: [
+    svelteGenerator(),
+    koaGenerator(),
+    ssrGenerator(),
+    ssgGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

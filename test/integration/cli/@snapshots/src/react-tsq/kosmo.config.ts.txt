@@ -1,0 +1,6 @@
+import { defineConfig, reactGenerator } from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/react-tsq",
+  generators: [reactGenerator({ tanstack: { query: true } })],
+});

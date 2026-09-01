@@ -1,0 +1,17 @@
+import {
+  defineConfig,
+  svelteGenerator,
+  koaGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/svelte-koa-tsq",
+  generators: [
+    svelteGenerator({ tanstack: { query: true } }),
+    koaGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

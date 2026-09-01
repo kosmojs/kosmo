@@ -1,0 +1,6 @@
+import { defineConfig, solidGenerator, ssrGenerator, ssgGenerator } from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/solid-ssg",
+  generators: [solidGenerator(), ssrGenerator(), ssgGenerator()],
+});

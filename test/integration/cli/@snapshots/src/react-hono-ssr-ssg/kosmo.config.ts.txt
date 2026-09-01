@@ -1,0 +1,21 @@
+import {
+  defineConfig,
+  reactGenerator,
+  honoGenerator,
+  ssrGenerator,
+  ssgGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/react-hono-ssr-ssg",
+  generators: [
+    reactGenerator(),
+    honoGenerator(),
+    ssrGenerator(),
+    ssgGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

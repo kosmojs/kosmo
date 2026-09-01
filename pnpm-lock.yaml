@@ -317,6 +317,10 @@ importers:
       vite:
         specifier: ^8.2.2
         version: 8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)
+    devDependencies:
+      path-to-regexp:
+        specifier: ^8.4.2
+        version: 8.4.2
 
   generators/ssr-generator:
     dependencies:
@@ -664,6 +668,9 @@ importers:
       got:
         specifier: ^15.1.0
         version: 15.1.0
+      hono:
+        specifier: ^4.13.3
+        version: 4.13.3
       jiti:
         specifier: ^2.7.0
         version: 2.7.0

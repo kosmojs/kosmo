@@ -60,3 +60,6 @@ jobs:
 
       - name: test:integration vue
         run: pnpm test:integration vue
+
+      - name: test:integration ssg
+        run: pnpm test:integration ssg

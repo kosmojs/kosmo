@@ -23,6 +23,7 @@ export type SourceFolder = {
   framework?: keyof typeof FRAMEWORKS | undefined;
   backend?: keyof typeof BACKENDS | undefined;
   ssr?: boolean | undefined;
+  ssg?: boolean | undefined;
   tsq?: boolean | undefined;
 };
 
@@ -41,6 +42,7 @@ export const FOLDER_OPTIONS = {
   backend: { type: "string" },
   "no-backend": { type: "boolean" },
   ssr: { type: "boolean" },
+  ssg: { type: "boolean" },
   tsq: { type: "boolean" },
 } as const;
 
@@ -149,6 +151,9 @@ export const printUsage = () => {
     "",
     `  ${styleText("cyan", "--ssr")}`,
     `  Enable server-side rendering (SSR)`,
+    "",
+    `  ${styleText("cyan", "--ssg")}`,
+    `  Enable static site generation (SSG)`,
     "",
     `  ${styleText("cyan", "--tsq")}`,
     `  Enable TanStack Query`,

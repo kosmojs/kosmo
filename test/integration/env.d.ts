@@ -6,6 +6,6 @@ export declare global {
 
 export declare module "vitest" {
   export interface ProvidedContext {
-    MODE: "backend" | "csr" | "ssr" | undefined;
+    MODE: "backend" | "csr" | "ssr" | "ssg" | undefined;
   }
 }

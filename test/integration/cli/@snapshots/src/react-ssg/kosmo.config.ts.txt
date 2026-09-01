@@ -1,0 +1,6 @@
+import { defineConfig, reactGenerator, ssrGenerator, ssgGenerator } from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/react-ssg",
+  generators: [reactGenerator(), ssrGenerator(), ssgGenerator()],
+});

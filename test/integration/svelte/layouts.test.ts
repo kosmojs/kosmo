@@ -17,20 +17,19 @@ beforeAll(async () => {
 
   await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
     return () => {
-      // Route names contain braces (`blog/{category}`, `docs/{...path}`).
-      // Svelte parses `{...}` as an expression in both text and quoted
-      // attribute values, so the name is emitted as a string expression in
-      // both places - a plain `<div data-layout="blog/{category}">` compiles
-      // but throws `category is not defined` at render time.
       if (file === "index") {
+        // Route names contain braces (`blog/{category}`, `docs/{...path}`).
+        // Svelte parses `{...}` as an expression in both text and quoted attribute values.
         return `<div>{${JSON.stringify(name)}}</div>`;
       }
 
-      return `<script lang="ts">
-  import type { Snippet } from "svelte";
-  let { children }: { children: Snippet } = $props();
-</script>
-<div data-layout={${JSON.stringify(name)}}>{@render children()}</div>`;
+      return `
+        <script lang="ts">
+          import type { Snippet } from "svelte";
+          let { children }: { children: Snippet } = $props();
+        </script>
+        <div data-layout={${JSON.stringify(name)}}>{@render children()}</div>
+      `;
     };
   });
 

@@ -1,0 +1,19 @@
+import {
+  defineConfig,
+  vueGenerator,
+  koaGenerator,
+  ssrGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/vue-koa-ssr-tsq",
+  generators: [
+    vueGenerator({ tanstack: { query: true } }),
+    koaGenerator(),
+    ssrGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

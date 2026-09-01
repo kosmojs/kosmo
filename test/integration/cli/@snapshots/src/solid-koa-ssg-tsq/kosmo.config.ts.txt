@@ -1,0 +1,21 @@
+import {
+  defineConfig,
+  solidGenerator,
+  koaGenerator,
+  ssrGenerator,
+  ssgGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/solid-koa-ssg-tsq",
+  generators: [
+    solidGenerator({ tanstack: { query: true } }),
+    koaGenerator(),
+    ssrGenerator(),
+    ssgGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

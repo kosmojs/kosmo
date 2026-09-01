@@ -1,0 +1,21 @@
+import {
+  defineConfig,
+  mdxGenerator,
+  honoGenerator,
+  ssrGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+import frontmatterPlugin from "remark-frontmatter";
+import mdxFrontmatterPlugin from "remark-mdx-frontmatter";
+
+export default defineConfig({
+  base: "/mdx-hono-tsq",
+  generators: [
+    mdxGenerator({ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }),
+    honoGenerator(),
+    ssrGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

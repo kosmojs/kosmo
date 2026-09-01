@@ -1,0 +1,21 @@
+import {
+  defineConfig,
+  solidGenerator,
+  h3Generator,
+  ssrGenerator,
+  ssgGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/solid-h3-ssg-tsq",
+  generators: [
+    solidGenerator({ tanstack: { query: true } }),
+    h3Generator(),
+    ssrGenerator(),
+    ssgGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

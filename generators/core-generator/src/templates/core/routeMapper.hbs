@@ -21,12 +21,3 @@ export const pageRouteMap = {
   ),
   {{/each}}
 };
-
-{{#if pageRoutes.length}}
-export type LinkProps =
-  {{#each pageRoutes}}
-  | [ "{{name}}", {{serializeParamsTupleElements .}} ]
-  {{/each}};
-{{else}}
-export type LinkProps = never;
-{{/if}}

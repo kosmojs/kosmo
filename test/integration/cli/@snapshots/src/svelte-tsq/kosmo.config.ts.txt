@@ -1,0 +1,6 @@
+import { defineConfig, svelteGenerator } from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/svelte-tsq",
+  generators: [svelteGenerator({ tanstack: { query: true } })],
+});

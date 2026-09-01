@@ -1,3 +1,11 @@
+import type { StaticParams } from "./types";
+
 export * from "./config";
 export * from "./routes";
 export * from "./types";
+
+export const defineStaticParams = <T extends keyof StaticParams>(
+  variants: Array<StaticParams[T]>,
+) => {
+  return variants
+};

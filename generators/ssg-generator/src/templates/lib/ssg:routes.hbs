@@ -1,0 +1,24 @@
+import type { PageRoute } from "@kosmojs/core";
+
+{{#each pageRoutes}}
+import * as {{id}} from "{{ createImport 'pages' file }}";
+{{/each}}
+
+type SSGRoute = {
+  // the page module as imported; the shape differs per framework
+  module: unknown;
+  pathPattern: string;
+  params: PageRoute["params"];
+};
+
+const routeMap: Record<string, SSGRoute> = {
+{{#each pageRoutes}}
+  "{{name}}": {
+    module: {{id}},
+    pathPattern: "{{pathPattern}}",
+    params: {{serializeParams .}},
+  },
+{{/each}}
+};
+
+export default routeMap;

@@ -195,17 +195,6 @@ export default defineGeneratorFactory((sourceFolder) => {
       { overwrite: false },
     );
 
-    for (const [file, template] of [
-      /**
-       * deploy a stub SSG file.
-       * generators that support SSG will override it as needed.
-       * then SSG generator will import it and generate static files for exported routes.
-       * */
-      ["ssg.ts", "export default [];"],
-    ]) {
-      await renderToFile(createPath.lib(file), template, {});
-    }
-
     if (generators.some((e) => e.meta.slot === "frontend")) {
       // deploy default index.html file; generators may override as needed
       await renderToFile(
@@ -228,17 +217,18 @@ export default defineGeneratorFactory((sourceFolder) => {
       },
     });
 
+    const apiRoutes = entries.flatMap(({ kind, entry }) => {
+      return kind === "apiRoute" ? [entry] : [];
+    });
+
+    const pageRoutes = entries.flatMap(({ kind, entry }) => {
+      return kind === "pageRoute" ? [entry] : [];
+    });
+
     await renderToFile(
       createPath.libCore("routes.ts"),
       templates.coreRouteMapper,
-      {
-        apiRoutes: entries.flatMap(({ kind, entry }) => {
-          return kind === "apiRoute" ? [entry] : [];
-        }),
-        pageRoutes: entries.flatMap(({ kind, entry }) => {
-          return kind === "pageRoute" ? [entry] : [];
-        }),
-      },
+      { apiRoutes, pageRoutes },
     );
 
     for (const [file, template] of [
@@ -247,7 +237,11 @@ export default defineGeneratorFactory((sourceFolder) => {
       ["ssr.ts", templates.coreSSR],
       ["index.ts", templates.coreIndex],
     ]) {
-      await renderToFile(createPath.libCore(file), template, sourceFolder);
+      await renderToFile(createPath.libCore(file), template, {
+        ...sourceFolder,
+        apiRoutes,
+        pageRoutes,
+      });
     }
 
     for (const { kind, entry } of entries) {

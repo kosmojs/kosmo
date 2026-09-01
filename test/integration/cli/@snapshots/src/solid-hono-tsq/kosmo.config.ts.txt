@@ -1,0 +1,17 @@
+import {
+  defineConfig,
+  solidGenerator,
+  honoGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/solid-hono-tsq",
+  generators: [
+    solidGenerator({ tanstack: { query: true } }),
+    honoGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

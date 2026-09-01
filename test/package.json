@@ -12,7 +12,8 @@
     "test:integration:backend": "pnpm -C .. run test:integration:backend",
     "test:integration:frontend": "pnpm -C .. run test:integration:frontend",
     "test:integration:frontend:csr": "pnpm -C .. run test:integration:frontend:csr",
-    "test:integration:frontend:ssr": "pnpm -C .. run test:integration:frontend:ssr"
+    "test:integration:frontend:ssr": "pnpm -C .. run test:integration:frontend:ssr",
+    "test:integration:frontend:ssg": "pnpm -C .. run test:integration:frontend:ssg"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.1",
@@ -24,6 +25,7 @@
     "cheerio": "^1.2.0",
     "crc": "^4.3.2",
     "got": "^15.1.0",
+    "hono": "^4.13.3",
     "jiti": "^2.7.0",
     "mrmime": "^2.0.1",
     "oxfmt": "^0.64.0",

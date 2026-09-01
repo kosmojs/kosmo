@@ -1,0 +1,6 @@
+import { defineConfig, solidGenerator, ssrGenerator } from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/solid-ssr-tsq",
+  generators: [solidGenerator({ tanstack: { query: true } }), ssrGenerator()],
+});

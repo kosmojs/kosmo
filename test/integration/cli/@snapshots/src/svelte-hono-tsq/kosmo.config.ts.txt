@@ -1,0 +1,17 @@
+import {
+  defineConfig,
+  svelteGenerator,
+  honoGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/svelte-hono-tsq",
+  generators: [
+    svelteGenerator({ tanstack: { query: true } }),
+    honoGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

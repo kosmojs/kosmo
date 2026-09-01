@@ -20,6 +20,7 @@
     "test:integration:frontend": "vitest run --project=\"integration:frontend:*\"",
     "test:integration:frontend:csr": "vitest run --project=integration:frontend:csr",
     "test:integration:frontend:ssr": "vitest run --project=integration:frontend:ssr",
+    "test:integration:frontend:ssg": "vitest run --project=integration:frontend:ssg",
     "release:prepare": "bash ./scripts/release/prepare",
     "release:commit": "bash ./scripts/release/commit"
   },

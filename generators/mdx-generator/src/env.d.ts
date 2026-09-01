@@ -82,16 +82,3 @@ declare module "{{ createImport 'pages' '404.mdx' }}" {
   export const frontmatter = Record<string, unknown>;
   export default component;
 }
-
-declare module "{{ createImport 'lib' 'ssg:routes' }}" {
-  import type { PageRoute } from "@kosmojs/core";
-  const modules: Record<
-    string,
-    {
-      frontmatter?: { staticParams?: Array<Array<string | Array<string>>> };
-      pathPattern: string;
-      params: PageRoute["params"];
-    }
-  >;
-  export default modules;
-}

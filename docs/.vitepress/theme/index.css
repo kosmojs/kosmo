@@ -45,3 +45,8 @@
 .vp-doc .text-center {
   margin: 40px 0 8px;
 }
+
+.vp-doc :not(pre) > code {
+  white-space: nowrap;
+  overflow-wrap: break-word;
+}

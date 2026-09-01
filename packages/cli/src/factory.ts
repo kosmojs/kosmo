@@ -198,6 +198,7 @@ export const createFolder = async (
       backend?: string;
       "no-backend"?: boolean;
       ssr?: boolean;
+      ssg?: boolean;
       tsq?: boolean;
       quiet?: boolean;
       overwrite?: boolean;
@@ -347,34 +348,40 @@ export const createFolder = async (
       }),
     );
 
-    // SSR and TanStack Query only apply to frameworks with a client runtime
-    const promptExtras =
-      !framework || ["mdx"].includes(framework) //
+    // SSR enabled unconditionally on mdx folders
+    const ssr =
+      framework === "mdx"
+        ? true
+        : await readAnswer(
+            prompts.confirm({
+              message: "Enable server-side rendering (SSR)?",
+              initialValue: false,
+              active: "yes",
+              inactive: "no",
+            }),
+          );
+
+    const ssg = await readAnswer(
+      prompts.confirm({
+        message: "Enable static site generation (SSG)?",
+        initialValue: false,
+        active: "yes",
+        inactive: "no",
+      }),
+    );
+
+    // TanStack Query not available on mdx folders
+    const tsq =
+      framework === "mdx"
         ? false
-        : true;
-
-    let ssr: boolean | undefined;
-    let tsq: boolean | undefined;
-
-    if (promptExtras) {
-      ssr = await readAnswer(
-        prompts.confirm({
-          message: "Enable server-side rendering (SSR)?",
-          initialValue: false,
-          active: "yes",
-          inactive: "no",
-        }),
-      );
-
-      tsq = await readAnswer(
-        prompts.confirm({
-          message: "Enable TanStack Query?",
-          initialValue: false,
-          active: "yes",
-          inactive: "no",
-        }),
-      );
-    }
+        : await readAnswer(
+            prompts.confirm({
+              message: "Enable TanStack Query?",
+              initialValue: false,
+              active: "yes",
+              inactive: "no",
+            }),
+          );
 
     const folder: SourceFolder = {
       name,
@@ -382,6 +389,7 @@ export const createFolder = async (
       ...(framework ? ({ framework } as never) : {}),
       ...(backend ? ({ backend } as never) : {}),
       ssr,
+      ssg,
       tsq,
     };
 
@@ -551,19 +559,12 @@ export const createKosmoConfig = (
         `import mdxFrontmatterPlugin from "remark-mdx-frontmatter";`,
       ],
     );
-
     generators.push({
       name: "mdxGenerator",
       options: options[framework]
         ? options[framework]
         : `{ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }`,
       generator: mdxGenerator as never,
-    });
-
-    generators.push({
-      name: "ssgGenerator",
-      options: "",
-      generator: ssgGenerator as never,
     });
   }
 
@@ -587,11 +588,19 @@ export const createKosmoConfig = (
     });
   }
 
-  if (folder.ssr || framework === "mdx") {
+  if (folder.ssr || folder.ssg || framework === "mdx") {
     generators.push({
       name: "ssrGenerator",
       options: options.ssr,
       generator: ssrGenerator as never,
+    });
+  }
+
+  if (folder.ssg) {
+    generators.push({
+      name: "ssgGenerator",
+      options: "",
+      generator: ssgGenerator as never,
     });
   }
 

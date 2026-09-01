@@ -4,8 +4,11 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { styleText } from "node:util";
 
+import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
 import crc from "crc/crc32";
 import got, { type Method } from "got";
+import { Hono } from "hono";
 import { createJiti } from "jiti";
 import { chromium } from "playwright";
 import { inject } from "vitest";
@@ -32,7 +35,7 @@ const browser = await chromium.launch({
 
 const pnpmDir = resolve(tmpdir(), ".kosmojs/pnpm-store");
 
-const apiClient = got.extend({
+const httpClient = got.extend({
   retry: {
     limit: 0, // ✅ Fast failures in tests
   },
@@ -82,7 +85,7 @@ export const setupTestProject = async (
   const projectRoot = resolve(tempDir, projectName);
 
   const {
-    backend = mode === "ssr" ? pickBackend() : undefined,
+    backend = mode === "ssr" || mode === "ssg" ? pickBackend() : undefined,
     tsq,
     skip,
     ...generatorOptions
@@ -199,9 +202,7 @@ export const setupTestProject = async (
 
       const server = await serve();
 
-      return async () => {
-        await server.close();
-      };
+      return () => server.close();
     }
 
     if (mode === "ssr") {
@@ -209,9 +210,29 @@ export const setupTestProject = async (
 
       const server = await startServer({ port: devPort });
 
-      return async () => {
-        server.close();
-      };
+      return () => server.close();
+    }
+
+    if (mode === "ssg") {
+      const { base } = sourceFolder.config;
+      const app = new Hono();
+
+      app.use(
+        `${base === "/" ? "" : base}/*`,
+        serveStatic({
+          root: createPath.distDir("ssg"),
+          rewriteRequestPath: (path) => {
+            return path.slice(base === "/" ? 0 : base.length);
+          },
+        }),
+      );
+
+      // no SPA fallback - a miss on a static host is a real 404
+      app.notFound((c) => c.text("404", 404));
+
+      const server = serve({ fetch: app.fetch, port: devPort });
+
+      return () => server.close();
     }
 
     if (mode === "csr") {
@@ -318,7 +339,7 @@ export const setupTestProject = async (
         ? await page.pause()
         : await page.close();
     } else {
-      maybeContent = await apiClient(url).text();
+      maybeContent = await httpClient(url).text();
     }
 
     const content = maybeContent
@@ -332,6 +353,25 @@ export const setupTestProject = async (
         ? contentPatternFor(pathSource[0])
         : /========================/,
     };
+  };
+
+  const withPageResponse = async <
+    T extends
+      | string
+      | [route: string, params?: Record<string, unknown> | undefined],
+  >(
+    pathSource: T,
+    {
+      method = "GET",
+      searchParams,
+    }: { method?: Method; searchParams?: Record<string, string | number> } = {},
+  ) => {
+    const path = Array.isArray(pathSource)
+      ? createRoutePath(pathSource[0], pathSource[1])
+      : pathSource;
+    const url = baseURL + join(sourceFolder.config.base, path as never);
+    const response = await httpClient(url, { method, searchParams });
+    return { response };
   };
 
   const withApiResponse = async <
@@ -349,7 +389,7 @@ export const setupTestProject = async (
       ? createRoutePath(pathSource[0], pathSource[1])
       : pathSource;
     const url = baseURL + join(sourceFolder.config.base, "api", path as never);
-    const response = await apiClient(url, { method, searchParams });
+    const response = await httpClient(url, { method, searchParams });
     return { response };
   };
 
@@ -359,6 +399,7 @@ export const setupTestProject = async (
     projectRoot,
     sourceFolder,
     withPageContent,
+    withPageResponse,
     withApiResponse,
     async bootstrapProject(opt?: {
       dependencies?: Record<string, string>;
@@ -397,8 +438,9 @@ export const setupTestProject = async (
           ...(backend ? { backend } : {}),
           ...(tsq ? { tsq } : {}),
           ssr: mode === "ssr",
+          ssg: mode === "ssg",
         },
-        generatorOptions,
+        framework ? generatorOptions[framework as never] : {},
       );
 
       await mkdir(createPath.api(), { recursive: true });
@@ -463,8 +505,12 @@ export const setupTestProject = async (
       if (skip) {
         return;
       }
+      const created = new Set<string>();
       for (const { name, file = "index" } of routes) {
-        await createPageRoute(name, file, templateFactory);
+        if (!created.has(name)) {
+          await createPageRoute(name, file, templateFactory);
+        }
+        created.add(name);
       }
     },
     async createApiRoutes(

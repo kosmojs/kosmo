@@ -1,0 +1,19 @@
+import {
+  defineConfig,
+  vueGenerator,
+  honoGenerator,
+  ssrGenerator,
+  fetchGenerator,
+  typeboxGenerator,
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  base: "/vue-hono-ssr-tsq",
+  generators: [
+    vueGenerator({ tanstack: { query: true } }),
+    honoGenerator(),
+    ssrGenerator(),
+    fetchGenerator(),
+    typeboxGenerator(),
+  ],
+});

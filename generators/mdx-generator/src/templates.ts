@@ -9,8 +9,6 @@ export { default as libPageSamplesStyles } from "#templates/lib/pageSamples/styl
 export { default as libPageSamplesWelcome } from "#templates/lib/pageSamples/welcome.hbs";
 export { default as libParams } from "#templates/lib/params.hbs";
 export { default as libRouter } from "#templates/lib/router";
-export { default as libSsg } from "#templates/lib/ssg";
-export { default as libSsgRoutes } from "#templates/lib/ssg:routes.hbs";
 export { default as libUse } from "#templates/lib/use";
 export { default as srcApp } from "#templates/src/app.mdx";
 export { default as srcComponentsLink } from "#templates/src/components/Link";
