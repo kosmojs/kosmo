@@ -361,14 +361,16 @@ export const createFolder = async (
             }),
           );
 
-    const ssg = await readAnswer(
-      prompts.confirm({
-        message: "Enable static site generation (SSG)?",
-        initialValue: false,
-        active: "yes",
-        inactive: "no",
-      }),
-    );
+    const ssg = ssr
+      ? await readAnswer(
+          prompts.confirm({
+            message: "Enable static site generation (SSG)?",
+            initialValue: false,
+            active: "yes",
+            inactive: "no",
+          }),
+        )
+      : false;
 
     // TanStack Query not available on mdx folders
     const tsq =
