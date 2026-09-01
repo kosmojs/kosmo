@@ -375,9 +375,17 @@ API requests on its own port, no separate API process required.
 
 ## Static Asset Handling
 
-The SSR server serves `dist/<folder>/ssr/assets/` itself, out of the box, from memory.
-There is no option to turn that off - and no need to: to keep asset requests away from the SSR process entirely,
-put a reverse proxy or CDN in front and let it serve the `assets/` folder directly.
+The SSR server serves static files itself, out of the box, from memory - two directories,
+each one an allowlist of its own, nothing else in the bundle root is ever exposed:
+
+- `dist/<folder>/ssr/assets/` - content-hashed by Vite, served at `<base>/assets/` with `Cache-Control: public, max-age=31536000, immutable`
+- `dist/<folder>/ssr/public/` - a verbatim copy of the folder's `public/` directory (or whatever `publicDir` is set to in `kosmo.config.ts`),
+served at `<base>/` with `Cache-Control: no-cache`, since these names are stable and clients must revalidate
+
+Static files take precedence over page routes, exactly as in the dev server.
+
+There is no option to turn that off - and no need to: to keep static requests away from the SSR process entirely,
+put a reverse proxy or CDN in front and let it serve both directories directly.
 
 ```nginx
 location /assets/ {
@@ -387,11 +395,14 @@ location /assets/ {
 }
 
 location / {
+  root /srv/app/dist/front/ssr/public;
+  try_files $uri @ssr;
+}
+
+location @ssr {
   proxy_pass http://ssr_backend;
 }
 ```
-
-Asset filenames are content-hashed by Vite, so they are safe to cache indefinitely.
 
 ## Testing / Debugging SSR
 

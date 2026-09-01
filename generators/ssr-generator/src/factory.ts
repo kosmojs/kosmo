@@ -8,6 +8,7 @@ import {
   collectVirtualModules,
   defineGeneratorFactory,
   mergeConfigs,
+  pathExists,
   pathResolver,
   renderFactory,
   sortRoutes,
@@ -113,6 +114,8 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
               sourcemap: true,
               emptyOutDir: true,
               minify: false,
+              // public/ is copied into a dedicated subdir below, not into the bundle root
+              copyPublicDir: false,
               rolldownOptions: {
                 output: {
                   dir,
@@ -151,10 +154,27 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         },
       });
 
-      // copy client files into ssr dir, merging assets
-      await cp(resolve(dir, "../client"), dir, {
-        recursive: true,
-      });
+      // copy only what the SSR server uses from the client build, merging assets;
+      // the client build root also holds public/ files, they get a dedicated subdir below
+      for (const entry of [".vite", "assets", "index.html"]) {
+        await cp(resolve(dir, "../client", entry), join(dir, entry), {
+          recursive: true,
+        });
+      }
+
+      // Same resolution vite applies to publicDir: relative to root, "public" by default,
+      // disabled with false or an empty string.
+      if (![false, ""].includes(config.publicDir as never)) {
+        const publicDir = resolve(
+          createPath.src(),
+          config.publicDir || "public", // when undefined
+        );
+        if (await pathExists(publicDir)) {
+          // served by the SSR server at base, the directory itself is the allowlist:
+          // nothing else in the bundle root is ever exposed
+          await cp(publicDir, join(dir, "public"), { recursive: true });
+        }
+      }
 
       for (const file of ["server.js", "server.js.map"]) {
         await cp(`${dir}/server/${file}`, `${dir}/${file}`);

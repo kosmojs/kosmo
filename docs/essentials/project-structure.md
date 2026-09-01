@@ -174,7 +174,8 @@ dist/front/
 └── ssr/                  → only when SSR is enabled
     ├── app.js
     ├── server.js         → serves pages AND the API
-    └── assets/
+    ├── assets/           → hashed, served at <base>/assets/
+    └── public/           → copy of public/, served at <base>/
 ```
 
 The simplest way to run all of this is `node dist/run.js`, which dispatches across every folder in one process.

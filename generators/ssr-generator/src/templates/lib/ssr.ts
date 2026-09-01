@@ -14,7 +14,12 @@ import { HTTPException } from "hono/http-exception";
 import { stream } from "hono/streaming";
 import { glob } from "tinyglobby";
 
-import type { FetchApp, NodeApp, SSRSetup } from "@kosmojs/core";
+import {
+  type FetchApp,
+  MIME_TYPES,
+  type NodeApp,
+  type SSRSetup,
+} from "@kosmojs/core";
 
 import { routeMap } from "{{ createImport 'lib' '@ssr/routes' }}";
 import { apiBase, base } from "{{ createImport 'libCore' }}";
@@ -31,6 +36,8 @@ type AssetInfo = {
   contentType: string;
   // Cached size to set Content-Length without re-measuring the buffer.
   size: number;
+  // Cache-Control header - hashed assets are immutable, public/ files are not.
+  cacheControl: string;
 };
 
 export const createApp = async () => {
@@ -163,6 +170,31 @@ export const createApp = async () => {
 
   const app = new Hono({ strict: false });
 
+  // Static files win over routes, as they do in vite dev and behind a reverse proxy.
+  // This covers hashed assets/ (JS, CSS, images, fonts, .map siblings) and public/ files.
+  app.use(async (ctx, next) => {
+    if (!["GET", "HEAD"].includes(ctx.req.method)) {
+      return next();
+    }
+
+    const asset = assets.get(ctx.req.path);
+
+    if (!asset) {
+      return next();
+    }
+
+    return new Response(
+      ctx.req.method === "HEAD" ? null : (asset.buffer as never),
+      {
+        headers: {
+          "Content-Type": asset.contentType,
+          "Content-Length": String(asset.size),
+          "Cache-Control": asset.cacheControl,
+        },
+      },
+    );
+  });
+
   for (const { pathPattern, renderMode } of routeMap) {
     app.get(join(base, pathPattern), async (ctx) => {
       try {
@@ -210,21 +242,6 @@ export const createApp = async () => {
   }
 
   app.get("/*", async (ctx) => {
-    const { path } = ctx.req;
-
-    // If incoming request path matches something cached at startup, serve it directly.
-    // This covers JS, CSS, images, fonts, etc., including their .map siblings.
-    const asset = assets.get(path);
-
-    if (asset) {
-      return new Response(asset.buffer as never, {
-        headers: {
-          "Content-Type": asset.contentType,
-          "Content-Length": String(asset.size),
-        },
-      });
-    }
-
     // render 404 page
     if (typeof renderToString === "function") {
       const url = new URL(ctx.req.url);
@@ -243,47 +260,47 @@ export const createApp = async () => {
  * Build an in-memory asset graph, loading asset content into memory.
  * The asset graph always includes every built asset URL so the SSR server
  * can correctly recognize static asset requests.
+ *
+ * Two roots, each directory being its own allowlist - nothing else in the bundle root is served:
+ *   - assets/ - emitted by vite with content hashes, served at base/assets/, cacheable forever
+ *   - public/ - copied verbatim from the folder's public dir, served at base/, names are stable so clients must revalidate
  * */
-const loadAssets = async (
-  root: string,
-  patterns: string | Array<string> = "**",
-) => {
-  const mimeTypeMap: Record<string, string> = {
-    ".js": "application/javascript",
-    ".mjs": "application/javascript",
-    ".css": "text/css",
-    ".json": "application/json",
-    ".png": "image/png",
-    ".apng": "image/png",
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".gif": "image/gif",
-    ".svg": "image/svg+xml",
-    ".ico": "image/x-icon",
-    ".woff": "font/woff",
-    ".woff2": "font/woff2",
-    ".ttf": "font/ttf",
-    ".webp": "image/webp",
-  };
-
+const loadAssets = async (root: string) => {
   // Resolve HTTP Content-Type from the asset's file extension.
   const contentTypeResolver = (filePath: string) => {
     const ext = extname(filePath).toLowerCase();
-    return mimeTypeMap[ext] || "application/octet-stream";
+    return MIME_TYPES[ext] || "application/octet-stream";
   };
 
   // Map from URL path (as used in requests) to asset metadata.
   const assetCache = new Map<string, AssetInfo>();
 
-  const folder = "assets";
-  const cwd = resolve(root, folder);
+  const roots = [
+    {
+      folder: "assets",
+      prefix: join(base, "assets"),
+      cacheControl: "public, max-age=31536000, immutable",
+    },
+    {
+      folder: "public",
+      prefix: base,
+      cacheControl: "no-cache",
+    },
+  ];
 
-  if (
-    await access(cwd, constants.R_OK)
-      .then(() => true)
-      .catch(() => false)
-  ) {
-    const files = await glob(patterns, {
+  for (const { folder, prefix, cacheControl } of roots) {
+    const cwd = resolve(root, folder);
+
+    const readable = await access(cwd, constants.F_OK).then(
+      () => true,
+      () => false,
+    );
+
+    if (!readable) {
+      continue;
+    }
+
+    const files = await glob("**", {
       cwd,
       onlyFiles: true,
       absolute: false,
@@ -291,11 +308,12 @@ const loadAssets = async (
 
     for (const file of files) {
       const buffer = new Uint8Array(await readFile(resolve(cwd, file)));
-      assetCache.set(join(base, folder, file), {
+      assetCache.set(join(prefix, file), {
         file,
         buffer,
         contentType: contentTypeResolver(file),
-        size: buffer?.length,
+        size: buffer.length,
+        cacheControl,
       });
     }
   }

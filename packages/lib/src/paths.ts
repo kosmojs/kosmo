@@ -120,10 +120,8 @@ export const pathResolver = (
 };
 
 export const pathExists = async (path: string): Promise<boolean> => {
-  try {
-    await access(path, constants.F_OK);
-    return true;
-  } catch {
-    return false;
-  }
+  return access(path, constants.F_OK).then(
+    () => true,
+    () => false,
+  );
 };
