@@ -17,9 +17,8 @@ development workflow unchanged.
 
 ## Adding SSR Support
 
-SSR is automatically enabled if selected during source folder creation.
-To add it to an existing folder, register `ssrGenerator` in your source
-folder's `kosmo.config.ts`:
+SSR is automatically enabled if selected during source folder creation (or via `--ssr` flag in CLI mode).
+To add it to an existing folder, register `ssrGenerator` in your source folder's `kosmo.config.ts`:
 
 ```ts [kosmo.config.ts]
 import {
@@ -36,8 +35,7 @@ export default defineConfig({
 });
 ```
 
-<details class="details custom-block">
-<summary>SSR runs in production builds only</summary>
+:::details SSR runs in production builds only
 
 `pnpm dev` is **always** Vite + HMR + client-side rendering, whether or not SSR enabled.
 
@@ -50,7 +48,7 @@ pnpm preview front
 
 This trips up people arriving from Next/Nuxt/TanStack Start, where dev mirrors prod rendering.
 See [Debugging SSR](#testing-debugging-ssr) for the working loop.
-</details>
+:::
 
 ## Server Entry Point
 

@@ -13,14 +13,34 @@ head:
 SSG renders pages to static HTML at build time,
 for deploying to a CDN or any static host without a running server.
 
-It works on any source folder with a frontend and [SSR enabled](/frontend/server-side-render):
+## Adding SSG Support
+
+SSG is automatically enabled if selected during source folder creation (or via `--ssg` flag in CLI mode).
+To add it to an existing folder, register `ssgGenerator` in your source folder's `kosmo.config.ts`:
+
+```ts [kosmo.config.ts]
+import {
+  defineConfig,
+  // ...other generators
+  ssgGenerator, // [!code ++]
+} from "@kosmojs/dev";
+
+export default defineConfig({
+  generators: [
+    // ...other generators
+    ssgGenerator(), // [!code ++]
+  ],
+});
+```
+
+It works on source folders with a frontend and [SSR enabled](/frontend/server-side-render):
 pages are rendered by the folder's own SSR server.
+
+## Declaring `staticParams`
 
 Static routes (no parameters) render automatically.
 A dynamic route renders once per parameter set it declares through `staticParams`;
 a dynamic route without `staticParams` is skipped - no file is generated for it.
-
-## Declaring `staticParams`
 
 `staticParams` is a list of variants, each one positional in the route's parameter order.
 A splat parameter takes an array of segments.
