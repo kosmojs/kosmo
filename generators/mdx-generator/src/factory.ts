@@ -11,6 +11,7 @@ import {
   pathResolver,
   renderFactory,
   sortRoutes,
+  sortRoutesForResolution,
 } from "@kosmojs/lib";
 
 import { randomCongratMessage } from "./base";
@@ -92,7 +93,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         }
         return [];
       })
-      .sort(sortRoutes);
+      .sort(sortRoutesForResolution);
 
     for (const [file, template] of [
       ["client.ts", templates.libEntryClient],

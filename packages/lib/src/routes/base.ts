@@ -259,3 +259,51 @@ export const sortRoutes = (
   // same weight profile, same length: deterministic tiebreak
   return a.pathPattern.localeCompare(b.pathPattern);
 };
+
+/**
+ * Compare two route entries for first-match resolution order,
+ * as used by the generated svelte/mdx routers.
+ *
+ * Identical to `sortRoutes` except when one route is a prefix of the other
+ * and the trailing extra segment is an optional parameter: there the SHORTER route goes first.
+ * The longer route's pattern also matches the bare path (optional omitted),
+ * but only the shorter route can serve it - deeper URLs never match the shorter one's pattern,
+ * so it must get the first shot:
+ *
+ *   /blog               -> `blog`, not `blog/{category}/{tag}`
+ *   /admin/x/resources  -> `admin/[tenant]/resources`, not `.../resources/{type}`
+ *
+ * Trailing splats already sort shorter-first in `sortRoutes`;
+ * trailing static or required segments make the two patterns disjoint,
+ * so their relative order is immaterial for first-match and stays as registration order.
+ * */
+export const sortRoutesForResolution = (
+  a: Pick<RouteEntry, "pathPattern" | "pathTokens">,
+  b: Pick<RouteEntry, "pathPattern" | "pathTokens">,
+): number => {
+  const shorter = a.pathTokens.length < b.pathTokens.length ? a : b;
+  const longer = shorter === a ? b : a;
+
+  // Equal-weight shared prefix approximates "no earlier difference decides":
+  // when prefix weights differ, sortRoutes orders by that difference anyway,
+  // and same-weight-different-static prefixes are disjoint patterns,
+  // where relative order is immaterial for first-match.
+  if (
+    a.pathTokens.length !== b.pathTokens.length &&
+    shorter.pathTokens.every((token, i) => {
+      const counterpart = longer.pathTokens[i] as PathToken;
+      return segmentWeight(token) === segmentWeight(counterpart);
+    })
+  ) {
+    const extra = longer.pathTokens[shorter.pathTokens.length] as PathToken;
+
+    if (
+      extra.kind === "param" &&
+      (extra.parts[0] as PathTokenParamPart).kind === "optional"
+    ) {
+      return shorter === a ? -1 : 1;
+    }
+  }
+
+  return sortRoutes(a, b);
+};

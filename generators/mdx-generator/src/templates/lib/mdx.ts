@@ -9,7 +9,6 @@ import { base } from "{{ createImport 'libCore' }}";
 
 export type RawRoute = {
   name: string;
-  pathSegments: number | undefined;
   regexp: RegExp;
   extractParams: (path: string) => Route["params"];
   loader: () => Promise<RouteModule>;
@@ -77,23 +76,20 @@ export const createRouter = (
   return {
     async resolve(url: URL = new URL(window.location.href)) {
       const searchParams = parseSearchParams(url);
-      const urlSegments = url.pathname.split("/").filter(Boolean).length;
 
-      // 1: use lightweight `RegExp.test()` on linear scan - no capture allocation
-      const matchedRoutes = routes.filter(({ regexp }) => {
-        return regexp.test(url.pathname);
-      });
-
+      // The routes array is generated pre-sorted by specificity
+      // (static beats required beats optional beats splat, token by token),
+      // the same ordering the SSR server registers routes in -
+      // so the first pattern that matches IS the most specific one,
+      // and CSR resolution stays consistent with SSR.
+      // A route with optional parameters matches a range of segment counts,
+      // which is why no segment-count heuristic can disambiguate here.
+      // Lightweight `RegExp.test()` on linear scan - no capture allocation.
       const matchedRoute =
-        matchedRoutes.length > 1
-          ? matchedRoutes.find(({ pathSegments }) => {
-              return pathSegments === undefined || pathSegments === urlSegments;
-            }) || catchallRoute
-          : matchedRoutes.length === 1
-            ? matchedRoutes[0]
-            : catchallRoute;
+        routes.find(({ regexp }) => {
+          return regexp.test(url.pathname);
+        }) || catchallRoute;
 
-      // 2: capture params only on matched route
       const params = matchedRoute
         ? matchedRoute.extractParams(url.pathname)
         : {};
@@ -187,11 +183,6 @@ export const createRoute = (
   return {
     name,
     regexp,
-    // count segments of the same base-joined path the regexp matches against;
-    // resolve() compares this against the full url pathname's segment count
-    pathSegments: name.includes("...")
-      ? undefined
-      : path.split("/").filter(Boolean).length,
     extractParams: (path) => {
       const match = matcher(path);
       return match ? match.params : {};
