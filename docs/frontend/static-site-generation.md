@@ -13,7 +13,7 @@ head:
 SSG renders pages to static HTML at build time,
 for deploying to a CDN or any static host without a running server.
 
-It works on any source folder with a frontend and [SSR enabled](frontend/server-side-render):
+It works on any source folder with a frontend and [SSR enabled](/frontend/server-side-render):
 pages are rendered by the folder's own SSR server.
 
 Static routes (no parameters) render automatically.
