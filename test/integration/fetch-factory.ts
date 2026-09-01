@@ -4,7 +4,7 @@ import { load } from "cheerio";
 import crc from "crc/crc32";
 import { inject, type TestFunction } from "vitest";
 
-import { BACKENDS, FRAMEWORKS } from "@kosmojs/core";
+import { BACKENDS, type FRAMEWORKS } from "@kosmojs/core";
 import { pathResolver, render, renderToFile } from "@kosmojs/lib";
 
 import { dependencies } from "../package.json";
@@ -20,15 +20,17 @@ export type TestGroup = {
 
 const mode = inject("MODE");
 
-export const createTestGroups = async (opt?: {
+export const createTestGroups = async (opt: {
+  framework: keyof typeof FRAMEWORKS;
   backends?: Array<keyof typeof BACKENDS>;
-  frameworks?: Array<keyof typeof FRAMEWORKS>;
   renderModes?: Array<"string" | "stream">;
   tsqModes?: Array<boolean>;
   routes?: Array<keyof typeof routes>;
   skip?: boolean;
 }) => {
   const testGroups: Array<TestGroup> = [];
+
+  const { framework } = opt;
 
   const renderModes =
     mode === "ssr" //
@@ -40,136 +42,130 @@ export const createTestGroups = async (opt?: {
     : [false, true];
 
   for (const backend of opt?.backends || Object.keys(BACKENDS)) {
-    for (const framework of opt?.frameworks || Object.keys(FRAMEWORKS)) {
-      for (const renderMode of renderModes) {
-        for (const tsq of tsqModes) {
-          if (renderMode === "stream") {
-            // mdx has no stream path, and svelte/server exposes only render() -
-            // the svelte generator is string-only SSR (serverRenderFactory<false>)
-            if (["mdx", "svelte"].includes(framework)) {
-              continue;
-            }
+    for (const renderMode of renderModes) {
+      for (const tsq of tsqModes) {
+        if (renderMode === "stream") {
+          // mdx has no stream path, and svelte/server exposes only render() -
+          // the svelte generator is string-only SSR (serverRenderFactory<false>)
+          if (["mdx", "svelte"].includes(framework)) {
+            continue;
+          }
+        }
+
+        if (tsq) {
+          // no tanstack query on mdx
+          if (framework === "mdx") {
+            continue;
+          }
+        }
+
+        const project = await setupTestProject({
+          mode,
+          backend: backend as never,
+          framework: framework as never,
+          tsq,
+          ...(renderMode ? { ssr: { renderMode } } : {}),
+          ...(opt?.skip ? { skip: opt.skip } : {}),
+        });
+
+        const group: TestGroup = {
+          name: [
+            backend,
+            framework,
+            renderMode || mode,
+            ...(tsq ? ["tsq"] : []),
+          ].join(":"),
+          project,
+          tests: [],
+        };
+
+        const {
+          sourceFolder,
+          bootstrapProject,
+          createApiRoutes,
+          createPageRoutes,
+        } = project;
+
+        const { createPath } = pathResolver(sourceFolder);
+
+        await bootstrapProject({
+          dependencies: { mrmime: dependencies["mrmime"] },
+        });
+
+        await mkdir(createPath.lib(), { recursive: true });
+
+        await renderToFile(
+          createPath.lib("@testUtils.ts"),
+          templates.testUtils,
+          {},
+        );
+
+        await createApiRoutes(
+          Object.keys(routes).map((name) => {
+            return { name };
+          }),
+          async ({ name }) => {
+            return () => renderApiFile(backend as never, name as never);
+          },
+        );
+
+        for (const [
+          route,
+          { params: paramsEntries = [[]], headers, cookies, ...payloadEntries },
+        ] of Object.entries(payloadMap)) {
+          if (opt?.skip) {
+            continue;
           }
 
-          if (tsq) {
-            // no tanstack query on mdx
-            if (framework === "mdx") {
-              continue;
-            }
+          if (opt?.routes && !opt.routes.includes(route as never)) {
+            continue;
           }
 
-          const project = await setupTestProject({
-            backend: backend as never,
-            framework: framework as never,
-            tsq,
-            ...(renderMode ? { ssr: { renderMode } } : {}),
-            ...(opt?.skip ? { skip: opt.skip } : {}),
-          });
+          for (const params of paramsEntries) {
+            for (const [method, payloads] of Object.entries(payloadEntries)) {
+              for (const payload of payloads) {
+                const path = [
+                  route.replace(/[^\w]/g, "_"),
+                  method,
+                  ...params.flatMap((p) => (Array.isArray(p) ? p : [p])),
+                  crc(route + JSON.stringify(payload)),
+                ].join("/");
 
-          const group: TestGroup = {
-            name: [
-              backend,
-              framework,
-              renderMode || mode,
-              ...(tsq ? ["tsq"] : []),
-            ].join(":"),
-            project,
-            tests: [],
-          };
-
-          const {
-            sourceFolder,
-            bootstrapProject,
-            createApiRoutes,
-            createPageRoutes,
-          } = project;
-
-          const { createPath } = pathResolver(sourceFolder);
-
-          await bootstrapProject({
-            dependencies: { mrmime: dependencies["mrmime"] },
-          });
-
-          await mkdir(createPath.lib(), { recursive: true });
-
-          await renderToFile(
-            createPath.lib("@testUtils.ts"),
-            templates.testUtils,
-            {},
-          );
-
-          await createApiRoutes(
-            Object.keys(routes).map((name) => {
-              return { name };
-            }),
-            async ({ name }) => {
-              return () => renderApiFile(backend as never, name as never);
-            },
-          );
-
-          for (const [
-            route,
-            {
-              params: paramsEntries = [[]],
-              headers,
-              cookies,
-              ...payloadEntries
-            },
-          ] of Object.entries(payloadMap)) {
-            if (opt?.skip) {
-              continue;
-            }
-
-            if (opt?.routes && !opt.routes.includes(route as never)) {
-              continue;
-            }
-
-            for (const params of paramsEntries) {
-              for (const [method, payloads] of Object.entries(payloadEntries)) {
-                for (const payload of payloads) {
-                  const path = [
-                    route.replace(/[^\w]/g, "_"),
-                    method,
-                    ...params.flatMap((p) => (Array.isArray(p) ? p : [p])),
-                    crc(route + JSON.stringify(payload)),
-                  ].join("/");
-
-                  for (const file of ["index", "layout"] as const) {
-                    await createPageRoutes([{ name: path, file }], async () => {
-                      return () => {
-                        return renderPageFile({
-                          framework: framework as never,
-                          tsq,
-                          route: route as never,
-                          path,
-                          params: JSON.stringify(params),
-                          method,
-                          payload,
-                          file,
-                        });
-                      };
-                    });
-                  }
-
-                  group.tests.push([
-                    path,
-                    createTestRunner({
-                      project,
-                      route,
-                      path,
-                      params: params as never,
-                      headers,
-                      cookies,
-                      payload,
-                    }),
-                  ]);
+                for (const file of ["index", "layout"] as const) {
+                  await createPageRoutes([{ name: path, file }], async () => {
+                    return () => {
+                      return renderPageFile({
+                        framework: framework as never,
+                        tsq,
+                        route: route as never,
+                        path,
+                        params: JSON.stringify(params),
+                        method,
+                        payload,
+                        file,
+                      });
+                    };
+                  });
                 }
+
+                group.tests.push([
+                  `[${mode}] ${path}`,
+                  createTestRunner({
+                    project,
+                    route,
+                    path,
+                    params: params as never,
+                    headers,
+                    cookies,
+                    payload,
+                  }),
+                ]);
               }
             }
           }
-
-          testGroups.push(group);
         }
+
+        testGroups.push(group);
       }
     }
   }

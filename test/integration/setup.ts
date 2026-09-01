@@ -11,7 +11,7 @@ import got, { type Method } from "got";
 import { Hono } from "hono";
 import { createJiti } from "jiti";
 import { chromium } from "playwright";
-import { inject } from "vitest";
+import { inject, type ProvidedContext } from "vitest";
 
 import { createProject, createSourceFolder } from "@kosmojs/cli";
 import {
@@ -27,11 +27,18 @@ import { pathResolver } from "@kosmojs/lib";
 import { contentPatternFor, createRoutePath, env, exec } from ".";
 import * as templates from "./@fixtures/templates";
 
-export const mode = inject("MODE");
+// Lazy: launched on first use, so browser-free suites (ssg, cli, backend)
+// run without playwright binaries installed.
+let browserInstance: Awaited<ReturnType<typeof chromium.launch>> | undefined;
 
-const browser = await chromium.launch({
-  headless: process.env.DEBUG !== "browser",
-});
+const getBrowser = async () => {
+  if (!browserInstance) {
+    browserInstance = await chromium.launch({
+      headless: process.env.DEBUG !== "browser",
+    });
+  }
+  return browserInstance;
+};
 
 const pnpmDir = resolve(tmpdir(), ".kosmojs/pnpm-store");
 
@@ -66,6 +73,7 @@ let portCursor = 0;
 
 export const setupTestProject = async (
   setup: {
+    mode?: ProvidedContext["MODE"];
     framework?: keyof typeof FRAMEWORKS | "random";
     backend?: keyof typeof BACKENDS;
     tsq?: boolean;
@@ -84,8 +92,10 @@ export const setupTestProject = async (
   const projectName = "app";
   const projectRoot = resolve(tempDir, projectName);
 
+  const mode = setup.mode || inject("MODE");
+
   const {
-    backend = mode === "ssr" || mode === "ssg" ? pickBackend() : undefined,
+    backend = ["ssr", "ssg"].includes(mode || "") ? pickBackend() : undefined,
     tsq,
     skip,
     ...generatorOptions
@@ -281,7 +291,12 @@ export const setupTestProject = async (
 
     let maybeContent: string | undefined;
 
-    if (browser) {
+    // Only CSR needs a real browser - content renders client-side there.
+    // SSR and SSG responses are complete HTML, asserted straight off the wire;
+    // hydration behavior for SSR is covered by the CSR suite over the same fixtures.
+    if (mode === "csr") {
+      const browser = await getBrowser();
+
       const context = await browser.newContext({
         extraHTTPHeaders: { ...opts?.headers },
       });
@@ -339,7 +354,16 @@ export const setupTestProject = async (
         ? await page.pause()
         : await page.close();
     } else {
-      maybeContent = await httpClient(url).text();
+      const cookie = Object.entries(opts?.cookies || {})
+        .map(([name, value]) => `${name}=${value}`)
+        .join("; ");
+
+      maybeContent = await httpClient(url, {
+        headers: {
+          ...opts?.headers,
+          ...(cookie ? { cookie } : {}),
+        },
+      }).text();
     }
 
     const content = maybeContent
@@ -440,7 +464,9 @@ export const setupTestProject = async (
           ssr: mode === "ssr",
           ssg: mode === "ssg",
         },
-        framework ? generatorOptions[framework as never] : {},
+        // the whole map, keyed by generator name - createKosmoConfig picks
+        // options for framework and backend generators by their own keys
+        generatorOptions as never,
       );
 
       await mkdir(createPath.api(), { recursive: true });
@@ -486,8 +512,9 @@ export const setupTestProject = async (
 
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      if (browser) {
+      if (mode === "csr") {
         // Initial warmup navigation
+        const browser = await getBrowser();
         const page = await browser.newPage();
         await page.goto(baseURL, {
           waitUntil: "networkidle",
@@ -507,10 +534,13 @@ export const setupTestProject = async (
       }
       const created = new Set<string>();
       for (const { name, file = "index" } of routes) {
-        if (!created.has(name)) {
+        // routes repeat a name once per params variant - one file each is enough;
+        // index and layout of the same name are distinct files, so key on both
+        const key = `${file}:${name}`;
+        if (!created.has(key)) {
           await createPageRoute(name, file, templateFactory);
         }
-        created.add(name);
+        created.add(key);
       }
     },
     async createApiRoutes(
@@ -528,9 +558,11 @@ export const setupTestProject = async (
       if (skip) {
         return;
       }
-      await browser?.close();
+      await browserInstance?.close();
       await closeServer?.();
-      await cleanup();
+      if (!process.env.KEEP_PROJECT) {
+        await cleanup();
+      }
       await new Promise((resolve) => setTimeout(resolve, 100));
     },
   };

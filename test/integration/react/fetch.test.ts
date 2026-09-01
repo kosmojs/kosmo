@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, test } from "vitest";
 
-import { createTestGroups } from "../fetch";
+import { createTestGroups } from "../fetch-factory";
 
 const testGroups = await createTestGroups({
-  frameworks: ["react"],
+  framework: "react",
 });
 
 beforeAll(async () => {

@@ -98,21 +98,23 @@ export default defineConfig({
         },
       }),
 
-      setupFactory("integration:frontend:csr", {
-        include: ["integration/{react,solid,vue,svelte,mdx}/!(ssg).test.ts"],
+      setupFactory("integration:csr", {
+        include: ["integration/{react,solid,vue,svelte,mdx}/*.test.ts"],
+        exclude: ["integration/*/ssg.test.ts"],
         provide: {
           MODE: "csr",
         },
       }),
 
-      setupFactory("integration:frontend:ssr", {
-        include: ["integration/{react,solid,vue,svelte,mdx}/!(ssg).test.ts"],
+      setupFactory("integration:ssr", {
+        include: ["integration/{react,solid,vue,svelte,mdx}/*.test.ts"],
+        exclude: ["integration/*/ssg.test.ts"],
         provide: {
           MODE: "ssr",
         },
       }),
 
-      setupFactory("integration:frontend:ssg", {
+      setupFactory("integration:ssg", {
         include: ["integration/{react,solid,vue,svelte,mdx}/ssg.test.ts"],
         provide: {
           MODE: "ssg",

@@ -17,10 +17,9 @@
     "test:integration": "vitest run --project=\"integration:*\"",
     "test:integration:cli": "vitest run --project=integration:cli",
     "test:integration:backend": "vitest run --project=integration:backend",
-    "test:integration:frontend": "vitest run --project=\"integration:frontend:*\"",
-    "test:integration:frontend:csr": "vitest run --project=integration:frontend:csr",
-    "test:integration:frontend:ssr": "vitest run --project=integration:frontend:ssr",
-    "test:integration:frontend:ssg": "vitest run --project=integration:frontend:ssg",
+    "test:integration:csr": "vitest run --project=integration:csr",
+    "test:integration:ssr": "vitest run --project=integration:ssr",
+    "test:integration:ssg": "vitest run --project=integration:ssg",
     "release:prepare": "bash ./scripts/release/prepare",
     "release:commit": "bash ./scripts/release/commit"
   },

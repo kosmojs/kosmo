@@ -28,13 +28,7 @@ beforeAll(bootstrap);
 afterAll(teardown);
 
 describe("SSG", async () => {
-  for (const { name, params, runner } of tests) {
-    test(
-      name,
-      {
-        skip: name === "search/{query}/{page}" && !params.length,
-      },
-      runner,
-    );
+  for (const { name, runner } of tests) {
+    test(name, runner);
   }
 });
