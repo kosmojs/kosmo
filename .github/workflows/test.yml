@@ -35,8 +35,8 @@ jobs:
       - run: pnpm -r build
 
       - run: pnpm test:unit
-      - run: pnpm test:integration cli
-      - run: pnpm test:integration backend
+      - run: pnpm test:integration:cli
+      - run: pnpm test:integration:backend
       - run: pnpm test:integration react
       - run: pnpm test:integration solid
       - run: pnpm test:integration vue
