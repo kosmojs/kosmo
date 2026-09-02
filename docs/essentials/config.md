@@ -165,7 +165,8 @@ In a frontend-only folder it is a no-op - there are no routes to generate client
 
 ### What the scaffolder writes
 
-Rather than assembling this by hand, `pnpm folder` writes the right set for your answers.
+Rather than assembling this by hand,
+[`kosmo folder`](/essentials/cli#adding-a-source-folder) writes the right set for your answers - interactively, or from flags.
 For reference, these are the configs it produces:
 
 :::tabs variant:code
@@ -396,7 +397,7 @@ A few settings are project-wide rather than per-folder, and live in the root `pa
 ```json [package.json]
 {
   "type": "module",
-  "distDir": "dist", // [!code hl:2]
+  "distDir": "dist", // [!code hl:3]
   "devPort": 4556,
   "previewPort": 4558,
   "scripts": {

@@ -48,22 +48,24 @@ Required: `--framework <name>` or `--no-framework`, and `--backend <name>` or `-
 the choice is always explicit; a missing flag is an error, never a silent default.
 
 Optional: `--name` (folder name, default `app`), `--base` (default `/`),
-`--ssr`, `--tsq`, `--overwrite`.
+`--ssr`, `--ssg`, `--tsq`, `--overwrite`.
+[Full flag reference&nbsp;›](/essentials/cli#cli-mode)
 
 Use `.` as the project name to scaffold into the current folder: `npm create kosmo . -- --framework ...`
 [Details&nbsp;›](/start)
 
 #### How do I add a source folder?
-Run `npm run folder` (or `pnpm folder` / `yarn folder`).
-[Details&nbsp;›](/tutorial#add-more-source-folders)
+Run `npm run folder` (or `pnpm folder` / `yarn folder`) - interactively, or with flags.
+[Details&nbsp;›](/essentials/cli#adding-a-source-folder)
 
 #### What am I prompted for when adding a source folder?
-Folder name, base URL, framework, backend, and SSR.
+Folder name, base URL, framework, backend, SSR, SSG (only if SSR is on) and TanStack Query.
 Non-interactive flags: `--name`, `--base`,
 `--framework solid|react|vue|svelte|mdx` or `--no-framework`,
-`--backend hono|h3|koa` or `--no-backend`, `--ssr`, `--tsq`.
-Framework and backend each require a value or its negation flag.
-[Details&nbsp;›](/tutorial#add-more-source-folders)
+`--backend hono|h3|koa` or `--no-backend`, `--ssr`, `--ssg`, `--tsq`, `--overwrite`.
+Framework and backend each require a value or its negation flag,
+and `--name` / `--base` are required here - unlike at project creation, they have no defaults.
+[Details&nbsp;›](/essentials/cli#adding-a-source-folder)
 
 #### How do I create a backend-only (API) folder, or a frontend-only folder?
 A source folder doesn't have to ship both sides - framework and backend are independent, and each is optional.
@@ -78,11 +80,11 @@ pnpm folder --name docs --base /docs --framework mdx --no-backend  # frontend-on
 ```
 
 The generated `kosmo.config.ts` contains only the generators that side needs.
-[Details&nbsp;›](/tutorial#add-more-source-folders)
+[Details&nbsp;›](/essentials/cli#adding-a-source-folder)
 
 #### Can I create a project without a source folder?
-No - every project starts with its first source folder (name defaults to `app` and base to `/`).
-A project without folders has nothing to serve or build,: the source folder is the unit of everything in KosmoJS.
+No - every project starts with its first source folder; omitting `--name` just falls back to the defaults (`app` at base `/`).
+A project without folders has nothing to serve or build - the source folder is the unit of everything in KosmoJS.
 Add more folders any time with `npm run folder`.
 [Details&nbsp;›](/start)
 
@@ -135,7 +137,7 @@ and they coexist in one project.
 Import a type directly across folders through the reserved aliases - `@/*` for root-level
 imports, `~/*` for source-folder imports, `_/*` for generated code. Change a database model
 and every folder sees it immediately. No publishing, no workspace protocols.
-[Details&nbsp;›](/frontend/intro#multi-folder-architecture)
+[Details&nbsp;›](/essentials/project-structure#path-mappings)
 
 #### Can I build/deploy a single folder?
 Yes - `pnpm build front` builds just that folder. Folders develop together as one project,
@@ -150,7 +152,7 @@ can deploy independently.
 #### Do routes/types leak between folders?
 No - generated types and utilities are scoped per folder.
 The admin dashboard's navigation types won't include the main app's routes, and vice versa.
-[Details&nbsp;›](/frontend/intro#multi-folder-architecture)
+[Details&nbsp;›](/essentials/project-structure#path-mappings)
 
 #### When should I split into separate folders?
 One folder per distinct concern (main app, admin, marketing).
@@ -344,6 +346,9 @@ Prefer simple segments for frontend routes and keep mixed segments to the API si
 Raw `path-to-regexp v8` patterns passed through directly.
 The rule: any param name containing non-alphanumeric characters is treated as a raw pattern.
 Examples: `book{-:id}-info`, `locale{-:lang{-:country}}`, `api/{v:version}/users`.
+
+**Koa is the only backend with full support**: Hono matches but renames the params (`_0abc`),
+H3 won't match at all, and no frontend supports it - keep power syntax on the API side, on Koa.
 Read the path-to-regexp docs before using it in production.
 [Details&nbsp;›](/routing/params#power-syntax)
 
@@ -448,6 +453,13 @@ No - dispatch is by HTTP method. Undefined methods return `405 Method Not Allowe
 
 #### Which method builders exist?
 `HEAD`, `OPTIONS`, `GET`, `POST`, `PUT`, `PATCH`, `DELETE`.
+[Details&nbsp;›](/backend/intro#defining-endpoints)
+
+#### What happens to a HEAD request if I only define GET?
+It is served by the `GET` handler, validated against its schemas, with the body dropped per the HTTP spec -
+`HEAD` is the one method that doesn't fall through to `405`.
+Define `HEAD` explicitly only when you want to override that - except on Hono, where you cannot:
+its router ignores any `HEAD` handler you define and fallback to `GET` handler.
 [Details&nbsp;›](/backend/intro#defining-endpoints)
 
 #### Why method-based routing?
@@ -641,7 +653,7 @@ Global middleware is typed through `api/env.d.ts` module augmentation
 A `UseT` exported from the global file is ignored.
 `UseT` is a cascading mechanism - it exists so types travel down a subtree alongside the middleware that sets them,
 which a app-wide file doesn't need.
-[Details&nbsp;›](/backend/middleware#global-vs-folder-level-use-ts)
+[Details&nbsp;›](/backend/middleware#global-vs-cascading)
 
 #### Why can some params be undefined in cascading middleware?
 A `use.ts` runs for every route in its subtree, including ones that don't define a given param -
@@ -793,7 +805,7 @@ or drifted DB/third-party shapes) and enables automatic OpenAPI generation.
 #### Does response validation run in production?
 Not by default: in production, response validation is disabled by default.
 To enable, set `runtimeValidation: true` on the response target.
-There is no global switch: each handler enable its own response validation.
+There is no global switch: each handler enables its own response validation.
 [Details&nbsp;›](/validation/response#development-vs-production)
 
 #### Can I use referenced types and generics?
@@ -877,7 +889,7 @@ Use sparingly: runtime validation is what catches mismatched DB responses, unexp
 
 #### What type arguments does defineRoute accept?
 - RouteName (required)
-- Params refinemets tuple
+- Params refinements tuple
 - Types unique to this specific route
     - Variables and Bindings for Hono
     - Context for H3
@@ -924,6 +936,7 @@ Each folder is checked against its own `tsconfig.json` - that's where JSX and fr
 
 There is no project-level typecheck because there is no project-level deliverable:
 source folders are what you build and deploy, so they are also the unit of typechecking.
+[Details&nbsp;›](/essentials/cli#typecheck-kosmo-typecheck)
 
 ### Fetch Clients
 
@@ -1030,7 +1043,7 @@ to the framework's native router and reactive model.
 Register the generator (e.g. `reactGenerator()`) in the folder's `kosmo.config.ts` and restart
 the dev server. The generator inserts its own Vite plugin automatically - don't add the plugin
 yourself (e.g. `@vitejs/plugin-react`), or it runs twice.
-[Details&nbsp;›](/frontend/intro#enabling-the-generator)
+[Details&nbsp;›](/essentials/config#generators-1)
 
 #### What `jsxImportSource` does each framework need?
 React `"react"`, SolidJS `"solid-js"`, Vue `"vue"` (only when using JSX), MDX `"preact"`.
@@ -1041,7 +1054,7 @@ per folder in `lib/` for your folder's `tsconfig.json` to extend from.
 #### What foundation files does a framework generator produce?
 A root App component (your app shell), a router config (`routerFactory`),
 and a client entry point (`entry/client`). SSR adds a server entry.
-[Details&nbsp;›](/frontend/intro#enabling-the-generator)
+[Details&nbsp;›](/frontend/intro#foundation-files)
 
 #### What is routerFactory?
 It wires your App + generated routes to the native router.
@@ -1083,7 +1096,7 @@ Each folder runs one framework and ignores other frameworks' files (a Vue folder
 
 #### Why isn't my pages/layout.* file loaded?
 Layout files only apply inside route folders.
-A layout outside a route folder is not picked up. `page/layout.*` files are simply ignored.
+A layout outside a route folder is not picked up. `pages/layout.*` files are simply ignored.
 If you look for a global layout that wraps every route, that's the `src/<folder>/app.*` file.
 [Details&nbsp;›](/frontend/layouts#global-layout-via-app-file)
 
@@ -1248,11 +1261,10 @@ To see server-rendered output locally, run `pnpm preview`.
 [Details&nbsp;›](/frontend/server-side-render#development-experience)
 
 #### renderToString vs renderToStream?
-Both return `{ head, html }` - `renderToString` resolves `html` to a string (full page
-rendered before sending), `renderToStream` resolves it to a `ReadableStream` (progressive
-flushing, better TTFB). Framework folders implement both; which one runs per route is
-chosen by `renderMode`, not by precedence. MDX is the exception - it renders static
-content and implements only `renderToString`.
+Both return `{ head, html }` - `renderToString` resolves `html` to a string (full page rendered before sending),
+`renderToStream` resolves it to a `ReadableStream` (progressive flushing, better TTFB).
+Framework folders implement both; which one runs per route is chosen by `renderMode`, not by precedence.
+**Svelte and MDX are the exceptions** - both render to string only and implement no `renderToStream`.
 [Details&nbsp;›](/frontend/server-side-render#server-entry-point)
 
 #### What do the render methods receive?
@@ -1278,11 +1290,11 @@ stream as `html`; the server handles writing it into the response. Enable it per
 [Details&nbsp;›](/frontend/server-side-render#stream-rendering)
 
 #### How do I use a different render mode per route or group of routes?
-`renderMode` in `ssrGenerator()` options controls string vs stream per route. Every route
-defaults to `"string"`; set `"stream"` to stream all routes, or pass a map of glob patterns to
-opt in selectively. When patterns overlap, the first match wins, so order them specific to
-general. Streaming a route needs the folder's renderer to implement `renderToStream`; MDX
-folders render static content and don't accept the streaming mode.
+`renderMode` in `ssrGenerator()` options controls string vs stream per route.
+Every route defaults to `"string"`; set `"stream"` to stream all routes, or pass a map of glob patterns to opt in selectively.
+When patterns overlap, the first match wins, so order them specific to general.
+Streaming a route needs the folder's renderer to implement `renderToStream`;
+**NOTE:** Svelte and MDX folders render to string only and don't accept the streaming mode.
 [Details&nbsp;›](/frontend/server-side-render#selecting-the-render-mode)
 
 #### How do I build and run the SSR bundle, and on which runtimes?
@@ -1928,7 +1940,7 @@ No ISR/revalidation and no partial prerendering.
 Closest equivalent, and it works on every frontend: each route renders to static HTML at build time
 (`staticParams` supplying the entries for dynamic routes), output to `dist/<folder>/ssg/`.
 An MDX folder additionally gets frontmatter-driven head, layouts and typed nav - comparable to Next + MDX/Contentlayer, but built in.
-[Details&nbsp;›](#ssg) · [Coming from Next&nbsp;›](/essentials/coming-from)
+[Details&nbsp;›](#ssg) · [Migration&nbsp;Tips&nbsp;›](/essentials/migration-tips)
 
 #### Can I use SSG with React, Vue, SolidJS or Svelte?
 Yes - SSG works with any frontend. The folder needs SSR enabled, since pages are rendered at build time by its own SSR server.
@@ -1990,117 +2002,12 @@ Serve it with Swagger UI, Redoc, or Stoplight Elements.
 
 ### Agents
 
-An LLM agent must answer these before emitting KosmoJS code that compiles and runs.
+#### Is there guidance for LLM agents writing KosmoJS code?
+Yes - [Notes for LLM Agents](/agents) collects what an agent must check before emitting code:
+how to tell which frameworks a folder runs, why boilerplate should never be hand-written,
+the four validation mistakes that typecheck but fail at runtime, middleware placement,
+and why the dev server never shows the SSR path.
 
-#### A1. Which backend is this folder - Hono/H3/Koa?
-Check the folder's `kosmo.config.ts` (`src/<folder>/kosmo.config.ts`): a `honoGenerator()`
-or `h3Generator()` or `koaGenerator()` in the `generators` array tells you which backend is
-in use. A folder with none is frontend-only and has no `api/` directory.
-[Configuration reference&nbsp;›](/essentials/config)
-
-#### A2. Which frontend framework is this folder - React, SolidJS, Vue, Svelte, or MDX?
-Check the folder's `kosmo.config.ts` for the framework generator
-(`reactGenerator()`, `solidGenerator()`, `vueGenerator()`, `svelteGenerator()`, or `mdxGenerator()`),
-or look at the page file extensions (`.tsx`/`.vue`/`.svelte`/`.mdx`).
-It matters because data preload (React `loader`+`useLoaderData`,
-SolidJS `preload`+`createAsync`, Vue/Svelte/MDX `loader`+`useLoaderData`),
-child rendering (React `<Outlet/>`, Vue `<RouterView/>`, Solid/MDX `props.children`, Svelte `{@render children()}`),
-entry wiring, layout filename (`layout.tsx`/`.vue`/`.svelte`/`.mdx`),
-`jsxImportSource` (`react`/`solid-js`/`vue`/`preact`),
-and mixed-segment support (full for Vue/Svelte/MDX, `.ext`-only for React, none for SolidJS) all differ.
-
-#### A3. Is this an API route or a page?
-API routes default-export `defineRoute(...)` returning an array of method handlers;
-pages default-export a component function (named, not an anonymous arrow, which would break Vite HMR).
-KosmoJS generates the correct boilerplate when the file is created.
-
-#### A4. Are the wrapping brackets literal?
-The params tuple, the response tuple and the `VRefine` constraint object must each have their `[]`/`{}` written inline -
-`defineRoute<"users/[id]", [number]>`, not `defineRoute<"users/[id]", Params>`.
-Type aliases used *inside* the brackets are fine.
-Hiding the brackets loses the structural info the generator reads from the source:
-a params tuple then rejects every request, a response tuple silently generates no schema.
-
-#### A5. Does any user-defined type collide with a JS/DOM/TS built-in name?
-`Event`, `Response`, `Request`, `Error`, `Date`, `Partial`, `Record`, `Buffer`, etc.
-are referenced as-is during type flattening, so the validator sees the built-in rather than your type -
-a silent runtime failure with no compile error.
-Rename with a consistent `T` suffix/prefix (`EventT`, `TResponse`).
-
-#### A6. Is any validation target combination illegal?
-Two body targets, or a body target on GET, is a dev-time error
-(KosmoJS warns and disables the affected schema).
-The valid shape is one body target (`json`/`form`/`raw`, mutually exclusive)
-plus any combination of metadata targets (`query`/`headers`/`cookies`, valid on any method).
-
-#### A7. Should this be cascading `use.ts` or route-level `use`?
-Shared across a route subtree -> a cascading `use.ts` in that folder
-(it auto-wraps the folder and subfolders and exports a `UseT`
-that cascades context types to child routes). One route only -> an inline `use` inside `defineRoute`.
-Keep cascading middleware generic - it runs for sibling routes too,
-so a param like `id` may be undefined there.
-
-#### A8. Does this folder have SSR enabled, and is this the dev or prod path?
-SSR only runs in production builds; dev is always Vite CSR + HMR
-regardless of whether `ssrGenerator()` is registered.
-Don't reason about "the SSR code path" while looking at the dev server -
-the server entry (`renderToString`/`renderToStream`) executes only in a production build.
-Use `pnpm preview` to look at the real thing.
-
-#### A9. For numeric constraints, is an integer required?
-Plain `number` allows floats - use `VRefine<number, { minimum: 1, multipleOf: 1 }>`
-for a positive integer ID. Without `multipleOf: 1`, `1000.5` passes validation
-and then gets rejected at the DB layer, turning a clear validation error into a confusing query error.
-
-#### A10. For navigation, is the typed `Link` tuple correct for this route's params?
-`to={["users/[id]", 123]}` - a typed tuple of route name then params in path order,
-with an optional `query` prop. TypeScript enforces the param types,
-and renaming a route folder surfaces errors at every `Link` using the old name.
-
-#### A11. Creating a new api route/use file or client page/layout file - who writes the boilerplate?
-**Never generate the boilerplate yourself.** Your template knowledge can be outdated -
-imports, factory signatures, and generated-file wiring may change with each release.
-Create the file **empty** and let kosmo land the current boilerplate, then update it accordingly.
-This also keeps the scaffolding pipeline in its intended flow: kosmo owns file scaffolding, you own the logic you put into it.
-
-Two ways to land the boilerplate:
-- **Local machine:** the running dev server picks the file up on creation and fills it in.
-- **Containers / CI / remote sandboxes:** do **not** rely on the dev server -
-file watching inside containers is prone to inotify/watcher trouble (limits, wedged half-terminated instances, event loss),
-which surfaces as files silently never picked up.
-Instead, create the empty files and run the **build** command: it resolves routes with exactly the same code as the dev server,
-writes the boilerplate, and wires the routes - deterministically, no watcher involved.
-
-#### A12. Is `_/use` available here, and what does it export?
-Only Vue, Svelte and MDX folders generate `_/use`. React and SolidJS folders have none -
-importing from it there will not resolve; use `react-router` / `@solidjs/router` instead.
-Vue exports `useLoaderData` only. Svelte and MDX also export `useRoute`, `useParams`,
-`useParamsEntries`, `useSearchParams`; MDX adds `useFrontmatter`.
-`useLoaderData` returns `T | undefined`, and a **layout** must pass its path-qualified name
-(`useLoaderData("dashboard/layout")`) while a page passes nothing.
-[Details&nbsp;›](/frontend/hooks)
-
-#### A13. Does this handler declare a `response`?
-If not, the generated fetch client returns `Promise<unknown>` for that method,
-there is no `ResponseT` entry, and no response validation or OpenAPI response schema.
-Declaring `response: [200, "json", T]` turns on all four at once.
-Add one to any handler whose result the frontend consumes.
-[Details&nbsp;›](/fetch/type-safety#without-a-response-the-result-is-unknown)
-
-#### A14. Will this validation fail silently?
-Four mistakes typecheck cleanly and misbehave at runtime:
-- a wrapping `[]` or `{}` hidden behind a type alias (contents may be aliased, brackets may not) -
-a params tuple then rejects *everything*, a response tuple generates *no schema at all*
-- a type named after a JS/DOM/TS built-in
-- plain `number` where an integer is required
-- and a non-string type on a target that doesn't coerce
-(only `query` coerces numbers and booleans; `params` coerce numbers only; `headers`/`cookies`/`form`/`raw` never coerce).
-
-Check these before debugging anything else.
-[Details&nbsp;›](/validation/gotchas)
-
-#### A15. Where is the latest authoritative source?
-Always prefer fetching `https://kosmojs.dev/llms-full.txt` over memory for exact generator option names,
-the full VRefine keyword set, and exact scaffold flags -
-the conventions are dense and easy to get subtly wrong.
-Every answer above links to its source documentation page for the authoritative detail.
+Agents should also prefer `https://kosmojs.dev/llms-full.txt` over recall for exact generator options,
+the full `VRefine` keyword set and scaffold flags.
+[Details&nbsp;›](/agents)

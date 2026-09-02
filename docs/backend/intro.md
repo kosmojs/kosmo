@@ -120,13 +120,22 @@ export default defineRoute<"users">(({ GET, POST, PUT, DELETE }) => [
 ]);
 ```
 
+This method-based routing style draws inspiration from [Sinatra](https://sinatrarb.com/) -
+the Ruby framework that pioneered it back in 2007.
+
 Handler order doesn't matter - requests are dispatched by HTTP method.
 Undefined methods return `405 Method Not Allowed` automatically.
 
 Available builders: `HEAD`, `OPTIONS`, `GET`, `POST`, `PUT`, `PATCH`, `DELETE`.
 
-This method-based routing style draws inspiration from [Sinatra](https://sinatrarb.com/) -
-the Ruby framework that pioneered it back in 2007.
+::: tip HEAD is served by your GET handler
+`HEAD` is the one exception to the 405 rule. A route that defines `GET` but not `HEAD` still answers HEAD requests:
+they are dispatched to the `GET` handler and validated against its schemas,
+with the body dropped as the HTTP spec requires.
+Define `HEAD` explicitly only when you want to override that.
+Hono is the exception: its router ignores any `HEAD` handler you define,
+so the fallback to `GET` always wins there.
+:::
 
 ## The Route Name Type Argument
 

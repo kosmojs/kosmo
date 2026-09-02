@@ -175,14 +175,13 @@ export default defineConfig({
               link: "/essentials/project-structure",
             },
             {
-              text: "Why Codegen",
-              docFooterText: "Why Codegen",
-              link: "/essentials/codegen",
-            },
-            {
               text: "Configuration",
               docFooterText: "kosmo.config.ts",
               link: "/essentials/config",
+            },
+            {
+              text: "CLI",
+              link: "/essentials/cli",
             },
             {
               text: "Framework Support",
@@ -190,9 +189,14 @@ export default defineConfig({
               link: "/essentials/frameworks",
             },
             {
-              text: "Coming from...",
-              docFooterText: "Coming from",
-              link: "/essentials/coming-from",
+              text: "Migration Tips",
+              docFooterText: "Migration Tips",
+              link: "/essentials/migration-tips",
+            },
+            {
+              text: "Why Codegen",
+              docFooterText: "Why Codegen",
+              link: "/essentials/codegen",
             },
           ],
         },
@@ -439,6 +443,11 @@ export default defineConfig({
             {
               text: "FAQ",
               link: "/faq",
+            },
+            {
+              text: "Agents",
+              docFooterText: "Agents",
+              link: "/agents",
             },
             {
               text: "Docs List",

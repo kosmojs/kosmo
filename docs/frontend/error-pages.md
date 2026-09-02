@@ -139,7 +139,7 @@ The 404 page only ever renders because *routing* found nothing.
 - **Not `not-found.tsx`.** There is no per-route not-found convention as in Next's App Router -
 one 404 page serves the whole source folder.
 Different folders have their own, which is usually the distinction you actually wanted.
-[Coming from...&nbsp;›](/essentials/coming-from#loading-tsx-error-tsx-not-found-tsx)
+[Migration&nbsp;Tips&nbps;›](/essentials/migration-tips#loading-tsx-error-tsx-not-found-tsx)
 
 ## Triggering it deliberately
 

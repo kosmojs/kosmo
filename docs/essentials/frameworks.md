@@ -97,4 +97,4 @@ src/
 ```
 
 A folder also ignores other frameworks' files: a Vue folder skips `.tsx`,
-a React folder skips `.vue`/`.svelte`. [Details&nbsp;›](/frontend/intro#multi-folder-architecture)
+a React folder skips `.vue`/`.svelte`. [Details&nbsp;›](/frontend/intro#extensions-per-framework)
