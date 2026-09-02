@@ -2,7 +2,10 @@ import { H3, type Middleware } from "h3";
 
 import type { Route, RouteDebugOption } from "@kosmojs/core/api";
 
-export type App = H3;
+/**
+ * The interface is a nameable symbol of this module, emit stops here and never chases through to the class.
+ * */
+export interface App extends H3 {}
 
 export type AppOptions = ConstructorParameters<typeof H3>[0] & {
   debug?: RouteDebugOption;
