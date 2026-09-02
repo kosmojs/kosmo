@@ -107,7 +107,7 @@ You focus on features, KosmoJS takes care of infrastructure.
 
 Part of how it does that is by generating code - validators, typed clients, route tables, an OpenAPI spec.
 If that sets off alarms, it should: most code generation has earned its reputation.
-[Why Codegen](/essentials/codegen) explains why this kind is the compiler kind rather than the scaffolding kind.
+[Why&nbsp;Codegen](/essentials/why-codegen) explains why this kind is the compiler kind rather than the scaffolding kind.
 
 ---
 

@@ -198,7 +198,10 @@ pnpm folder --name docs  --base /docs  --framework mdx   --no-backend --ssg
 ```
 
 Without `--overwrite`, an existing `src/<name>` is an error rather than a prompt:
-`./src/admin already exists. Either remove it or provide --overwrite flag.`
+
+```txt
+./src/admin already exists. Either remove it or provide --overwrite flag.
+```
 
 ### Install what it added
 
@@ -239,7 +242,11 @@ pnpm build admin svc  # several
 ```
 
 A name that isn't a source folder - no `src/<name>/kosmo.config.ts` - stops the command with
-`Some of given names does not contain a valid KosmoJS source folder`.
+
+```txt
+Some of given names does not contain a valid KosmoJS source folder.
+```
+
 A project with no folders at all reports `No source folders detected`.
 
 ## `dev` - `kosmo serve`
@@ -304,7 +311,7 @@ pnpm typecheck
 pnpm typecheck admin
 ```
 
-Runs `tsc --project src/<folder>/tsconfig.json --noEmit` for each selected folder,
+Runs `tsc -p src/<folder>/tsconfig.json --noEmit` for each selected folder,
 in sequence, using the `typescript` version installed in the project.
 
 Per folder, not per project: each source folder has [its own tsconfig.json](/essentials/config#typescript-config)

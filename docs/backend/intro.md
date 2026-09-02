@@ -91,7 +91,7 @@ That is the whole convention: **one URL per folder, one file that defines it.**
 
 Derived code - validators, the route table, fetch clients, the OpenAPI spec - never lands here.
 It lives in `lib/`, is git-ignored, and you neither read nor edit it.
-[Why codegen&nbsp;›](/essentials/codegen)
+[Details&nbsp;›](/essentials/why-codegen)
 
 ## Defining Endpoints
 

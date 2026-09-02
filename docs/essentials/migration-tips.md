@@ -271,7 +271,7 @@ which tRPC does not produce natively.
 
 Both, from one definition - which is the main difference from TanStack Router's compile-time-only route typing.
 The generated validators run on real requests.
-[Details&nbsp;›](/essentials/codegen)
+[Details&nbsp;›](/essentials/why-codegen)
 
 ## Rendering
 

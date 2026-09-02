@@ -29,7 +29,7 @@ Default port is `4556`, configured as `devPort` in `package.json`.
 
 ## What Happens on Start
 
-1. Generators run, seeding any blank route or page files - see [code generation](/essentials/codegen)
+1. Generators run, seeding any blank route or page files.
 2. `Vite` compiles `api/app.ts`
 3. Dev server starts, serving both client pages and your API routes
 4. Requests are routed between Vite and your API by the folder's `apiBase`

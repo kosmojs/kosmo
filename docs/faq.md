@@ -1913,7 +1913,7 @@ in the same category as what `tsc`, the JSX transform and Vite already generate 
 The `src/` boilerplate it does seed is written **only into blank files**,
 so regeneration can never overwrite your work.
 And nothing generated is proprietary: `lib/` holds ordinary Hono/React/TypeBox code you could walk away with.
-[The full argument, including the costs&nbsp;›](/essentials/codegen)
+[Details&nbsp;›](/essentials/why-codegen)
 
 #### Is generated code committed to git?
 Mostly no. `lib/.gitignore` ignores everything except `cache.json` and `types.ts`,

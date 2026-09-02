@@ -194,9 +194,14 @@ export default defineConfig({
               link: "/essentials/migration-tips",
             },
             {
+              text: "Why HTTP",
+              docFooterText: "Why HTTP",
+              link: "/essentials/why-http",
+            },
+            {
               text: "Why Codegen",
               docFooterText: "Why Codegen",
-              link: "/essentials/codegen",
+              link: "/essentials/why-codegen",
             },
           ],
         },

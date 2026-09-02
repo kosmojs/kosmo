@@ -89,7 +89,7 @@ A source folder runs exactly one framework and ignores the others' files - a Vue
 [Full&nbsp;matrix&nbsp;›](/essentials/frameworks#frontends)
 
 Derived code - the route table, fetch clients, validators - lives in `lib/`, is git-ignored,
-and is not something you read to learn the project. [Why&nbsp;codegen&nbsp;›](/essentials/codegen)
+and is not something you read to learn the project. [Why&nbsp;codegen&nbsp;›](/essentials/why-codegen)
 
 ## TypeScript Configuration
 
