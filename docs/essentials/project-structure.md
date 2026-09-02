@@ -14,20 +14,20 @@ Once that clicks, the rest of the docs read much faster.
 
 ```txt
 my-app/
-├── package.json          → project settings: distDir, devPort, previewPort, scripts
-├── tsconfig.json         → { "extends": "./lib/tsconfig.json" }
+├── package.json          -> project settings: distDir, devPort, previewPort, scripts
+├── tsconfig.json         -> { "extends": "./lib/tsconfig.json" }
 │
 ├── src/                  ✍️  YOU WRITE THIS
-│   ├── front/            →   one source folder
-│   └── admin/            →   another, fully independent
+│   ├── front/            ->   one source folder
+│   └── admin/            ->   another, fully independent
 │
 ├── lib/                  🤖 GENERATED - never edit, don't read to learn
-│   ├── tsconfig.json     →   base config the root tsconfig extends
-│   ├── front/            →   generated code for src/front
-│   └── admin/            →   generated code for src/admin
+│   ├── tsconfig.json     ->   base config the root tsconfig extends
+│   ├── front/            ->   generated code for src/front
+│   └── admin/            ->   generated code for src/admin
 │
 ├── dist/                 📦 BUILD OUTPUT
-│   ├── run.js            → runs every folder, one process
+│   ├── run.js            -> runs every folder, one process
 │   ├── front/
 │   └── admin/
 │
@@ -44,39 +44,39 @@ with SSR enabled - the fullest shape:
 
 ```txt
 src/front/
-├── kosmo.config.ts       → what this folder is
-├── tsconfig.json         → { "extends": "../../lib/front/tsconfig.json" }
-├── index.html            → Vite's HTML entry
-├── app.tsx               → global wrapper, wraps EVERY route
-├── router.ts             → routerFactory: routes ➜ native router
+├── kosmo.config.ts       -> what this folder is
+├── tsconfig.json         -> { "extends": "../../lib/front/tsconfig.json" }
+├── index.html            -> Vite's HTML entry
+├── app.tsx               -> global wrapper, wraps EVERY route
+├── router.ts             -> routerFactory: routes ➜ native router
 │
 ├── api/                  ── server side ───────────────────────────
-│   ├── app.ts            → the backend app instance (appFactory)
-│   ├── server.ts         → standalone server entry
-│   ├── dev.ts            → dev hooks: requestHandler, teardownHandler
-│   ├── errors.ts         → THE central error handler
-│   ├── use.ts            → global middleware (runs for every route)
-│   ├── env.d.ts          → global context/state types, custom UseSlots
+│   ├── app.ts            -> the backend app instance (appFactory)
+│   ├── server.ts         -> standalone server entry
+│   ├── dev.ts            -> dev hooks: requestHandler, teardownHandler
+│   ├── errors.ts         -> THE central error handler
+│   ├── use.ts            -> global middleware (runs for every route)
+│   ├── env.d.ts          -> global context/state types, custom UseSlots
 │   └── users/
 │       └── [id]/
-│           ├── index.ts  → the route  ➜  /api/users/:id
-│           └── types.ts  → colocated helper, NOT a route
+│           ├── index.ts  -> the route  ➜  /api/users/:id
+│           └── types.ts  -> colocated helper, NOT a route
 │
 ├── pages/                ── client side ───────────────────────────
-│   ├── 404.tsx           → rendered for unmatched routes
+│   ├── 404.tsx           -> rendered for unmatched routes
 │   ├── index/
-│   │   └── index.tsx     → the route  ➜  /
+│   │   └── index.tsx     -> the route  ➜  /
 │   └── users/
-│       ├── layout.tsx    → wraps everything under /users
+│       ├── layout.tsx    -> wraps everything under /users
 │       └── [id]/
-│           └── index.tsx → the route  ➜  /users/:id
+│           └── index.tsx -> the route  ➜  /users/:id
 │
 ├── components/
-│   └── Link.tsx          → generated typed Link
+│   └── Link.tsx          -> generated typed Link
 │
 └── entry/
-    ├── client.ts         → mount / hydrate in the browser
-    └── server.ts         → renderToString / renderToStream  (SSR only)
+    ├── client.ts         -> mount / hydrate in the browser
+    └── server.ts         -> renderToString / renderToStream  (SSR only)
 ```
 
 Things worth noticing:
@@ -103,22 +103,22 @@ while the `_/` names you import stay the same:
 
 ```txt
 lib/
-├── tsconfig.json         → shared base for the root tsconfig
-├── .gitignore            → why lib/ is NOT in the root .gitignore
+├── tsconfig.json         -> shared base for the root tsconfig
+├── .gitignore            -> why lib/ is NOT in the root .gitignore
 └── front/
-    ├── tsconfig.json     → this folder's jsxImportSource + path mappings
-    ├── api.ts            → _/api          defineRoute, use
-    ├── api:factory.ts    → _/api:factory  appFactory, devSetup, errorHandlerFactory
-    ├── app.tsx           → _/app          the AppProvider seam
-    ├── router.tsx        → _/router       routerFactory, createRouters
-    ├── query.ts          → _/query        TanStack client (when enabled)
-    ├── use.ts            → _/use          framework hooks (Vue/Svelte/MDX)
+    ├── tsconfig.json     -> this folder's jsxImportSource + path mappings
+    ├── api.ts            -> _/api          defineRoute, use
+    ├── api:factory.ts    -> _/api:factory  appFactory, devSetup, errorHandlerFactory
+    ├── app.tsx           -> _/app          the AppProvider seam
+    ├── router.tsx        -> _/router       routerFactory, createRouters
+    ├── query.ts          -> _/query        TanStack client (when enabled)
+    ├── use.ts            -> _/use          framework hooks (Vue/Svelte/MDX)
     ├── entry/
-    │   ├── client.ts     → _/entry/client
-    │   └── server.ts     → _/entry/server
-    ├── fetch/            → _/fetch        typed clients + ResponseT
+    │   ├── client.ts     -> _/entry/client
+    │   └── server.ts     -> _/entry/server
+    ├── fetch/            -> _/fetch        typed clients + ResponseT
     └── @api/
-        └── routes.ts     → the RouteMap
+        └── routes.ts     -> the RouteMap
 ```
 
 ::: tip `lib/` has its own `.gitignore` - don't add it to the root one
@@ -166,16 +166,16 @@ no workspaces, no publishing, no version bumps.
 ```txt
 dist/front/
 ├── api/
-│   ├── app.js            → the app instance, for custom mounting
-│   └── server.js         → ready-to-run API server
+│   ├── app.js            -> the app instance, for custom mounting
+│   └── server.js         -> ready-to-run API server
 ├── client/
-│   ├── assets/           → hashed JS, CSS, images
+│   ├── assets/           -> hashed JS, CSS, images
 │   └── index.html
-└── ssr/                  → only when SSR is enabled
+└── ssr/                  -> only when SSR is enabled
     ├── app.js
-    ├── server.js         → serves pages AND the API
-    ├── assets/           → hashed, served at <base>/assets/
-    └── public/           → copy of public/, served at <base>/
+    ├── server.js         -> serves pages AND the API
+    ├── assets/           -> hashed, served at <base>/assets/
+    └── public/           -> copy of public/, served at <base>/
 ```
 
 The simplest way to run all of this is `node dist/run.js`, which dispatches across every folder in one process.

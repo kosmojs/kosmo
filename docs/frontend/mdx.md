@@ -112,9 +112,9 @@ import Alert from "./Alert.tsx"
 
 Every markdown element (`# heading`, `` `code` ``, `[link](url)`) compiles to
 a JSX call. Override any of them globally via the component map in
-`components/mdx.tsx`:
+`components/mdx.ts`:
 
-```tsx [src/components/mdx.tsx]
+```tsx [src/components/mdx.ts]
 import Link from "./Link";
 
 export const components = {
@@ -385,7 +385,7 @@ The `to` prop accepts the same typed tuple as other frameworks - route name
 followed by parameters. TypeScript enforces correct parameter types at
 compile time.
 
-> **Tip:** When `Link` is enabled in `components/mdx.tsx` (the default),
+> **Tip:** When `Link` is enabled in `components/mdx.ts` (the default),
 > it can be used in pages without import - it is a global component provided via `MDXProvider`.
 
 ## Frontmatter & Head Injection

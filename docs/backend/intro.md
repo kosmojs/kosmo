@@ -9,13 +9,89 @@ head:
         framework choice, typescript api, defineRoute, api middleware
 ---
 
-Supported backend frameworks:
-- [Hono](https://hono.dev) - exceptional performance, runs on Node/Deno/Bun/edge platforms unchanged.
-- [H3](https://h3.dev) - similar to Hono in performance and multi‑runtime support, focus on Web standards.
-- [Koa](https://koajs.com) - battle-tested, mature ecosystem, elegant async/await middleware, Node-focused.
+A source folder's API runs on one backend framework - **Hono**, **H3** or **Koa**.
 
-Route organization, middleware composition, and validation are identical between frameworks.
-The difference is the context API inside handlers - each framework has its own.
+- [Hono](https://hono.dev) - exceptional performance, runs unchanged on Node, Deno, Bun and edge platforms.
+- [H3](https://h3.dev) - comparable performance and reach, built around Web standards.
+- [Koa](https://koajs.com) - battle-tested Node ecosystem, elegant async/await middleware.
+
+The decision matters less than it looks.
+Route layout, middleware composition, payload validation, fetch clients, all behave identically whichever you pick.
+
+What changes is the context object your handlers receive -
+reading a body, setting a response, raising an error stay your framework's own idioms, untouched.
+
+## What's in `api/`
+
+Creating a source folder with a backend seeds a small, fixed set of files.
+Each is a real source file you own - they are written once, never regenerated behind your back,
+and none of them can be seeded through [custom templates](/backend/custom-templates#what-it-overrides) (only route files can).
+
+```text
+src/<folder>/api/
+├── app.ts                -> builds the backend app instance
+├── server.ts             -> standalone server entry
+├── dev.ts                -> dev-only hooks
+├── errors.ts             -> the central error handler
+├── use.ts                -> global middleware (every route in this folder)
+├── env.d.ts              -> global context/state types, custom slots
+│
+└── users/                ── a route folder ──
+    ├── use.ts            -> middleware for /users and everything under it
+    ├── index.ts          -> the route  ➜  /api/users
+    ├── types.ts          -> colocated helper, NOT a route
+    └── [id]/
+        └── index.ts      -> the route  ➜  /api/users/:id
+```
+
+### Foundation files
+
+| File | What it is | When&nbsp;you&nbsp;touch&nbsp;it |
+|---|---|---|
+| `app.ts` | Builds the app with `appFactory()`. The callback hands you the **native** Hono/H3/Koa instance - this is where the error handler is registered and where any framework-native middleware or plugin goes. | Adding native middleware; enabling [debug](/dev-build-run/development-workflow#inspecting-api-routes) |
+| `server.ts` | The standalone entry that boots `app.ts` - what `node dist/<folder>/api/server.js` runs in production. | Rarely |
+| `dev.ts` | Dev-only hooks: `requestHandler()` returns the handler the dev server dispatches to (override it for WebSockets or custom dispatch), and `teardownHandler()` runs **before every reload** - close DB connections and sockets here or they leak across restarts. | WebSockets; connection cleanup |
+| `errors.ts` | The central error handler, registered by `app.ts`. The default distinguishes `ValidationError` and `HTTPError`, then content-negotiates JSON or plain text. | Customizing error responses |
+| `use.ts` | [Global middleware](/backend/middleware#global-middleware-api-use-ts) - runs for every route in this folder. | Request id, CORS, logging, auth |
+| `env.d.ts` | Module augmentation for folder-wide types: `DefaultVariables`/`DefaultBindings` (Hono), `DefaultContext` (H3), `DefaultState`/`DefaultContext` (Koa), plus [custom slot names](/backend/middleware#slot-composition). | Typing `ctx.state` / bindings |
+
+Only `app.ts` differs between backends, and only in how the error handler attaches:
+
+:::tabs key:backend variant:code
+== Hono
+```ts
+export default appFactory(routes, ({ app }) => {
+  app.onError(defaultErrorHandler);
+});
+```
+== H3
+```ts
+export default appFactory(routes, ({ app }) => {
+  app.use(onError(defaultErrorHandler));
+});
+```
+== Koa
+```ts
+export default appFactory(routes, ({ app }) => {
+  app.use(defaultErrorHandler);
+});
+```
+:::
+
+### Inside a route folder
+
+| File | What it is |
+|---|---|
+| `index.ts` | **The route.** Default-exports `defineRoute(...)`; its folder path becomes the URL. |
+| `use.ts` | [Cascading middleware](/backend/cascading-middleware) for this folder and everything beneath it. Exports `UseT` to extend the typed context downward. |
+| anything&nbsp;else | A colocated helper - schemas, types, queries, tests. Never a route, never scanned. |
+
+`index.ts` and `use.ts` are the only two filenames the backend watcher acts on.
+That is the whole convention: **one URL per folder, one file that defines it.**
+
+Derived code - validators, the route table, fetch clients, the OpenAPI spec - never lands here.
+It lives in `lib/`, is git-ignored, and you neither read nor edit it.
+[Why codegen&nbsp;›](/essentials/codegen)
 
 ## Defining Endpoints
 

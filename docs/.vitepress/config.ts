@@ -189,6 +189,11 @@ export default defineConfig({
               docFooterText: "Framework Support Matrix",
               link: "/essentials/frameworks",
             },
+            {
+              text: "Coming from...",
+              docFooterText: "Coming from",
+              link: "/essentials/coming-from",
+            },
           ],
         },
         {
@@ -295,6 +300,10 @@ export default defineConfig({
             {
               text: "Error Boundaries",
               link: "/frontend/error-boundaries",
+            },
+            {
+              text: "Error Pages",
+              link: "/frontend/error-pages",
             },
             {
               text: "TanStack Query",

@@ -34,7 +34,7 @@ exposed for client-side form validation with `check`, `errors`, `errorMessage`,
 `errorSummary`, and `validate` methods.
 [Details&nbsp;›](/fetch/validation)
 
-## Using the Generated Client
+## Using the Client
 
 Import the fetch map and pick the client for your route by path:
 

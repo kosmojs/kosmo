@@ -551,6 +551,27 @@ Use the `use` builder inside `defineRoute`. By default middleware applies to all
 call `next()` to continue, skip it to short-circuit.
 [Details&nbsp;›](/backend/middleware#basic-usage)
 
+#### Where does global middleware live?
+`api/use.ts`, at the root of a source folder's `api/` directory.
+Whatever it default-exports runs for **every route in that folder** - no imports, no registration.
+It's scaffolded with the folder and is an ordinary file you edit; route templates never touch it.
+Use it for app-wide concerns (request id, CORS, logging, rate limiting, a blanket auth check);
+anything narrower belongs in a subtree `use.ts` or the route's own `use`.
+[Details&nbsp;›](/backend/middleware#global-middleware-api-use-ts)
+
+#### Is `api/use.ts` the same as Express's `app.use()`?
+No - it runs **per route, not per request**. Global middleware is composed into each route's chain,
+so a request matching no route never reaches it, and it never sees requests outside this folder's `apiBase`.
+For work that must happen on every request regardless of routing,
+use the framework's own app instance in `api/app.ts`, where `appFactory`'s callback hands you `{ app }`.
+[Details&nbsp;›](/backend/middleware#it-runs-per-route-not-per-request)
+
+#### Can a route override or skip global middleware?
+Only if the global entry declares a `slot`. A route (or a cascading `use.ts`) declaring the same slot substitutes it -
+and the replacement runs **in the global one's position** in the chain, so surrounding order is preserved.
+A global middleware **without** a slot always runs and cannot be overridden or skipped, which is what you want for a security check.
+[Details&nbsp;›](/backend/middleware#restricting-and-overriding-it)
+
 #### How does the onion model work?
 Middleware runs in definition order going in, then unwinds in reverse after the handler.
 Global `api/use.ts` runs first, then route-level `use`, then the handler, then back out.
@@ -615,9 +636,12 @@ avoiding duplicate definitions across the hierarchy.
 [Details&nbsp;›](/backend/cascading-middleware#type-safe-context-extension)
 
 #### Why does the global `api/use.ts` ignore `UseT`?
-Global middleware operates on types defined in from `api/env.d.ts`;
-`UseT` is for folder-level files only, where the types cascade alongside the middleware.
-[Details&nbsp;›](/backend/cascading-middleware#type-safe-context-extension)
+Global middleware is typed through `api/env.d.ts` module augmentation
+(`DefaultVariables`/`DefaultBindings` for Hono, `DefaultContext` for H3, `DefaultState`/`DefaultContext` for Koa).
+A `UseT` exported from the global file is ignored.
+`UseT` is a cascading mechanism - it exists so types travel down a subtree alongside the middleware that sets them,
+which a app-wide file doesn't need.
+[Details&nbsp;›](/backend/middleware#global-vs-folder-level-use-ts)
 
 #### Why can some params be undefined in cascading middleware?
 A `use.ts` runs for every route in its subtree, including ones that don't define a given param -
@@ -1185,36 +1209,13 @@ a `[keys, values]` tuple in the same order the route declares its parameters,
 ready to pass straight to a parametrized endpoint (`GET(params)`).
 [Details&nbsp;›](/frontend/mdx#loaders-with-route-parameters)
 
-#### Is SSG enabled on MDX folders?
-Yes - there is nothing for you to enable, because the scaffolder does it:
-creating an MDX folder writes `ssgGenerator()` (alongside `mdxGenerator()` and `ssrGenerator()`) into that folder's `kosmo.config.ts`.
-SSG is MDX-only. Each route renders to its own static HTML file at build time, with staticParams supplying the entries for dynamic routes.
-[Details&nbsp;›](/frontend/mdx#static-site-generation) · [Scaffolded configs&nbsp;›](/essentials/config#what-the-scaffolder-writes)
-
-#### How does SSG handle dynamic routes?
-Declare variants via `staticParams` in frontmatter; the build renders one HTML file per entry.
-Static routes render automatically.
-Dynamic routes without `staticParams` are skipped from the SSG build entirely.
-[Details&nbsp;›](/frontend/mdx#static-site-generation)
-
-#### How do I fetch data in MDX in SSG mode?
-Same `loader` export, combined with `staticParams`. `loader` runs once per declared entry,
-receiving that entry's own `paramsEntries`, and each entry's fetched data gets baked into its
-own pre-rendered HTML file.
-[Details&nbsp;›](/frontend/mdx#static-site-generation)
-
-#### How do I turn SSG off for an MDX folder?
-Remove/comment `ssgGenerator()` from that folder's `kosmo.config.ts`.
-The folder keeps rendering normally, it just stops emitting static routes.
-[Details&nbsp;›](/frontend/mdx#static-site-generation)
-
 #### Why can't I write TypeScript in MDX?
 MDX only supports plain JavaScript expressions.
 Keep typed code (props, hooks, types) in `.tsx` files and import them into the MDX page.
 [Details&nbsp;›](/frontend/mdx#common-pitfalls)
 
 #### How do I override markdown elements globally?
-The component map in `components/mdx.tsx` (applied through `MDXProvider`) -
+The component map in `components/mdx.ts` (applied through `MDXProvider`) -
 override `h1`, `pre`, links, etc. for all pages. Individual pages can still import additional components.
 [Details&nbsp;›](/frontend/mdx#using-components)
 
@@ -1316,6 +1317,61 @@ SSR the client dispatches to the API route in-process (the API server is bundled
 bundle), so there's no network hop, just the full validation/handler chain. A fetch in
 `useEffect`/`onMounted` won't run on the server - those fire only after hydration.
 [Details&nbsp;›](/fetch/integration#isomorphic-fetch)
+
+### SSG
+
+#### What is SSG, and when do I want it over SSR?
+SSG renders pages to static HTML **at build time**, so the result deploys to a CDN or any static host with no running server.
+Reach for it when the content is known at build time - docs, blogs, marketing, changelogs.
+Use SSR instead when a page depends on the request (a signed-in user, live data, anything per-visitor).
+[Details&nbsp;›](/frontend/static-site-generation)
+
+#### How do I enable SSG?
+Choose it when creating the source folder (the interactive prompt asks, or pass `--ssg`),
+or add `ssgGenerator()` to an existing folder's `kosmo.config.ts`.
+
+It requires **SSR enabled** on that folder - pages are rendered at build time by the folder's own SSR server -
+which is why the creation prompt only offers SSG once you've chosen SSR.
+[Details&nbsp;›](/frontend/static-site-generation#adding-ssg-support)
+
+#### How does SSG handle dynamic routes?
+Static routes render automatically.
+A dynamic route renders once per parameter set it declares through `staticParams` - one HTML file per entry.
+A dynamic route **without** `staticParams` is skipped entirely: no file is generated for it.
+[Details&nbsp;›](/frontend/static-site-generation#declaring-staticparams)
+
+#### Where do I declare `staticParams`?
+Wherever the framework exposes named exports from a page module - the value is the same list of positional parameter sets everywhere:
+
+- **React / SolidJS**: `export const staticParams = defineStaticParams<"...">([...])`, importing `defineStaticParams` from `_/core`
+- **Vue**: the same, in a plain `<script>` block (`<script setup>` can't hold named exports)
+- **Svelte**: the same, in a `<script module>` block
+- **MDX**: a `staticParams` list in the page's frontmatter
+
+[Details&nbsp;›](/frontend/static-site-generation#declaring-staticparams)
+
+#### How do I fetch data for statically generated pages?
+The same `loader` (React, Vue, Svelte, MDX) or `preload` (SolidJS) export you'd use otherwise,
+combined with `staticParams`: it runs **once per declared entry**,
+receiving that entry's own params, and the fetched data is baked into that entry's pre-rendered HTML.
+[Details&nbsp;›](/frontend/static-site-generation)
+
+#### Where does the SSG output go, and what do I deploy?
+`dist/<folder>/ssg/` - a complete static site: one `index.html` per route, the hashed `assets/`,
+and your `public/` files copied to the root.
+The tree is rooted at the folder's `base`, so a folder with `base: "/admin"` is deployed at `/admin/` on the host.
+Nothing in it depends on the `ssr/` or `client/` directories at serve time.
+[Details&nbsp;›](/frontend/static-site-generation#output)
+
+#### Is a 404 page included in the SSG output?
+No - nothing is pre-rendered for unmatched paths, so point your host's own not-found setting at whatever it expects
+(`404.html` on GitHub Pages and Netlify, `error_page` in Nginx).
+[Details&nbsp;›](/frontend/error-pages)
+
+#### How do I turn SSG off?
+Remove (or comment out) `ssgGenerator()` from that folder's `kosmo.config.ts`.
+The folder keeps rendering normally, it just stops emitting static routes.
+[Details&nbsp;›](/frontend/static-site-generation)
 
 ### Build & Deployment
 
@@ -1426,12 +1482,12 @@ Pass the `debug` option to `appFactory` in `api/app.ts`:
 `debug: true` prints each route's path, methods, middleware chain (by slot), and handler.
 For targeted output pass one of `"headline"` / `"methods"` / `"middleware"` / `"handler"`,
 or pass a function `debug(log, route)` for a custom logger - `log` carries all four parts plus `full`.
-[Details&nbsp;›](/dev-build-run/development-workflow#inspecting-routes)
+[Details&nbsp;›](/dev-build-run/development-workflow#inspecting-api-routes)
 
 #### Why should I name my middleware functions?
 Named functions print by name in the debug output; anonymous ones print only their first line,
 which is much harder to read.
-[Details&nbsp;›](/dev-build-run/development-workflow#inspecting-routes)
+[Details&nbsp;›](/dev-build-run/development-workflow#inspecting-api-routes)
 
 #### How does validation generation performance scale?
 With type complexity - simple routes are near-instant, deep hierarchies with many dependencies
@@ -1722,7 +1778,7 @@ but it isn't required for fetch-client data to survive hydration.
 
 #### fetch caching / `revalidatePath` / `revalidateTag` / ISR?
 No fetch cache extensions, no tag/path revalidation, no ISR. Cache at the CDN/proxy layer;
-MDX SSG is full static generation. After a mutation, refetch or invalidate your own client cache.
+SSG is full static generation. After a mutation, refetch or invalidate your own client cache.
 [Details&nbsp;›](/openapi)
 
 #### Preload on link hover/intent - which frameworks?
@@ -1869,16 +1925,14 @@ No ISR/revalidation and no partial prerendering.
 [Details&nbsp;›](/frontend/server-side-render)
 
 #### SSG / static export vs `output: export`?
-SSG suported by MDX folders only, rendering each route to static HTML (`staticParams` for dynamic routes) -
-purpose-built for docs/blog/marketing with frontmatter-driven head, layouts, and typed nav.
-Comparable to Next + MDX/Contentlayer but built in.
-[Details&nbsp;›](/frontend/mdx#static-site-generation)
+Closest equivalent, and it works on every frontend: each route renders to static HTML at build time
+(`staticParams` supplying the entries for dynamic routes), output to `dist/<folder>/ssg/`.
+An MDX folder additionally gets frontmatter-driven head, layouts and typed nav - comparable to Next + MDX/Contentlayer, but built in.
+[Details&nbsp;›](#ssg) · [Coming from Next&nbsp;›](/essentials/coming-from)
 
 #### Can I use SSG with React, Vue, SolidJS or Svelte?
-Nope - SSG is MDX-only. For others use SSR instead, per-folder -
-an MDX folder for docs/marketing alongside an SSR or CSR folder for the app is the intended shape.
-Extending SSG to other frameworks is an open consideration though.
-[Details&nbsp;›](/frontend/mdx#static-site-generation)
+Yes - SSG works with any frontend. The folder needs SSR enabled, since pages are rendered at build time by its own SSR server.
+[Details&nbsp;›](#ssg)
 
 #### Islands / partial hydration?
 Not offered as a named feature. MDX delivers minimal client JS by default and hydrates;
