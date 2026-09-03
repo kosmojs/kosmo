@@ -53,11 +53,44 @@ export const renderWrapper: SSRRenderWrapper = (context, render) => {
 export const renderToString: RenderToStringWrapper<
   () => RouterFactoryReturn<JSX.Element>,
   Parameters<typeof renderToStringAsync>[1]
-> = async (resolver, { headerTags = [], ...options } = {}) => {
-  return {
-    head: [...headerTags, generateHydrationScript()].join("\n"),
-    html: await renderToStringAsync(() => resolver().component, options),
-  };
+> = async (resolver, { headerTags = [], timeoutMs = 30_000, ...options } = {}) => {
+  /**
+   * renderToStringAsync adaptation.
+   * Solid arms its internal timeout before invoking the component,
+   * so a component throwing synchronously leaves that timeout promise orphaned -
+   * its rejection, 30s later, is unhandled and fatal to the process.
+   * renderToStream's thenable resolves with the same html;
+   * deferring the call turns a sync throw into an immediate, catchable rejection carrying the real error,
+   * and the replacement timeout below is pre-observed, so it can never reject unhandled.
+   * */
+  let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutHandle = setTimeout(() => {
+      reject(new Error("SSR: solid render timed out"));
+    }, timeoutMs);
+  });
+
+  timeout.catch(() => {});
+
+  try {
+    return {
+      head: [...headerTags, generateHydrationScript()].join("\n"),
+      html: await Promise.race([
+        Promise.resolve().then(() => {
+          // typed as a stream handle, but resolving to the full html at runtime.
+          // renderToStringAsync itself races it the same way.
+          return renderToStreamOrig(
+            () => resolver().component,
+            options,
+          ) as unknown as Promise<string>;
+        }),
+        timeout,
+      ]),
+    };
+  } finally {
+    clearTimeout(timeoutHandle);
+  }
 };
 
 export const renderToStream: RenderToStreamWrapper<
