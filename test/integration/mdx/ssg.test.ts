@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, test } from "vitest";
 
-import { createTestSuite } from "../ssg-factory";
+import { createTestGroups } from "../ssg-factory";
 
-const { bootstrap, teardown, tests } = await createTestSuite({
+const testGroups = await createTestGroups({
   framework: "mdx",
   template({ name, paramsVariants }) {
     const staticParams = paramsVariants.length
@@ -19,14 +19,25 @@ const { bootstrap, teardown, tests } = await createTestSuite({
 <div id="content">{${JSON.stringify(name)}}</div>
 `;
   },
+  renderModes: ["string"],
 });
 
-beforeAll(bootstrap);
-
-afterAll(teardown);
-
-describe("SSG", async () => {
-  for (const { name, runner } of tests) {
-    test(name, runner);
+beforeAll(async () => {
+  for (const { project } of testGroups) {
+    await project.startServer();
   }
 });
+
+afterAll(async () => {
+  for (const { project } of testGroups) {
+    await project.teardown();
+  }
+});
+
+for (const { name, tests } of testGroups) {
+  describe(name, () => {
+    for (const { name, runner } of tests) {
+      test(name, runner);
+    }
+  });
+}

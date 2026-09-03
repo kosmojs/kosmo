@@ -7,21 +7,37 @@ import { pathTokensFactory } from "@kosmojs/lib";
 import { routes } from "./@fixtures/generic/routes";
 import { setupTestProject } from "./setup";
 
-export const createTestSuite = async ({
+export type TestGroup = {
+  name: string;
+  project: Awaited<ReturnType<typeof setupTestProject>>;
+  tests: Array<{
+    route: (typeof routes)[number];
+    params: Array<string>;
+    name: string;
+    runner: TestFunction;
+  }>;
+};
+
+export const createTestGroups = async ({
   framework,
   template,
+  renderModes = ["string", "stream"],
 }: {
   framework: keyof typeof FRAMEWORKS;
   template: (a: {
     name: string;
     paramsVariants: Array<Array<unknown>>;
   }) => string;
+  renderModes?: Array<"string" | "stream">;
 }) => {
-  const project = await setupTestProject({
-    framework,
-  });
+  const testGroups: Array<TestGroup> = [];
 
-  const bootstrap = async () => {
+  for (const renderMode of renderModes) {
+    const project = await setupTestProject({
+      framework,
+      ssr: { renderMode },
+    });
+
     await project.bootstrapProject();
 
     await project.createPageRoutes([...routes], async ({ name }) => {
@@ -54,37 +70,35 @@ export const createTestSuite = async ({
       };
     });
 
-    await project.startServer();
-  };
+    const tests = routes.map((route) => {
+      const runner: TestFunction = async ({ expect }) => {
+        const { response } = await project.withPageResponse([
+          route.name,
+          route.params,
+        ]);
+        const $ = load(response.body);
+        const content = $(`#content`).text();
+        expect(content).toMatch(route.name);
+      };
 
-  const teardown = project.teardown;
+      const params = Object.values(route.params);
 
-  const tests = routes.map((route) => {
-    const runner: TestFunction = async ({ expect }) => {
-      const { response } = await project.withPageResponse([
-        route.name,
-        route.params,
-      ]);
-      const $ = load(response.body);
-      const content = $(`#content`).text();
-      expect(content).toMatch(route.name);
-    };
+      return {
+        route,
+        params,
+        name: params.length
+          ? `${route.name}: [ ${params.join(", ")} ]`
+          : route.name,
+        runner,
+      };
+    });
 
-    const params = Object.values(route.params);
+    testGroups.push({
+      name: [framework, renderMode].join(":"),
+      project,
+      tests,
+    });
+  }
 
-    return {
-      route,
-      params,
-      name: params.length
-        ? `${route.name}: [ ${params.join(", ")} ]`
-        : route.name,
-      runner,
-    };
-  });
-
-  return {
-    bootstrap,
-    teardown,
-    tests,
-  };
+  return testGroups;
 };
