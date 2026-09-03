@@ -2,12 +2,13 @@
 title: Static Site Generation
 description: Pre-render React, SolidJS, Vue, Svelte and MDX pages to static HTML at build time
   with the KosmoJS SSG generator. Declaring staticParams for dynamic routes per framework,
-  output layout, and deploying to a static host or CDN.
+  building in CI against production data, output layout, and deploying to a static host or CDN.
 head:
   - - meta
     - name: keywords
       content: ssg, static site generation, prerender, staticParams, react ssg, vue ssg, svelte ssg,
-        solid ssg, mdx ssg, static html, cdn deploy, kosmojs ssg
+        solid ssg, mdx ssg, static html, cdn deploy, kosmojs ssg, ci workflow, build environment,
+        build time data, prerender fails build
 ---
 
 SSG renders pages to static HTML at build time,
@@ -131,6 +132,53 @@ against the API bundled into the SSR server.
 A non-component export in a React page file makes Fast Refresh fall back to a full reload for that file during development.
 It is a development-only nuisance, the build is unaffected.
 :::
+
+## Where to Build
+
+Pre-rendering runs your API.
+
+The build starts a disposable SSR server, requests every declared path from it,
+and each page's `loader` reaches the backend [in-process](/fetch/isomorphic-clients#ssg-runs-the-same-path-at-build-time) -
+the same handlers, middleware and data sources that would answer a live request.
+
+So the build machine needs the access production has: the database, the CMS, the upstream services your routes read.
+This is why SSG belongs in a **CI workflow** rather than on a laptop.
+A workflow that ships the sources to the production environment (or to a runner holding the same credentials and network reach),
+installs there, and runs `build` there.
+
+Pages are then rendered against exactly the data production would have served,
+and the `ssg/` directory it produces is what you publish.
+
+## A Route That Cannot Be Rendered Fails the Build
+
+Pre-rendering has no fallback.
+
+If a page cannot be rendered - its loader's fetch fails, the API returns a non-2xx, a component throws -
+the build **stops with that error** and no file is written for it.
+
+This is deliberate, and it is the one place where SSG differs from SSR.
+A live server that fails to render can [fall back to client rendering](/frontend/server-side-render#fetch-errors-and-recovery):
+the visitor still gets a working page, the server logs the failure, and the next request may well succeed.
+
+A static build has none of that. Whatever it writes is what visitors get, for as long as it stays published:
+
+- **A shell page is indistinguishable from a good one.** It returns `200`, carries your layout, and
+contains nothing. No monitor flags it, and nobody notices until someone reads the page.
+- **There is no server log to check afterwards.** The build was the only moment the failure was observable.
+- **Static output gets cached hard** - a CDN, an immutable deploy, a proxy in front of it.
+A bad page can outlive the deploy that produced it.
+
+So the build refuses to produce one. **A green build means every declared path rendered with real data**,
+which is exactly the guarantee you want before publishing a directory of HTML.
+
+When it does fail, the error names the route that could not be rendered.
+The usual causes are environmental rather than code:
+
+- The build machine cannot reach the database or upstream service - see [Where to Build](#where-to-build).
+- An environment variable the API needs is missing on the runner.
+- A `staticParams` entry points at a record that no longer exists, so its loader gets a `404`.
+
+Fix the cause and rebuild - or drop the stale entry from `staticParams` if the path should no longer be generated.
 
 ## Output
 
