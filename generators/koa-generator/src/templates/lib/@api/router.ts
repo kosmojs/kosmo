@@ -1,3 +1,4 @@
+import { command } from "virtual:kosmo/env";
 import type { RouterMiddleware } from "@koa/router";
 
 import type {
@@ -176,13 +177,13 @@ export const createRouteMiddleware: CreateRouteMiddleware<
         // options are same for all variants
         const { runtimeValidation, customErrors } = variants[0];
 
-        if (KOSMO_PRODUCTION_BUILD) {
-          // skip if undefined or explicitly set to false
+        if (command === "build") {
+          // production build - skip if undefined or explicitly set to false
           if (runtimeValidation === undefined || runtimeValidation === false) {
             return next();
           }
         } else {
-          // skip only if explicitly set to false
+          // dev mode - skip only if explicitly set to false
           if (runtimeValidation === false) {
             return next();
           }

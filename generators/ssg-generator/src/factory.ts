@@ -129,7 +129,7 @@ export default defineGeneratorFactory((sourceFolder) => {
               // routes bundle, not the SSR graph - client variants apply
               vitePlugins.virtualModules(
                 collectVirtualModules(sourceFolder, generators),
-                { kind: "csr" },
+                { kind: "csr", command: "build" },
               ),
             ],
             resolve: {

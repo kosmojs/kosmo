@@ -85,6 +85,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
             // so the client build above and any concurrently running dev server keep the CSR variants,
             // no matter what order things run in.
             kind: "ssr",
+            command: "build",
           },
         ),
       ];
@@ -105,9 +106,6 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
           {
             root: createPath.src(),
             plugins,
-            define: {
-              KOSMO_PRODUCTION_BUILD: "true",
-            },
             build: {
               ssr: createPath.lib("@ssr/__kosmo_ssr_bundle"),
               ssrEmitAssets: true,

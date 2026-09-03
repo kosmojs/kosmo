@@ -1,4 +1,6 @@
-declare const KOSMO_PRODUCTION_BUILD: boolean;
+declare module "virtual:kosmo/env" {
+  export const command: "serve" | "build";
+}
 
 declare module "{{ createImport 'libApi' }}" {
   export * from "#/templates/lib/api";

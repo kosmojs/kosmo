@@ -4,7 +4,12 @@ import { isAbsolute, join, parse } from "node:path";
 
 import type { Plugin } from "vite";
 
-import { defaults, type SourceFolder, type VirtualModule } from "@kosmojs/core";
+import {
+  defaults,
+  type ProjectSettings,
+  type SourceFolder,
+  type VirtualModule,
+} from "@kosmojs/core";
 
 import { pathResolver } from "./paths";
 
@@ -164,7 +169,10 @@ const nodePrefix = (): Plugin => {
  * */
 export const virtualModules = (
   modules: Array<VirtualModule>,
-  { kind }: { kind: "csr" | "ssr" },
+  {
+    kind,
+    command,
+  }: { kind: "csr" | "ssr"; command: ProjectSettings["command"] },
 ): Plugin => {
   /**
    * Rollup's / Rolldown's convention for ids owned by a plugin:
@@ -176,6 +184,13 @@ export const virtualModules = (
 
   for (const { specifier, csr, ssr } of modules) {
     virtualSources.set(specifier, { csr, ssr });
+  }
+
+  // Built-in build context, importable from any graph.
+  // Given modules should not override it.
+  {
+    const source = `export const command = "${command}";`;
+    virtualSources.set("virtual:kosmo/env", { csr: source, ssr: source });
   }
 
   return {

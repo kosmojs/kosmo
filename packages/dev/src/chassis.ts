@@ -108,6 +108,7 @@ export default async (
           // so env-sensitive modules resolve to their client variants here,
           // whatever a concurrent build is doing.
           kind: "csr",
+          command,
         },
       ),
     ];
@@ -356,6 +357,7 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
         // `kind: "csr"` everywhere except the SSR bundle,
         // which installs its own copy with `kind: "ssr"`
         kind: "csr",
+        command,
       },
     ),
   ];

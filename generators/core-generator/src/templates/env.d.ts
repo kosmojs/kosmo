@@ -1,4 +1,6 @@
-declare const KOSMO_PRODUCTION_BUILD: boolean;
+declare module "virtual:kosmo/env" {
+  export const command: "serve" | "build";
+}
 
 declare module "virtual:kosmo/backend-app" {
   import type { FetchApp, NodeApp } from "@kosmojs/core";
