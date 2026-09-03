@@ -108,6 +108,7 @@ export type RenderToStreamWrapper<T, O extends object | undefined = {}> = (
  * Default exported object from the SSR entry module (e.g. entry/server.ts).
  * */
 export type SSRSetup<StreamImplementationRequired extends boolean = true> = {
+  onError?: (e: Error & { url: string }) => void | undefined;
   renderToString: RenderToString;
 } & (StreamImplementationRequired extends true
   ? { renderToStream: RenderToStream }

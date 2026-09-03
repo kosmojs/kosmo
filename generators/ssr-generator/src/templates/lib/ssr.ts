@@ -65,7 +65,7 @@ export const createApp = async (
     with: { type: "json" },
   }).then((e) => e.default);
 
-  const { renderToString, renderToStream } = ssrApp;
+  const { renderToString, renderToStream, onError } = ssrApp;
 
   const [htmlStart, htmlEnd = ""] = template.split(/<!--\s*app-html\s*-->/);
 
@@ -114,13 +114,15 @@ export const createApp = async (
   };
 
   const handleError = (url: string, error: Error, fallback: Function) => {
-    if (errorHandler) {
-      // assign, not spread: message and stack are non-enumerable on Error,
-      // a spread silently drops them
-      errorHandler(Object.assign(error, { url }));
+    // assign, not spread: message and stack are non-enumerable on Error,
+    // a spread silently drops them
+    Object.assign(error, { url });
+    if (onError) {
+      onError(error as never);
     } else {
       fallback();
     }
+    errorHandler?.(error as never);
   };
 
   const injectHead = (html: string, head: string) => {

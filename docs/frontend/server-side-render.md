@@ -384,7 +384,10 @@ so every route recovers through the CSR fallback.
 
 ## onError hook
 
-Both `renderToString` and `renderToStream` accept an **`onError`** hook, called with the error that ended the render:
+By default, rendering errors are logged to console.
+To handle errors in a custom way, you can pass the `onError` method to `renderFactory`.
+
+It is called with the error that ended the render, augmented with `url` property:
 
 ```ts [entry/server.ts]
 export default renderFactory(() => {
@@ -392,24 +395,17 @@ export default renderFactory(() => {
     renderToString(url, { assets }) {
       return renderToString(
         () => serverRouter(url),
-        {
-          headerTags: assets.map(({ tag }) => tag),
-          onError(error) {
-            reportToSentry(error, { url, mode: "string" }); // [!code hl]
-          },
-        },
+        { headerTags: assets.map(({ tag }) => tag) },
       );
     },
     renderToStream(url, { assets }) {
       return renderToStream(
         () => serverRouter(url),
-        {
-          headerTags: assets.map(({ tag }) => tag),
-          onError(error) {
-            reportToSentry(error, { url, mode: "stream" }); // [!code hl]
-          },
-        },
+        { headerTags: assets.map(({ tag }) => tag) },
       );
+    },
+    onError(error) { // [!code ++:3]
+      reportToSentry(error, { url: error.url });
     },
   };
 });
