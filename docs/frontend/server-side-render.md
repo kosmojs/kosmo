@@ -303,7 +303,7 @@ Pages fetch data during server rendering through the same fetch client the brows
 dispatched in-process into the API app.
 When a fetch fails mid-render, what happens next depends on the render mode.
 
-### String-rendered routes recover automatically.
+### The CSR fallback - string-rendered routes recover automatically.
 
 A string-rendered page is produced in full before a single byte leaves the server,
 so a failed fetch aborts the render while the response is still untouched -
@@ -313,6 +313,35 @@ The browser receives a clean CSR page: the client entry mounts from scratch,
 fetching is retried in the browser, and any remaining failure surfaces through the error handling
 the page already implements for client-side navigation.
 No configuration is needed - string routes degrade to CSR on their own.
+
+The same catch covers a **hard render failure**, not just a failed fetch:
+if the component tree throws while rendering, the partial output is discarded and the client shell is served in its place.
+
+Server-side error boundaries behave differently in every framework, so the fallback deliberately hands the failure to the client,
+where one set of boundaries handles it the way it always does.
+
+#### What it looks like in production
+
+The server logs the failure and the fallback that followed:
+
+```txt
+WARN: SSR failed, fallback to CSR
+SSRFetchError: /api/users/123: 500 [ Internal Server Error ]
+```
+
+That log line is the only signal. The visitor still gets a working page,
+the status code is unchanged, and nothing in the browser says the page was meant to be server-rendered -
+so a routecan quietly stop being server-rendered and stay that way until someone reads the log or notices the missing markup in view-source.
+
+Two practical habits follow:
+
+- **When a page loses its SSR, look at the server log first.** An empty shell in production is
+usually a failing API call during render, not a frontend bug.
+- **Do not treat the fallback as an error strategy.** It keeps a bad deploy serving, it does not
+make the failure acceptable - the underlying call is still broken for every visitor of that route.
+
+At build time there is no visitor waiting, so [SSG](/frontend/static-site-generation) does the opposite:
+a route that cannot be rendered fails the build instead of writing a shell page.
 
 ### Streaming routes do not recover.
 
