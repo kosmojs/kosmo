@@ -124,23 +124,16 @@ each reads through its native patterns, with no proprietary abstraction layered 
 The client is just a typed function that takes the params array you build and returns a promise; where and how
 you call it is entirely the framework's.
 
-## Isomorphic Fetch
+## These Integrations Work Under SSR Too
 
-The client returns standard promises, so the integrations above work under SSR too.
-When a fetch runs as part of rendering the page - Solid's `preload`/`createAsync`, React's `loader` -
-it runs on the server during SSR: the request goes to the API route in-process
-(the API server is bundled into the SSR bundle), skipping the network
-but still running the full validation and handler chain.
+The client returns standard promises, so nothing above changes when the page is server-rendered.
 
-What matters is when the fetch fires. Loaders and preloaded resources run on the server;
-a fetch in `useEffect`/`onMounted` doesn't, since those don't run during SSR -
-that one fetches on the client after hydration, like a plain CSR app.
+What matters is **when** the fetch fires: loaders and preloaded resources run during the SSR render,
+so they take the in-process path and their result is reused on hydration rather than refetched.
 
-For requests that run during SSR, the server-rendered result is reused on hydration rather than refetched:
+A fetch in `useEffect` / `onMounted` does not run during SSR - it fetches in the browser after hydration, like a plain CSR app.
 
-- **Solid and React** reuse it through their built-in hydration.
-- **Vue, Svelte, and MDX** reuse it through their loader: the result is serialized into the page during SSR
-  and read on the client before the loader would fetch, so the request made during SSR is not repeated.
+[Isomorphic clients&nbsp;›](/fetch/isomorphic-clients)
 
 ## Suspense Is Your Responsibility
 

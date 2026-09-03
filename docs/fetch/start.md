@@ -64,12 +64,10 @@ const response = await fetchClients["users"].GET([], {
 If the route defines no payload type (or `never`), the second argument is not required.
 The client adapts to exactly what your API expects - passing the wrong shape is a type error.
 
-## Isomorphic Fetch
+## The Same Call in CSR and SSR
 
-The same call works in CSR and SSR without changes. In the browser it issues a same-origin
-network request; during SSR it dispatches to the API route in-process - the API server is
-bundled into the SSR bundle, so there's no network hop, just a direct call through the full
-middleware/validation/handler chain.
+The call above needs no variant for the server. In the browser it issues a same-origin network request;
+during SSR it dispatches to the API route in-process:
 
 ```ts [pages/example/index.tsx]
 // identical in a client component and in an SSR loader
@@ -77,6 +75,4 @@ const response = await fetchClients["users/[id]"].GET([123]);
 ```
 
 Nothing to configure - no separate server-side client, no base URL for the in-process path.
-The `path`/`href` utilities still produce URL strings for links and external references (see
-[Path Utilities](/fetch/utilities)); it's the request methods (`GET`, `POST`, ...) that swap
-transport on the server.
+[Isomorphic clients&nbsp;›](/fetch/isomorphic-clients)

@@ -106,7 +106,7 @@ When running folders separately, what you deploy depends on how the folder rende
 The build bundles the folder's backend *into* the SSR server:
 one process serves the client assets, renders pages, and answers API requests.
 
-During server-side rendering, the [isomorphic fetch client](/fetch/integration) calls your route handlers in-process -
+During server-side rendering, the [isomorphic fetch client](/fetch/isomorphic-clients) calls your route handlers in-process -
 no network hop, no localhost round-trip.
 
 After hydration, the same server answers the browser's API calls over HTTP

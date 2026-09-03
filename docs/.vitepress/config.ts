@@ -400,6 +400,11 @@ export default defineConfig({
               link: "/fetch/integration",
             },
             {
+              text: "Isomorphic Clients",
+              docFooterText: "Isomorphic Clients",
+              link: "/fetch/isomorphic-clients",
+            },
+            {
               text: "Validation",
               link: "/fetch/validation",
             },

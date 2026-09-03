@@ -369,7 +369,7 @@ The SSR bundle also includes the API app. During server rendering the generated
 fetch client dispatches to API routes in-process rather than over the network,
 so data loading on the server has no HTTP round-trip - and the same bundle serves
 API requests on its own port, no separate API process required.
-[Isomorphic Fetch ›](/fetch/integration#isomorphic-fetch)
+[Isomorphic Fetch ›](/fetch/isomorphic-clients)
 
 ## Static Asset Handling
 

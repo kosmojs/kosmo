@@ -20,7 +20,7 @@ The one shift worth internalizing first: **the client/server boundary is an HTTP
 
 Server code lives in `api/`, client code in `pages/`, and a typed fetch client carries the types across.
 There is no interleaving of server and client code in one file.
-During SSR that call runs [**in-process**](/fetch/intro#isomorphic-fetch), so the boundary costs nothing on the server.
+During SSR that call runs [**in-process**](/fetch/isomorphic-clients), so the boundary costs nothing on the server.
 
 The second shift: **the unit of an app is a [source folder](/essentials/project-structure).**
 
@@ -152,7 +152,7 @@ Server code lives in `api/`, client code in `pages/`, and a plain HTTP API sits 
 There is no interleaving of server and client code in one file and no new mental model to learn: the boundary is the network call.
 
 And with the isomorphic client that boundary is free on the server - during SSR the call runs in-process, with no network layer at all.
-[Details&nbsp;›](/fetch/integration#isomorphic-fetch)
+[Details&nbsp;›](/fetch/isomorphic-clients)
 
 ### Server functions / `createServerFn` / Server Actions
 
@@ -173,7 +173,7 @@ and no `useFormState`/`useActionState` equivalent - use your framework's form st
 **Not the RSC way** - data flows through the API layer rather than direct DB access in a page.
 During SSR this is not a network hop: the isomorphic client dispatches to the backend route `in-process` (no socket),
 so you get the API boundary without the round-trip cost.
-[Details&nbsp;›](/fetch/integration#isomorphic-fetch)
+[Details&nbsp;›](/fetch/isomorphic-clients)
 
 ### Loaders, and `loaderDeps` / staleness
 
@@ -196,7 +196,7 @@ After a mutation, refetch or invalidate your own client cache.
 No - fetch clients are isomorphic, and each framework's own hydration carries the result to the client, so nothing re-fetches.
 You do not wire `dehydrate`/`hydrate` for that.
 (TanStack Query is an opt-in layer; serializing *its* cache across SSR is on you.)
-[Details&nbsp;›](/fetch/integration#isomorphic-fetch)
+[Details&nbsp;›](/fetch/isomorphic-clients)
 
 ## Backend
 

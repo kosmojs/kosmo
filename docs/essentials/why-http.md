@@ -138,7 +138,7 @@ up to the same five hops the fetch spec allows.
 every other fetch in your app behaves exactly as it always did.
 - **Nothing about the call site changes.** A loader is a loader; the framework's own data model -
 Solid's `createAsync`, React Router's `loader`, `useLoaderData` in Vue, Svelte and MDX - is what you write.
-[Details&nbsp;›](/fetch/integration#isomorphic-fetch)
+[Details&nbsp;›](/fetch/isomorphic-clients)
 
 So the trade the industry seems to be posing - *keep the architecture and pay a round trip, or drop the architecture and get the speed* -
 turns out not to be the only option on the table.
@@ -212,5 +212,5 @@ Keep the API. Make crossing it free where it can be free. Ask again in ten years
 ---
 
 - [Migration Tips](/essentials/migration-tips)
-- [Isomorphic fetch](/fetch/integration#isomorphic-fetch)
+- [Isomorphic fetch](/fetch/isomorphic-clients)
 - [Validation](/validation/intro)

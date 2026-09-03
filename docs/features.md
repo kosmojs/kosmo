@@ -95,7 +95,7 @@ so the request is not repeated on the client.
 export const loader = ({ params }) => fetchClients["users/[id]"].GET([params.id]);
 ```
 
-[Read more ›](/fetch/integration#isomorphic-fetch)
+[Read more ›](/fetch/isomorphic-clients)
 
 ## Built-in Streaming SSR
 

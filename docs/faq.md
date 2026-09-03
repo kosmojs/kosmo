@@ -1037,7 +1037,7 @@ So `[201, "json", User] | [202, "json", { queued: true }] | [409]` yields `User 
 #### Which frontend frameworks are supported?
 React, SolidJS, Vue, Svelte, and MDX - each with a dedicated generator bridging directory routing
 to the framework's native router and reactive model.
-[Details&nbsp;›](/fetch/integration)
+[Details&nbsp;›](/essentials/frameworks)
 
 #### How do I enable a generator on an existing folder?
 Register the generator (e.g. `reactGenerator()`) in the folder's `kosmo.config.ts` and restart
@@ -1328,7 +1328,22 @@ generated fetch client inside it. During
 SSR the client dispatches to the API route in-process (the API server is bundled into the SSR
 bundle), so there's no network hop, just the full validation/handler chain. A fetch in
 `useEffect`/`onMounted` won't run on the server - those fire only after hydration.
-[Details&nbsp;›](/fetch/integration#isomorphic-fetch)
+[Details&nbsp;›](/fetch/isomorphic-clients)
+
+#### What happens if a fetch fails during SSR?
+The SSR output is discarded and the client shell is served instead,
+so the page re-renders in the browser where your own error boundaries handle the failure.
+Server-side boundaries behave too differently across frameworks to rely on.
+The server logs `WARN: SSR failed, fallback to CSR` along with the error.
+
+The page still works; it just isn't server-rendered any more.
+If a page unexpectedly arrives as an empty shell in production, check the server log before the client.
+[Details&nbsp;›](/fetch/isomorphic-clients#when-an-ssr-fetch-fails)
+
+#### Does client-side validation run during SSR?
+No - it's disabled automatically. The pre-flight check exists to avoid a round trip,
+and there is no round trip during SSR, so validation runs on the API endpoint only.
+[Details&nbsp;›](/fetch/isomorphic-clients#client-side-validation-is-skipped-under-ssr)
 
 ### SSG
 
@@ -1366,7 +1381,10 @@ Wherever the framework exposes named exports from a page module - the value is t
 The same `loader` (React, Vue, Svelte, MDX) or `preload` (SolidJS) export you'd use otherwise,
 combined with `staticParams`: it runs **once per declared entry**,
 receiving that entry's own params, and the fetched data is baked into that entry's pre-rendered HTML.
-[Details&nbsp;›](/frontend/static-site-generation)
+
+Those calls take the in-process path, inside the build: SSG starts a disposable SSR server and requests each route from it.
+So whatever your API talks to - a database, a CMS, an upstream service - must be reachable from wherever you run the build.
+[Details&nbsp;›](/fetch/isomorphic-clients#ssg-runs-the-same-path-at-build-time)
 
 #### Where does the SSG output go, and what do I deploy?
 `dist/<folder>/ssg/` - a complete static site: one `index.html` per route, the hashed `assets/`,
@@ -1707,14 +1725,14 @@ the client without hand-writing an endpoint; KosmoJS gives you that through the 
 generated typed client. The same client is isomorphic - during SSR it calls the route in-process
 (no network hop), on the client it's a same-origin request - so one typed call covers both sides
 without a separate server-function primitive.
-[Details&nbsp;›](/fetch/integration#isomorphic-fetch)
+[Details&nbsp;›](/fetch/isomorphic-clients)
 
 #### Can a page fetch from the database server-side without an API hop?
 Not the RSC way - data flows through the API layer, not direct DB access in the page.
 But during SSR that isn't a network hop: the isomorphic fetch client dispatches to the
 API route in-process (no socket), so you get the API boundary without the round-trip cost.
 The de-facto model is API routes + generated clients + framework loader/preload.
-[Details&nbsp;›](/fetch/integration#isomorphic-fetch)
+[Details&nbsp;›](/fetch/isomorphic-clients)
 
 #### Loaders like TanStack Start/Router?
 Yes, every framework uses own pattern - `export loader` on React / Vue / Svelte / MDX, `export preload` on SolidJS.
@@ -1786,7 +1804,7 @@ You don't wire dehydrate/hydrate for that.
 TanStack Query is an optional opt-in layer - if you enable it and want its cache serialized across SSR,
 that plumbing is on you (via TanStack's own dehydrate/hydrate),
 but it isn't required for fetch-client data to survive hydration.
-[Details&nbsp;›](/fetch/integration#isomorphic-fetch)
+[Details&nbsp;›](/fetch/isomorphic-clients)
 
 #### fetch caching / `revalidatePath` / `revalidateTag` / ISR?
 No fetch cache extensions, no tag/path revalidation, no ISR. Cache at the CDN/proxy layer;

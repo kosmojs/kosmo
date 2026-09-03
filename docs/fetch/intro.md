@@ -48,18 +48,10 @@ The generator places its output in the `lib` directory alongside other generated
 (validation routines, OpenAPI spec). Everything is updated automatically in the background
 as you modify routes during development.
 
-## Isomorphic Fetch
+## Isomorphic Clients
 
-The same fetch client works in both CSR and SSR - identical code, no server functions or
-RPC layer to define. A component or `loader` that calls `fetchClients["users/[id]"].GET([123])`
-runs unchanged whether it executes in the browser or on the server during SSR.
+The same client works in both CSR and SSR - identical code, no server functions or RPC layer to define.
+In the browser it issues a normal same-origin request; during SSR it dispatches to the matched API route in-process,
+with no network layer and no round-trip latency.
 
-What differs is the transport underneath. In the browser the client issues a normal
-same-origin network request. During SSR the API server is bundled into the SSR bundle, and
-the client dispatches to the matched API route in-process - a direct function call through
-the full chain (middleware, validation, handler), with no network layer and no round-trip
-latency.
-
-The client wraps `fetch` and swaps transport based on environment; it does not patch the
-global. Native `fetch` behaves exactly as it always does - only the generated clients switch
-to in-process dispatch on the server.
+[Isomorphic clients&nbsp;›](/fetch/isomorphic-clients)
