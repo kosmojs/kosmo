@@ -1,11 +1,13 @@
 import { load } from "cheerio";
-import type { TestFunction } from "vitest";
+import { inject, type TestFunction } from "vitest";
 
 import type { FRAMEWORKS } from "@kosmojs/core";
 import { pathResolver, render, renderToFile } from "@kosmojs/lib";
 
 import * as templates from "./@fixtures/error-boundary/templates";
-import { mode, setupTestProject } from "./setup";
+import { setupTestProject } from "./setup";
+
+const mode = inject("MODE");
 
 // Error boundaries catch on the client in every framework; on the server the
 // behavior diverges by framework, so these assertions only hold under CSR.

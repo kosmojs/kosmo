@@ -2,19 +2,21 @@ import { join } from "node:path";
 
 import { load } from "cheerio";
 import got from "got";
-import type { TestFunction } from "vitest";
+import { inject, type TestFunction } from "vitest";
 
 import type { FRAMEWORKS } from "@kosmojs/core";
 import { render } from "@kosmojs/lib";
 
 import * as templates from "./@fixtures/error-recovery/templates";
-import { mode, setupTestProject } from "./setup";
+import { setupTestProject } from "./setup";
 
 export type TestGroup = {
   name: string;
   project: Awaited<ReturnType<typeof setupTestProject>>;
   tests: Array<[path: string, runner: TestFunction]>;
 };
+
+const mode = inject("MODE");
 
 // If SSR fails (due to loader/fetch error or render failure),
 // the server returns the CSR fallback (index.html) without data,
