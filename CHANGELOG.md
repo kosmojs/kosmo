@@ -1,3 +1,20 @@
+## [0.4.4](https://github.com/kosmojs/kosmo/compare/v0.4.3...v0.4.4) (2026-09-03)
+
+### Features
+
+* add preview command and a single-entry dist/run.js ([199ff9e](https://github.com/kosmojs/kosmo/commit/199ff9e6ad6cd755c705c0c10e3641d79f7ddc97))
+* add SSG support to all frameworks ([15ebe82](https://github.com/kosmojs/kosmo/commit/15ebe82aacfd9568443ca07ef5f4127cc9f281a6))
+
+### Bug Fixes
+
+* **cli:** add exec bit to bin script ([91fae79](https://github.com/kosmojs/kosmo/commit/91fae79374e74330760dc5f7110907602a48d858))
+* **dev:** skip handlebars rendering for cache files ([7a9db4e](https://github.com/kosmojs/kosmo/commit/7a9db4e78cf28137ab4ec04e822abb3761ffa015))
+* **routing:** resolve svelte/mdx routes by specificity, not segment count ([2cdc4bc](https://github.com/kosmojs/kosmo/commit/2cdc4bc298c3651bdc669e5ab07c84ab589af144))
+* **solid:** keep adjacent optional params optional ([ba22948](https://github.com/kosmojs/kosmo/commit/ba229483c4160d7243a58ef8273e11c1f01c2165))
+* **ssr:** copy public/ dir into dist ([2d1e51b](https://github.com/kosmojs/kosmo/commit/2d1e51b9164ea895b64f4dec24a324073aced965))
+* **types:** core-generator was using too restrictive types for normalizeParams and alike ([ad1fa7b](https://github.com/kosmojs/kosmo/commit/ad1fa7bce27a091fd40a2160223d15e6585c1f56))
+* **types:** fetch-generator: adapted payloadTypes to new signature ([45b824c](https://github.com/kosmojs/kosmo/commit/45b824c28ca88a5ee62ace21a70b1b9d1275c501))
+
 ## [0.4.3](https://github.com/kosmojs/kosmo/compare/v0.4.2...v0.4.3) (2026-08-29)
 
 ### Bug Fixes
