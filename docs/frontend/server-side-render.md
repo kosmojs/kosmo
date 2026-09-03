@@ -246,6 +246,9 @@ resolve `html` to a `ReadableStream` and leave the writing to the server.
 
 `renderToStream` receives a third argument, the stream, for custom flushing control.
 
+Those are the arguments the server passes *in*. The renderers you call from inside each method take their own options -
+`headerTags`, and the [onError hook](#onerror-hook) for reporting a render that failed.
+
 ## Stream Rendering
 
 Streaming renders the page as a `ReadableStream` instead of a single string,
@@ -314,10 +317,11 @@ fetching is retried in the browser, and any remaining failure surfaces through t
 the page already implements for client-side navigation.
 No configuration is needed - string routes degrade to CSR on their own.
 
-The same catch covers a **hard render failure**, not just a failed fetch:
-if the component tree throws while rendering, the partial output is discarded and the client shell is served in its place.
+The same catch covers a **hard render failure**, not just a failed fetch: if the component tree throws while rendering,
+the partial output is discarded and the client shell is served in its place.
 
-Server-side error boundaries behave differently in every framework, so the fallback deliberately hands the failure to the client,
+Server-side error boundaries behave differently in every framework,
+so the fallback deliberately hands the failure to the client,
 where one set of boundaries handles it the way it always does.
 
 #### What it looks like in production
@@ -329,19 +333,78 @@ WARN: SSR failed, fallback to CSR
 SSRFetchError: /api/users/123: 500 [ Internal Server Error ]
 ```
 
-That log line is the only signal. The visitor still gets a working page,
-the status code is unchanged, and nothing in the browser says the page was meant to be server-rendered -
-so a routecan quietly stop being server-rendered and stay that way until someone reads the log or notices the missing markup in view-source.
+Nothing else announces it. The visitor still gets a working page, the status code is unchanged,
+and nothing in the browser says the page was meant to be server-rendered.
+
+So a route can quietly stop being server-rendered and stay that way until someone reads that line
+or notices the missing markup in view-source.
+
+Which is exactly why the renderers take an [`onError`](#onerror-hook) hook:
+it turns that line into an event your monitoring can see.
 
 Two practical habits follow:
 
-- **When a page loses its SSR, look at the server log first.** An empty shell in production is
-usually a failing API call during render, not a frontend bug.
-- **Do not treat the fallback as an error strategy.** It keeps a bad deploy serving, it does not
-make the failure acceptable - the underlying call is still broken for every visitor of that route.
+- **When a page loses its SSR, look at the server side first.**
+An empty shell in production is usually a failing API call during render, not a frontend bug.
+- **Do not treat the fallback as an error strategy.**
+It keeps a bad deploy serving, it does not make the failure acceptable - the underlying call is still broken for every visitor of that route.
 
 At build time there is no visitor waiting, so [SSG](/frontend/static-site-generation) does the opposite:
 a route that cannot be rendered fails the build instead of writing a shell page.
+
+## onError hook
+
+Both `renderToString` and `renderToStream` accept an **`onError`** hook, called with the error that ended the render:
+
+```ts [entry/server.ts]
+export default renderFactory(() => {
+  return {
+    renderToString(url, { assets }) {
+      return renderToString(
+        () => serverRouter(url),
+        {
+          headerTags: assets.map(({ tag }) => tag),
+          onError(error) {
+            reportToSentry(error, { url, mode: "string" }); // [!code hl]
+          },
+        },
+      );
+    },
+    renderToStream(url, { assets }) {
+      return renderToStream(
+        () => serverRouter(url),
+        {
+          headerTags: assets.map(({ tag }) => tag),
+          onError(error) {
+            reportToSentry(error, { url, mode: "stream" }); // [!code hl]
+          },
+        },
+      );
+    },
+  };
+});
+```
+
+::: warning It reports, it does not repair
+`onError` cannot change the response, patch the markup, or prevent what the render mode already does.
+A string-rendered route still falls back to CSR; a streamed route's shell is still on the wire.
+Returning a value from it changes nothing.
+:::
+
+The hook is the way to ship the error to your logger, to Sentry, to OpenTelemetry,
+tagged with the URL and whatever request context you already carry.
+
+What to do inside it:
+
+- **Report, don't render.** Log, count, trace, page someone. Keep it cheap -
+it runs on the request path, in front of a visitor who is already waiting.
+- **Never throw from it.** An `onError` that throws turns one failure into two,
+in the one place that was supposed to make failures observable.
+- **Tag the render mode.** A string-rendered failure means one visitor got a CSR page;
+a streamed failure means one visitor got a broken document. They deserve different alert thresholds.
+
+It fires in every environment that renders on the server - including [SSG](/frontend/static-site-generation) pre-rendering,
+where it runs inside the build and reports the route that could not be rendered before the build stops.
 
 ### Streaming routes do not recover.
 

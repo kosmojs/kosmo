@@ -1336,9 +1336,26 @@ so the page re-renders in the browser where your own error boundaries handle the
 Server-side boundaries behave too differently across frameworks to rely on.
 The server logs `WARN: SSR failed, fallback to CSR` along with the error.
 
+This recovery needs an untouched response, so it covers **string-rendered** routes (the default).
+A streamed route has already flushed its shell and cannot be replaced - it must handle fetch failures in the page itself.
+
+To see these without watching logs, pass an [onError hook](/frontend/server-side-render#onerror-hook) to the renderers.
+
 The page still works; it just isn't server-rendered any more.
 If a page unexpectedly arrives as an empty shell in production, check the server log before the client.
-[Details&nbsp;›](/fetch/isomorphic-clients#when-an-ssr-fetch-fails)
+
+This is a serving-time trade only - at build time nobody is waiting, so SSG fails the build instead.
+[Details&nbsp;›](/frontend/static-site-generation#error-handling)
+
+#### How do I log or report SSR render errors?
+Both `renderToString` and `renderToStream` accept an [onError hook](/frontend/server-side-render#onerror-hook) in `entry/server.ts`,
+called with the error that ended the render. Use it to log, count, trace or alert.
+
+It reports only - it cannot change the response or the markup. A string-rendered route still falls back to CSR,
+and a streamed route's shell is still on the wire.
+Don't throw from it, and keep it cheap: it runs on the request path.
+It also fires during SSG pre-rendering, inside the build.
+[Details&nbsp;›](/frontend/server-side-render#onerror-hook)
 
 #### Does client-side validation run during SSR?
 No - it's disabled automatically. The pre-flight check exists to avoid a round trip,
@@ -1383,8 +1400,11 @@ combined with `staticParams`: it runs **once per declared entry**,
 receiving that entry's own params, and the fetched data is baked into that entry's pre-rendered HTML.
 
 Those calls take the in-process path, inside the build: SSG starts a disposable SSR server and requests each route from it.
-So whatever your API talks to - a database, a CMS, an upstream service - must be reachable from wherever you run the build.
-[Details&nbsp;›](/fetch/isomorphic-clients#ssg-runs-the-same-path-at-build-time)
+So the build needs the access production has - the real database, the CMS, whatever the routes read.
+The usual shape is a CI workflow that ships the sources to the production environment (or a runner with the same credentials and network reach) and builds there.
+
+A route that can't be rendered fails the build rather than emitting a client shell.
+[Details&nbsp;›](/frontend/static-site-generation#error-handling)
 
 #### Where does the SSG output go, and what do I deploy?
 `dist/<folder>/ssg/` - a complete static site: one `index.html` per route, the hashed `assets/`,

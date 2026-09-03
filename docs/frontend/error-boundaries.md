@@ -198,6 +198,9 @@ surface through the mechanism you read the data with.
 See [Fetch Error Handling](/fetch/error-handling) for how a rejected request reaches a boundary in an event handler.
 - Backend errors are separate again, centralized in `api/errors.ts`.
 See [Backend Error Handling](/backend/error-handling).
+- A render error the server could not contain is **reported**, not caught, through the renderers'
+[`onError`](/frontend/server-side-render#onerror-hook) hook -
+the place to log or trace what a server-side boundary could not turn into fallback markup.
 - A boundary is for render-time errors in a subtree;
 the root [`app` file](/frontend/layouts#global-layout-via-app-file) is where a truly
 global boundary would go if you want one that wraps everything.

@@ -149,12 +149,12 @@ installs there, and runs `build` there.
 Pages are then rendered against exactly the data production would have served,
 and the `ssg/` directory it produces is what you publish.
 
-## A Route That Cannot Be Rendered Fails the Build
+## Error Handling
 
 Pre-rendering has no fallback.
 
 If a page cannot be rendered - its loader's fetch fails, the API returns a non-2xx, a component throws -
-the build **stops with that error** and no file is written for it.
+the page build **stops with that error** and no file is written.
 
 This is deliberate, and it is the one place where SSG differs from SSR.
 A live server that fails to render can [fall back to client rendering](/frontend/server-side-render#fetch-errors-and-recovery):
@@ -171,8 +171,11 @@ A bad page can outlive the deploy that produced it.
 So the build refuses to produce one. **A green build means every declared path rendered with real data**,
 which is exactly the guarantee you want before publishing a directory of HTML.
 
-When it does fail, the error names the route that could not be rendered.
-The usual causes are environmental rather than code:
+When it does fail, the error names the page that could not be rendered,
+and the renderer's [onError hook](/frontend/server-side-render#onerror-hook) fires first if you defined one -
+the same hook that reports failures at serving time also reports them during the build.
+
+The usual causes could be environmental rather than code:
 
 - The build machine cannot reach the database or upstream service - see [Where to Build](#where-to-build).
 - An environment variable the API needs is missing on the runner.

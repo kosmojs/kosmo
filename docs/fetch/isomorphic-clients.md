@@ -122,6 +122,13 @@ A single failing API call during render is enough to drop the whole page back to
 and the page still works - it just stopped being server-rendered.
 :::
 
+To catch that without reading logs, give the renderers an [onError hook](/frontend/server-side-render#onerror-hook) -
+it is called with the error that ended the render, so a lost SSR becomes an event in your monitoring rather than a line on stdout.
+It reports only; the fallback happens either way.
+
+This is a **serving-time** trade, and it applies to SSR only:
+at build time there is no visitor waiting, so [SSG](#ssg-runs-the-same-path-at-build-time) fails the build instead.
+
 Everything else about errors is unchanged: fetch clients always throw and transport failures are distinguished the same way on both sides.
 [Details&nbsp;›](/fetch/error-handling)
 
@@ -133,10 +140,14 @@ so every fetch made during those renders takes the in-process path, inside the b
 
 Two consequences:
 
-- **Your API runs during the build**, which means whatever it talks to -
-a database, a CMS, an upstream service - has to be reachable from wherever you build.
-- **A failed fetch degrades quietly.** The SSR fallback above applies, so the file written to disk
-is the client shell rather than a pre-rendered page. Watch the build output for `WARN: SSR failed, fallback to CSR`.
+- **Your API runs during the build**, so the build needs the access production has -
+the real database, the CMS, whatever your routes read.
+That is a CI concern rather than a laptop one: the usual shape is a workflow that ships the sources to the production environment -
+or to a runner with the same credentials and network reach - and builds there,
+so every page is rendered against exactly the data production would have served.
+- **A failed fetch fails the build.** SSG does not fall back to a client shell:
+a route that cannot be rendered stops the build with the error,
+so a page that quietly lost its content can never be published as a pre-rendered one.
 
 ## What does not change
 
