@@ -8,7 +8,7 @@ import { extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs, styleText } from "node:util";
 
-import { createAdaptorServer, getRequestListener } from "@hono/node-server";
+import { getRequestListener } from "@hono/node-server";
 import { type Context, Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { stream } from "hono/streaming";
@@ -40,7 +40,9 @@ type AssetInfo = {
   cacheControl: string;
 };
 
-export const createApp = async () => {
+export const createApp = async (
+  errorHandler?: (error: Error & { url: string }) => void | undefined,
+) => {
   // Import the SSR entry produced by Vite's ssr build.
   const {
     ssrApp,
@@ -111,6 +113,16 @@ export const createApp = async () => {
     };
   };
 
+  const handleError = (url: string, error: Error, fallback: Function) => {
+    if (errorHandler) {
+      // assign, not spread: message and stack are non-enumerable on Error,
+      // a spread silently drops them
+      errorHandler(Object.assign(error, { url }));
+    } else {
+      fallback();
+    }
+  };
+
   const injectHead = (html: string, head: string) => {
     const error = "WARN: missing </head> - required for SSR head injection";
     if (HEAD_CLOSE_PATTERN.test(html)) {
@@ -153,9 +165,11 @@ export const createApp = async () => {
 
     if (error) {
       const errorMessage = "WARN: SSR failed, fallback to CSR";
-      console.error(errorMessage);
-      console.error(error);
-      console.error();
+      handleError(ctx.req.url, error as never, () => {
+        console.error(errorMessage);
+        console.error(error);
+        console.error();
+      });
       return [
         injectHead(
           htmlStart,
@@ -208,16 +222,37 @@ export const createApp = async () => {
         if (renderMode === "stream" && typeof renderToStream === "function") {
           ctx.header("Content-Type", "text/html");
           return stream(ctx, async (stream) => {
-            const { head = "", html } = await withSsrContext(
-              {
-                headers: Object.fromEntries(ctx.req.raw.headers),
-                url: ctx.req.url,
-              },
-              () => renderToStream(url, ssrOptions(), stream as never),
-            );
-            await stream.write(injectHead(htmlStart, head));
-            await stream.pipe(html);
-            await stream.write(htmlEnd);
+            let error: Error | undefined;
+
+            /**
+             * Stream failures surface here, not in a catch upstream:
+             * on solid and vue pipe rejects; react shell errors reject the render promise itself.
+             * The shell may already be on the wire -
+             * reporting is all that is left to do, the response cannot be replaced.
+             * */
+            try {
+              const { head = "", html } = await withSsrContext(
+                {
+                  headers: Object.fromEntries(ctx.req.raw.headers),
+                  url: ctx.req.url,
+                },
+                () => renderToStream(url, ssrOptions(), stream as never),
+              );
+              await stream.write(injectHead(htmlStart, head));
+              await stream.pipe(html);
+              error = errorProvider();
+              await stream.write(htmlEnd);
+            } catch (e: any) {
+              error = e;
+            }
+
+            if (error) {
+              handleError(ctx.req.url, error, () => {
+                console.error("ERROR: SSR stream render failed");
+                console.error(error);
+                console.error();
+              });
+            }
           });
         }
 
@@ -397,24 +432,6 @@ export const startServer = async ({
   });
 
   return server;
-};
-
-export const createDisposableServer = async (
-  callback: (port: number) => Promise<void>,
-) => {
-  const app = await createApp();
-  const server = createAdaptorServer(app).listen(0); // OS picks a free port
-  const address = server.address();
-
-  if (!address || typeof address === "string") {
-    throw new Error("SSR: Failed starting disposable server on a free port");
-  }
-
-  try {
-    await callback(address.port);
-  } finally {
-    server.close();
-  }
 };
 
 const isMain = fileURLToPath(import.meta.url) === resolve(process.argv[1]);

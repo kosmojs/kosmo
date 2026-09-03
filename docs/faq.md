@@ -1344,7 +1344,7 @@ To see these without watching logs, pass an [onError hook](/frontend/server-side
 The page still works; it just isn't server-rendered any more.
 If a page unexpectedly arrives as an empty shell in production, check the server log before the client.
 
-This is a serving-time trade only - at build time nobody is waiting, so SSG fails the build instead.
+All of this is about serving a live request. SSG has no such fallback: nobody is waiting on a build, so a page that fails there fails the build.
 [Details&nbsp;›](/frontend/static-site-generation#error-handling)
 
 #### How do I log or report SSR render errors?
@@ -1403,7 +1403,8 @@ Those calls take the in-process path, inside the build: SSG starts a disposable 
 So the build needs the access production has - the real database, the CMS, whatever the routes read.
 The usual shape is a CI workflow that ships the sources to the production environment (or a runner with the same credentials and network reach) and builds there.
 
-A route that can't be rendered fails the build rather than emitting a client shell.
+A route that can't be rendered is never emitted as a client shell.
+Pre-rendering carries on through the rest, then either writes the whole set or - if anything failed - writes nothing and throws a summary.
 [Details&nbsp;›](/frontend/static-site-generation#error-handling)
 
 #### Where does the SSG output go, and what do I deploy?

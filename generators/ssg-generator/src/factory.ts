@@ -4,7 +4,7 @@ import { styleText } from "node:util";
 
 import { build } from "vite";
 
-import type { PageRoute, ResolvedEntry } from "@kosmojs/core";
+import type { FetchApp, PageRoute, ResolvedEntry } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   collectVirtualModules,
@@ -97,7 +97,14 @@ export default defineGeneratorFactory((sourceFolder) => {
 
       spinner.append("preparing...");
 
-      const { createDisposableServer } = await import(ssrServerPath);
+      // The SSR server module, used without a server: createApp returns a hono app,
+      // and app.fetch runs the full request cycle in-process - no port, no listener, no loopback round-trip.
+      // Loaders already take the in-process transport, so nothing in a render needs a socket.
+      const { createApp } = (await import(ssrServerPath)) as {
+        createApp: (
+          errorHandler: (error: Error & { url: string }) => void,
+        ) => Promise<FetchApp>;
+      };
 
       spinner.append("bundling routes...");
 
@@ -145,43 +152,77 @@ export default defineGeneratorFactory((sourceFolder) => {
         ),
       );
 
-      // The routes bundle build above emptied the output dir (vite derives outDir from the rolldown output dir),
-      // so statics are copied only now, once it is done.
-      // The output is a complete static site: the ssr folder holds the merged assets/
-      // (client bundle plus SSR-emitted CSS the rendered html links to)
-      // and public/, copied to the root, where a static host expects public files.
-      await cp(resolve(dir, "../ssr/assets"), join(dir, "assets"), {
-        recursive: true,
-      });
-
-      const publicDir = resolve(dir, "../ssr/public");
-
-      if (await pathExists(publicDir)) {
-        await cp(publicDir, dir, { recursive: true });
-      }
-
       try {
         const routes: Array<string> = await import(join(dir, "routes.js")).then(
           (e) => e.default,
         );
 
-        createDisposableServer(async (port: number) => {
-          for (const [i, route] of routes.entries()) {
-            spinner.append(`[ ${i + 1} of ${routes.length} ] ${route}`);
-            const html = await fetchRoute(port, route);
-            if (html === undefined) {
-              continue;
+        // Rendered pages buffered by path; nothing touches the disk until every route rendered -
+        // the output either materializes complete or not at all.
+        const pages = new Map<string, { html: string } | { error: string }>();
+
+        const app = await createApp((error) => {
+          pages.set(new URL(error.url).pathname, { error: error.message });
+        });
+
+        for (const [i, route] of routes.entries()) {
+          spinner.append(`[ ${i + 1} of ${routes.length} ] ${route}`);
+          // Routes carry the base for fetching; the output tree is rooted at <base>,
+          // same as vite's client build - deploy the folder at <base> on the host and the html,
+          // assets/ and public files line up.
+          try {
+            const html = await fetchRoute(app, route);
+            // A string-mode failure responds with the CSR shell and a 200 -
+            // the render already reported it through the error handler above,
+            // and that entry must not be overwritten by the shell html.
+            if (!pages.has(route)) {
+              pages.set(route, { html });
             }
-            // Routes carry the base for fetching; the output tree is rooted at base,
-            // same as vite's client build - deploy the folder at <base> on the host and the html,
-            // assets/ and public files line up.
+          } catch (error) {
+            if (!pages.has(route)) {
+              pages.set(route, { error: String(error) });
+            }
+          }
+        }
+
+        const failed = [...pages.entries()].flatMap(([route, status]) => {
+          return "error" in status ? [[route, status.error]] : [];
+        });
+
+        if (failed.length) {
+          spinner.failed("failed ❗");
+          // A quietly skipped route would ship an incomplete static site;
+          // surface every broken route at once and fail the build.
+          throw new Error(
+            [
+              `SSG: failed rendering ${failed.length} route(s):`,
+              ...failed.map(([route, error]) => `  ${route} - ${error}`),
+            ].join("\n"),
+          );
+        }
+
+        // The routes bundle build emptied the output dir (vite derives outDir from the rolldown output dir),
+        // so statics land only now, alongside the rendered pages.
+        await cp(resolve(dir, "../ssr/assets"), join(dir, "assets"), {
+          recursive: true,
+        });
+
+        // same for public dir
+        const publicDir = resolve(dir, "../ssr/public");
+
+        if (await pathExists(publicDir)) {
+          await cp(publicDir, dir, { recursive: true });
+        }
+
+        for (const [route, page] of pages) {
+          if ("html" in page) {
             const file = join(dir, posix.relative(base, route), "index.html");
             await mkdir(dirname(file), { recursive: true });
-            await writeFile(file, html, "utf8");
+            await writeFile(file, page.html, "utf8");
           }
+        }
 
-          spinner.succeed("done ✨");
-        });
+        spinner.succeed("done ✨");
       } finally {
         await rm(`${dir}/routes.js`);
       }
@@ -189,22 +230,13 @@ export default defineGeneratorFactory((sourceFolder) => {
   };
 });
 
-const fetchRoute = async (port: number, path: string) => {
-  try {
-    const url = `http://localhost:${port}${path}`;
-    const res = await fetch(url);
-    const html = await res.text();
-    return html;
-  } catch (
-    // biome-ignore lint: any
-    error: any
-  ) {
-    console.error(
-      styleText(
-        "red",
-        `✗ SSG: Failed generating ${path} route: ${error.message}`,
-      ),
-    );
-    return;
+const fetchRoute = async (app: FetchApp, path: string): Promise<string> => {
+  // the host is a placeholder - hono only needs an absolute URL to parse;
+  // the request never leaves the process
+  const res = await app.fetch(new Request(`http://localhost${path}`));
+  if (!res.ok) {
+    // catching non-render errors, they never land into into errorHandler passed to createApp
+    throw new Error(`app responded with ${res.status}`);
   }
+  return res.text();
 };

@@ -349,8 +349,38 @@ An empty shell in production is usually a failing API call during render, not a 
 - **Do not treat the fallback as an error strategy.**
 It keeps a bad deploy serving, it does not make the failure acceptable - the underlying call is still broken for every visitor of that route.
 
-At build time there is no visitor waiting, so [SSG](/frontend/static-site-generation) does the opposite:
-a route that cannot be rendered fails the build instead of writing a shell page.
+At build time there is no visitor waiting, so [SSG](/frontend/static-site-generation#error-handling) does the opposite:
+a route that cannot be rendered is never written as a shell,
+and one failure is enough to make the build write nothing and fail.
+
+### Streaming routes do not recover.
+
+Streaming exists to flush the shell before rendering completes,
+so by the time a fetch fails, the status line, headers, and opening HTML are already on the wire -
+there is no response left to replace, and no server-side fallback is possible.
+
+Routes that enable streaming must handle fetch errors manually, inside the page itself:
+
+- catch errors in loaders or components and render an explicit error state.
+- treat failure as a regular data state: a streamed page should be able to render something for every state its data can be in.
+- lean on the framework's containment primitives
+    - React contains the failure through the enclosing Suspense boundary:
+    the stream survives, the server emits the suspense fallback, and the client retries the subtree,
+    where an error boundary takes over (React never renders error boundary fallback HTML on the server);
+    - Solid serializes resource errors into the stream and rethrows them during client hydration,
+    where an `ErrorBoundary` catches them;
+    - Vue has no streaming-side equivalent: `onErrorCaptured` can stop an error from propagating,
+    which keeps the stream alive, but no fallback is rendered in that same server pass -
+    the failed subtree is simply absent until the boundary takes over on the client.
+
+What an unhandled mid-stream error produces is framework-specific -
+a truncated document, a built-in fallback with client-side retry,
+or an error deferred to hydration - none of which substitutes for explicit handling.
+
+See [Error Boundaries](/frontend/error-boundaries) for how each framework's boundary behaves during server rendering.
+
+MDX and Svelte folders are unaffected: they render strings only,
+so every route recovers through the CSR fallback.
 
 ## onError hook
 
@@ -403,37 +433,9 @@ in the one place that was supposed to make failures observable.
 - **Tag the render mode.** A string-rendered failure means one visitor got a CSR page;
 a streamed failure means one visitor got a broken document. They deserve different alert thresholds.
 
-It fires in every environment that renders on the server - including [SSG](/frontend/static-site-generation) pre-rendering,
-where it runs inside the build and reports the route that could not be rendered before the build stops.
-
-### Streaming routes do not recover.
-
-Streaming exists to flush the shell before rendering completes,
-so by the time a fetch fails, the status line, headers, and opening HTML are already on the wire -
-there is no response left to replace, and no server-side fallback is possible.
-
-Routes that enable streaming must handle fetch errors manually, inside the page itself:
-
-- catch errors in loaders or components and render an explicit error state.
-- treat failure as a regular data state: a streamed page should be able to render something for every state its data can be in.
-- lean on the framework's containment primitives
-    - React contains the failure through the enclosing Suspense boundary:
-    the stream survives, the server emits the suspense fallback, and the client retries the subtree,
-    where an error boundary takes over (React never renders error boundary fallback HTML on the server);
-    - Solid serializes resource errors into the stream and rethrows them during client hydration,
-    where an `ErrorBoundary` catches them;
-    - Vue has no streaming-side equivalent: `onErrorCaptured` can stop an error from propagating,
-    which keeps the stream alive, but no fallback is rendered in that same server pass -
-    the failed subtree is simply absent until the boundary takes over on the client.
-
-What an unhandled mid-stream error produces is framework-specific -
-a truncated document, a built-in fallback with client-side retry,
-or an error deferred to hydration - none of which substitutes for explicit handling.
-
-See [Error Boundaries](/frontend/error-boundaries) for how each framework's boundary behaves during server rendering.
-
-MDX and Svelte folders are unaffected: they render strings only,
-so every route recovers through the CSR fallback.
+It fires in every environment that renders on the server - including [SSG](/frontend/static-site-generation#error-handling) pre-rendering,
+where it runs inside the build, once per route that fails,
+before the build reports them together and exits non-zero without writing any output.
 
 ## Production Build
 

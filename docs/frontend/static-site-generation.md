@@ -154,7 +154,18 @@ and the `ssg/` directory it produces is what you publish.
 Pre-rendering has no fallback.
 
 If a page cannot be rendered - its loader's fetch fails, the API returns a non-2xx, a component throws -
-the page build **stops with that error** and no file is written.
+the error is recorded and pre-rendering carries on through the remaining paths.
+
+Then, at the end, one of two things happens:
+- every page rendered, and the whole set is written.
+- or at least one failed, and **nothing is written at all** - the collected errors reported.
+
+Two properties come out of that, and both matter when you are waiting on a build:
+
+- **One run names every broken route.** Aborting on the first failure would hide the other nine
+behind it, and finding them one rebuild at a time is how a ten-minute pipeline turns into an afternoon.
+- **The output is all-or-nothing.** There is no half-generated site to reason about,
+no question of which pages in `dist/` came from the run that failed, and nothing tempting to deploy from a red build.
 
 This is deliberate, and it is the one place where SSG differs from SSR.
 A live server that fails to render can [fall back to client rendering](/frontend/server-side-render#fetch-errors-and-recovery):
@@ -168,11 +179,12 @@ contains nothing. No monitor flags it, and nobody notices until someone reads th
 - **Static output gets cached hard** - a CDN, an immutable deploy, a proxy in front of it.
 A bad page can outlive the deploy that produced it.
 
-So the build refuses to produce one. **A green build means every declared path rendered with real data**,
-which is exactly the guarantee you want before publishing a directory of HTML.
+So a broken page is never written - nor is any of its neighbours, until the whole set is good.
+**A green build means every declared path rendered with real data**, which is exactly the guarantee
+you want before publishing a directory of HTML.
 
-When it does fail, the error names the page that could not be rendered,
-and the renderer's [onError hook](/frontend/server-side-render#onerror-hook) fires first if you defined one -
+The summary names every page that could not be rendered,
+and the renderer's [onError hook](/frontend/server-side-render#onerror-hook) has already fired for each of them if you defined one -
 the same hook that reports failures at serving time also reports them during the build.
 
 The usual causes could be environmental rather than code:
@@ -181,7 +193,8 @@ The usual causes could be environmental rather than code:
 - An environment variable the API needs is missing on the runner.
 - A `staticParams` entry points at a record that no longer exists, so its loader gets a `404`.
 
-Fix the cause and rebuild - or drop the stale entry from `staticParams` if the path should no longer be generated.
+Fix the causes and rebuild - or drop the stale entries from `staticParams` if those paths should no longer be generated.
+Since one run reports all of them, a single pass over the summary is usually enough.
 
 ## Output
 

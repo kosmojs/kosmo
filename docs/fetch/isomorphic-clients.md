@@ -39,7 +39,7 @@ The transport is a parameter of the generated client, not a global that gets swa
 - In the browser no transport is passed, so the client calls the platform's own fetch, pristine -
 with every redirect, credentials, caching, `AbortSignal` semantics, etc.
 - On the server the client is constructed with a transport that speaks the same `Request -> Response` contract
-and handed to the API app instead of to the network.
+and hands the request to the API app instead of to the network.
 
 ## What decides which transport you get
 
@@ -113,7 +113,12 @@ WARN: SSR failed, fallback to CSR
 SSRFetchError: /api/users/123: 500 [ Internal Server Error ]
 ```
 
-That is a deliberate trade - one consistent place to handle errors instead of server-side boundaries
+That recovery needs an untouched response, so it applies to **string-rendered routes** - the default.
+A [streamed route](/frontend/server-side-render#streaming-routes-do-not-recover) has already flushed its
+status line and opening HTML by the time a fetch fails, so there is nothing left to replace:
+streaming routes must handle fetch failures in the page itself.
+
+The fallback is a deliberate trade - one consistent place to handle errors instead of server-side boundaries
 that behave differently in every framework - but it has a practical consequence worth internalising:
 
 ::: warning A page that renders fine can still have lost its SSR
@@ -126,10 +131,13 @@ To catch that without reading logs, give the renderers an [onError hook](/fronte
 it is called with the error that ended the render, so a lost SSR becomes an event in your monitoring rather than a line on stdout.
 It reports only; the fallback happens either way.
 
-This is a **serving-time** trade, and it applies to SSR only:
-at build time there is no visitor waiting, so [SSG](#ssg-runs-the-same-path-at-build-time) fails the build instead.
+This is a **serving-time** trade, and it applies to SSR only: at build time there is no visitor waiting,
+so [SSG](#ssg-runs-the-same-path-at-build-time) writes nothing and fails the build instead.
 
-Everything else about errors is unchanged: fetch clients always throw and transport failures are distinguished the same way on both sides.
+Fetch clients always throw on failure, on both sides - but not the same object.
+In the browser the thrown error carries the `response` and the parsed error `body`;
+during SSR the transport throws first, with the route and status in its message.
+And a `ValidationError` can only ever come from the browser, since the pre-flight check is not there under SSR.
 [Details&nbsp;›](/fetch/error-handling)
 
 ## SSG runs the same path at build time
@@ -145,9 +153,9 @@ the real database, the CMS, whatever your routes read.
 That is a CI concern rather than a laptop one: the usual shape is a workflow that ships the sources to the production environment -
 or to a runner with the same credentials and network reach - and builds there,
 so every page is rendered against exactly the data production would have served.
-- **A failed fetch fails the build.** SSG does not fall back to a client shell:
-a route that cannot be rendered stops the build with the error,
-so a page that quietly lost its content can never be published as a pre-rendered one.
+- **A failed fetch costs you the whole build.** SSG does not fall back to a client shell:
+pre-rendering goes through every path, and if any of them failed it writes nothing and throws the collected errors.
+[Details&nbsp;›](/frontend/static-site-generation#error-handling)
 
 ## What does not change
 
