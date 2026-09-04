@@ -223,9 +223,9 @@ export default defineConfig({
               link: "/routing/params",
             },
             {
-              text: "Generated Content",
-              docFooterText: "Routing - Generated Content",
-              link: "/routing/generated-content",
+              text: "Seeded Content",
+              docFooterText: "Routing - Seeded Content",
+              link: "/routing/seeded-content",
             },
           ],
         },

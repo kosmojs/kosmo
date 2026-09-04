@@ -139,7 +139,7 @@ A fetch in `useEffect` / `onMounted` does not run during SSR - it fetches in the
 
 Solid's `createAsync` (like `createResource`) suspends: it reports its pending
 state to the nearest `<Suspense>` boundary and propagates errors to the nearest
-`<ErrorBoundary>`. `KosmoJS` does not provide either for you - the generated
+`<ErrorBoundary>`. `KosmoJS` does not provide either for you - the seeded
 `App` boilerplate renders its children directly, deliberately not wrapping the
 app in `<Suspense>`, because one app-wide boundary is an anti-pattern: any
 pending fetch anywhere collapses the whole page to a single fallback and

@@ -1,8 +1,8 @@
 ---
 title: Static Site Generation
-description: Pre-render React, SolidJS, Vue, Svelte and MDX pages to static HTML at build time
-  with the KosmoJS SSG generator. Declaring staticParams for dynamic routes per framework,
-  building in CI against production data, output layout, and deploying to a static host or CDN.
+description: Pre-render React, SolidJS, Vue, Svelte and MDX pages to static HTML at build time with the KosmoJS SSG setup.
+    Declaring staticParams for dynamic routes per framework,
+    building in CI against production data, output layout, and deploying to a static host or CDN.
 head:
   - - meta
     - name: keywords
@@ -41,7 +41,7 @@ pages are rendered by the folder's own SSR server.
 
 Static routes (no parameters) render automatically.
 A dynamic route renders once per parameter set it declares through `staticParams`;
-a dynamic route without `staticParams` is skipped - no file is generated for it.
+a dynamic route without `staticParams` is skipped - no file is written for it.
 
 `staticParams` is a list of variants, each one positional in the route's parameter order.
 A splat parameter takes an array of segments.
@@ -164,7 +164,7 @@ Two properties come out of that, and both matter when you are waiting on a build
 
 - **One run names every broken route.** Aborting on the first failure would hide the other nine
 behind it, and finding them one rebuild at a time is how a ten-minute pipeline turns into an afternoon.
-- **The output is all-or-nothing.** There is no half-generated site to reason about,
+- **The output is all-or-nothing.** There is no half-written site to reason about,
 no question of which pages in `dist/` came from the run that failed, and nothing tempting to deploy from a red build.
 
 This is deliberate, and it is the one place where SSG differs from SSR.
@@ -193,7 +193,7 @@ The usual causes could be environmental rather than code:
 - An environment variable the API needs is missing on the runner.
 - A `staticParams` entry points at a record that no longer exists, so its loader gets a `404`.
 
-Fix the causes and rebuild - or drop the stale entries from `staticParams` if those paths should no longer be generated.
+Fix the causes and rebuild - or drop the stale entries from `staticParams` if those paths should no longer be pre-rendered.
 Since one run reports all of them, a single pass over the summary is usually enough.
 
 ## Output

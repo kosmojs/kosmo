@@ -1,6 +1,6 @@
 ---
 title: Getting Started with Fetch Client
-description: Import and use KosmoJS generated fetch clients with full TypeScript typing.
+description: Import and use KosmoJS fetch clients with full TypeScript typing.
     Access routes directly or through a centralized map with automatic parameter and payload validation.
 head:
   - - meta
@@ -9,7 +9,7 @@ head:
         payload typing, response types, typescript api client
 ---
 
-The fetch index exports a map of route paths to their generated clients:
+The fetch index exports a map of route paths to their clients:
 
 ```ts [pages/example/index.tsx]
 import fetchClients from "_/fetch";
@@ -35,7 +35,7 @@ export default defineRoute<"users/[id]", [number]>(({ GET }) => [
 ]);
 ```
 
-The generated client expects a number parameter and an optional payload:
+The client expects a number parameter and an optional payload:
 
 ```ts [pages/example/index.tsx]
 const useFetch = fetchClients["users/[id]"];

@@ -14,7 +14,7 @@ head:
 Preloading ensures data is ready before a component renders, eliminating
 loading spinners for route-level data and creating seamless navigation
 experiences. Each framework has its own mechanism - all integrate naturally
-with `KosmoJS`'s generated fetch clients.
+with `KosmoJS`'s fetch clients.
 
 ## API Endpoint
 
@@ -65,7 +65,7 @@ export default defineRoute<"users/data">(({ GET }) => [
 ```
 :::
 
-Declaring `response` is what gives the generated client a typed return value here -
+Declaring `response` is what gives the client a typed return value here -
 and, on the client, an entry in the `ResponseT` map.
 [Details&nbsp;›](/fetch/type-safety#response-types)
 
@@ -229,7 +229,7 @@ made during SSR is replayed on hydration rather than firing twice.
 ## Suspense Is Your Responsibility
 
 Async data reads need a `<Suspense>` boundary above them, and `KosmoJS` does
-not provide one for you. The generated `App` boilerplate renders its children
+not provide one for you. The seeded `App` boilerplate renders its children
 directly - it deliberately does not wrap the app in `<Suspense>`, because a
 single app-wide boundary is an anti-pattern: any pending fetch anywhere
 collapses the whole page to one fallback, and unrelated async work shares a

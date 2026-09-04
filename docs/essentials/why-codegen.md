@@ -71,10 +71,10 @@ The only tracked files are `cache.json` and small shared `types.ts` files
 The route and page boilerplate written when you create a file is seeding, not scaffolding.
 A **strict** rule keeps it from becoming the bad kind:
 
-::: tip Generated boilerplate is written only into blank files
-The generator writes into a file **only when that file is empty**.
+::: tip Seeded boilerplate is written only into blank files
+Boilerplate is written into a file **only when that file is empty**.
 The moment you type into it, it is yours - permanently.
-No regeneration, no template change, no version bump can ever rewrite it.
+No re-seeding, no template change, no version bump can ever rewrite it.
 :::
 
 The whole point of this seeding is to save you from bootstrapping every route by hand.

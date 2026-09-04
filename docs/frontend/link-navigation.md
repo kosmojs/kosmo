@@ -1,6 +1,6 @@
 ---
 title: Type-Safe Navigation
-description: Generated Link component wrapping each framework's native router
+description: Link component wrapping each framework's native router
   with compile-time route validation. Autocomplete navigation targets, parameter
   enforcement, and query string handling for React, SolidJS, Vue, Svelte and MDX.
 head:
@@ -10,10 +10,8 @@ head:
         type-safe links, route autocomplete, parameter validation, typed navigation.
 ---
 
-The generator produces a `Link` component that wraps each framework's native
-router link with compile-time route validation. It knows your complete route
-structure and parameters, delivering autocomplete and type checking throughout
-navigation code.
+The `Link` component wraps each framework's native router link with compile-time route validation.
+It knows your complete route structure and parameters, delivering autocomplete and type checking throughout navigation code.
 
 The component is available at `components/Link.{tsx,vue,svelte}` in your source folder.
 
@@ -91,7 +89,7 @@ import Link from "~/components/Link.svelte";
 
 ## LinkProps Type
 
-The `to` prop is typed as `LinkProps` - a discriminated union generated from
+The `to` prop is typed as `LinkProps` - a discriminated union derived from
 your route structure:
 
 ```ts

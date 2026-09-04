@@ -58,7 +58,7 @@ export default defineRoute<"users">(({ POST }) => [
   <template #page>
 
 ```tsx [React: pages/users/index.tsx]
-// import generated clients
+// import derived clients
 import fetchClients from "_/fetch";
 
 const { POST } = fetchClients["users"];

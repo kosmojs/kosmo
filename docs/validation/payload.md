@@ -338,7 +338,7 @@ export default defineRoute<"users">(({ POST }) => [
 ]);
 ```
 
-The generator resolves generics, traces all referenced types, and builds a complete validation schema.
+Generics are resolved and every referenced type traced, producing a complete validation schema.
 Update a shared type and validation updates everywhere it's used.
 
 Different routes, same wrapper:

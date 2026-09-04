@@ -1,17 +1,15 @@
 ---
 title: About KosmoJS
 description: KosmoJS - the composable meta-framework.
-    Organize multiple apps with directory-based routing, automatic runtime validation,
-    typed fetch clients, and OpenAPI generation.
+    Organize multiple apps with directory-based routing, automatic runtime validation, fetch clients, and OpenAPI specs.
 head:
   - - meta
     - name: keywords
-      content: vite template, type-safe api, runtime validation, openapi generator,
+      content: vite template, type-safe api, runtime validation, openapi spec,
         multi-app vite, directory-based routing
 ---
 
-Named after the Greek "Kosmos" (κόσμος) - "order" or "world" -
-reflecting the focus on organized, structured project architecture.
+Named after the Greek "Kosmos" (κόσμος) - "order" or "world" - reflecting the focus on organized, structured project architecture.
 
 ### 💡 What it does and how
 
@@ -83,7 +81,7 @@ for all source folders, regardless of framework, backend or frontend.
 Thanks to this architecture, KosmoJS provides:
 
 - [End-to-End Type Safety](/validation/intro)
-- [Generated Fetch Clients + OpenAPI](/fetch/intro)
+- [Fetch Clients + OpenAPI](/fetch/intro)
 - [Composable Cascading Middleware](/backend/middleware)
 - [Nested Layouts](/frontend/layouts)
 

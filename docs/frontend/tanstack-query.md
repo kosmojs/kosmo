@@ -62,11 +62,11 @@ available there - fetch data with an MDX `loader` instead (see [MDX](./mdx)).
 ## Enabling and using it
 
 Enabling the `tanstack.query` option wires everything for you.
-The framework generator deploys the `_/query` runtime, swaps `_/app` for a provider
-that supplies the query client, and - on the server - gives each request its own client.
+The `_/query` runtime is deployed, `_/app` is swapped for a provider that supplies
+the query client, and - on the server - each request gets its own client.
 
 None of this touches your app code: the provider seam is part of the
-generated foundation (see [Application Structure](./application)), and it is
+derived foundation (see [Application Structure](./application)), and it is
 composed the same way whether the option is on or off.
 Toggling the option never asks you to edit, copy, or paste anything.
 

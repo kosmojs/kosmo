@@ -50,14 +50,14 @@ type Params = [UserID, UserAction];
 defineRoute<"[id]/[action]", Params>
 ```
 
-The generator reads this position structurally from the source, mapping each slot to a route parameter,
-so an alias leaves it nothing to destructure.
+The position is read structurally from the source, mapping each slot to a route parameter,
+so an alias leaves nothing to destructure.
 It fails silently: the schema does not build and **every** request is rejected.
 
 The same rule covers the `response` tuple and the `VRefine` constraint object.
 [The bracket rule&nbsp;›](/validation/refine#keep-the-wrapping-brackets-literal)
 
-Refinements also generate runtime validation - invalid params are rejected before your handler runs.
+Refinements also drive runtime validation - invalid params are rejected before your handler runs.
 [Details&nbsp;›](/validation/params)
 
 ## Typing Payload and Response

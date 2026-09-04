@@ -1,7 +1,7 @@
 ---
 title: Custom Page Templates
-description: Override default generated page components for specific routes using
-  glob pattern matching. Create specialized scaffolding for landing pages, admin
+description: Override default seeded page components for specific routes using
+  glob pattern matching. Seed specialized boilerplate for landing pages, admin
   dashboards, and marketing sections in React, SolidJS, Vue, Svelte and MDX source folders.
 head:
   - - meta
@@ -10,9 +10,9 @@ head:
         route patterns, glob matching, template configuration, landing page templates
 ---
 
-Each framework generator supports template overrides for specific routes through
+Every frontend framework supports template overrides for specific routes through
 pattern-based matching. When a new page is created and its path matches a
-configured pattern, the generator writes your custom template instead of the
+configured pattern, your custom template is written instead of the
 default - useful for standardizing structure across landing pages, admin tools,
 or any section requiring a consistent starting point.
 
@@ -31,9 +31,9 @@ Only page components - and not quite all of them:
 | `pages/404.*` | ❌ deployed once at folder creation |
 
 ::: warning Templates only fill blank files
-The generator writes boilerplate into a file **only when that file is empty**.
+Boilerplate is written into a file **only when that file is empty**.
 It never overwrites work you have already done - which is also why changing a template does not retroactively rewrite existing pages.
-To re-scaffold one, empty the file and let it be regenerated.
+To re-seed one, empty the file and it will be filled again.
 :::
 
 ## Configuration
@@ -237,7 +237,7 @@ Route params: {JSON.stringify(useParams())}
 ```
 :::
 
-> Templates use Handlebars syntax for any dynamic content injected during generation.
+> Templates use Handlebars syntax for any dynamic content injected during seeding.
 Avoid raw Vue interpolation <code>{{"{{"}}</code><code>}}</code> inside template strings -
 wrap in quotes or escape as needed to prevent accidental Handlebars evaluation.
 
@@ -267,7 +267,7 @@ generator({
 
 ## Default Template Override
 
-Routes without a matching pattern use the generator's built-in default, which
+Routes without a matching pattern use the built-in default, which
 displays the route name as a placeholder. Replace it globally with:
 
 ```ts

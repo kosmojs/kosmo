@@ -65,6 +65,6 @@ Response validation is especially valuable for data sourced from databases or th
 where the shape can change without warning. If an endpoint serves such data and malformed output
 would be worse than a thrown error, that endpoint is a candidate for `runtimeValidation: true`.
 
-Defining a response schema also enables automatic `OpenAPI` generation -
+Defining a response schema also enables automatic `OpenAPI` derivation -
 type safety and documentation in one step.
 [Details&nbsp;›](/openapi)

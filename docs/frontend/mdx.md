@@ -7,8 +7,7 @@ head:
   - - meta
     - name: keywords
       content: mdx content, static site, preact ssr, markdown components, frontmatter,
-        nested layouts, static generation, ssg, content site, documentation site,
-        kosmojs mdx, mdx generator
+        nested layouts, static generation, ssg, content site, documentation site
 ---
 
 MDX source folders are purpose-built for content: documentation, blogs,
@@ -19,10 +18,10 @@ server with Preact, and delivered with minimal client-side JavaScript by default
 The same directory-based routing, nested layouts, and type-safe navigation
 used by React, SolidJS, and Vue source folders apply for MDX as well.
 
-## Enabling the Generator
+## Enabling MDX
 
-MDX generator is automatically enabled when creating a source folder and
-selecting MDX as the framework. To add one to an existing folder:
+MDX is enabled automatically when you create a source folder and select MDX as the framework.
+To add it to an existing folder:
 
 ```ts [kosmo.config.ts]
 import {
@@ -372,7 +371,7 @@ no need to reconstruct an array from `params`/`useParams()` by hand.
 
 ## Type-Safe Navigation
 
-The generator produces a typed `Link` component at `components/Link.tsx`:
+A typed `Link` component is seeded at `components/Link.tsx`:
 
 ```mdx
 import Link from "~/components/Link"
@@ -423,8 +422,8 @@ This follows the same convention used by VitePress - no new syntax to learn.
 
 ## Application Structure
 
-The MDX generator produces the same foundational files as other frameworks,
-maintaining a consistent project structure:
+MDX folders get the same seeded foundation files as other frameworks,
+keeping project structure consistent:
 
 ```txt
 src/content/

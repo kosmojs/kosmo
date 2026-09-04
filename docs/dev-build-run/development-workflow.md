@@ -29,7 +29,7 @@ Default port is `4556`, configured as `devPort` in `package.json`.
 
 ## What Happens on Start
 
-1. Generators run, seeding any blank route or page files.
+1. Blank route and page files are seeded.
 2. `Vite` compiles `api/app.ts`
 3. Dev server starts, serving both client pages and your API routes
 4. Requests are routed between Vite and your API by the folder's `apiBase`
@@ -79,7 +79,7 @@ The API side has its own hooks, because it is the part kosmo runs itself.
 
 ### requestHandler
 
-Returns the API request handler. Generated default:
+Returns the API request handler. Seeded default:
 
 :::tabs key:backend variant:code
 == Hono

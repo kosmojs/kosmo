@@ -33,7 +33,7 @@ Every frontend source folder gets one, at the root of `pages/`:
 | MDX | `pages/404.mdx` |
 
 It is **seeded once when the folder is created**, carrying a placeholder you are expected to replace.
-From that point it is an ordinary source file: it is never regenerated,
+From that point it is an ordinary source file: it is never re-seeded,
 never overwritten by a later boilerplate pass, and - unlike route files - it cannot be seeded through
 [custom&nbsp;templates](/frontend/custom-templates#what-it-overrides). Edit it directly.
 
@@ -91,7 +91,7 @@ export default function NotFound() {
 
 ## How it is registered
 
-The generator appends it to the folder's route list as the router's **catch-all (`path: "*"`), always last**,
+It is appended to the folder's route list as the router's **catch-all (`path: "*"`), always last**,
 so it matches only after every real route has failed to.
 
 You never register it yourself and it never appears in the [typed Link](/frontend/link-navigation) route map -

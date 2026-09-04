@@ -24,7 +24,7 @@ reading a body, setting a response, raising an error stay your framework's own i
 ## What's in `api/`
 
 Creating a source folder with a backend seeds a small, fixed set of files.
-Each is a real source file you own - they are written once, never regenerated behind your back,
+Each is a real source file you own - they are written once, never re-seeded behind your back,
 and none of them can be seeded through [custom templates](/backend/custom-templates#what-it-overrides) (only route files can).
 
 ```text
@@ -146,9 +146,9 @@ It isn't - and it's worth one minute to understand why, because it explains a lo
 The routing itself never needs it. The URL comes from the file's location, full stop.
 The string is there for **TypeScript**, which cannot see the file system.
 
-Everything `KosmoJS` knows about a route is generated into a `RouteMap` in `lib/`, keyed by route name:
+Everything `KosmoJS` knows about a route is placed into a `RouteMap` in `lib/`, keyed by route name:
 
-```ts [lib/front/@api/routes.ts - generated]
+```ts [lib/front/@api/routes.ts]
 export type RouteMap = {
   "users/[id]": {
     paramsDefaults: [string],           // params, in path order
@@ -171,7 +171,7 @@ the route has parameters is a compile error.
 Because there is no runtime argument carrying it, TypeScript has nothing to infer it from -
 so the type argument is **required**, and you write it once when the file is created.
 
-In practice, you don't: the [generated boilerplate](/routing/generated-content#api-routes) already contains the correct name.
+In practice, you don't: the [seeded boilerplate](/routing/seeded-content#api-routes) already contains the correct name.
 
 ::: tip What if it's wrong?
 It can't silently drift. `defineRoute<R>` is constrained as `R extends keyof RouteMap`,
@@ -187,23 +187,62 @@ so `api/users/[id]/index.ts` is `"users/[id]"`, and `api/index/index.ts` is `"in
 Pages have no equivalent: a page component is an ordinary default export,
 and its routing is resolved by the framework's own router, so there is nothing to look up.
 
-## Where the URL Comes From
+## Where routes end up: `base` and `apiBase`
 
-A route's final URL is three parts joined:
+Every source folder has a `base`, the URL prefix it owns, and an `apiBase`,
+the prefix its API routes get *inside* that base. `apiBase` defaults to `/api`.
+The two compose:
 
 ```
-<base>  +  <apiBase>  +  <route name>
-
-  /        /api          users/[id]      ➜  /api/users/:id
-  /admin   /api          users/[id]      ➜  /admin/api/users/:id
+API route URL  = join(base, apiBase, routeName)
+page URL       = join(base, pagePath)
 ```
 
-- **`base`** is the source folder's base URL, set in its `kosmo.config.ts`.
-- **`apiBase`** defaults to `/api` and is configurable per folder.
-- The `api/` directory name itself never appears in the URL -
-it is the folder that separates server routes from `pages/`, not a path segment.
+`apiBase` is relative to `base`, not to the site root. That is the one thing to hold on to;
+everything in the table follows from it.
 
-[Details&nbsp;›](/essentials/config#folder-options)
+| `base` | `apiBase` | API routes live at | pages live at | Note |
+| --- | --- | --- | --- | --- |
+| `/` | default (`/api`) | `/api/<route>` | `/<page>` | the scaffold's default |
+| `/admin` | default (`/api`) | `/admin/api/<route>` | `/admin/<page>` | the API moves with the folder |
+| `/` | `/hub` | `/hub/<route>` | `/<page>` | any prefix works; it is still joined onto `base` |
+| `/api` | default (`/api`) | `/api/api/<route>` | none (API-only folder) | the doubled segment people hit first |
+| `/api` | `/` | `/api/<route>` | none | an API-only folder that owns `/api` directly |
+| `/webhooks` | `/` | `/webhooks/<route>` | none | the same shape for any public API surface |
+| `/docs` or `/` | default | none (no backend generator) | `/docs/<page>` or `/<page>` | `apiBase` is ignored without a backend |
+
+### An API-only folder at its own prefix
+
+To serve an API directly under a prefix, set `apiBase` to `/`:
+
+```ts
+// src/api/kosmo.config.ts
+export default defineConfig({
+  base: "/api",
+  apiBase: "/", // [!code hl]
+  // ...
+});
+// src/api/api/emails/index.ts  ->  /api/emails
+```
+
+Leaving `apiBase` at its default here would put the same route at `/api/api/emails`.
+
+### How requests are dispatched
+
+The dev server and the built `dist/run.js` route by prefix:
+more specific prefixes win, and API prefixes are ranked ahead of page prefixes -
+`/admin/api` beats `/admin` and `/api` beats `/`.
+
+A folder at `base: "/"` catches only what no other folder claims.
+The server prints the prefix table on start; read it when a route lands somewhere unexpected:
+
+```
+  /admin/api   -> admin
+  /api/        -> api
+  /webhooks/   -> webhooks
+  /admin       -> admin
+  /            -> docs
+```
 
 ## Type Safety
 

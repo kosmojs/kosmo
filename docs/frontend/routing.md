@@ -1,20 +1,20 @@
 ---
 title: Routing
-description: Watch-based route generation, lazy-loaded components, data loading
-  integration, and nested layout patterns for React, SolidJS, Vue, Svelte and MDX applications.
+description: Automatic route registration, lazy-loaded components, data loading integration,
+    and nested layout patterns for React, SolidJS, Vue, Svelte and MDX applications.
 head:
   - - meta
     - name: keywords
-      content: react route generation, solidjs routing, vue routing, svelte routing, mdx routing,
+      content: react route derivation, solidjs routing, vue routing, svelte routing, mdx routing,
         lazy components, loader integration, preload function, route parameters,
         code splitting, dynamic imports, nested routes, layout components,
         route hierarchy, outlet pattern, router view, kosmojs routing
 ---
 
-Each framework generator continuously watches your `pages` directory. When a
-page component is created, the generator analyzes its filesystem location,
-produces a corresponding route configuration, and writes it to your `lib`
-directory for the router to consume - without any manual wiring.
+Dev server continuously watches your `pages/` directory for new or updated pages.
+
+You never wire routes by hand: as page components are created, updated or deleted,
+a matching route configuration is written into `lib/` for the native router to consume.
 
 ## Same routing, both sides
 
@@ -57,13 +57,13 @@ pages/
 Layouts stack outward-in and cannot be escaped by child routes.
 [More on Layouts ›](/frontend/layouts)
 
-## Generated Route Shape
+## Routes
 
 There is no central route tree for you to register or maintain -
 no `routeTree.gen.ts` to import, no route config object to keep in sync.
 
-The generator writes route definitions into `lib/<folder>/` and the framework's own router consumes them;
-you reach them only through `createRoutes()` in your entry file, which the scaffold already wires up.
+Route definitions are written into `lib/<folder>/` and the framework's own router consumes them;
+you reach them only through `createRoutes()` in your entry file, which the seeded boilerplate already wires up.
 
 What it emits is a plain, **framework-native** route definition -
 the same object you would have hand-written:
@@ -98,7 +98,7 @@ Two consequences worth internalising:
 - **Nesting is structural.** A `layout` file becomes a parent route
 whose `children` are the routes beneath it -
 which is why layouts stack outward-in and why a child cannot escape one.
-- **It is a build artifact.** `lib/` is generated, regenerated on every relevant change,
+- **It is a build artifact.** `lib/` is derived, recomputed on every relevant change,
 and bundled like any other dependency at build time.
 You don't need to read it, and you should never edit it -
 treat it the way you treat a generated Prisma client.
@@ -111,37 +111,35 @@ lazy loading, nested layouts, navigation guards, `loader`/`preload`, error eleme
 
 ## Lazy Loading
 
-All page components are lazy-loaded by default. Route code is excluded from
-the initial JavaScript bundle and fetched on demand when a user navigates to
-that path. This keeps initial payloads small, accelerates application startup,
+All page components are lazy-loaded by default.
+
+Route code is excluded from the initial JavaScript bundle and fetched on demand
+when a user navigates to that path.
+
+This keeps initial payloads small, accelerates application startup,
 and ensures users download only the code for routes they actually visit.
 
 ## Data Loading on Navigation
 
-Every framework integrates data fetching into the route lifecycle through a
-page-level `loader`/`preload` export.
+Every framework integrates data fetching into the route lifecycle through a page-level `loader`/`preload` export.
 
-**React** - when a page exports a `loader` function, React Router executes it
-at strategic moments: initial page load, link hover, and navigation initiation.
-Data is available before the component renders, eliminating loading spinners
-for route-level data.
+**React** - when a page exports a `loader` function, React Router executes it at strategic moments:
+initial page load, link hover, and navigation initiation.
+Data is available before the component renders, eliminating loading spinners for route-level data.
 
-**SolidJS** - when a page exports a `preload` function, SolidJS Router calls it
-on link hover and navigation intent. The preload result is cached and reused by
-`createAsync` inside the component (wrap the fetch in `query()` so both share
-one cache key), so no duplicate requests are made.
+**SolidJS** - when a page exports a `preload` function, SolidJS Router calls it on link hover and navigation intent.
+The preload result is cached and reused by `createAsync` inside the component
+(wrap the fetch in `query()` so both share one cache key), so no duplicate requests are made.
 
-**Vue** - a page exports a `loader` (from a plain `<script>` block), and the
-generated router runs it before the route renders via a navigation guard. The
-component reads the result with `useLoaderData()` - no manual guards or
-`onMounted` needed.
+**Vue** - a page exports a `loader` (from a plain `<script>` block),
+and the router runs it before the route renders via a navigation guard.
+The component reads the result with `useLoaderData()` - no manual guards or `onMounted` needed.
 
-**Svelte** - a page exports a `loader` (from its module `<script>` block); the
-router runs it before render and the component reads it with `useLoaderData()`.
+**Svelte** - a page exports a `loader` (from its module `<script>` block);
+the router runs it before render and the component reads it with `useLoaderData()`.
 
-**MDX** - a page exports a `loader`; it runs before render and the page reads
-the result with the `useLoaderData()` hook.
+**MDX** - a page exports a `loader`; it runs before render and the page reads the result with the `useLoaderData()` hook.
 
-Loader results are serialized during SSR and reused on hydration, so a request
-made on the server is not repeated on the client.
-[More on data loading ›](/frontend/data-preload)
+Loader results are serialized during SSR and reused on hydration, so a request made on the server is not repeated on the client.
+
+[Details&nbsp;›](/frontend/data-preload)

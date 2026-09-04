@@ -104,8 +104,8 @@ export default [
 ];
 ```
 
-It is an ordinary source file, created once with the folder and never regenerated or overwritten -
-edit it freely. Unlike route files it cannot be seeded through [custom templates](/backend/custom-templates#what-it-overrides).
+It is an ordinary source file, seeded once with the folder and never overwritten - edit it freely.
+Unlike route files it cannot be seeded through [custom templates](/backend/custom-templates#what-it-overrides).
 
 This is the place for concerns that are genuinely app-wide:
 a request id, CORS, a logger, rate limiting, an auth check that every endpoint needs.

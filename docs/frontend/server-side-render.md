@@ -1,8 +1,7 @@
 ---
 title: Server-Side Rendering
-description: Add SSR capabilities to React, SolidJS, Vue, Svelte and MDX applications using
-  the KosmoJS SSR generator. String and stream rendering patterns, production
-  builds, and deployment configurations for server-rendered applications.
+description: Add SSR capabilities to React, SolidJS, Vue, Svelte and MDX applications using KosmoJS SSR setup.
+    String and stream rendering patterns, production builds, and deployment configurations for server-rendered applications.
 head:
   - - meta
     - name: keywords
@@ -12,8 +11,7 @@ head:
 ---
 
 Source folders default to client-side rendering with Vite's dev server and HMR.
-The SSR generator adds production-ready server rendering while keeping your
-development workflow unchanged.
+SSR adds production-ready server rendering while keeping your development workflow unchanged.
 
 ## Adding SSR Support
 
@@ -52,7 +50,7 @@ See [Debugging SSR](#testing-debugging-ssr) for the working loop.
 
 ## Server Entry Point
 
-The SSR generator creates `entry/server.ts` file with a default implementation.
+`entry/server.ts` is seeded with a default implementation.
 `renderFactory` accepts a callback returning an object with two required methods:
 
 - `renderToString(url, SSROptions)` - renders the complete page, then returns it
@@ -455,7 +453,7 @@ yarn build
 Produces an SSR bundle at `dist/<folder>/ssr/server.js`
 and the `dist/<folder>/ssr/assets/` folder for hydration.
 
-The SSR bundle also includes the API app. During server rendering the generated
+The SSR bundle also includes the API app. During server rendering the derived
 fetch client dispatches to API routes in-process rather than over the network,
 so data loading on the server has no HTTP round-trip - and the same bundle serves
 API requests on its own port, no separate API process required.

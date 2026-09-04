@@ -1,17 +1,17 @@
 ---
 title: Custom Route Templates
-description: Override the generated defineRoute boilerplate for specific API routes using
-    glob pattern matching. Scaffold consistent CRUD endpoints across many routes in Hono, H3 and Koa.
+description: Override the seeded defineRoute boilerplate for specific API routes using
+    glob pattern matching. Seed consistent CRUD endpoints across many routes in Hono, H3 and Koa.
 head:
   - - meta
     - name: keywords
-      content: api route templates, defineRoute template, crud scaffolding, route patterns,
+      content: api route templates, defineRoute template, crud seeding, route patterns,
         glob matching, hono templates, h3 templates, koa templates, batch route generation
 ---
 
-Every backend generator (`honoGenerator`, `h3Generator`, `koaGenerator`) accepts a `templates` option.
+Every backend generator accepts a `templates` option.
 When you create a new route file whose name matches one of your patterns,
-the generator writes **your** boilerplate into it instead of the built-in placeholder.
+**your** boilerplate is written into it instead of the built-in placeholder.
 
 This is the backend half of the feature; pages have their own.
 [Custom Page Templates&nbsp;›](/frontend/custom-templates)
@@ -27,10 +27,10 @@ Only the route file - the `index.ts` holding your `defineRoute` definition.
 | `api/app.ts`, `errors.ts`, `dev.ts`, `server.ts`, `env.d.ts` | ❌ deployed once at folder creation |
 
 ::: warning Templates only fill blank files
-The generator writes boilerplate into a file **only when that file is empty**.
+Boilerplate is written into a file **only when that file is empty**.
 It never overwrites work you have already done -
 which is also why changing a template does not retroactively rewrite existing routes.
-To re-scaffold one, empty the file and let it be regenerated.
+To re-seed one, empty the file and it will be filled again.
 :::
 
 ## Configuration
@@ -119,7 +119,7 @@ templates: {
 }
 ```
 
-A route matching nothing gets the generator's built-in placeholder.
+A route matching nothing gets the built-in placeholder.
 Set `"**"` to replace that default everywhere.
 
 ::: warning Numeric-looking patterns jump the queue
@@ -154,7 +154,7 @@ export default defineRoute<"${route.name}">(({ GET }) => [
 
 String templates are rendered with Handlebars against a `{ route }` context,
 so a <code v-pre>{{route.name}}</code> placeholder interpolates the route name -
-which is what keeps the required [route-name type argument](/backend/intro#the-route-name-type-argument) correct in generated files.
+which is what keeps the required [route-name type argument](/backend/intro#the-route-name-type-argument) correct in seeded files.
 
 ### Per-backend shapes
 
@@ -203,7 +203,7 @@ export default defineRoute<"{{route.name}}">(({ GET }) => [
 > Escape backticks (`` \` ``) and `${...}` inside template literals
 that you do not want interpolated at config-evaluation time.
 
-## Scaffolding CRUD Endpoints
+## Seeding CRUD Endpoints
 
 This is where route templates earn their place. Standing up endpoints for a dozen
 database tables means writing the same skeleton a dozen times -

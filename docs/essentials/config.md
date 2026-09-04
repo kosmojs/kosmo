@@ -1,7 +1,7 @@
 ---
 title: Configuration
-description: Complete reference for kosmo.config.ts - source folder options, the full generator
-    list with their options, generator ordering, and the project-level settings in package.json.
+description: Complete reference for kosmo.config.ts - source folder options,
+    the full generator list with their options, generator ordering, and the project-level settings in package.json.
 head:
   - - meta
     - name: keywords
@@ -10,7 +10,7 @@ head:
 ---
 
 Every source folder owns a `kosmo.config.ts`. It is the one file that decides what that folder *is* -
-which frameworks it runs, where it is served from, and what gets generated for it.
+which frameworks it runs, where it is served from, and what gets built for it.
 
 ```txt
 my-app/
@@ -160,7 +160,7 @@ core  →  backend  →  fetch  →  frontend  →  (slotless, in array order)  
 Two consequences:
 
 - `fetchGenerator()` only runs **if a backend generator is present**.
-In a frontend-only folder it is a no-op - there are no routes to generate clients for.
+In a frontend-only folder it is a no-op - there are no routes to build clients from.
 - Slotless generators (`typeboxGenerator`, `openapiGenerator`) *do* respect the order you write them in, relative to each other.
 
 ### What the scaffolder writes
@@ -258,7 +258,7 @@ reactGenerator({
   // wire TanStack Query for this folder
   tanstack: { query: true },
 
-  // override generated page boilerplate by route pattern
+  // override seeded page boilerplate by route pattern
   templates: {
     "admin/**": adminPageTemplate,
   },
@@ -308,14 +308,14 @@ honoGenerator({
 The key is absolute and is *not* prefixed by the router's base.
 If it carries dynamic segments, their names must match the target route's parameters exactly, or the request 404s.
 
-**`templates`** overrides the generated route boilerplate by route-name pattern -
+**`templates`** overrides the seeded route boilerplate by route-name pattern -
 the route file (`defineRoute(...)`), not a page component.
-This is what makes it useful for scaffolding CRUD endpoints across many tables at once.
+This is what makes it useful for seeding CRUD endpoints across many tables at once.
 [Custom Route Templates&nbsp;›](/backend/custom-templates)
 
 ### `typeboxGenerator`
 
-Controls how validators are generated and how validation errors read.
+Controls how validators are built and how validation errors read.
 
 ```ts
 typeboxGenerator({
@@ -426,13 +426,13 @@ and act on every source folder when given none.
 
 ## TypeScript Config
 
-Each source folder has its own `tsconfig.json` extending a generated base:
+Each source folder has its own `tsconfig.json` extending a base in lib dir:
 
 ```json [src/front/tsconfig.json]
 { "extends": "../../lib/front/tsconfig.json" }
 ```
 
-The generated base supplies the framework's `jsxImportSource`,
+The base supplies the framework's `jsxImportSource`,
 the reserved path mappings, and strict compiler settings.
 Anything you add in your own `compilerOptions` wins, and applies to that folder only:
 

@@ -1,22 +1,22 @@
 ---
-title: Auto-Generated Route Content
-description: KosmoJS automatically generates boilerplate code for new routes with context-aware templates
+title: Seeded Route Content
+description: KosmoJS automatically seeds boilerplate code into new routes with context-aware templates
     for API endpoints using defineRoute and framework-specific page components.
 head:
   - - meta
     - name: keywords
-      content: code generation, route templates, defineRoute, generated routes
+      content: route seeding, route templates, defineRoute, seeded routes
 ---
 
-When you create a new route file, `KosmoJS` detects it and generates appropriate boilerplate immediately.
+When you create a new route file, `KosmoJS` detects it and seeds appropriate boilerplate immediately.
 The output differs based on whether the file is an API route or a client page, and which framework you're using.
 
-> Some editors load generated content instantly, others may require you to briefly unfocus
+> Some editors load seeded content instantly, others may require you to briefly unfocus
 > and refocus the file to see the new content.
 
 ## API Routes
 
-Creating `api/users/[id]/index.ts` generates:
+Creating `api/users/[id]/index.ts` seeds:
 
 :::tabs key:backend variant:code
 == Hono
@@ -53,12 +53,12 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 ```
 :::
 
-The `_/` import prefix maps to `lib/` - generated code that provides full type definitions
+The `_/` import prefix maps to `lib/` - derived code that provides full type definitions
 for all your routes. `_/api` resolves to `lib/front/api.ts`, where `front` is your source folder name.
 
 ## Client Pages
 
-Creating `pages/users/[id]/index.tsx` generates a minimal framework component:
+Creating `pages/users/[id]/index.tsx` seeds a minimal framework component:
 
 ```tsx [pages/users/[id]/index.tsx]
 export default function Page() {

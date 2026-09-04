@@ -7,7 +7,7 @@ head:
   - - meta
     - name: keywords
       content: llm agent, ai coding agent, kosmojs for agents, codegen rules, agent checklist,
-        silent validation failure, builtin type collision, literal brackets, boilerplate scaffolding,
+        silent validation failure, builtin type collision, literal brackets, boilerplate seeding,
         llms.txt, llms-full.txt, cursor, copilot, claude code
 ---
 
@@ -15,9 +15,7 @@ This page is for **LLM agents** writing KosmoJS code - and for anyone who wants 
 The conventions here are dense, and most of them fail *silently*: the code typechecks, the server starts, and the wrong thing happens at runtime.
 
 ::: tip Prefer the source over memory
-Fetch **`https://kosmojs.dev/llms-full.txt`** before relying on recall for generator option names,
-the full `VRefine` keyword set, or scaffold flags. Model memory of this framework is likely to be stale or subtly wrong,
-and every rule below links to the page that owns it.
+Fetch **`https://kosmojs.dev/llms-full.txt`** before relying on recall for details.
 :::
 
 ## Orient before writing
@@ -41,7 +39,7 @@ A page default-exports a component - a **named function**, never an anonymous ar
 ## Never write the boilerplate yourself
 
 When a new route, `use.ts`, page or layout is needed: **create the file empty** and let KosmoJS fill it in.
-Imports, factory signatures and generated-file wiring change between releases,
+Imports, factory signatures and seeded-file wiring change between releases,
 so recalled boilerplate is the single most likely thing to be wrong.
 
 KosmoJS owns the seeding; you own the logic you put inside it.
@@ -68,8 +66,8 @@ type Params = [number];
 defineRoute<"users/[id]", Params>        // ❌ brackets hidden
 ```
 
-Aliases *inside* the brackets are fine - it is the brackets themselves the generator reads from source.
-Hide them and a params tuple rejects **every** request, while a response tuple generates **no schema at all**.
+Aliases *inside* the brackets are fine - it is the brackets themselves that are read from source.
+Hide them and a params tuple rejects **every** request, while a response tuple produces **no schema at all**.
 
 **2. A type named after a built-in.** `Event`, `Response`, `Request`, `Error`, `Date`, `Partial`,
 `Record`, `Buffer` and friends are referenced as-is during type flattening,
@@ -95,7 +93,7 @@ Two body targets, or a body target on a `GET`, is a dev-time error: KosmoJS warn
 
 ## Declare a `response` when the frontend consumes it
 
-Without a `response`, the generated fetch client returns `Promise<unknown>` for that method,
+Without a `response`, the fetch client returns `Promise<unknown>` for that method,
 there is no `ResponseT` entry, and no response validation or OpenAPI response schema.
 Declaring `response: [200, "json", T]` switches on all four at once.
 [Details&nbsp;›](/fetch/type-safety#without-a-response-the-result-is-unknown)

@@ -1,13 +1,13 @@
 ---
 title: Features
 description: Explore KosmoJS features including multiple source folders,
-    directory-based routing, end-to-end type safety, generated fetch clients,
+    directory-based routing, end-to-end type safety, derived fetch clients,
     OpenAPI specs, and framework freedom - Hono, H3, Koa, React, Solid, Svelte, Vue, MDX.
 head:
   - - meta
     - name: keywords
       content: typescript validation, vite multi-app, type-safe routing,
-        fetch client generator, isomorphic fetch, ssr, streaming ssr, openapi 3.1,
+        isomorphic fetch clients, ssr, streaming ssr, openapi 3.1,
         tanstack query, react query, solidjs, react, vue, mdx, hono, h3, koa
 ---
 
@@ -44,7 +44,7 @@ files/[name].[ext]/index.ts         ➜ files/document.pdf, /files/logo.png
 
 ## End-to-End Type Safety
 
-Write `TypeScript` types once - `KosmoJS` generates runtime validators automatically.
+Write `TypeScript` types once - `KosmoJS` derives runtime validators automatically.
 The same definition drives compile-time checking, runtime validation, type-safe fetch clients, and OpenAPI specs.
 
 ```ts
@@ -67,7 +67,7 @@ export default defineRoute<"users">(({ POST }) => [
 
 ## Typed Fetch Clients + OpenAPI
 
-For every API route, `KosmoJS` generates a fully-typed fetch client
+For every API route, `KosmoJS` produces a fully-typed fetch client
 and an OpenAPI 3.1 spec - both derived from the same type definitions.
 
 ```ts
@@ -202,7 +202,7 @@ the rest: advanced SSR warmup uses TanStack's own `dehydrate` and
 - **Frontend:** `React`, `Vue`, `SolidJS`, `Svelte`, `MDX` - same routing/layout/SSR.
 
 Different source folders can use different framework combinations.
-When you add a source folder, `KosmoJS` generates a ready-to-go setup for your chosen stack -
+When you add a source folder, `KosmoJS` seeds a ready-to-go setup for your chosen stack -
 router config, entry points, TypeScript settings, and all the wiring between them.
 Switch frameworks per folder without learning a new set of conventions.
 

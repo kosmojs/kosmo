@@ -32,17 +32,17 @@ api/users/
 Execution order for a request to `/api/users/account`:
 
 ```txt
-api/use.ts               → global middleware
-users/use.ts             → parent folder
-users/account/use.ts     → current folder
-users/account/index.ts   → route handler
+api/use.ts               -> global middleware
+users/use.ts             -> parent folder
+users/account/use.ts     -> current folder
+users/account/index.ts   -> route handler
 ```
 
 Parent middleware always runs before child middleware.
 
 > Child routes can't skip parent `use.ts`
 
-The generated boilerplate when you create a new `use.ts`:
+The seeded boilerplate when you create a new `use.ts`:
 
 ```ts [api/users/use.ts]
 import { use } from "_/api";
@@ -56,7 +56,7 @@ export default [
 ];
 ```
 
-> Some editors load the generated content immediately, others require a brief unfocus/refocus.
+> Some editors load the seeded content immediately, others require a brief unfocus/refocus.
 
 Beside the default exported middleware, every `use.ts` exports the `UseT` type - even if empty.
 This type extends the context for all routes underneath, giving you
@@ -161,10 +161,9 @@ export default defineRoute<"admin/dashboard">(({ GET }) => [
 ```
 :::
 
-The code generator imports `UseT` from each `use.ts` in the hierarchy
-and merges them into the context type for `defineRoute`. Inner definitions
-override outer ones - just like at runtime, where inner middleware runs after
-outer middleware and can overwrite context values.
+`UseT` is imported from each `use.ts` in the hierarchy and merged into the context type for `defineRoute`.
+Inner definitions override outer ones - just like at runtime,
+where inner middleware runs after outer middleware and can overwrite context values.
 
 > The global `api/use.ts` does not need to export `UseT`.
 Even if it does, the export is ignored - global middleware operates on types defined in `api/env.d.ts`.
@@ -318,7 +317,7 @@ export default [
 ];
 ```
 
-There is no bundled auth solution and no `NextAuth`-style integration:
+There is no bundled auth solution and no NextAuth-style integration:
 you verify the token and populate the context yourself, the native way for your framework
 (`ctx.set("user", ...)` on Hono, `event.context.user = ...` on H3, `ctx.state.user = ...` on Koa).
 

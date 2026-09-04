@@ -1,23 +1,22 @@
 ---
-title: Generated Fetch Clients
-description: KosmoJS automatically generates fully-typed fetch clients with runtime validation for every API route.
+title: Fetch Clients
+description: KosmoJS automatically derives fully-typed fetch clients with runtime validation for every API route.
     End-to-end type safety from frontend to backend with validation schemas and URL utilities.
 head:
   - - meta
     - name: keywords
-      content: generated fetch client, typed api client, runtime validation, type safety,
-        fetch generator, api consumption, validation schemas, url utilities,
-        isomorphic fetch, ssr fetch, in-process dispatch
+      content: fetch clients, typed api client, runtime validation, type safety,
+        api consumption, validation schemas, isomorphic fetch clients, in-process dispatch
 ---
 
 When you define an API route with typed parameters, payloads, and responses,
-`KosmoJS` generates a corresponding fetch client - automatically, as part of the same build step.
+`KosmoJS` derives a corresponding fetch client - automatically, as part of the same build step.
 
 The result is a fully-typed client that mirrors your route definition exactly.
 Parameters, payload shape, response type - all derived from the same source.
 Change your API, and the client updates with it. No manual sync required.
 
-## What Gets Generated
+## What Gets Derived
 
 Each route's client module exports:
 
@@ -44,7 +43,7 @@ import fetchClients from "_/fetch";
 const response = await fetchClients["users/[id]"].GET([123]);
 ```
 
-The generator places its output in the `lib` directory alongside other generated artifacts
+Clients land in the `lib` directory alongside other derived artifacts
 (validation routines, OpenAPI spec). Everything is updated automatically in the background
 as you modify routes during development.
 

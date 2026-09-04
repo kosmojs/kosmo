@@ -11,7 +11,7 @@ head:
 
 Most mistakes in `KosmoJS` are compile errors. Four are not: they typecheck cleanly and then misbehave at runtime.
 
-They share a shape - the generator flattens your types into schema text, and a few things don't survive that trip.
+They share a shape - your types are flattened into schema text, and a few things don't survive that trip.
 
 **If validation is rejecting data that looks obviously valid, work down this list first.**
 
@@ -42,13 +42,13 @@ type ResponseT = [200, "json", User];
 POST<{ response: ResponseT }>
 ```
 
-Both forms typecheck. The generator, though, expected a shape and got an identifier,
+Both forms typecheck. KosmoJS, though, expected a shape and got an identifier,
 with nothing to destructure - so it fails, silently, and differently per position:
 
 | Position | If the brackets are hidden |
 |---|---|
 | `params` tuple | schema does not build - **every** request 400s, including valid ones |
-| `response`&nbsp;tuple | **no schema generated** - response validation never runs, and the route gets no `ResponseT` entry |
+| `response`&nbsp;tuple | **no schema built** - response validation never runs, and the route gets no `ResponseT` entry |
 
 **Symptom:** a route rejects input you know is good, or a response you declared is quietly
 never validated - with no compile error pointing at the alias.
@@ -130,10 +130,10 @@ There is no global switch.
 
 ## When Nothing Above Fits
 
-Regenerating is the blunt instrument, and occasionally the right one.
+Rebuilding is the blunt instrument, and occasionally the right one.
 
 Remove `lib/` dir and restart dev server.
 
 That forces a full rebuild of every schema - minutes on a large project, so it is not part of the normal loop.
-Reach for it when you suspect stale generated output rather than a mistake in your types.
+Reach for it when you suspect stale derived output rather than a mistake in your types.
 [Details&nbsp;›](/validation/performance#when-it-becomes-noticeable)

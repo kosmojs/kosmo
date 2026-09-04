@@ -5,18 +5,18 @@ description: Understand KosmoJS validation performance with TypeScript compiler 
 head:
   - - meta
     - name: keywords
-      content: validation performance, type analysis, caching, generation time,
+      content: validation performance, type analysis, caching, derivation time,
         typescript compiler, background processing, ts-morph, tfusion
 ---
 
-Schema generation uses TypeScript's compiler API to trace your types - including all referenced files -
+Schema derivation uses TypeScript's compiler API to trace your types - including all referenced files -
 and build a complete dependency graph. This is what makes pure-TypeScript validation possible,
-with a brief generation step as the tradeoff.
+with a brief derivation step as the tradeoff.
 
-Generation time scales with type complexity. Simple routes are near-instant;
+Derivation time scales with type complexity. Simple routes are near-instant;
 routes with deep hierarchies and many dependencies may take a few seconds.
-In practice this rarely affects you - generation runs in parallel with the Vite dev server,
-and results are cached per file. Schemas only regenerate when the route file or one of its type dependencies changes.
+In practice this rarely affects you - derivation runs in parallel with the Vite dev server,
+and results are cached per file. Schemas are only recomputed when the route file or one of its type dependencies changes.
 
 By the time you've saved a file and switched to the browser, the schema is ready.
 
@@ -33,12 +33,12 @@ infrequent and expected, not part of the normal edit-test cycle.
 
 ## Machine Time vs Human Time
 
-Zod, Yup etc. have zero generation overhead - because you write the schemas yourself.
-That eliminates generation time but adds an ongoing maintenance cost.
+Zod, Yup etc. have zero derivation overhead - because you write the schemas yourself.
+That eliminates derivation time but adds an ongoing maintenance cost.
 
 `KosmoJS` trades a few seconds of machine time for eliminating that manual work entirely.
 For most workflows, that's a good deal.
 
 As the `TypeScript` ecosystem evolves - particularly native implementations that
 [ts-morph](https://ts-morph.com/) and [TFusion](https://github.com/sleewoo/tfusion) may leverage -
-generation performance will likely improve further.
+derivation performance will likely improve further.

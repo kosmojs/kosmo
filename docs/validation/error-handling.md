@@ -12,7 +12,7 @@ head:
 When validation fails - on parameters, request payload, or response - `KosmoJS` throws a `ValidationError`
 with detailed information about what went wrong and where.
 
-Your `api/errors.ts` is the central place to handle it. The generated file gives you a working default;
+Your `api/errors.ts` is the central place to handle it. The seeded file gives you a working default;
 customize it freely to add logging, change response formats, or handle specific error types differently.
 [Details&nbsp;›](/backend/error-handling)
 

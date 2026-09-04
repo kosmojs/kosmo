@@ -1,6 +1,6 @@
 ---
 title: The _/use Hooks
-description: Reference for the generated _/use module - useLoaderData, useParams, useRoute,
+description: Reference for the derived _/use module - useLoaderData, useParams, useRoute,
     useParamsEntries, useSearchParams and useFrontmatter - and which frameworks provide it.
 head:
   - - meta
@@ -9,10 +9,10 @@ head:
         useParamsEntries, vue hooks, svelte hooks, mdx hooks, kosmojs hooks
 ---
 
-`_/use` is a small generated module holding the hooks a page needs that its router doesn't already provide.
+`_/use` is a small derived module holding the hooks a page needs that its router doesn't already provide.
 
 ::: warning It does not exist for every framework
-`_/use` is generated **only for Vue, Svelte and MDX folders**. React and SolidJS folders
+`_/use` is derived **only for Vue, Svelte and MDX folders**. React and SolidJS folders
 have no `_/use` at all - React Router and Solid Router already cover this ground, so you
 import from them instead.
 An `import { ... } from "_/use"` in a React or SolidJS folder will not resolve.
@@ -123,7 +123,7 @@ Returns the current query string as parsed search params, for reading `?page=2&s
 
 > This is *route-level* search state.
 Validating and typing query parameters is a separate concern handled on the API contract,
-through the `query` validation target and the generated fetch clients.
+through the `query` validation target and the fetch clients.
 [Details&nbsp;›](/validation/payload#validation-targets)
 
 ## `useFrontmatter`

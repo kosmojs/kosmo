@@ -137,8 +137,8 @@ Follow next steps to turn this skeleton into a working app.
 
 ## Start the dev server
 
-The dev server completes the setup: it generates the remaining project files and wires everything together.
-From then on it watches your routes and regenerates as you work:
+The dev server completes the setup: it seeds the remaining project files and wires everything together.
+From then on it watches your routes and recomputes as you work:
 
 :::tabs key:pm variant:code
 == npm
@@ -161,7 +161,7 @@ Your app is now running at `http://localhost:4556`.
 
 ## Create Your First API Route
 
-Create `api/users/[id]/index.ts` - `KosmoJS` detects the file and generates boilerplate:
+Create `api/users/[id]/index.ts` - `KosmoJS` detects the file and seeds boilerplate:
 
 :::tabs key:backend variant:code
 == Hono
@@ -170,7 +170,7 @@ import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
-    return ctx.text("Automatically generated route: [ users/[id] ]");
+    return ctx.text("users/[id] route starts here - replace this response with real logic.");
   }),
 ]);
 ```
@@ -181,7 +181,7 @@ import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (event) => {
-    return "Automatically generated route: [ users/[id] ]"
+    return "users/[id] route starts here - replace this response with real logic.";
   }),
 ]);
 ```
@@ -192,13 +192,13 @@ import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
   GET(async (ctx) => {
-    ctx.body = "Automatically generated route: [ users/[id] ]"
+    ctx.body = "users/[id] route starts here - replace this response with real logic.";
   }),
 ]);
 ```
 :::
 
-> Some editors show generated content immediately; others need a brief unfocus/refocus.
+> Some editors show seeded content immediately; others need a brief unfocus/refocus.
 
 Replace with real logic:
 
@@ -474,7 +474,7 @@ Server-side validation still runs even when endpoints are called directly - clie
 ## Create Client Pages
 
 Pages live in `pages/` and follow the same directory-based routing as API routes.
-Create `pages/users/index.tsx` - `KosmoJS` generates framework-specific boilerplate.
+Create `pages/users/index.tsx` - `KosmoJS` seeds framework-specific boilerplate.
 
 Add a layout for shared UI across route groups - create `pages/users/layout.tsx`:
 
@@ -506,7 +506,7 @@ export default defineConfig({
 
 > Restart dev server after adding new generators.
 
-`KosmoJS` generates `entry/server.ts` - your SSR orchestration file.
+`KosmoJS` seeds `entry/server.ts` - your SSR orchestration file.
 Critical CSS is extracted and inlined automatically; remaining styles load asynchronously.
 
 See it running - `pnpm preview` builds and serves the production output, and rebuilds whenever you save:
@@ -654,7 +654,7 @@ You can add your own paths, but these prefixes are reserved:
 
 - `@/*` - Root-level imports
 - `~/*` - Source folder imports
-- `_/*` - Generated code imports
+- `_/*` - Derived code imports
 
 [Project Structure ›](/essentials/project-structure#path-mappings) walks the whole layout - what
 lives in `src/` versus `lib/`, and what each alias resolves to.

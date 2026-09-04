@@ -79,7 +79,7 @@ pnpm folder --name api --base / --backend hono --no-framework    # backend-only,
 pnpm folder --name docs --base /docs --framework mdx --no-backend  # frontend-only, no backend
 ```
 
-The generated `kosmo.config.ts` contains only the generators that side needs.
+The seeded `kosmo.config.ts` contains only the generators that side needs.
 [Details&nbsp;›](/essentials/cli#adding-a-source-folder)
 
 #### Can I create a project without a source folder?
@@ -102,9 +102,9 @@ It's the `devPort` value in `package.json`.
 
 #### How does this compare to Next.js / Nuxt / SolidStart / tRPC / a hand-rolled Vite setup?
 Unlike Next/Nuxt/SolidStart it doesn't choose your frontend or own your deploy model;
-unlike tRPC it's route-based (not procedure-based) and also generates OpenAPI and runtime validators;
+unlike tRPC it's route-based (not procedure-based) and also derives OpenAPI and runtime validators;
 unlike a hand-rolled Vite setup it provides directory routing for both sides,
-generated validation/clients, an isomorphic fetch client (in-process on the server
+derived validation/clients, an isomorphic fetch client (in-process on the server
 during SSR, no network hop), out-of-the-box SSR with an opt-in streaming render mode,
 and multi-folder build orchestration without the DIY glue.
 [Details&nbsp;›](/features)
@@ -135,7 +135,7 @@ and they coexist in one project.
 
 #### How do folders share types without publishing/versioning?
 Import a type directly across folders through the reserved aliases - `@/*` for root-level
-imports, `~/*` for source-folder imports, `_/*` for generated code. Change a database model
+imports, `~/*` for source-folder imports, `_/*` for derived code. Change a database model
 and every folder sees it immediately. No publishing, no workspace protocols.
 [Details&nbsp;›](/essentials/project-structure#path-mappings)
 
@@ -150,7 +150,7 @@ can deploy independently.
 [Details&nbsp;›](/dev-build-run/development-workflow#starting-the-dev-server)
 
 #### Do routes/types leak between folders?
-No - generated types and utilities are scoped per folder.
+No - derived types and utilities are scoped per folder.
 The admin dashboard's navigation types won't include the main app's routes, and vice versa.
 [Details&nbsp;›](/essentials/project-structure#path-mappings)
 
@@ -254,35 +254,35 @@ Intentional - a page and its corresponding API endpoint are always one folder ap
 
 #### How do I create an API route?
 Create a folder under `api/` with an `index.ts` file - the folder path becomes the URL
-and KosmoJS generates starter code automatically. For example, `api/products/index.ts`
+and KosmoJS seeds starter code automatically. For example, `api/products/index.ts`
 exposes `/api/products`, and `api/products/[id]/index.ts` exposes `/api/products/:id`.
 Inside, default-export a `defineRoute` that returns method handlers,
-then replace the generated placeholder with real logic and visit the URL
+then replace the seeded placeholder with real logic and visit the URL
 (e.g. `http://localhost:4556/api/products`).
 [Details&nbsp;›](/routing/intro#route-file-requirements)
 
 #### How do I create a page?
 Create a matching folder under `pages/` with an `index` component file for your framework -
 `pages/products/index.tsx` (React/SolidJS), `.vue` (Vue), `.svelte` (Svelte), or `.mdx` (MDX) - and it becomes `/products`.
-KosmoJS generates a placeholder component you replace with your own;
+KosmoJS seeds a placeholder component you replace with your own;
 the parallel `api/` and `pages/` trees mean a page and its endpoint are always one folder apart.
 The two sides are coupled by usage, not by name - you pick the names on each end freely. The
 docs mirror api and page names purely for consistency; matching them is a convention, not a
 requirement.
-Pages typically read data through the generated fetch client (`fetchClients["products"].GET()`).
+Pages typically read data through the fetch client (`fetchClients["products"].GET()`).
 [Details&nbsp;›](/routing/intro#route-file-requirements)
 
 #### What does the `_/` prefix and `_/api` map to?
-`_/` maps to `lib/` (generated code). `_/api` resolves to `lib/<folder>/api.ts`,
+`_/` maps to `lib/` (derived code). `_/api` resolves to `lib/<folder>/api.ts`,
 where `<folder>` is your source-folder name.
-[Details&nbsp;›](/routing/generated-content#api-routes)
+[Details&nbsp;›](/routing/seeded-content#api-routes)
 
 #### What do `@/*`, `~/*`, `_/*` mean?
 
 Reserved path mappings:
 - `@/*` root-level imports
 - `~/*` source-folder imports,
-- `_/*` generated-code imports.
+- `_/*` derived-code imports.
 
 Don't reuse these prefixes for your own aliases.
 [Details&nbsp;›](/tutorial)
@@ -366,33 +366,33 @@ Hono's high-performance router on the backend, and React Router / Solid Router /
 KosmoJS is the chassis, not the engine - the engine is whichever framework you chose.
 [Details&nbsp;›](/routing/intro#native-routing-under-the-hood)
 
-### Auto-Generated Boilerplate
+### Seeded Boilerplate
 
 #### What happens when I create a route file?
 KosmoJS detects it and writes appropriate boilerplate -
 an API route (`defineRoute`) vs a page component, matched to your framework.
 You rarely write the skeleton by hand.
-[Details&nbsp;›](/routing/generated-content)
+[Details&nbsp;›](/routing/seeded-content)
 
-#### Why doesn't my editor show generated content immediately?
+#### Why doesn't my editor show seeded content immediately?
 Some editors load it instantly; others need a brief unfocus/refocus of the file.
-[Details&nbsp;›](/routing/generated-content)
+[Details&nbsp;›](/routing/seeded-content)
 
 #### Why avoid anonymous arrow functions as default exports?
 This applies to page components, not API routes.
 A page's default export should be a named function (`export default function Page() {...}`) -
 an anonymous arrow can break Vite's HMR. API routes are unaffected:
 they default-export `defineRoute(...)`, which is already a named call.
-[Details&nbsp;›](/routing/generated-content#client-pages)
+[Details&nbsp;›](/routing/seeded-content#client-pages)
 
-#### How do I override the default generated template?
+#### How do I override the default seeded template?
 Pass `templates` in the generator options in `kosmo.config.ts`, keyed by route-name glob pattern.
 Each value is either a template string or a function of the route returning one.
 Both frontend and backend generators accept it:
 [Custom Page Templates&nbsp;›](/frontend/custom-templates#configuration) ·
 [Custom Route Templates&nbsp;›](/backend/custom-templates#configuration)
 
-#### Which generated files can templates override?
+#### Which seeded files can templates override?
 Only route files. On the frontend that means `pages/**/index.*` - **not** layouts and **not** the root `index` route,
 which always get their built-ins.
 On the backend it means `api/**/index.ts` - **not** `use.ts`.
@@ -401,9 +401,9 @@ Folder-level files (`app.ts`, `errors.ts`, `dev.ts`) are deployed once at folder
 [Backend&nbsp;›](/backend/custom-templates#what-it-overrides)
 
 #### Why didn't my new template change an existing route file?
-Boilerplate is written **only into blank files** - the generator never overwrites work you have already done,
+Boilerplate is written **only into blank files** - work you have already done is never overwritten,
 so changing a template does not retroactively rewrite existing routes.
-Empty the file and let it be regenerated.
+Empty the file and it will be filled again.
 [Details&nbsp;›](/backend/custom-templates#what-it-overrides)
 
 #### How does glob matching work for templates?
@@ -420,20 +420,20 @@ as `"2024/**"` matches before anything written above it; prefix it with `./` to 
 order. The same applies to `renderMode`, which uses the same resolver.
 [Details&nbsp;›](/frontend/custom-templates#resolution-priority)
 
-#### How do templates help with CRUD scaffolding?
+#### How do templates help with CRUD seeding?
 Define one backend route template with the standard boilerplate - method handlers,
-validation targets, a declared `response` - and every generated `api/**/index.ts` across
+validation targets, a declared `response` - and every seeded `api/**/index.ts` across
 many tables starts with the right structure instead of the skeleton being retyped N times.
-[Details&nbsp;›](/backend/custom-templates#scaffolding-crud-endpoints)
+[Details&nbsp;›](/backend/custom-templates#seeding-crud-endpoints)
 
 ### Backend
 
 #### Why does `defineRoute` repeat the route path I'm already in?
 Because TypeScript can't see the file system. Routing itself never uses the string -
-the URL comes from the file's location. The name is the key into the generated `RouteMap`,
+the URL comes from the file's location. The name is the key into the derived `RouteMap`,
 and that lookup is what types `ctx.validated.params` and the cascading `use.ts` context
 for that route. Since no runtime argument carries it, nothing can be inferred, so the
-type argument is required - and the generated boilerplate already contains it.
+type argument is required - and the seeded boilerplate already contains it.
 It cannot drift silently: `R extends keyof RouteMap`, so a stale name after a folder
 rename is a compile error.
 [Details&nbsp;›](/backend/intro#the-route-name-type-argument)
@@ -566,7 +566,7 @@ call `next()` to continue, skip it to short-circuit.
 #### Where does global middleware live?
 `api/use.ts`, at the root of a source folder's `api/` directory.
 Whatever it default-exports runs for **every route in that folder** - no imports, no registration.
-It's scaffolded with the folder and is an ordinary file you edit; route templates never touch it.
+It's seeded with the folder and is an ordinary file you edit; route templates never touch it.
 Use it for app-wide concerns (request id, CORS, logging, rate limiting, a blanket auth check);
 anything narrower belongs in a subtree `use.ts` or the route's own `use`.
 [Details&nbsp;›](/backend/middleware#global-middleware-api-use-ts)
@@ -637,7 +637,7 @@ Parent always runs before child; children cannot skip parent middleware.
 
 #### What is `UseT`?
 A type every folder-level `use.ts` exports (even when empty) describing
-what the middleware adds to context. The generator merges these so every route underneath
+what the middleware adds to context. These are merged so every route underneath
 is typed automatically - no imports, no type args on `defineRoute`.
 Inner definitions override outer ones, mirroring runtime.
 [Details&nbsp;›](/backend/cascading-middleware#type-safe-context-extension)
@@ -673,7 +673,7 @@ Nothing is KosmoJS-specific about the middleware itself; it's plain Hono/H3/Koa.
 ### Backend: Error Handling
 
 #### Where is the default error handler?
-`api/errors.ts`, generated per source folder - a regular file you can customize freely.
+`api/errors.ts`, seeded per source folder - a regular file you can customize freely.
 [Details&nbsp;›](/backend/error-handling#default-error-handler)
 
 #### How do I distinguish a ValidationError?
@@ -701,15 +701,15 @@ client (fetch) validation, and the OpenAPI spec.
 
 #### How does one type give both compile-time and runtime safety?
 The same definition that gives compile-time checking (autocomplete, refactor safety)
-also generates the runtime validator that runs when real requests arrive -
+also produces the runtime validator that runs when real requests arrive -
 closing the gap TypeScript can't cover at runtime.
 [Details&nbsp;›](/validation/intro#understanding-runtype-validation)
 
-#### How are validators generated?
+#### How are validators derived?
 AST parsing (via ts-morph / TFusion) extracts types and traces referenced files;
 AOT compilation produces high-performance validators in `lib` via TypeBox -
 direct property checks, not a generic JSON Schema interpreter.
-[Details&nbsp;›](/validation/intro#how-generation-works)
+[Details&nbsp;›](/validation/intro#how-derivation-works)
 
 #### Why is double (client + server) validation a performance gain, not a cost?
 Invalid requests are caught client-side before they leave the browser,
@@ -731,7 +731,7 @@ So you write `number` (or a numeric `VRefine`) and read a real number from `ctx.
 [Details&nbsp;›](/validation/params#params-refinements)
 
 #### Why must the params tuple be written inline?
-A pre-defined tuple *alias* loses the structural info the generator needs to emit a schema.
+A pre-defined tuple *alias* loses the structural info needed to emit a schema.
 Individual type aliases used *inside* the inline tuple are fine -
 it's only extracting the whole tuple to a named type that breaks.
 [Details&nbsp;›](/validation/params#params-refinements)
@@ -799,7 +799,7 @@ and the parsed result is available on `ctx.validated.form` like any other valida
 The `response` property as a positional tuple: `[status, contentType, Schema]`,
 e.g. `[200, "json", User]`.
 It validates before sending (catching handlers that return incomplete objects
-or drifted DB/third-party shapes) and enables automatic OpenAPI generation.
+or drifted DB/third-party shapes) and enables automatic OpenAPI derivation.
 [Details&nbsp;›](/validation/response)
 
 #### Does response validation run in production?
@@ -810,7 +810,7 @@ There is no global switch: each handler enables its own response validation.
 
 #### Can I use referenced types and generics?
 Fully supported - import shared types, use generic wrappers like `Payload<User>`.
-The generator resolves generics, traces all referenced types,
+Generics are resolved and every referenced type traced,
 and rebuilds the schema when a shared type changes.
 [Details&nbsp;›](/validation/payload#referenced-types)
 
@@ -912,7 +912,7 @@ Declare them in `api/env.d.ts` via module augmentation:
 
 #### Can I relax TypeScript strictness, e.g. `exactOptionalPropertyTypes`?
 Yes, per source folder - the folder's `tsconfig.json` (`src/<folder>/tsconfig.json`)
-extends the generated base config, so anything you set in its `compilerOptions` wins:
+extends the derived base config, so anything you set in its `compilerOptions` wins:
 
 ```json [src/front/tsconfig.json]
 {
@@ -940,7 +940,7 @@ source folders are what you build and deploy, so they are also the unit of typec
 
 ### Fetch Clients
 
-#### How are fetch clients generated?
+#### How are fetch clients derived?
 Automatically for every API route, derived from the same type definitions -
 change the API and the client updates, no manual sync.
 Output lands in `lib` alongside validators and the OpenAPI spec.
@@ -1035,31 +1035,30 @@ So `[201, "json", User] | [202, "json", { queued: true }] | [409]` yields `User 
 ### Frontend
 
 #### Which frontend frameworks are supported?
-React, SolidJS, Vue, Svelte, and MDX - each with a dedicated generator bridging directory routing
-to the framework's native router and reactive model.
+React, SolidJS, Vue, Svelte, and MDX - directory routing bridges to each framework's
+native router and reactive model.
 [Details&nbsp;›](/essentials/frameworks)
 
 #### How do I enable a generator on an existing folder?
-Register the generator (e.g. `reactGenerator()`) in the folder's `kosmo.config.ts` and restart
-the dev server. The generator inserts its own Vite plugin automatically - don't add the plugin
-yourself (e.g. `@vitejs/plugin-react`), or it runs twice.
+Register the generator (e.g. `reactGenerator()`) in the folder's `kosmo.config.ts` and restart the dev server.
+The generator inserts its own Vite plugin automatically - don't add the plugin yourself, or it runs twice.
 [Details&nbsp;›](/essentials/config#generators-1)
 
 #### What `jsxImportSource` does each framework need?
 React `"react"`, SolidJS `"solid-js"`, Vue `"vue"` (only when using JSX), MDX `"preact"`.
-Mixing frameworks needs per-folder tsconfig - KosmoJS generates a `tsconfig.json`
+Mixing frameworks needs per-folder tsconfig - KosmoJS derives a `tsconfig.json`
 per folder in `lib/` for your folder's `tsconfig.json` to extend from.
 [Details&nbsp;›](/frontend/intro#typescript-configuration)
 
-#### What foundation files does a framework generator produce?
+#### What foundation files does a source folder get?
 A root App component (your app shell), a router config (`routerFactory`),
 and a client entry point (`entry/client`). SSR adds a server entry.
 [Details&nbsp;›](/frontend/intro#foundation-files)
 
 #### What is routerFactory?
-It wires your App + generated routes to the native router.
+It wires your App + derived routes to the native router.
 Its callback returns `clientRouter()` (browser navigation) and `serverRouter(url)` (SSR routing).
-Generated routes are always wrapped inside your App, establishing the layout hierarchy,
+Derived routes are always wrapped inside your App, establishing the layout hierarchy,
 and use the folder's `baseurl`.
 [Details&nbsp;›](/frontend/application#router-configuration)
 
@@ -1071,7 +1070,7 @@ Referenced from `index.html` through `entry/client`.
 
 #### Are page components lazy-loaded?
 Yes - all page components are lazy-loaded by default and fetched on demand,
-keeping the initial bundle small. The generated route shape differs slightly
+keeping the initial bundle small. The derived route shape differs slightly
 per framework's router format.
 [Details&nbsp;›](/frontend/routing#lazy-loading)
 
@@ -1124,10 +1123,9 @@ page's; React and Solid scope per route automatically.
 ### Navigation (typed Link)
 
 #### How does the typed Link component work?
-The generator produces a `Link` at `components/Link.{tsx,vue}` with compile-time route validation.
-The `to` prop takes a typed tuple `[routeName, ...params]` (e.g. `["users/[id]", 123]`),
-plus an optional `query` prop. Typing the route name triggers IntelliSense;
-parameterized routes require their params.
+The `Link` component is seeded at `components/Link.{tsx,vue,svelte}` with compile-time route validation.
+The `to` prop takes a typed tuple `[routeName, ...params]` (e.g. `["users/[id]", 123]`), plus an optional `query` prop.
+Typing the route name triggers IntelliSense; parameterized routes require their params.
 [Details&nbsp;›](/frontend/link-navigation#usage)
 
 #### What's the refactor-safety benefit?
@@ -1139,7 +1137,7 @@ turning refactors into an automated checklist.
 
 #### How does route-level preloading work per framework?
 
-`GET` here is a method off the generated fetch client for the route
+`GET` here is a method off the fetch client for the route
 (`const { GET } = fetchClients["users/data"]`) - exported under the name the framework's
 router expects.
 
@@ -1164,7 +1162,7 @@ result with the `useLoaderData()` hook (`props` stays yours).
 #### Do I need a Suspense boundary for data fetching?
 For SolidJS, yes - `createAsync` (like `createResource`) suspends, reporting pending state
 to the nearest `<Suspense>` and errors to the nearest `<ErrorBoundary>`. KosmoJS
-ships no boundary: the generated `App` renders children directly, on purpose -
+ships no boundary: the seeded `App` renders children directly, on purpose -
 one app-wide `<Suspense>` is an anti-pattern (any pending fetch collapses the
 whole page to a single fallback). Scope a boundary to the data component or a
 subtree yourself. React, Vue, Svelte, and MDX loaders resolve before render and
@@ -1189,7 +1187,7 @@ Import Preact components directly.
 [Details&nbsp;›](/frontend/mdx#writing-pages)
 
 #### Is `_/use` available in my framework?
-Only in **Vue, Svelte and MDX** folders. React and SolidJS folders generate no `_/use` -
+Only in **Vue, Svelte and MDX** folders. React and SolidJS folders get no `_/use` -
 use `react-router` / `@solidjs/router` hooks instead.
 Vue's `_/use` exports `useLoaderData` **only**; Svelte and MDX also export `useRoute`, `useParams`, `useParamsEntries`
 and `useSearchParams`, and MDX adds `useFrontmatter`.
@@ -1324,7 +1322,7 @@ Use error boundaries so a server error doesn't terminate the process.
 #### How do I fetch data during SSR?
 Use your framework's render-time data path - a `loader` (React, Vue, Svelte, MDX), a
 `preload` (Solid), or a Solid `createResource`/Suspense resource - and call the
-generated fetch client inside it. During
+fetch client inside it. During
 SSR the client dispatches to the API route in-process (the API server is bundled into the SSR
 bundle), so there's no network hop, just the full validation/handler chain. A fetch in
 `useEffect`/`onMounted` won't run on the server - those fire only after hydration.
@@ -1381,7 +1379,7 @@ which is why the creation prompt only offers SSG once you've chosen SSR.
 #### How does SSG handle dynamic routes?
 Static routes render automatically.
 A dynamic route renders once per parameter set it declares through `staticParams` - one HTML file per entry.
-A dynamic route **without** `staticParams` is skipped entirely: no file is generated for it.
+A dynamic route **without** `staticParams` is skipped entirely: no file is written for it.
 [Details&nbsp;›](/frontend/static-site-generation#declaring-staticparams)
 
 #### Where do I declare `staticParams`?
@@ -1394,7 +1392,7 @@ Wherever the framework exposes named exports from a page module - the value is t
 
 [Details&nbsp;›](/frontend/static-site-generation#declaring-staticparams)
 
-#### How do I fetch data for statically generated pages?
+#### How do I fetch data for pre-rendered pages?
 The same `loader` (React, Vue, Svelte, MDX) or `preload` (SolidJS) export you'd use otherwise,
 combined with `staticParams`: it runs **once per declared entry**,
 receiving that entry's own params, and the fetched data is baked into that entry's pre-rendered HTML.
@@ -1480,7 +1478,7 @@ where there's no SSR bundle to carry it.
 
 ### OpenAPI
 
-#### Does it auto-generate OpenAPI?
+#### Does it derive OpenAPI automatically?
 Yes - OpenAPI 3.1 directly from route definitions, TypeScript types, `VRefine` constraints,
 parameters, and responses. No manual schema authoring or annotation layers.
 [Details&nbsp;›](/openapi)
@@ -1495,16 +1493,16 @@ Optional `info`: `summary`, `description` (markdown), `termsOfService`, `contact
 OpenAPI requires all path params to be mandatory, so a route like `users/[id]/posts/{postId}`
 emits both `/users/{id}/posts/{postId}` and `/users/{id}/posts` -
 both referencing the same handlers and schemas.
-[Details&nbsp;›](/openapi#generated-specification)
+[Details&nbsp;›](/openapi#derived-specification)
 
-#### Does the spec regenerate automatically?
-Yes - it regenerates in the background whenever you change routes, types, or schemas,
+#### Does the spec update automatically?
+Yes - it is recomputed in the background whenever you change routes, types, or schemas,
 alongside the validation and fetch generators.
-[Details&nbsp;›](/openapi#generated-specification)
+[Details&nbsp;›](/openapi#derived-specification)
 
 #### How do I serve the spec?
-Point Swagger UI, Redoc, or Stoplight Elements at the generated file.
-[Details&nbsp;›](/openapi#generated-specification)
+Point Swagger UI, Redoc, or Stoplight Elements at the derived file.
+[Details&nbsp;›](/openapi#derived-specification)
 
 ### Dev Workflow & Internals
 
@@ -1540,10 +1538,10 @@ Named functions print by name in the debug output; anonymous ones print only the
 which is much harder to read.
 [Details&nbsp;›](/dev-build-run/development-workflow#inspecting-api-routes)
 
-#### How does validation generation performance scale?
+#### How does schema derivation performance scale?
 With type complexity - simple routes are near-instant, deep hierarchies with many dependencies
-take a few seconds. Generation runs in parallel with the Vite dev server and is cached per file,
-so schemas regenerate only when the route file or a type dependency changes.
+take a few seconds. Derivation runs in parallel with the Vite dev server and is cached per file,
+so schemas are recomputed only when the route file or a type dependency changes.
 By the time you switch to the browser, the schema is ready.
 [Details&nbsp;›](/validation/performance)
 
@@ -1554,15 +1552,15 @@ or regenerating a Prisma client, not part of the normal edit-test cycle.
 [Details&nbsp;›](/validation/performance#when-it-becomes-noticeable)
 
 #### How does this compare to Zod/Yup on performance vs maintenance?
-Zod/Yup have zero generation overhead because you hand-write the schemas -
-eliminating generation time but adding ongoing maintenance and drift risk.
+Zod/Yup have zero derivation overhead because you hand-write the schemas -
+eliminating derivation time but adding ongoing maintenance and drift risk.
 KosmoJS trades a few seconds of machine time for eliminating that manual work entirely.
 [Details&nbsp;›](/validation/performance#machine-time-vs-human-time)
 
-#### Where does generated code live?
+#### Where does derived code live?
 In `lib`, kept out of your source directories and bundled like any other dependency
 at production build time. Treat it as a build artifact - you don't need to read it.
-[Details&nbsp;›](/validation/intro#how-generation-works)
+[Details&nbsp;›](/validation/intro#how-derivation-works)
 
 ### Mental Model & Positioning
 
@@ -1574,7 +1572,7 @@ state, styling, database, and deploy target.
 
 #### Is it full-stack like Next, or just router + build orchestrator?
 Both sides, but with an explicit client/server boundary rather than a unified Server Components model.
-You get directory routing for `api/` and `pages/`, plus typed validation, generated fetch clients,
+You get directory routing for `api/` and `pages/`, plus typed validation, derived fetch clients,
 OpenAPI, opt-in SSR, and build orchestration.
 [Details&nbsp;›](/features)
 
@@ -1592,7 +1590,7 @@ page uses the same `loader` export + `useLoaderData()` hook as MDX, not SvelteKi
 #### How does it compare to TanStack's "bring your own everything"?
 Similar spirit on the app layer - unopinionated about state/styling/data libraries -
 but it adds conventions for routing, validation, and build that TanStack leaves to you,
-and it enforces type safety at runtime (generated validators), not only at compile time.
+and it enforces type safety at runtime (derived validators), not only at compile time.
 [Details&nbsp;›](/about)
 
 #### Is it opinionated about state/styling/data fetching?
@@ -1607,8 +1605,8 @@ You can still deploy to Vercel as a Node app, but there are no Vercel-specific f
 [Details&nbsp;›](/dev-build-run/building-for-production#running-the-api-server)
 
 #### What does it give me over Vite + React Router + Hono wired by hand?
-Directory routing for both sides, generated runtime validators from TS types,
-generated typed fetch clients, automatic OpenAPI, multi-folder orchestration,
+Directory routing for both sides, derived runtime validators from TS types,
+derived typed fetch clients, automatic OpenAPI, multi-folder orchestration,
 and per-folder build/deploy - without the DIY glue that becomes load-bearing.
 [Details&nbsp;›](/features)
 
@@ -1652,9 +1650,9 @@ which doesn't validate request bodies by itself).
 
 #### Where's the central route tree (TanStack `routeTree.gen.ts`) / route config object?
 There isn't one you register. Routing is filesystem-driven;
-route configs are generated per source folder into `lib/` for the native router to consume.
-Treat generated code as a build artifact.
-[Details&nbsp;›](/frontend/routing#generated-route-shape)
+route configs are derived per source folder into `lib/` for the native router to consume.
+Treat derived code as a build artifact.
+[Details&nbsp;›](/frontend/routing#derived-route-shape)
 
 #### Route groups like Next's `(group)`?
 There's no route-group syntax, and it isn't needed. Next's `(group)` is a lightweight way
@@ -1715,7 +1713,7 @@ primitives untouched, so you use the native pattern directly:
 for pre-load checks and redirects
 
 For the data contract itself, search params are validated via the `query` target
-on handlers (with VRefine constraints) and surfaced through the generated,
+on handlers (with VRefine constraints) and surfaced through the derived,
 client-side-validating fetch clients.
 [Details&nbsp;›](/frontend/data-preload#page-integration)
 
@@ -1743,7 +1741,7 @@ in-process, so there's no network layer at all.
 #### How about server functions?
 There aren't any, and you don't need them. A server function exists to run server-only code from
 the client without hand-writing an endpoint; KosmoJS gives you that through the API route plus its
-generated typed client. The same client is isomorphic - during SSR it calls the route in-process
+derived typed client. The same client is isomorphic - during SSR it calls the route in-process
 (no network hop), on the client it's a same-origin request - so one typed call covers both sides
 without a separate server-function primitive.
 [Details&nbsp;›](/fetch/isomorphic-clients)
@@ -1752,12 +1750,12 @@ without a separate server-function primitive.
 Not the RSC way - data flows through the API layer, not direct DB access in the page.
 But during SSR that isn't a network hop: the isomorphic fetch client dispatches to the
 API route in-process (no socket), so you get the API boundary without the round-trip cost.
-The de-facto model is API routes + generated clients + framework loader/preload.
+The de-facto model is API routes + derived clients + framework loader/preload.
 [Details&nbsp;›](/fetch/isomorphic-clients)
 
 #### Loaders like TanStack Start/Router?
 Yes, every framework uses own pattern - `export loader` on React / Vue / Svelte / MDX, `export preload` on SolidJS.
-The loader is simply your generated fetch client's method exported as `loader`/`preload`,
+The loader is simply your fetch client's method exported as `loader`/`preload`,
 so the typed response flows into `useLoaderData`/`createAsync`.
 [Details&nbsp;›](/frontend/data-preload#page-integration)
 
@@ -1811,7 +1809,7 @@ Create the custom client in your `app.{tsx,vue,svelte}` and provide it as a prop
 [Details&nbsp;›](/frontend/tanstack-query#configuring-a-custom-client)
 
 #### Does SSR data fetching work without extra plumbing?
-Yes - the generated fetch client is isomorphic.
+Yes - the fetch client is isomorphic.
 
 During SSR a render-time fetch (a `loader` or `createAsync`) dispatches to the API route in-process,
 and the framework's own hydration carries the result to the client:
@@ -1843,18 +1841,18 @@ Loader (React/Vue/Svelte/MDX) and preload (SolidJS) make data ready before rende
 #### Server Actions (`"use server"`) / Start server functions (`createServerFn`)?
 No server actions and no RPC-style server functions.
 Do mutations by defining a normal API route (`POST`/`PUT`/`DELETE`)
-and calling its generated typed client, validated client-side first.
+and calling its derived typed client, validated client-side first.
 (There's no progressive-enhancement no-JS form submit as a first-class feature,
 and no `useFormState`/`useActionState` equivalent -
 use your framework's form state plus the client's `validationSchemas` for field errors.)
 [Details&nbsp;›](/fetch/start#method-signatures)
 
 #### End-to-end RPC type safety like tRPC?
-Effectively yes via generated clients - params, payload,
+Effectively yes via derived clients - params, payload,
 and response types derive from the same route definition,
 with client-side validation before the request.
 The difference: it's route-based (path keys + HTTP methods) rather than procedure-based,
-and backed by generated TypeBox validators plus automatic OpenAPI.
+and backed by derived TypeBox validators plus automatic OpenAPI.
 [Details&nbsp;›](/fetch/intro)
 
 #### Client-side input validation like a tRPC input schema?
@@ -1866,7 +1864,7 @@ so client-valid and server-accepted stay in sync.
 
 #### Next Route Handlers (`route.ts`) / Start `createAPIFileRoute` equivalent?
 `defineRoute` returning an array of method handlers in `api/.../index.ts` - same idea,
-plus validation and a generated client for free. You don't write `Response.json()`.
+plus validation and a derived client for free. You don't write `Response.json()`.
 There's no `NextRequest`/`NextResponse` - it's the native Hono/H3/Koa context.
 [Details&nbsp;›](/backend/intro#defining-endpoints)
 
@@ -1902,8 +1900,8 @@ Hono bindings are typed via `defineRoute`'s 4th type arg or `DefaultBindings` in
 ### Validation & Types
 
 #### Does it use Zod like TanStack often does?
-No - "runtype" validation: TS types -> JSON Schema -> TypeBox validators, generated automatically.
-You write TS types once; validators are generated, eliminating hand-written schemas
+No - "runtype" validation: TS types -> JSON Schema -> TypeBox validators, derived automatically.
+You write TS types once; validators are derived, eliminating hand-written schemas
 and type/schema drift. One source of truth drives compile-time types, runtime validation,
 client validation, and OpenAPI.
 [Details&nbsp;›](/validation/intro#understanding-runtype-validation)
@@ -1912,7 +1910,7 @@ client validation, and OpenAPI.
 Constraints come via `VRefine` (JSON Schema keywords like `minLength`, `pattern`,
 `format`, `minimum`, `multipleOf`, `minItems`);
 for trusted endpoints set `runtimeValidation: false` to keep types only.
-The generated fetch clients validate with the exact server schemas,
+The fetch clients validate with the exact server schemas,
 so client and server stay in sync with nothing to keep aligned by hand.
 [Details&nbsp;›](/validation/skip-validation)
 
@@ -1924,14 +1922,14 @@ local or imported. So `VRefine<string, { pattern: Pattern }>`,
 `defineRoute<"users/[id]", [UserID]>` and `response: [200, "json", User]` are all fine -
 but hiding the brackets themselves (`defineRoute<"users/[id]", Params>`, `response: ResponseT`) is not.
 
-The generator reads those positions structurally from the source - which tuple slot is which parameter,
+Those positions are read structurally from the source - which tuple slot is which parameter,
 which slot is the status versus the body - so an alias gives it an identifier where it expected a shape.
 Both forms typecheck; the failure is silent.
 `VRefine`'s base type (first argument) is unrestricted either way.
 [Details&nbsp;›](/validation/refine#keep-the-wrapping-brackets-literal)
 
 #### Is type safety runtime-enforced or compile-only?
-Both - the same TS type drives compile-time checks and generated runtime validators.
+Both - the same TS type drives compile-time checks and derived runtime validators.
 This is stronger than TanStack's compile-time route typing,
 which doesn't validate request bodies on its own.
 [Details&nbsp;›](/validation/intro#understanding-runtype-validation)
@@ -1941,7 +1939,7 @@ Validators are AOT-compiled from types (TanStack users used to instant route typ
 should expect a brief generation pass, cached per file, running alongside Vite).
 A slow full rebuild only happens when you delete `lib/` or a cache-version bump occurs -
 akin to regenerating `routeTree.gen.ts` from scratch, but heavier.
-Treat generated code as a build artifact, like the generated route tree.
+Treat derived code as a build artifact, like the generated route tree.
 [Details&nbsp;›](/validation/performance#machine-time-vs-human-time)
 
 #### Isn't generated code a red flag?
@@ -1950,14 +1948,14 @@ you then edit and own, so it drifts from its input.
 KosmoJS's `lib/` output is *derivation* - recomputed from a single source on every change, never edited,
 in the same category as what `tsc`, the JSX transform and Vite already generate for you.
 The `src/` boilerplate it does seed is written **only into blank files**,
-so regeneration can never overwrite your work.
+so re-seeding can never overwrite your work.
 And nothing generated is proprietary: `lib/` holds ordinary Hono/React/TypeBox code you could walk away with.
 [Details&nbsp;›](/essentials/why-codegen)
 
-#### Is generated code committed to git?
+#### Is derived code committed to git?
 Mostly no. `lib/.gitignore` ignores everything except `cache.json` and `types.ts`,
-so generated output is treated as a build artifact. What *is* committed is the per-route
-generation cache (`cache.json`, keyed by content hashes of the route and its type dependencies)
+so derived output is treated as a build artifact. What *is* committed is the per-route
+derivation cache (`cache.json`, keyed by content hashes of the route and its type dependencies)
 so a fresh clone or CI run skips a full rebuild.
 Don't add `lib/` to the root `.gitignore` - that would drop the cache and make every clone slow.
 [Details&nbsp;›](/essentials/project-structure#inside-lib)
@@ -2018,7 +2016,7 @@ No adapter system - Hono/H3 via native runtime servers, Koa via `node:http`.
 [Details&nbsp;›](/dev-build-run/building-for-production#build-output)
 
 #### `next/image` / `next/font` / `next/link` / `next/head` equivalents?
-A generated typed `Link` exists. Head injection is via MDX frontmatter and the SSR `head`.
+A seeded typed `Link` exists. Head injection is via MDX frontmatter and the SSR `head`.
 There's no `next/image` (image optimization) or `next/font` equivalent - bring your own.
 [Details&nbsp;›](/frontend/link-navigation)
 
@@ -2031,7 +2029,7 @@ KosmoJS keeps the apps in one codebase with no zone configuration.
 
 ### OpenAPI
 
-#### Does it really auto-generate OpenAPI, and how does it compare to hand-written / tRPC-OpenAPI?
+#### Does it really derive OpenAPI automatically, and how does it compare to hand-written / tRPC-OpenAPI?
 Yes - OpenAPI 3.1 from routes, types, VRefine constraints, params, and responses,
 with no manual authoring, kept live as routes change (TanStack has no built-in equivalent).
 Serve it with Swagger UI, Redoc, or Stoplight Elements.

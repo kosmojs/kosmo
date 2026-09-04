@@ -33,7 +33,7 @@ const { rootEl, ready } = useReveal();
               using same params convention across all frameworks.
             </div>
             <div class="lfeat">
-              Your types compile into high-performance runtime validation, with fetch clients and an OpenAPI spec generated from the same types.
+              Your types compile into high-performance runtime validation, with fetch clients and an OpenAPI spec derived from the same types.
             </div>
             <div class="lfeat">
               Cascading middleware removes the import-and-wire busywork. Middleware slots allow surgical overrides at any level depth.

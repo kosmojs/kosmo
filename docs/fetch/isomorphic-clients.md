@@ -1,6 +1,6 @@
 ---
 title: Isomorphic Clients
-description: One generated fetch client, two transports - a same-origin request in the browser
+description: One fetch client, two transports - a same-origin request in the browser
     and an in-process dispatch into your API during SSR. What decides which one runs,
     what the in-process path actually does, how hydration reuses the result, and what happens when an SSR fetch fails.
 head:
@@ -11,7 +11,7 @@ head:
         kosmojs fetch client
 ---
 
-A generated [fetch client](/fetch/intro) is one function you call the same way everywhere:
+A [fetch client](/fetch/intro) is one function you call the same way everywhere:
 
 ```ts
 import fetchClients from "_/fetch";
@@ -35,7 +35,7 @@ There is nothing to configure and no second client to import.
 Worth saying plainly, because "isomorphic fetch" elsewhere often means monkey-patching:
 `globalThis.fetch` is never touched - not in the browser, not in Node.
 
-The transport is a parameter of the generated client, not a global that gets swapped:
+The transport is a parameter of the derived client, not a global that gets swapped:
 - In the browser no transport is passed, so the client calls the platform's own fetch, pristine -
 with every redirect, credentials, caching, `AbortSignal` semantics, etc.
 - On the server the client is constructed with a transport that speaks the same `Request -> Response` contract
@@ -73,7 +73,7 @@ validation, your handler, [error handling](/backend/error-handling), response sh
 so an authenticated page renders authenticated data. Anything you set on the call itself wins over a forwarded value.
 - **Following redirects in-process** - up to the five hops the fetch spec allows,
 including the `303` (and `301`/`302` from `POST`) rewrite to `GET`.
-- **Without patching anything global.** Only the generated clients switch transports.
+- **Without patching anything global.** Only the derived clients switch transports.
 Every other `fetch` in your app - a call to a third-party API, say - behaves exactly as it always did.
 
 ## Client-side validation is skipped under SSR

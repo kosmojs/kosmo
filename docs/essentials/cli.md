@@ -144,8 +144,8 @@ demo/
     └── entry/client.ts        # empty stub, if a frontend was chosen
 ```
 
-The stubs are **empty on purpose**. They are filled on the first `npm run dev` - or `npm run build`,
-which runs the same generators - along with everything else the folder needs.
+The stubs are **empty on purpose**. They are filled on the first `pnpm dev` or `pnpm build`,
+along with everything else the folder needs.
 
 Nothing here is overwritten if it already exists, so a stub you have already written into is safe.
 
@@ -205,7 +205,7 @@ Without `--overwrite`, an existing `src/<name>` is an error rather than a prompt
 
 ### Install what it added
 
-A new folder usually brings new dependencies - a framework, a backend, their generators.
+A new folder usually brings new dependencies.
 The command diffs `package.json` before and after and prints only what was added:
 
 ```txt
@@ -219,7 +219,7 @@ $ npm install
 Run the install before starting the dev server.
 
 The generators are already listed in the new folder's `kosmo.config.ts`,
-but the packages they generate imports for are not on disk yet.
+but the packages they write imports for are not on disk yet.
 
 A dev server that was already running does not pick the folder up: folders are collected once, at startup.
 Restart it.
@@ -318,12 +318,6 @@ Per folder, not per project: each source folder has [its own tsconfig.json](/ess
 with its own path mappings, and a project-wide `tsc` run would resolve `_/` or `@/` against the wrong folder.
 
 The first folder that fails prints its errors and exits `1` - the remaining folders are not checked.
-
-::: tip Generated types are build artifacts
-Typecheck reads the generated `_/*` modules like any other source.
-Run it after the dev server or a build has had a chance to generate them -
-on a fresh clone, `npm run build` (or one dev start) before the first `typecheck`.
-:::
 
 ## When a command refuses to run
 

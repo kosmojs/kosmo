@@ -1,6 +1,6 @@
 ---
 title: Fetch Client Type Safety
-description: Generated fetch clients are fully typed - parameters, payload, and response all
+description: Fetch clients are fully typed - parameters, payload, and response all
     mirror the backend route. Access response types on the client with the ResponseT map.
 head:
   - - meta
@@ -9,7 +9,7 @@ head:
         typed api client, type inference, useLoaderData types, createAsync types
 ---
 
-The generated fetch client mirrors your backend route exactly.
+The fetch client mirrors your backend route exactly.
 Parameters, payload, and response are all typed from the same route definition -
 change the route, and every call site updates with it.
 
@@ -37,7 +37,7 @@ What you occasionally need is the response type *out of band* - away from the ca
 where there's no awaited result to infer from. Typing a Solid `createAsync` accessor,
 a `useLoaderData()` result, a store, a component prop, or a shared helper are the common cases.
 
-For those, `KosmoJS` generates a `ResponseT` map, exported from `_/fetch`.
+For those, `KosmoJS` derives a `ResponseT` map, exported from `_/fetch`.
 
 `ResponseT` is keyed by route name, then request method, and resolves to the response **body**
 type declared on that handler - the same type awaiting the method gives you, available as a

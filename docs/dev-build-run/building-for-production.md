@@ -34,7 +34,7 @@ Each folder is served as what it is. `SSR` folders render on the server;
 `CSR` folders are served as static assets with a fallback to their `index.html`;
 `API`-only folders answer on their `apiBase`.
 
-You do not configure any of this - it follows from the generators the folder is built with.
+You do not configure any of this - it follows from the folder's config.
 
 `dist/run.js` is also what [`kosmo preview`](/dev-build-run/production-preview) runs,
 so what you check locally is the same entry point production serve.

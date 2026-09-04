@@ -76,8 +76,8 @@ Follow next steps to turn this skeleton into a working app.
 
 ## Start the dev server
 
-The dev server completes the setup: it generates the remaining project files and wires everything together.
-From then on it watches your routes and regenerates as you work:
+The dev server completes the setup: it seeds the remaining project files and wires everything together.
+From then on it watches your routes and recomputes as you work:
 
 :::tabs key:pm variant:code
 == npm
@@ -101,9 +101,9 @@ Your app is now running at `http://localhost:4556`.
 ## Create a route
 
 Create the file `api/users/[id]/index.ts` - `KosmoJS` detects it
-and generates starter code automatically.
+and seeds starter code automatically.
 
-Replace the generated content with something real:
+Replace the seeded content with something real:
 
 :::tabs key:backend variant:code
 == Hono
@@ -149,7 +149,7 @@ Visit `http://localhost:4556/api/users/123`. You should see JSON.
 
 With the dev server still running, create `pages/users/[id]/index.tsx`
 (or `.vue` / `.svelte` / `.mdx`).
-`KosmoJS` generates a placeholder component - replace it with a page that fetches from your API route.
+`KosmoJS` seeds a placeholder component - replace it with a page that fetches from your API route.
 React, SolidJS, and Vue fetch in the component here; Svelte and MDX read through a
 `loader` export instead (resolved before render), so they need no loading state:
 
@@ -267,7 +267,7 @@ pages/users/[id]/index.tsx  ➜  /users/:id
 The parallel structure between `api/` and `pages/` is intentional -
 API endpoints and their corresponding pages are always easy to find.
 
-The fetch client was generated automatically from your API route definition.
+The fetch client is derived automatically from your API route definition.
 Change the API types, and the client updates with them - no manual sync.
 
 ---
@@ -276,7 +276,7 @@ That's the foundation. From here:
 
 - [Tutorial](/tutorial) - validation, middleware, fetch clients, pages, SSR
 - [Project Structure](/essentials/project-structure) - what lives where, and what `@/` `~/` `_/` mean
-- [Configuration](/essentials/config) - every `kosmo.config.ts` option and generator
+- [Configuration](/essentials/config) - every `kosmo.config.ts` option
 - [CLI](/essentials/cli) - every command and flag, interactive and non-interactive
 - [Routing](/routing/intro) - parameters, mixed segments, power syntax
 - [Framework Support](/essentials/frameworks) - what each framework does and doesn't support

@@ -1,19 +1,18 @@
 ---
-title: OpenAPI Generator
-description: Automatically generate OpenAPI 3.1 specifications from KosmoJS API routes.
+title: OpenAPI
+description: Automatically derive OpenAPI 3.1 specifications from KosmoJS API routes.
     Analyzes route structure, TypeScript types, and validation schemas to produce standards-compliant documentation.
 head:
   - - meta
     - name: keywords
-      content: openapi generator, openapi 3.1, api documentation, swagger,
-        openapi spec, typescript to openapi, api schema, rest api docs, openapi servers
+      content: openapi 3.1, api documentation, swagger, openapi spec, typescript to openapi, api schema, rest api docs, openapi servers
 ---
 
-`KosmoJS` generates an `OpenAPI 3.1` specification directly from your route definitions.
+`KosmoJS` derives an `OpenAPI 3.1` specification directly from your route definitions.
 Route structure, `TypeScript` types, `VRefine` constraints, parameters, responses -
 all reflected in the spec automatically. No manual schema authoring, no annotation layers.
 
-## Enable the generator
+## Enable OpenAPI
 
 Simply add it to your source folder's `kosmo.config.ts`:
 
@@ -39,8 +38,7 @@ export default defineConfig({
 ## Configuration
 
 `openapiGenerator` is the only generator whose options are mandatory.
-For how it sits alongside the other generators, see the
-[configuration reference](/essentials/config#generators-1).
+For how it sits alongside the other generators, see the [configuration reference](/essentials/config#generators-1).
 
 ### Required Options
 
@@ -141,17 +139,17 @@ servers: [
 ];
 ```
 
-A client generated from the spec resolves `/users/{id}` against whichever server
+A client built from the spec resolves `/users/{id}` against whichever server
 it is pointed at, requesting `http://localhost:4556/api/users/42` in development
 and `https://api.myapp.com/users/42` in production - one spec, no per-environment
-regeneration.
+rebuilds.
 
 ::: tip
 If **Try it out** in `Swagger UI` returns `404`, check the server URL first.
 A missing `base` + `apiBase` prefix is the usual cause.
 :::
 
-## Generated Specification
+## Derived Specification
 
 The output is a complete `OpenAPI 3.1` document covering:
 
@@ -165,21 +163,21 @@ The output is a complete `OpenAPI 3.1` document covering:
 ### Path Variations for Optional Parameters
 
 OpenAPI requires all path parameters to be mandatory,
-so routes with optional parameters generate multiple paths.
+so routes with optional parameters produce multiple paths.
 
-For a route at `users/[id]/posts/{postId}/index.ts`, the generator produces:
+For a route at `users/[id]/posts/{postId}/index.ts`, the spec contains:
 - `/users/{id}/posts/{postId}` - full path with optional parameter present
 - `/users/{id}/posts` - path without optional parameter
 
 Both reference the same handlers and schemas.
 
-### Live Regeneration
+### Live Updates
 
-The spec regenerates automatically whenever you modify route definitions, types, or validation schemas.
-The generator runs in the background alongside the validation and fetch generators -
+The spec is recomputed automatically whenever you modify route definitions, types, or validation schemas.
+This happens in the background alongside validation and fetch derivation -
 no manual rebuild step required.
 
-Serve the generated spec with any standard tooling:
+Serve the spec with any standard tooling:
 [Swagger UI](https://swagger.io/tools/swagger-ui/),
 [Redoc](https://github.com/Redocly/redoc),
 or [Stoplight Elements](https://stoplight.io/open-source/elements).

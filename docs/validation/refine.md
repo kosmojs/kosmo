@@ -206,7 +206,7 @@ The base type of `VRefine` (its first argument) is unrestricted either way -
 
 ### Why the brackets matter
 
-The generator reads these positions **structurally**, from the source: which tuple slot maps to which route parameter,
+These positions are read **structurally**, from the source: which tuple slot maps to which route parameter,
 which slot carries the status code versus the body.
 An alias that hides the brackets gives it an identifier where it expected a shape, and there is nothing to destructure.
 
@@ -215,7 +215,7 @@ That failure is silent, and it differs by position:
 | Position | If the brackets are hidden behind an alias |
 |---|---|
 | `params` tuple | the schema does not build - **every** request is rejected with a 400 |
-| `response`&nbsp;tuple | **no schema is generated at all** - response validation never runs, and the route gets no [`ResponseT`](/fetch/type-safety#response-types) entry |
+| `response`&nbsp;tuple | **no schema is built at all** - response validation never runs, and the route gets no [`ResponseT`](/fetch/type-safety#response-types) entry |
 
 Neither raises a compile error, so nothing points at the alias.
 If a route rejects input you know is valid, or a response you declared is silently not validated, check the brackets first.

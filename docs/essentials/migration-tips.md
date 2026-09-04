@@ -87,7 +87,7 @@ There is no route tree to register or import.
 
 Routing is filesystem-driven; the route config is derived per source folder into `lib/` and handed to the framework's native router.
 Treat it as a build artifact - you never edit or read it.
-[Details&nbsp;›](/frontend/routing#generated-route-shape)
+[Details&nbsp;›](/frontend/routing#routes)
 
 ### `(group)` - route groups
 
@@ -270,7 +270,7 @@ which tRPC does not produce natively.
 ### Compile-time or runtime?
 
 Both, from one definition - which is the main difference from TanStack Router's compile-time-only route typing.
-The generated validators run on real requests.
+The derived validators run on real requests.
 [Details&nbsp;›](/essentials/why-codegen)
 
 ## Rendering
@@ -332,7 +332,7 @@ You can deploy to Vercel as a Node app, but there are no Vercel-specific feature
 
 ## What you gain
 
-Worth naming, since it's the other half of the trade: generated **runtime validators** from your TypeScript types,
+Worth naming, since it's the other half of the trade: derived **runtime validators** from your TypeScript types,
 **typed fetch clients** with client-side validation, automatic **OpenAPI 3.1**,
 and **multi-app orchestration** in one project - several frameworks side by side,
 sharing types with no workspace protocols, each building and deploying independently.

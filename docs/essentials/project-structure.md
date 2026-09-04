@@ -1,11 +1,11 @@
 ---
 title: Project Structure
-description: The anatomy of a KosmoJS project - source folders, the generated lib directory,
+description: The anatomy of a KosmoJS project - source folders, the derived lib directory,
     build output, and the reserved @/ ~/ _/ path mappings.
 head:
   - - meta
     - name: keywords
-      content: project structure, source folders, lib directory, generated code, path mappings,
+      content: project structure, source folders, lib directory, derived code, path mappings,
         path aliases, tsconfig paths, dist output, kosmojs layout, var cache
 ---
 
@@ -21,10 +21,10 @@ my-app/
 │   ├── front/            ->   one source folder
 │   └── admin/            ->   another, fully independent
 │
-├── lib/                  🤖 GENERATED - never edit, don't read to learn
+├── lib/                  🤖 DERIVED - never edit, don't read to learn
 │   ├── tsconfig.json     ->   base config the root tsconfig extends
-│   ├── front/            ->   generated code for src/front
-│   └── admin/            ->   generated code for src/admin
+│   ├── front/            ->   derived code for src/front
+│   └── admin/            ->   derived code for src/admin
 │
 ├── dist/                 📦 BUILD OUTPUT
 │   ├── run.js            -> runs every folder, one process
@@ -72,7 +72,7 @@ src/front/
 │           └── index.tsx -> the route  ➜  /users/:id
 │
 ├── components/
-│   └── Link.tsx          -> generated typed Link
+│   └── Link.tsx          -> seeded typed Link
 │
 └── entry/
     ├── client.ts         -> mount / hydrate in the browser
@@ -126,15 +126,15 @@ The root `.gitignore` deliberately leaves `lib/` alone,
 because `lib/.gitignore` handles it more precisely:
 it ignores **everything** except `cache.json` and `types.ts` at any depth.
 
-So generated code is *not* committed - it is a build artifact.
-What is committed is the per-route generation cache
+So derived code is *not* committed - it is a build artifact.
+What is committed is the per-route derivation cache
 (`cache.json`, keyed by content hashes of the route file and its type dependencies),
 so a fresh clone or a CI run doesn't pay for a full rebuild.
 
 Adding `lib/` to the root ignore file would drop that cache and make every clone slow.
 :::
 
-Deleting `lib/` is safe but not free: it forces a full regeneration,
+Deleting `lib/` is safe but not free: it forces a full rebuild,
 which on a large project takes minutes. [Details&nbsp;›](/validation/performance#when-it-becomes-noticeable)
 
 ## Path Mappings
@@ -145,7 +145,7 @@ Three prefixes are reserved. Don't reuse them for your own aliases.
 |---|---|---|
 | `@/*` | project root | anything shared across source folders - db layer, domain types |
 | `~/*` | **this** source folder | your own modules inside the folder |
-| `_/*` | `lib/<this folder>/` | generated code |
+| `_/*` | `lib/<this folder>/` | derived code |
 
 ```ts
 import { db } from "@/db";                    // my-app/db.ts

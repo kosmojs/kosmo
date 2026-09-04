@@ -168,11 +168,11 @@ A per-route `catch` costs you three things: the response shape drifts from every
 whatever logging/reporting you added to `api/errors.ts` never sees the failure,
 and a `ValidationError` caught this way loses its structured `target`/`errors` detail.
 
-`throw` is also how you signal an *expected* failure. The generated handler understands several shapes:
+`throw` is also how you signal an *expected* failure. The seeded handler understands several shapes:
 
 - `HTTPError` (from `@kosmojs/core/errors`) - status plus message, in every framework.
 - Your framework's native error - `HTTPException` (Hono), `HTTPError` (H3), `ctx.throw()`/`ctx.assert()` (Koa).
-- A `[status, message]` tuple - the shorthand the generated handler destructures first.
+- A `[status, message]` tuple - the shorthand the seeded handler destructures first.
 - `ValidationError` - thrown for you by the validation layer; answered with a 400.
 - Anything else - `error.statusCode || 500`.
 

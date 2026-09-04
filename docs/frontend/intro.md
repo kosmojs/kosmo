@@ -6,7 +6,7 @@ description: Integrate KosmoJS directory-based routing with React, SolidJS, Vue,
 head:
   - - meta
     - name: keywords
-      content: react integration, solidjs generator, vue generator, svelte generator, mdx content,
+      content: react, solidjs, vue, svelte, mdx,
         automated routing, code splitting, type-safe navigation, lazy loading
 ---
 
@@ -22,7 +22,7 @@ you keep its router, its reactive model and its ecosystem, exactly as documented
 ## What's in the Folder
 
 These are the files that make the folder an application.
-Every one is a real source file you own: written once when the folder is created, never regenerated behind your back,
+Every one is a real source file you own: written once when the folder is created, never re-seeded behind your back,
 and - unlike page route files - never seeded through [custom templates](/frontend/custom-templates#what-it-overrides).
 
 ```text
@@ -55,12 +55,12 @@ src/<folder>/
 | File | What it is | When&nbsp;you&nbsp;touch&nbsp;it |
 |---|---|---|
 | `app.*` | The **global wrapper**, rendered around every route including `404` - the place for providers, auth gates, analytics, an app-wide error boundary. Not a layout: it has no folder scope, it simply wraps everything. | Providers, global chrome |
-| `router.ts` | `routerFactory` - hands your `app` plus the generated routes to the framework's native router, returning `clientRouter()` for browser navigation and `serverRouter(url)` for SSR. | Rarely |
+| `router.ts` | `routerFactory` - hands your `app` plus the derived routes to the framework's native router, returning `clientRouter()` for browser navigation and `serverRouter(url)` for SSR. | Rarely |
 | `entry/client.*` | The browser entry, referenced from `index.html`. `renderFactory` picks `mount()` (fresh render) or `hydrate()` (SSR markup already present) automatically. | Rarely |
 | `entry/server.*` | The SSR entry, exporting `renderToString` and - where the framework supports it - `renderToStream`. Only present when SSR is enabled. | Injecting SSR assets into `head` |
 | `components/Link.*` | The typed [Link](/frontend/link-navigation) component: `to` takes a `[routeName, ...params]` tuple, so renaming a route directory becomes a compile error at every call site. | Styling it |
 | `index.html` | Vite's HTML entry, loading `entry/client`. | Meta tags, fonts, the mount node |
-| `tsconfig.json` | Extends the generated `lib/<folder>/tsconfig.json`, which carries JSX and path settings. Anything you set here wins. | [Relaxing strictness](/backend/type-safety) |
+| `tsconfig.json` | Extends the derived `lib/<folder>/tsconfig.json`, which carries JSX and path settings. Anything you set here wins. | [Relaxing strictness](/backend/type-safety) |
 | `kosmo.config.ts` | The folder's [configuration](/essentials/config) - `base`, `apiBase`, generators, and any Vite option. | Adding generators or Vite plugins |
 
 ### Inside `pages/`
@@ -108,7 +108,7 @@ configuration. Each framework has its own JSX import source requirement:
 but differing `jsxImportSource` values cause type
 conflicts when multiple frameworks coexist in the same project.
 
-Solved by generating a `tsconfig.json` specific to each source folder,
+Solved by deriving a `tsconfig.json` specific to each source folder,
 placed in the `lib/` directory for the source folder to extend:
 
 ```json [src/front/tsconfig.json]

@@ -44,8 +44,8 @@ This consistency means no special cases: every route is a folder with an `index`
 API routes export a route definition (HTTP methods + handlers).
 Client pages export a component function.
 
-The [auto-generation feature](/routing/generated-content) produces the correct boilerplate
-when you create a new file, so you rarely write it from scratch.
+When you create a new route, you rarely write it from scratch -
+it is automatically [seeded](/routing/seeded-content) with the correct boilerplate.
 
 The folder-per-route pattern gives each route its own namespace for colocating related files -
 utilities, types, tests - without cluttering parent directories.

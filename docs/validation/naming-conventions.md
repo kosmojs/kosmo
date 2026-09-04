@@ -14,7 +14,7 @@ These names compile fine, but cause silent failures during runtime validation.
 
 ## Why This Matters
 
-When `KosmoJS` flattens types for schema generation, built-in names are referenced as-is
+When `KosmoJS` flattens types for schema derivation, built-in names are referenced as-is
 rather than resolved to your custom definition. The validator sees the built-in, not your type,
 and validation fails at runtime without a compile-time warning.
 
