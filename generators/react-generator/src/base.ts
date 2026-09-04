@@ -180,8 +180,6 @@ export const randomCongratMessage = () => {
     "🌟 Nice work! Another React route added to your app.",
     "⚡ Quick and easy! Your new React route is good to go.",
     "🥳 Congrats! Your app just leveled up with a new React route.",
-    "🧩 All set! A new React route has been scaffolded.",
-    "🔧 Scaffold complete! Your new React route is in place.",
     "✨ Fantastic! Your new React route is ready.",
     "🎯 Nailed it! A brand new React route just landed.",
     "💫 Awesome! Another React route joins the lineup.",
