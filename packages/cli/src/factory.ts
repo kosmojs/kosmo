@@ -349,8 +349,8 @@ export const createFolder = async (
     );
 
     // SSR enabled unconditionally on mdx folders
-    const ssr =
-      framework === "mdx"
+    const ssr = framework
+      ? framework === "mdx"
         ? true
         : await readAnswer(
             prompts.confirm({
@@ -359,22 +359,25 @@ export const createFolder = async (
               active: "yes",
               inactive: "no",
             }),
-          );
+          )
+      : false;
 
-    const ssg = ssr
-      ? await readAnswer(
-          prompts.confirm({
-            message: "Enable static site generation (SSG)?",
-            initialValue: false,
-            active: "yes",
-            inactive: "no",
-          }),
-        )
+    const ssg = framework
+      ? ssr
+        ? await readAnswer(
+            prompts.confirm({
+              message: "Enable static site generation (SSG)?",
+              initialValue: false,
+              active: "yes",
+              inactive: "no",
+            }),
+          )
+        : false
       : false;
 
     // TanStack Query not available on mdx folders
-    const tsq =
-      framework === "mdx"
+    const tsq = framework
+      ? framework === "mdx"
         ? false
         : await readAnswer(
             prompts.confirm({
@@ -383,7 +386,8 @@ export const createFolder = async (
               active: "yes",
               inactive: "no",
             }),
-          );
+          )
+      : false;
 
     const folder: SourceFolder = {
       name,
