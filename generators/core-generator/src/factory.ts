@@ -10,6 +10,7 @@ import {
   pathResolver,
   renderFactory,
   renderToFile,
+  sortRoutes,
 } from "@kosmojs/lib";
 
 import * as templates from "./templates";
@@ -217,13 +218,17 @@ export default defineGeneratorFactory((sourceFolder) => {
       },
     });
 
-    const apiRoutes = entries.flatMap(({ kind, entry }) => {
-      return kind === "apiRoute" ? [entry] : [];
-    });
+    const apiRoutes = entries
+      .flatMap(({ kind, entry }) => {
+        return kind === "apiRoute" ? [entry] : [];
+      })
+      .sort(sortRoutes);
 
-    const pageRoutes = entries.flatMap(({ kind, entry }) => {
-      return kind === "pageRoute" ? [entry] : [];
-    });
+    const pageRoutes = entries
+      .flatMap(({ kind, entry }) => {
+        return kind === "pageRoute" ? [entry] : [];
+      })
+      .sort(sortRoutes);
 
     await renderToFile(
       createPath.libCore("routes.ts"),
