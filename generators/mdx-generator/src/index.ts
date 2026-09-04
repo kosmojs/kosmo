@@ -13,8 +13,6 @@ export default defineGenerator<Options>({
   },
   dependencies: {
     "path-to-regexp": self.devDependencies["path-to-regexp"],
-  },
-  devDependencies: {
     preact: self.devDependencies.preact,
     "preact-render-to-string": self.devDependencies["preact-render-to-string"],
     "@mdx-js/preact": self.devDependencies["@mdx-js/preact"],
