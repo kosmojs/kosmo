@@ -38,7 +38,10 @@ export const createRoutes = <MiddlewareT, MiddlewareR>(
 
   // Iterate over each route definition
   for (const routeSource of routeSources) {
-    const { name, path, file } = routeSource;
+    const { name, file } = routeSource;
+
+    // normalize route path
+    const path = routeSource.path.replace(/\/+/g, "/").replace(/(.+)\/$/, "$1");
 
     // Include both middleware and HTTP method handlers
     const definitionItems = [
