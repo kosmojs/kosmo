@@ -1,6 +1,6 @@
 import type { UserConfig } from "vite";
 
-import type { ProjectSettings, SourceFolder } from "./project";
+import type { FolderConfig, ProjectSettings, SourceFolder } from "./project";
 import type { ResolvedEntry } from "./routes";
 
 export type WatcherEvent = {
@@ -57,7 +57,7 @@ export type GeneratorCustomTemplates<T> = Record<
 
 export type GeneratorFactory = {
   // Vite config provided by generator itself
-  config?: (o: {
+  viteConfig?: (o: {
     kind: "client" | "backend";
     command: ProjectSettings["command"];
   }) => UserConfig;
@@ -97,23 +97,16 @@ export type VirtualModule = {
 };
 
 /**
- * Dependency declarations are consumed twice:
- *  - when the source folder is created, before generators are configured
- *  - when the dev server or build starts, with generators configured
- * So when a function is provided, it is called twice: first with no options,
- * then with the resolved options. This lets a generator vary its dependencies
- * by option - e.g. enabling the tanstack.query option adds a dependency, and on
- * the next build the core generator re-invokes dependencies/devDependencies with
- * the target generator's options and warns if the newly required dependency is missing.
+ * Providing a function allow a generator to vary its dependencies by options.
  * */
 type GeneratorDependencies =
   | Record<string, string>
-  | ((o?: object) => Record<string, string>);
+  | ((c: FolderConfig) => Record<string, string>);
 
-export type GeneratorSignature = {
+export type GeneratorSignature<Options extends object = object> = {
   meta: GeneratorMeta;
   factory: (sourceFolder: SourceFolder) => GeneratorFactory;
-  options?: object;
+  options?: Options;
   dependencies?: GeneratorDependencies;
   devDependencies?: GeneratorDependencies;
 };

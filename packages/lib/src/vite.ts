@@ -8,7 +8,6 @@ import {
   defaults,
   type ProjectSettings,
   type SourceFolder,
-  type VirtualModule,
 } from "@kosmojs/core";
 
 import { pathResolver } from "./paths";
@@ -168,7 +167,7 @@ const nodePrefix = (): Plugin => {
  * Generators declare their modules via `factory.virtualModules()`.
  * */
 export const virtualModules = (
-  modules: Array<VirtualModule>,
+  sourceFolder: SourceFolder,
   {
     kind,
     command,
@@ -179,6 +178,10 @@ export const virtualModules = (
    * the NUL prefix keeps other plugins and Node resolution from touching them.
    * */
   const VIRTUAL_PREFIX = "\0";
+
+  const modules = sourceFolder.config.generators.flatMap(({ factory }) => {
+    return factory(sourceFolder).virtualModules?.() || [];
+  });
 
   const virtualSources = new Map<string, { csr: string; ssr: string }>();
 

@@ -17,9 +17,9 @@ import {
 
 import { randomCongratMessage, traverseFactory } from "./base";
 import * as templates from "./templates";
-import type { Options } from "./types";
 
-export default defineGeneratorFactory<Options>((sourceFolder, options) => {
+export default defineGeneratorFactory((sourceFolder) => {
+  const { frontend } = sourceFolder.config;
   const { generators = [] } = sourceFolder.config;
 
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
@@ -43,7 +43,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   const overwrite = (content: string) => !content?.trim().length;
 
   const templateResolver = createTemplateResolver(
-    options?.templates,
+    frontend?.templates,
     templates.srcPageSamplesPage,
   );
 
@@ -102,24 +102,26 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   };
 
   return {
-    config({ command }) {
-      const { templates, ...opts } = { ...options };
+    viteConfig() {
+      const defaultPlugin = () => {
+        return vitePlugin({
+          ...(generators.some((e) => e.meta.slot === "ssr")
+            ? {
+                ssr: true,
+                solid: { hydratable: true },
+              }
+            : {}),
+        });
+      };
+
+      const { plugin = defaultPlugin() } =
+        typeof sourceFolder.config.frontend?.stack === "object"
+          ? sourceFolder.config.frontend.stack
+          : {};
+
       return {
         oxc: { jsx: { importSource: "solid-js" } },
-        plugins:
-          command === "build"
-            ? [
-                vitePlugin({
-                  ...opts,
-                  ...(generators.some((e) => e.meta.slot === "ssr")
-                    ? {
-                        ssr: true,
-                        solid: { ...opts?.solid, hydratable: true },
-                      }
-                    : {}),
-                }),
-              ]
-            : [vitePlugin({ ...opts, dev: true, hot: true })],
+        plugins: [plugin],
       };
     },
 
@@ -133,7 +135,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         ["pageSamples/welcome.tsx", templates.libPageSamplesWelcome],
         ["pageSamples/page.tsx", templates.libPageSamplesPage],
         ["pageSamples/404.tsx", templates.libPageSamples404],
-        ...(options?.tanstack?.query
+        ...(frontend?.tanstack?.query
           ? [
               ["app.tsx", templates.libAppTsq],
               ["query.ts", templates.libQuery],
@@ -193,7 +195,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
     },
 
     virtualModules() {
-      return options?.tanstack?.query
+      return frontend?.tanstack?.query
         ? [
             {
               // The tsq client must differ between the browser and the SSR bundle

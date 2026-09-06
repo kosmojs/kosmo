@@ -24,31 +24,21 @@
 import { chmod, readdir, readFile, unlink } from "node:fs/promises";
 import type { IncomingMessage, Server, ServerResponse } from "node:http";
 import { createServer } from "node:http";
-import { extname, join, posix } from "node:path";
+import { extname, join, posix, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 
-import { MIME_TYPES } from "@kosmojs/core";
+import { MIME_TYPES, type SourceFolderManifest } from "@kosmojs/core";
 
 type NodeListener = (req: IncomingMessage, res: ServerResponse) => void;
 
-// the shape `kosmo build` writes to dist/<folder>/kosmo.json
-type FolderManifest = {
-  name: string;
-  base: string;
-  apiBase: string;
-  api: boolean;
-  client: boolean;
-  ssr: boolean;
-};
-
-type Folder = FolderManifest & {
+type Folder = SourceFolderManifest & {
   dir: string;
 };
 
 type Handler = {
   name: string;
-  segments: [base: string, api?: string];
+  path: string;
   listener: NodeListener;
 };
 
@@ -73,17 +63,8 @@ const prefixMatcher = (prefix: string): ((pathname: string) => boolean) => {
   return (pathname) => pattern.test(pathname);
 };
 
-/**
- * Sorting mirrors the dev server: more specific prefixes first, API prefixes ahead of page prefixes.
- *
- *   /admin/api  weight 6
- *   /api        weight 5
- *   /admin      weight 1
- *   /           weight 0
- * */
-const weightOf = ([base, api]: Handler["segments"]): number => {
-  const weight = base.split("/").filter(Boolean).length;
-  return api ? weight + 5 : weight;
+const handlerWeight = ({ path }: Handler): number => {
+  return path.length + path.split("/").filter(Boolean).length;
 };
 
 const readFolders = async (): Promise<Array<Folder>> => {
@@ -101,7 +82,7 @@ const readFolders = async (): Promise<Array<Folder>> => {
     );
 
     if (manifest) {
-      folders.push({ dir, ...(JSON.parse(manifest) as FolderManifest) });
+      folders.push({ dir, ...(JSON.parse(manifest) as SourceFolderManifest) });
     }
   }
 
@@ -179,45 +160,44 @@ const createStaticListener = async (
 const mountFolders = async (folders: Array<Folder>) => {
   const handlers: Array<Handler> = [];
 
-  for (const { dir, name, base, apiBase, api, client, ssr } of folders) {
-    const apiPrefix = posix.join(base, apiBase);
-
+  for (const { dir, name, frontend, backend, ssr } of folders) {
     if (ssr) {
-      // ssr/server.js bundles the backend; its listener already splits API from pages
+      // ssr/server.js bundles the backend
       const { createListener } = (await import(
-        pathToFileURL(join(dir, "ssr", "server.js")).href
+        resolve(dir, "ssr", "server.js")
       )) as { createListener: () => Promise<NodeListener> };
 
       const listener = await createListener();
 
-      handlers.push({ name, segments: [base, apiPrefix], listener });
-      handlers.push({ name, segments: [base], listener });
+      handlers.push({ name, path: backend?.base as string, listener });
+      handlers.push({ name, path: frontend?.base as string, listener });
 
       continue;
     }
 
-    if (api) {
+    if (backend) {
       const { default: listener } = (await import(
         pathToFileURL(join(dir, "api", "listener.js")).href
       )) as { default: NodeListener };
-
-      handlers.push({ name, segments: [base, apiPrefix], listener });
+      handlers.push({ name, path: backend.base, listener });
     }
 
-    if (client) {
-      const listener = await createStaticListener(join(dir, "client"), base);
-      handlers.push({ name, segments: [base], listener });
+    if (frontend) {
+      const listener = await createStaticListener(
+        join(dir, "client"),
+        frontend.base,
+      );
+      handlers.push({ name, path: frontend.base, listener });
     }
   }
 
   return handlers
-    .sort((a, b) => weightOf(b.segments) - weightOf(a.segments))
-    .map(({ name, segments, listener }) => {
-      const [base, api] = segments;
+    .sort((a, b) => handlerWeight(b) - handlerWeight(a))
+    .map(({ name, path, listener }) => {
       return {
         name,
-        prefix: api || base,
-        match: prefixMatcher(api || base),
+        prefix: path,
+        match: prefixMatcher(path),
         listener,
       };
     });

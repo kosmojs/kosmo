@@ -12,6 +12,7 @@ import {
   type RouteEntry,
   type RouteResolverCacheFactory,
   type SourceFolder,
+  type TypeboxOptions,
   type ValidationDefinition,
 } from "@kosmojs/core";
 
@@ -31,11 +32,12 @@ export const resolverFactory = (
   | "apiRouteResolver",
   (entry: RouteEntry) => ResolverSignature
 > => {
-  const {
-    //
-    generators = [],
-    refineTypeName = defaults.refineTypeName,
-  } = sourceFolder.config;
+  const { generators } = sourceFolder.config;
+
+  const { refineTypeName = defaults.refineTypeName } =
+    typeof sourceFolder.config.validation === "object"
+      ? ({ ...sourceFolder.config.validation } as TypeboxOptions)
+      : {};
 
   const { typeResolverFactory, resolveRouteSignature } = astFactory();
 

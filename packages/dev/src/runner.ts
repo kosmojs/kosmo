@@ -3,47 +3,27 @@ import { resolve } from "node:path";
 
 import { transformWithOxc } from "vite";
 
-import type { ProjectSettings, SourceFolder } from "@kosmojs/core";
+import type {
+  ProjectSettings,
+  SourceFolder,
+  SourceFolderManifest,
+} from "@kosmojs/core";
 import { pathResolver } from "@kosmojs/lib";
 
 import runTemplate from "#templates/run";
 
-/**
- * What `dist/run.js` needs to know about a built folder.
- * Written next to the folder's build output so the runner discovers folders from disk
- * rather than from a table that a partial build could leave stale.
- * */
-export type FolderManifest = {
-  name: string;
-  base: string;
-  apiBase: string;
-  // dist/<folder>/api/listener.js exists
-  api: boolean;
-  // dist/<folder>/client/ exists
-  client: boolean;
-  // dist/<folder>/ssr/server.js exists - it bundles the api, run.js mounts it alone
-  ssr: boolean;
-};
-
 export const folderManifestFactory = (
   sourceFolder: SourceFolder,
-): FolderManifest => {
-  const { generators } = sourceFolder.config;
-
-  const hasSlot = (slot: string) => {
-    return generators.some((e) => e.meta.slot === slot);
-  };
-
-  const client = hasSlot("frontend");
-
+): SourceFolderManifest => {
+  const {
+    name,
+    config: { frontend, backend },
+  } = sourceFolder;
   return {
-    name: sourceFolder.name,
-    base: sourceFolder.config.base,
-    apiBase: sourceFolder.config.apiBase,
-    api: hasSlot("backend"),
-    client,
-    // the ssr generator skips its build when there is no frontend
-    ssr: client && hasSlot("ssr"),
+    name,
+    ...(frontend?.base ? { frontend: { base: frontend.base } } : {}),
+    ...(backend?.base ? { backend: { base: backend.base } } : {}),
+    ssr: frontend?.ssr ? true : false,
   };
 };
 

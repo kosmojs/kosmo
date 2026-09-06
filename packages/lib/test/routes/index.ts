@@ -8,8 +8,6 @@ export const sourceFolder: SourceFolder = {
   root: appRoot,
   name: "test",
   config: {
-    base: "/",
-    apiBase: "/api",
     generators: [
       // providing a stub generator with options.resolveTypes
       {

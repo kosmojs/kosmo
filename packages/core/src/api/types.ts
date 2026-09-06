@@ -113,9 +113,10 @@ export type DevSetup = {
   ) => Promise<unknown> | unknown;
 
   /**
-   * Custom function to determine if a request should be handled by the API.
+   * Determine if a request should be handled by the API.
    *
-   * By default, requests are routed to the API handler if their URL starts with `apiurl`.
+   * By default, requests are routed to the API handler if their URL starts with `backend.base`
+   * or match any `backend.alias`.
    * Use this to implement custom heuristics for detecting API requests.
    * */
   requestMatcher?: (req: IncomingMessage) => boolean;

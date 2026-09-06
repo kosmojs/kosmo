@@ -12,7 +12,7 @@ declare module "{{ createImport 'entry' 'server' }}" {
 
 declare module "{{ createImport 'libCore' }}" {
   export const base: string;
-  export const apiBase: string;
+  export const backendBase: string;
 }
 
 declare module "{{ createImport 'libCore' 'ssr' }}" {

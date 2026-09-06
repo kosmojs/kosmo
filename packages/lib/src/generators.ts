@@ -4,7 +4,6 @@ import type {
   GeneratorSignature,
   ResolvedEntry,
   SourceFolder,
-  VirtualModule,
   WatcherEvent,
 } from "@kosmojs/core";
 
@@ -13,13 +12,16 @@ export const defineGenerator = <O extends object, R extends boolean = false>({
   factory,
   dependencies,
   devDependencies,
-}: Omit<GeneratorSignature, "factory"> & {
+}: Omit<GeneratorSignature<O>, "factory"> & {
   factory: (f: SourceFolder, o?: O) => GeneratorFactory;
 }): [R] extends [true]
-  ? ((o: O) => GeneratorSignature) &
+  ? ((o: O) => GeneratorSignature<O>) &
       Pick<GeneratorSignature, "meta" | "dependencies" | "devDependencies">
-  : ((o?: O) => GeneratorSignature) &
-      Pick<GeneratorSignature, "meta" | "dependencies" | "devDependencies"> => {
+  : ((o?: O) => GeneratorSignature<O>) &
+      Pick<
+        GeneratorSignature<O>,
+        "meta" | "dependencies" | "devDependencies"
+      > => {
   const wrapper = ((options?: O) => {
     return {
       meta,
@@ -95,18 +97,4 @@ export const createWatchedPageRouteEntriesFilter = (
       ? entry.fileFullpath === event.file
       : false;
   };
-};
-
-/**
- * Gather virtual modules declared by a folder's generators.
- * Feed the result to `vitePlugins.virtualModules()`,
- * with `kind: "ssr"` on the SSR builds and `kind: "csr"` everywhere else.
- * */
-export const collectVirtualModules = (
-  sourceFolder: SourceFolder,
-  generators: Array<GeneratorSignature>,
-): Array<VirtualModule> => {
-  return generators.flatMap(({ factory }) => {
-    return factory(sourceFolder).virtualModules?.() || [];
-  });
 };

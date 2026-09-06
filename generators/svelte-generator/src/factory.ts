@@ -17,9 +17,9 @@ import {
 
 import { randomCongratMessage } from "./base";
 import * as templates from "./templates";
-import type { Options } from "./types";
 
-export default defineGeneratorFactory<Options>((sourceFolder, options) => {
+export default defineGeneratorFactory((sourceFolder) => {
+  const { frontend } = sourceFolder.config;
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
   const { render: renderLibTpl, renderToFile: deployLibFile } = renderFactory({
@@ -36,7 +36,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   const overwrite = (content: string) => !content?.trim().length;
 
   const templateResolver = createTemplateResolver(
-    options?.templates,
+    frontend?.templates,
     templates.srcPageSamplesPage,
   );
 
@@ -111,10 +111,16 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   };
 
   return {
-    config() {
-      const { templates, ...opts } = { ...options };
+    viteConfig() {
+      const defaultPlugin = () => svelte();
+
+      const { plugin = defaultPlugin() } =
+        typeof sourceFolder.config.frontend?.stack === "object"
+          ? sourceFolder.config.frontend.stack
+          : {};
+
       return {
-        plugins: svelte(opts),
+        plugins: [plugin],
       };
     },
 
@@ -129,7 +135,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
         ["pageSamples/welcome.svelte", templates.libPageSamplesWelcome],
         ["pageSamples/page.svelte", templates.libPageSamplesPage],
         ["pageSamples/404.svelte", templates.libPageSamples404],
-        ...(options?.tanstack?.query
+        ...(frontend?.tanstack?.query
           ? [
               ["app/app.svelte", templates.libApp],
               ["app/app-tsq.svelte", templates.libAppTsq],
@@ -196,7 +202,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
     },
 
     virtualModules() {
-      return options?.tanstack?.query
+      return frontend?.tanstack?.query
         ? [
             {
               // The tsq client must differ between the browser and the SSR bundle

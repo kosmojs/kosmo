@@ -1,3 +1,7 @@
+import vitePlugin from "@mdx-js/rollup";
+import frontmatterPlugin from "remark-frontmatter";
+import mdxFrontmatterPlugin from "remark-mdx-frontmatter";
+
 import {
   createTemplateResolver,
   defaults,
@@ -15,11 +19,11 @@ import {
 } from "@kosmojs/lib";
 
 import { randomCongratMessage } from "./base";
-import plugins from "./plugins";
+import builtinPlugins from "./plugins";
 import * as templates from "./templates";
-import type { Options } from "./types";
 
-export default defineGeneratorFactory<Options>((sourceFolder, options) => {
+export default defineGeneratorFactory((sourceFolder) => {
+  const { frontend } = sourceFolder.config;
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
   const { renderToFile: deployLibFile } = renderFactory({
@@ -39,7 +43,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   const overwrite = (content: string) => !content?.trim().length;
 
   const templateResolver = createTemplateResolver(
-    options?.templates,
+    frontend?.templates,
     templates.srcPageSamplesPage,
   );
 
@@ -114,10 +118,23 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   };
 
   return {
-    config({ command }) {
+    viteConfig({ command }) {
+      const defaultPlugin = () => {
+        return vitePlugin({
+          jsxImportSource: "preact",
+          providerImportSource: "@mdx-js/preact",
+          remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin],
+        });
+      };
+
+      const { plugin = defaultPlugin() } =
+        typeof sourceFolder.config.frontend?.stack === "object"
+          ? sourceFolder.config.frontend.stack
+          : {};
+
       return {
         oxc: { jsx: { runtime: "automatic", importSource: "preact" } },
-        plugins: plugins(sourceFolder, command, options),
+        plugins: [plugin, ...builtinPlugins(sourceFolder, command)],
       };
     },
 

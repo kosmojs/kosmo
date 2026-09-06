@@ -3,9 +3,8 @@ import { join, resolve } from "node:path";
 
 import { build } from "vite";
 
-import { createRouteResolver } from "@kosmojs/core";
+import { createRouteResolver, type SSROptions } from "@kosmojs/core";
 import {
-  collectVirtualModules,
   defineGeneratorFactory,
   mergeConfigs,
   pathExists,
@@ -16,14 +15,13 @@ import {
 } from "@kosmojs/lib";
 
 import * as templates from "./templates";
-import type { Options } from "./types";
 
 const RENDER_MODES = ["string", "stream"] as const;
 const DEFAULT_RENDER_MODE = RENDER_MODES[0];
 
-export default defineGeneratorFactory<Options>((sourceFolder, options) => {
+export default defineGeneratorFactory<SSROptions>((sourceFolder, options) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
-  const { generators, refineTypeName, ...config } = sourceFolder.config;
+  const { frontend, generators } = sourceFolder.config;
 
   const { renderToFile: deployLibFile } = renderFactory({
     helpers: {
@@ -53,7 +51,6 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
               : [];
           })
           .sort(sortRoutes),
-        apiGenerator: generators.some((e) => e.meta.slot === "backend"),
       };
 
       for (const [file, template] of [
@@ -66,7 +63,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
     },
 
     async postBuild() {
-      if (!generators.some((e) => e.meta.slot === "frontend")) {
+      if (!frontend) {
         // no frontend generator, nothing to build
         return;
       }
@@ -76,28 +73,25 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
       const plugins = [
         vitePlugins.tsconfigPaths(sourceFolder),
         vitePlugins.nodePrefix(),
-        vitePlugins.virtualModules(
-          collectVirtualModules(sourceFolder, generators),
-          {
-            // The SSR graph is the only one that resolves the SSR side of every env-sensitive module -
-            // the fetch transport, the query client.
-            // The choice is made here, by the plugin, and never written to disk,
-            // so the client build above and any concurrently running dev server keep the CSR variants,
-            // no matter what order things run in.
-            kind: "ssr",
-            command: "build",
-          },
-        ),
+        vitePlugins.virtualModules(sourceFolder, {
+          // The SSR graph is the only one that resolves the SSR side of every env-sensitive module -
+          // the fetch transport, the query client.
+          // The choice is made here, by the plugin, and never written to disk,
+          // so the client build above and any concurrently running dev server keep the CSR variants,
+          // no matter what order things run in.
+          kind: "ssr",
+          command: "build",
+        }),
       ];
 
       // INFO: === Build the SSR client bundle using `entry/server` as the entry point ===
       await build(
         mergeConfigs(
           // user config - lowest priority
-          config,
+          frontend.viteConfig,
           // generators configs - higher priority
           ...generators.map(({ factory }) => {
-            return factory(sourceFolder).config?.({
+            return factory(sourceFolder).viteConfig?.({
               kind: "client",
               command: "build",
             });
@@ -162,10 +156,10 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
 
       // Same resolution vite applies to publicDir: relative to root, "public" by default,
       // disabled with false or an empty string.
-      if (![false, ""].includes(config.publicDir as never)) {
+      if (![false, ""].includes(frontend.viteConfig?.publicDir as never)) {
         const publicDir = resolve(
           createPath.src(),
-          config.publicDir || "public", // when undefined
+          frontend.viteConfig?.publicDir || "public", // when undefined
         );
         if (await pathExists(publicDir)) {
           // served by the SSR server at base, the directory itself is the allowlist:

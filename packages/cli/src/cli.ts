@@ -55,7 +55,7 @@ const run = async () => {
 
   const [command, ...rest] = positionals as [
     command: (typeof COMMANDS)[number],
-    ...optedFolders: Array<string>,
+    ...rest: Array<string>,
   ];
 
   if (
@@ -77,6 +77,8 @@ const run = async () => {
   });
 
   if (command === "folder") {
+    const [name] = rest;
+
     const intro = () => {
       return styleText(
         ["blue", "bold"],
@@ -120,6 +122,7 @@ const run = async () => {
     if (input) {
       // cli mode
       await createFolder(root, {
+        name,
         input,
         intro: () => "",
         note: () => "",
@@ -131,7 +134,7 @@ const run = async () => {
       });
     } else {
       // interactive mode
-      await createFolder(root, { intro, note, outro });
+      await createFolder(root, { name, intro, note, outro });
     }
 
     return;
@@ -150,7 +153,6 @@ const run = async () => {
         ? "Some of given names does not contain a valid KosmoJS source folder"
         : undefined;
     }
-
     return !configFiles.length //
       ? "No source folders detected"
       : undefined;
@@ -190,7 +192,7 @@ const run = async () => {
       await runTsc(dirname(file));
     }
 
-    spinner.text("Typecheck done ✨");
+    spinner.text("Typecheck OK ✨");
     spinner.succeed();
 
     return;
@@ -206,9 +208,25 @@ const run = async () => {
   };
 
   for (const file of configFiles) {
-    const config = await jiti.import<
-      import("@kosmojs/core").SourceFolder["config"]
-    >(file, { default: true });
+    const { config, error } = await jiti
+      .import<import("@kosmojs/core").SourceFolder["config"]>(file, {
+        default: true,
+      })
+      .then(
+        (config) => {
+          return { config, error: undefined };
+        },
+        (error) => {
+          return { config: undefined, error };
+        },
+      );
+
+    if (!config || error) {
+      console.error(
+        styleText(["red"], `Failed loading ${file.replace(`${root}/`, "")}`),
+      );
+      throw new Error(error || "No config defined");
+    }
 
     settings.sourceFolders.push({
       name: basename(dirname(file)),

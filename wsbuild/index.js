@@ -100,7 +100,7 @@ await build({
   build: {
     target: "esnext",
     ssr: true,
-    minify: true,
+    minify: false,
     sourcemap: true,
     emptyOutDir: true,
     rolldownOptions: {

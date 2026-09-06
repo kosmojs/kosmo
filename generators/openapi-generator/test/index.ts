@@ -22,8 +22,6 @@ export const openapiOptions = {
 export const sourceFolder: SourceFolder = {
   name: "test",
   config: {
-    base: "",
-    apiBase: "",
     generators: [
       coreGenerator(),
       openapiGenerator({

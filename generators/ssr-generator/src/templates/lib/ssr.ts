@@ -22,7 +22,7 @@ import {
 } from "@kosmojs/core";
 
 import { routeMap } from "{{ createImport 'lib' '@ssr/routes' }}";
-import { apiBase, base } from "{{ createImport 'libCore' }}";
+import { backendBase, base } from "{{ createImport 'libCore' }}";
 import { redirectCodes, ssrOrigin } from "{{ createImport 'libCore' 'ssr' }}";
 
 const ROOT = import.meta.dirname;
@@ -368,7 +368,7 @@ const createNodeListener = (app: FetchApp | NodeApp): NodeListener => {
 
 /**
  * The folder's complete request surface as a single node:http listener:
- * API requests under `apiBase` go to the bundled backend, everything else to the SSR app.
+ * API requests under `backend.base` go to the bundled backend, everything else to the SSR app.
  * `startServer` binds it to a port/socket; `dist/run.js` mounts it next to other folders.
  * */
 export const createListener = async (): Promise<NodeListener> => {
@@ -379,7 +379,6 @@ export const createListener = async (): Promise<NodeListener> => {
   } = await import(`${ROOT}/app.js`);
 
   const ssrApp = await createApp();
-  const apiPrefix = join(base, apiBase);
 
   const ssrListener = createNodeListener(ssrApp as never);
 
@@ -389,7 +388,7 @@ export const createListener = async (): Promise<NodeListener> => {
 
   return (req, res) => {
     const { pathname } = new URL(req.url ?? "/", ssrOrigin);
-    return pathname === apiPrefix || pathname.startsWith(`${apiPrefix}/`)
+    return pathname === backendBase || pathname.startsWith(`${backendBase}/`)
       ? apiListener(req, res)
       : ssrListener(req, res);
   };

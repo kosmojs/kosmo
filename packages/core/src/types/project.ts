@@ -1,46 +1,47 @@
-import type { UserConfig } from "vite";
-
 import type { GeneratorSignature } from "./generators";
+import type {
+  BackendOptions,
+  FrontendOptions,
+  TypeboxOptions,
+} from "./integrations";
 
-export type FolderConfig = Omit<
-  UserConfig,
-  "root" | "base" | "cacheDir" | "mode" | "builder" | "future" | "legacy"
-> & {
-  // Base URL this source folder is served from, e.g. "/" or "/admin"
-  base:
-    | string
-    | {
-        [key: string]: string;
-        development?: string;
-        test?: string;
-        stage?: string;
-        production?: string;
-      };
-
-  // Base URL for API routes, e.g. "/api"
-  apiBase?: string;
-
-  // Generators to run for this source folder (validation, fetch clients, OpenAPI, etc.)
-  generators?: Array<GeneratorSignature>;
-
-  // Name to use for custom runtime validation refinements.
-  // @default "VRefine"
-  refineTypeName?: string;
+export type FolderConfig = {
+  frontend?: FrontendOptions;
+  backend?: BackendOptions;
+  validation?:
+    | boolean
+    | TypeboxOptions
+    | { generator?: GeneratorSignature<TypeboxOptions> };
 };
 
 export type SourceFolder = {
   // Source folder name, e.g. "front", "admin", "app"
   name: string;
   // Resolved folder configuration
-  config: Omit<FolderConfig, "base" | "apiBase" | "generators"> & {
-    base: string;
-    apiBase: string;
+  config: FolderConfig & {
     generators: Array<GeneratorSignature>;
   };
   // Absolute path to the project root
   root: string;
   // output directory name, configured as `distDir` in package.json
   distDir: string;
+};
+
+/**
+ * What `dist/run.js` needs to know about a built folder.
+ * Written next to the folder's build output so the runner discovers folders from disk
+ * rather than from a table that a partial build could leave stale.
+ * */
+export type SourceFolderManifest = {
+  name: string;
+  frontend?: {
+    base: string;
+  };
+  backend?: {
+    base: string;
+  };
+  // dist/<folder>/ssr/server.js exists - it bundles the backend, run.js mounts it alone
+  ssr: boolean;
 };
 
 export type ProjectSettings = {

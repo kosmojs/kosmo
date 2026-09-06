@@ -17,3 +17,11 @@ export const escapeTemplateLiterals = (origin: string) => {
     [/(?<!\\)\$\{/g, "\\${"],
   ].reduce((text, [a, b]) => text.replace(a, b as never), origin);
 };
+
+export const containsPathTraversalPatterns = (str: string): boolean => {
+  return [
+    // path traversal patterns
+    /\.\.\//,
+    /\/\.\//,
+  ].some((e) => e.test(str));
+};

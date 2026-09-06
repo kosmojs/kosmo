@@ -1,29 +1,3 @@
-export type Options = {
-  outfile: string;
-  openapi: `3.1.${number}`;
-  info: {
-    title: string;
-    version: string;
-    summary?: string;
-    description?: string;
-    termsOfService?: string;
-    contact?: {
-      name?: string;
-      url?: string;
-      email?: string;
-    };
-    license?: {
-      name: string;
-      identifier?: string;
-      url?: string;
-    };
-  };
-  servers: Array<{
-    url: string;
-    description?: string;
-  }>;
-};
-
 export type JsonSchema = {
   type?: string;
   properties?: Record<string, JsonSchema>;

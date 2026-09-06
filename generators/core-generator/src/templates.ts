@@ -1,4 +1,4 @@
-export { default as coreConfig } from "#templates/core/config";
+export { default as coreConfig } from "#templates/core/config.hbs";
 export { default as coreIndex } from "#templates/core/index.hbs";
 export { default as coreRouteMapper } from "#templates/core/routeMapper.hbs";
 export { default as coreRouteMapperPartial } from "#templates/core/routeMapperPartial";

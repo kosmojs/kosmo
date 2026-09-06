@@ -15,7 +15,6 @@ import {
 } from "@kosmojs/core";
 import type { DevSetup } from "@kosmojs/core/api";
 import {
-  collectVirtualModules,
   mergeConfigs,
   pathResolver,
   routesFactory,
@@ -75,7 +74,7 @@ export default async (
 
   const requestHandlers: Array<
     [
-      segments: [base: string, api?: string],
+      path: string,
       matcherFactory: () => RequestMatcher,
       handlerFactory: () => RequestHandler,
     ]
@@ -94,44 +93,38 @@ export default async (
 
   for (const sourceFolder of projectSettings.sourceFolders) {
     const { createPath } = pathResolver(sourceFolder);
-    const { generators } = sourceFolder.config;
+    const { generators, frontend, backend } = sourceFolder.config;
 
     const requestMatchers = matchersFactory(sourceFolder);
 
     const plugins = [
       vitePlugins.tsconfigPaths(sourceFolder),
       vitePlugins.nodePrefix(),
-      vitePlugins.virtualModules(
-        collectVirtualModules(sourceFolder, generators),
-        {
-          // The dev server is always a CSR graph - SSR runs in production builds only -
-          // so env-sensitive modules resolve to their client variants here,
-          // whatever a concurrent build is doing.
-          kind: "csr",
-          command,
-        },
-      ),
+      vitePlugins.virtualModules(sourceFolder, {
+        // The dev server is always a CSR graph - SSR runs in production builds only -
+        // so env-sensitive modules resolve to their client variants here,
+        // whatever a concurrent build is doing.
+        kind: "csr",
+        command,
+      }),
     ];
 
-    const frontendGenerator = generators.find(
-      (e) => e.meta.slot === "frontend",
-    );
-
-    const backendGenerator = generators.find((e) => e.meta.slot === "backend");
-
     // INFO: === start client server ===
-    if (frontendGenerator) {
+    if (frontend) {
       const viteServer = await createServer(
         mergeConfigs(
           // user-provided config - lowest priority
-          sourceFolder.config,
+          frontend?.viteConfig,
           // generators configs - higher priority
           ...generators.map(({ factory }) => {
-            return factory(sourceFolder).config?.({ kind: "client", command });
+            return factory(sourceFolder).viteConfig?.({
+              kind: "client",
+              command,
+            });
           }),
           // main config - highest priority
           {
-            // base provided by sourceFolder.config
+            base: frontend.base,
             root: createPath.src(),
             cacheDir: cacheDir(sourceFolder, command, "client"),
             plugins,
@@ -151,8 +144,8 @@ export default async (
       }
 
       requestHandlers.push([
-        [sourceFolder.config.base],
-        () => requestMatchers.base,
+        frontend.base,
+        () => requestMatchers.frontend,
         () => viteServer.middlewares,
       ]);
 
@@ -160,17 +153,18 @@ export default async (
     }
 
     // INFO: === start backend server ===
-    if (backendGenerator) {
+    if (backend) {
+      const generator = generators.find((e) => e.meta.slot === "backend");
       // NOTE: sourceFolder.config is client-specific config - not using for backend!
       // To provide backend-specific config pass it as api generator options.
       const viteServer = await createServer(
         mergeConfigs(
           // user-provided config - lowest priority
-          backendGenerator.options,
+          backend.viteConfig,
           // generator config - higher priority
-          backendGenerator
-            .factory(sourceFolder)
-            .config?.({ kind: "backend", command }),
+          generator
+            ?.factory(sourceFolder)
+            .viteConfig?.({ kind: "backend", command }),
           // main config - highest priority
           {
             root: createPath.src(),
@@ -236,8 +230,8 @@ export default async (
       }
 
       requestHandlers.push([
-        [sourceFolder.config.base, sourceFolder.config.apiBase],
-        () => devSetup.requestMatcher || requestMatchers.api,
+        backend.base,
+        () => devSetup.requestMatcher || requestMatchers.backend,
         () => devSetup.requestHandler(),
       ]);
 
@@ -248,27 +242,14 @@ export default async (
   /**
    * Sorting is essential to ensure more specific paths are matched before broader ones.
    *
-   * Given source folders:
-   *   - main app:  baseurl=/  apiurl=/api
-   *   - admin app: baseurl=/admin  apiurl=/admin/api
-   *
    * Correct sort order:
-   *   1. /admin/api  — most specific
-   *   2. /api
-   *   3. /admin
-   *   4. /
+   *   1. /admin/api - 10 + 3, most specific
+   *   3. /admin     - 6  + 2
+   *   2. /api       - 4  + 2
+   *   4. /          - 1  + 2
    * */
-  const requestHandlerWeight = ([
-    segments,
-  ]: (typeof requestHandlers)[number]) => {
-    const [base, api] = segments;
-    /**
-     * set weight to number of non-empty segments:
-     * "/" weight is 0
-     * "/admin" weight is 1
-     * */
-    const weight = base.split("/").filter(Boolean).length;
-    return api ? weight + 5 : weight;
+  const requestHandlerWeight = ([path]: (typeof requestHandlers)[number]) => {
+    return path.length + path.split("/").filter(Boolean).length;
   };
 
   const handlers = requestHandlers.sort(
@@ -329,7 +310,7 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
   const command = "build";
 
   const { createPath } = pathResolver(sourceFolder);
-  const { generators } = sourceFolder.config;
+  const { generators, frontend, backend } = sourceFolder.config;
 
   const resolvedRoutes = [];
 
@@ -351,41 +332,34 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
   const plugins = [
     vitePlugins.tsconfigPaths(sourceFolder),
     vitePlugins.nodePrefix(),
-    vitePlugins.virtualModules(
-      collectVirtualModules(sourceFolder, generators),
-      {
-        // `kind: "csr"` everywhere except the SSR bundle,
-        // which installs its own copy with `kind: "ssr"`
-        kind: "csr",
-        command,
-      },
-    ),
+    vitePlugins.virtualModules(sourceFolder, {
+      // `kind: "csr"` everywhere except the SSR bundle,
+      // which installs its own copy with `kind: "ssr"`
+      kind: "csr",
+      command,
+    }),
   ];
 
   for (const generator of generators) {
     await generator.factory(sourceFolder).build?.(resolvedRoutes);
   }
 
-  const frontendGenerator = generators.find((e) => e.meta.slot === "frontend");
-
-  const backendGenerator = generators.find((e) => e.meta.slot === "backend");
-
   // INFO: === build client ===
-  if (frontendGenerator) {
+  if (frontend) {
     await build(
       mergeConfigs(
         // user-provided config - lowest priority
-        sourceFolder.config,
+        frontend.viteConfig,
         // generators configs - higher priority
         ...generators.map(({ factory }) => {
-          return factory(sourceFolder).config?.({
+          return factory(sourceFolder).viteConfig?.({
             kind: "client",
             command,
           });
         }),
         // main config - highest priority
         {
-          // base provided by sourceFolder.config
+          base: frontend.base,
           root: createPath.src(),
           cacheDir: cacheDir(sourceFolder, command, "client"),
           plugins,
@@ -400,19 +374,19 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
   }
 
   // INFO: === build backend ===
-  if (backendGenerator) {
-    const dir = createPath.distDir("api");
+  if (backend) {
+    const generator = generators.find((e) => e.meta.slot === "backend");
 
     // NOTE: sourceFolder.config is client-specific config - not using for backend!
     // To provide backend-specific config pass it as api generator options.
     await build(
       mergeConfigs(
         // user-provided config - lowest priority
-        backendGenerator.options,
+        backend.viteConfig,
         // generator config - higher priority
-        backendGenerator
-          .factory(sourceFolder)
-          .config?.({ kind: "backend", command }),
+        generator
+          ?.factory(sourceFolder)
+          .viteConfig?.({ kind: "backend", command }),
         // main config - highest priority
         {
           base: "./",
@@ -435,7 +409,7 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
                 createPath.lib("@api/listener.ts"),
               ],
               output: {
-                dir,
+                dir: createPath.distDir("api"),
                 format: "esm",
               },
             },
@@ -596,21 +570,25 @@ const normalizeRegex = (s: string) => {
 
 const matchersFactory: (
   sourceFolder: SourceFolder,
-) => Record<"base" | "api", (req: IncomingMessage) => boolean> = ({
+) => Record<"frontend" | "backend", (req: IncomingMessage) => boolean> = ({
   config,
 }) => {
-  const basePattern = new RegExp(`^${normalizeRegex(config.base)}(?=$|/)`);
-  const apiPattern = new RegExp(
-    `^${normalizeRegex(join(config.base, config.apiBase))}(?=$|/)`,
-  );
+  const frontendPattern = config.frontend?.base
+    ? new RegExp(`^${normalizeRegex(config.frontend.base)}(?=$|/)`)
+    : undefined;
+
+  const backendPattern = config.backend?.base
+    ? new RegExp(`^${normalizeRegex(config.backend.base)}(?=$|/)`)
+    : undefined;
+
   return {
-    base(req) {
-      return apiPattern.test(req.url as string)
+    frontend(req) {
+      return backendPattern?.test(req.url as string)
         ? false
-        : basePattern.test(req.url as string);
+        : frontendPattern?.test(req.url as string) || false;
     },
-    api(req) {
-      return apiPattern.test(req.url as string);
+    backend(req) {
+      return backendPattern?.test(req.url as string) || false;
     },
   };
 };

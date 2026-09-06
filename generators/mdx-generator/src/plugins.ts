@@ -1,4 +1,3 @@
-import createMdxPlugin from "@mdx-js/rollup";
 import { createFilter, type Plugin } from "vite";
 
 import {
@@ -7,15 +6,10 @@ import {
   type SourceFolder,
 } from "@kosmojs/core";
 
-import type { Options } from "./types";
-
 export default (
   sourceFolder: SourceFolder,
   command: ProjectSettings["command"],
-  options: Options | undefined,
 ): Array<Plugin> => {
-  const { remarkPlugins = [], rehypePlugins = [] } = { ...options };
-
   const hmrPlugin = (): Plugin => {
     const hmrFilters = [
       `${defaults.srcDir}/${sourceFolder.name}/${defaults.entryDir}/client.ts`,
@@ -41,14 +35,7 @@ if (import.meta.hot) {
     };
   };
 
-  const plugins: Array<Plugin> = [
-    createMdxPlugin({
-      jsxImportSource: "preact",
-      providerImportSource: "@mdx-js/preact",
-      remarkPlugins,
-      rehypePlugins,
-    }) as Plugin,
-  ];
+  const plugins: Array<Plugin> = [];
 
   if (command === "serve") {
     plugins.push(hmrPlugin());

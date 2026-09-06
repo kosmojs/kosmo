@@ -11,7 +11,7 @@ import { pathResolver } from "@kosmojs/lib";
 import coreGenerator from "@kosmojs/core-generator";
 import typeboxGenerator from "@kosmojs/typebox-generator";
 
-export { MESSAGE_CODES } from "@kosmojs/typebox-generator";
+export { TYPEBOX_MESSAGE_CODES as MESSAGE_CODES } from "@kosmojs/core";
 
 export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 
@@ -22,8 +22,6 @@ export { defineRoute } from "@kosmojs/koa-generator/lib";
 export const sourceFolder: SourceFolder = {
   name: "test",
   config: {
-    base: "",
-    apiBase: "",
     generators: [coreGenerator(), typeboxGenerator()],
   },
   root: appRoot,

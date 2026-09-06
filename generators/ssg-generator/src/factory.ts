@@ -1,5 +1,5 @@
 import { access, constants, cp, mkdir, rm, writeFile } from "node:fs/promises";
-import { dirname, join, posix, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { styleText } from "node:util";
 
 import { build } from "vite";
@@ -7,7 +7,6 @@ import { build } from "vite";
 import type { FetchApp, PageRoute, ResolvedEntry } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
-  collectVirtualModules,
   defineGeneratorFactory,
   mergeConfigs,
   pathExists,
@@ -21,14 +20,7 @@ import {
 import * as templates from "./templates";
 
 export default defineGeneratorFactory((sourceFolder) => {
-  const {
-    generators = [],
-    refineTypeName,
-    ...config
-  } = { ...sourceFolder.config };
-
-  const { base } = config;
-
+  const { config } = sourceFolder;
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
   const { renderToFile: deployLibFile } = renderFactory({
@@ -71,6 +63,11 @@ export default defineGeneratorFactory((sourceFolder) => {
     },
 
     async postBuild() {
+      if (!config.frontend) {
+        // no frontend generator, nothing to build
+        return;
+      }
+
       const dir = createPath.distDir("ssg");
 
       const ssrServerPath = resolve(dir, "../ssr/server.js");
@@ -111,10 +108,10 @@ export default defineGeneratorFactory((sourceFolder) => {
       await build(
         mergeConfigs(
           // user config - lowest priority
-          config,
+          config.frontend.viteConfig,
           // generators configs - higher priority
-          ...generators.map(({ factory }) => {
-            return factory(sourceFolder).config?.({
+          ...config.generators.map(({ factory }) => {
+            return factory(sourceFolder).viteConfig?.({
               kind: "client",
               command: "build",
             });
@@ -127,10 +124,10 @@ export default defineGeneratorFactory((sourceFolder) => {
               vitePlugins.tsconfigPaths(sourceFolder),
               vitePlugins.nodePrefix(),
               // routes bundle, not the SSR graph - client variants apply
-              vitePlugins.virtualModules(
-                collectVirtualModules(sourceFolder, generators),
-                { kind: "csr", command: "build" },
-              ),
+              vitePlugins.virtualModules(sourceFolder, {
+                kind: "csr",
+                command: "build",
+              }),
             ],
             resolve: {
               conditions: ["node"],
@@ -216,7 +213,11 @@ export default defineGeneratorFactory((sourceFolder) => {
 
         for (const [route, page] of pages) {
           if ("html" in page) {
-            const file = join(dir, posix.relative(base, route), "index.html");
+            const file = join(
+              dir,
+              relative(config.frontend.base, route),
+              "index.html",
+            );
             await mkdir(dirname(file), { recursive: true });
             await writeFile(file, page.html, "utf8");
           }

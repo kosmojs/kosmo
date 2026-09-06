@@ -13,7 +13,8 @@ import {
   DEFAULT_PORT,
   DEFAULT_PREVIEW_PORT,
   defaults,
-  FRAMEWORKS,
+  type FolderConfig,
+  FRONTENDS,
   type GeneratorSignature,
 } from "@kosmojs/core";
 import {
@@ -40,7 +41,6 @@ import {
   type MaybePromise,
   type Project,
   type SourceFolder,
-  validateBase,
   validateName,
 } from "./base";
 import * as templates from "./templates";
@@ -61,13 +61,6 @@ const { version } = JSON.parse(
 );
 
 const SELF_VERSION = `^${version}`;
-
-type GeneratorOptions = Partial<
-  Record<
-    keyof typeof FRAMEWORKS | keyof typeof BACKENDS | "ssr",
-    Record<string, unknown>
-  >
->;
 
 // Resolve a clack prompt, exiting cleanly on ctrl-c / escape
 const readAnswer = async <T>(input: Promise<T | symbol>) => {
@@ -184,17 +177,18 @@ export const createProject = async (
 export const createFolder = async (
   root: string,
   {
+    name,
+    base,
+    input,
     intro,
     outro,
     note,
-    input,
-    ...rest
   }: {
+    name: string;
+    base?: string;
     input?: {
-      name?: string;
-      base?: string;
-      framework?: string;
-      "no-framework"?: boolean;
+      frontend?: string;
+      "no-frontend"?: boolean;
       backend?: string;
       "no-backend"?: boolean;
       ssr?: boolean;
@@ -203,13 +197,13 @@ export const createFolder = async (
       quiet?: boolean;
       overwrite?: boolean;
     };
-    name?: string;
-    base?: string;
     intro?: () => MaybePromise<string | undefined>;
     outro?: (f: SourceFolder) => MaybePromise<string | undefined>;
     note?: (f: SourceFolder) => MaybePromise<string | undefined>;
   },
 ): Promise<SourceFolder> => {
+  assertNoError(() => validateName(name, "No folder name provided"));
+
   const srcDir = resolve(root, defaults.srcDir);
 
   await mkdir(srcDir, { recursive: true });
@@ -222,20 +216,16 @@ export const createFolder = async (
       input?.quiet || console.log(await intro());
     }
 
-    assertNoError(() => validateName(input?.name, "No folder name provided"));
-
     if (!input?.overwrite) {
       assertNoError(() => {
-        return entries.includes(input?.name ?? "") //
-          ? `./${defaults.srcDir}/${input?.name} already exists. Either remove it or provide --overwrite flag.`
+        return entries.includes(name ?? "") //
+          ? `./${defaults.srcDir}/${name} already exists. Either remove it or provide --overwrite flag.`
           : undefined;
       });
     }
 
-    assertNoError(() => validateBase(input?.base));
-
     for (const [key, values] of [
-      ["framework", FRAMEWORKS],
+      ["frontend", FRONTENDS],
       ["backend", BACKENDS],
     ] as const) {
       if (input?.[key]) {
@@ -256,7 +246,7 @@ export const createFolder = async (
       });
     }
 
-    const folder = input as SourceFolder;
+    const folder = { ...input, name, base } as SourceFolder;
 
     await createSourceFolder(root, folder);
 
@@ -276,17 +266,6 @@ export const createFolder = async (
     if (intro) {
       const output = await intro();
       !output || prompts.intro(output);
-    }
-
-    let { name, base } = rest;
-
-    if (!name) {
-      name = await readAnswer(
-        prompts.text({
-          message: "Folder Name",
-          validate: validateName,
-        }),
-      );
     }
 
     if (entries.includes(name)) {
@@ -314,29 +293,19 @@ export const createFolder = async (
       }
     }
 
-    if (!base) {
-      base = await readAnswer(
-        prompts.text({
-          message: "Base URL",
-          initialValue: "/",
-          validate: (base) => validateBase(base || "/"),
-        }),
-      );
-    }
-
-    const framework = await readAnswer(
+    const frontend = (await readAnswer(
       prompts.select({
-        message: "Framework",
+        message: "Frontend",
         options: [
-          ...Object.entries(FRAMEWORKS).map(([value, label]) => {
+          ...Object.entries(FRONTENDS).map(([value, label]) => {
             return { value, label };
           }),
           { value: undefined, label: "None (API-only folder)" },
         ],
       }),
-    );
+    )) as SourceFolder["frontend"];
 
-    const backend = await readAnswer(
+    const backend = (await readAnswer(
       prompts.select({
         message: "Backend Framework",
         options: [
@@ -346,11 +315,11 @@ export const createFolder = async (
           { value: undefined, label: "None (client-only folder)" },
         ],
       }),
-    );
+    )) as SourceFolder["backend"];
 
     // SSR enabled unconditionally on mdx folders
-    const ssr = framework
-      ? framework === "mdx"
+    const ssr = frontend
+      ? frontend === "mdx"
         ? true
         : await readAnswer(
             prompts.confirm({
@@ -362,22 +331,21 @@ export const createFolder = async (
           )
       : false;
 
-    const ssg = framework
-      ? ssr
-        ? await readAnswer(
-            prompts.confirm({
-              message: "Enable static site generation (SSG)?",
-              initialValue: false,
-              active: "yes",
-              inactive: "no",
-            }),
-          )
-        : false
+    // ssg can be enabled only if ssr enabled
+    const ssg = ssr
+      ? await readAnswer(
+          prompts.confirm({
+            message: "Enable static site generation (SSG)?",
+            initialValue: false,
+            active: "yes",
+            inactive: "no",
+          }),
+        )
       : false;
 
     // TanStack Query not available on mdx folders
-    const tsq = framework
-      ? framework === "mdx"
+    const tsq = frontend
+      ? frontend === "mdx"
         ? false
         : await readAnswer(
             prompts.confirm({
@@ -391,9 +359,8 @@ export const createFolder = async (
 
     const folder: SourceFolder = {
       name,
-      base,
-      ...(framework ? ({ framework } as never) : {}),
-      ...(backend ? ({ backend } as never) : {}),
+      frontend,
+      backend,
       ssr,
       ssg,
       tsq,
@@ -418,7 +385,7 @@ export const createFolder = async (
 export const createSourceFolder = async (
   projectRoot: string,
   folder: SourceFolder,
-  generatorOptions?: GeneratorOptions,
+  folderDefaults?: FolderConfig,
 ) => {
   const folderPath = resolve(projectRoot, defaults.srcDir, folder.name);
 
@@ -429,10 +396,36 @@ export const createSourceFolder = async (
   // Using readFile cause import() returns cached content
   const packageJson = JSON.parse(await readFile(packageFile, "utf8"));
 
-  const [kosmoConfig, { generators }] = createKosmoConfig(
-    folder,
-    generatorOptions,
-  );
+  const { frontend, backend } = folder;
+
+  const options = {
+    ...(frontend
+      ? {
+          frontend: {
+            stack: frontend,
+            base: `/${folder.name}`,
+            fetch: true,
+            ssr: folder.ssr || folder.ssg ? true : false,
+            ssg: folder.ssg ? true : false,
+            ...(["mdx"].includes(frontend)
+              ? {}
+              : { tanstack: { query: folder.tsq ? true : false } }),
+            ...folderDefaults?.frontend,
+          },
+        }
+      : {}),
+    ...(backend
+      ? {
+          backend: {
+            stack: backend,
+            base: `/${folder.name}/api`,
+            ...folderDefaults?.backend,
+          },
+        }
+      : {}),
+  };
+
+  const kosmoConfig = createKosmoConfig(folder, options);
 
   await writeFile(
     resolve(folderPath, "kosmo.config.ts"),
@@ -444,27 +437,27 @@ export const createSourceFolder = async (
 
   for (const file of [
     // stub files for initial build to pass;
-    // generators will fill them with appropriate content.
+    // generators will seed them with appropriate content.
     ...(folder.backend ? [`${defaults.apiDir}/index/index.ts`] : []),
-    ...(["solid", "react"].includes(folder.framework ?? "")
+    ...(["solid", "react"].includes(folder.frontend ?? "")
       ? [
           `${defaults.pagesDir}/index/index.tsx`,
           `${defaults.entryDir}/client.ts`,
         ]
       : []),
-    ...(["vue"].includes(folder.framework ?? "")
+    ...(["vue"].includes(folder.frontend ?? "")
       ? [
           `${defaults.pagesDir}/index/index.vue`,
           `${defaults.entryDir}/client.ts`,
         ]
       : []),
-    ...(["svelte"].includes(folder.framework ?? "")
+    ...(["svelte"].includes(folder.frontend ?? "")
       ? [
           `${defaults.pagesDir}/index/index.svelte`,
           `${defaults.entryDir}/client.ts`,
         ]
       : []),
-    ...(["mdx"].includes(folder.framework ?? "")
+    ...(["mdx"].includes(folder.frontend ?? "")
       ? [
           `${defaults.pagesDir}/index/index.mdx`,
           `${defaults.entryDir}/client.ts`,
@@ -477,19 +470,54 @@ export const createSourceFolder = async (
       {},
       {
         // do not overwrite real files with a stub!
-        // if at any point file should be regenerated,
+        // if at any point file should be re-seeded,
         // just empty or delete it and dev server will seed a clean version.
         overwrite: false,
       },
     );
   }
 
-  for (const { generator } of [{ generator: coreGenerator() }, ...generators]) {
+  const generators: Array<GeneratorSignature> = [coreGenerator()];
+
+  if (frontend === "solid") {
+    generators.push(solidGenerator as never);
+  } else if (frontend === "react") {
+    generators.push(reactGenerator as never);
+  } else if (frontend === "vue") {
+    generators.push(vueGenerator as never);
+  } else if (frontend === "svelte") {
+    generators.push(svelteGenerator as never);
+  } else if (frontend === "mdx") {
+    generators.push(mdxGenerator as never);
+  }
+
+  if (backend === "hono") {
+    generators.push(honoGenerator as never);
+  } else if (backend === "h3") {
+    generators.push(h3Generator as never);
+  } else if (backend === "koa") {
+    generators.push(koaGenerator as never);
+  }
+
+  if (folder.ssr || folder.ssg || frontend === "mdx") {
+    generators.push(ssrGenerator());
+  }
+
+  if (folder.ssg) {
+    generators.push(ssgGenerator());
+  }
+
+  if (Object.values(generators).some((e) => e.meta.slot === "backend")) {
+    generators.push(fetchGenerator());
+    generators.push(typeboxGenerator());
+  }
+
+  for (const generator of generators) {
     for (const key of ["dependencies", "devDependencies"] as const) {
       packageJson[key] = {
         ...packageJson[key],
         ...(typeof generator[key] === "function"
-          ? generator[key](folder.tsq ? { tanstack: { query: true } } : {})
+          ? generator[key](options)
           : generator[key]),
       };
     }
@@ -507,129 +535,24 @@ export const createSourceFolder = async (
 
 export const createKosmoConfig = (
   folder: SourceFolder,
-  generatorOptions?: GeneratorOptions,
+  options: Record<string, Record<string, unknown>>,
 ) => {
-  const imports: Array<string> = [];
-
-  const generators: Array<{
-    name: string;
-    options: string;
-    generator: GeneratorSignature;
-  }> = [];
-
-  const { base, framework = "", backend = "" } = folder;
-
-  const options = Object.entries({
-    ...generatorOptions,
-    ...(folder.tsq && framework !== "mdx"
-      ? {
-          [framework]: {
-            ...(generatorOptions?.[framework as never] || {}),
-            tanstack: { query: true },
-          },
-        }
-      : {}),
-  }).reduce<Record<string, string>>((map, [key, val]) => {
-    map[key] = JSON.stringify(val);
-    return map;
-  }, {});
-
-  if (framework === "solid") {
-    generators.push({
-      name: "solidGenerator",
-      options: options[framework],
-      generator: solidGenerator as never,
-    });
-  } else if (framework === "react") {
-    generators.push({
-      name: "reactGenerator",
-      options: options[framework],
-      generator: reactGenerator as never,
-    });
-  } else if (framework === "vue") {
-    generators.push({
-      name: "vueGenerator",
-      options: options[framework],
-      generator: vueGenerator as never,
-    });
-  } else if (framework === "svelte") {
-    generators.push({
-      name: "svelteGenerator",
-      options: options[framework],
-      generator: svelteGenerator as never,
-    });
-  } else if (framework === "mdx") {
-    imports.push(
-      ...[
-        `import frontmatterPlugin from "remark-frontmatter";`,
-        `import mdxFrontmatterPlugin from "remark-mdx-frontmatter";`,
-      ],
-    );
-    generators.push({
-      name: "mdxGenerator",
-      options: options[framework]
-        ? options[framework]
-        : `{ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }`,
-      generator: mdxGenerator as never,
-    });
-  }
-
-  if (backend === "hono") {
-    generators.push({
-      name: "honoGenerator",
-      options: options[backend],
-      generator: honoGenerator as never,
-    });
-  } else if (backend === "h3") {
-    generators.push({
-      name: "h3Generator",
-      options: options[backend],
-      generator: h3Generator as never,
-    });
-  } else if (backend === "koa") {
-    generators.push({
-      name: "koaGenerator",
-      options: options[backend],
-      generator: koaGenerator as never,
-    });
-  }
-
-  if (folder.ssr || folder.ssg || framework === "mdx") {
-    generators.push({
-      name: "ssrGenerator",
-      options: options.ssr,
-      generator: ssrGenerator as never,
-    });
-  }
-
-  if (folder.ssg) {
-    generators.push({
-      name: "ssgGenerator",
-      options: "",
-      generator: ssgGenerator as never,
-    });
-  }
-
-  if (generators.some(({ generator }) => generator.meta.slot === "backend")) {
-    generators.push(
-      {
-        name: "fetchGenerator",
-        options: "",
-        generator: fetchGenerator as never,
-      },
-      {
-        name: "typeboxGenerator",
-        options: "",
-        generator: typeboxGenerator as never,
-      },
-    );
-  }
+  const { frontend, backend } = folder;
 
   const context = {
-    base,
-    imports,
-    generators,
+    frontend,
+    backend,
+    options: Object.fromEntries(
+      // frontend/backend etc.
+      Object.entries(options).map(([key, val]) => [
+        key,
+        Object.fromEntries(
+          // stack/base etc.
+          Object.entries(val).map(([key, val]) => [key, JSON.stringify(val)]),
+        ),
+      ]),
+    ),
   };
 
-  return [render(templates.kosmoConfig, context), { generators }] as const;
+  return render(templates.kosmoConfig, context);
 };

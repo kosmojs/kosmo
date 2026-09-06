@@ -20,9 +20,9 @@ import {
 } from "@kosmojs/lib";
 
 import * as templates from "./templates";
-import type { Options } from "./types";
 
-export default defineGeneratorFactory<Options>((sourceFolder, options) => {
+export default defineGeneratorFactory((sourceFolder) => {
+  const { backend } = sourceFolder.config;
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
   const cascadingState = (ids: Array<string>): string => {
@@ -67,7 +67,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
   const overwrite = (content: string) => content?.trim().length === 0;
 
   const templateResolver = createTemplateResolver(
-    options?.templates,
+    backend?.templates,
     templates.srcRouteIndex,
   );
 
@@ -119,7 +119,7 @@ export default defineGeneratorFactory<Options>((sourceFolder, options) => {
           }),
         };
 
-        const aliases = Object.entries({ ...options?.alias }).flatMap(
+        const aliases = Object.entries({ ...backend?.alias }).flatMap(
           ([url, routeName]) => {
             const pathTokens = pathTokensFactory(url);
             return routeName === entry.name

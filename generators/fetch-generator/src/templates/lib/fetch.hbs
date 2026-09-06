@@ -11,8 +11,7 @@ export type ResponseT = {
 }
 
 export default {
-{{#each routes}}  "{{name}}": {{id}},
-{{#each alias }}  "{{this}}": {{../id}},
-{{/each}}
+{{#each routes}}
+  "{{name}}": {{id}},
 {{/each}}
 }

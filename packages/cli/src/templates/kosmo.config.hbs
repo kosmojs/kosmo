@@ -1,16 +1,19 @@
-import {
-  defineConfig,
-{{#each generators}}  {{name}},
-{{/each}}
-} from "@kosmojs/dev";
-
-{{#each imports}}{{.}}
-{{/each}}
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "{{base}}",
-  generators: [
-{{#each generators}}    {{name}}({{options}}),
-{{/each}}
-  ],
+{{#if frontend}}
+  frontend: {
+    {{#each options.frontend}}
+    "{{@key}}": {{.}},
+    {{/each}}
+  },
+{{/if}}
+{{#if backend}}
+  backend: {
+    {{#each options.backend}}
+    "{{@key}}": {{.}},
+    {{/each}}
+  },
+  validation: true,
+{{/if}}
 });

@@ -23,7 +23,7 @@ import { generateTsconfig } from "./tsconfig";
  * */
 export default defineGeneratorFactory((sourceFolder) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
-  const { generators } = sourceFolder.config;
+  const { generators, frontend, backend } = sourceFolder.config;
 
   const start = async () => {
     const { dependencies = {}, devDependencies = {} } = await import(
@@ -243,7 +243,8 @@ export default defineGeneratorFactory((sourceFolder) => {
       ["index.ts", templates.coreIndex],
     ]) {
       await renderToFile(createPath.libCore(file), template, {
-        ...sourceFolder,
+        base: frontend?.base ? JSON.stringify(frontend.base) : "undefined",
+        backendBase: backend?.base ? JSON.stringify(backend.base) : "undefined",
         apiRoutes,
         pageRoutes,
       });

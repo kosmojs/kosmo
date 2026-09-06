@@ -1,10 +1,9 @@
-import { join } from "node:path";
+import { posix } from "node:path";
 
 import type { RouteSource } from "@kosmojs/core/api";
 
 import {
-  base,
-  apiBase,
+  backendBase,
   apiRouteMap,
   apiRouteMapper,
   // needed for cascadingMiddleware
@@ -39,8 +38,8 @@ export const routeSources: Array<RouteSource<never>> = [
     pathPattern: "{{alias}}",
     {{else}}
     ...apiRouteMap["{{name}}"],
-    path: join(base, apiBase, "{{path}}"),
-    pathPattern: join(base, apiBase, "{{pathPattern}}"),
+    path: posix.join(backendBase, "{{path}}"),
+    pathPattern: posix.join(backendBase, "{{pathPattern}}"),
     {{/if}}
     name: "{{name}}",
     file: "{{file}}",

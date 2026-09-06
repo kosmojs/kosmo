@@ -1,6 +1,7 @@
 import { styleText } from "node:util";
 
-import { BACKENDS, FRAMEWORKS } from "@kosmojs/core";
+import { BACKENDS, FRONTENDS } from "@kosmojs/core";
+import { containsPathTraversalPatterns } from "@kosmojs/lib";
 
 export type PackageJSON = {
   devPort?: number;
@@ -19,8 +20,7 @@ export type Project = {
 
 export type SourceFolder = {
   name: string;
-  base: string;
-  framework?: keyof typeof FRAMEWORKS | undefined;
+  frontend?: keyof typeof FRONTENDS | undefined;
   backend?: keyof typeof BACKENDS | undefined;
   ssr?: boolean | undefined;
   ssg?: boolean | undefined;
@@ -29,16 +29,11 @@ export type SourceFolder = {
 
 export type MaybePromise<T> = T | Promise<T>;
 
-export const DEFAULT_NAME = "app";
-export const DEFAULT_BASE = "/";
-
 export const CREATE_OPTIONS = ["project", "folder"] as const;
 
 export const FOLDER_OPTIONS = {
-  name: { type: "string" },
-  base: { type: "string" },
-  framework: { type: "string" },
-  "no-framework": { type: "boolean" },
+  frontend: { type: "string" },
+  "no-frontend": { type: "boolean" },
   backend: { type: "string" },
   "no-backend": { type: "boolean" },
   ssr: { type: "boolean" },
@@ -90,27 +85,6 @@ export const validateName = (
   return undefined;
 };
 
-export const validateBase = (base: string | undefined) => {
-  if (!base?.trim()) {
-    return "Invalid base";
-  }
-  if (base.includes(" ")) {
-    return "Should not contain spaces";
-  }
-  if (containsPathTraversalPatterns(base)) {
-    return "Should not contain path traversal patterns";
-  }
-  return undefined;
-};
-
-export const containsPathTraversalPatterns = (str: string): boolean => {
-  return [
-    // path traversal patterns
-    /\.\.\//,
-    /\/\.\//,
-  ].some((e) => e.test(str));
-};
-
 export const assertNoError = (validator: () => string | undefined) => {
   const error = validator();
   if (error) {
@@ -126,43 +100,19 @@ export const printUsage = () => {
 
     styleText("bold", "FOLDER COMMAND"),
     "",
-    `  ${styleText("blue", "kosmo folder")}`,
-    `  Create a new Source Folder in interactive mode, prompting for each step`,
+    `  ${styleText("blue", "kosmo folder <name>")}`,
+    `  Create <name> Source Folder in interactive mode, prompting for each step`,
     "",
     styleText(
       "bold",
       "  Use these options to create a Source Folder in CLI mode:",
     ),
-    "",
-    `  ${styleText("cyan", "--name")} ${styleText("dim", "<name>")}`,
-    `  Source folder name ${styleText("dim", "(required)")}`,
-    "",
-    `  ${styleText("cyan", "--base")} ${styleText("dim", "<path>")}`,
-    `  Base URL ${styleText("dim", "(required)")}`,
-    "",
-    `  ${styleText("cyan", "--framework")} ${styleText("dim", "<framework>")}`,
-    `  Framework: ${styleText("yellow", Object.keys(FRAMEWORKS).join("|"))} ${styleText("dim", "(--no-framework for API-only folders)")}`,
-    "",
-    `  ${styleText("cyan", "--backend")} ${styleText("dim", "<framework>")}`,
-    `  Backend framework: ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(--no-backend for client-only folders)")}`,
-    "",
-    styleText(
-      "dim",
-      "  Both are required: pass a value or the matching --no-* flag, never neither",
-    ),
-    "",
-    `  ${styleText("cyan", "--ssr")}`,
-    `  Enable server-side rendering (SSR)`,
-    "",
-    `  ${styleText("cyan", "--ssg")}`,
-    `  Enable static site generation (SSG)${styleText("dim", ", implies --ssr")}`,
-    "",
-    `  ${styleText("cyan", "--tsq")}`,
-    `  Enable TanStack Query`,
-    "",
-    `  ${styleText("cyan", "--overwrite")}`,
-    `  Overwrite existing files ${styleText("dim", "(use with caution)")}`,
-    "",
+    `  ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))} ${styleText("dim", "(--no-frontend for API-only folders)")}`,
+    `  ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(--no-backend for client-only folders use)")}`,
+    `  ${styleText("cyan", "--ssr")} ${styleText("dim", "enable server-side rendering (SSR)")}`,
+    `  ${styleText("cyan", "--ssg")} ${styleText("dim", "enable static site generation (SSG); implies --ssr")}`,
+    `  ${styleText("cyan", "--tsq")} ${styleText("dim", "enable TanStack Query")}`,
+    `  ${styleText("cyan", "--overwrite")} ${styleText("dim", "overwrite existing files (use with caution)")}`,
 
     styleText("bold", "SERVE COMMAND"),
     "",

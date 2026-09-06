@@ -1,6 +1,6 @@
-import fetchFactory, { join } from "@kosmojs/core/fetch";
+import fetchFactory from "@kosmojs/core/fetch";
 
-import { base, apiBase, apiRouteMap } from "{{ createImport 'libCore' }}";
+import { backendBase, apiRouteMap } from "{{ createImport 'libCore' }}";
 import { transport } from "virtual:kosmo/fetch-transport";
 
 import {
@@ -43,10 +43,7 @@ const {
   href,
 } = apiRouteMap["{{route.name}}"];
 
-const fetchApi = fetchFactory(
-  join(base, apiBase),
-  { transport },
-);
+const fetchApi = fetchFactory(backendBase, { transport });
 
 {{#each routeMethods}}
 export const {{method}} = (

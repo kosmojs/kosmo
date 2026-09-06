@@ -7,14 +7,12 @@ import {
   assertNoError,
   createFolder,
   createProject,
-  DEFAULT_BASE,
-  DEFAULT_NAME,
   FOLDER_OPTIONS,
   isCLI,
   type Project,
   validateName,
 } from "@kosmojs/cli";
-import { BACKENDS, FRAMEWORKS } from "@kosmojs/core";
+import { BACKENDS, FRONTENDS } from "@kosmojs/core";
 
 const usage = [
   "",
@@ -28,21 +26,19 @@ const usage = [
   ` ${styleText("blue", "npm create kosmo .")}`,
   " Create a project in current folder",
   "",
-  ` ${styleText("blue", "npm create kosmo <name> -- --framework ...")}`,
+  ` ${styleText("blue", "npm create kosmo <name> -- --frontend ...")}`,
   ` Create a project at ${styleText("blue", "./<name>")} path ${styleText("dim", "(CLI mode)")}`,
   "",
-  ` ${styleText("blue", "npm create kosmo . -- --framework ...")}`,
+  ` ${styleText("blue", "npm create kosmo . -- --frontend ...")}`,
   ` Create a project in current folder`,
   "",
   " pnpm/yarn works without extra --",
-  ` ${styleText("dim", "pnpm create kosmo . --framework ...")}`,
-  ` ${styleText("dim", "yarn create kosmo . --framework ...")}`,
+  ` ${styleText("dim", "pnpm create kosmo . --frontend ...")}`,
+  ` ${styleText("dim", "yarn create kosmo . --frontend ...")}`,
   "",
   " CLI mode arguments:",
-  `   ${styleText("cyan", "--name")} ${styleText("dim", "folder name, default:")} ${DEFAULT_NAME}`,
-  `   ${styleText("cyan", "--base")} ${styleText("dim", "folder base, default:")} ${DEFAULT_BASE}`,
-  `   ${styleText("cyan", `--framework`)} ${styleText("yellow", Object.keys(FRAMEWORKS).join("|"))} ${styleText("dim", "(--no-framework for API-only folders)")}`,
-  `   ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(--no-backend for client-only folders)")}`,
+  `   ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))} ${styleText("dim", "(--no-frontend for API-only folders)")}`,
+  `   ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(--no-backend for client-only folders use)")}`,
   `   ${styleText("cyan", "--ssr")} ${styleText("dim", "enable server-side rendering (SSR)")}`,
   `   ${styleText("cyan", "--ssg")} ${styleText("dim", "enable static site generation (SSG); implies --ssr")}`,
   `   ${styleText("cyan", "--tsq")} ${styleText("dim", "enable TanStack Query")}`,
@@ -118,28 +114,34 @@ const run = async () => {
     .map((e) => e.trimEnd())
     .join("\n");
 
-  if (isCLI(Object.keys(values).length)) {
-    // cli mode
-    await createProject(root, project, { input: values });
-    await createFolder(root, {
-      input: { name: DEFAULT_NAME, base: DEFAULT_BASE, ...values },
-      intro: () => doneText,
-      note: () => nextStepsText,
-    });
-  } else {
-    // interactive mode
-    await createProject(root, project);
-    await createFolder(root, {
-      name: DEFAULT_NAME,
-      base: DEFAULT_BASE,
-      intro: () => readyText,
-      note: () => nextStepsText,
-      outro: () => doneText,
-    });
+  {
+    const [name, base] = ["app", "/"];
+
+    if (isCLI(Object.keys(values).length)) {
+      // cli mode
+      await createProject(root, project, { input: values });
+      await createFolder(root, {
+        name,
+        base,
+        input: values,
+        intro: () => doneText,
+        note: () => nextStepsText,
+      });
+    } else {
+      // interactive mode
+      await createProject(root, project);
+      await createFolder(root, {
+        name,
+        base,
+        intro: () => readyText,
+        note: () => nextStepsText,
+        outro: () => doneText,
+      });
+    }
   }
 };
 
 await run().catch((error) => {
-  console.error(styleText("red", error.message));
+  console.error(error.message);
   process.exit(1);
 });
