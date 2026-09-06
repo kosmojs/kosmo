@@ -57,7 +57,7 @@ proprietary helper - warm SSR uses TanStack's own `dehydrate` and
 `HydrationBoundary` directly, shown per framework in [SSR Warmup](#ssr-warmup-advanced) below.
 
 MDX folders render static HTML with no client runtime, so TanStack Query is not
-available there - fetch data with an MDX `loader` instead (see [MDX](./mdx)).
+available there - fetch data with an MDX `loader` instead (see [MDX](/mdx)).
 
 ## Enabling and using it
 
@@ -66,7 +66,7 @@ The `_/query` runtime is deployed, `_/app` is swapped for a provider that suppli
 the query client, and - on the server - each request gets its own client.
 
 None of this touches your app code: the provider seam is part of the
-derived foundation (see [Application Structure](./application)), and it is
+derived foundation (see [Application Structure](/application)), and it is
 composed the same way whether the option is on or off.
 Toggling the option never asks you to edit, copy, or paste anything.
 
