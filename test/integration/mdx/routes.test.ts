@@ -10,7 +10,7 @@ const {
   createPageRoutes,
   startServer,
   teardown,
-} = await setupTestProject({ framework: "mdx" });
+} = await setupTestProject({ frontend: "mdx" });
 
 beforeAll(async () => {
   await bootstrapProject();

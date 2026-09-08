@@ -28,16 +28,18 @@ const {
   createPageRoutes,
   startServer,
   teardown,
-} = await setupTestProject({
-  framework: "mdx",
-  mdx: {
-    templates: {
-      landing: landingTemplate,
-      "landing/**/*": landingTemplate,
-      "marketing/**/*": marketingTemplate,
+} = await setupTestProject(
+  { frontend: "mdx" },
+  {
+    frontend: {
+      templates: {
+        landing: landingTemplate,
+        "landing/**/*": landingTemplate,
+        "marketing/**/*": marketingTemplate,
+      },
     },
   },
-});
+);
 
 beforeAll(async () => {
   await bootstrapProject();

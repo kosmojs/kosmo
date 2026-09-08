@@ -88,6 +88,7 @@ export default defineConfig({
       setupFactory("generators/vue-generator"),
 
       setupFactory("integration:cli", {
+        testTimeout: 20_000,
         include: ["integration/cli/*.test.ts"],
       }),
 

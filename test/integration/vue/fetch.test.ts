@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, test } from "vitest";
 import { createTestGroups } from "../fetch-factory";
 
 const testGroups = await createTestGroups({
-  framework: "vue",
+  frontend: "vue",
 });
 
 beforeAll(async () => {

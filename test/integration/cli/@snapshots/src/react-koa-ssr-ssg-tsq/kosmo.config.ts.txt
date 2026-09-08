@@ -1,21 +1,17 @@
-import {
-  defineConfig,
-  reactGenerator,
-  koaGenerator,
-  ssrGenerator,
-  ssgGenerator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/react-koa-ssr-ssg-tsq",
-  generators: [
-    reactGenerator({ tanstack: { query: true } }),
-    koaGenerator(),
-    ssrGenerator(),
-    ssgGenerator(),
-    fetchGenerator(),
-    typeboxGenerator(),
-  ],
+  frontend: {
+    stack: "react",
+    base: "/react-koa-ssr-ssg-tsq",
+    fetch: true,
+    ssr: true,
+    ssg: true,
+    tanstack: { query: true },
+  },
+  backend: {
+    stack: "koa",
+    base: "/react-koa-ssr-ssg-tsq/api",
+  },
+  validation: true,
 });

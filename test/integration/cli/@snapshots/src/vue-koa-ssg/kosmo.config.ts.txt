@@ -1,21 +1,17 @@
-import {
-  defineConfig,
-  vueGenerator,
-  koaGenerator,
-  ssrGenerator,
-  ssgGenerator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/vue-koa-ssg",
-  generators: [
-    vueGenerator(),
-    koaGenerator(),
-    ssrGenerator(),
-    ssgGenerator(),
-    fetchGenerator(),
-    typeboxGenerator(),
-  ],
+  frontend: {
+    stack: "vue",
+    base: "/vue-koa-ssg",
+    fetch: true,
+    ssr: true,
+    ssg: true,
+    tanstack: { query: false },
+  },
+  backend: {
+    stack: "koa",
+    base: "/vue-koa-ssg/api",
+  },
+  validation: true,
 });

@@ -1,12 +1,17 @@
-import {
-  defineConfig,
-  solidGenerator,
-  honoGenerator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/solid-hono",
-  generators: [solidGenerator(), honoGenerator(), fetchGenerator(), typeboxGenerator()],
+  frontend: {
+    stack: "solid",
+    base: "/solid-hono",
+    fetch: true,
+    ssr: false,
+    ssg: false,
+    tanstack: { query: false },
+  },
+  backend: {
+    stack: "hono",
+    base: "/solid-hono/api",
+  },
+  validation: true,
 });

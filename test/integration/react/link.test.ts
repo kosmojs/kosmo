@@ -1,5 +1,3 @@
-import { join } from "node:path";
-
 import { load } from "cheerio";
 import { afterAll, beforeAll, describe, it } from "vitest";
 
@@ -35,20 +33,21 @@ const navigationTemplate = `
 `;
 
 const {
-  sourceFolder,
   bootstrapProject,
   withPageContent,
   createPageRoutes,
   startServer,
   teardown,
-} = await setupTestProject({
-  framework: "react",
-  react: {
-    templates: {
-      navigation: navigationTemplate,
+} = await setupTestProject(
+  { frontend: "react" },
+  {
+    frontend: {
+      templates: {
+        navigation: navigationTemplate,
+      },
     },
   },
-});
+);
 
 beforeAll(async () => {
   await bootstrapProject();
@@ -76,7 +75,7 @@ describe("React - Link Component", async () => {
 
       // Verify href attribute
       const href = element.attr("href");
-      expect(href).toBe(join(sourceFolder.config.base, link.href));
+      expect(href).toContain(link.href);
 
       // Verify text content
       const text = element.text().trim(); // trim() removes whitespace

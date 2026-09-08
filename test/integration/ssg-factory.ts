@@ -1,7 +1,7 @@
 import { load } from "cheerio";
 import type { TestFunction } from "vitest";
 
-import type { FRAMEWORKS } from "@kosmojs/core";
+import type { FRONTENDS } from "@kosmojs/core";
 import { pathTokensFactory } from "@kosmojs/lib";
 
 import { routes } from "./@fixtures/generic/routes";
@@ -19,11 +19,11 @@ export type TestGroup = {
 };
 
 export const createTestGroups = async ({
-  framework,
+  frontend,
   template,
   renderModes = ["string", "stream"],
 }: {
-  framework: keyof typeof FRAMEWORKS;
+  frontend: keyof typeof FRONTENDS;
   template: (a: {
     name: string;
     paramsVariants: Array<Array<unknown>>;
@@ -33,10 +33,14 @@ export const createTestGroups = async ({
   const testGroups: Array<TestGroup> = [];
 
   for (const renderMode of renderModes) {
-    const project = await setupTestProject({
-      framework,
-      ssr: { renderMode },
-    });
+    const project = await setupTestProject(
+      { frontend },
+      {
+        frontend: {
+          ssr: { renderMode },
+        },
+      },
+    );
 
     await project.bootstrapProject();
 
@@ -94,7 +98,7 @@ export const createTestGroups = async ({
     });
 
     testGroups.push({
-      name: [framework, renderMode].join(":"),
+      name: [frontend, renderMode].join(":"),
       project,
       tests,
     });

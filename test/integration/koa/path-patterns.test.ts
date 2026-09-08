@@ -1,12 +1,9 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-import { pathResolver } from "@kosmojs/lib";
-
 import { apiRoutes } from "../@fixtures/generic/routes";
 import { setupTestProject } from "../setup";
 
 const {
-  sourceFolder,
   bootstrapProject,
   createApiRoutes,
   withApiResponse,
@@ -15,8 +12,6 @@ const {
 } = await setupTestProject({
   backend: "koa",
 });
-
-const { createImport } = pathResolver(sourceFolder);
 
 beforeAll(async () => {
   await bootstrapProject();
@@ -28,7 +23,7 @@ beforeAll(async () => {
     async ({ name }) => {
       return () => {
         return `
-          import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
+          import { defineRoute } from "_/api";
           export default defineRoute(({ GET }) => [
             GET((ctx) => {
               ctx.body = { route: "${name}", params: ctx.validated.params };

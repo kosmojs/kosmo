@@ -1,17 +1,17 @@
-import {
-  defineConfig,
-  reactGenerator,
-  h3Generator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/react-h3-tsq",
-  generators: [
-    reactGenerator({ tanstack: { query: true } }),
-    h3Generator(),
-    fetchGenerator(),
-    typeboxGenerator(),
-  ],
+  frontend: {
+    stack: "react",
+    base: "/react-h3-tsq",
+    fetch: true,
+    ssr: false,
+    ssg: false,
+    tanstack: { query: true },
+  },
+  backend: {
+    stack: "h3",
+    base: "/react-h3-tsq/api",
+  },
+  validation: true,
 });

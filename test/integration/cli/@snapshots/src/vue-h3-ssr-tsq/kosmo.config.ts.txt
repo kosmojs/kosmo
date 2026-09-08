@@ -1,19 +1,17 @@
-import {
-  defineConfig,
-  vueGenerator,
-  h3Generator,
-  ssrGenerator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/vue-h3-ssr-tsq",
-  generators: [
-    vueGenerator({ tanstack: { query: true } }),
-    h3Generator(),
-    ssrGenerator(),
-    fetchGenerator(),
-    typeboxGenerator(),
-  ],
+  frontend: {
+    stack: "vue",
+    base: "/vue-h3-ssr-tsq",
+    fetch: true,
+    ssr: true,
+    ssg: false,
+    tanstack: { query: true },
+  },
+  backend: {
+    stack: "h3",
+    base: "/vue-h3-ssr-tsq/api",
+  },
+  validation: true,
 });

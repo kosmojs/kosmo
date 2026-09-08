@@ -1,12 +1,17 @@
-import {
-  defineConfig,
-  svelteGenerator,
-  h3Generator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/svelte-h3",
-  generators: [svelteGenerator(), h3Generator(), fetchGenerator(), typeboxGenerator()],
+  frontend: {
+    stack: "svelte",
+    base: "/svelte-h3",
+    fetch: true,
+    ssr: false,
+    ssg: false,
+    tanstack: { query: false },
+  },
+  backend: {
+    stack: "h3",
+    base: "/svelte-h3/api",
+  },
+  validation: true,
 });

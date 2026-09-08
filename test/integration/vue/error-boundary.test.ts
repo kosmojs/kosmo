@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, test } from "vitest";
 
 import { createTestSuite, skip } from "../error-boundary";
 
-const framework = "vue";
+const frontend = "vue";
 
-const { project, tests } = await createTestSuite({ framework });
+const { project, tests } = await createTestSuite({ frontend });
 
 beforeAll(async () => {
   await project.startServer();
@@ -14,7 +14,7 @@ afterAll(async () => {
   await project.teardown();
 });
 
-describe(framework, { skip }, () => {
+describe(frontend, { skip }, () => {
   for (const [name, runner] of tests) {
     test(name, runner);
   }

@@ -5,7 +5,7 @@ import { defaults } from "@kosmojs/core";
 import { createTestGroups } from "../ssg-factory";
 
 const testGroups = await createTestGroups({
-  framework: "vue",
+  frontend: "vue",
   template({ name, paramsVariants }) {
     const staticParams = paramsVariants.length
       ? `

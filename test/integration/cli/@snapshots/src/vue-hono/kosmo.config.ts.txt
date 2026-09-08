@@ -1,12 +1,17 @@
-import {
-  defineConfig,
-  vueGenerator,
-  honoGenerator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/vue-hono",
-  generators: [vueGenerator(), honoGenerator(), fetchGenerator(), typeboxGenerator()],
+  frontend: {
+    stack: "vue",
+    base: "/vue-hono",
+    fetch: true,
+    ssr: false,
+    ssg: false,
+    tanstack: { query: false },
+  },
+  backend: {
+    stack: "hono",
+    base: "/vue-hono/api",
+  },
+  validation: true,
 });

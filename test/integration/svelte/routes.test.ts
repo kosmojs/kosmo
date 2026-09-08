@@ -10,7 +10,7 @@ const {
   createPageRoutes,
   startServer,
   teardown,
-} = await setupTestProject({ framework: "svelte" });
+} = await setupTestProject({ frontend: "svelte" });
 
 beforeAll(async () => {
   await bootstrapProject();

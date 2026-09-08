@@ -1,12 +1,17 @@
-import {
-  defineConfig,
-  solidGenerator,
-  koaGenerator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/solid-koa",
-  generators: [solidGenerator(), koaGenerator(), fetchGenerator(), typeboxGenerator()],
+  frontend: {
+    stack: "solid",
+    base: "/solid-koa",
+    fetch: true,
+    ssr: false,
+    ssg: false,
+    tanstack: { query: false },
+  },
+  backend: {
+    stack: "koa",
+    base: "/solid-koa/api",
+  },
+  validation: true,
 });

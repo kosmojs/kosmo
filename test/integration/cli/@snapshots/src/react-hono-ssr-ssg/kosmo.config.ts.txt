@@ -1,21 +1,17 @@
-import {
-  defineConfig,
-  reactGenerator,
-  honoGenerator,
-  ssrGenerator,
-  ssgGenerator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/react-hono-ssr-ssg",
-  generators: [
-    reactGenerator(),
-    honoGenerator(),
-    ssrGenerator(),
-    ssgGenerator(),
-    fetchGenerator(),
-    typeboxGenerator(),
-  ],
+  frontend: {
+    stack: "react",
+    base: "/react-hono-ssr-ssg",
+    fetch: true,
+    ssr: true,
+    ssg: true,
+    tanstack: { query: false },
+  },
+  backend: {
+    stack: "hono",
+    base: "/react-hono-ssr-ssg/api",
+  },
+  validation: true,
 });

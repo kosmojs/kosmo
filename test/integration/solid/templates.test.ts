@@ -28,16 +28,18 @@ const {
   createPageRoutes,
   startServer,
   teardown,
-} = await setupTestProject({
-  framework: "solid",
-  solid: {
-    templates: {
-      landing: landingTemplate,
-      "landing/**/*": landingTemplate,
-      "marketing/**/*": marketingTemplate,
+} = await setupTestProject(
+  { frontend: "solid" },
+  {
+    frontend: {
+      templates: {
+        landing: landingTemplate,
+        "landing/**/*": landingTemplate,
+        "marketing/**/*": marketingTemplate,
+      },
     },
   },
-});
+);
 
 beforeAll(async () => {
   await bootstrapProject();

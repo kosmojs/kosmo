@@ -1,6 +1,12 @@
-import { defineConfig, reactGenerator, ssrGenerator, ssgGenerator } from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/react-ssr-ssg",
-  generators: [reactGenerator(), ssrGenerator(), ssgGenerator()],
+  frontend: {
+    stack: "react",
+    base: "/react-ssr-ssg",
+    fetch: true,
+    ssr: true,
+    ssg: true,
+    tanstack: { query: false },
+  },
 });

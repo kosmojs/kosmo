@@ -26,7 +26,7 @@ const coreSlots: Array<keyof UseSlots> = [
 
 const createRouteName = (slot: keyof UseSlots) => slot.replace(/\W/g, "_");
 
-const { createPath, createImport } = pathResolver(sourceFolder);
+const { createPath } = pathResolver(sourceFolder);
 
 beforeAll(async () => {
   await bootstrapProject();
@@ -42,7 +42,7 @@ beforeAll(async () => {
   await writeFile(
     createPath.api("use.ts"),
     `
-      import { use } from "${createImport.libApi([], { origin: "src" })}";
+      import { use } from "_/api";
       export default [
         use(
           async (event, next) => {
@@ -82,7 +82,7 @@ beforeAll(async () => {
     await createApiRoutes([route], async () => {
       return () => {
         return `
-          import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
+          import { defineRoute } from "_/api";
           export default defineRoute(({ use, GET }) => [
             ${coreSlots.flatMap(coreSlotsMapper).join(",\n")},
             GET(() => {
@@ -115,7 +115,7 @@ beforeAll(async () => {
     await createApiRoutes([route], async () => {
       return () => {
         return `
-          import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
+          import { defineRoute } from "_/api";
           export default defineRoute(({ use, GET }) => [
             ${coreSlots.map(coreSlotsMapper).join(",\n")},
             GET(async (event) => {

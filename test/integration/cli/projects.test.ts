@@ -4,7 +4,6 @@ import { join, resolve } from "node:path";
 import crc from "crc/crc32";
 import { afterEach, describe, expect, test } from "vitest";
 
-import { DEFAULT_NAME } from "@kosmojs/cli";
 import { defaults } from "@kosmojs/core";
 
 import { createBin, createTempDir, run } from ".";
@@ -35,19 +34,13 @@ for (const projectName of [
 
       const result = await run(createBin, args, cwd);
 
-      const folderName =
-        args.indexOf("--name") >= 0
-          ? args[args.indexOf("--name") + 1]
-          : DEFAULT_NAME;
-
       const folderPath = resolve(
         cwd,
-        join(projectName, defaults.srcDir, folderName),
+        join(projectName, defaults.srcDir, "app"),
       );
 
       return {
         cwd,
-        folderName,
         folderPath,
         folderEntries: await readdir(folderPath).catch(() => []),
         folderConfig: await readFile(
@@ -58,14 +51,13 @@ for (const projectName of [
       };
     };
 
-    test("framework + backend", async () => {
+    test("frontend + backend", async () => {
       const { code, stderr, folderEntries } = await createProject([
         projectName,
-        "--framework",
+        "--frontend",
         "react",
         "--backend",
         "hono",
-        "-q",
       ]);
       expect(code, stderr).toEqual(0);
       expect(folderEntries).toContain("kosmo.config.ts");
@@ -73,13 +65,12 @@ for (const projectName of [
       expect(folderEntries).toContain("pages");
     });
 
-    test("--no-framework creates a backend-only folder", async () => {
+    test("--no-frontend creates a backend-only folder", async () => {
       const { code, folderEntries } = await createProject([
         projectName,
-        "--no-framework",
+        "--no-frontend",
         "--backend",
         "hono",
-        "-q",
       ]);
       expect(code).toEqual(0);
       expect(folderEntries).toContain("kosmo.config.ts");
@@ -90,10 +81,9 @@ for (const projectName of [
     test("--no-backend creates a frontend-only folder", async () => {
       const { code, folderEntries } = await createProject([
         projectName,
-        "--framework",
+        "--frontend",
         "mdx",
         "--no-backend",
-        "-q",
       ]);
       expect(code).toEqual(0);
       expect(folderEntries).toContain("kosmo.config.ts");
@@ -104,9 +94,8 @@ for (const projectName of [
     test("both negations create a bare folder", async () => {
       const { code, folderEntries } = await createProject([
         projectName,
-        "--no-framework",
+        "--no-frontend",
         "--no-backend",
-        "-q",
       ]);
       expect(code).toEqual(0);
       expect(folderEntries).toContain("kosmo.config.ts");
@@ -114,41 +103,21 @@ for (const projectName of [
       expect(folderEntries).not.toContain("pages");
     });
 
-    test("--name/--base override the folder defaults", async () => {
-      const { code, folderName, folderConfig } = await createProject([
-        projectName,
-        "--name",
-        "web",
-        "--base",
-        "/web",
-        "--framework",
-        "vue",
-        "--backend",
-        "koa",
-        "-q",
-      ]);
-      expect(code).toEqual(0);
-      expect(folderName).toEqual("web");
-      expect(folderConfig).toContain('base: "/web"');
-    });
-
-    test("missing framework fails", async () => {
+    test("missing frontend fails", async () => {
       const { code, stderr } = await createProject([
         projectName,
         "--backend",
         "hono",
-        "-q",
       ]);
       expect(code).not.toEqual(0);
-      expect(stderr).toMatch(/framework is required/);
+      expect(stderr).toMatch(/frontend is required/);
     });
 
     test("missing backend fails", async () => {
       const { code, stderr } = await createProject([
         projectName,
-        "--framework",
+        "--frontend",
         "react",
-        "-q",
       ]);
       expect(code).not.toEqual(0);
       expect(stderr).toMatch(/backend is required/);
@@ -156,55 +125,51 @@ for (const projectName of [
 
     test("missing project name fails", async () => {
       const { code, stderr } = await createProject([
-        "--framework",
+        "--frontend",
         "react",
         "--backend",
         "hono",
-        "-q",
       ]);
       expect(code).not.toEqual(0);
       expect(stderr).toMatch(/No project name provided/);
     });
 
-    test("invalid framework value fails, listing options", async ({
+    test("invalid frontend value fails, listing options", async ({
       expect,
     }) => {
       const { code, stderr } = await createProject([
         projectName,
-        "--framework",
+        "--frontend",
         "angular",
         "--backend",
         "hono",
-        "-q",
       ]);
       expect(code).not.toEqual(0);
-      expect(stderr).toMatch(/invalid framework/i);
+      expect(stderr).toMatch(/invalid frontend/i);
       expect(stderr).toMatch(/react/);
     });
 
     test("invalid backend value fails, listing options", async () => {
       const { code, stderr } = await createProject([
         projectName,
-        "--framework",
+        "--frontend",
         "solid",
         "--backend",
         "x",
-        "-q",
       ]);
       expect(code).not.toEqual(0);
       expect(stderr).toMatch(/invalid backend/i);
       expect(stderr).toMatch(/hono/);
     });
 
-    test("framework value + negation is a conflict", async () => {
+    test("frontend value + negation is a conflict", async () => {
       const { code, stderr } = await createProject([
         projectName,
-        "--framework",
+        "--frontend",
         "vue",
-        "--no-framework",
+        "--no-frontend",
         "--backend",
         "h3",
-        "-q",
       ]);
       expect(code).not.toEqual(0);
       expect(stderr).toMatch(/ERROR/);
@@ -213,12 +178,11 @@ for (const projectName of [
     test("backend value + negation is a conflict", async () => {
       const { code, stderr } = await createProject([
         projectName,
-        "--framework",
+        "--frontend",
         "react",
         "--backend",
         "hono",
         "--no-backend",
-        "-q",
       ]);
       expect(code).not.toEqual(0);
       expect(stderr).toMatch(/ERROR/);
@@ -228,11 +192,10 @@ for (const projectName of [
       const { code, stderr } = await createProject([
         projectName,
         "--unknown-flag",
-        "--framework",
+        "--frontend",
         "react",
         "--backend",
         "hono",
-        "-q",
       ]);
       expect(code).not.toEqual(0);
       expect(stderr).toMatch("Unknown option '--unknown-flag'");
@@ -242,16 +205,15 @@ for (const projectName of [
     test("existing dir fails", async () => {
       const { code, cwd } = await createProject([
         projectName,
-        "--no-framework",
+        "--no-frontend",
         "--no-backend",
-        "-q",
       ]);
 
       expect(code).toEqual(0);
 
       {
         const { code, stderr } = await createProject(
-          [projectName, "--no-framework", "--no-backend", "-q"],
+          [projectName, "--no-frontend", "--no-backend"],
           cwd,
         );
         expect(code).not.toEqual(0);
@@ -262,16 +224,15 @@ for (const projectName of [
     test("existing dir succeeds with --overwrite", async () => {
       const { code, cwd } = await createProject([
         projectName,
-        "--no-framework",
+        "--no-frontend",
         "--no-backend",
-        "-q",
       ]);
 
       expect(code).toEqual(0);
 
       {
         const { code } = await createProject(
-          [projectName, "--no-framework", "--no-backend", "--overwrite", "-q"],
+          [projectName, "--no-frontend", "--no-backend", "--overwrite"],
           cwd,
         );
         expect(code).toEqual(0);

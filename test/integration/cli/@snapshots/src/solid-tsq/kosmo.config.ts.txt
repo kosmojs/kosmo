@@ -1,6 +1,12 @@
-import { defineConfig, solidGenerator } from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/solid-tsq",
-  generators: [solidGenerator({ tanstack: { query: true } })],
+  frontend: {
+    stack: "solid",
+    base: "/solid-tsq",
+    fetch: true,
+    ssr: false,
+    ssg: false,
+    tanstack: { query: true },
+  },
 });

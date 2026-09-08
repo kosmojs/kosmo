@@ -17,7 +17,8 @@ import { createProject, createSourceFolder } from "@kosmojs/cli";
 import {
   BACKENDS,
   defaults,
-  FRAMEWORKS,
+  type FolderConfig,
+  FRONTENDS,
   type ProjectSettings,
   type SourceFolder,
 } from "@kosmojs/core";
@@ -74,16 +75,15 @@ let portCursor = 0;
 export const setupTestProject = async (
   setup: {
     mode?: ProvidedContext["MODE"];
-    framework?: keyof typeof FRAMEWORKS | "random";
+    frontend?: keyof typeof FRONTENDS | "random";
     backend?: keyof typeof BACKENDS;
     tsq?: boolean;
     skip?: boolean;
-  } & Partial<
-    Record<
-      keyof typeof FRAMEWORKS | keyof typeof BACKENDS | "ssr",
-      Record<string, unknown>
-    >
-  >,
+  },
+  folderDefaults?: {
+    frontend?: Omit<FolderConfig["frontend"], "stack" | "base">;
+    backend?: Omit<FolderConfig["backend"], "stack" | "base">;
+  },
 ) => {
   const devPort = await findFreePort();
   const baseURL = `http://localhost:${devPort}`;
@@ -95,26 +95,28 @@ export const setupTestProject = async (
   const mode = setup.mode || inject("MODE");
 
   const {
+    frontend: maybeFrontend,
     backend = ["ssr", "ssg"].includes(mode || "") ? pickBackend() : undefined,
     tsq,
     skip,
-    ...generatorOptions
   } = setup;
 
-  const framework =
-    setup.framework === "random"
-      ? Object.keys(FRAMEWORKS)[
-          Math.floor(Math.random() * Object.keys(FRAMEWORKS).length)
-        ]
-      : setup.framework;
+  const frontend =
+    maybeFrontend === "random"
+      ? (Object.keys(FRONTENDS)[
+          Math.floor(Math.random() * Object.keys(FRONTENDS).length)
+        ] as keyof typeof FRONTENDS)
+      : maybeFrontend;
 
-  const baseVariants = ["/", tempDir, ...(framework ? [`/${framework}`] : [])];
+  const baseVariants = ["/", tempDir, ...(frontend ? [`/${frontend}`] : [])];
+
+  const base = baseVariants[Math.floor(Math.random() * baseVariants.length)];
 
   const sourceFolder: SourceFolder = {
     name: "test",
     config: {
-      base: baseVariants[Math.floor(Math.random() * baseVariants.length)],
-      apiBase: "/api",
+      ...(frontend ? { frontend: { stack: frontend, base } } : {}),
+      ...(backend ? { backend: { stack: backend, base: `${base}/api` } } : {}),
       generators: [],
     },
     root: projectRoot,
@@ -151,14 +153,14 @@ export const setupTestProject = async (
     file: string,
     templateFactory?: PageTemplateFactory,
   ) => {
-    const fileExt = framework
+    const fileExt = frontend
       ? {
           solid: "tsx",
           react: "tsx",
           vue: "vue",
           svelte: "svelte",
           mdx: "mdx",
-        }[framework]
+        }[frontend]
       : "ts";
 
     const filePath = createPath.pages(`${name}/${file}.${fileExt}`);
@@ -224,7 +226,12 @@ export const setupTestProject = async (
     }
 
     if (mode === "ssg") {
-      const { base } = sourceFolder.config;
+      const base = sourceFolder.config.frontend?.base;
+
+      if (!base) {
+        throw new Error("frontend not configured");
+      }
+
       const app = new Hono();
 
       app.use(
@@ -278,15 +285,20 @@ export const setupTestProject = async (
       cookies?: Record<string, string> | undefined;
     },
   ) => {
+    const base = sourceFolder.config.frontend?.base;
+
+    if (!base) {
+      throw new Error("frontend not configured");
+    }
+
     const path = Array.isArray(pathSource)
       ? createRoutePath(pathSource[0], pathSource[1])
       : pathSource;
 
     const url = [
+      //
       baseURL,
-      path === ""
-        ? sourceFolder.config.base
-        : join(sourceFolder.config.base, path as never),
+      path === "" ? base : join(base, path as never),
     ].join("");
 
     let maybeContent: string | undefined;
@@ -390,10 +402,17 @@ export const setupTestProject = async (
       searchParams,
     }: { method?: Method; searchParams?: Record<string, string | number> } = {},
   ) => {
+    const base = sourceFolder.config.frontend?.base;
+
+    if (!base) {
+      throw new Error("frontend not configured");
+    }
+
     const path = Array.isArray(pathSource)
       ? createRoutePath(pathSource[0], pathSource[1])
       : pathSource;
-    const url = baseURL + join(sourceFolder.config.base, path as never);
+
+    const url = baseURL + join(base, path as never);
     const response = await httpClient(url, { method, searchParams });
     return { response };
   };
@@ -409,11 +428,19 @@ export const setupTestProject = async (
       searchParams,
     }: { method?: Method; searchParams?: Record<string, string | number> } = {},
   ) => {
+    const base = sourceFolder.config.backend?.base;
+
+    if (!base) {
+      throw new Error("backend not configured");
+    }
+
     const path = Array.isArray(pathSource)
       ? createRoutePath(pathSource[0], pathSource[1])
       : pathSource;
-    const url = baseURL + join(sourceFolder.config.base, "api", path as never);
+
+    const url = baseURL + join(base, path as never);
     const response = await httpClient(url, { method, searchParams });
+
     return { response };
   };
 
@@ -457,16 +484,22 @@ export const setupTestProject = async (
         projectRoot,
         {
           name: sourceFolder.name,
-          base: sourceFolder.config.base,
-          ...(framework ? ({ framework } as never) : {}),
-          ...(backend ? { backend } : {}),
-          ...(tsq ? { tsq } : {}),
+          frontend,
+          backend,
+          tsq,
           ssr: mode === "ssr",
           ssg: mode === "ssg",
         },
-        // the whole map, keyed by generator name - createKosmoConfig picks
-        // options for framework and backend generators by their own keys
-        generatorOptions as never,
+        {
+          frontend: {
+            ...folderDefaults?.frontend,
+            base,
+          } as never,
+          backend: {
+            ...folderDefaults?.backend,
+            base: sourceFolder.config.backend?.base,
+          } as never,
+        },
       );
 
       await mkdir(createPath.api(), { recursive: true });
@@ -481,18 +514,18 @@ export const setupTestProject = async (
         "utf8",
       );
 
-      if (framework) {
+      if (frontend) {
         const ext = {
           react: "tsx",
           solid: "tsx",
           vue: "vue",
           svelte: "svelte",
           mdx: "mdx",
-        }[framework];
+        }[frontend];
 
         await writeFile(
           createPath.src(`app.${ext}`),
-          templates[`${framework as never}App`],
+          templates[`${frontend as never}App`],
           "utf8",
         );
       }

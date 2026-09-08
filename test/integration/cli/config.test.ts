@@ -4,12 +4,7 @@ import { resolve } from "node:path";
 import { format } from "oxfmt";
 import { afterAll, describe, test } from "vitest";
 
-import {
-  BACKENDS,
-  DEFAULT_DIST,
-  DEFAULT_PORT,
-  FRAMEWORKS,
-} from "@kosmojs/core";
+import { BACKENDS, DEFAULT_DIST, DEFAULT_PORT, FRONTENDS } from "@kosmojs/core";
 
 import { createBin, createTempDir, kosmoBin, run } from ".";
 
@@ -28,7 +23,7 @@ describe("should create the project and folders", async () => {
 
     await run(
       createBin,
-      [projectName, "--no-framework", "--no-backend"],
+      [projectName, "--no-frontend", "--no-backend"],
       tempDir,
     );
 
@@ -40,49 +35,45 @@ describe("should create the project and folders", async () => {
     expect(packageJson.distDir).toEqual(DEFAULT_DIST);
   });
 
-  const folders = [...Object.keys(FRAMEWORKS), undefined].flatMap(
-    (framework) => {
-      return [...Object.keys(BACKENDS), undefined].flatMap((backend) => {
-        if (framework) {
-          return ["ssr", undefined].flatMap((ssr) => {
-            return ["ssg", undefined].flatMap((ssg) => {
-              return ["tsq", undefined].flatMap((tsq) => {
-                const name = [framework, backend, ssr, ssg, tsq]
-                  .filter(Boolean)
-                  .join("-");
-                return [
-                  {
-                    name,
-                    base: `/${name}`,
-                    framework: framework as string | undefined,
-                    backend,
-                    ssr,
-                    ssg,
-                    tsq,
-                  },
-                ];
-              });
+  const folders = [...Object.keys(FRONTENDS), undefined].flatMap((frontend) => {
+    return [...Object.keys(BACKENDS), undefined].flatMap((backend) => {
+      if (frontend) {
+        return ["ssr", undefined].flatMap((ssr) => {
+          return ["ssg", undefined].flatMap((ssg) => {
+            return ["tsq", undefined].flatMap((tsq) => {
+              const name = [frontend, backend, ssr, ssg, tsq]
+                .filter(Boolean)
+                .join("-");
+              return [
+                {
+                  name,
+                  frontend: frontend as string | undefined,
+                  backend,
+                  ssr,
+                  ssg,
+                  tsq,
+                },
+              ];
             });
           });
-        }
-        return backend
-          ? [
-              {
-                name: backend,
-                base: `/${backend}`,
-                framework,
-                backend,
-                ssr: undefined,
-                ssg: undefined,
-                tsq: undefined,
-              },
-            ]
-          : [];
-      });
-    },
-  );
+        });
+      }
+      return backend
+        ? [
+            {
+              name: backend,
+              frontend,
+              backend,
+              ssr: undefined,
+              ssg: undefined,
+              tsq: undefined,
+            },
+          ]
+        : [];
+    });
+  });
 
-  for (const { name, base, framework, backend, ssr, ssg, tsq } of folders) {
+  for (const { name, frontend, backend, ssr, ssg, tsq } of folders) {
     test(`create ${name} folder`, async ({ expect }) => {
       // the bin directly rather than the project's folder script:
       // the scaffolded project has no node_modules installed
@@ -90,16 +81,12 @@ describe("should create the project and folders", async () => {
         kosmoBin,
         [
           "folder",
-          "--name",
           name,
-          "--base",
-          base,
-          ...(framework ? ["--framework", framework] : ["--no-framework"]),
+          ...(frontend ? ["--frontend", frontend] : ["--no-frontend"]),
           ...(backend ? ["--backend", backend] : ["--no-backend"]),
           ...(ssr ? ["--ssr"] : []),
           ...(ssg ? ["--ssg"] : []),
           ...(tsq ? ["--tsq"] : []),
-          "-q",
         ],
         projectRoot,
       );

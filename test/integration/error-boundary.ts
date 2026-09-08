@@ -1,7 +1,7 @@
 import { load } from "cheerio";
 import { inject, type TestFunction } from "vitest";
 
-import type { FRAMEWORKS } from "@kosmojs/core";
+import type { FRONTENDS } from "@kosmojs/core";
 import { pathResolver, render, renderToFile } from "@kosmojs/lib";
 
 import * as templates from "./@fixtures/error-boundary/templates";
@@ -9,8 +9,8 @@ import { setupTestProject } from "./setup";
 
 const mode = inject("MODE");
 
-// Error boundaries catch on the client in every framework; on the server the
-// behavior diverges by framework, so these assertions only hold under CSR.
+// Error boundaries catch on the client in every frontend; on the server the
+// behavior diverges by frontend, so these assertions only hold under CSR.
 export const skip = mode !== "csr";
 
 const BOUNDARY_MESSAGE = "BOUNDARY_CAUGHT_ERROR";
@@ -23,12 +23,12 @@ const routes = [
 ];
 
 export const createTestSuite = async ({
-  framework,
+  frontend,
 }: {
-  framework: keyof typeof FRAMEWORKS;
+  frontend: keyof typeof FRONTENDS;
 }) => {
   const project = await setupTestProject({
-    framework,
+    frontend,
     skip,
   });
 
@@ -43,7 +43,7 @@ export const createTestSuite = async ({
         BOUNDARY_MESSAGE,
         THROW_MESSAGE,
       };
-      if (framework === "mdx") {
+      if (frontend === "mdx") {
         await renderToFile(
           createPath.src("ErrorBoundary.tsx"),
           templates.mdxWrapper,
@@ -51,12 +51,12 @@ export const createTestSuite = async ({
         );
       }
       if (file === "layout") {
-        return () => render(templates[`${framework}Layout`], context);
+        return () => render(templates[`${frontend}Layout`], context);
       }
       if (name === "guarded/boom") {
-        return () => render(templates[`${framework}Boom`], context);
+        return () => render(templates[`${frontend}Boom`], context);
       }
-      return () => render(templates[`${framework}Ok`], context);
+      return () => render(templates[`${frontend}Ok`], context);
     });
   }
 

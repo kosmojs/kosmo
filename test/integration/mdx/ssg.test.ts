@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, test } from "vitest";
 import { createTestGroups } from "../ssg-factory";
 
 const testGroups = await createTestGroups({
-  framework: "mdx",
+  frontend: "mdx",
   template({ name, paramsVariants }) {
     const staticParams = paramsVariants.length
       ? [

@@ -1,17 +1,17 @@
-import {
-  defineConfig,
-  reactGenerator,
-  koaGenerator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/react-koa-tsq",
-  generators: [
-    reactGenerator({ tanstack: { query: true } }),
-    koaGenerator(),
-    fetchGenerator(),
-    typeboxGenerator(),
-  ],
+  frontend: {
+    stack: "react",
+    base: "/react-koa-tsq",
+    fetch: true,
+    ssr: false,
+    ssg: false,
+    tanstack: { query: true },
+  },
+  backend: {
+    stack: "koa",
+    base: "/react-koa-tsq/api",
+  },
+  validation: true,
 });

@@ -1,12 +1,11 @@
-import { defineConfig, mdxGenerator, ssrGenerator, ssgGenerator } from "@kosmojs/dev";
-import frontmatterPlugin from "remark-frontmatter";
-import mdxFrontmatterPlugin from "remark-mdx-frontmatter";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/mdx-ssr-ssg-tsq",
-  generators: [
-    mdxGenerator({ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }),
-    ssrGenerator(),
-    ssgGenerator(),
-  ],
+  frontend: {
+    stack: "mdx",
+    base: "/mdx-ssr-ssg-tsq",
+    fetch: true,
+    ssr: true,
+    ssg: true,
+  },
 });

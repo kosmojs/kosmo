@@ -1,12 +1,10 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 import { HTTPMethods } from "@kosmojs/core/api";
-import { pathResolver } from "@kosmojs/lib";
 
 import { setupTestProject } from "../setup";
 
 const {
-  sourceFolder,
   bootstrapProject,
   createApiRoutes,
   withApiResponse,
@@ -15,8 +13,6 @@ const {
 } = await setupTestProject({
   backend: "koa",
 });
-
-const { createImport } = pathResolver(sourceFolder);
 
 const methods = Object.keys(HTTPMethods);
 
@@ -32,7 +28,7 @@ beforeAll(async () => {
     async ({ name }) => {
       return () => {
         return `
-          import { defineRoute } from "${createImport.libApi([], { origin: "src" })}";
+          import { defineRoute } from "_/api";
           export default defineRoute(({ ${name} }) => [
             ${name}<{ query: { page?: number } }>((ctx) => {
               ctx.body = { method: "${name}", page: ctx.validated.query.page };

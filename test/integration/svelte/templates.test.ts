@@ -22,16 +22,18 @@ const {
   createPageRoutes,
   startServer,
   teardown,
-} = await setupTestProject({
-  framework: "svelte",
-  svelte: {
-    templates: {
-      landing: landingTemplate,
-      "landing/**/*": landingTemplate,
-      "marketing/**/*": marketingTemplate,
+} = await setupTestProject(
+  { frontend: "svelte" },
+  {
+    frontend: {
+      templates: {
+        landing: landingTemplate,
+        "landing/**/*": landingTemplate,
+        "marketing/**/*": marketingTemplate,
+      },
     },
   },
-});
+);
 
 beforeAll(async () => {
   await bootstrapProject();

@@ -1,6 +1,9 @@
-import { defineConfig, koaGenerator, fetchGenerator, typeboxGenerator } from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/koa",
-  generators: [koaGenerator(), fetchGenerator(), typeboxGenerator()],
+  backend: {
+    stack: "koa",
+    base: "/koa/api",
+  },
+  validation: true,
 });

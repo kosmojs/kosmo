@@ -1,6 +1,12 @@
-import { defineConfig, vueGenerator, ssrGenerator, ssgGenerator } from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/vue-ssr-ssg",
-  generators: [vueGenerator(), ssrGenerator(), ssgGenerator()],
+  frontend: {
+    stack: "vue",
+    base: "/vue-ssr-ssg",
+    fetch: true,
+    ssr: true,
+    ssg: true,
+    tanstack: { query: false },
+  },
 });

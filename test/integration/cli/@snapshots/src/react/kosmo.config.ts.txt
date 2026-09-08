@@ -1,6 +1,12 @@
-import { defineConfig, reactGenerator } from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/react",
-  generators: [reactGenerator()],
+  frontend: {
+    stack: "react",
+    base: "/react",
+    fetch: true,
+    ssr: false,
+    ssg: false,
+    tanstack: { query: false },
+  },
 });

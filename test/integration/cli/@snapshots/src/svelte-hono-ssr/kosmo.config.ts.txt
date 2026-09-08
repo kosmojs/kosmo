@@ -1,19 +1,17 @@
-import {
-  defineConfig,
-  svelteGenerator,
-  honoGenerator,
-  ssrGenerator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/svelte-hono-ssr",
-  generators: [
-    svelteGenerator(),
-    honoGenerator(),
-    ssrGenerator(),
-    fetchGenerator(),
-    typeboxGenerator(),
-  ],
+  frontend: {
+    stack: "svelte",
+    base: "/svelte-hono-ssr",
+    fetch: true,
+    ssr: true,
+    ssg: false,
+    tanstack: { query: false },
+  },
+  backend: {
+    stack: "hono",
+    base: "/svelte-hono-ssr/api",
+  },
+  validation: true,
 });

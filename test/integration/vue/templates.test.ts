@@ -26,16 +26,18 @@ const {
   createPageRoutes,
   startServer,
   teardown,
-} = await setupTestProject({
-  framework: "vue",
-  vue: {
-    templates: {
-      landing: landingTemplate,
-      "landing/**/*": landingTemplate,
-      "marketing/**/*": marketingTemplate,
+} = await setupTestProject(
+  { frontend: "vue" },
+  {
+    frontend: {
+      templates: {
+        landing: landingTemplate,
+        "landing/**/*": landingTemplate,
+        "marketing/**/*": marketingTemplate,
+      },
     },
   },
-});
+);
 
 beforeAll(async () => {
   await bootstrapProject();

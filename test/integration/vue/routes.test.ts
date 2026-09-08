@@ -10,7 +10,7 @@ const {
   createPageRoutes,
   startServer,
   teardown,
-} = await setupTestProject({ framework: "vue" });
+} = await setupTestProject({ frontend: "vue" });
 
 beforeAll(async () => {
   await bootstrapProject();

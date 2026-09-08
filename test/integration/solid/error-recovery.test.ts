@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, test } from "vitest";
 
 import { createTestGroups, skip } from "../error-recovery";
 
-const testGroups = await createTestGroups({ framework: "solid" });
+const testGroups = await createTestGroups({ frontend: "solid" });
 
 beforeAll(async () => {
   for (const { project } of testGroups) {

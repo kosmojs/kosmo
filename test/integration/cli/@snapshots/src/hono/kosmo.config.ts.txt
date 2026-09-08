@@ -1,6 +1,9 @@
-import { defineConfig, honoGenerator, fetchGenerator, typeboxGenerator } from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/hono",
-  generators: [honoGenerator(), fetchGenerator(), typeboxGenerator()],
+  backend: {
+    stack: "hono",
+    base: "/hono/api",
+  },
+  validation: true,
 });

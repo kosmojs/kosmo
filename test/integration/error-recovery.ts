@@ -4,7 +4,7 @@ import { load } from "cheerio";
 import got from "got";
 import { inject, type TestFunction } from "vitest";
 
-import type { FRAMEWORKS } from "@kosmojs/core";
+import type { FRONTENDS } from "@kosmojs/core";
 import { render } from "@kosmojs/lib";
 
 import * as templates from "./@fixtures/error-recovery/templates";
@@ -37,27 +37,33 @@ const apiRoutes = [
 ];
 
 export const createTestGroups = async ({
-  framework,
-  tsqModes = framework === "mdx" // no tanstack query on mdx
+  frontend,
+  tsqModes = frontend === "mdx" // no tanstack query on mdx
     ? [false]
     : [false, true],
 }: {
-  framework: keyof typeof FRAMEWORKS;
+  frontend: keyof typeof FRONTENDS;
   tsqModes?: Array<boolean>;
 }) => {
   const testGroups: Array<TestGroup> = [];
 
   for (const tsq of tsqModes) {
-    const project = await setupTestProject({
-      framework,
-      backend: "hono",
-      tsq,
-      skip,
-      ssr: { renderMode: "string" },
-    });
+    const project = await setupTestProject(
+      {
+        frontend,
+        backend: "hono",
+        tsq,
+        skip,
+      },
+      {
+        frontend: {
+          ssr: { renderMode: "string" },
+        },
+      },
+    );
 
     const group: TestGroup = {
-      name: [framework, tsq ? "tsq" : "plain"].join(":"),
+      name: [frontend, tsq ? "tsq" : "plain"].join(":"),
       project,
       tests: [],
     };
@@ -84,7 +90,7 @@ export const createTestGroups = async ({
     await createPageRoutes(routes, async ({ name }) => {
       const endpoint = name === "recover/fail" ? "fail" : "ok";
       return () =>
-        render(templates[`${framework}Page${variant}` as never], {
+        render(templates[`${frontend}Page${variant}` as never], {
           OK_MESSAGE,
           endpoint,
         });
@@ -128,7 +134,13 @@ const serverHtml = async (
   project: Awaited<ReturnType<typeof setupTestProject>>,
   path: string,
 ) => {
-  return got(project.baseURL + join(project.sourceFolder.config.base, path), {
+  const base = project.sourceFolder.config.frontend?.base;
+
+  if (!base) {
+    throw new Error("frontend not configured");
+  }
+
+  return got(project.baseURL + join(base, path), {
     retry: { limit: 0 },
     timeout: { request: 500 },
   }).text();

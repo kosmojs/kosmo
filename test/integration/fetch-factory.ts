@@ -4,7 +4,7 @@ import { load } from "cheerio";
 import crc from "crc/crc32";
 import { inject, type TestFunction } from "vitest";
 
-import { BACKENDS, type FRAMEWORKS } from "@kosmojs/core";
+import { BACKENDS, type FRONTENDS } from "@kosmojs/core";
 import { pathResolver, render, renderToFile } from "@kosmojs/lib";
 
 import { dependencies } from "../package.json";
@@ -21,7 +21,7 @@ export type TestGroup = {
 const mode = inject("MODE");
 
 export const createTestGroups = async (opt: {
-  framework: keyof typeof FRAMEWORKS;
+  frontend: keyof typeof FRONTENDS;
   backends?: Array<keyof typeof BACKENDS>;
   renderModes?: Array<"string" | "stream">;
   tsqModes?: Array<boolean>;
@@ -30,16 +30,14 @@ export const createTestGroups = async (opt: {
 }) => {
   const testGroups: Array<TestGroup> = [];
 
-  const { framework } = opt;
+  const { frontend } = opt;
 
   const renderModes =
     mode === "ssr" //
       ? opt?.renderModes || ["string", "stream"]
       : [undefined];
 
-  const tsqModes = Array.isArray(opt?.tsqModes) //
-    ? opt.tsqModes
-    : [false, true];
+  const tsqModes = opt.tsqModes || [false, true];
 
   for (const backend of opt?.backends || Object.keys(BACKENDS)) {
     for (const renderMode of renderModes) {
@@ -47,14 +45,14 @@ export const createTestGroups = async (opt: {
         if (renderMode === "stream") {
           // mdx has no stream path, and svelte/server exposes only render() -
           // the svelte generator is string-only SSR (serverRenderFactory<false>)
-          if (["mdx", "svelte"].includes(framework)) {
+          if (["mdx", "svelte"].includes(frontend)) {
             continue;
           }
         }
 
         if (tsq) {
           // no tanstack query on mdx
-          if (framework === "mdx") {
+          if (frontend === "mdx") {
             continue;
           }
         }
@@ -62,19 +60,14 @@ export const createTestGroups = async (opt: {
         const project = await setupTestProject({
           mode,
           backend: backend as never,
-          framework: framework as never,
+          frontend: frontend as never,
           tsq,
           ...(renderMode ? { ssr: { renderMode } } : {}),
           ...(opt?.skip ? { skip: opt.skip } : {}),
         });
 
         const group: TestGroup = {
-          name: [
-            backend,
-            framework,
-            renderMode || mode,
-            ...(tsq ? ["tsq"] : []),
-          ].join(":"),
+          name: [backend, frontend, renderMode, tsq].filter(Boolean).join(":"),
           project,
           tests: [],
         };
@@ -135,7 +128,7 @@ export const createTestGroups = async (opt: {
                   await createPageRoutes([{ name: path, file }], async () => {
                     return () => {
                       return renderPageFile({
-                        framework: framework as never,
+                        frontend: frontend as never,
                         tsq,
                         route: route as never,
                         path,
@@ -285,7 +278,7 @@ const renderApiFile = (
 };
 
 const renderPageFile = (data: {
-  framework: keyof typeof FRAMEWORKS;
+  frontend: keyof typeof FRONTENDS;
   tsq: boolean;
   route: keyof typeof routes;
   path: string;
@@ -305,11 +298,11 @@ const renderPageFile = (data: {
   const template =
     data.file === "index" //
       ? data.tsq
-        ? `${data.framework}PageTsq`
-        : `${data.framework}Page`
+        ? `${data.frontend}PageTsq`
+        : `${data.frontend}Page`
       : data.tsq
-        ? `${data.framework}LayoutTsq`
-        : `${data.framework}Layout`;
+        ? `${data.frontend}LayoutTsq`
+        : `${data.frontend}Layout`;
 
   return render(templates[template as never], {
     ...data,
