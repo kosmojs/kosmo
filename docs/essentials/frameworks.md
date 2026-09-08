@@ -45,7 +45,7 @@ Koa for a mature Node ecosystem - and it is the only backend with complete mixed
 | Data loading export | `loader` | `preload` | `loader` | `loader` | `loader` |
 | Reading loaded data | `useLoaderData` *(react-router)* | `createAsync` | `useLoaderData` *(`_/use`)* | `useLoaderData` *(`_/use`)* | `useLoaderData` *(`_/use`)* |
 | Needs `<Suspense>` | ❌ | ✅ | ❌ | ❌ | ❌ |
-| [`_/use` module](/frontend/hooks) | ❌ | ❌ | ⚠️ `useLoaderData` only | ✅ | ✅ |
+| [_/use module](/frontend/hooks) | ❌ | ❌ | ⚠️ `useLoaderData` only | ✅ | ✅ |
 | [Streaming SSR](/frontend/server-side-render#stream-rendering) | ✅ | ✅ | ✅ | ❌ | ❌ |
 | [SSG](/frontend/static-site-generation) | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [TanStack Query](/frontend/tanstack-query) | ✅ | ✅ | ✅ | ✅ | ❌ |
@@ -60,7 +60,7 @@ Koa for a mature Node ecosystem - and it is the only backend with complete mixed
 `KosmoJS` ships no boundary for you - scoping it is your call.
 [Why&nbsp;›](/frontend/data-preload#suspense-is-your-responsibility)
 - **Svelte and MDX render to strings only.** They implement `renderToString` but not `renderToStream`,
-and their folders don't accept the streaming [`renderMode`](/frontend/server-side-render#selecting-the-render-mode).
+and their folders don't accept the streaming [renderMode](/frontend/server-side-render#selecting-the-render-mode).
 - **MDX has no client runtime**, so TanStack Query is unavailable there. Fetch with an MDX `loader` instead.
 - **Svelte does not use SvelteKit.** `KosmoJS` uses only Svelte's UI layer,
 so data loading is the `loader` export, not SvelteKit's `load`, and there are no `+page` files.

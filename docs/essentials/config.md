@@ -1,12 +1,12 @@
 ---
 title: Configuration
-description: Complete reference for kosmo.config.ts - source folder options,
-    the full generator list with their options, generator ordering, and the project-level settings in package.json.
+description: Complete reference for kosmo.config.ts - the frontend, backend and validation
+    blocks, base URLs, stack plugins and vite options, and the project-level settings in package.json.
 head:
   - - meta
     - name: keywords
-      content: kosmo.config.ts, defineConfig, generators, apiBase, base url, devPort, previewPort, distDir,
-        vite config, reactGenerator, ssrGenerator, openapiGenerator, typeboxGenerator, refineTypeName
+      content: kosmo.config.ts, defineConfig, frontend stack, backend stack, base url, devPort,
+        previewPort, distDir, stack plugin, viteConfig, validation, openapi, ssr, ssg, tanstack query
 ---
 
 Every source folder owns a `kosmo.config.ts`. It is the one file that decides what that folder *is* -
@@ -14,311 +14,323 @@ which frameworks it runs, where it is served from, and what gets built for it.
 
 ```txt
 my-app/
-├── package.json                    ← project-level settings
+├── package.json                    <- project-level settings
 └── src/
     ├── front/
-    │   └── kosmo.config.ts         ← this folder's config
+    │   └── kosmo.config.ts         <- this folder's config
     └── admin/
-        └── kosmo.config.ts         ← independent of front's
+        └── kosmo.config.ts         <- independent of front's
 ```
 
 There is no project-wide `kosmo.config.ts`, and no `vite.config.ts`:
-**`kosmo.config.ts` is your Vite config for that folder** (see [Vite options](#vite-options)).
+each side of the folder carries its own [viteConfig](#frontend-vite-config).
 
 ## The Shape
 
-```ts [src/front/kosmo.config.ts]
-import { defineConfig, reactGenerator, ssrGenerator } from "@kosmojs/dev";
+The config is declarative - you describe what the folder has:
+
+```ts [src/vue/kosmo.config.ts]
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  base: "/",
-  generators: [reactGenerator(), ssrGenerator()],
+  frontend: {
+    stack: "vue",
+    base: "/vue",
+    fetch: true,
+    ssr: true,
+    ssg: false,
+    tanstack: { query: false },
+  },
+  backend: {
+    stack: "hono",
+    base: "/vue/api",
+  },
+  validation: true,
 });
 ```
 
-`base` is the only required option. Everything else has a default.
+Three top-level keys, all optional: `frontend`, `backend`, `validation`.
+A folder can have both sides, or just one.
 
-## Folder Options
+Every feature key follows the same pattern: a plain value turns it on with defaults,
+or an object turns it on and hands KosmoJS the instance to use -
+`stack` takes a `plugin`, `ssr` / `ssg` / `fetch` / `validation` take a `generator`.
 
-### `base` - required
+`defineConfig` turns that description into the right set of generators, in the right order,
+and is the only import a folder config needs.
 
-The URL this source folder is served from.
+## frontend
+
+### frontend.stack - required
+
+`"react"` · `"solid"` · `"vue"` · `"svelte"` · `"mdx"`
+
+A bare name runs that stack's Vite plugin with defaults:
 
 ```ts
-base: "/"          // front-end app at the root
-base: "/admin"     // admin dashboard under /admin
+stack: "react"
 ```
 
-It also accepts a per-environment map, resolved against `NODE_ENV` at config load:
+To configure it, construct the plugin yourself and pass it alongside the name:
 
 ```ts
-base: {
-  development: "/",
-  production: "/app",
+import react from "@vitejs/plugin-react";
+
+stack: {
+  name: "react",
+  plugin: react({ jsxRuntime: "automatic" }),
 }
 ```
 
-Recognized keys are `development`, `test`, `stage` and `production`,
-plus any custom `NODE_ENV` value you use.
-A missing base for the active environment is a startup error, not a silent fallback.
+`name` is what KosmoJS routes on - which stack runs, which page extensions it watches,
+the `jsxImportSource` it writes into your tsconfig.
+`plugin` is handed to Vite as you built it, alongside anything KosmoJS adds for that stack.
 
-### `apiBase`
+The default plugin each stack resolves to:
 
-Prefix for this folder's API routes. **Default: `"/api"`.**
+| stack | default plugin |
+|---|---|
+| react | `@vitejs/plugin-react` |
+| vue | `@vitejs/plugin-vue`
+| solid | `vite-plugin-solid`
+| svelte | `@sveltejs/vite-plugin-svelte`
+| mdx   | `@mdx-js/rollup`, with a basic set of `remarkPlugins` |
 
-A route's final URL is `base` + `apiBase` + route name:
+Bring your own plugin instance:
+
+```ts
+import mdx from "@mdx-js/rollup";
+
+stack: {
+  name: "mdx",
+  plugin: mdx({
+    remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin],
+    rehypePlugins: [rehypeSlug],
+  }),
+}
+```
+
+::: warning Don't also list the plugin in `viteConfig.plugins`
+Whichever form you use, the plugin reaches Vite through `stack`.
+Adding it to `viteConfig.plugins` as well runs the transform twice.
+:::
+
+### frontend.base - required
+
+The URL prefix this folder's pages are served from. Must be absolute:
+
+```ts
+base: "/"          // app at the root
+base: "/admin"     // admin dashboard under /admin
+```
+
+Duplicate slashes are collapsed and a trailing slash is stripped,
+so `"/admin/"` and `"//admin"` both resolve to `"/admin"`.
+Path traversal segments (`../`, `/./`) are rejected at startup.
+
+### frontend.fetch
+
+Typed [fetch clients](/fetch/intro) in `_/fetch`.
+
+```ts
+fetch: true
+```
+
+Clients are derived from the backend's routes, so this only produces anything
+when the folder also has a `backend`.
+
+### frontend.ssr
+
+[Server-side rendering](/frontend/server-side-render).
+Accepts `true`, or an options object:
+
+```ts
+ssr: true
+
+ssr: {
+  renderMode: {
+    "docs/**": "stream",
+  },
+}
+```
+
+**`renderMode`** - `"string"` (default), `"stream"`, or a glob map for per-route selection.
+[Details&nbsp;›](/frontend/server-side-render#selecting-the-render-mode)
+
+### frontend.ssg
+
+[Static site generation](/frontend/static-site-generation).
+
+```ts
+ssg: true
+```
+
+Renders routes to static HTML at build time. Requires `ssr: true` -
+the scaffolder turns SSR on for you when you ask for SSG.
+Dynamic routes declare their variants with `staticParams`.
+
+### frontend.tanstack
+
+```ts
+tanstack: { query: true }
+```
+
+Deploys the `_/query` runtime, swaps `_/app` for a provider that supplies the query client,
+and gives each SSR request its own client. [Details&nbsp;›](/frontend/tanstack-query)
+
+### frontend.templates
+
+Overrides seeded page boilerplate by route pattern:
+
+```ts
+templates: {
+  "landing/*": landingTemplate,
+  "marketing/**": landingTemplate,
+}
+```
+
+[Custom Page Templates&nbsp;›](/frontend/custom-templates)
+
+### frontend.viteConfig
+
+Vite's `UserConfig` for the client build - `plugins`, `resolve`, `css`, `server`, `define`, `optimizeDeps`, and the rest:
+
+```ts
+frontend: {
+  stack: "react",
+  base: "/",
+  viteConfig: {
+    plugins: [tailwindcss()],
+    resolve: {
+      alias: { "#shared": "/src/shared" },
+    },
+    css: {
+      preprocessorOptions: { scss: { api: "modern" } },
+    },
+  },
+}
+```
+
+A handful of Vite keys are **not** accepted, because KosmoJS derives them from the source-folder layout:
+`root`, `base` (the folder's prefixes come from `frontend.base` / `backend.base`),
+`cacheDir`, `mode`, `builder`, `future`, `legacy`.
+
+## backend
+
+### backend.stack - required
+
+`"hono"` · `"h3"` · `"koa"`
+
+A bare name, or the same object form the frontend takes.
+The backend stacks have no Vite plugin, so the object carries only `name` today and the bare name is the usual form.
+Vite settings for the API build go in [viteConfig](#backend-vite-config).
+
+### backend.base - required
+
+The URL prefix this folder's API routes are served from - a **full path**,
+resolved on its own rather than against `frontend.base`:
+
+```ts
+frontend: { base: "/vue" },
+backend:  { base: "/vue/api" },   // routes at /vue/api/<route name>
+```
+
+Nesting it under the frontend base is the convention the scaffolder follows,
+but nothing requires it - the two prefixes are independent:
+
+```ts
+frontend: { base: "/admin" },
+backend:  { base: "/api/v2" },    // routes at /api/v2/<route name>
+```
+
+A route's final URL is `backend.base` + route name:
 
 ```
-base "/"       apiBase "/api"   route "users/[id]"  ➜  /api/users/:id
-base "/admin"  apiBase "/api"   route "users/[id]"  ➜  /admin/api/users/:id
-base "/"       apiBase "/v1"    route "users/[id]"  ➜  /v1/users/:id
+base "/api"        route "users/[id]"  ➜  /api/users/:id
+base "/admin/api"  route "users/[id]"  ➜  /admin/api/users/:id
+base "/v1"         route "users/[id]"  ➜  /v1/users/:id
 ```
 
 The `api/` directory name never appears in the URL - it separates server routes from `pages/` on disk, nothing more.
 
-### `generators`
+### backend.openapi
 
-The list of generators to run for this folder.
-**Default: `[]`** - a folder with no generators has no backend, no frontend, and produces nothing.
-
-See [Generators](#generators-1) below for the full list and their options.
-
-### `refineTypeName`
-
-The identifier used for runtime refinements. **Default: `"VRefine"`.**
-
-Rename it if `VRefine` collides with something in your codebase:
+Derives an [OpenAPI 3.1 spec](/openapi) from this folder's routes. Options are required:
 
 ```ts
-refineTypeName: "Refine",   // then write Refine<string, { format: "email" }>
-```
-
-The name is global and import-free either way.
-[Details&nbsp;›](/validation/refine)
-
-### Vite options
-
-`kosmo.config.ts` accepts **everything Vite's `UserConfig` accepts** -
-`plugins`, `resolve`, `css`, `server`, `define`, `optimizeDeps`, and the rest - and passes them through:
-
-```ts
-export default defineConfig({
-  base: "/",
-  generators: [reactGenerator()],
-
-  plugins: [tailwindcss()],
-  resolve: {
-    alias: { "#shared": "/src/shared" },
+backend: {
+  stack: "hono",
+  base: "/api",
+  openapi: {
+    outfile: "openapi.json",
+    openapi: "3.1.0",
+    info: { title: "My API", version: "1.0.0" },
+    servers: [{ url: "https://api.example.com/api" }],
   },
-  css: {
-    preprocessorOptions: { scss: { api: "modern" } },
-  },
-});
+}
 ```
 
-A handful of Vite keys are **not** accepted, because `KosmoJS` derives them from the source-folder layout:
-`root`, `base` (replaced by the folder `base` above), `cacheDir`, `mode`, `builder`, `future`, `legacy`.
+[Details&nbsp;›](/openapi#configuration)
 
-::: warning Don't add your framework's Vite plugin yourself
-Each framework generator inserts its own Vite plugin, already configured.
-Adding it to `plugins` as well runs the transform twice.
-Pass plugin options through the generator instead - `reactGenerator({ jsxRuntime: "classic" })` -
-since every framework generator's options extend its Vite plugin's options.
-:::
+### backend.alias
 
-## Generators
-
-A generator is one unit of "what this folder gets": a backend, a frontend, validators,
-fetch clients, an OpenAPI spec, SSR, SSG. All are imported from `@kosmojs/dev`.
-
-| Generator | Slot | Options | What it adds |
-|---|---|---|---|
-| `honoGenerator()` | backend | optional | Hono API - `api/` routes, middleware, `api/app.ts` |
-| `h3Generator()` | backend | optional | H3 API |
-| `koaGenerator()` | backend | optional | Koa API |
-| `fetchGenerator()` | fetch | – | Typed fetch clients in `_/fetch` |
-| `typeboxGenerator()` | – | optional | Runtime validators from your types |
-| `reactGenerator()` | frontend | optional | React pages, router, entries |
-| `solidGenerator()` | frontend | optional | SolidJS pages, router, entries |
-| `vueGenerator()` | frontend | optional | Vue pages, router, entries |
-| `svelteGenerator()` | frontend | optional | Svelte pages, router, entries |
-| `mdxGenerator()` | frontend | optional | MDX content pages (Preact) |
-| `openapiGenerator(cfg)` | – | **required** | OpenAPI 3.1 spec |
-| `ssrGenerator()` | ssr | optional | `entry/server.ts`, SSR build |
-| `ssgGenerator()` | ssg | – | Static HTML at build time |
-
-`coreGenerator()` is exported too, but you never list it - the chassis always runs it first.
-
-### Ordering doesn't depend on array order
-
-Generators are sorted by **slot** before they run, so you cannot break a folder by listing them in the "wrong" order:
-
-```txt
-core  →  backend  →  fetch  →  frontend  →  (slotless, in array order)  →  ssr  →  ssg
-```
-
-Two consequences:
-
-- `fetchGenerator()` only runs **if a backend generator is present**.
-In a frontend-only folder it is a no-op - there are no routes to build clients from.
-- Slotless generators (`typeboxGenerator`, `openapiGenerator`) *do* respect the order you write them in, relative to each other.
-
-### What the scaffolder writes
-
-Rather than assembling this by hand,
-[`kosmo folder`](/essentials/cli#adding-a-source-folder) writes the right set for your answers - interactively, or from flags.
-For reference, these are the configs it produces:
-
-:::tabs variant:code
-== React + Hono
-```ts
-import {
-  defineConfig,
-  reactGenerator,
-  honoGenerator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
-
-export default defineConfig({
-  base: "/",
-  generators: [
-    reactGenerator(),
-    honoGenerator(),
-    fetchGenerator(),
-    typeboxGenerator(),
-  ],
-});
-```
-
-== Frontend only
-```ts
-import { defineConfig, reactGenerator } from "@kosmojs/dev";
-
-export default defineConfig({
-  base: "/",
-  generators: [reactGenerator()],
-});
-```
-
-== Backend only
-```ts
-import {
-  defineConfig,
-  koaGenerator,
-  fetchGenerator,
-  typeboxGenerator,
-} from "@kosmojs/dev";
-
-export default defineConfig({
-  base: "/",
-  generators: [koaGenerator(), fetchGenerator(), typeboxGenerator()],
-});
-```
-
-== MDX docs
-```ts
-import {
-  defineConfig,
-  mdxGenerator,
-  ssgGenerator,
-  ssrGenerator,
-} from "@kosmojs/dev";
-
-import frontmatterPlugin from "remark-frontmatter";
-import mdxFrontmatterPlugin from "remark-mdx-frontmatter";
-
-export default defineConfig({
-  base: "/docs",
-  generators: [
-    mdxGenerator({ remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin] }),
-    ssgGenerator(),
-    ssrGenerator(),
-  ],
-});
-```
-:::
-
-> Adding a generator to an existing folder requires a **dev server restart** -
-generators are resolved once at startup.
-
-## Generator Options
-
-### Frontend generators
-
-`reactGenerator` · `solidGenerator` · `vueGenerator` · `svelteGenerator`
-
-Options extend the framework's own Vite plugin options, plus:
+Maps a public URL to an existing named route:
 
 ```ts
-reactGenerator({
-  // any @vitejs/plugin-react option, passed straight through
-  jsxRuntime: "automatic",
-
-  // wire TanStack Query for this folder
-  tanstack: { query: true },
-
-  // override seeded page boilerplate by route pattern
-  templates: {
-    "admin/**": adminPageTemplate,
-  },
-})
+alias: {
+  "/feed.xml": "rss",             // /feed.xml handled by the "rss" route
+  "/members/[id]": "users/[id]",  // param names must match exactly
+}
 ```
 
-- **`tanstack.query`** - deploys the `_/query` runtime,
-swaps `_/app` for a provider that supplies the query client, and gives each SSR request its own client.
-[Details&nbsp;›](/frontend/tanstack-query)
-- **`templates`** - [Custom Page Templates ›](/frontend/custom-templates)
-
-### `mdxGenerator`
-
-```ts
-mdxGenerator({
-  remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin],
-  rehypePlugins: [rehypeSlug],
-  templates: { "blog/**": postTemplate },
-})
-```
-
-`remarkPlugins`/`rehypePlugins` are passed to the MDX processor.
-Frontmatter support comes from plugins, which is why the scaffolder adds `remark-frontmatter`
-and `remark-mdx-frontmatter` for you. [Details&nbsp;›](/frontend/mdx)
-
-### Backend generators
-
-`honoGenerator` · `h3Generator` · `koaGenerator`
-
-Options extend Vite's `UserConfig` (applied to the API build), plus:
-
-```ts
-honoGenerator({
-  // serve extra URLs from an existing route
-  alias: {
-    "/feed.xml": "rss",              // /feed.xml handled by the "rss" route
-    "/members/[id]": "users/[id]",  // param names must match exactly
-  },
-
-  templates: {
-    "admin/**": adminRouteTemplate,
-  },
-})
-```
-
-**`alias`** maps a public URL to an existing named route.
 The key is absolute and is *not* prefixed by the router's base.
 If it carries dynamic segments, their names must match the target route's parameters exactly, or the request 404s.
 
-**`templates`** overrides the seeded route boilerplate by route-name pattern -
+[Details&nbsp;›](/backend/aliases)
+
+### backend.templates
+
+Overrides the seeded route boilerplate by route-name pattern -
 the route file (`defineRoute(...)`), not a page component.
 This is what makes it useful for seeding CRUD endpoints across many tables at once.
-[Custom Route Templates&nbsp;›](/backend/custom-templates)
-
-### `typeboxGenerator`
-
-Controls how validators are built and how validation errors read.
 
 ```ts
-typeboxGenerator({
+templates: {
+  "admin/**": adminRouteTemplate,
+}
+```
+
+[Details&nbsp;›](/backend/custom-templates)
+
+### backend.viteConfig
+
+Vite's `UserConfig` for the API build, with the same exclusions as the frontend's:
+
+```ts
+backend: {
+  stack: "hono",
+  base: "/api",
+  viteConfig: {
+    define: { __API_BUILD__: true },
+  },
+}
+```
+
+The two sides are built separately, so `frontend.viteConfig` and `backend.viteConfig` are independent.
+
+## validation
+
+Runtime [validators derived from your types](/validation/intro).
+Only meaningful alongside a `backend` - it validates incoming requests.
+
+```ts
+validation: true
+```
+
+For anything beyond on/off, pass an options object instead:
+
+```ts
+validation: {
   // override validation messages - node:util.format placeholders
   validationMessages: {
     STRING_MIN_LENGTH: "must be at least %d character%s long",
@@ -328,67 +340,133 @@ typeboxGenerator({
   // file whose default export maps custom TypeBox types
   customTypesImport: "@/validation/types.ts",
 
+  // identifier used for runtime refinements, default "VRefine"
+  refineTypeName: "Refine",
+
   settings: {
     maxErrors: 8,                     // cap buffered diagnostics (DoS guard)
     useEval: true,                    // disable where unsafe-eval is blocked by CSP
     exactOptionalPropertyTypes: false,
     immutableTypes: false,
   },
-})
+}
 ```
 
 - **`validationMessages`** is the place for i18n or project wording -
 it changes every message globally, unlike the per-field [custom error messages](/validation/error-handling#custom-error-messages) you set on a handler.
+- **`refineTypeName`** renames `VRefine` if it collides with something in your codebase.
+The name is global and import-free either way. [Details&nbsp;›](/validation/refine)
 - **`settings.useEval: false`** is the option to reach for when a strict Content Security Policy forbids `unsafe-eval`;
 validation falls back to dynamic checking.
 - **`settings.exactOptionalPropertyTypes: true`** aligns runtime check semantics with the TypeScript flag of the same name.
 
-### `ssrGenerator`
+## What the scaffolder writes
 
+Rather than assembling this by hand,
+[kosmo folder](/essentials/cli#adding-a-source-folder) writes the right config for your answers - interactively, or from flags.
+It names the bases after the folder: `/<folder>` for the frontend, `/<folder>/api` for the backend.
+
+For reference, these are the configs it produces for a folder named `front`:
+
+:::tabs variant:code
+== React + Hono
 ```ts
-ssrGenerator({
-  renderMode: {
-    "docs/**": "stream",
+import { defineConfig } from "@kosmojs/dev";
+
+export default defineConfig({
+  frontend: {
+    stack: "react",
+    base: "/front",
+    fetch: true,
+    ssr: false,
+    ssg: false,
+    tanstack: { query: false },
   },
-})
+  backend: {
+    stack: "hono",
+    base: "/front/api",
+  },
+  validation: true,
+});
 ```
 
-**`renderMode`** - `"string"` (default), `"stream"`, or a glob map for per-route selection.
-First match wins, so order patterns specific → general.
-[Details&nbsp;›](/frontend/server-side-render#selecting-the-render-mode)
+== Frontend only
+```ts
+import { defineConfig } from "@kosmojs/dev";
 
-::: warning Numeric-looking patterns get hoisted
-JavaScript objects order integer-like keys first, regardless of where you wrote them.
-A pattern such as `"2024/**"` jumps to the front and matches before anything above it.
-Prefix it with `./` to keep the order you wrote - `"./2024/**"`.
-The `./` is stripped when matching.
+export default defineConfig({
+  frontend: {
+    stack: "react",
+    base: "/front",
+    fetch: true,
+    ssr: false,
+    ssg: false,
+    tanstack: { query: false },
+  },
+});
+```
+
+== Backend only
+```ts
+import { defineConfig } from "@kosmojs/dev";
+
+export default defineConfig({
+  backend: {
+    stack: "koa",
+    base: "/front/api",
+  },
+  validation: true,
+});
+```
+
+== MDX docs
+```ts
+import { defineConfig } from "@kosmojs/dev";
+
+export default defineConfig({
+  frontend: {
+    stack: "mdx",
+    base: "/docs",
+    fetch: true,
+    ssr: true,
+    ssg: true,
+  },
+});
+```
 :::
 
-### `openapiGenerator` - options required
+> Changing what a folder has - adding `ssr`, a `backend`, `validation` - requires a
+**dev server restart**. The config is read once at startup.
 
-The only generator whose options are mandatory.
-[Full reference&nbsp;›](/openapi#configuration)
+## Bringing your own generator
+
+Each block accepts a `generator` key that replaces the built-in one for that slot.
+This is the escape hatch for a framework or a validator KosmoJS does not ship:
 
 ```ts
-openapiGenerator({
-  outfile: "openapi.json",
-  openapi: "3.1.0",
-  info: { title: "My API", version: "1.0.0" },
-  servers: [{ url: "https://api.example.com" }],
-})
+frontend: {
+  stack: "react",
+  base: "/",
+  generator: myReactGenerator(),
+  fetch: { generator: myFetchGenerator() },
+  ssr: { generator: mySSRGenerator() },
+},
+backend: {
+  stack: "hono",
+  base: "/api",
+  generator: myHonoGenerator(),
+  openapi: { generator: myOpenapiGenerator() },
+},
+validation: { generator: myValidationGenerator() },
 ```
 
-### `ssgGenerator` and `fetchGenerator`
+The order generators run in is fixed and does not depend on how you write the config:
 
-Take no options.
+```txt
+core  ->  backend  ->  validation  ->  openapi  ->  fetch  ->  frontend  ->  ssr  ->  ssg
+```
 
-`ssgGenerator()` renders routes to static HTML files at build time,
-on any folder that has a frontend and [SSR enabled](/frontend/server-side-render).
-Dynamic routes declare their variants with `staticParams`.
-[Details&nbsp;›](/frontend/static-site-generation)
-
-`fetchGenerator()` produces the typed clients in `_/fetch`,
-and runs only when a backend generator is present. [Details&nbsp;›](/fetch/intro)
+`coreGenerator` always runs first and is never listed.
 
 ## Project Settings - `package.json`
 
@@ -414,7 +492,7 @@ A few settings are project-wide rather than per-folder, and live in the root `pa
 |---|---|---|
 | `distDir` | `"dist"` | Build output directory for every folder |
 | `devPort` | `4556` | Port the dev server listens on |
-| `previewPort` | `4558` | Port [`kosmo preview`](/dev-build-run/production-preview) listens on |
+| `previewPort` | `4558` | Port [kosmo preview](/dev-build-run/production-preview) listens on |
 
 > Changing `distDir` also means updating `.gitignore`, which the scaffolder points at the default `/dist/`.
 
@@ -426,14 +504,13 @@ and act on every source folder when given none.
 
 ## TypeScript Config
 
-Each source folder has its own `tsconfig.json` extending a base in lib dir:
+Each source folder has its own `tsconfig.json` extending a derived base in lib dir:
 
 ```json [src/front/tsconfig.json]
 { "extends": "../../lib/front/tsconfig.json" }
 ```
 
-The base supplies the framework's `jsxImportSource`,
-the reserved path mappings, and strict compiler settings.
+The derived base supplies the framework's `jsxImportSource`, the reserved path mappings, and strict compiler settings.
 Anything you add in your own `compilerOptions` wins, and applies to that folder only:
 
 ```json [src/front/tsconfig.json]

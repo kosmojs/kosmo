@@ -174,7 +174,7 @@ export default defineRoute<"users/[id]", [
 
 - **In the browser**, the derived client validates params and payload *before* the request leaves.
 Invalid data throws immediately - no round trip, and the same schemas are exposed
-as [`validationSchemas`](/fetch/validation#validation-schemas) for live form feedback.
+as [validationSchemas](/fetch/validation#validation-schemas) for live form feedback.
 - **On the server**, the request is validated again on arrival -
 because a server that trusts its clients is not a server, it is a suggestion box.
 

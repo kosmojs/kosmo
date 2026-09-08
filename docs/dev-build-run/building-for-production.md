@@ -9,12 +9,13 @@ head:
         serverless api, edge runtime, nodejs deployment, api bundling, source maps, ssr deployment
 ---
 
-Each source folder builds independently.
+Each source folder builds independently, into its own subdirectory of `distDir` -
+a client bundle, an API bundle when it has a backend, and an SSR bundle when SSR is on.
 
-```sh
-pnpm build          # all source folders
-pnpm build front    # specific folder
-```
+Alongside them the build writes one entry point that serves every folder at once,
+so the simple deployment is a single process even when the project has several folders.
+
+Splitting them across hosts stays available: each folder's bundles are runnable on their own.
 
 ## One Entry Point for the Whole Project
 
@@ -26,17 +27,18 @@ node dist/run.js -p 4556
 ```
 
 It routes incoming requests by path the same way the dev server does:
-each folder's `base` and `apiBase` decide what it owns, longest prefix first.
+each folder's `frontend.base` and `backend.base` decide what it owns, longest prefix first.
+
 A project with a marketing site at `/`, an admin app at `/admin` and an API-only folder at `/svc` is one process,
 one port, no reverse proxy needed to glue the folders together.
 
 Each folder is served as what it is. `SSR` folders render on the server;
 `CSR` folders are served as static assets with a fallback to their `index.html`;
-`API`-only folders answer on their `apiBase`.
+`API`-only folders answer on their `backend.base`.
 
 You do not configure any of this - it follows from the folder's config.
 
-`dist/run.js` is also what [`kosmo preview`](/dev-build-run/production-preview) runs,
+`dist/run.js` is also what [kosmo preview](/dev-build-run/production-preview) runs,
 so what you check locally is the same entry point production serve.
 
 ### Other Runtimes
@@ -110,7 +112,7 @@ During server-side rendering, the [isomorphic fetch client](/fetch/isomorphic-cl
 no network hop, no localhost round-trip.
 
 After hydration, the same server answers the browser's API calls over HTTP
-through a built-in gateway that routes everything under the folder's `apiBase` to the bundled backend.
+through a built-in gateway that routes everything under the folder's `backend.base` to the bundled backend.
 
 ```sh
 node dist/front/ssr/server.js -p 4556   # pages + API, one process

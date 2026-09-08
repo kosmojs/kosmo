@@ -16,20 +16,17 @@ SSR adds production-ready server rendering while keeping your development workfl
 ## Adding SSR Support
 
 SSR is automatically enabled if selected during source folder creation (or via `--ssr` flag in CLI mode).
-To add it to an existing folder, register `ssrGenerator` in your source folder's `kosmo.config.ts`:
+To add it to an existing folder, flip `ssr` on in your source folder's `kosmo.config.ts`:
 
 ```ts [kosmo.config.ts]
-import {
-  defineConfig,
-  // ...other generators
-  ssrGenerator, // [!code ++]
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  generators: [
-    // ...other generators
-    ssrGenerator(), // [!code ++]
-  ],
+  frontend: {
+    stack: "react",
+    base: "/front",
+    ssr: true, // [!code ++]
+  },
 });
 ```
 
@@ -37,7 +34,7 @@ export default defineConfig({
 
 `pnpm dev` is **always** Vite + HMR + client-side rendering, whether or not SSR enabled.
 
-To see, test or debug anything server-rendered, use [`kosmo preview`](/dev-build-run/production-preview) -
+To see, test or debug anything server-rendered, use [kosmo preview](/dev-build-run/production-preview) -
 it serves the production build and rebuilds on change:
 
 ```sh
@@ -45,7 +42,7 @@ pnpm preview front
 ```
 
 This trips up people arriving from Next/Nuxt/TanStack Start, where dev mirrors prod rendering.
-See [Debugging SSR](#testing-debugging-ssr) for the working loop.
+See [Debugging SSR](#preview) for the working loop.
 :::
 
 ## Server Entry Point
@@ -260,38 +257,42 @@ differing only in the renderer it calls and the `ReadableStream` it resolves to.
 `renderToStream` from `_/entry/server` returns a web-standard `ReadableStream` for every framework,
 so streaming works the same on Node, Bun, and Deno.
 
-Streaming a route is opt-in per route via [`renderMode`](#selecting-the-render-mode).
+Streaming a route is opt-in per route via [renderMode](#selecting-the-render-mode).
 MDX and Svelte are the exceptions: they provide no `renderToStream`, and their folders do not expose the streaming mode.
 
 ## Selecting the Render Mode
 
-Every route defaults to string rendering. To stream instead, set `renderMode` in
-the SSR generator options and match routes by glob pattern:
+Every route defaults to string rendering.
+
+To stream instead, pass `renderMode` in the `ssr` options and match routes by glob pattern:
 
 ```ts [kosmo.config.ts]
-ssrGenerator({
-  renderMode: {
-    "docs/**": "stream",
+frontend: {
+  ssr: {
+    renderMode: {
+      "docs/**": "stream",
+    },
   },
-})
+}
 ```
 
 - `renderMode: "string"` (default) - render every route to a string.
 - `renderMode: "stream"` - stream every route.
 - `renderMode: { ... }` - per-route selection by glob pattern.
 
-`docs/*` matches only routes directly under `docs`; `docs/**` matches routes at
-any depth. Unmatched routes fall back to `"string"`. To invert the default -
-stream everything, then opt specific routes back into strings - order patterns
-from specific to general:
+`docs/*` matches only routes directly under `docs`; `docs/**` matches routes at any depth. Unmatched routes fall back to `"string"`.
+
+To invert the default - stream everything, then opt specific routes back into strings - order patterns from specific to general:
 
 ```ts [kosmo.config.ts]
-ssrGenerator({
-  renderMode: {
-    "users/**": "string",
-    "*": "stream",
+frontend: {
+  ssr: {
+    renderMode: {
+      "users/**": "string",
+      "**": "stream",
+    },
   },
-})
+}
 ```
 
 When a route matches multiple patterns, the first match wins - so more specific
@@ -337,7 +338,7 @@ and nothing in the browser says the page was meant to be server-rendered.
 So a route can quietly stop being server-rendered and stay that way until someone reads that line
 or notices the missing markup in view-source.
 
-Which is exactly why the renderers take an [`onError`](#onerror-hook) hook:
+Which is exactly why the renderers take an [onError](#onerror-hook) hook:
 it turns that line into an event your monitoring can see.
 
 Two practical habits follow:
@@ -431,6 +432,34 @@ It fires in every environment that renders on the server - including [SSG](/fron
 where it runs inside the build, once per route that fails,
 before the build reports them together and exits non-zero without writing any output.
 
+## Preview
+
+Because SSR never runs under `pnpm dev`, anything server-rendered is checked against the production build.
+[kosmo preview](/dev-build-run/production-preview) does the build for you and rebuilds whenever you save:
+
+```sh
+pnpm preview front
+```
+
+Preview listens on `previewPort` (`4558` by default), so it runs alongside
+`pnpm dev` rather than replacing it - keep both open and compare.
+
+A few things that make debugging less painful:
+
+- **Preview one folder.** `pnpm preview front` skips every other source folder.
+- **Confirm you are actually seeing SSR.** View source (not the inspector):
+a server-rendered page arrives with real markup in `<div id="app">`.
+If it arrives empty, the render was skipped or it fell back to CSR.
+- **Watch the server's stderr.** A failed fetch during a string render aborts that render
+and silently serves the CSR shell - the page still "works",
+so the terminal is where the failure shows up.
+- **Isolate browser-only code.** `window`/`document` access during render is the most
+common SSR-only crash. Move it into an effect (`useEffect`/`onMounted`) or guard it
+with `typeof window !== "undefined"`.
+- **Reach for a string render first.** If a route misbehaves only when streamed,
+drop it back to `"string"` in [renderMode](#selecting-the-render-mode)
+to find out whether the bug is in your render or in the streaming path.
+
 ## Production Build
 
 :::tabs key:pm variant:code
@@ -490,34 +519,6 @@ location @ssr {
 }
 ```
 
-## Testing / Debugging SSR
-
-Because SSR never runs under `pnpm dev`, anything server-rendered is checked against the production build.
-[`kosmo preview`](/dev-build-run/production-preview) does the build for you and rebuilds whenever you save:
-
-```sh
-pnpm preview front
-```
-
-Preview listens on `previewPort` (`4558` by default), so it runs alongside
-`pnpm dev` rather than replacing it - keep both open and compare.
-
-A few things that make debugging less painful:
-
-- **Preview one folder.** `pnpm preview front` skips every other source folder.
-- **Confirm you are actually seeing SSR.** View source (not the inspector):
-a server-rendered page arrives with real markup in `<div id="app">`.
-If it arrives empty, the render was skipped or it fell back to CSR.
-- **Watch the server's stderr.** A failed fetch during a string render aborts that render
-and silently serves the CSR shell - the page still "works",
-so the terminal is where the failure shows up.
-- **Isolate browser-only code.** `window`/`document` access during render is the most
-common SSR-only crash. Move it into an effect (`useEffect`/`onMounted`) or guard it
-with `typeof window !== "undefined"`.
-- **Reach for a string render first.** If a route misbehaves only when streamed,
-drop it back to `"string"` in [`renderMode`](#selecting-the-render-mode)
-to find out whether the bug is in your render or in the streaming path.
-
 ## Runtime
 
 The SSR server uses `node:http` which is natively supported by Node, Bun, and Deno.
@@ -573,7 +574,7 @@ SSR activates exclusively in production builds. During development:
 - Vite handles all requests with HMR
 - Client-side rendering provides immediate feedback
 
-When you need the server-rendered page, run [`pnpm preview`](/dev-build-run/production-preview) -
+When you need the server-rendered page, run [pnpm preview](/dev-build-run/production-preview) -
 the production build, rebuilt on every save, on its own port so it sits alongside `pnpm dev`.
 
 ## Production Guidelines

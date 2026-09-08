@@ -178,7 +178,7 @@ It can't silently drift. `defineRoute<R>` is constrained as `R extends keyof Rou
 so a name that doesn't match a real route is a **compile error**, not a runtime surprise.
 
 Rename `api/users/` to `api/people/` and the stale `defineRoute<"users/[id]">` fails to typecheck immediately -
-the same refactor-as-a-checklist property the typed [`Link`](/frontend/link-navigation) component gives you on the frontend.
+the same refactor-as-a-checklist property the typed [Link](/frontend/link-navigation) component gives you on the frontend.
 :::
 
 The name is the route path **relative to `api/`**, without the trailing `index.ts` -
@@ -187,51 +187,53 @@ so `api/users/[id]/index.ts` is `"users/[id]"`, and `api/index/index.ts` is `"in
 Pages have no equivalent: a page component is an ordinary default export,
 and its routing is resolved by the framework's own router, so there is nothing to look up.
 
-## Where routes end up: `base` and `apiBase`
+## Where routes end up: `frontend.base` and `backend.base`
 
-Every source folder has a `base`, the URL prefix it owns, and an `apiBase`,
-the prefix its API routes get *inside* that base. `apiBase` defaults to `/api`.
-The two compose:
+Each side of a source folder declares the URL prefix it owns, and each one is a **full path**.
+The two are resolved independently:
 
 ```
-API route URL  = join(base, apiBase, routeName)
-page URL       = join(base, pagePath)
+API route URL  = join(backend.base, routeName)
+page URL       = join(frontend.base, pagePath)
 ```
 
-`apiBase` is relative to `base`, not to the site root. That is the one thing to hold on to;
-everything in the table follows from it.
+That is the one thing to hold on to; everything in the table follows from it.
 
-| `base` | `apiBase` | API routes live at | pages live at | Note |
+| `frontend.base` | `backend.base` | API routes live at | pages live at | Note |
 | --- | --- | --- | --- | --- |
-| `/` | default (`/api`) | `/api/<route>` | `/<page>` | the scaffold's default |
-| `/admin` | default (`/api`) | `/admin/api/<route>` | `/admin/<page>` | the API moves with the folder |
-| `/` | `/hub` | `/hub/<route>` | `/<page>` | any prefix works; it is still joined onto `base` |
-| `/api` | default (`/api`) | `/api/api/<route>` | none (API-only folder) | the doubled segment people hit first |
-| `/api` | `/` | `/api/<route>` | none | an API-only folder that owns `/api` directly |
-| `/webhooks` | `/` | `/webhooks/<route>` | none | the same shape for any public API surface |
-| `/docs` or `/` | default | none (no backend generator) | `/docs/<page>` or `/<page>` | `apiBase` is ignored without a backend |
+| `/` | `/api` | `/api/<route>` | `/<page>` | app at the root |
+| `/admin` | `/admin/api` | `/admin/api/<route>` | `/admin/<page>` | the API nested under the folder |
+| `/admin` | `/api/v2` | `/api/v2/<route>` | `/admin/<page>` | nothing requires them to nest |
+| none | `/api` | `/api/<route>` | none | an API-only folder |
+| `/docs` | none | none | `/docs/<page>` | a pages-only folder |
 
-### An API-only folder at its own prefix
+Nesting the API under the pages prefix is a convention, not a rule -
+useful when a folder should be relocatable as a unit, since moving `frontend.base`
+means moving `backend.base` with it.
 
-To serve an API directly under a prefix, set `apiBase` to `/`:
+### An API-only folder
+
+Omit `frontend` entirely and give the backend the prefix it should own:
 
 ```ts
 // src/api/kosmo.config.ts
 export default defineConfig({
-  base: "/api",
-  apiBase: "/", // [!code hl]
-  // ...
+  backend: {
+    stack: "hono",
+    base: "/api", // [!code hl]
+  },
+  validation: true,
 });
 // src/api/api/emails/index.ts  ->  /api/emails
 ```
 
-Leaving `apiBase` at its default here would put the same route at `/api/api/emails`.
+The `api/` dir on disk never appears in the URL - it only separates server routes from `pages/`.
 
 ### How requests are dispatched
 
 The dev server and the built `dist/run.js` route by prefix:
-more specific prefixes win, and API prefixes are ranked ahead of page prefixes -
-`/admin/api` beats `/admin` and `/api` beats `/`.
+more specific prefixes win, and a folder's `backend.base` is ranked ahead of its `frontend.base` -
+so `/front/api/users` reaches the API even though `/front` also matches.
 
 A folder at `base: "/"` catches only what no other folder claims.
 The server prints the prefix table on start; read it when a route lands somewhere unexpected:

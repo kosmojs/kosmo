@@ -172,7 +172,7 @@ app hydrates on the client - the difference is confined to the initial server re
 
 This is upstream framework behavior, not a KosmoJS limitation, and it isn't something a config option changes.
 
-In particular, the [`renderMode`](/frontend/server-side-render#selecting-the-render-mode)
+In particular, the [renderMode](/frontend/server-side-render#selecting-the-render-mode)
 setting (string versus stream) does not change the outcome for a synchronous shell throw -
 streaming helps only with errors thrown after a shell has already flushed,
 and streamed routes carry their own recovery caveats -
@@ -199,8 +199,8 @@ See [Fetch Error Handling](/fetch/error-handling) for how a rejected request rea
 - Backend errors are separate again, centralized in `api/errors.ts`.
 See [Backend Error Handling](/backend/error-handling).
 - A render error the server could not contain is **reported**, not caught, through the renderers'
-[`onError`](/frontend/server-side-render#onerror-hook) hook -
+[onError](/frontend/server-side-render#onerror-hook) hook -
 the place to log or trace what a server-side boundary could not turn into fallback markup.
 - A boundary is for render-time errors in a subtree;
-the root [`app` file](/frontend/layouts#global-layout-via-app-file) is where a truly
+the root [app file](/frontend/layouts#global-layout-via-app-file) is where a truly
 global boundary would go if you want one that wraps everything.

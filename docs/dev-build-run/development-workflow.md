@@ -32,7 +32,7 @@ Default port is `4556`, configured as `devPort` in `package.json`.
 1. Blank route and page files are seeded.
 2. `Vite` compiles `api/app.ts`
 3. Dev server starts, serving both client pages and your API routes
-4. Requests are routed between Vite and your API by the folder's `apiBase`
+4. Requests are routed between Vite and your API by the folder's `backend.base`
 5. File watchers monitor client modules and API files for changes
 
 ## Dev Renders Client-Side
@@ -45,7 +45,7 @@ so there is no server-rendered markup to look at while the dev server is running
 This catches people out coming from Next/Nuxt/TanStack Start,
 where dev mirrors production rendering.
 
-To see, test or debug anything server-rendered, run [`kosmo preview`](/dev-build-run/production-preview).
+To see, test or debug anything server-rendered, run [kosmo preview](/dev-build-run/production-preview).
 It serves the real production build and still reloads when you edit a file.
 
 ## Hot Reload vs HMR
@@ -67,15 +67,16 @@ Keep anything that must survive a restart in a real store from day one -
 the dev reload cycle is simply an early rehearsal of what production restarts do anyway.
 
 What *does* need care across reloads is resources: open connections leak when
-the program restarts around them. Close them in the [`teardownHandler`](#teardownhandler) hook.
+the program restarts around them. Close them in the [teardownHandler](#teardownhandler) hook.
 
 ## api/dev.ts
 
-Client-side dev behaviour is `Vite`'s, configured through the folder's
-[`kosmo.config.ts`](/essentials/config#vite-options) like any Vite project.
-The API side has its own hooks, because it is the part kosmo runs itself.
+`api/dev.ts` is where the API side of the dev server is wired up.
 
-`api/dev.ts` exposes three hooks for customizing the dev experience.
+It is re-evaluated on every relevant change: the previous setup is torn down, the file re-imported,
+and the fresh handler serves the next request.
+
+The three hooks below sit on that cycle.
 
 ### requestHandler
 
@@ -128,6 +129,12 @@ Override this for custom routing logic - WebSocket handling, multi-handler dispa
 ### requestMatcher
 
 Controls which requests go to your API vs Vite.
+
+By default, requests are routed to the API handler if their URL starts with `backend.base`
+or match any `backend.alias`.
+
+Use this to implement custom heuristics for detecting API requests:
+
 
 ```ts
 export default devSetup({

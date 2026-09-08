@@ -16,7 +16,7 @@ asset hashing, the production validation policy - none of these exist until you 
 and none of them are visible from the dev server.
 
 `preview` builds the project and runs
-[`dist/run.js`](/dev-build-run/building-for-production#one-entry-point-for-the-whole-project) -
+[dist/run.js](/dev-build-run/building-for-production#one-entry-point-for-the-whole-project) -
 the same entry point production starts.
 
 ```sh
@@ -72,5 +72,5 @@ preview down.
 - Sanity-checking a multi-folder layout end to end, since preview dispatches across folders exactly as `dist/run.js` will in production
 - Reproducing a bug that only appears in a deployed build
 
-For everyday work, keep using [`pnpm dev`](/dev-build-run/development-workflow).
+For everyday work, keep using [pnpm dev](/dev-build-run/development-workflow).
 Preview is the check before you ship.

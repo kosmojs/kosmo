@@ -16,24 +16,22 @@ Enable TanStack Query when you create the source folder.
 Interactive mode asks whether to enable it; for non-interactive runs pass `--tsq`:
 
 ```sh [CLI mode]
-pnpm folder --name front --base / --framework react --tsq
+pnpm folder front --frontend react --tsq
 ```
 
-Opting in adds the `tanstack` option to your framework generator.
+Opting in sets `tanstack.query` in the `frontend` block.
 You can also add it by hand later if you did not enable it at folder creation:
 
 ```ts [kosmo.config.ts]
-import {
-  defineConfig,
-  reactGenerator,
-  ssrGenerator,
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  generators: [
-    reactGenerator({ tanstack: { query: true } }), // [!code hl]
-    ssrGenerator(),
-  ],
+  frontend: {
+    stack: "react",
+    base: "/front",
+    ssr: true,
+    tanstack: { query: true }, // [!code hl]
+  },
 });
 ```
 
@@ -57,7 +55,7 @@ proprietary helper - warm SSR uses TanStack's own `dehydrate` and
 `HydrationBoundary` directly, shown per framework in [SSR Warmup](#ssr-warmup-advanced) below.
 
 MDX folders render static HTML with no client runtime, so TanStack Query is not
-available there - fetch data with an MDX `loader` instead (see [MDX](/mdx)).
+available there - fetch data with an MDX `loader` instead (see [MDX](/frontend/mdx)).
 
 ## Enabling and using it
 
@@ -66,7 +64,7 @@ The `_/query` runtime is deployed, `_/app` is swapped for a provider that suppli
 the query client, and - on the server - each request gets its own client.
 
 None of this touches your app code: the provider seam is part of the
-derived foundation (see [Application Structure](/application)), and it is
+derived foundation (see [Application Structure](/frontend/application)), and it is
 composed the same way whether the option is on or off.
 Toggling the option never asks you to edit, copy, or paste anything.
 

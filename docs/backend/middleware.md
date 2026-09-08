@@ -121,7 +121,7 @@ They differ in reach and in how they type the context:
 |---|---|---|
 | Applies to | every route | folder's subtree only |
 | Position | before all cascading and route middleware | parent before child, then the route's own middleware |
-| Context types | [`api/env.d.ts`](/backend/type-safety#global-context-types-api-env-d-ts) module augmentation | its exported `UseT`, which cascades downward |
+| Context types | [api/env.d.ts](/backend/type-safety#global-context-types-api-env-d-ts) module augmentation | its exported `UseT`, which cascades downward |
 | Exports&nbsp;a&nbsp;`UseT`? | **no** - see below | yes, always (even when empty) |
 
 ::: tip `api/use.ts` does not export `UseT`
@@ -139,7 +139,7 @@ Global middleware is composed into **each route's** chain.
 A request that matches no route never reaches it - there is no route whose chain to run.
 
 So `api/use.ts` is not an Express-style `app.use()`:
-it can't answer unmatched URLs, and it can't see requests outside this folder's `apiBase`.
+it can't answer unmatched URLs, and it can't see requests outside this folder's `backend.base`.
 
 For work that must happen on every request regardless of routing,
 reach for the framework's own app instance in [api/app.ts](/essentials/project-structure#inside-a-source-folder),

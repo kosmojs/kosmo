@@ -34,7 +34,7 @@ instead of sending malformed data to the client.
 Response validation is environment-aware:
 
 - **Development / test**: every declared response schema is validated at runtime.
-Opt out per handler with [`runtimeValidation: false`](/validation/skip-validation).
+Opt out per handler with [runtimeValidation: false](/validation/skip-validation).
 - **Production builds**: response validation is **disabled by default**.
 To enable it running in production, set `runtimeValidation: true` on the response target:
 

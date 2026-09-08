@@ -49,59 +49,44 @@ Provide the framework/backend up front and no prompts appear:
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm create kosmo demo -- --framework solid --backend hono
+npm create kosmo demo -- --frontend solid --backend hono
 ```
 
 == pnpm
 ```sh
-pnpm create kosmo demo --framework solid --backend hono
+pnpm create kosmo demo --frontend solid --backend hono
 ```
 
 == yarn
 ```sh
-yarn create kosmo demo --framework solid --backend hono
+yarn create kosmo demo --frontend solid --backend hono
 ```
 :::
 
-Want a custom name/base for the source folder? Provide `--name`/`--base`:
-
-:::tabs key:pm variant:code
-== npm
-```sh
-npm create kosmo demo -- --name <name> --base <base> --framework ...
-```
-
-== pnpm
-```sh
-pnpm create kosmo demo --name <name> --base <base> --framework ...
-```
-
-== yarn
-```sh
-yarn create kosmo demo --name <name> --base <base> --framework ...
-```
-:::
+The first source folder is always `app`, serving pages at `/` and its API at `/api`.
+Edit `frontend.base` / `backend.base` in the generated `kosmo.config.ts` to change that,
+or add further folders with [kosmo folder](/essentials/cli#adding-a-source-folder).
 
 Need no backend? Provide `--no-backend` flag:
 
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm create kosmo demo -- --framework solid --no-backend
+npm create kosmo demo -- --frontend solid --no-backend
 ```
 
 == pnpm
 ```sh
-pnpm create kosmo demo --framework solid --no-backend
+pnpm create kosmo demo --frontend solid --no-backend
 ```
 
 == yarn
 ```sh
-yarn create kosmo demo --framework solid --no-backend
+yarn create kosmo demo --frontend solid --no-backend
 ```
 :::
 
-Same for framework, provide the `--no-framework` flag to get a backend-only setup.
+Same for the frontend, provide the `--no-frontend` flag to get a backend-only setup.
 </details>
 
 ---
@@ -494,17 +479,17 @@ Layouts can be nested - deeper layouts wrap inner layouts, matching your route h
 Enable when creating a source folder (`--ssr`), or add it later in `kosmo.config.ts`:
 
 ```ts [kosmo.config.ts]
-import { defineConfig, ssrGenerator } from "@kosmojs/dev"; // [!code ++]
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  generators: [
+  frontend: {
     // ...
-    ssrGenerator(), // [!code ++]
-  ]
+    ssr: true, // [!code ++]
+  },
 });
 ```
 
-> Restart dev server after adding new generators.
+> Restart dev server after changing `kosmo.config.ts`.
 
 `KosmoJS` seeds `entry/server.ts` - your SSR orchestration file.
 Critical CSS is extracted and inlined automatically; remaining styles load asynchronously.
@@ -545,57 +530,57 @@ yarn folder
 ```
 :::
 
-You'll be prompted for folder name, base URL, framework, backend, and more.
+You'll be prompted for the frontend, backend, and more.
+The name gives the folder its prefixes: pages at `/<name>`, API at `/<name>/api`.
 
-Non-interactive mode is also supported; just provide arguments and no prompts appear:
+Non-interactive mode is also supported; pass any flag and no prompts appear:
 
-- `--name` - folder name (required)
-- `--base` - base URL (required)
-- `--framework solid|react|vue|svelte|mdx` or `--no-framework` (one required)
+- `--frontend solid|react|vue|svelte|mdx` or `--no-frontend` (one required)
 - `--backend hono|h3|koa` or `--no-backend` (one required)
 - `--ssr` to enable server-side rendering
+- `--ssg` to enable static side generation
 - `--tsq` to enable TanStack Query
 
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm run folder -- --name front --base / --framework solid --backend hono
+npm run folder -- <name> --frontend solid --backend hono
 ```
 
 == pnpm
 ```sh
-pnpm folder --name front --base / --framework solid --backend hono
+pnpm folder <name> --frontend solid --backend hono
 ```
 
 == yarn
 ```sh
-yarn folder --name front --base / --framework solid --backend hono
+yarn folder <name> --frontend solid --backend hono
 ```
 :::
 
 Need no backend? Provide the `--no-backend` flag for a frontend-only folder (a static docs or marketing site).
 
-Need no client? Provide the `--no-framework` flag for a backend-only folder (an API service with no UI).
+Need no client? Provide the `--no-frontend` flag for a backend-only folder (an API service with no UI).
 
 The choice is always explicit - a forgotten flag is an error, never a silent default:
 
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm run folder -- --name api --base / --backend hono --no-framework    # API only, no UI
-npm run folder -- --name docs --base /docs --framework mdx --no-backend  # UI only, no backend
+npm run folder -- api  --backend hono --no-frontend   # API only, no UI
+npm run folder -- docs --frontend mdx --no-backend    # UI only, no backend
 ```
 
 == pnpm
 ```sh
-pnpm folder --name api --base / --backend hono --no-framework    # API only, no UI
-pnpm folder --name docs --base /docs --framework mdx --no-backend  # UI only, no backend
+pnpm folder api  --backend hono --no-frontend   # API only, no UI
+pnpm folder docs --frontend mdx  --no-backend   # UI only, no backend
 ```
 
 == yarn
 ```sh
-yarn folder --name api --base / --backend hono --no-framework    # API only, no UI
-yarn folder --name docs --base /docs --framework mdx --no-backend  # UI only, no backend
+yarn folder api  --backend hono --no-frontend   # API only, no UI
+yarn folder docs --frontend mdx  --no-backend   # UI only, no backend
 ```
 :::
 

@@ -112,7 +112,7 @@ Build it with client-side modal state, or your router's modal patterns.
 
 There are **no per-route special files** for loading and error states - they are handled with each
 framework's own primitives rather than a KosmoJS file convention.
-Global loading, Suspense and error boundaries belong at the [`app.*`](/frontend/layouts#global-layout-via-app-file) level.
+Global loading, Suspense and error boundaries belong at the [app.*](/frontend/layouts#global-layout-via-app-file) level.
 
 Not-found **does** have a built-in: a [pages/404.*](/frontend/error-pages) component is rendered for unmatched routes.
 Backend errors are separate and centralize in [api/errors.ts](/backend/error-handling).
@@ -210,7 +210,7 @@ You don't write `Response.json()`, and there is no`NextRequest`/`NextResponse`: 
 
 ### `middleware.ts` - global edge middleware
 
-Global middleware lives in [`api/use.ts`](/backend/middleware#global-middleware-api-use-ts) file.
+Global middleware lives in [api/use.ts](/backend/middleware#global-middleware-api-use-ts) file.
 Whatever it default-exports runs for every route in that app, with no registration.
 
 Below it, a [cascading `use.ts`](/backend/cascading-middleware) in any `api/` subfolder wraps everything beneath it,
@@ -223,7 +223,7 @@ there is no separate edge runtime, and no Web-API-only subset to code against.
 - **It is per route, not per request.** Global middleware is composed into each route's chain,
 so a request matching no route never reaches it. Rewrites, redirects for unknown URLs,
 or blanket header injection belong at the reverse proxy, or on the native app instance in [api/app.ts](/backend/intro#foundation-files).
-- **It never sees page requests.** `api/use.ts` covers routes under the folder's `apiBase` only.
+- **It never sees page requests.** `api/use.ts` covers routes under the folder's `backend.base` only.
 Next's `middleware.ts` intercepts page navigations too; there is no client-route interception layer here.
 Gate the client side in the global `app.*` wrapper or a [layout](/frontend/layouts) instead -
 and remember that a client-side check is UX, not security: the API middleware is what actually enforces it.
@@ -255,7 +255,7 @@ There is no schema to drift from your types.
 [Details&nbsp;›](/validation/intro)
 
 The trade-off worth knowing: you give up schema-level *transforms* and custom refinement functions,
-and you get constraints declaratively through [`VRefine`](/validation/refine) instead.
+and you get constraints declaratively through [VRefine](/validation/refine) instead.
 Do transformation in the handler, where it's plain code.
 
 ### tRPC-style end-to-end type safety
@@ -300,9 +300,9 @@ There is no `metadata` / `generateMetadata` export convention.
 
 ### `next.config.js`
 
-Per-folder [`kosmo.config.ts`](/essentials/config), which **is** the Vite config for that folder -
-it takes `plugins`, `resolve`, `css` and everything else `UserConfig` takes,
-alongside the KosmoJS options. There is no separate `vite.config.ts` and no project-wide kosmo config.
+Per-folder [kosmo.config.ts](/essentials/config). Vite's `UserConfig` goes in `viteConfig`
+on the `frontend` and `backend` blocks - `plugins`, `resolve`, `css` and the rest.
+There is no separate `vite.config.ts` and no project-wide kosmo config.
 
 ### `.next/` and `next start`
 

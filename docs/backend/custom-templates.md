@@ -35,11 +35,11 @@ To re-seed one, empty the file and it will be filled again.
 
 ## Configuration
 
-Pass `templates` to your backend generator in the source folder's `kosmo.config.ts`,
+Pass `templates` through the `backend` block in the source folder's `kosmo.config.ts`,
 keyed by route-name pattern:
 
 ```ts [kosmo.config.ts]
-import { defineConfig, honoGenerator } from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 const crudTemplate = `
 import { defineRoute } from "_/api";
@@ -52,14 +52,13 @@ export default defineRoute<"{{route.name}}">(({ GET, POST, PUT, DELETE }) => [
 ]);`;
 
 export default defineConfig({
-  base: "/",
-  generators: [
-    honoGenerator({
-      templates: {
-        "admin/**": crudTemplate,
-      },
-    }),
-  ],
+  backend: {
+    stack: "hono",
+    base: "/api",
+    templates: {
+      "admin/**": crudTemplate,
+    },
+  },
 });
 ```
 
@@ -128,7 +127,7 @@ a pattern such as `"2024/**"` is hoisted to the front and matches before anythin
 it. Prefix it with `./` to keep your written order: `"./2024/**"`.
 The `./` is stripped before matching.
 
-The same applies to [`renderMode`](/frontend/server-side-render#selecting-the-render-mode), which uses the same resolver.
+The same applies to [renderMode](/frontend/server-side-render#selecting-the-render-mode), which uses the same resolver.
 :::
 
 ## Template Format
@@ -233,10 +232,11 @@ export default defineRoute<"{{route.name}}">(({ GET, POST }) => [
 ]);`;
 
 export default defineConfig({
-  base: "/",
-  generators: [
-    honoGenerator({ templates: { "admin/**": resourceTemplate } }),
-  ],
+  backend: {
+    stack: "hono",
+    base: "/api",
+    templates: { "admin/**": resourceTemplate },
+  },
 });
 ```
 
@@ -250,11 +250,13 @@ the template references `./types`, and each route defines its own.
 ## Common Use Cases
 
 ```ts
-honoGenerator({
+backend: {
+  stack: "hono",
+  base: "/api",
   templates: {
     "admin/**": crudTemplate,        // consistent admin endpoints
     "webhooks/**": webhookTemplate,  // signature verification + 200 fast
     "internal/**": internalTemplate, // runtimeValidation: false, trusted callers
   },
-})
+}
 ```

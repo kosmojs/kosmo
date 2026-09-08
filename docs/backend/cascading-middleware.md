@@ -289,7 +289,7 @@ export default [
 
 Gate a whole section of the API by dropping a `use.ts` into its folder.
 Everything under `/api/admin` is now behind the check,
-and every route beneath it gets `user` typed on the context through [`UseT`](#type-safe-context-extension) -
+and every route beneath it gets `user` typed on the context through [UseT](#type-safe-context-extension) -
 no imports, no type arguments:
 
 ```txt

@@ -15,7 +15,7 @@ An **error page** is a full-page route rendered when a request can't be satisfie
 
 It is distinct from an [error boundary](/frontend/error-boundaries),
 which catches a *rendering* error inside an otherwise-working page,
-and from [`api/errors.ts`](/backend/error-handling), which handles failures on the API side.
+and from [api/errors.ts](/backend/error-handling), which handles failures on the API side.
 
 Today there is exactly one error page: **404**. The `pages/<code>.*` shape is deliberate,
 so more can join it later without changing the convention.
@@ -132,7 +132,7 @@ Point it at whatever your host expects.
 
 - **Not for API 404s.** A missing record behind `/api/users/[id]` is a backend concern:
 return a declared `[404, "json", ...]` response variant, or let it reach [api/errors.ts](/backend/error-handling).
-Requests under `apiBase` never render a page.
+Requests under `backend.base` never render a page.
 - **Not a render-error handler.** If a page throws while rendering,
 that is an [error boundary](/frontend/error-boundaries)'s job.
 The 404 page only ever renders because *routing* found nothing.

@@ -58,7 +58,7 @@ a fetch that fires in the browser runs in the browser.
 
 ::: tip The dev server never shows you the in-process path
 Dev is CSR, so the fetch you are watching in the network tab is the network one - even in a folder with SSR enabled.
-Run [`pnpm preview`](/dev-build-run/production-preview) to exercise the real SSR path.
+Run [pnpm preview](/dev-build-run/production-preview) to exercise the real SSR path.
 :::
 
 ## What the in-process path actually does

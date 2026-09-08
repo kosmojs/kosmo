@@ -93,7 +93,7 @@ Neither directory name appears in a URL.
 [Details&nbsp;›](/backend/cascading-middleware)
 
 A folder created with `--no-backend` simply has no `api/`;
-one created with `--no-framework` has no `pages/`, `app.*`, `router.ts`, `index.html` or `entry/`.
+one created with `--no-frontend` has no `pages/`, `app.*`, `router.ts`, `index.html` or `entry/`.
 
 ## Inside `lib/`
 

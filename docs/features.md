@@ -110,11 +110,13 @@ Streaming is opt-in - every route defaults to string rendering.
 Set `renderMode: "stream"` to stream all routes, or map glob patterns for per-route selection:
 
 ```ts [kosmo.config.ts]
-ssrGenerator({
-  renderMode: {
-    "docs/**": "stream",
+frontend: {
+  ssr: {
+    renderMode: {
+      "docs/**": "stream",
+    },
   },
-})
+}
 ```
 
 Available for `React`, `SolidJS`, and `Vue`; `MDX` renders to a string.
@@ -181,7 +183,7 @@ browser, with no setup in your app code. Enabling it is one option; using it is
 just importing `useQuery`.
 
 ```ts [kosmo.config.ts]
-reactGenerator({ tanstack: { query: true } })
+frontend: { stack: "react", base: "/", tanstack: { query: true } }
 ```
 
 ```tsx

@@ -17,28 +17,26 @@ all reflected in the spec automatically. No manual schema authoring, no annotati
 Simply add it to your source folder's `kosmo.config.ts`:
 
 ```ts
-import {
-  defineConfig,
-  // ...other generators
-  openapiGenerator, // [!code ++]
-} from "@kosmojs/dev";
-
-const openapiConfig = { // [!code ++:3]
-  // ...
-};
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  generators: [
-    // ...other generators
-    openapiGenerator(openapiConfig), // [!code ++]
-  ],
+  backend: {
+    stack: "hono",
+    base: "/api",
+    openapi: { // [!code ++:6]
+      outfile: "openapi.json",
+      openapi: "3.1.0",
+      info: { title: "My API", version: "1.0.0" },
+      servers: [{ url: "https://api.example.com/api" }],
+    },
+  },
 });
 ```
 
 ## Configuration
 
-`openapiGenerator` is the only generator whose options are mandatory.
-For how it sits alongside the other generators, see the [configuration reference](/essentials/config#generators-1).
+`backend.openapi` is the one block whose options are mandatory.
+For how it sits alongside the rest of the folder config, see the [configuration reference](/essentials/config#backend-openapi).
 
 ### Required Options
 
@@ -51,7 +49,7 @@ For how it sits alongside the other generators, see the [configuration reference
 - `version` (required) - API version, use semantic versioning
 
 **`servers`** - Array of server objects:
-- `url` (required) - URL the API is served from, including the `base` + `apiBase` prefix.
+- `url` (required) - URL the API is served from, including the `backend.base` prefix.
 Paths in the spec are relative to this, so getting it wrong is the usual cause of a spec whose endpoints 404 -
 see [Server URLs and Route Paths](#server-urls-and-route-paths)
 - `description` (optional) - Human-readable label
@@ -93,9 +91,8 @@ user management, billing, and analytics.`,
       url: "https://www.apache.org/licenses/LICENSE-2.0.html",
     },
   },
-  // this folder has base "/" and apiBase "/api", so the dev server carries
-  // the "/api" prefix - in production the API is deployed at the root of its
-  // own host and carries none
+  // this folder has backend.base "/api", so the dev server carries that prefix -
+  // in production the API is deployed at the root of its own host and carries none.
   servers: [
     { url: "http://localhost:4556/api", description: "Development server" },
     { url: "https://staging-api.myapp.com", description: "Staging environment" },
@@ -108,9 +105,8 @@ user management, billing, and analytics.`,
 
 Paths in the spec are route names, exactly as they appear under `api/`.
 A route at `api/users/[id]/index.ts` becomes `/users/{id}`,
-and the `index` route becomes `/` - neither carries the source folder's
-[`base`](/essentials/config#base-required) or
-[`apiBase`](/essentials/config#apibase).
+and the `index` route becomes `/` - neither carries the folder's
+[backend.base](/essentials/config#backend-base-required).
 
 That is deliberate, not an omission. In `OpenAPI`, paths are relative to `servers`,
 and the prefix an API answers on is a deployment decision rather than a property of the route.
@@ -120,10 +116,10 @@ at the root of a dedicated host in production, and under `/v2/api` behind a gate
 so the prefix belongs to the server entry, and the paths stay the same in all three.
 
 This is why `servers` is mandatory: it is the only place the prefix is recorded.
-Give each entry the full prefix, origin plus `base` plus `apiBase`:
+Give each entry the full prefix, origin plus `backend.base`:
 
 ```ts
-// folder with base "/" and apiBase "/api"
+// folder with backend.base "/api"
 servers: [
   { url: "http://localhost:4556/api", description: "Development server" },
   // deployed at the root of its own host - no prefix to add
@@ -132,7 +128,7 @@ servers: [
 ```
 
 ```ts
-// folder with base "/admin" and apiBase "/api"
+// folder with backend.base "/admin/api"
 servers: [
   { url: "http://localhost:4556/admin/api", description: "Development server" },
   { url: "https://myapp.com/admin/api", description: "Production server" },
@@ -146,7 +142,7 @@ rebuilds.
 
 ::: tip
 If **Try it out** in `Swagger UI` returns `404`, check the server URL first.
-A missing `base` + `apiBase` prefix is the usual cause.
+A missing `backend.base` prefix is the usual cause.
 :::
 
 ## Derived Specification

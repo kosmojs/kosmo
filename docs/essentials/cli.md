@@ -20,11 +20,11 @@ and `package.json` wires it to scripts so you rarely type the binary name:
 
 | Script | Command | What it does |
 |---|---|---|
-| `npm run dev` | `kosmo serve` | Dev server for every source folder |
-| `npm run preview` | `kosmo preview` | Production build, served and rebuilt on change |
-| `npm run build` | `kosmo build` | Production build, then exit |
-| `npm run typecheck` | `kosmo typecheck` | `tsc --noEmit` per source folder |
-| `npm run folder` | `kosmo folder` | Add a source folder to the project |
+| `pnpm dev` | `kosmo serve` | Dev server for every source folder |
+| `pnpm preview` | `kosmo preview` | Production build, served and rebuilt on change |
+| `pnpm build` | `kosmo build` | Production build |
+| `pnpm typecheck` | `kosmo typecheck` | `tsc --noEmit` per source folder |
+| `pnpm folder` | `kosmo folder` | Add a source folder to the project |
 
 All five run from the **project root** - the directory holding `package.json`.
 
@@ -93,26 +93,24 @@ Then a handful of questions, all about the **first source folder**:
 4. **Enable static site generation (SSG)?** - asked only if SSR is enabled
 5. **Enable TanStack Query?** - skipped for MDX, which does not support it
 
-You are not asked for the folder's name or base: the first folder is always **`app` at base `/`**.
-Pass `--name` / `--base` to choose otherwise, or add differently-shaped folders at any time with [`kosmo folder`](#adding-a-source-folder).
+You are not asked for the folder's name or base: the first folder is always **`app`**, with its pages at `/` and its API at `/api`.
+Add differently-shaped folders at any time with [kosmo folder](#adding-a-source-folder).
 
 ### CLI mode
 
 ```sh
 # npm needs -- to pass flags through
-npm create kosmo demo -- --framework react --backend hono
+npm create kosmo demo -- --frontend react --backend hono
 
 # pnpm and yarn do not
-pnpm create kosmo demo --framework react --backend hono --ssr
+pnpm create kosmo demo --frontend react --backend hono --ssr
 ```
 
 | Flag | Meaning |
 |---|---|
-| `--name <name>` | Source folder name. Defaults to `app`. |
-| `--base <path>` | The folder's base URL. Defaults to `/`. |
-| `--framework <name>` | `react`, `solid`, `vue`, `svelte` or `mdx`. |
-| `--no-framework` | API-only folder - no `pages/`, no client entries. |
-| `--backend <name>` | `hono`, `h3` or `koa`. |
+| `--frontend <name>` | `react`, `solid`, `vue`, `svelte`, `mdx`. |
+| `--no-frontend` | API-only folder - no `pages/`, no client entries. |
+| `--backend <name>` | `hono`, `h3`, `koa`. |
 | `--no-backend` | Client-only folder - no `api/` directory. |
 | `--ssr` | Enable [server-side rendering](/frontend/server-side-render). |
 | `--ssg` | Enable [static site generation](/frontend/static-site-generation). Implies SSR. |
@@ -121,14 +119,14 @@ pnpm create kosmo demo --framework react --backend hono --ssr
 | `-q, --quiet` | Suppress output. |
 | `-h, --help` | Print usage and exit. |
 
-::: warning The framework and backend choices are never implied
-Either `--framework <name>` **or** `--no-framework` is required -
+::: warning The frontend and backend choices are never implied
+Either `--frontend <name>` **or** `--no-frontend` is required -
 omitting both is an error, and passing them both is an error too (same for backend).
 :::
 
-`--name` and `--base` are the only flags with defaults here, which is why
-`pnpm create kosmo demo --framework mdx --no-backend` is a complete command:
-it produces `src/app` at `/`, MDX, no API.
+The folder name and its bases are not flags, which is why
+`pnpm create kosmo demo --frontend mdx --no-backend` is a complete command:
+it produces `demo/src/app` serving pages at `/`, MDX, no API.
 
 ### What you get
 
@@ -137,7 +135,7 @@ demo/
 ├── package.json               # type, distDir, devPort, previewPort, scripts, deps
 ├── .gitignore
 └── src/app/
-    ├── kosmo.config.ts        # base + the generators your answers imply
+    ├── kosmo.config.ts        # the frontend / backend blocks your answers imply
     ├── public/favicon.svg
     ├── api/index/index.ts     # empty stub, if a backend was chosen
     ├── pages/index/index.tsx  # empty stub, extension per framework
@@ -165,37 +163,45 @@ npm run dev
 
 A project is a set of [source folders](/essentials/project-structure), and you can add one at any time.
 
-Each is a self-contained app with its own framework, backend and base -
+Each is a self-contained app with its own stack and its own URL prefixes -
 e.g. a marketing site at `/`, an admin app at `/admin`, an API-only service at `/svc`, etc.
 
 ```sh
-npm run folder      # interactive
-pnpm folder         # same
+npm run folder <name>   # interactive
+# or `pnpm folder <name>`
 ```
 
-The prompts are the project ones, preceded by the two that were assumed at bootstrap:
+**Folder Name** - becomes `src/<name>`, and gives the folder its prefixes:
+- pages at `/<name>`
+- API at `/<name>/api`.
 
-1. **Folder Name** - becomes `src/<name>`
-2. **Base URL** - defaults to `/`
-3. **Framework** and **Backend Framework**, each with a *None* option
-4. **SSR**, then **SSG** if SSR is on, then **TanStack Query**
+Edit `base` in the generated `kosmo.config.ts` afterwards if you want different prefixes.
 
-If `src/<name>` already exists, you are offered remove / overwrite / cancel before anything is written.
+If `src/<name>` already exists, you are offered to remove / overwrite before proceed, or cancel.
+
+Interactive prompts you'll answer to:
+
+- **Frontend** and **Backend**, each with a *None* option
+- **SSR**, then **SSG** if SSR is on, then **TanStack Query**
+
 
 ### CLI mode
 
 The same flags as `create kosmo`, with one difference that matters:
 
-::: warning `--name` and `--base` are required here
-They have no defaults on this command. `pnpm folder --framework react --backend hono` errors with
-`No folder name provided`.
+::: warning The folder name is required here
+It has no default on this command, and it is a positional, not a flag.
+`pnpm folder --frontend react --backend hono` errors with `No folder name provided`.
 :::
 
 ```sh
-pnpm folder --name admin --base /admin --framework solid --backend h3
-pnpm folder --name svc   --base /svc   --no-framework    --backend hono
-pnpm folder --name docs  --base /docs  --framework mdx   --no-backend --ssg
+pnpm folder admin --frontend solid --backend h3
+pnpm folder svc   --no-frontend    --backend hono
+pnpm folder docs  --frontend mdx   --no-backend --ssg
 ```
+
+That gives `admin` its pages at `/admin` and its API at `/admin/api`,
+`svc` an API at `/svc/api` and no pages, `docs` pages at `/docs` and no API.
 
 Without `--overwrite`, an existing `src/<name>` is an error rather than a prompt:
 
@@ -203,7 +209,7 @@ Without `--overwrite`, an existing `src/<name>` is an error rather than a prompt
 ./src/admin already exists. Either remove it or provide --overwrite flag.
 ```
 
-### Install what it added
+### Install new dependencies
 
 A new folder usually brings new dependencies.
 The command diffs `package.json` before and after and prints only what was added:
@@ -218,16 +224,16 @@ $ npm install
 
 Run the install before starting the dev server.
 
-The generators are already listed in the new folder's `kosmo.config.ts`,
-but the packages they write imports for are not on disk yet.
+The new folder's `kosmo.config.ts` already declares the stack,
+but the packages it writes imports for are not on disk yet.
 
 A dev server that was already running does not pick the folder up: folders are collected once, at startup.
 Restart it.
 
-::: tip Adding a generator later
+::: tip Changing the folder later
 `kosmo folder` writes `kosmo.config.ts` once; editing it afterwards is expected and supported.
-What it is not is hot - generators are resolved at startup, so restart the dev server after changing the `generators` array.
-[Configuration&nbsp;›](/essentials/config#generators)
+The config is read at startup, so restart the dev server after turning `ssr` on, adding a `backend`, or changing a `base`.
+[Configuration&nbsp;›](/essentials/config#the-shape)
 :::
 
 ## Selecting folders
@@ -278,7 +284,7 @@ pnpm preview front
 ```
 
 Builds the selected folders, then runs
-[`dist/run.js`](/dev-build-run/building-for-production#one-entry-point-for-the-whole-project) -
+[dist/run.js](/dev-build-run/building-for-production#one-entry-point-for-the-whole-project) -
 the same entry point production starts - on **`previewPort`** (default `4558`, configured in `package.json`).
 
 It then watches your sources and rebuilds on change, restarting the runner.
@@ -327,8 +333,8 @@ The first folder that fails prints its errors and exits `1` - the remaining fold
 | Invalid command, use one of folder, serve, build, preview, typecheck | Typo, or a command from another framework's CLI. |
 | No source folders detected | No `src/*/kosmo.config.ts` anywhere. |
 | Some of given names does not contain a valid KosmoJS source folder | A named folder doesn't exist or has no config. |
-| No folder name provided | `kosmo folder` in CLI mode without `--name` - including the non-TTY case. |
-| framework is required: either provide `--framework <name>` or `--no-framework` flag | Neither half of the pair was passed. |
-| `--framework` and `--no-framework` are mutually exclusive; use only one | Both halves were. |
+| No folder name provided | `kosmo folder` in CLI mode with no name positional - including the non-TTY case. |
+| frontend is required: either provide `--frontend <name>` or `--no-frontend` flag | Neither half of the pair was passed. |
+| `--frontend` and `--no-frontend` are mutually exclusive; use only one | Both halves were. |
 | Target dir is not empty. Either remove dir contents or provide `--overwrite` flag | `create kosmo` in CLI mode, non-empty target. |
 | `./src/<name>` already exists. Either remove it or provide `--overwrite` flag. | `kosmo folder` in CLI mode, folder taken. |

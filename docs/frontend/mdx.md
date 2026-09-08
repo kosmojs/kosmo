@@ -24,22 +24,15 @@ MDX is enabled automatically when you create a source folder and select MDX as t
 To add it to an existing folder:
 
 ```ts [kosmo.config.ts]
-import {
-  // ...
-  mdxGenerator, // [!code ++]
-} from "@kosmojs/dev";
-
-import frontmatterPlugin from "remark-frontmatter"; // [!code ++:2]
-import mdxFrontmatterPlugin from "remark-mdx-frontmatter";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  // ...
-  generators: [
-    // ...
-    mdxGenerator({ // [!code ++:3]
-      remarkPlugins: [frontmatterPlugin, mdxFrontmatterPlugin]
-    }),
-  ],
+  frontend: {
+    stack: "mdx",
+    base: "/docs",
+    ssr: true,
+    ssg: true,
+  },
 });
 ```
 

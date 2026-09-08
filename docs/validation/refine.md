@@ -215,7 +215,7 @@ That failure is silent, and it differs by position:
 | Position | If the brackets are hidden behind an alias |
 |---|---|
 | `params` tuple | the schema does not build - **every** request is rejected with a 400 |
-| `response`&nbsp;tuple | **no schema is built at all** - response validation never runs, and the route gets no [`ResponseT`](/fetch/type-safety#response-types) entry |
+| `response`&nbsp;tuple | **no schema is built at all** - response validation never runs, and the route gets no [ResponseT](/fetch/type-safety#response-types) entry |
 
 Neither raises a compile error, so nothing points at the alias.
 If a route rejects input you know is valid, or a response you declared is silently not validated, check the brackets first.

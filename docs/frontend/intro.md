@@ -61,7 +61,7 @@ src/<folder>/
 | `components/Link.*` | The typed [Link](/frontend/link-navigation) component: `to` takes a `[routeName, ...params]` tuple, so renaming a route directory becomes a compile error at every call site. | Styling it |
 | `index.html` | Vite's HTML entry, loading `entry/client`. | Meta tags, fonts, the mount node |
 | `tsconfig.json` | Extends the derived `lib/<folder>/tsconfig.json`, which carries JSX and path settings. Anything you set here wins. | [Relaxing strictness](/backend/type-safety) |
-| `kosmo.config.ts` | The folder's [configuration](/essentials/config) - `base`, `apiBase`, generators, and any Vite option. | Adding generators or Vite plugins |
+| `kosmo.config.ts` | The folder's [configuration](/essentials/config) - the `frontend`, `backend` and `validation` blocks, and any Vite option. | Turning on SSR, adding Vite plugins |
 
 ### Inside `pages/`
 

@@ -41,17 +41,17 @@ Use `.` as the name to bootstrap into the current folder (e.g. a freshly cloned 
 
 #### How do I create a project non-interactively?
 Choose the framework and backend up front - when flags are present no prompts appear:
-`npm create kosmo demo -- --framework react --backend hono`
-(pnpm and yarn forward flags without the extra `--`: `pnpm create kosmo demo --framework ...`).
+`npm create kosmo demo -- --frontend react --backend hono`
+(pnpm and yarn forward flags without the extra `--`: `pnpm create kosmo demo --frontend ...`).
 
-Required: `--framework <name>` or `--no-framework`, and `--backend <name>` or `--no-backend` -
+Required: `--frontend <name>` or `--no-frontend`, and `--backend <name>` or `--no-backend` -
 the choice is always explicit; a missing flag is an error, never a silent default.
 
-Optional: `--name` (folder name, default `app`), `--base` (default `/`),
-`--ssr`, `--ssg`, `--tsq`, `--overwrite`.
+Optional: `--ssr`, `--ssg`, `--tsq`, `--overwrite`.
+The first folder is always `app`, with pages at `/` and its API at `/api`.
 [Full flag reference&nbsp;›](/essentials/cli#cli-mode)
 
-Use `.` as the project name to scaffold into the current folder: `npm create kosmo . -- --framework ...`
+Use `.` as the project name to scaffold into the current folder: `npm create kosmo . -- --frontend ...`
 [Details&nbsp;›](/start)
 
 #### How do I add a source folder?
@@ -59,12 +59,13 @@ Run `npm run folder` (or `pnpm folder` / `yarn folder`) - interactively, or with
 [Details&nbsp;›](/essentials/cli#adding-a-source-folder)
 
 #### What am I prompted for when adding a source folder?
-Folder name, base URL, framework, backend, SSR, SSG (only if SSR is on) and TanStack Query.
-Non-interactive flags: `--name`, `--base`,
-`--framework solid|react|vue|svelte|mdx` or `--no-framework`,
+Frontend, backend, SSR, SSG (only if SSR is on) and TanStack Query.
+Non-interactive: the name is a positional, plus
+`--frontend solid|react|vue|svelte|mdx` or `--no-frontend`,
 `--backend hono|h3|koa` or `--no-backend`, `--ssr`, `--ssg`, `--tsq`, `--overwrite`.
-Framework and backend each require a value or its negation flag,
-and `--name` / `--base` are required here - unlike at project creation, they have no defaults.
+Frontend and backend each require a value or its negation flag,
+and the name is required here - unlike at project creation, it has no default.
+The folder gets pages at `/<name>` and its API at `/<name>/api`.
 [Details&nbsp;›](/essentials/cli#adding-a-source-folder)
 
 #### How do I create a backend-only (API) folder, or a frontend-only folder?
@@ -75,15 +76,15 @@ or `None (client-only folder)` in the backend select.
 In non-interactive mode, pass the matching negation flag for the side you skip:
 
 ```sh
-pnpm folder --name api --base / --backend hono --no-framework    # backend-only, no UI
-pnpm folder --name docs --base /docs --framework mdx --no-backend  # frontend-only, no backend
+pnpm folder api  --backend hono --no-frontend   # backend-only, no UI
+pnpm folder docs --frontend mdx  --no-backend   # frontend-only, no backend
 ```
 
-The seeded `kosmo.config.ts` contains only the generators that side needs.
+The seeded `kosmo.config.ts` contains only the block that side needs.
 [Details&nbsp;›](/essentials/cli#adding-a-source-folder)
 
 #### Can I create a project without a source folder?
-No - every project starts with its first source folder; omitting `--name` just falls back to the defaults (`app` at base `/`).
+No - every project starts with its first source folder; omitting the name positional just falls back to the default (`app`, pages at `/`, API at `/api`).
 A project without folders has nothing to serve or build - the source folder is the unit of everything in KosmoJS.
 Add more folders any time with `npm run folder`.
 [Details&nbsp;›](/start)
@@ -165,58 +166,61 @@ and a CSR folder for the app rather than mixing SSR/CSR within one folder.
 #### Where does configuration live, and is there a `vite.config.ts`?
 Per source folder, in `src/<folder>/kosmo.config.ts` -
 there is no project-wide kosmo config and **no separate `vite.config.ts`**.
-`kosmo.config.ts` *is* the Vite config for that folder:
-it accepts everything Vite's `UserConfig` accepts (`plugins`, `resolve`, `css`, `define`, ...) alongside the KosmoJS options.
+Vite's `UserConfig` goes in `viteConfig`, on the `frontend` and `backend` blocks separately -
+`plugins`, `resolve`, `css`, `define`, and the rest.
 A few Vite keys are excluded because KosmoJS derives them from the folder layout:
 `root`, `base`, `cacheDir`, `mode`, `builder`, `future`, `legacy`.
 Project-wide settings (`distDir`, `devPort`, `previewPort`, scripts) live in the root `package.json`.
 [Details&nbsp;›](/essentials/config)
 
 #### What options does a source folder config take?
-`base` (required - a string, or a per-environment map like `{ development: "/", production: "/app" }`),
-`apiBase` (default `"/api"`), `generators` (default `[]`),
-`refineTypeName` (default `"VRefine"`), plus any Vite option.
-[Details&nbsp;›](/essentials/config#folder-options)
+Three optional blocks: `frontend`, `backend`, `validation`.
+`frontend` takes `stack`, `base` (required), `fetch`, `ssr`, `ssg`, `tanstack`, `templates` and `viteConfig`.
+`backend` takes `stack`, `base` (required), `openapi`, `alias`, `templates` and `viteConfig`.
+`stack` is either a name or `{ name, plugin }`, where `plugin` is a Vite plugin instance you construct.
+`validation` is `true` or a TypeBox options object.
+[Details&nbsp;›](/essentials/config#the-shape)
 
-#### What is the full list of generators?
-Backend: `honoGenerator`, `h3Generator`, `koaGenerator`.
-Frontend: `reactGenerator`, `solidGenerator`, `vueGenerator`, `svelteGenerator`, `mdxGenerator`.
-Plus `fetchGenerator`, `typeboxGenerator`, `openapiGenerator`, `ssrGenerator`, `ssgGenerator`.
-`coreGenerator` is exported too but always runs first automatically - never list it.
-All are imported from `@kosmojs/dev`.
-[Details&nbsp;›](/essentials/config#generators-1)
+#### What do I import in `kosmo.config.ts`?
+`defineConfig` from `@kosmojs/dev`, and nothing else.
+You name a `stack` and flip features on; `defineConfig` assembles the generators for you.
+`@kosmojs/dev` also exports the generators themselves, for the `generator` escape hatch
+that swaps a built-in generator for your own on any block.
+[Details&nbsp;›](/essentials/config#bringing-your-own-generator)
 
-#### Does the order of generators in the array matter?
-Mostly no - they are sorted by slot before running:
-`core → backend → fetch → frontend → (slotless, in array order) → ssr → ssg`.
-Only the slotless ones (`typeboxGenerator`, `openapiGenerator`) respect the order you write.
-Note `fetchGenerator()` runs only when a backend generator is also present.
-[Details&nbsp;›](/essentials/config#ordering-doesn-t-depend-on-array-order)
+#### What runs, and in what order?
+Fixed, and independent of how you write the config:
+`core -> backend -> validation -> openapi -> fetch -> frontend -> ssr -> ssg`.
+`coreGenerator` always runs first and is never listed.
+`validation` and `openapi` only apply when a `backend` is present,
+and `fetch` only produces clients when there are backend routes to derive them from.
+[Details&nbsp;›](/essentials/config#bringing-your-own-generator)
 
-#### Should I add my framework's Vite plugin to `plugins`?
-No - the framework generator inserts its own already-configured Vite plugin.
-Adding `@vitejs/plugin-react` (or the Solid/Vue/Svelte equivalent) yourself runs the transform twice.
-Pass plugin options through the generator instead: every framework generator's options
-extend its Vite plugin's options, e.g. `reactGenerator({ jsxRuntime: "classic" })`.
-[Details&nbsp;›](/essentials/config#vite-options)
+#### Should I add my stack's Vite plugin to `viteConfig.plugins`?
+No - it reaches Vite through `stack`, so listing it in `viteConfig.plugins` runs the transform twice.
+To configure it, construct it yourself and pass it as `plugin`:
+`frontend: { stack: { name: "react", plugin: react({ jsxRuntime: "classic" }) }, base: "/" }`.
+With a bare name `KosmoJS` builds the plugin with the arguments the current command needs;
+an instance you pass is used as written, so set those yourself.
+[Details&nbsp;›](/essentials/config#frontend-stack-required)
 
 #### How do I change the `/api` prefix, and where does it come from?
-It is `apiBase` in the folder's `kosmo.config.ts`, defaulting to `"/api"`.
-A route's URL is `base` + `apiBase` + route name, so `base: "/admin"` with the default
-`apiBase` serves `users/[id]` at `/admin/api/users/:id`.
+It is `backend.base` in the folder's `kosmo.config.ts`, and it is a **full path** -
+not a suffix joined onto `frontend.base`. A route's URL is `backend.base` + route name,
+so `backend: { base: "/admin/api" }` serves `users/[id]` at `/admin/api/users/:id`.
 The `api/` **directory** name never appears in the URL - it only separates server routes from `pages/` on disk.
-[Details&nbsp;›](/essentials/config#apibase)
+[Details&nbsp;›](/essentials/config#backend-base-required)
 
 #### Can I rename `VRefine`?
-Yes - set `refineTypeName` in the folder's config.
+Yes - set `refineTypeName` inside the `validation` options object.
 It stays globally available and import-free under whatever name you choose.
-[Details&nbsp;›](/essentials/config#refinetypename)
+[Details&nbsp;›](/essentials/config#validation)
 
 #### How do I map an extra URL onto an existing route?
-The `alias` option on the backend generator: `honoGenerator({ alias: { "/feed.xml": "rss" } })`.
+The `alias` option in the `backend` block: `backend: { alias: { "/feed.xml": "rss" } }`.
 Keys are absolute URLs, not prefixed by the router's base; if a key has dynamic segments,
 their names must match the target route's parameters exactly or the request 404s.
-[Details&nbsp;›](/essentials/config#backend-generators)
+[Details&nbsp;›](/backend/aliases)
 
 ### Directory-Based Routing
 
@@ -386,9 +390,9 @@ they default-export `defineRoute(...)`, which is already a named call.
 [Details&nbsp;›](/routing/seeded-content#client-pages)
 
 #### How do I override the default seeded template?
-Pass `templates` in the generator options in `kosmo.config.ts`, keyed by route-name glob pattern.
+Pass `templates` in the `frontend` or `backend` block of `kosmo.config.ts`, keyed by route-name glob pattern.
 Each value is either a template string or a function of the route returning one.
-Both frontend and backend generators accept it:
+Both blocks accept it:
 [Custom Page Templates&nbsp;›](/frontend/custom-templates#configuration) ·
 [Custom Route Templates&nbsp;›](/backend/custom-templates#configuration)
 
@@ -573,7 +577,7 @@ anything narrower belongs in a subtree `use.ts` or the route's own `use`.
 
 #### Is `api/use.ts` the same as Express's `app.use()`?
 No - it runs **per route, not per request**. Global middleware is composed into each route's chain,
-so a request matching no route never reaches it, and it never sees requests outside this folder's `apiBase`.
+so a request matching no route never reaches it, and it never sees requests outside this folder's `backend.base`.
 For work that must happen on every request regardless of routing,
 use the framework's own app instance in `api/app.ts`, where `appFactory`'s callback hands you `{ app }`.
 [Details&nbsp;›](/backend/middleware#it-runs-per-route-not-per-request)
@@ -1039,10 +1043,11 @@ React, SolidJS, Vue, Svelte, and MDX - directory routing bridges to each framewo
 native router and reactive model.
 [Details&nbsp;›](/essentials/frameworks)
 
-#### How do I enable a generator on an existing folder?
-Register the generator (e.g. `reactGenerator()`) in the folder's `kosmo.config.ts` and restart the dev server.
-The generator inserts its own Vite plugin automatically - don't add the plugin yourself, or it runs twice.
-[Details&nbsp;›](/essentials/config#generators-1)
+#### How do I add a frontend or backend to an existing folder?
+Add the block to the folder's `kosmo.config.ts` - `frontend: { stack: "react", base: "/front" }` -
+then restart the dev server.
+The framework's Vite plugin is inserted for you - don't add the plugin yourself, or it runs twice.
+[Details&nbsp;›](/essentials/config#the-shape)
 
 #### What `jsxImportSource` does each framework need?
 React `"react"`, SolidJS `"solid-js"`, Vue `"vue"` (only when using JSX), MDX `"preact"`.
@@ -1247,8 +1252,8 @@ layouts must be `.mdx` not `.md` (`.md` can't render `{props.children}`).
 
 #### Is SSR on by default?
 No - folders default to client-side rendering (with Vite's dev server and HMR in dev). Enable
-SSR when you create the folder (choose it in the interactive prompt, or pass `--ssr` in CLI
-mode), or add it later by registering `ssrGenerator()` in `kosmo.config.ts` and restarting dev.
+SSR when you create the folder (choose it in the interactive prompt, or pass `--ssr` in CLI mode),
+or add it later by setting `frontend.ssr: true` in `kosmo.config.ts` and restarting dev.
 [Details&nbsp;›](/frontend/server-side-render#adding-ssr-support)
 
 #### Does SSR run in dev?
@@ -1288,7 +1293,7 @@ stream as `html`; the server handles writing it into the response. Enable it per
 [Details&nbsp;›](/frontend/server-side-render#stream-rendering)
 
 #### How do I use a different render mode per route or group of routes?
-`renderMode` in `ssrGenerator()` options controls string vs stream per route.
+`renderMode` in the `frontend.ssr` options controls string vs stream per route.
 Every route defaults to `"string"`; set `"stream"` to stream all routes, or pass a map of glob patterns to opt in selectively.
 When patterns overlap, the first match wins, so order them specific to general.
 Streaming a route needs the folder's renderer to implement `renderToStream`;
@@ -1370,7 +1375,7 @@ Use SSR instead when a page depends on the request (a signed-in user, live data,
 
 #### How do I enable SSG?
 Choose it when creating the source folder (the interactive prompt asks, or pass `--ssg`),
-or add `ssgGenerator()` to an existing folder's `kosmo.config.ts`.
+or set `frontend.ssg: true` in an existing folder's `kosmo.config.ts`.
 
 It requires **SSR enabled** on that folder - pages are rendered at build time by the folder's own SSR server -
 which is why the creation prompt only offers SSG once you've chosen SSR.
@@ -1418,7 +1423,7 @@ No - nothing is pre-rendered for unmatched paths, so point your host's own not-f
 [Details&nbsp;›](/frontend/error-pages)
 
 #### How do I turn SSG off?
-Remove (or comment out) `ssgGenerator()` from that folder's `kosmo.config.ts`.
+Set `frontend.ssg: false` in that folder's `kosmo.config.ts`.
 The folder keeps rendering normally, it just stops emitting static routes.
 [Details&nbsp;›](/frontend/static-site-generation)
 
@@ -1452,7 +1457,7 @@ and `ssr/` (`app.js` + `server.js` + `assets/` folder, only when SSR is enabled)
 [Details&nbsp;›](/dev-build-run/building-for-production#build-output)
 
 #### What's the simplest way to run my app in production?
-`node dist/run.js -p 4556` - one process serving every source folder, dispatched by `base` + `apiBase`.
+`node dist/run.js -p 4556` - one process serving every source folder, dispatched by each folder's `frontend.base` and `backend.base`.
 It's built on `node:http`, so `bun` and `deno run -A` work too.
 [Details&nbsp;›](/dev-build-run/building-for-production#one-entry-point-for-the-whole-project)
 
@@ -1484,7 +1489,7 @@ parameters, and responses. No manual schema authoring or annotation layers.
 [Details&nbsp;›](/openapi)
 
 #### How do I enable and configure it?
-Add `openapiGenerator(config)` in `kosmo.config.ts`. Required: `outfile`, `openapi` (e.g. `"3.1.0"`),
+Add an `openapi` block under `backend` in `kosmo.config.ts`. Required: `outfile`, `openapi` (e.g. `"3.1.0"`),
 `info` (`title` + `version`), `servers` (each `url` + optional `description`).
 Optional `info`: `summary`, `description` (markdown), `termsOfService`, `contact`, `license`.
 [Details&nbsp;›](/openapi#configuration)
@@ -1496,8 +1501,7 @@ both referencing the same handlers and schemas.
 [Details&nbsp;›](/openapi#derived-specification)
 
 #### Does the spec update automatically?
-Yes - it is recomputed in the background whenever you change routes, types, or schemas,
-alongside the validation and fetch generators.
+Yes - it is recomputed in the background whenever you change routes, types, or schemas, alongside validation and fetch clients.
 [Details&nbsp;›](/openapi#derived-specification)
 
 #### How do I serve the spec?
@@ -1652,7 +1656,7 @@ which doesn't validate request bodies by itself).
 There isn't one you register. Routing is filesystem-driven;
 route configs are derived per source folder into `lib/` for the native router to consume.
 Treat derived code as a build artifact.
-[Details&nbsp;›](/frontend/routing#derived-route-shape)
+[Details&nbsp;›](/frontend/routing#routes)
 
 #### Route groups like Next's `(group)`?
 There's no route-group syntax, and it isn't needed. Next's `(group)` is a lightweight way
@@ -1767,10 +1771,10 @@ For real caching, enable TanStack Query (a first-class option).
 
 #### How do I enable TanStack Query?
 Turn it on when you create the source folder - interactive mode asks,
-or pass `--tsq` non-interactively (`pnpm folder --name front --base / --framework react --tsq`).
+or pass `--tsq` non-interactively (`pnpm folder front --frontend react --tsq`).
 
-To add it later, set the `tanstack` option on the framework generator in `kosmo.config.ts`
-(`reactGenerator({ tanstack: { query: true } })`).
+To add it later, set `tanstack` in the `frontend` block of `kosmo.config.ts`
+(`frontend: { tanstack: { query: true } }`).
 
 Once it's on, everything is wired - no setup, no provider to place - you just start using it in your components.
 [Details&nbsp;›](/frontend/tanstack-query#enabling-and-using-it)
@@ -1962,11 +1966,14 @@ Don't add `lib/` to the root `.gitignore` - that would drop the cache and make e
 
 ### Rendering & SSR
 
-#### Is KosmoJS CSR-first, and how do I enable SSR?
-Yes - folders default to CSR with Vite's dev server and HMR.
-Opt into SSR via `ssrGenerator()` (or `--ssr` at creation). SSR runs in production builds, not dev.
-Whether a folder is SSR or CSR is a per-folder choice (e.g. an SSR marketing folder + a CSR app
-folder); within an SSR folder, `renderMode` selects string vs stream per route by glob pattern.
+#### What decides whether a folder renders on the server or the client?
+You do, per folder - set `frontend.ssr` (or pass `--ssr` at creation),
+and that folder's production build renders on the server.
+A project can mix freely: an SSR marketing folder next to a CSR app folder.
+
+Dev is the exception, and not a choice: `pnpm dev` is always Vite with HMR and client-side rendering,
+whatever the folder is configured for. The SSR path is exercised by kosmo preview and in production.
+To see server-rendered output during dev, run `pnpm preview`.
 [Details&nbsp;›](/frontend/server-side-render#adding-ssr-support)
 
 #### ISR / on-demand revalidation / PPR?
@@ -2004,8 +2011,9 @@ Folders develop together as one project and deploy independently while sharing i
 
 #### Is Vite exposed/configurable? What replaces `next.config.js`?
 It's built on Vite (no proprietary runtime/bundler).
-Configure per folder via `kosmo.config.ts` with `plugins` and `generators` arrays,
-plus standard Vite config. There's no `app/` vs `pages/` debate - you're in `src/<folder>/{api,pages}`.
+Configure per folder via `kosmo.config.ts` with the `frontend` / `backend` / `validation` blocks,
+plus standard Vite config including `plugins`.
+There's no `app/` vs `pages/` debate - you're in `src/<folder>/{api,pages}`.
 [Details&nbsp;›](/frontend/intro)
 
 #### Output vs `.next/`, and a `next start` equivalent?
@@ -2045,6 +2053,6 @@ how to tell which frameworks a folder runs, why boilerplate should never be hand
 the four validation mistakes that typecheck but fail at runtime, middleware placement,
 and why the dev server never shows the SSR path.
 
-Agents should also prefer `https://kosmojs.dev/llms-full.txt` over recall for exact generator options,
+Agents should also prefer `https://kosmojs.dev/llms-full.txt` over recall for exact config options,
 the full `VRefine` keyword set and scaffold flags.
 [Details&nbsp;›](/agents)

@@ -38,10 +38,10 @@ To re-seed one, empty the file and it will be filled again.
 
 ## Configuration
 
-Pass custom templates via generator options in your source folder's `kosmo.config.ts`:
+Pass custom templates through the `frontend` block in your source folder's `kosmo.config.ts`:
 
 ```ts [kosmo.config.ts]
-import { defineConfig, reactGenerator } from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 // [!code ++:8]
 const landingTemplate = `
@@ -54,14 +54,14 @@ export default function Page() {
 }`;
 
 export default defineConfig({
-  generators: [
-    reactGenerator({
-      templates: { // [!code ++:4]
-        "landing/*": landingTemplate,
-        "marketing/**": landingTemplate,
-      },
-    }),
-  ],
+  frontend: {
+    stack: "react",
+    base: "/front",
+    templates: { // [!code ++:4]
+      "landing/*": landingTemplate,
+      "marketing/**": landingTemplate,
+    },
+  },
 });
 ```
 
@@ -120,7 +120,7 @@ a pattern such as `"2024/**"` is hoisted to the front and matches before anythin
 it. Prefix it with `./` to keep your written order: `"./2024/**"`.
 The `./` is stripped before matching.
 
-The same applies to [`renderMode`](/frontend/server-side-render#selecting-the-render-mode), which uses the same resolver.
+The same applies to [renderMode](/frontend/server-side-render#selecting-the-render-mode), which uses the same resolver.
 :::
 
 ## Parameter Compatibility

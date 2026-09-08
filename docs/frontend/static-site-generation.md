@@ -17,20 +17,18 @@ for deploying to a CDN or any static host without a running server.
 ## Adding SSG Support
 
 SSG is automatically enabled if selected during source folder creation (or via `--ssg` flag in CLI mode).
-To add it to an existing folder, register `ssgGenerator` in your source folder's `kosmo.config.ts`:
+To add it to an existing folder, flip `ssg` on in your source folder's `kosmo.config.ts`:
 
 ```ts [kosmo.config.ts]
-import {
-  defineConfig,
-  // ...other generators
-  ssgGenerator, // [!code ++]
-} from "@kosmojs/dev";
+import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
-  generators: [
-    // ...other generators
-    ssgGenerator(), // [!code ++]
-  ],
+  frontend: {
+    stack: "react",
+    base: "/front",
+    ssr: true,
+    ssg: true, // [!code ++]
+  },
 });
 ```
 

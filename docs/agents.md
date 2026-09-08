@@ -21,13 +21,14 @@ Fetch **`https://kosmojs.dev/llms-full.txt`** before relying on recall for detai
 ## Orient before writing
 
 A source folder is a self-contained app, and almost every convention depends on which frameworks it runs.
-Read `src/<folder>/kosmo.config.ts` first - the `generators` array is the answer:
+Read `src/<folder>/kosmo.config.ts` first - the `frontend` and `backend` blocks are the answer:
 
 | Question | Where to look |
 |---|---|
-| Which backend? | `honoGenerator()` / `h3Generator()` / `koaGenerator()`. None of them -> frontend-only folder, no `api/` directory. |
-| Which frontend? | `reactGenerator()` / `solidGenerator()` / `vueGenerator()` / `svelteGenerator()` / `mdxGenerator()`, or the page file extensions. None -> backend-only folder, no `pages/`. |
-| SSR? SSG? | `ssrGenerator()` / `ssgGenerator()` in the same array. |
+| Which backend? | `backend.stack` - `"hono"` / `"h3"` / `"koa"`. No `backend` block -> frontend-only folder, no `api/` directory. |
+| Which frontend? | `frontend.stack` - `"react"` / `"solid"` / `"vue"` / `"svelte"` / `"mdx"`, or the page file extensions. No `frontend` block -> backend-only folder, no `pages/`. |
+| SSR? SSG? | `frontend.ssr` / `frontend.ssg`. |
+| Where does it serve from? | `frontend.base` and `backend.base` - both full paths, not joined. |
 
 The frontend answer decides more than syntax - data preload, child rendering, layout filenames,
 `jsxImportSource` and mixed-segment support all differ per framework.
@@ -109,7 +110,7 @@ Keep cascading middleware generic. It runs for sibling routes too, so a param li
 
 ## Navigation and framework hooks
 
-The typed [`Link`](/frontend/link-navigation) takes a tuple of route name then params in path order -
+The typed [Link](/frontend/link-navigation) takes a tuple of route name then params in path order -
 `to={["users/[id]", 123]}` - plus an optional `query` prop.
 TypeScript enforces the param types, so renaming a route folder surfaces an error at every stale `Link`.
 
@@ -123,7 +124,7 @@ and a **layout** must pass its path-qualified name (`useLoaderData("dashboard/la
 
 ## The dev server never shows the SSR path
 
-Dev is **always** client-rendered - Vite with HMR - whether or not `ssrGenerator()` is registered.
+Dev is **always** client-rendered - Vite with HMR - whether or not `frontend.ssr` is on.
 The server entry (`renderToString` / `renderToStream`) and any SSG output exist only in a production build.
 Do not reason about "the SSR code path" from what the dev server does; run `pnpm preview` to see the real thing.
 [Details&nbsp;›](/dev-build-run/production-preview)
