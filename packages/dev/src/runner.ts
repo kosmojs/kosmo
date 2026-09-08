@@ -8,7 +8,7 @@ import type {
   SourceFolder,
   SourceFolderManifest,
 } from "@kosmojs/core";
-import { pathResolver } from "@kosmojs/lib";
+import { createAliasPatterns, pathResolver } from "@kosmojs/lib";
 
 import runTemplate from "#templates/run";
 
@@ -22,7 +22,14 @@ export const folderManifestFactory = (
   return {
     name,
     ...(frontend?.base ? { frontend: { base: frontend.base } } : {}),
-    ...(backend?.base ? { backend: { base: backend.base } } : {}),
+    ...(backend?.base
+      ? {
+          backend: {
+            base: backend.base,
+            aliasPatterns: createAliasPatterns(backend?.alias),
+          },
+        }
+      : {}),
     ssr: frontend?.ssr ? true : false,
   };
 };

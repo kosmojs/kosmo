@@ -299,3 +299,11 @@ export const createH3Pattern = (tokens: Array<PathToken>): string => {
     })
     .join("/");
 };
+
+export const createAliasPatterns = (
+  aliasMap: Record<string, string> | undefined,
+) => {
+  return Object.keys(aliasMap || {}).map((alias) => {
+    return createPathPattern(pathTokensFactory(alias));
+  });
+};

@@ -263,6 +263,10 @@ export default defineConfig({
               link: "/backend/error-handling",
             },
             {
+              text: "Aliases",
+              link: "/backend/aliases",
+            },
+            {
               text: "Custom Templates",
               link: "/backend/custom-templates",
             },

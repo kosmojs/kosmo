@@ -39,6 +39,7 @@ export type SourceFolderManifest = {
   };
   backend?: {
     base: string;
+    aliasPatterns: Array<string>;
   };
   // dist/<folder>/ssr/server.js exists - it bundles the backend, run.js mounts it alone
   ssr: boolean;

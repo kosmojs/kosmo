@@ -6,6 +6,7 @@ import semver from "semver";
 import { defaults, type ResolvedEntry } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
+  createAliasPatterns,
   defineGeneratorFactory,
   pathResolver,
   renderFactory,
@@ -245,6 +246,9 @@ export default defineGeneratorFactory((sourceFolder) => {
       await renderToFile(createPath.libCore(file), template, {
         base: frontend?.base ? JSON.stringify(frontend.base) : "undefined",
         backendBase: backend?.base ? JSON.stringify(backend.base) : "undefined",
+        backendAliasPatterns: JSON.stringify(
+          createAliasPatterns(backend?.alias),
+        ),
         apiRoutes,
         pageRoutes,
       });

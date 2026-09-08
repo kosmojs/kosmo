@@ -13,6 +13,7 @@ declare module "{{ createImport 'entry' 'server' }}" {
 declare module "{{ createImport 'libCore' }}" {
   export const base: string;
   export const backendBase: string;
+  export const backendAliasPatterns: Array<string>;
 }
 
 declare module "{{ createImport 'libCore' 'ssr' }}" {

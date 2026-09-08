@@ -33,7 +33,7 @@ export const routeSources: Array<RouteSource<never>> = [
   {{#each routes}}
   {
     {{#if alias}}
-    ...apiRouteMapper(apiBase, { ...{{serializeApiRoute .}}, pathPattern: "{{alias}}" }),
+    ...apiRouteMapper("/", { ...{{serializeApiRoute .}}, pathPattern: "{{aliasPattern}}" }),
     path: "{{alias}}",
     pathPattern: "{{alias}}",
     {{else}}

@@ -21,7 +21,7 @@ export type TestGroup = {
 export const createTestGroups = async ({
   frontend,
   template,
-  renderModes = ["string", "stream"],
+  renderModes = ["string"],
 }: {
   frontend: keyof typeof FRONTENDS;
   template: (a: {

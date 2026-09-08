@@ -4,7 +4,7 @@ import {
   type IncomingMessage,
   type ServerResponse,
 } from "node:http";
-import { extname, join, resolve } from "node:path";
+import { extname, join, posix, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs, styleText } from "node:util";
 
@@ -12,6 +12,7 @@ import { getRequestListener } from "@hono/node-server";
 import { type Context, Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { stream } from "hono/streaming";
+import { pathToRegexp } from "path-to-regexp";
 import { glob } from "tinyglobby";
 
 import {
@@ -22,7 +23,11 @@ import {
 } from "@kosmojs/core";
 
 import { routeMap } from "{{ createImport 'lib' '@ssr/routes' }}";
-import { backendBase, base } from "{{ createImport 'libCore' }}";
+import {
+  backendAliasPatterns,
+  backendBase,
+  base,
+} from "{{ createImport 'libCore' }}";
 import { redirectCodes, ssrOrigin } from "{{ createImport 'libCore' 'ssr' }}";
 
 const ROOT = import.meta.dirname;
@@ -368,7 +373,8 @@ const createNodeListener = (app: FetchApp | NodeApp): NodeListener => {
 
 /**
  * The folder's complete request surface as a single node:http listener:
- * API requests under `backend.base` go to the bundled backend, everything else to the SSR app.
+ * API requests under `backend.base` and ones in `backend.alias` go to the bundled backend,
+ * everything else to the SSR app.
  * `startServer` binds it to a port/socket; `dist/run.js` mounts it next to other folders.
  * */
 export const createListener = async (): Promise<NodeListener> => {
@@ -382,14 +388,23 @@ export const createListener = async (): Promise<NodeListener> => {
 
   const ssrListener = createNodeListener(ssrApp as never);
 
-  const apiListener = backendApp
+  const backendListener = backendApp
     ? createNodeListener(backendApp as never)
-    : async () => {};
+    : undefined;
+
+  const aliasPatterns = backendAliasPatterns.map((alias) => {
+    return pathToRegexp(posix.join("/", alias)).regexp;
+  });
 
   return (req, res) => {
-    const { pathname } = new URL(req.url ?? "/", ssrOrigin);
-    return pathname === backendBase || pathname.startsWith(`${backendBase}/`)
-      ? apiListener(req, res)
+    if (!backendListener) {
+      return ssrListener(req, res);
+    }
+    const path = new URL(req.url ?? "/", ssrOrigin).pathname;
+    return path === backendBase ||
+      path.startsWith(`${backendBase}/`) ||
+      aliasPatterns.some((regexp) => regexp.test(path))
+      ? backendListener(req, res)
       : ssrListener(req, res);
   };
 };

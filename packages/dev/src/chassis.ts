@@ -1,8 +1,9 @@
 import http, { type IncomingMessage, type ServerResponse } from "node:http";
 import net from "node:net";
-import { join, resolve } from "node:path";
+import { join, posix, resolve } from "node:path";
 import { styleText } from "node:util";
 
+import { pathToRegexp } from "path-to-regexp";
 import { build, createServer, type RunnableDevEnvironment } from "vite";
 
 import {
@@ -15,6 +16,7 @@ import {
 } from "@kosmojs/core";
 import type { DevSetup } from "@kosmojs/core/api";
 import {
+  createAliasPatterns,
   mergeConfigs,
   pathResolver,
   routesFactory,
@@ -564,31 +566,39 @@ const eventFactory = async (
   };
 };
 
-const normalizeRegex = (s: string) => {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\/+$/, "");
-};
-
 const matchersFactory: (
   sourceFolder: SourceFolder,
 ) => Record<"frontend" | "backend", (req: IncomingMessage) => boolean> = ({
   config,
 }) => {
-  const frontendPattern = config.frontend?.base
-    ? new RegExp(`^${normalizeRegex(config.frontend.base)}(?=$|/)`)
-    : undefined;
+  const [frontendBase, backendBase] = [
+    config.frontend?.base,
+    config.backend?.base,
+  ];
 
-  const backendPattern = config.backend?.base
-    ? new RegExp(`^${normalizeRegex(config.backend.base)}(?=$|/)`)
-    : undefined;
+  const backendAliasPatterns = backendBase
+    ? createAliasPatterns(config.backend?.alias).map((pattern) => {
+        return pathToRegexp(posix.join("/", pattern)).regexp;
+      })
+    : [];
 
   return {
     frontend(req) {
-      return backendPattern?.test(req.url as string)
-        ? false
-        : frontendPattern?.test(req.url as string) || false;
+      if (!frontendBase || this.backend(req)) {
+        return false;
+      }
+      const path = new URL(req.url ?? "/", "http://localhost").pathname;
+      return path === frontendBase || path.startsWith(`${frontendBase}/`);
     },
     backend(req) {
-      return backendPattern?.test(req.url as string) || false;
+      if (!backendBase) {
+        return false;
+      }
+      const path = new URL(req.url ?? "/", "http://localhost").pathname;
+      if (path === backendBase || path.startsWith(`${backendBase}/`)) {
+        return true;
+      }
+      return backendAliasPatterns.some((r) => r.test(path) || false);
     },
   };
 };

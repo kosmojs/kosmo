@@ -1,7 +1,7 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import net from "node:net";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, posix, resolve } from "node:path";
 import { styleText } from "node:util";
 
 import { serve } from "@hono/node-server";
@@ -81,8 +81,8 @@ export const setupTestProject = async (
     skip?: boolean;
   },
   folderDefaults?: {
-    frontend?: Omit<FolderConfig["frontend"], "stack" | "base">;
-    backend?: Omit<FolderConfig["backend"], "stack" | "base">;
+    frontend?: Omit<NonNullable<FolderConfig["frontend"]>, "stack" | "base">;
+    backend?: Omit<NonNullable<FolderConfig["backend"]>, "stack" | "base">;
   },
 ) => {
   const devPort = await findFreePort();
@@ -116,12 +116,17 @@ export const setupTestProject = async (
     name: "test",
     config: {
       ...(frontend ? { frontend: { stack: frontend, base } } : {}),
-      ...(backend ? { backend: { stack: backend, base: `${base}/api` } } : {}),
+      ...(backend
+        ? { backend: { stack: backend, base: posix.join(base, "api") } }
+        : {}),
       generators: [],
     },
     root: projectRoot,
     distDir: "dist",
   };
+
+  const { createPath, createImport } = pathResolver(sourceFolder);
+  const jiti = createJiti(projectRoot);
 
   const projectSettings: ProjectSettings = {
     root: projectRoot,
@@ -138,15 +143,17 @@ export const setupTestProject = async (
     await rm(tempDir, { recursive: true, force: true });
   };
 
-  const { createPath, createImport } = pathResolver(sourceFolder);
-  const jiti = createJiti(projectRoot);
-
   type PageTemplateFactory = (a: {
     name: string;
     file: string;
     cssFile: string;
     cssText: string;
   }) => Promise<() => string>;
+
+  const buildProject = async () => {
+    await installDependencies(projectRoot);
+    await exec("pnpm", ["build"], { cwd: projectRoot, env });
+  };
 
   const createPageRoute = async (
     name: string,
@@ -205,11 +212,10 @@ export const setupTestProject = async (
     await writeFile(filePath, templateBuilder());
   };
 
-  const createDevServer = async () => {
-    if (mode === "backend") {
-      const serve = await jiti.import<() => Promise<{ close: Function }>>(
-        createPath.distDir("api/server.js"),
-        { default: true },
+  const createServer = async (kind = mode) => {
+    if (kind === "backend") {
+      const { default: serve } = await import(
+        createPath.distDir("api/server.js")
       );
 
       const server = await serve();
@@ -217,7 +223,7 @@ export const setupTestProject = async (
       return () => server.close();
     }
 
-    if (mode === "ssr") {
+    if (kind === "ssr") {
       const { startServer } = await import(createPath.distDir("ssr/server.js"));
 
       const server = await startServer({ port: devPort });
@@ -225,34 +231,15 @@ export const setupTestProject = async (
       return () => server.close();
     }
 
-    if (mode === "ssg") {
-      const base = sourceFolder.config.frontend?.base;
+    if (kind === "ssg") {
+      const { startServer } = await import(createPath.distDir("../run.js"));
 
-      if (!base) {
-        throw new Error("frontend not configured");
-      }
-
-      const app = new Hono();
-
-      app.use(
-        `${base === "/" ? "" : base}/*`,
-        serveStatic({
-          root: createPath.distDir("ssg"),
-          rewriteRequestPath: (path) => {
-            return path.slice(base === "/" ? 0 : base.length);
-          },
-        }),
-      );
-
-      // no SPA fallback - a miss on a static host is a real 404
-      app.notFound((c) => c.text("404", 404));
-
-      const server = serve({ fetch: app.fetch, port: devPort });
+      const server = await startServer({ port: devPort });
 
       return () => server.close();
     }
 
-    if (mode === "csr") {
+    if (kind === "csr") {
       const config = await jiti.import<SourceFolder["config"]>(
         createPath.src("kosmo.config.ts"),
         { default: true },
@@ -260,18 +247,13 @@ export const setupTestProject = async (
 
       const teardown = await chassis({
         ...projectSettings,
-        sourceFolders: [
-          {
-            ...sourceFolder,
-            config,
-          },
-        ],
+        sourceFolders: [{ ...sourceFolder, config }],
       });
 
       return teardown;
     }
 
-    throw new Error(`Unknown mode ${mode}`);
+    throw new Error(`Unknown mode ${kind}`);
   };
 
   const withPageContent = async <
@@ -298,7 +280,7 @@ export const setupTestProject = async (
     const url = [
       //
       baseURL,
-      path === "" ? base : join(base, path as never),
+      path === "/" ? base : posix.join(base, path as never),
     ].join("");
 
     let maybeContent: string | undefined;
@@ -412,8 +394,9 @@ export const setupTestProject = async (
       ? createRoutePath(pathSource[0], pathSource[1])
       : pathSource;
 
-    const url = baseURL + join(base, path as never);
+    const url = baseURL + posix.join(base, path as never);
     const response = await httpClient(url, { method, searchParams });
+
     return { response };
   };
 
@@ -434,11 +417,14 @@ export const setupTestProject = async (
       throw new Error("backend not configured");
     }
 
-    const path = Array.isArray(pathSource)
+    const path: string = Array.isArray(pathSource)
       ? createRoutePath(pathSource[0], pathSource[1])
       : pathSource;
 
-    const url = baseURL + join(base, path as never);
+    const url = path.startsWith("/")
+      ? baseURL + path
+      : baseURL + posix.join(base, path as never);
+
     const response = await httpClient(url, { method, searchParams });
 
     return { response };
@@ -487,8 +473,8 @@ export const setupTestProject = async (
           frontend,
           backend,
           tsq,
-          ssr: mode === "ssr",
-          ssg: mode === "ssg",
+          ssr: mode === "ssr" || (folderDefaults?.frontend?.ssr as boolean),
+          ssg: mode === "ssg" || (folderDefaults?.frontend?.ssg as boolean),
         },
         {
           frontend: {
@@ -532,16 +518,16 @@ export const setupTestProject = async (
 
       await installDependencies(projectRoot);
     },
+    buildProject,
+    createServer,
     async startServer() {
       if (skip) {
         return;
       }
 
-      await installDependencies(projectRoot);
+      await buildProject();
 
-      await exec("pnpm", ["build"], { cwd: projectRoot, env });
-
-      closeServer = await createDevServer();
+      closeServer = await createServer();
 
       await new Promise((resolve) => setTimeout(resolve, 100));
 

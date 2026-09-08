@@ -1,4 +1,5 @@
 import child_process from "node:child_process";
+import { posix } from "node:path";
 import { promisify } from "node:util";
 
 import { compile } from "path-to-regexp";
@@ -50,7 +51,7 @@ export const createRoutePath = (
   const pathTokens = pathTokensFactory(routeName);
   const pathPattern = createPathPattern(pathTokens);
   const toPath = compile(pathPattern);
-  return toPath({ ...params } as never);
+  return posix.join("/", toPath({ ...params } as never));
 };
 
 export const contentPatternFor = (route: string) => {

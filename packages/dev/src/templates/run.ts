@@ -28,6 +28,8 @@ import { extname, join, posix, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 
+import { pathToRegexp } from "path-to-regexp";
+
 import { MIME_TYPES, type SourceFolderManifest } from "@kosmojs/core";
 
 type NodeListener = (req: IncomingMessage, res: ServerResponse) => void;
@@ -38,7 +40,8 @@ type Folder = SourceFolderManifest & {
 
 type Handler = {
   name: string;
-  path: string;
+  base: string;
+  aliasPatterns: Array<RegExp>;
   listener: NodeListener;
 };
 
@@ -53,18 +56,8 @@ const contentTypeFor = (file: string): string => {
   return MIME_TYPES[extname(file).toLowerCase()] || "application/octet-stream";
 };
 
-const escapeRegex = (text: string): string => {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\/+$/, "");
-};
-
-// matches `prefix` itself and anything nested under it, never a sibling sharing the text
-const prefixMatcher = (prefix: string): ((pathname: string) => boolean) => {
-  const pattern = new RegExp(`^${escapeRegex(prefix)}(?=$|/)`);
-  return (pathname) => pattern.test(pathname);
-};
-
-const handlerWeight = ({ path }: Handler): number => {
-  return path.length + path.split("/").filter(Boolean).length;
+const handlerWeight = ({ base }: Handler): number => {
+  return base.length + base.split("/").filter(Boolean).length;
 };
 
 const readFolders = async (): Promise<Array<Folder>> => {
@@ -77,13 +70,11 @@ const readFolders = async (): Promise<Array<Folder>> => {
 
     const dir = join(ROOT, entry.name);
 
-    const manifest = await readFile(join(dir, "kosmo.json"), "utf8").catch(
-      () => undefined,
-    );
+    const { default: manifest } = await import(join(dir, "kosmo.json"), {
+      with: { type: "json" },
+    });
 
-    if (manifest) {
-      folders.push({ dir, ...(JSON.parse(manifest) as SourceFolderManifest) });
-    }
+    folders.push({ dir, ...(manifest as SourceFolderManifest) });
   }
 
   return folders;
@@ -157,10 +148,17 @@ const createStaticListener = async (
   };
 };
 
-const mountFolders = async (folders: Array<Folder>) => {
+const mountFolders = async (
+  folders: Array<Folder>,
+): Promise<Array<Handler>> => {
   const handlers: Array<Handler> = [];
 
   for (const { dir, name, frontend, backend, ssr } of folders) {
+    const aliasPatterns =
+      backend?.aliasPatterns.map((alias) => {
+        return pathToRegexp(posix.join("/", alias)).regexp;
+      }) || [];
+
     if (ssr) {
       // ssr/server.js bundles the backend
       const { createListener } = (await import(
@@ -169,8 +167,19 @@ const mountFolders = async (folders: Array<Folder>) => {
 
       const listener = await createListener();
 
-      handlers.push({ name, path: backend?.base as string, listener });
-      handlers.push({ name, path: frontend?.base as string, listener });
+      handlers.push({
+        name,
+        base: backend?.base as string,
+        aliasPatterns: aliasPatterns,
+        listener,
+      });
+
+      handlers.push({
+        name,
+        base: frontend?.base as string,
+        aliasPatterns: [],
+        listener,
+      });
 
       continue;
     }
@@ -179,7 +188,12 @@ const mountFolders = async (folders: Array<Folder>) => {
       const { default: listener } = (await import(
         pathToFileURL(join(dir, "api", "listener.js")).href
       )) as { default: NodeListener };
-      handlers.push({ name, path: backend.base, listener });
+      handlers.push({
+        name,
+        base: backend.base,
+        aliasPatterns: aliasPatterns,
+        listener,
+      });
     }
 
     if (frontend) {
@@ -187,20 +201,11 @@ const mountFolders = async (folders: Array<Folder>) => {
         join(dir, "client"),
         frontend.base,
       );
-      handlers.push({ name, path: frontend.base, listener });
+      handlers.push({ name, base: frontend.base, aliasPatterns: [], listener });
     }
   }
 
-  return handlers
-    .sort((a, b) => handlerWeight(b) - handlerWeight(a))
-    .map(({ name, path, listener }) => {
-      return {
-        name,
-        prefix: path,
-        match: prefixMatcher(path),
-        listener,
-      };
-    });
+  return handlers.sort((a, b) => handlerWeight(b) - handlerWeight(a));
 };
 
 export const createListener = async (): Promise<NodeListener> => {
@@ -212,15 +217,19 @@ export const createListener = async (): Promise<NodeListener> => {
 
   const handlers = await mountFolders(folders);
 
-  for (const { name, prefix } of handlers) {
-    console.log(`  ${prefix.padEnd(24)} -> ${name}`);
+  for (const { name, base } of handlers) {
+    console.log(`  ${base.padEnd(24)} -> ${name}`);
   }
 
   return (req, res) => {
     const { pathname } = new URL(req.url ?? "/", "http://localhost");
 
-    for (const { match, listener } of handlers) {
-      if (match(pathname)) {
+    for (const { base, aliasPatterns, listener } of handlers) {
+      if (
+        pathname === base ||
+        pathname.startsWith(`${base}/`) ||
+        aliasPatterns.some((r) => r.test(pathname))
+      ) {
         listener(req, res);
         return;
       }
