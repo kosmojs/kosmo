@@ -13,7 +13,7 @@ const { Layout: DefaultLayout } = DefaultTheme;
       the accent variable, so it could not follow the color scheme.
     -->
     <template #nav-bar-title-before>
-      <KosmoMark :size="40" />
+      <KosmoMark />
     </template>
   </DefaultLayout>
 </template>

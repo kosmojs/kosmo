@@ -10,7 +10,7 @@ const props = withDefaults(
     // set when the mark stands alone, with no wordmark beside it
     label?: string;
   }>(),
-  { size: 30, label: "" },
+  { size: 32, label: "" },
 );
 
 const box = computed(() => ({
