@@ -1,3 +1,21 @@
+## [0.5.0](https://github.com/kosmojs/kosmo/compare/v0.4.4...v0.5.0) (2026-09-09)
+
+### ⚠ BREAKING CHANGES
+
+* declarative syntax for kosmo.config.ts
+
+### Bug Fixes
+
+* **backend:** normalize route path ([efa395d](https://github.com/kosmojs/kosmo/commit/efa395d36fb60b281c9b58dc28f3c7c981f46f16))
+* **backend:** uniform alias matching across dev server, backend server and dist/run.js ([ab39d92](https://github.com/kosmojs/kosmo/commit/ab39d92bcef598d3dd1255e1eb2876d2dac3ee78))
+* **mdx-generator:** dependencies needed on prod/CI for SSR/SSG ([a68badb](https://github.com/kosmojs/kosmo/commit/a68badb482f4866d12eaf9ea2f23fe93cb3bd028))
+* pottential path matching issues due to loose prefix checking ([d74e5d4](https://github.com/kosmojs/kosmo/commit/d74e5d489b68974d2b0fe724fa54086573282496))
+* **vue-generator:** use isomorphic join() method in router ([f05a5b5](https://github.com/kosmojs/kosmo/commit/f05a5b5c5459838089a178573531aaf7b127e6c5))
+
+### Code Refactoring
+
+* declarative syntax for kosmo.config.ts ([796cf76](https://github.com/kosmojs/kosmo/commit/796cf763ea229958d7a6cd4a72f5c0877d7ad743))
+
 ## [0.4.4](https://github.com/kosmojs/kosmo/compare/v0.4.3...v0.4.4) (2026-09-03)
 
 ### Features
