@@ -167,19 +167,23 @@ const mountFolders = async (
 
       const listener = await createListener();
 
-      handlers.push({
-        name,
-        base: backend?.base as string,
-        aliasPatterns: aliasPatterns,
-        listener,
-      });
+      if (backend) {
+        handlers.push({
+          name,
+          base: backend.base,
+          aliasPatterns: aliasPatterns,
+          listener,
+        });
+      }
 
-      handlers.push({
-        name,
-        base: frontend?.base as string,
-        aliasPatterns: [],
-        listener,
-      });
+      if (frontend) {
+        handlers.push({
+          name,
+          base: frontend?.base as string,
+          aliasPatterns: [],
+          listener,
+        });
+      }
 
       continue;
     }
@@ -227,7 +231,7 @@ export const createListener = async (): Promise<NodeListener> => {
     for (const { base, aliasPatterns, listener } of handlers) {
       if (
         pathname === base ||
-        pathname.startsWith(`${base}/`) ||
+        pathname.startsWith(posix.join(base, "/")) ||
         aliasPatterns.some((r) => r.test(pathname))
       ) {
         listener(req, res);

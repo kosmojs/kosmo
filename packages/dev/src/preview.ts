@@ -1,5 +1,5 @@
 import { type ChildProcess, spawn } from "node:child_process";
-import { basename, relative, sep } from "node:path";
+import { basename, posix, relative } from "node:path";
 import { styleText } from "node:util";
 
 import { watch } from "chokidar";
@@ -150,21 +150,18 @@ export const previewFactory = async (
     return { dir: createPath.src(), sourceFolder };
   });
 
-  const folderFor = (file: string) => {
-    return watchedFolders.find(({ dir }) => {
-      return file === dir || file.startsWith(dir + sep);
-    })?.sourceFolder;
-  };
-
   const watcher = watch(
     watchedFolders.map(({ dir }) => dir),
     { ignoreInitial: true },
   );
 
-  watcher.on("all", (_event, file) => {
-    const sourceFolder = folderFor(file);
+  watcher.on("all", (_event, path) => {
+    const { sourceFolder } =
+      watchedFolders.find(({ dir }) => {
+        return path === dir || path.startsWith(posix.join(dir, "/"));
+      }) || {};
     if (sourceFolder) {
-      schedule(sourceFolder, file);
+      schedule(sourceFolder, path);
     }
   });
 

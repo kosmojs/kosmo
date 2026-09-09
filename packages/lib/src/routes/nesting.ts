@@ -1,4 +1,4 @@
-import { basename } from "node:path";
+import { basename, posix } from "node:path";
 
 import type { NestedRouteEntry, RouteEntry } from "@kosmojs/core";
 
@@ -85,7 +85,7 @@ export const nestedRoutesFactory = (routeEntries: Array<RouteEntry>) => {
         return false;
       }
       // Must be a descendant path
-      if (!entry.name.startsWith(`${name}/`)) {
+      if (!entry.name.startsWith(posix.join(name, "/"))) {
         return false;
       }
       return true;
@@ -106,7 +106,7 @@ export const nestedRoutesFactory = (routeEntries: Array<RouteEntry>) => {
           return false;
         }
         // Child must be descendant of intermediate
-        return child.name.startsWith(`${intermediate.name}/`);
+        return child.name.startsWith(posix.join(intermediate.name, "/"));
       });
 
       return !hasIntermediateRoute;
@@ -123,7 +123,7 @@ export const nestedRoutesFactory = (routeEntries: Array<RouteEntry>) => {
       if (potential.pathTokens.length >= entry.pathTokens.length) {
         return false;
       }
-      return entry.name.startsWith(`${potential.name}/`);
+      return entry.name.startsWith(posix.join(potential.name, "/"));
     });
 
     return !hasParent;

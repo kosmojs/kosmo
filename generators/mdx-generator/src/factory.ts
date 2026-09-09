@@ -1,3 +1,5 @@
+import { posix } from "node:path";
+
 import vitePlugin from "@mdx-js/rollup";
 import frontmatterPlugin from "remark-frontmatter";
 import mdxFrontmatterPlugin from "remark-mdx-frontmatter";
@@ -87,7 +89,8 @@ export default defineGeneratorFactory((sourceFolder) => {
               ...entry,
               layouts: layouts
                 .flatMap((e) => {
-                  return e.name === name || file.startsWith(`${e.name}/`)
+                  return e.name === name ||
+                    file.startsWith(posix.join(e.name, "/"))
                     ? [e]
                     : [];
                 })

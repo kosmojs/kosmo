@@ -402,7 +402,7 @@ export const createListener = async (): Promise<NodeListener> => {
     }
     const path = new URL(req.url ?? "/", ssrOrigin).pathname;
     return path === backendBase ||
-      path.startsWith(`${backendBase}/`) ||
+      path.startsWith(posix.join(backendBase, "/")) ||
       aliasPatterns.some((regexp) => regexp.test(path))
       ? backendListener(req, res)
       : ssrListener(req, res);

@@ -1,3 +1,5 @@
+import { posix } from "node:path";
+
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 
 import {
@@ -80,7 +82,8 @@ export default defineGeneratorFactory((sourceFolder) => {
               ...entry,
               layouts: layouts
                 .flatMap((e) => {
-                  return e.name === name || file.startsWith(`${e.name}/`)
+                  return e.name === name ||
+                    file.startsWith(posix.join(e.name, "/"))
                     ? [e]
                     : [];
                 })

@@ -582,23 +582,32 @@ const matchersFactory: (
       })
     : [];
 
+  const prefixMatch = (base: string, path: string) => {
+    return path === base || path.startsWith(posix.join(base, "/"));
+  };
+
+  const backendMatch = (path: string) => {
+    if (!backendBase) {
+      return false;
+    }
+    return prefixMatch(backendBase, path)
+      ? true
+      : backendAliasPatterns.some((r) => r.test(path) || false);
+  };
+
   return {
     frontend(req) {
-      if (!frontendBase || this.backend(req)) {
+      if (!frontendBase) {
         return false;
       }
-      const path = new URL(req.url ?? "/", "http://localhost").pathname;
-      return path === frontendBase || path.startsWith(`${frontendBase}/`);
+      const { pathname } = new URL(req.url ?? "/", "http://localhost");
+      return backendMatch(pathname)
+        ? false
+        : prefixMatch(frontendBase, pathname);
     },
     backend(req) {
-      if (!backendBase) {
-        return false;
-      }
-      const path = new URL(req.url ?? "/", "http://localhost").pathname;
-      if (path === backendBase || path.startsWith(`${backendBase}/`)) {
-        return true;
-      }
-      return backendAliasPatterns.some((r) => r.test(path) || false);
+      const { pathname } = new URL(req.url ?? "/", "http://localhost");
+      return backendMatch(pathname);
     },
   };
 };

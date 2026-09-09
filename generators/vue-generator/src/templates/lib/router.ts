@@ -1,3 +1,5 @@
+import { posix } from "node:path";
+
 import {
   type App,
   type Component,
@@ -133,7 +135,7 @@ export const createRouters = (
         // strip the base from pushed paths
         if (pathname === base) {
           pathname = "/";
-        } else if (pathname.startsWith(`${base}/`)) {
+        } else if (pathname.startsWith(posix.join(base, "/"))) {
           pathname = pathname.slice(base.length);
         }
       }
