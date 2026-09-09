@@ -220,8 +220,7 @@ export type ValidationSchemas<Extend = object> = {
       Extend & {
         runtimeValidation?: boolean;
         customErrors?: ValidationCustomErrors;
-      }
-  >;
+      }>;
 } & {
   params?: ValidationSchema & Extend;
   response?: Record<
@@ -235,8 +234,7 @@ export type ValidationSchemas<Extend = object> = {
           runtimeValidation?: boolean;
           customErrors?: ValidationCustomErrors;
         }
-    >
-  >;
+    >>;
 };
 
 export type ValidationDefinition = {
