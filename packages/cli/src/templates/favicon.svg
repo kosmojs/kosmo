@@ -1,19 +1,7 @@
 <!--
-  KosmoJS scaffold placeholder - replace this with your own mark.
-
   Both letters are Gajraj One (OFL-1.1, Copyright 2022 The GajrajOne Project Authors),
   outlined to paths - a favicon cannot wait on a webfont,
   and an outline renders identically everywhere.
-
-  "osmo" is scaled by width rather than by size: it is set to measure exactly the k's ink width,
-  so the two edges line up and the pair reads as one block.
-  That is what fixes its height at roughly a sixth of the k - which means it carries at 32px and above,
-  and below that it reads as a bar of texture under the letter rather than as a word.
-  That is the intended trade for a lockup this shape, not an oversight.
-
-  Colours sit at a middling lightness on purpose.
-  A tab bar is near-white in one browser and near-black in the next,
-  and this ramp holds around 4:1 against both, so no colour-scheme switching is needed.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
   <defs>
