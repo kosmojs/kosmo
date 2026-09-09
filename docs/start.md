@@ -100,7 +100,7 @@ Your app is now running at `http://localhost:4556`.
 
 ## Create a route
 
-Create the file `api/users/[id]/index.ts` - `KosmoJS` detects it
+Create the file `api/users/[id]/index.ts` - KosmoJS detects it
 and seeds starter code automatically.
 
 Replace the seeded content with something real:
@@ -149,7 +149,7 @@ Visit `http://localhost:4556/api/users/123`. You should see JSON.
 
 With the dev server still running, create `pages/users/[id]/index.tsx`
 (or `.vue` / `.svelte` / `.mdx`).
-`KosmoJS` seeds a placeholder component - replace it with a page that fetches from your API route.
+KosmoJS seeds a placeholder component - replace it with a page that fetches from your API route.
 React, SolidJS, and Vue fetch in the component here; Svelte and MDX read through a
 `loader` export instead (resolved before render), so they need no loading state:
 
@@ -259,8 +259,8 @@ and invalid parameters are caught before the request leaves the browser.
 Your folder structure became your routes:
 
 ```
-api/users/[id]/index.ts     ➜  /api/users/:id
-pages/users/[id]/index.tsx  ➜  /users/:id
+api/users/[id]/index.ts     ->  /api/users/:id
+pages/users/[id]/index.tsx  ->  /users/:id
 ```
 
 `[id]` is a required parameter. `{id}` makes it optional. `{...path}` matches any depth.

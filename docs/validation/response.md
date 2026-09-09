@@ -25,7 +25,7 @@ export default defineRoute<"users">(({ GET }) => [
 ]);
 ```
 
-Before sending, `KosmoJS` checks that the actual status, content type, and body match the schema.
+Before sending, KosmoJS checks that the actual status, content type, and body match the schema.
 If anything is off - a missing field, a type mismatch, a constraint violation - it throws a `ValidationError`
 instead of sending malformed data to the client.
 

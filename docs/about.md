@@ -67,11 +67,11 @@ src/app/
 ├── api/
 │   └── users/
 │       └── [id]/
-│           └── index.ts       ➜  GET /api/users/:id
+│           └── index.ts       ->  GET /api/users/:id
 └── pages/
     └── users/
         └── [id]/
-            └── index.tsx      ➜  /users/:id
+            └── index.tsx      ->  /users/:id
 ```
 
 

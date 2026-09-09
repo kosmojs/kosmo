@@ -11,7 +11,7 @@ head:
         tanstack query, react query, solidjs, react, vue, mdx, hono, h3, koa
 ---
 
-Everything `KosmoJS` provides, at a glance.
+Everything KosmoJS provides, at a glance.
 
 ## Multiple Source Folders
 
@@ -19,15 +19,15 @@ Organize distinct concerns - public site, customer app, admin dashboard -
 as independent source folders within a single `Vite` project.
 Each gets its own set of frameworks, base URL, development workflow and build pipeline.
 
-[Read more ›](/tutorial#create-your-first-api-route)
+[Details&nbsp;›](/tutorial#create-your-first-api-route)
 
 ## Directory-Based Routing
 
 Your folder structure defines your routes - for both API and client pages.
 
 ```
-api/users/[id]/index.ts    ➜ /api/users/:id
-pages/users/[id]/index.tsx ➜ /users/:id
+api/users/[id]/index.ts    -> /api/users/:id
+pages/users/[id]/index.tsx -> /users/:id
 ```
 
 Dynamic parameters: `[id]` required · `{id}` optional · `{...path}` splat.
@@ -36,15 +36,15 @@ No separate routing config to maintain - restructure files and routes update aut
 Mixed segments are also supported for backend routes (and some frontend integrations):
 
 ```
-products/[category].html/index.ts   ➜ products/electronics.html
-files/[name].[ext]/index.ts         ➜ files/document.pdf, /files/logo.png
+products/[category].html/index.ts   -> products/electronics.html
+files/[name].[ext]/index.ts         -> files/document.pdf, /files/logo.png
 ```
 
-[Read more ›](/routing/intro)
+[Details&nbsp;›](/routing/intro)
 
 ## End-to-End Type Safety
 
-Write `TypeScript` types once - `KosmoJS` derives runtime validators automatically.
+Write `TypeScript` types once - KosmoJS derives runtime validators automatically.
 The same definition drives compile-time checking, runtime validation, type-safe fetch clients, and OpenAPI specs.
 
 ```ts
@@ -63,11 +63,11 @@ export default defineRoute<"users">(({ POST }) => [
 ]);
 ```
 
-[Read more ›](/validation/intro)
+[Details&nbsp;›](/validation/intro)
 
 ## Typed Fetch Clients + OpenAPI
 
-For every API route, `KosmoJS` produces a fully-typed fetch client
+For every API route, KosmoJS produces a fully-typed fetch client
 and an OpenAPI 3.1 spec - both derived from the same type definitions.
 
 ```ts
@@ -77,7 +77,7 @@ const user = await fetchClients["users/[id]"].GET([123]);
 // fully typed, validates payload client-side before the request is sent
 ```
 
-[Fetch Clients ›](/fetch/intro) · [OpenAPI ➜](/openapi)
+[Fetch&nbsp;Clients&nbsp;›](/fetch/intro) · [OpenAPI&nbsp;›](/openapi)
 
 ## Isomorphic Fetch
 
@@ -95,7 +95,7 @@ so the request is not repeated on the client.
 export const loader = ({ params }) => fetchClients["users/[id]"].GET([params.id]);
 ```
 
-[Read more ›](/fetch/isomorphic-clients)
+[Details&nbsp;›](/fetch/isomorphic-clients)
 
 ## Built-in Streaming SSR
 
@@ -104,7 +104,7 @@ browser early, improving Time-to-First-Byte for large pages or long data-fetchin
 
 Each framework streams through its own native renderer,
 returning a web-standard `ReadableStream` that works the same on Node, Bun, and Deno;
-`KosmoJS` adds no rendering layer of its own.
+KosmoJS adds no rendering layer of its own.
 
 Streaming is opt-in - every route defaults to string rendering.
 Set `renderMode: "stream"` to stream all routes, or map glob patterns for per-route selection:
@@ -121,7 +121,7 @@ frontend: {
 
 Available for `React`, `SolidJS`, and `Vue`; `MDX` renders to a string.
 
-[Read more ›](/frontend/server-side-render#stream-rendering)
+[Details&nbsp;›](/frontend/server-side-render#stream-rendering)
 
 ## Composable Middleware (Slots)
 
@@ -140,7 +140,7 @@ Slots give you surgical control over middleware composition:
 replace only what needs replacing, inherit everything else.
 Custom slot names are supported by extending the `UseSlots` interface.
 
-[Read more ›](/backend/middleware)
+[Details&nbsp;›](/backend/middleware)
 
 ## Cascading Middleware
 
@@ -155,7 +155,7 @@ api/admin/users/use.ts → wraps only routes under /api/admin/users
 Parent middleware always runs before child middleware.
 Combine with slots to override globals for entire route subtrees.
 
-[Read more ›](/backend/cascading-middleware)
+[Details&nbsp;›](/backend/cascading-middleware)
 
 ## Nested Layouts
 
@@ -173,11 +173,11 @@ pages/
         index.tsx
 ```
 
-[Read more ›](/frontend/routing)
+[Details&nbsp;›](/frontend/routing)
 
 ## TanStack Query Integration
 
-Opt into TanStack Query per source folder and `KosmoJS` wires it for you - the
+Opt into TanStack Query per source folder and KosmoJS wires it for you - the
 query client is provided, per-request on the server and a singleton in the
 browser, with no setup in your app code. Enabling it is one option; using it is
 just importing `useQuery`.
@@ -192,11 +192,11 @@ const { data } = useQuery({ queryKey: ["users", id], queryFn: () => GET([id]) })
 ```
 
 Works across `React`, `SolidJS`, `Vue`, and `Svelte`, each on its own official
-adapter. `KosmoJS` provides the seamless basic path and stays out of the way of
+adapter. KosmoJS provides the seamless basic path and stays out of the way of
 the rest: advanced SSR warmup uses TanStack's own `dehydrate` and
 `HydrationBoundary` directly, not a wrapper that could drift from them.
 
-[Read more ›](/frontend/tanstack-query)
+[Details&nbsp;›](/frontend/tanstack-query)
 
 ## Multiple Frameworks
 
@@ -204,11 +204,11 @@ the rest: advanced SSR warmup uses TanStack's own `dehydrate` and
 - **Frontend:** `React`, `Vue`, `SolidJS`, `Svelte`, `MDX` - same routing/layout/SSR.
 
 Different source folders can use different framework combinations.
-When you add a source folder, `KosmoJS` seeds a ready-to-go setup for your chosen stack -
+When you add a source folder, KosmoJS seeds a ready-to-go setup for your chosen stack -
 router config, entry points, TypeScript settings, and all the wiring between them.
 Switch frameworks per folder without learning a new set of conventions.
 
-[Read more ›](/frontend/intro)
+[Details&nbsp;›](/frontend/intro)
 
 ## Built on Proven Tools
 

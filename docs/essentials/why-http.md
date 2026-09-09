@@ -124,9 +124,9 @@ const user = await GET([123]); // identical code in a component and in a loader
 | Browser, after hydration | Global `fetch`, same-origin request | A normal HTTP request - as it should be |
 | Server, during SSR | Direct dispatch into the API app | A function call and an object. **No socket, no localhost hop, no round trip.** |
 
-During SSR the API is bundled *into* the SSR server, and the derived client hands a real `Request`
-straight to the backend app instance. What runs is not a shortcut around your API:
-it is your API, complete with routing, [middleware](/backend/middleware), validation, error handling and response shaping.
+During SSR the API is bundled *into* the SSR server, and the fetch client hands a real `Request` straight to the backend app instance.
+What runs is not a shortcut around your API: it is your API, complete with routing,
+[middleware](/backend/middleware), validation, error handling and response shaping.
 
 Details worth knowing about that in-process path:
 
@@ -134,7 +134,7 @@ Details worth knowing about that in-process path:
 reach the route exactly as they would over the network. Anything you set on the call itself wins.
 - **Redirects are followed in-process**, including the `303`/`301`/`302` rewrite to `GET`,
 up to the same five hops the fetch spec allows.
-- **Native `fetch` is not patched.** Only the derived clients switch transports;
+- **Native `fetch` is not patched.** Only the fetch clients switch transports;
 every other fetch in your app behaves exactly as it always did.
 - **Nothing about the call site changes.** A loader is a loader; the framework's own data model -
 Solid's `createAsync`, React Router's `loader`, `useLoaderData` in Vue, Svelte and MDX - is what you write.
@@ -172,7 +172,7 @@ export default defineRoute<"users/[id]", [
 ]);
 ```
 
-- **In the browser**, the derived client validates params and payload *before* the request leaves.
+- **In the browser**, fetch client validates params and payload *before* the request leaves.
 Invalid data throws immediately - no round trip, and the same schemas are exposed
 as [validationSchemas](/fetch/validation#validation-schemas) for live form feedback.
 - **On the server**, the request is validated again on arrival -

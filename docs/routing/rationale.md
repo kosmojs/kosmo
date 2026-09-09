@@ -20,11 +20,11 @@ In file-based routing, route handlers and helper files live side by side:
 ```
 api/
   users/
-    index.ts           ➜ Handler for /users
-    [id].ts            ➜ Handler for /users/:id
-    schema.ts          ➜ Validation schemas... for which route?
-    auth.ts            ➜ Authorization... for which endpoint?
-    utils.ts           ➜ Helpers... used by what?
+    index.ts           -> Handler for /users
+    [id].ts            -> Handler for /users/:id
+    schema.ts          -> Validation schemas... for which route?
+    auth.ts            -> Authorization... for which endpoint?
+    utils.ts           -> Helpers... used by what?
 ```
 
 Which files are route handlers? Which are helpers? Is `schema.ts` a route at `/users/schema`
@@ -38,16 +38,16 @@ Everything else in the folder is a helper for that route.
 ```
 api/
   users/
-    index.ts           ➜ Handler for /users
-    schema.ts          ➜ Obviously a helper for /users
+    index.ts           -> Handler for /users
+    schema.ts          -> Obviously a helper for /users
 
     [id]/
-      index.ts         ➜ Handler for /users/:id
-      permissions.ts   ➜ Obviously a helper for this endpoint
+      index.ts         -> Handler for /users/:id
+      permissions.ts   -> Obviously a helper for this endpoint
 
       posts/
-        index.ts       ➜ Handler for /users/:id/posts
-        formatter.ts   ➜ Obviously post-specific logic
+        index.ts       -> Handler for /users/:id/posts
+        formatter.ts   -> Obviously post-specific logic
 ```
 
 No conventions to memorize, no ambiguity. The folder tree is your API map -

@@ -25,7 +25,7 @@ By the time you've saved a file and switched to the browser, the schema is ready
 Full rebuilds happen in a few specific situations:
 
 - Deleting the `lib` folder manually
-- `KosmoJS` releasing an update that bumps the cache version
+- KosmoJS releasing an update that bumps the cache version
 
 For large projects with many routes, a full rebuild can take several minutes.
 This is the same category of thing as clearing `node_modules` or regenerating a Prisma client -
@@ -36,7 +36,7 @@ infrequent and expected, not part of the normal edit-test cycle.
 Zod, Yup etc. have zero derivation overhead - because you write the schemas yourself.
 That eliminates derivation time but adds an ongoing maintenance cost.
 
-`KosmoJS` trades a few seconds of machine time for eliminating that manual work entirely.
+KosmoJS trades a few seconds of machine time for eliminating that manual work entirely.
 For most workflows, that's a good deal.
 
 As the `TypeScript` ecosystem evolves - particularly native implementations that

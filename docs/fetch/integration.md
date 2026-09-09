@@ -139,7 +139,7 @@ A fetch in `useEffect` / `onMounted` does not run during SSR - it fetches in the
 
 Solid's `createAsync` (like `createResource`) suspends: it reports its pending
 state to the nearest `<Suspense>` boundary and propagates errors to the nearest
-`<ErrorBoundary>`. `KosmoJS` does not provide either for you - the seeded
+`<ErrorBoundary>`. KosmoJS does not provide either for you - the seeded
 `App` boilerplate renders its children directly, deliberately not wrapping the
 app in `<Suspense>`, because one app-wide boundary is an anti-pattern: any
 pending fetch anywhere collapses the whole page to a single fallback and
@@ -168,6 +168,6 @@ so it needs no boundary unless you reach for `React.lazy` or a promise-throwing 
 The same holds for Vue, Svelte, and MDX loaders - they resolve before render, so only
 Solid's `createAsync` needs a boundary in the common case.
 Wrapping the whole app in one boundary does work if you accept the
-tradeoff - it is your call, not a default `KosmoJS` makes for you. See
+tradeoff - it is your call, not a default KosmoJS makes for you. See
 [Data Preloading](/frontend/data-preload#suspense-is-your-responsibility) for the
 full breakdown.

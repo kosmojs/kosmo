@@ -13,7 +13,7 @@ Payload validation covers everything your API receives from clients:
 query parameters, headers, cookies for any method,
 and request bodies for POST/PUT/PATCH.
 
-`KosmoJS` makes payload validation straightforward by letting you express validation rules
+KosmoJS makes payload validation straightforward by letting you express validation rules
 directly through `TypeScript` types.
 
 You write the type once, and it serves both as compile-time safety
@@ -276,7 +276,7 @@ but you can combine it with any number of metadata targets (`query`, `headers`, 
 As your application grows, defining complex types inline becomes unwieldy.
 You'll want to define types once and reuse them across multiple routes.
 
-`KosmoJS` fully supports this pattern - you can define types in separate files,
+KosmoJS fully supports this pattern - you can define types in separate files,
 import them where needed, and use them for validation just like inline types.
 
 Suppose you have a file defining user-related types:

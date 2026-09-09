@@ -138,7 +138,7 @@ don't expect them to validate anything.
 
 ```ts
 VRefine<string, { format: "uuid" }>    // params: id: must be a valid UUID
-VRefine<string, { format: "email" }>   // json: from ➜ email: must be a valid email address
+VRefine<string, { format: "email" }>   // json: from -> email: must be a valid email address
 ```
 
 ## Integers

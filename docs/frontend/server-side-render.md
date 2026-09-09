@@ -588,7 +588,7 @@ users see content faster as it arrives progressively.
 - **Implement error boundaries.** Add error boundaries throughout your application and handle errors in server entry points.
 Server errors shouldn't terminate the entire process.
 - **Separate SSR and CSR concerns via source folders.** Rather than complex route-level SSR/CSR switching within a single folder,
-use `KosmoJS`'s architectural strength: deploy an SSR source folder for marketing content and a CSR source folder for your application.
+use KosmoJS's architectural strength: deploy an SSR source folder for marketing content and a CSR source folder for your application.
 Cleaner codebases, straightforward maintenance.
 
 ## Technical Considerations

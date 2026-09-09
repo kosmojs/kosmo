@@ -8,7 +8,7 @@ head:
       content: ctx.validated, typed parameters, request body parsing
 ---
 
-`KosmoJS` extends the standard Hono/H3/Koa context with two additions:
+KosmoJS extends the standard Hono/H3/Koa context with two additions:
 a unified bodyparser API and `ctx.validated` for type-safe access to validated request data.
 
 ## Unified Bodyparser

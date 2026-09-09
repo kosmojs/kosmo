@@ -175,7 +175,7 @@ npm run folder <name>   # interactive
 - pages at `/<name>`
 - API at `/<name>/api`.
 
-Edit `base` in the generated `kosmo.config.ts` afterwards if you want different prefixes.
+Edit `base` in `kosmo.config.ts` afterwards if you want different prefixes.
 
 If `src/<name>` already exists, you are offered to remove / overwrite before proceed, or cancel.
 

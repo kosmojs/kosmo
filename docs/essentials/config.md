@@ -246,9 +246,9 @@ backend:  { base: "/api/v2" },    // routes at /api/v2/<route name>
 A route's final URL is `backend.base` + route name:
 
 ```
-base "/api"        route "users/[id]"  ➜  /api/users/:id
-base "/admin/api"  route "users/[id]"  ➜  /admin/api/users/:id
-base "/v1"         route "users/[id]"  ➜  /v1/users/:id
+base "/api"        route "users/[id]"  ->  /api/users/:id
+base "/admin/api"  route "users/[id]"  ->  /admin/api/users/:id
+base "/v1"         route "users/[id]"  ->  /v1/users/:id
 ```
 
 The `api/` directory name never appears in the URL - it separates server routes from `pages/` on disk, nothing more.

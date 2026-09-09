@@ -35,7 +35,7 @@ Each schema has four methods:
 
 ## Field Paths
 
-Nested field errors use arrow notation: `"customer ➜ address ➜ city"`.
+Nested field errors use arrow notation: `"customer -> address -> city"`.
 Match them with word-boundary regex to avoid false positives:
 
 ```ts

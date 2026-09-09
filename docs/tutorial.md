@@ -9,7 +9,7 @@ head:
         hono, h3, koa, solidjs, react, vue, svelte, mdx
 ---
 
-A step-by-step walkthrough covering everything `KosmoJS` provides.
+A step-by-step walkthrough covering everything KosmoJS provides.
 
 ## Create a Project
 
@@ -64,8 +64,7 @@ yarn create kosmo demo --frontend solid --backend hono
 :::
 
 The first source folder is always `app`, serving pages at `/` and its API at `/api`.
-Edit `frontend.base` / `backend.base` in the generated `kosmo.config.ts` to change that,
-or add further folders with [kosmo folder](/essentials/cli#adding-a-source-folder).
+Both `frontend` and `backend` can be further configured in `kosmo.config.ts`.
 
 Need no backend? Provide `--no-backend` flag:
 
@@ -146,7 +145,7 @@ Your app is now running at `http://localhost:4556`.
 
 ## Create Your First API Route
 
-Create `api/users/[id]/index.ts` - `KosmoJS` detects the file and seeds boilerplate:
+Create `api/users/[id]/index.ts` - KosmoJS detects the file and seeds boilerplate:
 
 :::tabs key:backend variant:code
 == Hono
@@ -459,7 +458,7 @@ Server-side validation still runs even when endpoints are called directly - clie
 ## Create Client Pages
 
 Pages live in `pages/` and follow the same directory-based routing as API routes.
-Create `pages/users/index.tsx` - `KosmoJS` seeds framework-specific boilerplate.
+Create `pages/users/index.tsx` - KosmoJS seeds framework-specific boilerplate.
 
 Add a layout for shared UI across route groups - create `pages/users/layout.tsx`:
 
@@ -491,7 +490,7 @@ export default defineConfig({
 
 > Restart dev server after changing `kosmo.config.ts`.
 
-`KosmoJS` seeds `entry/server.ts` - your SSR orchestration file.
+KosmoJS seeds `entry/server.ts` - your SSR orchestration file.
 Critical CSS is extracted and inlined automatically; remaining styles load asynchronously.
 
 See it running - `pnpm preview` builds and serves the production output, and rebuilds whenever you save:
@@ -610,15 +609,15 @@ Folder names become URL segments. Each route requires an `index` file:
 ```txt
 api/
   users/
-    index.ts          ➜ /api/users
+    index.ts          -> /api/users
     [id]/
-      index.ts        ➜ /api/users/:id
+      index.ts        -> /api/users/:id
 
 pages/
   users/
-    index.tsx         ➜ /users
+    index.tsx         -> /users
     [id]/
-      index.tsx       ➜ /users/:id
+      index.tsx       -> /users/:id
 ```
 
 Parameters: `[id]` required · `{id}` optional · `{...path}` splat.

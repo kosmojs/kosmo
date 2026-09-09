@@ -10,7 +10,7 @@ head:
 ---
 
 When you define an API route with typed parameters, payloads, and responses,
-`KosmoJS` derives a corresponding fetch client - automatically, as part of the same build step.
+KosmoJS derives a corresponding fetch client - automatically, as part of the same build step.
 
 The result is a fully-typed client that mirrors your route definition exactly.
 Parameters, payload shape, response type - all derived from the same source.

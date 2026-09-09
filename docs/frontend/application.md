@@ -111,7 +111,7 @@ A plain shell would force you to add and remove the provider wiring by hand each
 
 The `routerFactory` function in `router.ts` file connects your root app component
 and derived routes to the framework's native router.
-It accepts a callback receiving derived route definitions from `KosmoJS`.
+It accepts a callback receiving derived route definitions from KosmoJS.
 
 The callback must return two functions:
 

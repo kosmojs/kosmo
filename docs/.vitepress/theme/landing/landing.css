@@ -95,8 +95,11 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: transform 0.15s var(--ease),
-    background 0.15s, border-color 0.15s, color 0.15s;
+  transition:
+    transform 0.15s var(--ease),
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .landing .btn:active {
@@ -107,7 +110,8 @@
   background: var(--kx-accent);
   color: var(--kx-bg-inset);
   font-weight: 600;
-  box-shadow: 0 0 0 1px var(--kx-accent-line),
+  box-shadow:
+    0 0 0 1px var(--kx-accent-line),
     0 14px 34px -16px var(--kx-accent-line);
 }
 
@@ -236,7 +240,9 @@
 .landing .is-ready .rise {
   opacity: 0;
   transform: translateY(18px);
-  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+  transition:
+    opacity 0.6s var(--ease),
+    transform 0.6s var(--ease);
 }
 
 .landing .is-ready .rise.in {

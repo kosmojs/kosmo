@@ -50,7 +50,10 @@ function scrollToLoop() {
   const target = document.querySelector("#loop");
   if (!target) return;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  target.scrollIntoView({
+    behavior: reduce ? "auto" : "smooth",
+    block: "start",
+  });
 }
 
 onMounted(() => {

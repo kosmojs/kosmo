@@ -43,11 +43,11 @@ src/<folder>/
 └── pages/
     ├── 404.tsx           -> rendered for unmatched routes
     ├── index/
-    │   └── index.tsx     -> the route  ➜  /
+    │   └── index.tsx     -> the route  ->  /
     └── users/
         ├── layout.tsx    -> wraps everything under /users
         └── [id]/
-            └── index.tsx -> the route  ➜  /users/:id
+            └── index.tsx -> the route  ->  /users/:id
 ```
 
 ### Foundation files
@@ -104,7 +104,7 @@ configuration. Each framework has its own JSX import source requirement:
 | Svelte | n/a *(no JSX - compiled from `.svelte`)* |
 | MDX | `"preact"` |
 
-`KosmoJS` delegates JSX transformation to Vite, not TypeScript -
+KosmoJS delegates JSX transformation to Vite, not TypeScript -
 but differing `jsxImportSource` values cause type
 conflicts when multiple frameworks coexist in the same project.
 

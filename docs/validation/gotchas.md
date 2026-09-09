@@ -9,7 +9,7 @@ head:
         multipleOf integer, coercion, debugging validation, always rejects
 ---
 
-Most mistakes in `KosmoJS` are compile errors. Four are not: they typecheck cleanly and then misbehave at runtime.
+Most mistakes in KosmoJS are compile errors. Four are not: they typecheck cleanly and then misbehave at runtime.
 
 They share a shape - your types are flattened into schema text, and a few things don't survive that trip.
 
@@ -17,7 +17,7 @@ They share a shape - your types are flattened into schema text, and a few things
 
 ## 1. A wrapping bracket hidden behind an alias
 
-`KosmoJS` reads three positions **structurally**, out of the source:
+KosmoJS reads three positions **structurally**, out of the source:
 the `VRefine` constraint object, the params refinement tuple, and the response tuple.
 In all three, the wrapping `{}` or `[]` must be written literally.
 

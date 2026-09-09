@@ -8,7 +8,7 @@ head:
       content: openapi 3.1, api documentation, swagger, openapi spec, typescript to openapi, api schema, rest api docs, openapi servers
 ---
 
-`KosmoJS` derives an `OpenAPI 3.1` specification directly from your route definitions.
+KosmoJS derives an `OpenAPI 3.1` specification directly from your route definitions.
 Route structure, `TypeScript` types, `VRefine` constraints, parameters, responses -
 all reflected in the spec automatically. No manual schema authoring, no annotation layers.
 

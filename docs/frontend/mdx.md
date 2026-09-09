@@ -223,11 +223,11 @@ pages/
   blog/
     post/
       [slug]/
-        index.mdx        ➜ /blog/post/:slug
+        index.mdx        -> /blog/post/:slug
     {category}/
-      index.mdx          ➜ /blog/:category (optional)
+      index.mdx          -> /blog/:category (optional)
       {tag}/
-        index.mdx        ➜ /blog/:category/:tag (both optional)
+        index.mdx        -> /blog/:category/:tag (both optional)
 ```
 
 Access parameters inside a component using `useParams()` from `_/use`.

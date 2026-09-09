@@ -38,10 +38,10 @@ src/<folder>/api/
 │
 └── users/                ── a route folder ──
     ├── use.ts            -> middleware for /users and everything under it
-    ├── index.ts          -> the route  ➜  /api/users
+    ├── index.ts          -> the route  ->  /api/users
     ├── types.ts          -> colocated helper, NOT a route
     └── [id]/
-        └── index.ts      -> the route  ➜  /api/users/:id
+        └── index.ts      -> the route  ->  /api/users/:id
 ```
 
 ### Foundation files
@@ -146,13 +146,13 @@ It isn't - and it's worth one minute to understand why, because it explains a lo
 The routing itself never needs it. The URL comes from the file's location, full stop.
 The string is there for **TypeScript**, which cannot see the file system.
 
-Everything `KosmoJS` knows about a route is placed into a `RouteMap` in `lib/`, keyed by route name:
+Everything KosmoJS knows about a route is placed into a `RouteMap` in `lib/`, keyed by route name:
 
 ```ts [lib/front/@api/routes.ts]
 export type RouteMap = {
   "users/[id]": {
     paramsDefaults: [string],           // params, in path order
-    paramsMappings: { id: 0 },          // name ➜ position
+    paramsMappings: { id: 0 },          // name -> position
     cascadingState: UseT_apiUse & UseT_apiUsersUse,  // merged use.ts context
   },
   // ...every other route
@@ -171,7 +171,7 @@ the route has parameters is a compile error.
 Because there is no runtime argument carrying it, TypeScript has nothing to infer it from -
 so the type argument is **required**, and you write it once when the file is created.
 
-In practice, you don't: the [seeded boilerplate](/routing/seeded-content#api-routes) already contains the correct name.
+In practice, you don't: the seeded [boilerplate](/backend/custom-templates) already contains the correct name.
 
 ::: tip What if it's wrong?
 It can't silently drift. `defineRoute<R>` is constrained as `R extends keyof RouteMap`,

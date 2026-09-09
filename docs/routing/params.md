@@ -20,7 +20,7 @@ Parameter types supported out of the box, with same syntax for both API and clie
 ## Required Parameters
 
 ```
-users/[id]/index.ts   ➜ /users/123, /users/abc
+users/[id]/index.ts   -> /users/123, /users/abc
 ```
 
 The parameter name becomes the key in `ctx.validated.params` (or your framework's equivalent).
@@ -29,7 +29,7 @@ The parameter name becomes the key in `ctx.validated.params` (or your framework'
 ## Optional Parameters
 
 ```
-users/{id}/index.ts   ➜ /users and /users/123
+users/{id}/index.ts   -> /users and /users/123
 ```
 
 Useful for combining list and detail views in a single handler,
@@ -57,9 +57,9 @@ Fix it by adding an explicit static route:
 
 ```
 properties/
-├── filters/index.tsx          ➜ /properties/filters
+├── filters/index.tsx          -> /properties/filters
 └── {city}/
-    └── filters/index.tsx      ➜ /properties/NY/filters
+    └── filters/index.tsx      -> /properties/NY/filters
 ```
 
 Static routes always take priority over dynamic ones.
@@ -70,9 +70,9 @@ Static routes always take priority over dynamic ones.
 
 ```
 careers/
-├── index.tsx       ➜ /careers (fallback when no id)
+├── index.tsx       -> /careers (fallback when no id)
 └── [jobId]/
-    └── index.tsx   ➜ /careers/123
+    └── index.tsx   -> /careers/123
 ```
 
 When a parent `index` exists, `[jobId]` is effectively optional - there's a fallback to render.
@@ -81,9 +81,9 @@ In this case, `{jobId}` communicates intent more clearly and both notations work
 ## Splat Parameters
 
 ```
-docs/{...path}/index.ts   ➜ /docs/getting-started
-                          ➜ /docs/api/reference
-                          ➜ /docs/guides/deployment/production
+docs/{...path}/index.ts   -> /docs/getting-started
+                          -> /docs/api/reference
+                          -> /docs/guides/deployment/production
 ```
 
 The matched segments are provided as an array - useful for doc sites, file browsers,
@@ -97,9 +97,9 @@ A request to `/docs/guides/deployment/production` gives you
 Segments can combine static text with parameters:
 
 ```
-products/[category].html      ➜ /products/electronics.html
-profiles/[id]-[data].json     ➜ /profiles/1-posts.json
-files/[name].[ext]            ➜ /files/document.pdf
+products/[category].html      -> /products/electronics.html
+profiles/[id]-[data].json     -> /profiles/1-posts.json
+files/[name].[ext]            -> /files/document.pdf
 ```
 
 Mixed segments support varies by framework:
@@ -115,7 +115,7 @@ Prefer simple segments for frontend routes.
 
 ## Power Syntax
 
-For advanced cases, `KosmoJS` passes `path-to-regexp v8` patterns through directly.
+For advanced cases, KosmoJS passes `path-to-regexp v8` patterns through directly.
 
 > **The rule:** if the param name contains non-alphanumeric characters,
 it is treated as a raw pattern.
@@ -132,9 +132,9 @@ products/{:category.html}
 More examples:
 
 ```
-book{-:id}-info           ➜ /book-info or /book-123-info
-locale{-:lang{-:country}} ➜ /locale, /locale-en, /locale-en-US
-api/{v:version}/users     ➜ /api/users or /api/v2/users
+book{-:id}-info           -> /book-info or /book-123-info
+locale{-:lang{-:country}} -> /locale, /locale-en, /locale-en-US
+api/{v:version}/users     -> /api/users or /api/v2/users
 ```
 
 ::: info Limited support across frameworks

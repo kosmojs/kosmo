@@ -9,7 +9,7 @@ head:
         path aliases, tsconfig paths, dist output, kosmojs layout, var cache
 ---
 
-A `KosmoJS` project has four top-level directories, and each one has exactly one job.
+A KosmoJS project has four top-level directories, and each one has exactly one job.
 Once that clicks, the rest of the docs read much faster.
 
 ```txt
@@ -21,7 +21,7 @@ my-app/
 │   ├── front/            ->   one source folder
 │   └── admin/            ->   another, fully independent
 │
-├── lib/                  🤖 DERIVED - never edit, don't read to learn
+├── lib/                  🤖 DERIVED - never edit
 │   ├── tsconfig.json     ->   base config the root tsconfig extends
 │   ├── front/            ->   derived code for src/front
 │   └── admin/            ->   derived code for src/admin
@@ -34,7 +34,7 @@ my-app/
 └── var/                  🗑️  Vite cache - disposable
 ```
 
-The rule of thumb: **you own `src/`, `KosmoJS` owns `lib/`.**
+The rule of thumb: **you own `src/`, KosmoJS owns `lib/`.**
 Every `_/` import you write points into `lib/`.
 
 ## Inside a Source Folder
@@ -48,7 +48,7 @@ src/front/
 ├── tsconfig.json         -> { "extends": "../../lib/front/tsconfig.json" }
 ├── index.html            -> Vite's HTML entry
 ├── app.tsx               -> global wrapper, wraps EVERY route
-├── router.ts             -> routerFactory: routes ➜ native router
+├── router.ts             -> routerFactory: routes -> native router
 │
 ├── api/                  ── server side ───────────────────────────
 │   ├── app.ts            -> the backend app instance (appFactory)
@@ -59,17 +59,17 @@ src/front/
 │   ├── env.d.ts          -> global context/state types, custom UseSlots
 │   └── users/
 │       └── [id]/
-│           ├── index.ts  -> the route  ➜  /api/users/:id
+│           ├── index.ts  -> the route  ->  /api/users/:id
 │           └── types.ts  -> colocated helper, NOT a route
 │
 ├── pages/                ── client side ───────────────────────────
 │   ├── 404.tsx           -> rendered for unmatched routes
 │   ├── index/
-│   │   └── index.tsx     -> the route  ➜  /
+│   │   └── index.tsx     -> the route  ->  /
 │   └── users/
 │       ├── layout.tsx    -> wraps everything under /users
 │       └── [id]/
-│           └── index.tsx -> the route  ➜  /users/:id
+│           └── index.tsx -> the route  ->  /users/:id
 │
 ├── components/
 │   └── Link.tsx          -> seeded typed Link

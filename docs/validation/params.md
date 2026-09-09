@@ -12,7 +12,7 @@ head:
 Route parameters are extracted from the URL path as strings - that's just how URLs work.
 But you often need more than a string: a numeric ID, a positive integer, a value from a fixed set or of a specific pattern, uuid, date, etc.
 
-`KosmoJS` lets you express these requirements directly in the type system.
+KosmoJS lets you express these requirements directly in the type system.
 
 ## Params Refinements
 
@@ -37,7 +37,7 @@ A request to `/api/users/abc` is rejected with a 400 before your handler runs.
 
 ::: tip Numeric params are coerced for you
 A URL param arrives as a string, but when you type it as `number`,
-`KosmoJS` coerces it before validation - `"123"` becomes `123`.
+KosmoJS coerces it before validation - `"123"` becomes `123`.
 
 A non-numeric value like `"abc"` is left as-is and fails the number check, producing a clean 400.
 

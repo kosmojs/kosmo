@@ -51,11 +51,21 @@
 
   /* ambient wash painted behind the page, keyed off the accents */
   --kx-glow:
-    radial-gradient(720px 460px at 82% -10%, rgba(136, 57, 239, 0.07), transparent 70%),
-    radial-gradient(560px 400px at 4% 12%, rgba(30, 102, 245, 0.06), transparent 70%);
+    radial-gradient(
+      720px 460px at 82% -10%,
+      rgba(136, 57, 239, 0.07),
+      transparent 70%
+    ),
+    radial-gradient(
+      560px 400px at 4% 12%,
+      rgba(30, 102, 245, 0.06),
+      transparent 70%
+    );
 
-  --kx-shadow-card: 0 1px 5px rgba(76, 79, 105, 0.05), 0 18px 40px -32px rgba(76, 79, 105, 0.4);
-  --kx-shadow-code: 0 1px 5px rgba(76, 79, 105, 0.05), 0 16px 32px -28px rgba(76, 79, 105, 0.28);
+  --kx-shadow-card:
+    0 1px 5px rgba(76, 79, 105, 0.05), 0 18px 40px -32px rgba(76, 79, 105, 0.4);
+  --kx-shadow-code:
+    0 1px 5px rgba(76, 79, 105, 0.05), 0 16px 32px -28px rgba(76, 79, 105, 0.28);
 
   /*
     ---------- brand mark (Latte cut) ----------
@@ -115,11 +125,21 @@
   --kx-mauve: #cba6f7;
 
   --kx-glow:
-    radial-gradient(720px 460px at 82% -10%, rgba(203, 166, 247, 0.13), transparent 70%),
-    radial-gradient(560px 400px at 4% 12%, rgba(137, 180, 250, 0.09), transparent 70%);
+    radial-gradient(
+      720px 460px at 82% -10%,
+      rgba(203, 166, 247, 0.13),
+      transparent 70%
+    ),
+    radial-gradient(
+      560px 400px at 4% 12%,
+      rgba(137, 180, 250, 0.09),
+      transparent 70%
+    );
 
-  --kx-shadow-card: 0 1px 5px rgba(0, 0, 0, 0.4), 0 24px 48px -34px rgba(0, 0, 0, 0.8);
-  --kx-shadow-code: 0 1px 5px rgba(0, 0, 0, 0.32), 0 18px 36px -28px rgba(0, 0, 0, 0.68);
+  --kx-shadow-card:
+    0 1px 5px rgba(0, 0, 0, 0.4), 0 24px 48px -34px rgba(0, 0, 0, 0.8);
+  --kx-shadow-code:
+    0 1px 5px rgba(0, 0, 0, 0.32), 0 18px 36px -28px rgba(0, 0, 0, 0.68);
 
   /*
     ---------- brand mark (Mocha cut) ----------
@@ -196,7 +216,11 @@
   --vp-nav-bg-color: color-mix(in srgb, var(--kx-bg) 78%, transparent);
   --vp-sidebar-bg-color: var(--kx-bg-sunk);
   --vp-local-nav-bg-color: var(--kx-bg-sunk);
-  --vp-backdrop-bg-color: color-mix(in srgb, var(--kx-bg-inset) 72%, transparent);
+  --vp-backdrop-bg-color: color-mix(
+    in srgb,
+    var(--kx-bg-inset) 72%,
+    transparent
+  );
 
   --vp-shadow-1: var(--kx-shadow-card);
   --vp-shadow-2: var(--kx-shadow-card);

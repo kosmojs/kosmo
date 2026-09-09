@@ -200,7 +200,7 @@ and `fetch` only produces clients when there are backend routes to derive them f
 No - it reaches Vite through `stack`, so listing it in `viteConfig.plugins` runs the transform twice.
 To configure it, construct it yourself and pass it as `plugin`:
 `frontend: { stack: { name: "react", plugin: react({ jsxRuntime: "classic" }) }, base: "/" }`.
-With a bare name `KosmoJS` builds the plugin with the arguments the current command needs;
+With a bare name KosmoJS builds the plugin with the arguments the current command needs;
 an instance you pass is used as written, so set those yourself.
 [Details&nbsp;›](/essentials/config#frontend-stack-required)
 
@@ -279,7 +279,7 @@ Pages typically read data through the fetch client (`fetchClients["products"].GE
 #### What does the `_/` prefix and `_/api` map to?
 `_/` maps to `lib/` (derived code). `_/api` resolves to `lib/<folder>/api.ts`,
 where `<folder>` is your source-folder name.
-[Details&nbsp;›](/routing/seeded-content#api-routes)
+[Details&nbsp;›](/essentials/project-structure#path-mappings)
 
 #### What do `@/*`, `~/*`, `_/*` mean?
 
@@ -376,18 +376,16 @@ KosmoJS is the chassis, not the engine - the engine is whichever framework you c
 KosmoJS detects it and writes appropriate boilerplate -
 an API route (`defineRoute`) vs a page component, matched to your framework.
 You rarely write the skeleton by hand.
-[Details&nbsp;›](/routing/seeded-content)
+[Details&nbsp;›](/backend/custom-templates)
 
 #### Why doesn't my editor show seeded content immediately?
 Some editors load it instantly; others need a brief unfocus/refocus of the file.
-[Details&nbsp;›](/routing/seeded-content)
+[Details&nbsp;›](/backend/custom-templates)
 
 #### Why avoid anonymous arrow functions as default exports?
-This applies to page components, not API routes.
 A page's default export should be a named function (`export default function Page() {...}`) -
-an anonymous arrow can break Vite's HMR. API routes are unaffected:
-they default-export `defineRoute(...)`, which is already a named call.
-[Details&nbsp;›](/routing/seeded-content#client-pages)
+an anonymous arrow can break Vite's HMR.
+[Details&nbsp;›](/frontend/custom-templates)
 
 #### How do I override the default seeded template?
 Pass `templates` in the `frontend` or `backend` block of `kosmo.config.ts`, keyed by route-name glob pattern.
@@ -467,7 +465,7 @@ its router ignores any `HEAD` handler you define and fallback to `GET` handler.
 [Details&nbsp;›](/backend/intro#defining-endpoints)
 
 #### Why method-based routing?
-In `KosmoJS` a single route folder owns one URL, and inside it you declare a handler per HTTP method -
+In KosmoJS a single route folder owns one URL, and inside it you declare a handler per HTTP method -
 `GET`, `POST`, `PUT`, and so on - rather than branching on `ctx.method` or splitting verbs across files.
 
 This keeps everything about one resource in one place:
@@ -1754,7 +1752,7 @@ without a separate server-function primitive.
 Not the RSC way - data flows through the API layer, not direct DB access in the page.
 But during SSR that isn't a network hop: the isomorphic fetch client dispatches to the
 API route in-process (no socket), so you get the API boundary without the round-trip cost.
-The de-facto model is API routes + derived clients + framework loader/preload.
+The de-facto model is API routes + fetch clients + framework loader.
 [Details&nbsp;›](/fetch/isomorphic-clients)
 
 #### Loaders like TanStack Start/Router?
@@ -1852,8 +1850,7 @@ use your framework's form state plus the client's `validationSchemas` for field 
 [Details&nbsp;›](/fetch/start#method-signatures)
 
 #### End-to-end RPC type safety like tRPC?
-Effectively yes via derived clients - params, payload,
-and response types derive from the same route definition,
+Effectively yes via fetch clients - params, payload, and response types derive from the same route definition,
 with client-side validation before the request.
 The difference: it's route-based (path keys + HTTP methods) rather than procedure-based,
 and backed by derived TypeBox validators plus automatic OpenAPI.
@@ -1868,7 +1865,7 @@ so client-valid and server-accepted stay in sync.
 
 #### Next Route Handlers (`route.ts`) / Start `createAPIFileRoute` equivalent?
 `defineRoute` returning an array of method handlers in `api/.../index.ts` - same idea,
-plus validation and a derived client for free. You don't write `Response.json()`.
+plus validation and a fetch client for free. You don't write `Response.json()`.
 There's no `NextRequest`/`NextResponse` - it's the native Hono/H3/Koa context.
 [Details&nbsp;›](/backend/intro#defining-endpoints)
 

@@ -14,7 +14,7 @@ head:
 Preloading ensures data is ready before a component renders, eliminating
 loading spinners for route-level data and creating seamless navigation
 experiences. Each framework has its own mechanism - all integrate naturally
-with `KosmoJS`'s fetch clients.
+with KosmoJS's fetch clients.
 
 ## API Endpoint
 
@@ -228,13 +228,13 @@ made during SSR is replayed on hydration rather than firing twice.
 
 ## Suspense Is Your Responsibility
 
-Async data reads need a `<Suspense>` boundary above them, and `KosmoJS` does
+Async data reads need a `<Suspense>` boundary above them, and KosmoJS does
 not provide one for you. The seeded `App` boilerplate renders its children
 directly - it deliberately does not wrap the app in `<Suspense>`, because a
 single app-wide boundary is an anti-pattern: any pending fetch anywhere
 collapses the whole page to one fallback, and unrelated async work shares a
 single loading state. Where the boundary goes is a design decision only you
-can make, so `KosmoJS` leaves it to you.
+can make, so KosmoJS leaves it to you.
 
 This matters most for **SolidJS**. `createAsync` reports its pending state to
 the nearest `<Suspense>` and propagates errors to the nearest
@@ -272,6 +272,6 @@ does not suspend, so it needs no boundary in the common case.
 so it needs no boundary in the common case.
 
 Wrapping the entire app in one boundary does work if you accept the tradeoff -
-it is your call, not a default `KosmoJS` will make for you. The guidance is to
+it is your call, not a default KosmoJS will make for you. The guidance is to
 scope boundaries to the components or sections that actually fetch, so a
 spinner in one area never blanks the rest of the page.

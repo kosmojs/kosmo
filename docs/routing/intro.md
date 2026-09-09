@@ -18,19 +18,19 @@ The same pattern applies to both API routes and client pages:
 ```
 api/
   index/
-    index.ts          ➜ /api
+    index.ts          -> /api
   users/
-    index.ts          ➜ /api/users
+    index.ts          -> /api/users
     [id]/
-      index.ts        ➜ /api/users/:id
+      index.ts        -> /api/users/:id
 
 pages/
   index/
-    index.tsx         ➜ /
+    index.tsx         -> /
   users/
-    index.tsx         ➜ /users
+    index.tsx         -> /users
     [id]/
-      index.tsx       ➜ /users/:id
+      index.tsx       -> /users/:id
 ```
 
 The parallel structure between `api/` and `pages/` is intentional -
@@ -45,7 +45,7 @@ API routes export a route definition (HTTP methods + handlers).
 Client pages export a component function.
 
 When you create a new route, you rarely write it from scratch -
-it is automatically [seeded](/routing/seeded-content) with the correct boilerplate.
+it is automatically seeded with the correct boilerplate.
 
 The folder-per-route pattern gives each route its own namespace for colocating related files -
 utilities, types, tests - without cluttering parent directories.
@@ -63,7 +63,7 @@ with shared UI like navigation or headers.
 ## Native Routing Under the Hood
 
 A fair question: with custom parameter syntax and `path-to-regexp` patterns,
-is `KosmoJS` running its own router at runtime? It isn't.
+is KosmoJS running its own router at runtime? It isn't.
 
 `path-to-regexp` is used only at build time, to parse your directory structure into
 route definitions. At runtime, those parsed routes are registered with each framework's
@@ -74,8 +74,8 @@ request and your framework's matching logic.
 build time                          runtime
 ──────────                          ───────
 directory structure                 native router registration
-  api/users/[id]/index.ts    ➜        Hono/H3/Koa router
-  pages/users/[id]/index.tsx ➜        React/Solid/Vue router
+  api/users/[id]/index.ts    ->        Hono/H3/Koa router
+  pages/users/[id]/index.tsx ->        React/Solid/Vue router
         │                                       │
         └── parsed via path-to-regexp ──────────┘
 ```
@@ -88,7 +88,7 @@ nothing is wrapped, shimmed, or reimplemented:
   definitions, so nested layouts, lazy loading, loaders/preloads, and navigation guards
   all behave exactly as documented by those frameworks.
 
-**`KosmoJS` is the chassis, not the engine.**
+**KosmoJS is the chassis, not the engine.**
 
 It gives every source folder the same consistent, directory-based way to define routes;
 the engine doing the actual routing is the framework you picked.

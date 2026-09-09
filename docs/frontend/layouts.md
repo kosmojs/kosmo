@@ -68,7 +68,7 @@ Only the lowercase form is recognized as a special file. `Layout.tsx`,
 Each source folder runs a single framework and ignores files belonging to
 others: React/SolidJS folders ignore `.vue`/`.svelte` files, Vue folders ignore `.tsx`.
 
-When you create a new layout file, `KosmoJS` seeds framework-appropriate
+When you create a new layout file, KosmoJS seeds framework-appropriate
 boilerplate immediately. Some editors may require a brief unfocus/refocus to
 load the seeded content.
 

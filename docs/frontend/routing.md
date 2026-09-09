@@ -22,8 +22,8 @@ Frontend routing follows the exact same directory-based pattern as API routing.
 If you know how `api/` routes work, you already know how `pages/` routes work:
 
 ```
-api/users/[id]/index.ts     ➜  /api/users/:id   (backend handler)
-pages/users/[id]/index.tsx  ➜  /users/:id       (frontend component)
+api/users/[id]/index.ts     ->  /api/users/:id   (backend handler)
+pages/users/[id]/index.tsx  ->  /users/:id       (frontend component)
 ```
 
 The parallel structure is intentional - an API endpoint and its corresponding
@@ -31,9 +31,9 @@ page are always one folder apart. The same parameter syntax applies to both:
 
 | Syntax | Type | Example |
 |---|---|---|
-| `[id]` | Required | `pages/users/[id]/` ➜ `/users/123` |
-| `{id}` | Optional | `pages/users/{id}/` ➜ `/users` or `/users/123` |
-| `{...path}` | Splat | `pages/docs/{...path}/` ➜ `/docs/any/depth` |
+| `[id]` | Required | `pages/users/[id]/` -> `/users/123` |
+| `{id}` | Optional | `pages/users/{id}/` -> `/users` or `/users/123` |
+| `{...path}` | Splat | `pages/docs/{...path}/` -> `/docs/any/depth` |
 
 Static routes always take priority over dynamic ones.
 Optional parameters followed by static segments can cause ambiguity -

@@ -9,7 +9,7 @@ head:
         error logging, field errors, structured errors, error response
 ---
 
-When validation fails - on parameters, request payload, or response - `KosmoJS` throws a `ValidationError`
+When validation fails - on parameters, request payload, or response - KosmoJS throws a `ValidationError`
 with detailed information about what went wrong and where.
 
 Your `api/errors.ts` is the central place to handle it. The seeded file gives you a working default;
@@ -108,7 +108,7 @@ Each target has its own message set. For nested fields, use dot notation:
 }
 ```
 
-When validation fails, `KosmoJS` uses the most specific message available -
+When validation fails, KosmoJS uses the most specific message available -
 field-specific first, falling back to the generic `error` if no match is found.
 Custom messages appear in the `message` field of each `ValidationErrorEntry`,
 so your existing error handler picks them up automatically.

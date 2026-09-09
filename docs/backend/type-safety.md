@@ -9,7 +9,7 @@ head:
         DefaultContext, DefaultState, DefaultVariables, env.d.ts
 ---
 
-Type safety in `KosmoJS` covers the full request-response cycle:
+Type safety in KosmoJS covers the full request-response cycle:
 path parameters, payloads, responses, and context/state properties -
 all driving both compile-time checking and runtime validation from the same type definitions.
 
