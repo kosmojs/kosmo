@@ -94,8 +94,8 @@ Your app is now running at `http://localhost:4556`.
 ### 4. Add more source folders as the project grows
 
 ```sh
-npm run folder
-# or `pnpm folder` / `yarn folder`
+npm run folder <name>
+# or `pnpm folder <name>` / `yarn folder <name>`
 ```
 
 Each source folder runs its own set of frameworks with its own base URL, config etc.
