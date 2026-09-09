@@ -60,20 +60,12 @@
   /*
     ---------- brand mark (Latte cut) ----------
 
-    The mark is inlined rather than served through an <img>, so it reads these
-    directly and flips with the scheme. Two stops, one ramp, running down the
-    artwork - the frame and the rocket each get their own span of it.
+    The mark is inlined rather than served through an <img>, so it reads these directly and flips with the scheme.
+    Two stops, one ramp, running down the artwork - the frame and the rocket each get their own span of it.
+  */
 
-    Latte mirrors the ramp rather than translating it stop for stop. The
-    drawing runs strong at the top and eases toward the bottom; on #eff1f5
-    that means the teal end is the one that has to go deep, and Latte blue
-    then lands almost exactly where the lower stop wants to be.
-  * */
-
-  /* teal, deepened until it holds the top of the mark against the page */
-  --kosmo-mark-from: #00505a;
-  /* Latte blue, unchanged */
-  --kosmo-mark-to: #1e66f5;
+  --kosmo-mark-from: #305da7;
+  --kosmo-mark-to: #4d7cc9;
 
   /* ---------- shape and motion ---------- */
 
@@ -132,12 +124,13 @@
   /*
     ---------- brand mark (Mocha cut) ----------
 
-    Straight palette here: on a #181825 page both accents already carry the
-    separation the artwork needs.
-  * */
+    Same hue, lifted to what a dark page needs and held under the wordmark beside it:
+    the mark is solid shapes where the wordmark is text strokes, so equal contrast reads as the mark shouting.
+    Roughly 6.7:1 against the sidebar against the wordmark's 12:1.
+  */
 
-  --kosmo-mark-from: #94e2d5;
-  --kosmo-mark-to: #89b4fa;
+  --kosmo-mark-from: #7b9dd4;
+  --kosmo-mark-to: #6484ba;
 }
 
 /*
