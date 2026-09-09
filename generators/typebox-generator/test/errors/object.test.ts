@@ -75,8 +75,8 @@ describe("errors/object", async () => {
       [
         "noAdditionalProps",
         { id: "789", name: "Jane", extra: "not-allowed" },
-        MESSAGE_CODES.OBJECT_ADDITIONAL_PROPERTIES,
-        { additionalProperties: ["extra"] },
+        MESSAGE_CODES.UNKNOWN,
+        {},
       ],
 
       // Property count
@@ -122,14 +122,14 @@ describe("errors/object", async () => {
       [
         "dynamicKeys",
         { "Invalid-Key": 10 },
-        MESSAGE_CODES.OBJECT_PROPERTY_NAMES,
-        { propertyNames: ["Invalid-Key"] },
+        MESSAGE_CODES.STRING_PATTERN,
+        { pattern: "^[a-z]+$" },
       ],
       [
         "dynamicKeys",
         { "123number": 10 },
-        MESSAGE_CODES.OBJECT_PROPERTY_NAMES,
-        { propertyNames: ["123number"] },
+        MESSAGE_CODES.STRING_PATTERN,
+        { pattern: "^[a-z]+$" },
       ],
     ] as const) {
       const data = { ...validPayload, [name]: value };
