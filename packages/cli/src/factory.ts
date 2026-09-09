@@ -361,9 +361,9 @@ export const createFolder = async (
       name,
       frontend,
       backend,
-      ssr,
-      ssg,
-      tsq,
+      ssr: ssr === true,
+      ssg: ssg === true,
+      tsq: tsq === true,
     };
 
     await createSourceFolder(root, folder);
