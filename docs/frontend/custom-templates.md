@@ -1,8 +1,7 @@
 ---
 title: Custom Page Templates
-description: Override default seeded page components for specific routes using
-  glob pattern matching. Seed specialized boilerplate for landing pages, admin
-  dashboards, and marketing sections in React, SolidJS, Vue, Svelte and MDX source folders.
+description: Override default seeded page components for specific routes using glob pattern matching.
+    Seed specialized boilerplate for landing pages, admin dashboards, marketing sections etc.
 head:
   - - meta
     - name: keywords
@@ -10,31 +9,8 @@ head:
         route patterns, glob matching, template configuration, landing page templates
 ---
 
-Every frontend framework supports template overrides for specific routes through
-pattern-based matching. When a new page is created and its path matches a
-configured pattern, your custom template is written instead of the
-default - useful for standardizing structure across landing pages, admin tools,
-or any section requiring a consistent starting point.
-
-This is the frontend half of the feature; API routes have their own.
-[Custom Route Templates ›](/backend/custom-templates)
-
-## What It Overrides
-
-Only page components - and not quite all of them:
-
-| File | Templatable? |
-|---|:---:|
-| `pages/**/index.*` - page components | ✅ |
-| `pages/index/index.*` - the root route | ❌ always the built-in welcome page |
-| `pages/**/layout.*` - layouts | ❌ always the built-in layout |
-| `pages/404.*` | ❌ deployed once at folder creation |
-
-::: warning Templates only fill blank files
-Boilerplate is written into a file **only when that file is empty**.
-It never overwrites work you have already done - which is also why changing a template does not retroactively rewrite existing pages.
-To re-seed one, empty the file and it will be filled again.
-:::
+Every frontend framework supports template overrides for specific routes through <span style="white-space: nowrap">pattern-based</span> matching.
+Useful for standardizing structure across landing pages, admin tools, or any section requiring a consistent starting point.
 
 ## Configuration
 
@@ -64,6 +40,13 @@ export default defineConfig({
   },
 });
 ```
+
+Now every new route under `landing/` and `marketing/` will start with your template.
+
+> **Templates only fill blank files.**
+Boilerplate is written into a file **only when that file is empty**.
+It never overwrites work you have already done - which is also why changing a template does not retroactively rewrite existing pages.
+To re-seed one, empty the file and it will be filled again.
 
 ## Pattern Syntax
 
