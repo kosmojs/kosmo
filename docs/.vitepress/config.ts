@@ -222,11 +222,6 @@ export default defineConfig({
               text: "Parameters",
               link: "/routing/params",
             },
-            {
-              text: "Seeded Content",
-              docFooterText: "Routing - Seeded Content",
-              link: "/routing/seeded-content",
-            },
           ],
         },
         {
