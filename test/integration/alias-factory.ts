@@ -2,7 +2,7 @@ import type { TestFunction } from "vitest";
 
 import type { BACKENDS } from "@kosmojs/core";
 
-import { createRoutePath } from ".";
+import { compileRoutePath, createRoutePath } from ".";
 import { apiRoutes } from "./@fixtures/generic/routes";
 import { setupTestProject } from "./setup";
 
@@ -73,8 +73,8 @@ export const createTests = async (backend: keyof typeof BACKENDS) => {
         try {
           for (const [alias, route] of aliases) {
             for (const params of apiRoutes[route]) {
-              const path = createRoutePath(alias, params);
-              const { response } = await project.withApiResponse(path);
+              const path = compileRoutePath(alias, params);
+              const { response } = await project.withApiResponse(`/${path}`);
               expect(JSON.parse(response.body as never)).toEqual({
                 route,
                 params,

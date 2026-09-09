@@ -524,15 +524,13 @@ export default () => {
          *       index.ts
          *
          * Two routes exist: search/{:type} and search/{:type}/{:page}.
-         * Because {:page} is optional, the longer route ALSO emits the
-         * `search/{:type}` variation, so the shorter route's paths are a
-         * subset and including both would produce duplicate/phantom paths.
+         * Because {:page} is optional, the longer route ALSO emits the `search/{:type}` variation,
+         * so the shorter route's paths are a subset and including both would produce duplicate/phantom paths.
          *
-         * The test must be on the generated path variations, not the route
-         * names: a required-param child like `posts/[id]` emits only
-         * `/posts/{id}` (never `/posts`), so the `posts` collection is NOT
-         * subsumed and must be kept. A name-prefix check (`startsWith`)
-         * wrongly drops any route whose name is a string prefix of another.
+         * The test must be on the generated path variations, not the route names:
+         * a required-param child like `posts/[id]` emits only `/posts/{id}` (never `/posts`),
+         * so the `posts` collection is NOT subsumed and must be kept.
+         * A name-prefix check wrongly drops any route whose name is a string prefix of another.
          * */
         const own = variationsByName.get(route.name) ?? [];
 

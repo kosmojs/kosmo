@@ -1,7 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-import { defaults } from "@kosmojs/core";
-
 import { routes } from "../@fixtures/cascading-middleware";
 import { setupTestProject } from "../setup";
 
@@ -22,7 +20,7 @@ beforeAll(async () => {
     return () => {
       if (file === "use") {
         return `
-          import { use } from "${defaults.libPrefix}/api";
+          import { use } from "_/api";
           export type UseT = { stack: Array<string> };
           export default [
             use<UseT>((event, next) => {
@@ -36,7 +34,7 @@ beforeAll(async () => {
         `;
       }
       return `
-        import { defineRoute } from "${defaults.libPrefix}/api";
+        import { defineRoute } from "_/api";
         export default defineRoute<"${name}">(({ GET }) => [
           GET(async (event) => {
             return [ ...event.context.stack, "${name}/index" ];

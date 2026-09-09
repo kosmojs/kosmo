@@ -44,14 +44,28 @@ export const exec = async (
   }
 };
 
-export const createRoutePath = (
-  routeName: string,
+type PathSource =
+  | string
+  | [route: string, params?: Record<string, unknown> | undefined];
+
+export const compileRoutePath = (
+  route: string,
   params?: Record<string, unknown> | undefined,
 ) => {
-  const pathTokens = pathTokensFactory(routeName);
+  const pathTokens = pathTokensFactory(route);
   const pathPattern = createPathPattern(pathTokens);
   const toPath = compile(pathPattern);
-  return posix.join("/", toPath({ ...params } as never));
+  return toPath({ ...params } as never);
+};
+
+export const createRoutePath = (base: string, pathSource: PathSource) => {
+  if (Array.isArray(pathSource)) {
+    const [route, params] = pathSource;
+    return posix.join("/", base, compileRoutePath(route, params));
+  }
+  return pathSource.startsWith("/") //
+    ? pathSource
+    : posix.join(base, pathSource);
 };
 
 export const contentPatternFor = (route: string) => {

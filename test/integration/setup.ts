@@ -4,11 +4,8 @@ import { tmpdir } from "node:os";
 import { dirname, posix, resolve } from "node:path";
 import { styleText } from "node:util";
 
-import { serve } from "@hono/node-server";
-import { serveStatic } from "@hono/node-server/serve-static";
 import crc from "crc/crc32";
 import got, { type Method } from "got";
-import { Hono } from "hono";
 import { createJiti } from "jiti";
 import { chromium } from "playwright";
 import { inject, type ProvidedContext } from "vitest";
@@ -273,15 +270,7 @@ export const setupTestProject = async (
       throw new Error("frontend not configured");
     }
 
-    const path = Array.isArray(pathSource)
-      ? createRoutePath(pathSource[0], pathSource[1])
-      : pathSource;
-
-    const url = [
-      //
-      baseURL,
-      path === "/" ? base : posix.join(base, path as never),
-    ].join("");
+    const path = createRoutePath(base, pathSource);
 
     let maybeContent: string | undefined;
 
@@ -319,7 +308,7 @@ export const setupTestProject = async (
         }
       });
 
-      await page.goto(url);
+      await page.goto(baseURL + path);
       await page.waitForLoadState("networkidle");
 
       // Wait for the client runtime to take over.
@@ -335,7 +324,7 @@ export const setupTestProject = async (
           [
             styleText(
               ["red", "italic"],
-              `Browser reported ${pageErrors.length} error(s) at ${url}:`,
+              `Browser reported ${pageErrors.length} error(s) at ${path}:`,
             ),
             ...new Set(pageErrors),
           ].join("\n"),
@@ -352,7 +341,7 @@ export const setupTestProject = async (
         .map(([name, value]) => `${name}=${value}`)
         .join("; ");
 
-      maybeContent = await httpClient(url, {
+      maybeContent = await httpClient(baseURL + path, {
         headers: {
           ...opts?.headers,
           ...(cookie ? { cookie } : {}),
@@ -365,7 +354,7 @@ export const setupTestProject = async (
       : "";
 
     return {
-      path,
+      path: path.replace(posix.join(base, "/"), ""),
       content,
       contentPattern: Array.isArray(pathSource)
         ? contentPatternFor(pathSource[0])
@@ -390,12 +379,10 @@ export const setupTestProject = async (
       throw new Error("frontend not configured");
     }
 
-    const path = Array.isArray(pathSource)
-      ? createRoutePath(pathSource[0], pathSource[1])
-      : pathSource;
-
-    const url = baseURL + posix.join(base, path as never);
-    const response = await httpClient(url, { method, searchParams });
+    const response = await httpClient(
+      baseURL + createRoutePath(base, pathSource),
+      { method, searchParams },
+    );
 
     return { response };
   };
@@ -417,15 +404,10 @@ export const setupTestProject = async (
       throw new Error("backend not configured");
     }
 
-    const path: string = Array.isArray(pathSource)
-      ? createRoutePath(pathSource[0], pathSource[1])
-      : pathSource;
-
-    const url = path.startsWith("/")
-      ? baseURL + path
-      : baseURL + posix.join(base, path as never);
-
-    const response = await httpClient(url, { method, searchParams });
+    const response = await httpClient(
+      baseURL + createRoutePath(base, pathSource),
+      { method, searchParams },
+    );
 
     return { response };
   };
