@@ -260,6 +260,3 @@ generator({
   },
 })
 ```
-
-Note this still does not reach the root `index` route or `layout` files -
-see [What It Overrides](#what-it-overrides).

@@ -464,6 +464,9 @@ importers:
       cookie:
         specifier: ^2.0.1
         version: 2.0.1
+      path-to-regexp:
+        specifier: ^8.4.2
+        version: 8.4.2
       picomatch:
         specifier: ^4.0.7
         version: 4.0.7
@@ -483,9 +486,6 @@ importers:
       msw:
         specifier: ^2.15.0
         version: 2.15.0(@types/node@26.5.0)(typescript@7.0.2)
-      path-to-regexp:
-        specifier: ^8.4.2
-        version: 8.4.2
       tfusion:
         specifier: ^0.2.2
         version: 0.2.2

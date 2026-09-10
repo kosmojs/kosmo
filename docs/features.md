@@ -148,8 +148,8 @@ Place a `use.ts` file in any folder and its middleware automatically wraps
 all routes in that folder and its subfolders - no imports or wiring needed.
 
 ```
-api/admin/use.ts       → wraps all routes under /api/admin
-api/admin/users/use.ts → wraps only routes under /api/admin/users
+api/admin/use.ts       -> wraps all routes under /api/admin
+api/admin/users/use.ts -> wraps only routes under /api/admin/users
 ```
 
 Parent middleware always runs before child middleware.

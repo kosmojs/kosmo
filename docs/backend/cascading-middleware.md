@@ -225,7 +225,8 @@ export default [
 
 ## Common Use Cases
 
-Cascading middleware is where cross-cutting concerns belong: authentication, logging, rate limiting, CORS, request IDs.
+Cascading middleware is where subtree-wide concerns belong: authentication, permission checks,
+audit logging, per-section rate limiting.
 
 KosmoJS imposes nothing here - `use` accepts your framework's own middleware signature,
 so **any Hono/H3/Koa middleware package works unchanged**.
@@ -238,14 +239,11 @@ Add middleware to `use.ts` and it will run on every route underneath:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-import { cors } from "hono/cors";
 import { rateLimiter } from "hono-rate-limiter";
 
 import { use } from "_/api";
 
 export default [
-  use(cors({ origin: "https://example.com" })),
-
   use(
     rateLimiter({
       windowMs: 15 * 60 * 1000,
@@ -261,8 +259,8 @@ export default [
 import { use } from "_/api";
 
 export default [
-  use(async function cors(event, next) {
-    event.res.headers.set("access-control-allow-origin", "https://example.com");
+  use(async function noStore(event, next) {
+    event.res.headers.set("cache-control", "no-store");
     return next();
   }),
 ];
@@ -270,7 +268,6 @@ export default [
 
 == Koa
 ```ts
-import koaCors from "@koa/cors";
 import ratelimit from "koa-ratelimit";
 
 import { use } from "_/api";
@@ -278,11 +275,15 @@ import { use } from "_/api";
 const db = new Map();
 
 export default [
-  use(koaCors({ origin: "https://example.com" })),
-
   use(ratelimit({ driver: "memory", db, duration: 15 * 60 * 1000, max: 100 })),
 ];
 ```
+:::
+
+::: warning Not CORS, though
+A `use.ts` is composed into each route's chain, so it only runs once a route has matched.
+A preflight `OPTIONS` is answered before that, and never reaches it.
+CORS belongs in `api/app.ts`, as [app&nbsp;middleware](/backend/middleware#app-middleware).
 :::
 
 ### Authentication for a subtree
@@ -294,9 +295,9 @@ no imports, no type arguments:
 
 ```txt
 api/
-├── use.ts              → global: CORS, request id, rate limit
+├── use.ts              -> global: request id, auth, rate limit
 └── admin/
-    ├── use.ts          → auth: everything under /api/admin
+    ├── use.ts          -> auth: everything under /api/admin
     ├── index.ts
     └── users/
         └── index.ts
@@ -328,7 +329,7 @@ you verify the token and populate the context yourself, the native way for your 
 | Scope | a folder and everything beneath it | one route file |
 | Wiring | automatic - no imports | explicit, inside `defineRoute` |
 | Context types | cascade via `UseT` | via `defineRoute` type arguments |
-| Good for | auth, logging, rate limiting, CORS | one-off concerns for a single endpoint |
+| Good for | auth, audit logging, rate limiting | one-off concerns for a single endpoint |
 
 Keep cascading middleware **generic**. It runs for sibling routes too,
 so a param like `id` may be undefined there - see [Parameter Availability](#parameter-availability).

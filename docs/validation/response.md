@@ -68,3 +68,12 @@ would be worse than a thrown error, that endpoint is a candidate for `runtimeVal
 Defining a response schema also enables automatic `OpenAPI` derivation -
 type safety and documentation in one step.
 [Details&nbsp;›](/openapi)
+
+## Overriding the Default
+
+Response validation runs in the `validate:response` slot.
+Claim that slot and your middleware decides what a valid response looks like.
+The built-in check stops running.
+
+Use it for responses no schema can describe - a stream, for example.
+[Details&nbsp;›](/backend/middleware#overriding-validation)

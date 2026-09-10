@@ -24,8 +24,8 @@ describe("global use", () => {
   });
 
   test("accepts slot option", () => {
-    const stack = use(async () => {}, { slot: "errorHandler" });
-    expect(stack.options?.slot).toEqual("errorHandler");
+    const stack = use(async () => {}, { slot: "edge:auth" });
+    expect(stack.options?.slot).toEqual("edge:auth");
   });
 
   test("accepts `on` option", () => {

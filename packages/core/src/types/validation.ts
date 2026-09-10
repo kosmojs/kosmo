@@ -5,9 +5,16 @@ import type { ResolvedTypeSignature } from "./generic";
  * Request metadata validation targets.
  * */
 export const RequestMetadataTargets = {
+  params: "URL parameters",
   query: "URL query parameters",
   headers: "HTTP request headers",
   cookies: "HTTP cookies",
+} as const;
+
+export const RequestMetadataParsers = {
+  method: "HTTP method",
+  pathname: "URL pathname",
+  ...RequestMetadataTargets,
 } as const;
 
 /**
@@ -39,6 +46,7 @@ export const RequestValidationTargets = {
 } as const;
 
 export type RequestMetadataTarget = keyof typeof RequestMetadataTargets;
+export type RequestMetadataParser = keyof typeof RequestMetadataParsers;
 export type RequestBodyTarget = keyof typeof RequestBodyTargets;
 export type RequestValidationTarget = keyof typeof RequestValidationTargets;
 
@@ -213,16 +221,17 @@ export type ValidationSchema = {
 };
 
 export type ValidationSchemas<Extend = object> = {
-  [T in RequestValidationTarget]?: Record<
-    // http method
-    string,
-    ValidationSchema &
-      Extend & {
-        runtimeValidation?: boolean;
-        customErrors?: ValidationCustomErrors;
-      }>;
+  [T in RequestValidationTarget]?: T extends "params"
+    ? ValidationSchema & Extend
+    : Record<
+        // http method
+        string,
+        ValidationSchema &
+          Extend & {
+            runtimeValidation?: boolean;
+            customErrors?: ValidationCustomErrors;
+          }>;
 } & {
-  params?: ValidationSchema & Extend;
   response?: Record<
     // http method
     string,

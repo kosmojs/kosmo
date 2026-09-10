@@ -2,7 +2,7 @@ import type { TestFunction } from "vitest";
 
 import type { BACKENDS } from "@kosmojs/core";
 
-import { compileRoutePath, createRoutePath } from ".";
+import { compileRoutePath } from ".";
 import { apiRoutes } from "./@fixtures/generic/routes";
 import { setupTestProject } from "./setup";
 

@@ -9,93 +9,90 @@ describe("createRouterRoutes", () => {
     test("splat params", async () => {
       const pathTokens = pathTokensFactory("{...path}");
       const pathPattern = createPathPattern(pathTokens);
+      const params = { path: ["a", "b", "c"] };
 
       const stack = middlewareStackBuilder(
         [
           {
             name: "{...path}",
             pathPattern,
+            params: Object.keys(params),
             definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 ctx.body = ctx.validated.params;
               }),
             ]) as never,
-            normalizeParams() {
-              return { path: ["a", "b", "c"] };
-            },
           },
         ],
         {},
       );
 
-      const ctx = await runMiddleware(
+      const res = await runMiddleware(
         stack.flatMap((e) => e.middleware),
         { path: "/a/b/c" },
       );
 
-      expect(ctx.body).toEqual({ path: ["a", "b", "c"] });
+      expect(res.body).toEqual(params);
     });
 
     test("numeric params", async () => {
       const pathTokens = pathTokensFactory("[id]/[name]");
       const pathPattern = createPathPattern(pathTokens);
+      const params = { id: 0, name: "name" };
 
       const stack = middlewareStackBuilder(
         [
           {
             name: "[id]/[name]",
             pathPattern: `/${pathPattern}`,
+            params: Object.keys(params),
+            numericProperties: { params: ["id"], query: {} },
             definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 ctx.body = ctx.validated.params;
               }),
             ]) as never,
-            normalizeParams() {
-              return { id: 0, name: "name" };
-            },
           },
         ],
         {},
       );
 
-      const ctx = await runMiddleware(
+      const res = await runMiddleware(
         stack.flatMap((e) => e.middleware),
         { path: "/0/name" },
       );
 
-      expect(ctx.body).toEqual({ id: 0, name: "name" });
+      expect(res.body).toEqual(params);
     });
 
     test("splat numeric params", async () => {
       const pathTokens = pathTokensFactory("{...ids}");
       const pathPattern = createPathPattern(pathTokens);
+      const params = { ids: [1, 2, 3] };
 
       const stack = middlewareStackBuilder(
         [
           {
             name: "{...ids}",
             pathPattern,
+            params: Object.keys(params),
+            numericProperties: { params: ["ids"], query: {} },
             definitionItems: defineRoute(({ GET }) => [
               GET((ctx) => {
                 ctx.body = ctx.validated.params;
               }),
             ]) as never,
-            normalizeParams() {
-              return { ids: [1, 2, 3] };
-            },
           },
         ],
         {},
       );
 
-      const ctx = await runMiddleware(
+      const res = await runMiddleware(
         stack.flatMap((e) => e.middleware),
-        {
-          path: "/1/2/3",
-        },
+        { path: "/1/2/3" },
       );
 
-      expect(ctx.body).toEqual({ ids: [1, 2, 3] });
+      expect(res.body).toEqual(params);
     });
   });
 });

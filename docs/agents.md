@@ -104,7 +104,10 @@ Declaring `response: [200, "json", T]` switches on all four at once.
 Shared across a route subtree -> a [cascading `use.ts`](/backend/cascading-middleware) in that folder:
 it auto-wraps the folder and its subfolders and exports a `UseT` that cascades context types downward.
 One route only -> an inline `use` inside `defineRoute`.
-App-wide -> the [global `api/use.ts`](/backend/middleware#global-middleware-api-use-ts).
+Global -> the [`api/use.ts`](/backend/middleware).
+Before validation -> an [`edge:` prefixed slot](/backend/edge-middleware) on any of the above.
+Every request, matched route or not -> [`api/app.ts`](/backend/middleware#app-middleware) - the only
+layer that sees preflights, `405`s and unmatched URLs, so CORS belongs here.
 
 Keep cascading middleware generic. It runs for sibling routes too, so a param like `id` may be `undefined` there.
 

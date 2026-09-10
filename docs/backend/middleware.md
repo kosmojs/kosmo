@@ -1,15 +1,14 @@
 ---
 title: Middleware
-description: Understand middleware chains and Hono/H3/Koa onion model execution pattern.
-    Global middleware in api/use.ts that runs for every route in a source folder.
-    Configure middleware to run only for specific HTTP methods.
-    Override global middleware using slot system.
+description: Middleware chains and the Hono/H3/Koa onion model.
+    Global middleware in api/use.ts that runs for every route in a source folder,
+    method restrictions, and overriding defaults through slots.
 head:
   - - meta
     - name: keywords
       content: hono middleware, h3 middleware, koa middleware, use function, middleware chain,
         onion model, middleware composition, middleware slots, global middleware, api/use.ts,
-        app.use equivalent, folder-wide middleware, env.d.ts context types.
+        folder-wide middleware, env.d.ts context types.
 ---
 
 Beyond the standard HTTP method handlers, you often need to run custom middleware -
@@ -73,11 +72,8 @@ Second middleware after next
 First middleware after next
 ```
 
-Global middleware from `api/use.ts` runs first, then route-level `use` calls, then the handler.
-[More on global middleware&nbsp;›](#global-middleware-api-use-ts)
-
-> **Positioning note:** All `use` calls run before method handlers regardless of where they appear
-in the array. Defining `use` after a handler doesn't change this:
+> **Positioning note:** All `use` calls run before method handlers regardless of where they appear in the array.
+Defining `use` after a handler doesn't change this:
 
 ```ts
 export default defineRoute<"example">(({ use, GET, POST }) => [
@@ -88,15 +84,17 @@ export default defineRoute<"example">(({ use, GET, POST }) => [
 ]);
 ```
 
-## Global Middleware (`api/use.ts`)
+## Global Middleware
 
-Every source folder is seeded with an `api/use.ts`.
-Whatever it default-exports runs for **every route in that folder** - no imports, no registration, nothing to wire:
+Wiring same middleware into every route is tedious and dangerous.
+
+Use **global middleware** instead - add middleware to `api/use.ts` and it runs for **every route** - no imports, no registration, nothing to wire:
 
 ```ts [api/use.ts]
 import { use } from "_/api";
 
 export default [
+  // will run on every route
   use(async function requestId(ctx, next) {
     ctx.set("requestId", crypto.randomUUID());
     return next();
@@ -104,70 +102,21 @@ export default [
 ];
 ```
 
-It is an ordinary source file, seeded once with the folder and never overwritten - edit it freely.
-Unlike route files it cannot be seeded through [custom templates](/backend/custom-templates#what-it-overrides).
+This is the place for work that belongs to **routes**: loading the current user onto the context,
+permission checks, audit logging of writes - things that need a route to exist,
+and that want the request already validated.
 
-This is the place for concerns that are genuinely app-wide:
-a request id, CORS, a logger, rate limiting, an auth check that every endpoint needs.
+Anything narrower belongs in a [cascading&nbsp;use.ts](/backend/cascading-middleware) for a subtree, or in the route's own `use`.
 
-Anything narrower belongs in a [cascading use.ts](/backend/cascading-middleware) for a subtree, or in the route's own `use`.
+::: warning `api/use.ts` is skipped for non-route responses
+A preflight `OPTIONS`, or a `405` for a method the route doesn't implement,
+is answered before any route chain runs - so global middleware never sees it.
 
-### Global vs. cascading
+Which makes this the wrong home for **CORS**: the preflight would never reach your middleware,
+and the browser would reject the request before it ever sent the real one.
 
-Both files export an array of `use(...)` definitions, and both are picked up automatically.
-They differ in reach and in how they type the context:
-
-| | `api/use.ts` (global) | `api/<folder>/use.ts` (cascading) |
-|---|---|---|
-| Applies to | every route | folder's subtree only |
-| Position | before all cascading and route middleware | parent before child, then the route's own middleware |
-| Context types | [api/env.d.ts](/backend/type-safety#global-context-types-api-env-d-ts) module augmentation | its exported `UseT`, which cascades downward |
-| Exports&nbsp;a&nbsp;`UseT`? | **no** - see below | yes, always (even when empty) |
-
-::: tip `api/use.ts` does not export `UseT`
-A `UseT` exported from the **global** file is **ignored**.
-Global middleware is typed through `api/env.d.ts` instead -
-`DefaultVariables` / `DefaultBindings` (Hono), `DefaultContext` (H3), `DefaultState` / `DefaultContext` (Koa).
-`UseT` is a cascading-middleware mechanism: it exists so types travel down a subtree alongside the middleware that sets them,
-which is exactly what a folder-wide file doesn't need.
-[Type-safe&nbsp;context&nbsp;›](/backend/cascading-middleware#type-safe-context-extension)
+CORS - and anything else that must appear on *every* response - belongs to [app&nbsp;middleware](#app-middleware).
 :::
-
-### It runs per route, not per request
-
-Global middleware is composed into **each route's** chain.
-A request that matches no route never reaches it - there is no route whose chain to run.
-
-So `api/use.ts` is not an Express-style `app.use()`:
-it can't answer unmatched URLs, and it can't see requests outside this folder's `backend.base`.
-
-For work that must happen on every request regardless of routing,
-reach for the framework's own app instance in [api/app.ts](/essentials/project-structure#inside-a-source-folder),
-where `appFactory`'s callback hands you `{ app }` and any native Hono/H3/Koa middleware applies.
-
-### Restricting and overriding it
-
-Global middleware takes the same options as any other `use` call, so [on](#method-specific-middleware) works here too:
-
-```ts [api/use.ts]
-export default [
-  use(auditWrite, { on: ["POST", "PUT", "PATCH", "DELETE"] }),
-];
-```
-
-To let individual routes replace a global default, give it a [slot](#slot-composition).
-A route declaring the same slot **substitutes** that middleware -
-and the replacement runs **in the global one's position** in the chain, so surrounding order is preserved:
-
-```ts [api/use.ts]
-export default [
-  use(defaultLogger, { slot: "logger" }),   // replaceable
-  use(requestId),                           // always runs
-];
-```
-
-A global middleware **without** a slot cannot be overridden or skipped by any route -
-which is what you want for a security check, and worth knowing before you reach for a slot out of habit.
 
 ## Method-Specific Middleware
 
@@ -197,7 +146,7 @@ export default defineRoute<"example">(({ GET, POST, use }) => [
 Slots are named positions in the middleware chain. Middleware with the same slot name
 replaces earlier middleware at that position - useful for overriding global defaults per-route.
 
-A global error handler defined in `api/use.ts`:
+A global logger defined in `api/use.ts`:
 
 ```ts [api/use.ts]
 export default [
@@ -222,7 +171,7 @@ export default defineRoute<"upload">(({ POST, use }) => [
 ]);
 ```
 
-> **Important:** When overriding via slot, explicitly set `on` if needed -
+> When overriding via slot, explicitly set [on](#method-specific-middleware) option if needed -
 it doesn't inherit from the middleware being replaced.
 
 Custom slot names, like `logger`, should be added to `api/env.d.ts`:
@@ -240,3 +189,148 @@ Then use it anywhere:
 ```ts
 use(async (ctx, next) => { /* ... */ }, { slot: "logger" })
 ```
+
+Some slot names are reserved and already positioned in the chain -
+the [`edge:`](/backend/edge-middleware) family is the one you are likely to reach for.
+
+---
+
+### Promoting to the Route Edge
+
+Any `use()` entry claiming an `edge:` prefixed slot in `api/use.ts`, in a cascading `use.ts`, or in the route itself -
+is lifted out of its usual position and run first in the matched route's chain instead, ahead of validation.
+That is [edge middleware](/backend/edge-middleware).
+
+## Overriding Validation
+
+Validation is middleware too, and every target sits in a reserved slot -
+so any of them can be replaced exactly the way you replace a `logger`:
+
+```ts
+export interface UseSlots {
+  "validate:params": string;
+  "validate:query": string;
+  "validate:headers": string;
+  "validate:cookies": string;
+  "validate:json": string;
+  "validate:form": string;
+  "validate:raw": string;
+  "validate:response": string;
+}
+```
+
+> These are reserved slots - no `UseSlots` declaration in `api/env.d.ts` needed.
+
+Claim one and your middleware runs **instead of** the built-in validator for that target,
+say an endpoint accepts a body no schema can describe:
+
+```ts [api/import/index.ts]
+export default defineRoute<"import">(({ POST, use }) => [
+  use(async (ctx, next) => {
+    // NDJSON - one JSON document per line
+    const body = await ctx.bodyparser.raw<string>();
+    // ...
+    return next();
+  }, {
+    slot: "validate:json", // [!code hl]
+  }),
+
+  POST(async (ctx) => { /* ... */ }),
+]);
+```
+
+Everything else about slots still applies: declare it in `api/use.ts` to replace validation
+folder-wide, in a [cascading&nbsp;use.ts](/backend/cascading-middleware) for a subtree,
+or in the route itself for one endpoint.
+
+### What You Take Over
+
+One target, and only that one. Overriding `validate:json` replaces the JSON validator and
+nothing else - `ctx.validated.params`, `.query`, `.headers` and `.cookies` are still filled
+in by their own validators, still before your handler runs.
+
+What you give up is that target's entry in `ctx.validated`. The built-in validator loads the
+data, checks it, and publishes the result; yours is only expected to check. So
+`ctx.validated.json` stays unset, and the handler reads the body itself.
+
+Which costs nothing, because the parsers are shared:
+
+::: tip Parsers are lazy and cached
+`ctx.bodyparser.<target>()` and `ctx.metaparser.<target>()` each run at most once per
+request and return the cached result afterwards. Call them wherever you like - in your
+validator, in the handler, in both. The request stream is read once no matter how many
+times you ask for it.
+:::
+
+So the handler above just asks again, and gets the body your validator already parsed:
+
+```ts [api/import/index.ts]
+  POST(async (ctx) => {
+    const records = await ctx.bodyparser.raw<string>()
+    // ...
+  }),
+```
+
+Overriding `validate:response` works the same way in reverse: your middleware decides what
+a valid response looks like, and the built-in check no longer runs.
+
+## App Middleware
+
+The outermost layer, and the only one KosmoJS doesn't compose for you.
+`api/app.ts` hands you the `Hono` / `H3` / `Koa` instance itself, so anything the framework can do at app level,
+you do here - written exactly as that framework's own docs describe:
+
+:::tabs key:backend variant:code
+== Hono
+```ts
+export default appFactory(routes, ({ app }) => {
+  app.onError(defaultErrorHandler);
+
+  app.use(async (c, next) => {
+    const started = performance.now();
+    await next();
+    console.log([ c.req.method, c.req.path, performance.now() - started ]);
+  });
+});
+```
+
+== H3
+```ts
+export default appFactory(routes, ({ app }) => {
+  app.use(onError(defaultErrorHandler));
+
+  app.use(async (event, next) => {
+    const started = performance.now();
+    await next();
+    console.log([ event.req.method, event.url.pathname, performance.now() - started ]);
+  });
+});
+```
+
+== Koa
+```ts
+export default appFactory(routes, ({ app }) => {
+  app.use(defaultErrorHandler);
+
+  app.use(async (ctx, next) => {
+    const started = performance.now();
+    await next();
+    console.log([ ctx.method, ctx.path, performance.now() - started ]);
+  });
+});
+```
+:::
+
+This layer runs **first, on every request**, whether or not a route matched -
+so it is the only place that can answer a 404, or see traffic for URLs your `api/` tree knows nothing about.
+
+It is also the bluntest layer. There are no slots here and nothing downstream can replace it,
+and KosmoJS doesn't compose it.
+
+It runs before any route chain, so the KosmoJS helpers aren't on the context yet:
+no `ctx.validated`, no `ctx.metaparser`, no `ctx.bodyparser`.
+
+Read the request through the framework's own API - or move the check into [edge middleware](/backend/edge-middleware),
+which runs inside the route's chain and has them.
+
+Request logging, CORS, tracing, rate limiting by IP: things that are true of the connection rather than of the route.

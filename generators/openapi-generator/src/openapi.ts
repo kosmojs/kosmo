@@ -390,7 +390,6 @@ export default () => {
     }
 
     if (route.params.resolvedType) {
-      // console.dir(route.params.resolvedType, { depth: 10 });
       for (const prop of route.params.resolvedType.properties || []) {
         if (prop?.typeboxSchema) {
           parameters[generateComponentId(route, route.params.id, prop.name)] = {

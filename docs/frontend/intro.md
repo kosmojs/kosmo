@@ -22,8 +22,7 @@ you keep its router, its reactive model and its ecosystem, exactly as documented
 ## What's in the Folder
 
 These are the files that make the folder an application.
-Every one is a real source file you own: written once when the folder is created, never re-seeded behind your back,
-and - unlike page route files - never seeded through [custom templates](/frontend/custom-templates#what-it-overrides).
+Every one is a real source file you own: written once when the folder is created, never re-seeded behind your back.
 
 ```text
 src/<folder>/

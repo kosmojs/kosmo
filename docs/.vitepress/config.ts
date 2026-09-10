@@ -42,16 +42,17 @@ export default defineConfig({
   transformPageData(pageData) {
     pageData.frontmatter.head ??= [];
 
-    // mark .html URLs as canonical
+    const redirect = redirects.find(([old]) => old === pageData.relativePath);
+
+    // mark .html URLs as canonical - for a redirect stub that is the target,
+    // otherwise the retired URL competes with the page it points at
     pageData.frontmatter.head.push([
       "link",
       {
         rel: "canonical",
-        href: `https://kosmojs.dev/${pageData.relativePath.replace(/\.md$/, ".html")}`,
+        href: `https://kosmojs.dev/${redirect ? redirect[1] : pageData.relativePath.replace(/\.md$/, ".html")}`,
       },
     ]);
-
-    const redirect = redirects.find(([old]) => old === pageData.relativePath);
 
     if (redirect) {
       pageData.frontmatter.head.push(
@@ -251,6 +252,11 @@ export default defineConfig({
               text: "Cascading Middleware",
               collapsed: false,
               link: "/backend/cascading-middleware",
+            },
+            {
+              text: "Edge Middleware",
+              collapsed: false,
+              link: "/backend/edge-middleware",
             },
             {
               text: "Error Handling",

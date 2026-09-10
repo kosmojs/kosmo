@@ -74,3 +74,17 @@ export const createTemplateResolver = <T>(
       : template;
   };
 };
+
+export const maybeNumber = (val: unknown) => {
+  if (val === undefined || val === null) {
+    return val;
+  }
+  const n = Number(val);
+  return Number.isFinite(n) ? n : val;
+};
+
+export const maybeBoolean = (val: unknown) => {
+  return [true, false, "true", "false"].includes(val as never) //
+    ? JSON.parse(val as never)
+    : val;
+};

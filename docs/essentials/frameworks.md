@@ -91,9 +91,9 @@ So the differences above are choices you make per app, not constraints you carry
 
 ```txt
 src/
-├── marketing/    MDX + SSG        → static, no backend
-├── app/          React + Hono     → SSR, streaming, TanStack Query
-└── admin/        Vue + H3         → CSR
+├── marketing/    MDX + SSG        -> static, no backend
+├── app/          React + Hono     -> SSR, streaming, TanStack Query
+└── admin/        Vue + H3         -> CSR
 ```
 
 A folder also ignores other frameworks' files: a Vue folder skips `.tsx`,

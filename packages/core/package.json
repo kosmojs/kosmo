@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "cookie": "^2.0.1",
+    "path-to-regexp": "^8.4.2",
     "picomatch": "^4.0.7",
     "picoquery": "^2.5.0",
     "string-width": "^8.2.2"
@@ -48,7 +49,6 @@
     "@types/picomatch": "^4.0.3",
     "hono": "^4.13.7",
     "msw": "^2.15.0",
-    "path-to-regexp": "^8.4.2",
     "tfusion": "^0.2.2",
     "vite": "^8.2.2"
   }

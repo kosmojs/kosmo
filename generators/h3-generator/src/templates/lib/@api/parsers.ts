@@ -4,37 +4,70 @@ import {
   parseCookies,
   parseSearchParams,
   type RequestBodyTarget,
-  type RequestMetadataTarget,
+  type RequestMetadataParser,
 } from "@kosmojs/core";
+import { createParamsNormalizers, type RouteSource } from "@kosmojs/core/api";
 
-export const metaparsers: {
-  [T in RequestMetadataTarget]: (event: H3Event) => unknown;
-} = {
-  query(event) {
-    return parseSearchParams(event.url);
-  },
+import type { ParameterizedMiddleware } from "../api";
 
-  headers(event) {
-    return Object.fromEntries(event.req.headers);
-  },
+export const createMetaparsers: (
+  r: RouteSource<ParameterizedMiddleware>,
+  event: H3Event,
+) => Record<RequestMetadataParser, () => unknown> = (routeSource, event) => {
+  const {
+    //
+    normalizeParams,
+    normalizeSearchParams,
+  } = createParamsNormalizers<ParameterizedMiddleware>(routeSource);
 
-  cookies(event) {
-    return parseCookies(Object.fromEntries(event.req.headers));
-  },
+  return {
+    method() {
+      return event.req.method;
+    },
+
+    pathname() {
+      return event.url.pathname;
+    },
+
+    params() {
+      return normalizeParams(event.url.pathname);
+    },
+
+    query() {
+      return normalizeSearchParams(
+        parseSearchParams(event.url ?? ""),
+        event.req.method,
+      );
+    },
+
+    headers() {
+      return Object.fromEntries(event.req.headers);
+    },
+
+    cookies() {
+      return parseCookies(Object.fromEntries(event.req.headers));
+    },
+  };
 };
 
-export const bodyparsers: {
-  [T in RequestBodyTarget]: (event: H3Event) => Promise<unknown>;
-} = {
-  json(event) {
-    return event.req.json();
-  },
+export const createBodyparsers: (
+  r: RouteSource<ParameterizedMiddleware>,
+  event: H3Event,
+) => Record<RequestBodyTarget, () => Promise<unknown>> = (
+  _routeSource,
+  event,
+) => {
+  return {
+    json() {
+      return event.req.json();
+    },
 
-  form(event) {
-    return readBody(event, { type: "formData" });
-  },
+    form() {
+      return readBody(event, { type: "formData" });
+    },
 
-  raw(event) {
-    return event.req.text();
-  },
+    raw() {
+      return event.req.text();
+    },
+  };
 };

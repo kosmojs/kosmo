@@ -1,6 +1,5 @@
 import zlib from "node:zlib";
 
-import type { RouterContext } from "@koa/router";
 import Formidable, { type Options as FormidableOptions } from "formidable";
 import rawParser from "raw-body";
 
@@ -8,8 +7,9 @@ import {
   parseCookies,
   parseSearchParams,
   type RequestBodyTarget,
-  type RequestMetadataTarget,
+  type RequestMetadataParser,
 } from "@kosmojs/core";
+import { createParamsNormalizers, type RouteSource } from "@kosmojs/core/api";
 
 import type {
   DefaultContext,
@@ -17,20 +17,52 @@ import type {
   ParameterizedContext,
 } from "../api";
 
-export const metaparsers: {
-  [T in RequestMetadataTarget]: (ctx: RouterContext) => unknown;
-} = {
-  query(ctx) {
-    return parseSearchParams(ctx.req.url ?? "");
-  },
+import type { ParameterizedMiddleware } from "{{ createImport 'libApi' }}";
 
-  headers(ctx) {
-    return ctx.req.headers;
-  },
+type Ctx = ParameterizedContext<
+  Record<string, string>,
+  DefaultState,
+  DefaultContext
+>;
 
-  cookies(ctx) {
-    return parseCookies(ctx.req.headers);
-  },
+export const createMetaparsers: (
+  routeSource: RouteSource<ParameterizedMiddleware>,
+  ctx: Ctx,
+) => Record<RequestMetadataParser, () => unknown> = (routeSource, ctx) => {
+  const {
+    //
+    normalizeParams,
+    normalizeSearchParams,
+  } = createParamsNormalizers<ParameterizedMiddleware>(routeSource);
+
+  return {
+    method() {
+      return ctx.method;
+    },
+
+    pathname() {
+      return ctx.path;
+    },
+
+    params() {
+      return normalizeParams(ctx.path);
+    },
+
+    query() {
+      return normalizeSearchParams(
+        parseSearchParams(ctx.req.url ?? ""),
+        ctx.method,
+      );
+    },
+
+    headers() {
+      return ctx.req.headers;
+    },
+
+    cookies() {
+      return parseCookies(ctx.req.headers);
+    },
+  };
 };
 
 type JsonOptions = {
@@ -158,47 +190,13 @@ const unwrap = (
   );
 };
 
-export const bodyparsers: {
-  [T in RequestBodyTarget]: (
-    ctx: ParameterizedContext<
-      Record<string, string>,
-      DefaultState,
-      DefaultContext
-    >,
-    opt?: BodyparserOptions[T],
-  ) => Promise<unknown>;
-} = {
-  async json(ctx, opt) {
-    const body = await bodyparsers.raw(ctx, {
-      ...opt,
-      encoding: "utf-8",
-    });
-    return body ? JSON.parse(body as never) : undefined;
-  },
-
-  async form(ctx, opt) {
-    const form = Formidable({
-      maxFieldsSize: opt?.limit || defaults.form.limit,
-      maxFileSize: opt?.limit || defaults.form.limit,
-      ...opt,
-    });
-    return new Promise((resolve, reject) => {
-      form.parse(ctx.request.req, (err, fields, files) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve(
-          unwrap(
-            // files should go last to override fields in case of name conflicting
-            { ...fields, ...files },
-            opt?.unwrap,
-          ),
-        );
-      });
-    });
-  },
-
-  async raw(ctx, opt) {
+export const createBodyparsers: (
+  routeSource: RouteSource<ParameterizedMiddleware>,
+  ctx: Ctx,
+) => {
+  [T in RequestBodyTarget]: (opt?: BodyparserOptions[T]) => Promise<unknown>;
+} = (_routeSource, ctx) => {
+  const raw = async (opt: any): Promise<unknown> => {
     const { chunkSize, ...rawParserOptions } = { ...defaults.raw, ...opt };
 
     const encoding = ctx.request.headers["content-encoding"];
@@ -208,6 +206,41 @@ export const bodyparsers: {
       ? ctx.request.req.pipe(zlib.createUnzip({ chunkSize }))
       : ctx.request.req;
 
+    // raw-body v4 returns a Promise if no callback provided
     return rawParser(stream, rawParserOptions);
-  },
+  };
+
+  return {
+    async json(opt) {
+      const body = await raw({
+        ...opt,
+        encoding: "utf-8",
+      });
+      return body ? JSON.parse(body as never) : undefined;
+    },
+
+    async form(opt) {
+      const form = Formidable({
+        maxFieldsSize: opt?.limit || defaults.form.limit,
+        maxFileSize: opt?.limit || defaults.form.limit,
+        ...opt,
+      });
+      return new Promise((resolve, reject) => {
+        form.parse(ctx.request.req, (err, fields, files) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(
+            unwrap(
+              // files should go last to override fields in case of name conflicting
+              { ...fields, ...files },
+              opt?.unwrap,
+            ),
+          );
+        });
+      });
+    },
+
+    raw,
+  };
 };

@@ -205,8 +205,8 @@ dist/front/ssg/
 │   ├── getting-started/index.html
 │   ├── routing/index.html
 │   └── validation/index.html
-├── assets/              → hashed JS and CSS, the same set the SSR server serves
-├── favicon.svg          → public/ files, copied to the root
+├── assets/              -> hashed JS and CSS, the same set the SSR server serves
+├── favicon.svg          -> public/ files, copied to the root
 └── robots.txt
 ```
 

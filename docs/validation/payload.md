@@ -352,3 +352,14 @@ export default defineRoute<"posts">(({ POST }) => [
   }>(async (ctx) => {}),
 ]);
 ```
+
+## Overriding the Default
+
+Every target has its own slot: `validate:json`, `validate:form`, `validate:raw`.
+
+Claim one and your middleware runs instead of the built-in validator.
+Use it for a body format no schema describes, or a check that has to hit the database.
+
+Replacing one target leaves the rest alone.
+And `ctx.bodyparser.<target>()` is cached, so your validator and your handler can both read the body.
+[Details&nbsp;›](/backend/middleware#overriding-validation)

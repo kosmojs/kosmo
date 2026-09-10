@@ -42,7 +42,7 @@ structural here instead.
 | `(group)` route groups | a separate [source folder](/essentials/project-structure#inside-a-source-folder) |
 | `@slot` parallel / `(.)` intercepting | no equivalent - compose in a layout / use modal state |
 | `route.ts` route handlers | [defineRoute](/backend/intro#defining-endpoints) in `api/**/index.ts` |
-| `middleware.ts` | global [api/use.ts](/backend/middleware#global-middleware-api-use-ts) per app, or  [cascading use.ts](/backend/cascading-middleware) per subtree |
+| `middleware.ts` | global [api/use.ts](/backend/middleware) per app, or  [cascading use.ts](/backend/cascading-middleware) per subtree |
 | `"use server"` / Server Actions | an API route + its [fetch client](/fetch/intro) |
 | `createServerFn` | ditto |
 | tRPC procedures | route name + HTTP method, [typed](/fetch/type-safety) / [validated](/validation/payload) end to end |
@@ -210,7 +210,7 @@ You don't write `Response.json()`, and there is no`NextRequest`/`NextResponse`: 
 
 ### `middleware.ts` - global edge middleware
 
-Global middleware lives in [api/use.ts](/backend/middleware#global-middleware-api-use-ts) file.
+Global middleware lives in [api/use.ts](/backend/middleware) file.
 Whatever it default-exports runs for every route in that app, with no registration.
 
 Below it, a [cascading `use.ts`](/backend/cascading-middleware) in any `api/` subfolder wraps everything beneath it,

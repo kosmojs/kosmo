@@ -399,14 +399,14 @@ Only route files. On the frontend that means `pages/**/index.*` - **not** layout
 which always get their built-ins.
 On the backend it means `api/**/index.ts` - **not** `use.ts`.
 Folder-level files (`app.ts`, `errors.ts`, `dev.ts`) are deployed once at folder creation and are not templatable.
-[Frontend&nbsp;›](/frontend/custom-templates#what-it-overrides) ·
-[Backend&nbsp;›](/backend/custom-templates#what-it-overrides)
+[Frontend&nbsp;›](/frontend/custom-templates) ·
+[Backend&nbsp;›](/backend/custom-templates)
 
 #### Why didn't my new template change an existing route file?
 Boilerplate is written **only into blank files** - work you have already done is never overwritten,
 so changing a template does not retroactively rewrite existing routes.
 Empty the file and it will be filled again.
-[Details&nbsp;›](/backend/custom-templates#what-it-overrides)
+[Details&nbsp;›](/backend/custom-templates)
 
 #### How does glob matching work for templates?
 `*` matches exactly one nesting level, `**` matches any depth,
@@ -549,10 +549,39 @@ Rarely - defining a validation schema runs the appropriate parser automatically
 and places the result in `ctx.validated`.
 [Details&nbsp;›](/backend/context#unified-bodyparser)
 
+#### What is `ctx.metaparser`?
+The same idea for request metadata - `.params()`, `.query()`, `.headers()`, `.cookies()`.
+Synchronous, and cached like the body parsers.
+`params()` and `query()` come back normalized - splats split into arrays, values coerced to your declared types -
+while `headers()` and `cookies()` are plain parses.
+[Details&nbsp;›](/backend/context#unified-metaparser)
+
 #### What is `ctx.validated`?
 The validated, typed result for each target you defined:
 `ctx.validated.json`, `.query`, `.headers`, `.cookies`, `.form`, `.raw`, `.params`.
 [Details&nbsp;›](/backend/context#validated-data-access)
+
+#### How do I access normalized data before validation runs?
+Through the parsers. The context is extended before any validator runs, so `ctx.metaparser`
+and `ctx.bodyparser` are already on it while `ctx.validated` is still empty.
+Useful in [edge middleware](/backend/edge-middleware)
+and in a [custom validator](/backend/middleware#overriding-validation).
+Both are cached, so reading there costs nothing: the validators and your handler reuse the same values,
+and the request stream is read once.
+[Details&nbsp;›](/backend/context#unified-metaparser)
+
+#### Is normalized the same as validated?
+No. Normalizing splits splats and coerces types; it doesn't check anything.
+Your refinements run in the validators, and only the checked results land in `ctx.validated`.
+So `ctx.metaparser.query()` may hand you a number that your schema would still reject.
+[Details&nbsp;›](/backend/context#unified-metaparser)
+
+#### Can I use the parsers in `api/app.ts`?
+No - `api/app.ts` runs before the context is extended, so there is no
+`ctx.metaparser`, no `ctx.bodyparser` and no `ctx.validated` yet.
+Read the request through the framework's own API, or move the check into `api/use.ts`
+under an `edge:` slot, which runs just after the context is extended.
+[Details&nbsp;›](/backend/middleware#app-middleware)
 
 #### Do the raw params still work?
 Yes - `ctx.req.param()` (Hono), `event.context.params` (H3), `ctx.params` (Koa) still return raw strings if you need them.
@@ -569,22 +598,66 @@ call `next()` to continue, skip it to short-circuit.
 `api/use.ts`, at the root of a source folder's `api/` directory.
 Whatever it default-exports runs for **every route in that folder** - no imports, no registration.
 It's seeded with the folder and is an ordinary file you edit; route templates never touch it.
-Use it for app-wide concerns (request id, CORS, logging, rate limiting, a blanket auth check);
+Use it for route-wide concerns (request id, a blanket auth check, permission checks, audit logging);
 anything narrower belongs in a subtree `use.ts` or the route's own `use`.
-[Details&nbsp;›](/backend/middleware#global-middleware-api-use-ts)
+[Details&nbsp;›](/backend/middleware)
+
+#### Where does CORS go?
+`api/app.ts`, as [app middleware](/backend/middleware#app-middleware).
+Neither global nor edge middleware works for CORS - a preflight `OPTIONS` is answered before any route chain runs,
+so anything composed per route never sees it and the browser rejects the request.
+[Details&nbsp;›](/backend/middleware#app-middleware)
+
+#### How do I return 401 instead of 400 when a token is bad?
+Give the auth middleware an `edge:` slot - `edge:auth`, say - and it runs ahead of validation,
+so an unauthenticated request is rejected before any schema is consulted.
+Declare it in `api/use.ts`, a cascading `use.ts` or the route itself;
+the file decides reach, the slot decides position.
+[Details&nbsp;›](/backend/edge-middleware)
+
+#### So, where do I add my auth?
+Depends on whether any route needs to opt out.
+Same rules everywhere - put it directly in `api/app.ts`: one middleware, no slots,
+nothing downstream can replace it by accident, and it also covers unmatched URLs, preflights and `405`s.
+Some routes authenticating differently - a signature-verifying webhook, a public health check -
+use an `edge:` slot, so any route or subtree can substitute its own check.
+[Details&nbsp;›](/backend/edge-middleware#so-where-do-i-add-my-auth)
+
+#### Can I have more than one edge middleware?
+As many as you like - give each its own name. `edge:auth`, `edge:ratelimit`, and so on:
+they run at the edge in declaration order, and each is its own slot, independently overridable.
+[Details&nbsp;›](/backend/edge-middleware#name-your-slots)
+
+#### Do `edge:*` slots need a `UseSlots` declaration?
+No. Every `edge:` prefixed name is reserved, like the validation slots - nothing to add to `api/env.d.ts`.
+Typos are still caught, though: `edge-auth` is not a slot.
+[Details&nbsp;›](/backend/edge-middleware#name-your-slots)
+
+#### What is the bare `edge` slot, and can I use it?
+It holds the built-in middleware that extends the context -
+the one that puts `ctx.metaparser` and `ctx.bodyparser` on it.
+Claim `edge` and you replace that, so nothing downstream has those helpers and validators, middleware and handlers all break.
+Always prefix your own: `edge:auth`, not `edge`.
+[Details&nbsp;›](/backend/edge-middleware#name-your-slots)
+
+#### I put auth in `api/app.ts` and a route still declares `slot: "edge:auth"` - which one wins?
+Both run. An `edge:auth` slot substitutes an `edge:auth` entry declared above it;
+it can't replace anything in `api/app.ts`, because that layer isn't composed by KosmoJS at all.
+The route ends up authenticating twice, by two different rules - pick either one.
+[Details&nbsp;›](/backend/edge-middleware#so-where-do-i-add-my-auth)
 
 #### Is `api/use.ts` the same as Express's `app.use()`?
 No - it runs **per route, not per request**. Global middleware is composed into each route's chain,
 so a request matching no route never reaches it, and it never sees requests outside this folder's `backend.base`.
 For work that must happen on every request regardless of routing,
 use the framework's own app instance in `api/app.ts`, where `appFactory`'s callback hands you `{ app }`.
-[Details&nbsp;›](/backend/middleware#it-runs-per-route-not-per-request)
+[Details&nbsp;›](/backend/middleware)
 
 #### Can a route override or skip global middleware?
 Only if the global entry declares a `slot`. A route (or a cascading `use.ts`) declaring the same slot substitutes it -
 and the replacement runs **in the global one's position** in the chain, so surrounding order is preserved.
 A global middleware **without** a slot always runs and cannot be overridden or skipped, which is what you want for a security check.
-[Details&nbsp;›](/backend/middleware#restricting-and-overriding-it)
+[Details&nbsp;›](/backend/middleware#slot-composition)
 
 #### How does the onion model work?
 Middleware runs in definition order going in, then unwinds in reverse after the handler.
@@ -648,14 +721,6 @@ Inner definitions override outer ones, mirroring runtime.
 Import the parent's `UseT`, intersect it, and re-export -
 avoiding duplicate definitions across the hierarchy.
 [Details&nbsp;›](/backend/cascading-middleware#type-safe-context-extension)
-
-#### Why does the global `api/use.ts` ignore `UseT`?
-Global middleware is typed through `api/env.d.ts` module augmentation
-(`DefaultVariables`/`DefaultBindings` for Hono, `DefaultContext` for H3, `DefaultState`/`DefaultContext` for Koa).
-A `UseT` exported from the global file is ignored.
-`UseT` is a cascading mechanism - it exists so types travel down a subtree alongside the middleware that sets them,
-which a app-wide file doesn't need.
-[Details&nbsp;›](/backend/middleware#global-vs-cascading)
 
 #### Why can some params be undefined in cascading middleware?
 A `use.ts` runs for every route in its subtree, including ones that don't define a given param -
@@ -882,10 +947,39 @@ You then read the body via the bodyparser directly.
 
 Param validation cannot be skipped - params are part of the URL structure.
 
-For response targets the same flag is also the production opt-in: response validation only runs in production when set to `true`.
+For response targets the same flag is also the production opt-in:
+response validation only runs in production when set to `true`.
 
-Use sparingly: runtime validation is what catches mismatched DB responses, unexpected payloads, and API drift.
+Use sparingly: runtime validation is what catches mismatched DB responses,
+unexpected payloads, and API drift.
 [Details&nbsp;›](/validation/skip-validation)
+
+#### Can I replace the default validator with my own?
+Yes - every target is middleware in a reserved slot, so claiming that slot runs your check instead:
+`validate:params`, `validate:query`, `validate:headers`, `validate:cookies`,
+`validate:json`, `validate:form`, `validate:raw`, `validate:response`.
+Declare it globally in `api/use.ts`, in a cascading `use.ts` for a subtree,
+or in the route itself for one endpoint. Reserved slots need no `UseSlots` declaration.
+[Details&nbsp;›](/backend/middleware#overriding-validation)
+
+#### If I override one target, do the others still validate?
+Yes - slots are per target. Overriding `validate:json` replaces the JSON validator and nothing else;
+`ctx.validated.params`, `.query`, `.headers` and `.cookies` are still filled in by their own validators.
+[Details&nbsp;›](/backend/middleware#what-you-take-over)
+
+#### What do I lose by overriding a validator?
+That target's entry in `ctx.validated`. The built-in validator loads the data,
+checks it and publishes the result; yours is only expected to check -
+so `ctx.validated.json` stays unset and the handler reads the body itself.
+Which costs nothing: `ctx.bodyparser.<target>()` and `ctx.metaparser.<target>()` are lazy loaded and cached,
+so your validator and your handler can both call them and the request stream is read once either way.
+[Details&nbsp;›](/backend/middleware#what-you-take-over)
+
+#### `runtimeValidation: false` or a custom validator - which do I want?
+`runtimeValidation: false` turns checking off for that target and keeps the types.
+A slotted validator keeps checking, on your terms - the way in for a body format no schema describes,
+or a check that has to hit the database.
+[Details&nbsp;›](/backend/middleware#overriding-validation)
 
 ### Type Safety
 

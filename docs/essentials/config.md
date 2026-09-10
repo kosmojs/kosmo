@@ -23,7 +23,7 @@ my-app/
 ```
 
 There is no project-wide `kosmo.config.ts`, and no `vite.config.ts`:
-each side of the folder carries its own [viteConfig](#frontend-vite-config).
+each side of the folder carries its own `viteConfig`.
 
 ## The Shape
 
@@ -223,7 +223,7 @@ A handful of Vite keys are **not** accepted, because KosmoJS derives them from t
 
 A bare name, or the same object form the frontend takes.
 The backend stacks have no Vite plugin, so the object carries only `name` today and the bare name is the usual form.
-Vite settings for the API build go in [viteConfig](#backend-vite-config).
+Vite settings for the API build go in [viteConfig](#backend-viteconfig).
 
 ### backend.base - required
 

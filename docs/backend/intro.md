@@ -24,8 +24,7 @@ reading a body, setting a response, raising an error stay your framework's own i
 ## What's in `api/`
 
 Creating a source folder with a backend seeds a small, fixed set of files.
-Each is a real source file you own - they are written once, never re-seeded behind your back,
-and none of them can be seeded through [custom templates](/backend/custom-templates#what-it-overrides) (only route files can).
+Each is a real source file you own - they are written once, never re-seeded.
 
 ```text
 src/<folder>/api/
@@ -48,11 +47,11 @@ src/<folder>/api/
 
 | File | What it is | When&nbsp;you&nbsp;touch&nbsp;it |
 |---|---|---|
-| `app.ts` | Builds the app with `appFactory()`. The callback hands you the **native** Hono/H3/Koa instance - this is where the error handler is registered and where any framework-native middleware or plugin goes. | Adding native middleware; enabling [debug](/dev-build-run/development-workflow#inspecting-api-routes) |
+| `app.ts` | Builds the app with `appFactory()`. The callback hands you the **native** Hono/H3/Koa instance - this is where the error handler is registered and where [app middleware](/backend/middleware#app-middleware) or any framework plugin goes. | Adding app middleware; enabling [debug](/dev-build-run/development-workflow#inspecting-api-routes) |
 | `server.ts` | The standalone entry that boots `app.ts` - what `node dist/<folder>/api/server.js` runs in production. | Rarely |
 | `dev.ts` | Dev-only hooks: `requestHandler()` returns the handler the dev server dispatches to (override it for WebSockets or custom dispatch), and `teardownHandler()` runs **before every reload** - close DB connections and sockets here or they leak across restarts. | WebSockets; connection cleanup |
 | `errors.ts` | The central error handler, registered by `app.ts`. The default distinguishes `ValidationError` and `HTTPError`, then content-negotiates JSON or plain text. | Customizing error responses |
-| `use.ts` | [Global middleware](/backend/middleware#global-middleware-api-use-ts) - runs for every route in this folder. | Request id, CORS, logging, auth |
+| `use.ts` | [Global middleware](/backend/middleware) - runs for every route in this folder. | Request id, auth, permission checks |
 | `env.d.ts` | Module augmentation for folder-wide types: `DefaultVariables`/`DefaultBindings` (Hono), `DefaultContext` (H3), `DefaultState`/`DefaultContext` (Koa), plus [custom slot names](/backend/middleware#slot-composition). | Typing `ctx.state` / bindings |
 
 Only `app.ts` differs between backends, and only in how the error handler attaches:

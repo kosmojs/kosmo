@@ -149,6 +149,7 @@ export default defineGeneratorFactory((sourceFolder) => {
       await deployLibFile(createPath.lib(file), template, {
         routes: routesWithAliases,
         cascadingMiddleware,
+        validationEnabled: sourceFolder.config.validation ? true : false,
       });
     }
   };

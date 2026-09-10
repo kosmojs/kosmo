@@ -1,13 +1,13 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 import type {
+  ApiRouteSerialized,
   RequestBodyTarget,
   RequestMetadataTarget,
   RequestValidationTarget,
   ValidationDefmap,
   ValidationOptmap,
   ValidationSchemas,
-  ValidationTarget,
 } from "../types";
 
 export enum HTTPMethods {
@@ -39,8 +39,8 @@ export type RouteDefinitionItem<MiddlewareT> =
   | HandlerDefinition<MiddlewareT>;
 
 export interface UseSlots {
-  errorHandler: string;
-  "@extendContext": string;
+  edge: string;
+  [slot: `edge:${string}`]: string;
   "validate:params": string;
   "validate:query": string;
   "validate:headers": string;
@@ -63,16 +63,15 @@ export type RouteSource<MiddlewareT> = {
   // path-to-regexp pattern
   pathPattern: string;
   file: string;
+  params: ApiRouteSerialized["params"];
+  numericProperties: ApiRouteSerialized["numericProperties"];
+  booleanProperties: ApiRouteSerialized["booleanProperties"];
   // same as inline middleware inside route definition,
   // just automatically imported from use.ts files
   cascadingMiddleware: [...a: Array<MiddlewareDefinition<MiddlewareT>>];
   definitionItems: Array<RouteDefinitionItem<MiddlewareT>>;
-  validationSchemas: ValidationSchemas;
-  normalizeParams: (path: string) => Record<string, unknown>;
-  normalizeSearchParams: (
-    searchParams: Record<string, unknown>,
-    method: string,
-  ) => Record<string, unknown>;
+  // no schemas provided when validation disabled
+  validationSchemas?: ValidationSchemas;
   meta?: Record<string, unknown>;
 };
 
@@ -127,12 +126,6 @@ export type DevSetup = {
   teardownHandler?: () => void | Promise<void>;
 };
 
-export type CreateRouteMiddleware<MiddlewareT> = (
-  routeSource: RouteSource<MiddlewareT>,
-) => Array<MiddlewareDefinition<MiddlewareT>>;
-
-export const StateKey: unique symbol = Symbol("kosmo.state");
-
 export type ExtendContext<
   ParamsT,
   VDefs extends ValidationDefmap,
@@ -141,7 +134,6 @@ export type ExtendContext<
     | Record<RequestBodyTarget, unknown>
     | undefined = undefined,
 > = {
-  [StateKey]: Map<ValidationTarget, unknown>;
   metaparser: {
     [T in RequestMetadataTarget]: <R = unknown>() => R;
   };
@@ -158,4 +150,15 @@ export type ExtendContext<
         : K
       : never]: VDefs[K];
   } & { params: ParamsT };
+};
+
+export type ResponseResolver = (
+  // biome-ignore lint: any
+  ctx: any,
+  // biome-ignore lint: any
+  body: any,
+) => {
+  status: number;
+  contentType: string | null;
+  body: () => Promise<unknown>;
 };

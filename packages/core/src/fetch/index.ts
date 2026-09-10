@@ -6,6 +6,7 @@ import type {
   HTTPMethod,
   Options,
 } from "./types";
+import { join } from "./utils";
 
 export * from "./types";
 export * from "./utils";
@@ -21,7 +22,7 @@ const bodylessMethods = ["GET", "DELETE"];
  * Keeping the factory transport-agnostic keeps server-only modules out of
  * browser bundles.
  * */
-export default (base: string | URL, factoryOpts?: Options): FetchMapper => {
+export default (factoryOpts?: Options): FetchMapper => {
   // Factory function that creates HTTP method implementations
   function factory(method: HTTPMethod): FetchMethod {
     return async (...args: Partial<Parameters<FetchMethod>>) => {
@@ -37,15 +38,8 @@ export default (base: string | URL, factoryOpts?: Options): FetchMapper => {
         ...opts,
       };
 
-      // Construct URL from base and path segments
-      const url = [
-        String(base),
-        ...(Array.isArray(path)
-          ? path.flat()
-          : ["string", "number"].includes(typeof path)
-            ? [path] // Wrap single value in array
-            : []), // No path provided
-      ].join("/");
+      // Construct URL from path segments
+      const url = Array.isArray(path) ? join(path.flat()) : String(path);
 
       // Normalize headers to Headers instance for consistent API
       const headers = new Headers({

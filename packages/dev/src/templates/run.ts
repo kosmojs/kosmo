@@ -18,14 +18,12 @@
  *     with the SPA fallback to index.html for unmatched page URLs.
  *
  * Authored as TypeScript, deployed with types stripped;
- * only node builtins are used here: `node:http` runs unchanged on Node, Bun and Deno.
  * */
 
 import { chmod, readdir, readFile, unlink } from "node:fs/promises";
 import type { IncomingMessage, Server, ServerResponse } from "node:http";
 import { createServer } from "node:http";
 import { extname, join, posix, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 
 import { pathToRegexp } from "path-to-regexp";
@@ -190,7 +188,7 @@ const mountFolders = async (
 
     if (backend) {
       const { default: listener } = (await import(
-        pathToFileURL(join(dir, "api", "listener.js")).href
+        join(dir, "api", "listener.js")
       )) as { default: NodeListener };
       handlers.push({
         name,
@@ -280,7 +278,7 @@ export const startServer = async ({
   return server;
 };
 
-if (pathToFileURL(process.argv[1] || "").href === import.meta.url) {
+if (process.argv[1] === import.meta.url) {
   const {
     values: { port, sock },
   } = parseArgs({

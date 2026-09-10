@@ -1,6 +1,6 @@
-import fetchFactory from "@kosmojs/core/fetch";
+import fetchFactory, { payloadResolver } from "@kosmojs/core/fetch";
 
-import { backendBase, apiRouteMap } from "{{ createImport 'libCore' }}";
+import { apiRouteMap } from "{{ createImport 'libCore' }}";
 import { transport } from "virtual:kosmo/fetch-transport";
 
 import {
@@ -38,12 +38,11 @@ export type ResponseT = {
 const {
   paramsMapper,
   parametrize,
-  payloadResolver,
   path,
   href,
 } = apiRouteMap["{{route.name}}"];
 
-const fetchApi = fetchFactory(backendBase, { transport });
+const fetchApi = fetchFactory({ transport });
 
 {{#each routeMethods}}
 export const {{method}} = (
@@ -76,7 +75,12 @@ export const {{method}} = (
     {{#each payloadTypes}}
     if (validationSchemas.{{target}}?.{{method}}) {
       validationSchemas.{{target}}.{{method}}.validate(
-        payloadResolver(payload as never, "{{target}}", "{{../method}}"),
+        payloadResolver(
+          payload as never,
+          "{{target}}",
+          "{{../method}}",
+          apiRouteMap["{{@root/route.name}}"],
+        ),
       );
     }
     {{/each}}

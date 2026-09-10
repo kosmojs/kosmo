@@ -12,11 +12,14 @@ import {
 } from "@kosmojs/core/api";
 
 import {
+  createBodyparsers,
+  createMetaparsers,
+} from "#/templates/lib/@api/parsers";
+import {
   defineRoute,
   type ParameterizedMiddleware,
   use,
 } from "#/templates/lib/api";
-import { createRouteMiddleware } from "#/templates/lib/api:factory";
 
 export { defineRoute, type ParameterizedMiddleware, use };
 
@@ -35,23 +38,33 @@ export const middlewareStackBuilder = (
         path: "",
         pathPattern: "",
         file: "",
+        params: [],
+        numericProperties: { params: [], query: {} },
+        booleanProperties: { query: {} },
         cascadingMiddleware: [],
         definitionItems: defineRoute(({ GET }) => [
           GET(async function get() {}),
         ]) as never,
-        validationSchemas: {},
-        normalizeParams: () => {
-          return {};
-        },
-        normalizeSearchParams: () => {
-          return {};
+        validationSchemas: {
+          params: {
+            validate: () => true,
+            check: () => true,
+            errors: () => [],
+            errorMessage: () => "",
+            errorSummary: () => "",
+          },
         },
         ...(e as Partial<RouteSource<ParameterizedMiddleware>>),
       };
     }),
     {
+      productionBuild: false,
+      createMetaparsers,
+      createBodyparsers,
+      responseResolver() {
+        return { status: 200, contentType: "", body: async () => {} };
+      },
       globalMiddleware: b?.globalMiddleware || [],
-      createRouteMiddleware: createRouteMiddleware as never,
     },
   );
 };

@@ -79,3 +79,15 @@ export default defineRoute<"users/[id]/[view]", [
 ```
 
 Refinements are positional, not name-based - renaming `[id]` to `[userId]` requires no changes here.
+
+## Overriding the Default
+
+Params validation runs in the `validate:params` slot.
+Claim that slot and your middleware runs instead of it.
+
+Use it when no refinement can express the check.
+Resolving a slug against the database, for instance.
+
+Only that target changes. `ctx.validated.params` is no longer set.
+Every other target keeps its own validator.
+[Details&nbsp;›](/backend/middleware#overriding-validation)

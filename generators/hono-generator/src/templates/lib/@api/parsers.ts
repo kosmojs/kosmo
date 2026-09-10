@@ -4,8 +4,11 @@ import {
   parseCookies,
   parseSearchParams,
   type RequestBodyTarget,
-  type RequestMetadataTarget,
+  type RequestMetadataParser,
 } from "@kosmojs/core";
+import { createParamsNormalizers, type RouteSource } from "@kosmojs/core/api";
+
+import type { ParameterizedMiddleware } from "../api";
 
 export type BodyparserOptions = {
   json: never;
@@ -13,37 +16,63 @@ export type BodyparserOptions = {
   raw: { as?: "text" | "arrayBuffer" | "blob" | "formData" };
 };
 
-export const metaparsers: {
-  [T in RequestMetadataTarget]: (ctx: Context) => unknown;
-} = {
-  query(ctx) {
-    return parseSearchParams(ctx.req.url);
-  },
+export const createMetaparsers: (
+  r: RouteSource<ParameterizedMiddleware>,
+  ctx: Context,
+) => Record<RequestMetadataParser, () => unknown> = (routeSource, ctx) => {
+  const {
+    //
+    normalizeParams,
+    normalizeSearchParams,
+  } = createParamsNormalizers<ParameterizedMiddleware>(routeSource);
 
-  headers(ctx) {
-    return Object.fromEntries(ctx.req.raw.headers);
-  },
+  return {
+    method() {
+      return ctx.req.method;
+    },
 
-  cookies(ctx) {
-    return parseCookies(Object.fromEntries(ctx.req.raw.headers));
-  },
+    pathname() {
+      return ctx.req.path;
+    },
+
+    params() {
+      return normalizeParams(ctx.req.path);
+    },
+
+    query() {
+      return normalizeSearchParams(
+        parseSearchParams(ctx.req.url),
+        ctx.req.method,
+      );
+    },
+
+    headers() {
+      return Object.fromEntries(ctx.req.raw.headers);
+    },
+
+    cookies() {
+      return parseCookies(Object.fromEntries(ctx.req.raw.headers));
+    },
+  };
 };
 
-export const bodyparsers: {
-  [T in RequestBodyTarget]: (
-    ctx: Context,
-    opt?: BodyparserOptions[T],
-  ) => Promise<unknown>;
-} = {
-  json(ctx) {
-    return ctx.req.json();
-  },
+export const createBodyparsers: (
+  r: RouteSource<ParameterizedMiddleware>,
+  ctx: Context,
+) => {
+  [T in RequestBodyTarget]: (opt?: BodyparserOptions[T]) => Promise<unknown>;
+} = (_routeSource, ctx) => {
+  return {
+    json() {
+      return ctx.req.json();
+    },
 
-  form(ctx, opt) {
-    return ctx.req.parseBody(opt);
-  },
+    form(opt) {
+      return ctx.req.parseBody(opt);
+    },
 
-  raw(ctx, { as = "text" } = {}) {
-    return ctx.req[as]();
-  },
+    raw({ as = "text" } = {}) {
+      return ctx.req[as]();
+    },
+  };
 };

@@ -67,7 +67,7 @@ It is not a shortcut around your API. The SSR build bundles the backend in, and 
 
 - **Dispatched into the app instance** - `app.fetch(request)` for backends that expose it,
 an in-memory injection for the Node-style one. Either way the request goes through the whole chain:
-routing, [global](/backend/middleware#global-middleware-api-use-ts) and [cascading](/backend/cascading-middleware) middleware,
+routing, [global](/backend/middleware) and [cascading](/backend/cascading-middleware) middleware,
 validation, your handler, [error handling](/backend/error-handling), response shaping.
 - **With the page request's headers as defaults.** Cookies, `authorization`, tracing headers from the incoming request are forwarded,
 so an authenticated page renders authenticated data. Anything you set on the call itself wins over a forwarded value.

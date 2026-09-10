@@ -1,15 +1,16 @@
 ---
 title: Enhanced Context Object
-description: Learn about KosmoJS's enhanced context with unified bodyparser API
+description: Learn about KosmoJS's enhanced context - unified bodyparser and metaparser APIs,
     and ctx.validated for type-safe validated data access
 head:
   - - meta
     - name: keywords
-      content: ctx.validated, typed parameters, request body parsing
+      content: ctx.validated, ctx.bodyparser, ctx.metaparser, typed parameters,
+        request body parsing, query parsing, cookie parsing
 ---
 
-KosmoJS extends the standard Hono/H3/Koa context with two additions:
-a unified bodyparser API and `ctx.validated` for type-safe access to validated request data.
+KosmoJS extends the standard Hono/H3/Koa context with three additions:
+unified `bodyparser` and `metaparser` APIs, and `ctx.validated` for type-safe access to validated request data.
 
 ## Unified Bodyparser
 
@@ -25,6 +26,33 @@ Results are cached - calling the same parser multiple times doesn't re-parse the
 
 In practice you rarely call this directly. Define a validation schema in your handler
 and the appropriate parser runs automatically, placing the result in `ctx.validated`.
+
+## Unified Metaparser
+
+`ctx.metaparser` does the same for request metadata:
+
+```ts
+ctx.metaparser.params()    // route params, normalized
+ctx.metaparser.query()     // query parameters, normalized
+ctx.metaparser.headers()   // headers, as a plain object
+ctx.metaparser.cookies()   // parsed cookies
+```
+
+These are synchronous - there is nothing to await - and cached the same way.
+
+`params()` and `query()` hand back normalized values rather than raw strings:
+splat params are split into arrays, and values are coerced to match your declared types -
+numbers for params, numbers and booleans for query. `headers()` and `cookies()` are plain parses.
+
+---
+
+Both `ctx.metaparser` and `ctx.bodyparser` are rarely used in handlers directly.
+They are most useful in [edge middleware](/backend/edge-middleware)
+and in a [custom validator](/backend/middleware#overriding-validation).
+where `ctx.validated.*` is not filled yet.
+
+They are not there in [`api/app.ts`](/backend/middleware#app-middleware),
+which runs before the context is extended.
 
 ## Validated Data Access
 
@@ -65,6 +93,9 @@ export default defineRoute<"users/[id]", [number]>(({ GET, POST }) => [
   }),
 ]);
 ```
+
+`ctx.metaparser.params()` gives you the same normalized values before validation runs -
+useful in [edge middleware](/backend/edge-middleware), where `ctx.validated` is still empty.
 
 The underlying raw params still exist if you need them:
 - Hono - `ctx.req.param()`

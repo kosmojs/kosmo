@@ -33,7 +33,7 @@ The key is the URL to serve. The value is the name of the route that handles it.
 
 ## The key is absolute
 
-An alias URL is **not** prefixed by [backend.base](/essentials/config#backend-base).
+An alias URL is **not** prefixed by [backend.base](/essentials/config#backend-base-required).
 It is the whole path, from the root of the host:
 
 ```ts
