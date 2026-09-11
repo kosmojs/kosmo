@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 import fetchWrapper, { type HTTPMethod } from "../src/fetch/index";
 
 describe("fetch", () => {
-  const fetch = fetchWrapper("http://json");
+  const fetch = fetchWrapper({ prefix: "http://json" });
 
   type ResponseT = {
     method: HTTPMethod;
@@ -55,7 +55,7 @@ describe("fetch", () => {
   });
 
   describe("raw:text", () => {
-    const fetch = fetchWrapper("http://text");
+    const fetch = fetchWrapper({ prefix: "http://text" });
     for (const method of ["POST", "PUT", "PATCH"] as const) {
       test(method, async () => {
         const res = await fetch[method]<string>(
@@ -69,7 +69,8 @@ describe("fetch", () => {
   });
 
   describe("raw:buffer", () => {
-    const fetch = fetchWrapper("http://buffer", {
+    const fetch = fetchWrapper({
+      prefix: "http://buffer",
       responseMode: "arrayBuffer",
     });
     const name = "John";
@@ -85,9 +86,7 @@ describe("fetch", () => {
   });
 
   describe("raw:blob", () => {
-    const fetch = fetchWrapper("http://blob", {
-      responseMode: "blob",
-    });
+    const fetch = fetchWrapper({ prefix: "http://blob", responseMode: "blob" });
     for (const method of ["POST", "PUT", "PATCH"] as const) {
       const blob = new Blob(["payload"]);
       test(method, async () => {
@@ -102,7 +101,7 @@ describe("fetch", () => {
   });
 
   describe("form: URL-encoded", () => {
-    const fetch = fetchWrapper("http://form");
+    const fetch = fetchWrapper({ prefix: "http://form" });
     const name = "John";
     for (const method of ["POST", "PUT", "PATCH"] as const) {
       test(method, async () => {
@@ -113,7 +112,7 @@ describe("fetch", () => {
   });
 
   describe("form: Multipart", () => {
-    const fetch = fetchWrapper("http://multipart");
+    const fetch = fetchWrapper({ prefix: "http://multipart" });
     const name = "John";
     for (const method of ["POST", "PUT", "PATCH"] as const) {
       const form = new FormData();
@@ -130,7 +129,7 @@ describe("fetch", () => {
   });
 
   describe("raw response", () => {
-    const fetch = fetchWrapper("http://raw", { responseMode: "raw" });
+    const fetch = fetchWrapper({ prefix: "http://raw", responseMode: "raw" });
     for (const method of ["POST", "PUT", "PATCH"] as const) {
       test(method, async () => {
         const res = await fetch[method]<Response>([]);

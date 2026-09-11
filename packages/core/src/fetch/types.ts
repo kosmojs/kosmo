@@ -19,6 +19,7 @@ export type ResponseMode =
   | "raw";
 
 export type Options = {
+  prefix?: string;
   stringifySearchParams?: typeof stringifySearchParams;
   transport?: Transport | undefined;
   responseMode?: ResponseMode;

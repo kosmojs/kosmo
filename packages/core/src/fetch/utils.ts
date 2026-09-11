@@ -7,7 +7,10 @@ export const join = (...args: Array<unknown>): string => {
     console.error(args);
     throw new Error("The path argument must be of type string or number");
   }
-  return args.join("/").replace(/\/+/g, "/");
+  const [prefix = "", ...rest] = args;
+  const head = String(prefix).replace(/\/+$/, "");
+  const tail = rest.join("/").replace(/\/+/g, "/").replace(/^\//, "");
+  return tail ? `${head}/${tail}` : head;
 };
 
 export const createHost = (host: HostOpt): string => {

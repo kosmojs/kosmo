@@ -22,7 +22,9 @@ const bodylessMethods = ["GET", "DELETE"];
  * Keeping the factory transport-agnostic keeps server-only modules out of
  * browser bundles.
  * */
-export default (factoryOpts?: Options): FetchMapper => {
+export default (opts?: Options): FetchMapper => {
+  const { prefix, ...factoryOpts } = { ...opts };
+
   // Factory function that creates HTTP method implementations
   function factory(method: HTTPMethod): FetchMethod {
     return async (...args: Partial<Parameters<FetchMethod>>) => {
@@ -39,7 +41,9 @@ export default (factoryOpts?: Options): FetchMapper => {
       };
 
       // Construct URL from path segments
-      const url = Array.isArray(path) ? join(path.flat()) : String(path);
+      const url = Array.isArray(path)
+        ? join(...(prefix ? [prefix] : []), ...path.flat())
+        : join(...(prefix ? [prefix] : []), ...(path ? [path] : []));
 
       // Normalize headers to Headers instance for consistent API
       const headers = new Headers({
