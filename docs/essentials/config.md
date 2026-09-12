@@ -29,21 +29,21 @@ each side of the folder carries its own `viteConfig`.
 
 The config is declarative - you describe what the folder has:
 
-```ts [src/vue/kosmo.config.ts]
+```ts [src/app/kosmo.config.ts]
 import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
   frontend: {
-    stack: "vue",
-    base: "/vue",
+    stack: "react", // or solid, vue, svelte, mdx
+    base: "/",
     fetch: true,
     ssr: true,
     ssg: false,
     tanstack: { query: false },
   },
   backend: {
-    stack: "hono",
-    base: "/vue/api",
+    stack: "hono", // or h3, koa
+    base: "/api",
   },
   validation: true,
 });
@@ -371,6 +371,7 @@ For reference, these are the configs it produces for a folder named `front`:
 :::tabs variant:code
 == React + Hono
 ```ts
+// React + Hono
 import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
@@ -392,6 +393,7 @@ export default defineConfig({
 
 == Frontend only
 ```ts
+// Frontend only
 import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
@@ -408,6 +410,7 @@ export default defineConfig({
 
 == Backend only
 ```ts
+// Backend only
 import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
@@ -421,6 +424,7 @@ export default defineConfig({
 
 == MDX docs
 ```ts
+// MDX docs
 import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({

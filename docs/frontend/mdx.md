@@ -1,8 +1,7 @@
 ---
 title: MDX Content
-description: Create content-focused source folders with MDX - static HTML rendering
-  with Preact, nested layouts, frontmatter-driven head injection, typed navigation,
-  and optional static site generation. No client-side JavaScript by default.
+description: Create content-focused source folders with MDX - static HTML rendering with Preact,
+    nested layouts, frontmatter-driven head injection, typed Link component.
 head:
   - - meta
     - name: keywords
@@ -12,11 +11,9 @@ head:
 
 MDX source folders are purpose-built for content: documentation, blogs,
 marketing pages, and any site where prose matters more than interactivity.
-Pages are authored in MDX (Markdown with JSX), rendered to static HTML on the
-server with Preact, and delivered with minimal client-side JavaScript by default.
 
-The same directory-based routing, nested layouts, and type-safe navigation
-used by React, SolidJS, and Vue source folders apply for MDX as well.
+Pages are authored in MDX (Markdown with JSX), rendered to static HTML on the server with Preact,
+and delivered with minimal client-side JavaScript by default.
 
 ## Enabling MDX
 
@@ -76,6 +73,7 @@ everything works in the `.tsx` file. The MDX file stays focused on content:
 :::tabs variant:code
 == pages/blog/Alert.tsx
 ```tsx
+// pages/blog/Alert.tsx
 import type { JSX } from "preact";
 
 export default function Alert(props: {
@@ -92,6 +90,7 @@ export default function Alert(props: {
 
 == pages/blog/index.mdx
 ```mdx
+// pages/blog/index.mdx
 import Alert from "./Alert.tsx"
 
 <Alert type="warning">
@@ -231,13 +230,14 @@ pages/
 ```
 
 Access parameters inside a component using `useParams()` from `_/use`.
-Pass the route name as a type argument and the returned params are typed for that route:
+`.mdx` is not TypeScript, so it takes no type argument and the params come back untyped -
+move anything that needs the typed form into a `.tsx` component and import it:
 
 ```mdx [pages/blog/post/[slug]/index.mdx]
 import { useParams } from "_/use";
 
 export const Post = () => {
-  const { slug } = useParams<"blog/post/[slug]">();
+  const { slug } = useParams();
   return <p>Reading: {slug}</p>;
 };
 
@@ -246,14 +246,14 @@ export const Post = () => {
 <Post />
 ```
 
-Optional parameters come back possibly-undefined, and a splat parameter comes back
-as an array of segments:
+Optional parameters come back possibly-undefined,
+and a splat parameter comes back as an array of segments or undefined:
 
 ```mdx [pages/blog/{category}/{tag}/index.mdx]
 import { useParams } from "_/use";
 
 export const Filters = () => {
-  const { category, tag } = useParams<"blog/{category}/{tag}">();
+  const { category, tag } = useParams();
   return <p>{category ?? "all"} / {tag ?? "all"}</p>;
 };
 
@@ -362,9 +362,9 @@ no need to reconstruct an array from `params`/`useParams()` by hand.
 > remain the right tool inside actual components;
 > `loader` is a pre-render step, not a rendered component.
 
-## Type-Safe Navigation
+## Navigation with `Link`
 
-A typed `Link` component is seeded at `components/Link.tsx`:
+There is `Link` component at `components/Link.tsx` for your convenience:
 
 ```mdx
 import Link from "~/components/Link"
@@ -373,9 +373,10 @@ Navigate to the <Link to={["blog/[slug]", "hello-world"]}>first post</Link>
 or go <Link to={["index"]}>home</Link>.
 ```
 
-The `to` prop accepts the same typed tuple as other frameworks - route name
-followed by parameters. TypeScript enforces correct parameter types at
-compile time.
+The `to` prop accepts the same tuple as other frameworks - route name followed by parameters.
+`Link.tsx` is type-checked, but the call site in an `.mdx` page is not,
+so a wrong route name or a missing parameter surfaces at runtime rather than at build time.
+Wrap navigation in a `.tsx` component where that matters.
 
 > **Tip:** When `Link` is enabled in `components/mdx.ts` (the default),
 > it can be used in pages without import - it is a global component provided via `MDXProvider`.
@@ -424,7 +425,7 @@ src/content/
 ├── router.ts              ← routes wired into the native router
 ├── index.html             ← HTML shell with placeholders
 ├── components/
-│   ├── Link.tsx           ← typed navigation component
+│   ├── Link.tsx           ← navigation component
 │   └── mdx.ts             ← MDXProvider component overrides
 ├── entry/
 │   ├── client.ts          ← minimal client entry
@@ -469,6 +470,7 @@ Both client and server entries follow the same `renderFactory` pattern as React/
 :::tabs variant:code
 == entry/client.ts
 ```ts
+// entry/client.ts
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -501,6 +503,7 @@ if (root) {
 
 == entry/server.ts
 ```ts
+// entry/server.ts
 import renderFactory, {
   createRoutes,
   renderToString,

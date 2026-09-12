@@ -145,6 +145,7 @@ Because the context API differs by backend, so does the boilerplate:
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: kosmo.config.ts
 const template = `
 import { defineRoute } from "_/api";
 
@@ -158,6 +159,7 @@ export default defineRoute<"{{route.name}}">(({ GET }) => [
 
 == H3
 ```ts
+// H3: kosmo.config.ts
 const template = `
 import { defineRoute } from "_/api";
 
@@ -171,6 +173,7 @@ export default defineRoute<"{{route.name}}">(({ GET }) => [
 
 == Koa
 ```ts
+// Koa: kosmo.config.ts
 const template = `
 import { defineRoute } from "_/api";
 

@@ -145,6 +145,7 @@ Each framework has its own component structure:
 :::tabs key:frontend variant:code
 == React
 ```ts
+// React: kosmo.config.ts
 const customTemplate = `
 import { useParams } from "react-router";
 
@@ -163,6 +164,7 @@ export default function Page() {
 
 == Solid
 ```ts
+// Solid: kosmo.config.ts
 const customTemplate = `
 import { useParams } from "@solidjs/router";
 
@@ -181,6 +183,7 @@ export default function Page() {
 
 == Vue
 ```ts
+// Vue: kosmo.config.ts
 const customTemplate = `
 <template>
   <div>
@@ -198,6 +201,7 @@ const route = useRoute();
 
 == Svelte
 ```ts
+// Svelte: kosmo.config.ts
 const customTemplate = `
 <script lang="ts">
 import { useParams } from "_/use";
@@ -213,6 +217,7 @@ const params = useParams();
 
 == MDX
 ```mdx
+// MDX: kosmo.config.ts
 import { useParams } from "_/use";
 
 # Custom Template

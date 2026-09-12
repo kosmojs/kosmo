@@ -79,7 +79,7 @@ Each framework renders child routes differently:
 :::tabs key:frontend variant:code
 == React
 ```tsx
-// layout.tsx
+// React: layout.tsx
 import { Outlet } from "react-router";
 
 export default function Layout() {
@@ -97,7 +97,7 @@ export default function Layout() {
 
 == Solid
 ```tsx
-// layout.tsx
+// Solid: layout.tsx
 import type { ParentComponent } from "solid-js";
 
 const Layout: ParentComponent = (props) => {
@@ -117,7 +117,7 @@ export default Layout;
 
 == Vue
 ```vue
-// layout.vue
+// Vue: layout.vue
 <script setup lang="ts">
 // layout-specific logic
 </script>
@@ -135,7 +135,7 @@ export default Layout;
 
 == Svelte
 ```svelte
-// layout.svelte
+// Svelte: layout.svelte
 <script lang="ts">
 let { children } = $props();
 </script>
@@ -151,7 +151,7 @@ let { children } = $props();
 
 == MDX
 ```mdx
-// layout.mdx
+// MDX: layout.mdx
 <nav>
   <a href="/">Home</a>
   <a href="/docs">Docs</a>
@@ -187,7 +187,7 @@ but how a layout's data stays distinct from its child page's differs:
 :::tabs key:frontend variant:code
 == React
 ```tsx
-// layout.tsx
+// React: layout.tsx
 import { Outlet, useLoaderData } from "react-router";
 import fetchClients from "_/fetch";
 
@@ -204,7 +204,7 @@ export default function Layout() {
 
 == Solid
 ```tsx
-// layout.tsx
+// Solid: layout.tsx
 import { Suspense, type ParentComponent } from "solid-js";
 import { createAsync, query } from "@solidjs/router";
 import fetchClients from "_/fetch";
@@ -227,7 +227,7 @@ export default Layout;
 
 == Vue
 ```vue
-<!-- layout.vue -->
+<!-- Vue: layout.vue -->
 <script lang="ts">
 import fetchClients from "_/fetch";
 
@@ -251,7 +251,7 @@ const data = useLoaderData("dashboard/layout");
 
 == Svelte
 ```svelte
-<!-- layout.svelte -->
+<!-- Svelte: layout.svelte -->
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
@@ -278,7 +278,7 @@ const data = useLoaderData("dashboard/layout");
 
 == MDX
 ```mdx
-// layout.mdx
+// MDX: layout.mdx
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 

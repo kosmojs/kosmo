@@ -140,12 +140,13 @@ ResponseT["users"]["POST"]; // User | { queued: true }
 
 ## Using Response Types
 
-The out-of-band cases in practice, e.g. React's `useLoaderData()` annotated at its untyped boundary,
-and a shared helper naming the type once:
+The out-of-band cases in practice - the hook that needs annotating at its untyped boundary -
+and a shared helper naming the type once. `helpers.ts` is the same file for every framework.
 
 :::tabs variant:code
 == React
 ```tsx
+// React: pages/users/[id]/index.tsx
 import { useLoaderData } from "react-router";
 import f from "_/fetch";
 import { formatUser, type User } from "./helpers";
@@ -161,8 +162,84 @@ export default function UserProfile() {
 }
 ```
 
-== helpers.ts
+== Solid
+```tsx
+// Solid: pages/users/[id]/index.tsx
+import { Show, Suspense } from "solid-js";
+import { createAsync, query, useParams } from "@solidjs/router";
+import f from "_/fetch";
+import { formatUser, type User } from "./helpers";
+
+const { GET } = f["users/[id]"];
+
+// createAsync infers from the fetcher, so there is no boundary to annotate -
+// User earns its keep on the query wrapper and on helper signatures
+const getUser = query((id: string): Promise<User> => GET([id]), "user");
+
+export const preload = ({ params }) => getUser(params.id);
+
+export default function UserProfile() {
+  const params = useParams();
+  const user = createAsync(() => getUser(params.id));
+  return (
+    <Suspense>
+      <Show when={user()}>{(u) => <div>{formatUser(u())}</div>}</Show>
+    </Suspense>
+  );
+}
+```
+
+== Vue
+```vue
+<!-- Vue: pages/users/[id]/index.vue -->
+<script lang="ts">
+import f from "_/fetch";
+
+const { GET } = f["users/[id]"];
+
+export const loader = ({ params }) => GET([params.id]);
+</script>
+
+<script setup lang="ts">
+import { useLoaderData } from "_/use";
+import { formatUser, type User } from "./helpers";
+
+// useLoaderData takes the type argument - it returns User | undefined
+const user = useLoaderData<User>();
+</script>
+
+<template>
+  <div v-if="user">{{ formatUser(user) }}</div>
+</template>
+```
+
+== Svelte
+```svelte
+<!-- Svelte: pages/users/[id]/index.svelte -->
+<script module lang="ts">
+import f from "_/fetch";
+
+const { GET } = f["users/[id]"];
+
+export const loader = ({ params }) => GET([params.id]);
+</script>
+
+<script lang="ts">
+import { useLoaderData } from "_/use";
+import { formatUser, type User } from "./helpers";
+
+// useLoaderData takes the type argument - it returns User | undefined
+const user = useLoaderData<User>();
+</script>
+
+{#if user}
+  <div>{formatUser(user)}</div>
+{/if}
+```
+
+== ./helpers.ts
 ```ts
+// helpers.ts - framework-agnostic, identical in every folder
 import type { ResponseT } from "_/fetch";
 
 // name the type once, reuse it across components
@@ -173,6 +250,10 @@ export const formatUser = (user: User) => {
 }
 ```
 :::
+
+
+> MDX is absent here on purpose: `.mdx` is not TypeScript,
+so it has no type arguments and no type imports - an MDX page reads `useLoaderData()` untyped.
 
 The type flows from the backend route through the client to wherever you consume it.
 Change the route's `response` shape and every consumer - loaders, resources, helpers, props -

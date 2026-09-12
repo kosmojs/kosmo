@@ -16,6 +16,7 @@ Error handling starts with `api/errors.ts` file, customize it at your needs:
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/errors.ts
 import { accepts } from "hono/accepts";
 import { HTTPException } from "hono/http-exception";
 
@@ -50,6 +51,7 @@ export default errorHandlerFactory(async (error, ctx) => {
 
 == H3
 ```ts
+// H3: api/errors.ts
 import { ValidationError } from "@kosmojs/core/errors";
 import { HTTPError } from "h3";
 
@@ -80,6 +82,7 @@ export default errorHandlerFactory(async (error, event) => {
 
 == Koa
 ```ts
+// Koa: api/errors.ts
 import { HTTPError, ValidationError } from "@kosmojs/core/errors";
 
 import { errorHandlerFactory } from "_/api:factory";
@@ -137,7 +140,7 @@ So don't wrap handler logic in `try`/`catch` just to turn a failure into a respo
 :::tabs key:backend variant:code
 == Hono
 ```ts
-// api/users/[id]/index.ts
+// Hono: api/users/[id]/index.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
 export default defineRoute<"users/[id]", [number]>(({ GET }) => [
@@ -155,7 +158,7 @@ export default defineRoute<"users/[id]", [number]>(({ GET }) => [
 
 == H3
 ```ts
-// api/users/[id]/index.ts
+// H3: api/users/[id]/index.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
 export default defineRoute<"users/[id]", [number]>(({ GET }) => [
@@ -173,7 +176,7 @@ export default defineRoute<"users/[id]", [number]>(({ GET }) => [
 
 == Koa
 ```ts
-// api/users/[id]/index.ts
+// Koa: api/users/[id]/index.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
 export default defineRoute<"users/[id]", [number]>(({ GET }) => [

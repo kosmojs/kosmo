@@ -94,7 +94,7 @@ no imports, no registration, nothing to wire:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-// api/use.ts
+// Hono: api/use.ts
 import { use } from "_/api";
 
 export default [
@@ -108,7 +108,7 @@ export default [
 
 == H3
 ```ts
-// api/use.ts
+// H3: api/use.ts
 import { use } from "_/api";
 
 export default [
@@ -122,7 +122,7 @@ export default [
 
 == Koa
 ```ts
-// api/use.ts
+// Koa: api/use.ts
 import { use } from "_/api";
 
 export default [
@@ -158,7 +158,7 @@ Use the `on` option to restrict middleware to specific HTTP methods:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-// api/example/index.ts
+// Hono: api/example/index.ts
 export default defineRoute<"example">(({ GET, POST, use }) => [
   use(async (ctx, next) => {
     ctx.set("user", await verifyToken(ctx.req.header("authorization")));
@@ -179,7 +179,7 @@ export default defineRoute<"example">(({ GET, POST, use }) => [
 
 == H3
 ```ts
-// api/example/index.ts
+// H3: api/example/index.ts
 export default defineRoute<"example">(({ GET, POST, use }) => [
   use(async (event, next) => {
     event.context.user = await verifyToken(event.req.headers.get("authorization"));
@@ -200,7 +200,7 @@ export default defineRoute<"example">(({ GET, POST, use }) => [
 
 == Koa
 ```ts
-// api/example/index.ts
+// Koa: api/example/index.ts
 export default defineRoute<"example">(({ GET, POST, use }) => [
   use(async (ctx, next) => {
     ctx.state.user = await verifyToken(ctx.headers.authorization);
@@ -363,7 +363,7 @@ you do here - written exactly as that framework's own docs describe:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-// api/app.ts
+// Hono: api/app.ts
 import appFactory, { routes } from "_/api:factory";
 import defaultErrorHandler from "./errors";
 
@@ -380,7 +380,7 @@ export default appFactory(routes, ({ app }) => {
 
 == H3
 ```ts
-// api/app.ts
+// H3: api/app.ts
 import { onError } from "h3";
 
 import appFactory, { routes } from "_/api:factory";
@@ -399,7 +399,7 @@ export default appFactory(routes, ({ app }) => {
 
 == Koa
 ```ts
-// api/app.ts
+// Koa: api/app.ts
 import appFactory, { routes } from "_/api:factory";
 import defaultErrorHandler from "./errors";
 

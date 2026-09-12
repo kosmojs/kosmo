@@ -28,7 +28,7 @@ Wrap the layout's child slot - the same slot that renders the nested route - in 
 :::tabs key:frontend variant:code
 == React
 ```tsx
-// layout.tsx
+// React: layout.tsx
 import { Component, type ReactNode } from "react";
 import { Outlet } from "react-router";
 
@@ -55,7 +55,7 @@ export default function Layout() {
 
 == Solid
 ```tsx
-// layout.tsx
+// Solid: layout.tsx
 import type { ParentComponent } from "solid-js";
 import { ErrorBoundary } from "solid-js";
 
@@ -72,7 +72,7 @@ export default Layout;
 
 == Vue
 ```vue
-// layout.vue
+// Vue: layout.vue
 <script setup lang="ts">
 import { ref, onErrorCaptured } from "vue";
 
@@ -91,7 +91,7 @@ onErrorCaptured(() => {
 
 == Svelte
 ```svelte
-// layout.svelte
+// Svelte: layout.svelte
 <script lang="ts">
 let { children } = $props();
 </script>
@@ -107,7 +107,7 @@ let { children } = $props();
 
 == MDX
 ```mdx
-// layout.mdx
+// MDX: layout.mdx
 import { Boundary } from "~/components/Boundary";
 
 <Boundary>

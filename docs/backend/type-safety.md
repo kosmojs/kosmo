@@ -92,6 +92,7 @@ Both payload and response are validated at runtime, not just at compile time.
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/users/[id]/index.ts
 defineRoute<
   "route-name",
   ParamsTuple,      // param refinements
@@ -102,6 +103,7 @@ defineRoute<
 
 == H3
 ```ts
+// H3: api/users/[id]/index.ts
 defineRoute<
   "route-name",
   ParamsTuple,      // param refinements
@@ -111,6 +113,7 @@ defineRoute<
 
 == Koa
 ```ts
+// Koa: api/users/[id]/index.ts
 defineRoute<
   "route-name",
   ParamsTuple,      // param refinements
@@ -125,6 +128,7 @@ Use the third and fourth arguments for types that are unique to a specific route
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/users/[id]/index.ts
 export default defineRoute<
   "users/[id]",
   [number],
@@ -141,6 +145,7 @@ export default defineRoute<
 
 == H3
 ```ts
+// H3: api/users/[id]/index.ts
 export default defineRoute<
   "users/[id]",
   [number],
@@ -155,6 +160,7 @@ export default defineRoute<
 
 == Koa
 ```ts
+// Koa: api/users/[id]/index.ts
 export default defineRoute<
   "users/[id]",
   [number],
@@ -182,6 +188,7 @@ so every route handler picks them up automatically:
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/env.d.ts
 export declare module "_/api" {
   interface DefaultVariables {
     permissions: Array<"read" | "write" | "admin">;
@@ -194,6 +201,7 @@ export declare module "_/api" {
 
 == H3
 ```ts
+// H3: api/env.d.ts
 export declare module "_/api" {
   interface DefaultContext {
     permissions: Array<"read" | "write" | "admin">;
@@ -203,6 +211,7 @@ export declare module "_/api" {
 
 == Koa
 ```ts
+// Koa: api/env.d.ts
 export declare module "_/api" {
   interface DefaultState {
     permissions: Array<"read" | "write" | "admin">;
@@ -223,6 +232,7 @@ It runs for every endpoint, so properties becomes available for all routes:
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/env.d.ts
 import { use } from "_/api";
 
 export default [
@@ -235,6 +245,7 @@ export default [
 
 == H3
 ```ts
+// H3: api/env.d.ts
 import { use } from "_/api";
 
 export default [
@@ -247,6 +258,7 @@ export default [
 
 == Koa
 ```ts
+// Koa: api/env.d.ts
 import { use } from "_/api";
 
 export default [

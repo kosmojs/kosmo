@@ -1219,7 +1219,7 @@ page's; React and Solid scope per route automatically.
 ### Navigation (typed Link)
 
 #### How does the typed Link component work?
-The `Link` component is seeded at `components/Link.{tsx,vue,svelte}` with compile-time route validation.
+Just import it from `~/components/Link.{tsx,vue,svelte}`.
 The `to` prop takes a typed tuple `[routeName, ...params]` (e.g. `["users/[id]", 123]`), plus an optional `query` prop.
 Typing the route name triggers IntelliSense; parameterized routes require their params.
 [Details&nbsp;›](/frontend/link-navigation#usage)
@@ -2073,7 +2073,7 @@ No ISR/revalidation and no partial prerendering.
 #### SSG / static export vs `output: export`?
 Closest equivalent, and it works on every frontend: each route renders to static HTML at build time
 (`staticParams` supplying the entries for dynamic routes), output to `dist/<folder>/ssg/`.
-An MDX folder additionally gets frontmatter-driven head, layouts and typed nav - comparable to Next + MDX/Contentlayer, but built in.
+An MDX folder additionally gets frontmatter-driven head, comparable to Next + MDX/Contentlayer, but built in.
 [Details&nbsp;›](#ssg) · [Migration&nbsp;Tips&nbsp;›](/essentials/migration-tips)
 
 #### Can I use SSG with React, Vue, SolidJS or Svelte?
@@ -2114,8 +2114,9 @@ No adapter system - Hono/H3 via native runtime servers, Koa via `node:http`.
 [Details&nbsp;›](/dev-build-run/building-for-production#build-output)
 
 #### `next/image` / `next/font` / `next/link` / `next/head` equivalents?
-A seeded typed `Link` exists. Head injection is via MDX frontmatter and the SSR `head`.
-There's no `next/image` (image optimization) or `next/font` equivalent - bring your own.
+There is a typed `Link` component for type-safe navigation.
+Head injection is via MDX frontmatter and the SSR `head`.
+No `next/image` (image optimization) nor `next/font` equivalent - bring your own.
 [Details&nbsp;›](/frontend/link-navigation)
 
 #### Vs Next multi-zone?

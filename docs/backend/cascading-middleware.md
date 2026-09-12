@@ -75,6 +75,7 @@ every route underneath should know about it without importing or declaring anyth
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/users/use.ts
 import { use } from "_/api";
 
 export type UseT = {
@@ -94,6 +95,7 @@ export default [
 
 == H3
 ```ts
+// H3: api/users/use.ts
 import { use } from "_/api";
 
 export type UseT = {
@@ -113,6 +115,7 @@ export default [
 
 == Koa
 ```ts
+// Koa: api/users/use.ts
 import { use } from "_/api";
 
 export type UseT = {
@@ -137,6 +140,7 @@ no imports, no type arguments on `defineRoute`:
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/users/use.ts
 export default defineRoute<"admin/dashboard">(({ GET }) => [
   GET(async (ctx) => {
     const user = ctx.get("user");  // typed as { id: number; role: "admin" | "user" }
@@ -146,6 +150,7 @@ export default defineRoute<"admin/dashboard">(({ GET }) => [
 
 == H3
 ```ts
+// H3: api/users/use.ts
 export default defineRoute<"admin/dashboard">(({ GET }) => [
   GET(async (event) => {
     const { user } = event.context;  // typed as { id: number; role: "admin" | "user" }
@@ -155,6 +160,7 @@ export default defineRoute<"admin/dashboard">(({ GET }) => [
 
 == Koa
 ```ts
+// Koa: api/users/use.ts
 export default defineRoute<"admin/dashboard">(({ GET }) => [
   GET(async (ctx) => {
     const { user } = ctx.state;  // typed as { id: number; role: "admin" | "user" }
@@ -241,6 +247,7 @@ Add middleware to `use.ts` and it will run on every route underneath:
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/users/use.ts
 import { rateLimiter } from "hono-rate-limiter";
 
 import { use } from "_/api";
@@ -258,6 +265,7 @@ export default [
 
 == H3
 ```ts
+// H3: api/users/use.ts
 import { use } from "_/api";
 
 export default [
@@ -270,6 +278,7 @@ export default [
 
 == Koa
 ```ts
+// Koa: api/users/use.ts
 import ratelimit from "koa-ratelimit";
 
 import { use } from "_/api";
@@ -297,7 +306,7 @@ What differs per backend is only how the error handler attaches:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-// api/app.ts
+// Hono: api/app.ts
 import appFactory, { routes } from "_/api:factory";
 import defaultErrorHandler from "./errors";
 import { cors } from "./cors"; // [!code ++]
@@ -310,7 +319,7 @@ export default appFactory(routes, ({ app }) => {
 
 == H3
 ```ts
-// api/app.ts
+// H3: api/app.ts
 import { onError } from "h3";
 
 import appFactory, { routes } from "_/api:factory";
@@ -325,7 +334,7 @@ export default appFactory(routes, ({ app }) => {
 
 == Koa
 ```ts
-// api/app.ts
+// Koa: api/app.ts
 import appFactory, { routes } from "_/api:factory";
 import defaultErrorHandler from "./errors";
 import { cors } from "./cors"; // [!code ++]

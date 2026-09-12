@@ -49,6 +49,7 @@ Where the declaration lives depends on how the framework exposes named exports f
 :::tabs key:frontend variant:code
 == React
 ```tsx
+// React: pages/docs/[slug]/index.tsx
 import { defineStaticParams } from "_/core";
 
 export const staticParams = defineStaticParams<"docs/[slug]">([
@@ -62,6 +63,7 @@ export default function DocsPage() { /* ... */ }
 
 == Solid
 ```tsx
+// Solid: pages/docs/[slug]/index.tsx
 import { defineStaticParams } from "_/core";
 
 export const staticParams = defineStaticParams<"docs/[slug]">([
@@ -75,6 +77,7 @@ export default function DocsPage() { /* ... */ }
 
 == Vue
 ```vue
+<!-- Vue: pages/docs/[slug]/index.vue -->
 <script lang="ts">
 // a plain <script> block: <script setup> can not have named exports,
 // and the two blocks coexist in one SFC
@@ -93,6 +96,7 @@ export const staticParams = defineStaticParams<"docs/[slug]">([
 
 == Svelte
 ```svelte
+<!-- Svelte: pages/docs/[slug]/index.svelte -->
 <script module lang="ts">
 // pages/docs/[slug]/index.svelte module-level script:
 // its exports are the component module's named exports
@@ -117,6 +121,8 @@ staticParams:
   - [getting-started]
   - [routing]
 ---
+
+{/* MDX declares staticParams in frontmatter, not as an export */}
 ```
 
 :::

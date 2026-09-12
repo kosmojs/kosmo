@@ -45,7 +45,7 @@ The `target` property tells you exactly which part of the request failed:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-// api/errors.ts
+// Hono: api/errors.ts
 
 // All errors as a readable string
 if (error instanceof ValidationError) {
@@ -70,7 +70,7 @@ if (error instanceof ValidationError) {
 
 == H3
 ```ts
-// api/errors.ts
+// H3: api/errors.ts
 
 // All errors as a readable string
 if (error instanceof ValidationError) {
@@ -98,7 +98,7 @@ if (error instanceof ValidationError) {
 
 == Koa
 ```ts
-// api/errors.ts
+// Koa: api/errors.ts
 
 // All errors as a readable string
 if (error instanceof ValidationError) {

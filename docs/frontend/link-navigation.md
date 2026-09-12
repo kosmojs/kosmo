@@ -24,6 +24,7 @@ router props passed through:
 :::tabs variant:code
 == Menu.tsx
 ```tsx
+// Menu.tsx
 import Link from "~/components/Link";
 
 export default function Menu() {
@@ -46,6 +47,7 @@ export default function Menu() {
 
 == Menu.vue
 ```vue
+<!-- Menu.vue -->
 <script setup lang="ts">
 import Link from "~/components/Link.vue";
 </script>
@@ -68,6 +70,7 @@ import Link from "~/components/Link.vue";
 
 == Menu.svelte
 ```svelte
+<!-- Menu.svelte -->
 <script lang="ts">
 import Link from "~/components/Link.svelte";
 </script>

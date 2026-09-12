@@ -38,7 +38,7 @@ From that point it is an ordinary source file: it is never re-seeded, never over
 :::tabs key:frontend variant:code
 == React
 ```tsx
-// pages/404.tsx
+// React: pages/404.tsx
 export default function NotFound() {
   return (
     <main>
@@ -50,7 +50,7 @@ export default function NotFound() {
 ```
 == Solid
 ```tsx
-// pages/404.tsx
+// Solid: pages/404.tsx
 export default function NotFound() {
   return (
     <main>
@@ -62,7 +62,7 @@ export default function NotFound() {
 ```
 == Vue
 ```vue
-<!-- pages/404.vue -->
+<!-- Vue: pages/404.vue -->
 <template>
   <main>
     <h1>404 - Not Found</h1>
@@ -72,7 +72,7 @@ export default function NotFound() {
 ```
 == Svelte
 ```svelte
-<!-- pages/404.svelte -->
+<!-- Svelte: pages/404.svelte -->
 <main>
   <h1>404 - Not Found</h1>
   <a href="/">Back home</a>
@@ -80,7 +80,8 @@ export default function NotFound() {
 ```
 == MDX
 ```mdx
-{/* pages/404.mdx */}
+// MDX: pages/404.mdx
+
 # 404 - Not Found
 
 [Back home](/)
@@ -92,7 +93,7 @@ export default function NotFound() {
 It is appended to the folder's route list as the router's **catch-all (`path: "*"`), always last**,
 so it matches only after every real route has failed to.
 
-You never register it yourself and it never appears in the [typed Link](/frontend/link-navigation) route map -
+You never register it yourself and it never appears in the typed [Link](/frontend/link-navigation) route map -
 there is no route name to link to.
 
 Two consequences worth knowing:

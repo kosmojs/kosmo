@@ -72,7 +72,7 @@ src/front/
 │           └── index.tsx -> the route  ->  /users/:id
 │
 ├── components/
-│   └── Link.tsx          -> seeded typed Link
+│   └── Link.tsx          -> typed Link component
 │
 └── entry/
     ├── client.ts         -> mount / hydrate in the browser

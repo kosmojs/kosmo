@@ -66,6 +66,7 @@ both are implemented, and the mode decides which one the server calls per route.
 :::tabs key:frontend variant:code
 == React
 ```ts
+// React: entry/server.ts
 import renderFactory, {
   createRoutes,
   renderToStream,
@@ -97,6 +98,7 @@ export default renderFactory(() => {
 
 == Solid
 ```ts
+// Solid: entry/server.ts
 import renderFactory, {
   createRoutes,
   renderToStream,
@@ -128,6 +130,7 @@ export default renderFactory(() => {
 
 == Vue
 ```ts
+// Vue: entry/server.ts
 import renderFactory, {
   createRoutes,
   renderToStream,
@@ -159,6 +162,7 @@ export default renderFactory(() => {
 
 == Svelte
 ```ts
+// Svelte: entry/server.ts
 import renderFactory, {
   createRoutes,
   renderToString,
@@ -184,6 +188,7 @@ export default renderFactory(() => {
 
 == MDX
 ```ts
+// MDX: entry/server.ts
 import renderFactory, {
   createRoutes,
   renderToString,
@@ -555,16 +560,19 @@ Same bundle, same behavior, just pick your runtime:
 :::tabs key:runtime variant:code
 == Node
 ```sh
+# Node
 node dist/front/ssr/server.js -p 4556
 ```
 
 == Bun
 ```sh
+# Bun
 bun dist/front/ssr/server.js -p 4556
 ```
 
 == Deno
 ```sh
+# Deno
 deno run -A dist/front/ssr/server.js -p 4556
 ```
 :::

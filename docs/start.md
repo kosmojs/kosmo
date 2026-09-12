@@ -108,6 +108,7 @@ Replace the seeded content with something real:
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/users/[id]/index.ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -120,6 +121,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 
 == H3
 ```ts
+// H3: api/users/[id]/index.ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -132,6 +134,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 
 == Koa
 ```ts
+// Koa: api/users/[id]/index.ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -156,6 +159,7 @@ React, SolidJS, and Vue fetch in the component here; Svelte and MDX read through
 :::tabs key:frontend variant:code
 == React
 ```tsx
+// React: pages/users/[id]/index.tsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import fetchClients from "_/fetch";
@@ -176,6 +180,7 @@ export default function UserPage() {
 
 == Solid
 ```tsx
+// Solid: pages/users/[id]/index.tsx
 import { useParams } from "@solidjs/router";
 import { createAsync } from "@solidjs/router";
 import fetchClients from "_/fetch";
@@ -194,6 +199,7 @@ export default function UserPage() {
 
 == Vue
 ```vue
+<!-- Vue: pages/users/[id]/index.vue -->
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
@@ -214,6 +220,7 @@ onMounted(async () => { user.value = await GET([route.params.id]); });
 
 == Svelte
 ```svelte
+<!-- Svelte: pages/users/[id]/index.svelte -->
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
@@ -233,6 +240,7 @@ const user = useLoaderData();
 
 == MDX
 ```mdx
+// MDX: pages/users/[id]/index.mdx
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 

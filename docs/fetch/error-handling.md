@@ -77,6 +77,7 @@ A layout-level boundary for each framework:
 :::tabs key:frontend variant:code
 == React
 ```tsx
+// React: pages/dashboard/layout.tsx
 import { ErrorBoundary } from "react-error-boundary";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -97,6 +98,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
 == Solid
 ```tsx
+// Solid: pages/dashboard/layout.tsx
 import { ErrorBoundary, type ParentProps } from "solid-js";
 
 export default function Layout(props: ParentProps) {
@@ -117,6 +119,7 @@ export default function Layout(props: ParentProps) {
 
 == Vue
 ```vue
+<!-- Vue: pages/dashboard/layout.vue -->
 <script setup lang="ts">
 import { ref, onErrorCaptured } from "vue";
 
@@ -141,6 +144,7 @@ const reset = () => (error.value = null);
 
 == Svelte
 ```svelte
+<!-- Svelte: pages/dashboard/layout.svelte -->
 <script lang="ts">
   let { children } = $props();
 </script>
@@ -159,6 +163,7 @@ const reset = () => (error.value = null);
 
 == MDX
 ```tsx
+// MDX: pages/dashboard/layout.mdx
 import { useErrorBoundary } from "preact/hooks";
 import type { ComponentChildren } from "preact";
 

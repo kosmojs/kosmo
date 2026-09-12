@@ -49,6 +49,7 @@ Reads the result of the page's `loader` export, resolved before render.
 :::tabs key:frontend variant:code
 == Vue
 ```vue
+<!-- Vue: pages/users/[id]/index.vue -->
 <script setup lang="ts">
 import { useLoaderData } from "_/use";
 import type { ResponseT } from "_/fetch";
@@ -59,6 +60,7 @@ const user = useLoaderData<ResponseT["users/[id]"]["GET"]>();
 
 == Svelte
 ```svelte
+<!-- Svelte: pages/users/[id]/index.svelte -->
 <script lang="ts">
 import { useLoaderData } from "_/use";
 import type { ResponseT } from "_/fetch";
@@ -69,11 +71,12 @@ const user = useLoaderData<ResponseT["users/[id]"]["GET"]>();
 
 == MDX
 ```mdx
+// MDX: pages/users/[id]/index.mdx
 import { useLoaderData } from "_/use";
-import type { ResponseT } from "_/fetch";
 
 export const Profile = () => {
-  const user = useLoaderData<ResponseT["users/[id]"]["GET"]>();
+  // .mdx is not TypeScript - no type argument, the result is untyped
+  const user = useLoaderData();
   return <p>{user?.name}</p>;
 };
 
@@ -106,8 +109,12 @@ const data = useLoaderData("dashboard/layout");   // pages/dashboard/layout.*
 useParams<RouteName>(): ParamsMap[RouteName]
 ```
 
-Svelte and MDX only. Pass the route name as a type argument and the params come back typed for that route -
-required params as values, optional ones possibly `undefined`, a splat as an array:
+Svelte and MDX only.
+
+On Svelte, pass the route name as a type argument and the params come back typed for that route -
+required params as values, optional ones possibly `undefined`, a splat as an array or `undefined`.
+
+An MDX page calls `useParams()` with no type argument and gets the same values untyped:
 
 ```svelte
 <script lang="ts">
@@ -141,6 +148,9 @@ which is exactly the order a fetch client expects:
 const [keys, values] = useParamsEntries<"users/[id]/posts/[postId]">();
 await fetchClients["users/[id]/posts/[postId]"].GET(values);
 ```
+
+In MDX, call `useParamsEntries()` without the type argument -
+the returned order is still correct, it is just untyped.
 
 Prefer this over rebuilding an array from `useParams()`.
 Object key order is insertion order in practice, but it is not tied to how the route declares its parameters -

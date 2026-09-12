@@ -51,7 +51,7 @@ structural here instead.
 | `routeTree.gen.ts` | nothing to register - filesystem is the [route tree](/routing/intro) |
 | `revalidatePath` / `revalidateTag` / ISR | no equivalent - cache at CDN/proxy, or SSG |
 | `next/image`, `next/font` | no equivalent - bring your own |
-| `next/link` | typed [Link](/frontend/link-navigation) |
+| `next/link` | typed [Link](/frontend/link-navigation) component |
 | `next/head` / `metadata` | MDX frontmatter, or the SSR entry's `head` |
 | `next.config.js` | per-folder [kosmo.config.ts](/essentials/config) (it *is* the Vite config) |
 | `next start` | [node dist/run.js -p 4556](/dev-build-run/building-for-production) |

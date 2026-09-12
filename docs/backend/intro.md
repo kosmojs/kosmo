@@ -59,18 +59,21 @@ Only `app.ts` differs between backends, and only in how the error handler attach
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/app.ts
 export default appFactory(routes, ({ app }) => {
   app.onError(defaultErrorHandler);
 });
 ```
 == H3
 ```ts
+// H3: api/app.ts
 export default appFactory(routes, ({ app }) => {
   app.use(onError(defaultErrorHandler));
 });
 ```
 == Koa
 ```ts
+// Koa: api/app.ts
 export default appFactory(routes, ({ app }) => {
   app.use(defaultErrorHandler);
 });

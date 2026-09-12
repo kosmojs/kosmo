@@ -32,7 +32,7 @@ so out of the box your app behaves exactly like a plain shell.
 :::tabs key:frontend variant:code
 == React
 ```tsx
-// app.tsx
+// React: app.tsx
 import { Outlet } from "react-router";
 import { AppProvider } from "_/app";
 
@@ -47,7 +47,7 @@ export default function App() {
 
 == Solid
 ```tsx
-// app.tsx
+// Solid: app.tsx
 import type { ParentComponent } from "solid-js";
 import { AppProvider } from "_/app";
 
@@ -60,7 +60,7 @@ export default app;
 
 == Vue
 ```vue
-<!-- app.vue -->
+<!-- Vue: app.vue -->
 <script setup lang="ts">
 import { AppProvider } from "_/app";
 </script>
@@ -74,7 +74,7 @@ import { AppProvider } from "_/app";
 
 == Svelte
 ```svelte
-<!-- app.svelte -->
+<!-- Svelte: app.svelte -->
 <script lang="ts">
   import type { Snippet } from "svelte";
   import { AppProvider } from "_/app";
@@ -88,7 +88,7 @@ import { AppProvider } from "_/app";
 
 == MDX
 ```mdx
-// app.mdx
+// MDX: app.mdx
 import { AppProvider } from "_/app";
 
 <AppProvider>{props.children}</AppProvider>
@@ -121,6 +121,7 @@ The callback must return two functions:
 :::tabs key:frontend variant:code
 == React
 ```tsx
+// React: router.ts
 import routerFactory, { createRouters } from "_/router";
 
 import app from "./app";
@@ -140,6 +141,7 @@ export default routerFactory((routes) => {
 
 == Solid
 ```tsx
+// Solid: router.ts
 import routerFactory, { createRouters } from "_/router";
 
 import app from "./app";
@@ -159,6 +161,7 @@ export default routerFactory((routes) => {
 
 == Vue
 ```ts
+// Vue: router.ts
 import routerFactory, { createRouters } from "_/router";
 import { appProvider } from "_/app";
 
@@ -182,6 +185,7 @@ export default routerFactory((routes) => {
 
 == Svelte
 ```svelte
+<!-- Svelte: router.ts -->
 import routerFactory, { createRouters } from "_/router";
 
 import app from "./app.svelte";
@@ -201,6 +205,7 @@ export default routerFactory((routes) => {
 
 == MDX
 ```tsx
+// MDX: router.ts
 import routerFactory, { createRouters } from "_/router";
 
 import app from "./app.mdx";
@@ -247,6 +252,7 @@ correct method: `hydrate()` for SSR hydration, `mount()` for a fresh client-only
 :::tabs key:frontend variant:code
 == React
 ```tsx
+// React: entry/client.ts
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -278,6 +284,7 @@ if (root) {
 
 == Solid
 ```tsx
+// Solid: entry/client.ts
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -309,6 +316,7 @@ if (root) {
 
 == Vue
 ```ts
+// Vue: entry/client.ts
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -340,6 +348,7 @@ if (root) {
 
 == Svelte
 ```svelte
+<!-- Svelte: entry/client.ts -->
 import renderFactory, {
   createRoutes,
   hydrate,
@@ -371,6 +380,7 @@ if (root) {
 
 == MDX
 ```tsx
+// MDX: entry/client.ts
 import renderFactory, {
   createRoutes,
   hydrate,

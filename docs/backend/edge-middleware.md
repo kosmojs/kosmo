@@ -42,7 +42,7 @@ They should have got a `401`.
 :::tabs key:backend variant:code
 == Hono
 ```ts
-// api/use.ts
+// Hono: api/use.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
 import { use } from "_/api";
@@ -62,7 +62,7 @@ export default [
 
 == H3
 ```ts
-// api/use.ts
+// H3: api/use.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
 import { use } from "_/api";
@@ -82,7 +82,7 @@ export default [
 
 == Koa
 ```ts
-// api/use.ts
+// Koa: api/use.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
 import { use } from "_/api";
@@ -184,7 +184,7 @@ no `use()`, no slot, nothing imported from `_/api`:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-// api/app.ts
+// Hono: api/app.ts
 import appFactory, { routes } from "_/api:factory";
 import defaultErrorHandler from "./errors";
 
@@ -201,7 +201,7 @@ export default appFactory(routes, ({ app }) => {
 
 == H3
 ```ts
-// api/app.ts
+// H3: api/app.ts
 import { onError } from "h3";
 
 import appFactory, { routes } from "_/api:factory";
@@ -220,7 +220,7 @@ export default appFactory(routes, ({ app }) => {
 
 == Koa
 ```ts
-// api/app.ts
+// Koa: api/app.ts
 import appFactory, { routes } from "_/api:factory";
 import defaultErrorHandler from "./errors";
 

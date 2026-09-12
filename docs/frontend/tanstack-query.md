@@ -28,7 +28,7 @@ import { defineConfig } from "@kosmojs/dev";
 export default defineConfig({
   frontend: {
     stack: "react",
-    base: "/front",
+    base: "/",
     ssr: true,
     tanstack: { query: true }, // [!code hl]
   },
@@ -81,6 +81,7 @@ data ready during SSR.
 :::tabs key:frontend variant:code
 == React
 ```tsx
+// React: components/User.tsx
 import { useQuery } from "@tanstack/react-query";
 import fetchClients from "_/fetch";
 
@@ -99,6 +100,7 @@ export default function User({ id }: { id: string }) {
 
 == Solid
 ```tsx
+// Solid: components/User.tsx
 import { Show } from "solid-js";
 import { useQuery } from "@tanstack/solid-query";
 import fetchClients from "_/fetch";
@@ -122,6 +124,7 @@ export default function User(props: { id: string }) {
 
 == Vue
 ```vue
+<!-- Vue: components/User.vue -->
 <script setup lang="ts">
 import { useQuery } from "@tanstack/vue-query";
 import fetchClients from "_/fetch";
@@ -143,6 +146,7 @@ const { data, isPending } = useQuery({
 
 == Svelte
 ```svelte
+<!-- Svelte: components/User.svelte -->
 <script lang="ts">
   // Svelte uses createQuery (not useQuery) and takes a thunk
   import { createQuery } from "@tanstack/svelte-query";
@@ -205,6 +209,7 @@ Sketches per framework - see the official guides above for the full picture:
 :::tabs key:frontend variant:code
 == React
 ```tsx
+// React: pages/users/[id]/index.tsx
 // Prefetch in the loader, dehydrate, then wrap the page in HydrationBoundary.
 // https://tanstack.com/query/latest/docs/framework/react/guides/ssr
 import { dehydrate, HydrationBoundary, useQuery } from "@tanstack/react-query";
@@ -243,6 +248,7 @@ export default function Page() {
 
 == Solid
 ```tsx
+// Solid: pages/users/[id]/index.tsx
 // Solid Query rehydrates through Solid's generateHydrationScript(),
 // which the SSR entry already emits - so there is no HydrationBoundary to place.
 // Prefetch into the request client and the cache crosses to the browser automatically.
@@ -272,6 +278,7 @@ export default function Page() {
 
 == Vue
 ```vue
+<!-- Vue: pages/users/[id]/index.vue -->
 <!-- Prefetch + dehydrate in the loader; hydrate the page's script setup.
      https://tanstack.com/query/latest/docs/framework/vue/guides/ssr -->
 <script lang="ts">
@@ -314,6 +321,7 @@ const { data } = useQuery(queryOptions(route.params.id as string));
 
 == Svelte
 ```svelte
+<!-- Svelte: pages/users/[id]/index.svelte -->
 <!-- Prefetch + dehydrate in the loader; wrap the page in HydrationBoundary.
      https://tanstack.com/query/latest/docs/framework/svelte/ssr -->
 <script module lang="ts">
@@ -367,6 +375,7 @@ alone cannot do without re-navigating.
 :::tabs key:frontend variant:code
 == React
 ```tsx
+// React: components/RenameUser.tsx
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClients from "_/fetch";
 
@@ -384,6 +393,7 @@ export default function RenameUser({ id }: { id: string }) {
 
 == Solid
 ```tsx
+// Solid: components/RenameUser.tsx
 // Solid's hooks take a thunk, like useQuery above
 import { useMutation, useQueryClient } from "@tanstack/solid-query";
 import fetchClients from "_/fetch";
@@ -402,6 +412,7 @@ export default function RenameUser(props: { id: string }) {
 
 == Vue
 ```vue
+<!-- Vue: components/RenameUser.vue -->
 <script setup lang="ts">
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import fetchClients from "_/fetch";
@@ -424,6 +435,7 @@ const rename = useMutation({
 
 == Svelte
 ```svelte
+<!-- Svelte: components/RenameUser.svelte -->
 <script lang="ts">
   // Svelte uses createMutation (not useMutation) and takes a thunk
   import { createMutation, useQueryClient } from "@tanstack/svelte-query";
@@ -465,7 +477,7 @@ Where you call it differs slightly by framework - it goes wherever your app is c
 :::tabs key:frontend variant:code
 == React
 ```tsx
-// app.tsx - pass the configured client to the provider's `client` prop
+// React: app.tsx - pass the configured client to the provider's `client` prop
 import { AppProvider } from "_/app";
 import { createQueryClient } from "_/query";
 import { Outlet } from "react-router";
@@ -485,7 +497,7 @@ export default function App() {
 
 == Solid
 ```tsx
-// app.tsx - pass the configured client to the provider's `client` prop
+// Solid: app.tsx - pass the configured client to the provider's `client` prop
 import { AppProvider } from "_/app";
 import { createQueryClient } from "_/query";
 import type { ParentComponent } from "solid-js";
@@ -503,7 +515,7 @@ export default app;
 
 == Vue
 ```vue
-<!-- app.vue - call createQueryClient in <script setup>; the provider resolves it -->
+<!-- Vue: app.vue - call createQueryClient in <script setup>; the provider resolves it -->
 <script setup lang="ts">
 import { AppProvider } from "_/app";
 import { createQueryClient } from "_/query";
@@ -520,7 +532,7 @@ createQueryClient({ defaultOptions: { queries: { staleTime: 60_000 } } });
 
 == Svelte
 ```svelte
-<!-- app.svelte - pass the configured client to the provider's `client` prop -->
+<!-- Svelte: app.svelte - pass the configured client to the provider's `client` prop -->
 <script lang="ts">
   import { AppProvider } from "_/app";
   import { createQueryClient } from "_/query";

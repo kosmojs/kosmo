@@ -150,6 +150,7 @@ Create `api/users/[id]/index.ts` - KosmoJS detects the file and seeds boilerplat
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/users/[id]/index.ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -161,6 +162,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 
 == H3
 ```ts
+// H3: api/users/[id]/index.ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -172,6 +174,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 
 == Koa
 ```ts
+// Koa: api/users/[id]/index.ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -189,6 +192,7 @@ Replace with real logic:
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/users/[id]/index.ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -202,6 +206,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 
 == H3
 ```ts
+// H3: api/users/[id]/index.ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -215,6 +220,7 @@ export default defineRoute<"users/[id]">(({ GET }) => [
 
 == Koa
 ```ts
+// Koa: api/users/[id]/index.ts
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users/[id]">(({ GET }) => [
@@ -274,6 +280,7 @@ Body targets (mutually exclusive, POST/PUT/PATCH only): `json` · `form` · `raw
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/users/index.ts
 import type { CreateUserPayload, User } from "./types";
 
 export default defineRoute<"users">(({ POST }) => [
@@ -289,6 +296,7 @@ export default defineRoute<"users">(({ POST }) => [
 
 == H3
 ```ts
+// H3: api/users/index.ts
 import type { CreateUserPayload, User } from "./types";
 
 export default defineRoute<"users">(({ POST }) => [
@@ -304,6 +312,7 @@ export default defineRoute<"users">(({ POST }) => [
 
 == Koa
 ```ts
+// Koa: api/users/index.ts
 import type { CreateUserPayload, User } from "./types";
 
 export default defineRoute<"users">(({ POST }) => [
@@ -373,6 +382,7 @@ Invalid requests are caught before they leave the browser:
 :::tabs key:frontend variant:code
 == React
 ```tsx
+// React: pages/users/[id]/index.tsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import fetchClients from "_/fetch";
@@ -389,6 +399,7 @@ export default function UserPage() {
 
 == Solid
 ```tsx
+// Solid: pages/users/[id]/index.tsx
 import { useParams, createAsync } from "@solidjs/router";
 import fetchClients from "_/fetch";
 
@@ -403,6 +414,7 @@ export default function UserPage() {
 
 == Vue
 ```vue
+<!-- Vue: pages/users/[id]/index.vue -->
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
@@ -417,6 +429,7 @@ onMounted(async () => { user.value = await GET([route.params.id]); });
 
 == Svelte
 ```svelte
+<!-- Svelte: pages/users/[id]/index.svelte -->
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
@@ -435,6 +448,7 @@ const user = useLoaderData();
 
 == MDX
 ```mdx
+// MDX: pages/users/[id]/index.mdx
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 

@@ -37,7 +37,7 @@ src/<folder>/
 │   └── server.ts         -> renderToString / renderToStream  (SSR only)
 │
 ├── components/
-│   └── Link.tsx          -> typed Link component
+│   └── Link.tsx          -> type-safe navigation component
 │
 └── pages/
     ├── 404.tsx           -> rendered for unmatched routes

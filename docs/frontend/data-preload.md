@@ -30,6 +30,7 @@ export type UserData = {
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// Hono: api/users/data/index.ts
 import { defineRoute } from "_/api";
 import type { UserData } from "./types";
 
@@ -42,6 +43,7 @@ export default defineRoute<"users/data">(({ GET }) => [
 
 == H3
 ```ts
+// H3: api/users/data/index.ts
 import { defineRoute } from "_/api";
 import type { UserData } from "./types";
 
@@ -54,6 +56,7 @@ export default defineRoute<"users/data">(({ GET }) => [
 
 == Koa
 ```ts
+// Koa: api/users/data/index.ts
 import { defineRoute } from "_/api";
 import type { UserData } from "./types";
 
@@ -74,6 +77,7 @@ and, on the client, an entry in the `ResponseT` map.
 :::tabs key:frontend variant:code
 == React
 ```tsx
+// React: pages/users/data/index.tsx
 import { useLoaderData } from "react-router";
 import fetchClients from "_/fetch";
 
@@ -97,6 +101,7 @@ export default function Page() {
 
 == Solid
 ```tsx
+// Solid: pages/users/data/index.tsx
 import { Suspense } from "solid-js";
 import { createAsync, query } from "@solidjs/router";
 import fetchClients from "_/fetch";
@@ -126,6 +131,7 @@ export default function Page() {
 
 == Vue
 ```vue
+<!-- Vue: pages/users/data/index.vue -->
 <script lang="ts">
 import fetchClients from "_/fetch";
 
@@ -152,6 +158,7 @@ const data = useLoaderData();
 
 == Svelte
 ```svelte
+<!-- Svelte: pages/users/data/index.svelte -->
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
@@ -176,6 +183,7 @@ const data = useLoaderData();
 
 == MDX
 ```mdx
+// MDX: pages/users/data/index.mdx
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 
