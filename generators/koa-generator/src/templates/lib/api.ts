@@ -4,6 +4,7 @@ import type { Next } from "koa";
 import type { ValidationDefmap, ValidationOptmap } from "@kosmojs/core";
 import {
   use as createUse,
+  type DefaultUseSlots,
   type ExtendContext,
   type HandlerDefinition,
   type HTTPMethod,
@@ -17,6 +18,7 @@ import type { RouteMap } from "./@api/routes";
 
 export interface DefaultState {}
 export interface DefaultContext {}
+export interface UseSlots extends DefaultUseSlots {}
 
 type ExtractBodies<R> = R extends [number, string, infer Body] ? Body : never;
 
@@ -111,12 +113,12 @@ export const use = <StateT = DefaultState>(
   middleware:
     | ParameterizedMiddleware<Record<string, string>, StateT>
     | Array<ParameterizedMiddleware<Record<string, string>, StateT>>,
-  options?: UseOptions,
+  options?: UseOptions<keyof UseSlots>,
 ) => {
-  return createUse<ParameterizedMiddleware<Record<string, string>, StateT>>(
-    middleware,
-    options,
-  );
+  return createUse<
+    ParameterizedMiddleware<Record<string, string>, StateT>,
+    UseOptions<keyof UseSlots>
+  >(middleware, options);
 };
 
 export const defineRoute: <

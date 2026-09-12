@@ -1,4 +1,5 @@
 export declare module "{{ createImport 'libApi' }}" {
   interface DefaultState {}
   interface DefaultContext {}
+  interface UseSlots {}
 }

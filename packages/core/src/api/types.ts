@@ -38,7 +38,7 @@ export type RouteDefinitionItem<MiddlewareT> =
   | MiddlewareDefinition<MiddlewareT>
   | HandlerDefinition<MiddlewareT>;
 
-export interface UseSlots {
+export interface DefaultUseSlots {
   edge: string;
   [slot: `edge:${string}`]: string;
   "validate:params": string;
@@ -51,9 +51,9 @@ export interface UseSlots {
   "validate:response": string;
 }
 
-export type UseOptions = {
+export type UseOptions<S extends string = `${string}`> = {
   on?: Array<HTTPMethod>;
-  slot?: keyof UseSlots;
+  slot?: S;
   debug?: string | undefined;
 };
 

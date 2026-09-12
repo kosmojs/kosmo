@@ -3,6 +3,7 @@ import type { H3Event, H3EventContext } from "h3";
 import type { ValidationDefmap, ValidationOptmap } from "@kosmojs/core";
 import {
   use as createUse,
+  type DefaultUseSlots,
   type ExtendContext,
   type HandlerDefinition,
   type HTTPMethod,
@@ -14,6 +15,7 @@ import {
 import type { RouteMap } from "./@api/routes";
 
 export interface DefaultContext extends H3EventContext {}
+export interface UseSlots extends DefaultUseSlots {}
 
 type MaybePromise<T = unknown> = T | Promise<T>;
 
@@ -99,12 +101,12 @@ export const use = <ContextT = DefaultContext>(
   middleware:
     | ParameterizedMiddleware<Record<string, string>, ContextT>
     | Array<ParameterizedMiddleware<Record<string, string>, ContextT>>,
-  options?: UseOptions,
+  options?: UseOptions<keyof UseSlots>,
 ) => {
-  return createUse<ParameterizedMiddleware<Record<string, string>, ContextT>>(
-    middleware,
-    options,
-  );
+  return createUse<
+    ParameterizedMiddleware<Record<string, string>, ContextT>,
+    UseOptions<keyof UseSlots>
+  >(middleware, options);
 };
 
 export const defineRoute: <

@@ -10,7 +10,6 @@ import type {
   ResponseResolver,
   Route,
   RouteSource,
-  UseSlots,
 } from "./types";
 import { use } from "./use";
 import { createValidationMiddleware, StateKey } from "./validation";
@@ -45,7 +44,7 @@ export const createRoutes = <MiddlewareT, MiddlewareR>(
   },
 ): Array<Route<MiddlewareR>> => {
   // NOTE:: prioritized middleware must run in this exact order!
-  const prioritizedSlots: Array<keyof UseSlots | RegExp> = [
+  const prioritizedSlots = [
     "edge",
     /^edge:.+/,
     "validate:params",

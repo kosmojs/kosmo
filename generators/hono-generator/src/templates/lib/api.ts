@@ -3,6 +3,7 @@ import type { Context, Next } from "hono";
 import type { ValidationDefmap, ValidationOptmap } from "@kosmojs/core";
 import {
   use as createUse,
+  type DefaultUseSlots,
   type ExtendContext,
   type HandlerDefinition,
   type HTTPMethod,
@@ -16,6 +17,7 @@ import type { RouteMap } from "./@api/routes";
 
 export interface DefaultVariables {}
 export interface DefaultBindings {}
+export interface UseSlots extends DefaultUseSlots {}
 
 type ExtractJsonBody<R> = R extends [
   number,
@@ -72,12 +74,12 @@ export const use = <VariablesT = DefaultVariables>(
   middleware:
     | ParameterizedMiddleware<Record<string, string>, VariablesT>
     | Array<ParameterizedMiddleware<Record<string, string>, VariablesT>>,
-  options?: UseOptions,
+  options?: UseOptions<keyof UseSlots>,
 ) => {
-  return createUse<ParameterizedMiddleware<Record<string, string>, VariablesT>>(
-    middleware,
-    options,
-  );
+  return createUse<
+    ParameterizedMiddleware<Record<string, string>, VariablesT>,
+    UseOptions<keyof UseSlots>
+  >(middleware, options);
 };
 
 export type RouteHandler<

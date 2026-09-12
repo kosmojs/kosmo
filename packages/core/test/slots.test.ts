@@ -8,16 +8,6 @@ import type {
 } from "#/api/types";
 import { use } from "#/api/use";
 
-/**
- * Custom slot names are declared by the project in `api/env.d.ts`;
- * this is the same augmentation, scoped to the test.
- * */
-declare module "#/api/types" {
-  interface UseSlots {
-    logger: string;
-  }
-}
-
 type Middleware = (ctx: unknown, next: Function) => unknown;
 
 /**
