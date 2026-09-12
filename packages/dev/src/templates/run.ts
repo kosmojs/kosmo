@@ -20,7 +20,14 @@
  * Authored as TypeScript, deployed with types stripped;
  * */
 
-import { chmod, readdir, readFile, unlink } from "node:fs/promises";
+import {
+  access,
+  chmod,
+  constants,
+  readdir,
+  readFile,
+  unlink,
+} from "node:fs/promises";
 import type { IncomingMessage, Server, ServerResponse } from "node:http";
 import { createServer } from "node:http";
 import { extname, join, posix, resolve } from "node:path";
@@ -67,8 +74,19 @@ const readFolders = async (): Promise<Array<Folder>> => {
     }
 
     const dir = join(ROOT, entry.name);
+    const manifestFile = join(dir, "kosmo.json");
 
-    const { default: manifest } = await import(join(dir, "kosmo.json"), {
+    const manifestFileExists = await access(manifestFile, constants.F_OK).then(
+      () => true,
+      () => false,
+    );
+
+    if (!manifestFileExists) {
+      // not a kosmo folder, ignore
+      continue;
+    }
+
+    const { default: manifest } = await import(manifestFile, {
       with: { type: "json" },
     });
 
