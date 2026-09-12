@@ -10,6 +10,7 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
+    "build": "pnpm -r --filter '!docs' build",
     "test": "vitest run",
     "test:unit": "vitest run --project=packages/* --project=generators/*",
     "test:unit:generators": "vitest run --project=generators/*",
