@@ -15,7 +15,7 @@ Once that clicks, the rest of the docs read much faster.
 ```txt
 my-app/
 ├── package.json          -> project settings: distDir, devPort, previewPort, scripts
-├── tsconfig.json         -> { "extends": "./lib/tsconfig.json" }
+├── tsconfig.json         -> minimal config with an empty `include`
 │
 ├── src/                  ✍️  YOU WRITE THIS
 │   ├── front/            ->   one source folder
@@ -72,7 +72,7 @@ src/front/
 │           └── index.tsx -> the route  ->  /users/:id
 │
 ├── components/
-│   └── Link.tsx          -> typed Link component
+│   └── Link.tsx          -> type-safe navigation component
 │
 └── entry/
     ├── client.ts         -> mount / hydrate in the browser

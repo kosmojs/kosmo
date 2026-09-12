@@ -6,7 +6,16 @@ import {
 import llmstxtPlugin from "vitepress-plugin-llms";
 import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 
-const redirects: Array<[string, string]> = [];
+// retired URL -> its replacement, both as site-absolute .html paths
+const redirects: Array<[string, string]> = [
+  // CLI moved
+  ["/essentials/cli.html", "/cli/intro.html"],
+];
+
+// the URL a page is published at, to match a redirect key against
+const pageUrl = (relativePath: string) => {
+  return `/${relativePath.replace(/\.md$/, ".html")}`;
+};
 
 export default defineConfig({
   lang: "en-US",
@@ -42,7 +51,8 @@ export default defineConfig({
   transformPageData(pageData) {
     pageData.frontmatter.head ??= [];
 
-    const redirect = redirects.find(([old]) => old === pageData.relativePath);
+    const url = pageUrl(pageData.relativePath);
+    const redirect = redirects.find(([old]) => old === url);
 
     // mark .html URLs as canonical - for a redirect stub that is the target,
     // otherwise the retired URL competes with the page it points at
@@ -50,16 +60,13 @@ export default defineConfig({
       "link",
       {
         rel: "canonical",
-        href: `https://kosmojs.dev/${redirect ? redirect[1] : pageData.relativePath.replace(/\.md$/, ".html")}`,
+        href: `https://kosmojs.dev${redirect ? redirect[1] : url}`,
       },
     ]);
 
     if (redirect) {
       pageData.frontmatter.head.push(
-        [
-          "meta",
-          { "http-equiv": "refresh", content: `0; url=/${redirect[1]}` },
-        ],
+        ["meta", { "http-equiv": "refresh", content: `0; url=${redirect[1]}` }],
         ["meta", { name: "robots", content: "noindex" }],
       );
     }
@@ -119,7 +126,15 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [llmstxtPlugin() as never, groupIconVitePlugin() as never],
+    plugins: [
+      llmstxtPlugin({
+        // redirect stubs carry no content - keep them out of llms.txt
+        ignoreFiles: redirects.map(([from]) => {
+          return from.replace(/^\//, "").replace(/\.html$/, ".md");
+        }),
+      }) as never,
+      groupIconVitePlugin() as never,
+    ],
   },
 
   markdown: {
@@ -163,6 +178,11 @@ export default defineConfig({
         link: "/essentials/config",
         activeMatch: "^/essentials/config",
       },
+      {
+        text: "CLI",
+        link: "/cli/intro",
+        activeMatch: "^/cli/",
+      },
     ],
 
     sidebar: {
@@ -179,10 +199,6 @@ export default defineConfig({
               text: "Configuration",
               docFooterText: "kosmo.config.ts",
               link: "/essentials/config",
-            },
-            {
-              text: "CLI",
-              link: "/essentials/cli",
             },
             {
               text: "Framework Support",
@@ -203,6 +219,47 @@ export default defineConfig({
               text: "Why Codegen",
               docFooterText: "Why Codegen",
               link: "/essentials/why-codegen",
+            },
+          ],
+        },
+        {
+          text: "CLI",
+          collapsed: false,
+          items: [
+            {
+              text: "Overview",
+              docFooterText: "CLI",
+              link: "/cli/intro",
+            },
+            {
+              text: "create kosmo",
+              docFooterText: "create kosmo",
+              link: "/cli/create",
+            },
+            {
+              text: "kosmo folder",
+              docFooterText: "kosmo folder",
+              link: "/cli/folder",
+            },
+            {
+              text: "kosmo serve",
+              docFooterText: "kosmo serve",
+              link: "/cli/serve",
+            },
+            {
+              text: "kosmo preview",
+              docFooterText: "kosmo preview",
+              link: "/cli/preview",
+            },
+            {
+              text: "kosmo build",
+              docFooterText: "kosmo build",
+              link: "/cli/build",
+            },
+            {
+              text: "kosmo typecheck",
+              docFooterText: "kosmo typecheck",
+              link: "/cli/typecheck",
             },
           ],
         },

@@ -49,14 +49,14 @@ the choice is always explicit; a missing flag is an error, never a silent defaul
 
 Optional: `--ssr`, `--ssg`, `--tsq`, `--overwrite`.
 The first folder is always `app`, with pages at `/` and its API at `/api`.
-[Full flag reference&nbsp;›](/essentials/cli#cli-mode)
+[Full flag reference&nbsp;›](/cli/create#cli-mode)
 
 Use `.` as the project name to scaffold into the current folder: `npm create kosmo . -- --frontend ...`
 [Details&nbsp;›](/start)
 
 #### How do I add a source folder?
 Run `npm run folder` (or `pnpm folder` / `yarn folder`) - interactively, or with flags.
-[Details&nbsp;›](/essentials/cli#adding-a-source-folder)
+[Details&nbsp;›](/cli/folder)
 
 #### What am I prompted for when adding a source folder?
 Frontend, backend, SSR, SSG (only if SSR is on) and TanStack Query.
@@ -66,7 +66,7 @@ Non-interactive: the name is a positional, plus
 Frontend and backend each require a value or its negation flag,
 and the name is required here - unlike at project creation, it has no default.
 The folder gets pages at `/<name>` and its API at `/<name>/api`.
-[Details&nbsp;›](/essentials/cli#adding-a-source-folder)
+[Details&nbsp;›](/cli/folder)
 
 #### How do I create a backend-only (API) folder, or a frontend-only folder?
 A source folder doesn't have to ship both sides - framework and backend are independent, and each is optional.
@@ -81,7 +81,7 @@ pnpm folder docs --frontend mdx  --no-backend   # frontend-only, no backend
 ```
 
 The seeded `kosmo.config.ts` contains only the block that side needs.
-[Details&nbsp;›](/essentials/cli#adding-a-source-folder)
+[Details&nbsp;›](/cli/folder)
 
 #### Can I create a project without a source folder?
 No - every project starts with its first source folder; omitting the name positional just falls back to the default (`app`, pages at `/`, API at `/api`).
@@ -1024,14 +1024,36 @@ which most codebases coming from looser configs notice immediately.
 Relaxing it - or any other strictness flag - is a per-folder choice and only affects that folder's typecheck.
 
 #### How do I typecheck?
-`pnpm typecheck` - same shape as `dev` and `build`: no arguments checks every source folder,
-folder names check just those (`pnpm typecheck admin front`).
+`pnpm typecheck` - the same shape as `dev` and `build`:
+no arguments checks every source folder, folder names check just those (`pnpm typecheck admin front`).
+It takes one extra argument the others do not: `.` for the project root.
 
 Each folder is checked against its own `tsconfig.json` - that's where JSX and framework settings live.
 
-There is no project-level typecheck because there is no project-level deliverable:
-source folders are what you build and deploy, so they are also the unit of typechecking.
-[Details&nbsp;›](/essentials/cli#typecheck-kosmo-typecheck)
+Every selected tsconfig is checked even if an earlier one fails,
+so a single run reports all of them rather than stopping at the first.
+The command exits `1` if any of them reported errors, which makes it usable as a CI gate directly.
+
+A full run also checks the project root, so code outside `src/` is covered.
+That run is opt-in: the root `tsconfig.json` ships with an empty `include`,
+and stays skipped until you list what belongs to it.
+The folders are checked separately rather than in one pass because each has its own path mappings -
+one `tsc` over everything would resolve `_/` against the wrong folder.
+[Details&nbsp;›](/cli/typecheck)
+
+#### How do I typecheck only the project root?
+`pnpm typecheck .` meaning the project root rather than a source folder.
+
+Naming folders drops the root, so `pnpm typecheck admin` checks that folder only.
+`.` puts it back: on its own it checks the root and nothing else,
+and alongside folder names it adds the root to them - `pnpm typecheck . admin` checks both.
+
+Useful after touching a script or a shared package while `src/` is untouched.
+
+The root's `tsconfig.json` decides what "the root" covers, so `.` is only meaningful once you have filled its `include` in.
+Ask for it while `include` is still the seeded `[]` and you get a warning that nothing was checked -
+a full run skips the root quietly instead, since having nothing outside `src/` is a normal shape rather than a mistake.
+[Details&nbsp;›](/cli/typecheck#selective-typechecking)
 
 ### Fetch Clients
 

@@ -363,7 +363,7 @@ validation falls back to dynamic checking.
 ## What the scaffolder writes
 
 Rather than assembling this by hand,
-[kosmo folder](/essentials/cli#adding-a-source-folder) writes the right config for your answers - interactively, or from flags.
+[kosmo folder](/cli/folder) writes the right config for your answers - interactively, or from flags.
 It names the bases after the folder: `/<folder>` for the frontend, `/<folder>/api` for the backend.
 
 For reference, these are the configs it produces for a folder named `front`:
@@ -508,7 +508,17 @@ and act on every source folder when given none.
 
 ## TypeScript Config
 
-Each source folder has its own `tsconfig.json` extending a derived base in lib dir:
+The project root has a `tsconfig.json` covering anything you keep outside `src/`.
+It ships with an empty `include`, which also means `kosmo typecheck` skips the root until you fill it in:
+
+```json [tsconfig.json]
+{
+  "extends": "./lib/tsconfig.json",
+  "include": []
+}
+```
+
+Each source folder then has its own `tsconfig.json` extending a derived base in lib dir:
 
 ```json [src/front/tsconfig.json]
 { "extends": "../../lib/front/tsconfig.json" }
