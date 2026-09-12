@@ -1,12 +1,12 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 import type { ResolvedType } from "tfusion";
-import type { UserConfig } from "vite";
 
-export type ViteConfig = Omit<
-  UserConfig,
-  "root" | "base" | "cacheDir" | "mode" | "builder" | "future" | "legacy"
->;
+export type DeepPartial<T> = {
+  [K in keyof T]?: NonNullable<T[K]> extends object
+    ? DeepPartial<NonNullable<T[K]>>
+    : T[K];
+};
 
 export type ResolvedTypeSignature = Omit<ResolvedType, "properties"> & {
   // needed for validation

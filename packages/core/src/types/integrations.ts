@@ -1,13 +1,17 @@
-import type { PluginOption } from "vite";
+import type { PluginOption, UserConfig } from "vite";
 
 import type { BACKENDS, FRONTENDS } from "../defaults";
 import type {
   GeneratorCustomTemplates,
   GeneratorSignature,
 } from "./generators";
-import type { ViteConfig } from "./generic";
 import type { ApiRoute, PageRoute } from "./routes";
 import type { TypeboxSettings, TypeboxValidationMessages } from "./typebox";
+
+export type ViteConfig = Omit<
+  UserConfig,
+  "root" | "base" | "cacheDir" | "mode" | "builder" | "future" | "legacy"
+>;
 
 type FrontendStack = keyof typeof FRONTENDS;
 type BackendStack = keyof typeof BACKENDS;

@@ -12,6 +12,7 @@ import {
   DEFAULT_DIST,
   DEFAULT_PORT,
   DEFAULT_PREVIEW_PORT,
+  type DeepPartial,
   defaults,
   type FolderConfig,
   FRONTENDS,
@@ -176,16 +177,13 @@ export const createProject = async (
 
 export const createFolder = async (
   root: string,
+  name: string,
   {
-    name,
-    base,
     input,
     intro,
     outro,
     note,
   }: {
-    name: string;
-    base?: string;
     input?: {
       frontend?: string;
       "no-frontend"?: boolean;
@@ -201,6 +199,7 @@ export const createFolder = async (
     outro?: (f: SourceFolder) => MaybePromise<string | undefined>;
     note?: (f: SourceFolder) => MaybePromise<string | undefined>;
   },
+  folderDefaults?: DeepPartial<FolderConfig>,
 ): Promise<SourceFolder> => {
   assertNoError(() => validateName(name, "No folder name provided"));
 
@@ -246,9 +245,9 @@ export const createFolder = async (
       });
     }
 
-    const folder = { ...input, name, base } as SourceFolder;
+    const folder = { ...input, name } as SourceFolder;
 
-    await createSourceFolder(root, folder);
+    await createSourceFolder(root, folder, folderDefaults);
 
     if (note) {
       input?.quiet || console.log(await note(folder));
@@ -366,7 +365,7 @@ export const createFolder = async (
       tsq: tsq === true,
     };
 
-    await createSourceFolder(root, folder);
+    await createSourceFolder(root, folder, folderDefaults);
 
     if (note) {
       const output = await note(folder);
@@ -385,7 +384,7 @@ export const createFolder = async (
 export const createSourceFolder = async (
   projectRoot: string,
   folder: SourceFolder,
-  folderDefaults?: FolderConfig,
+  folderDefaults?: DeepPartial<FolderConfig>,
 ) => {
   const folderPath = resolve(projectRoot, defaults.srcDir, folder.name);
 
@@ -403,7 +402,7 @@ export const createSourceFolder = async (
       ? {
           frontend: {
             stack: frontend,
-            base: `/${folder.name}`,
+            base: folderDefaults?.frontend?.base || `/${folder.name}`,
             fetch: true,
             ssr: folder.ssr || folder.ssg ? true : false,
             ssg: folder.ssg ? true : false,
@@ -418,7 +417,7 @@ export const createSourceFolder = async (
       ? {
           backend: {
             stack: backend,
-            base: `/${folder.name}/api`,
+            base: folderDefaults?.backend?.base || `/${folder.name}/api`,
             ...folderDefaults?.backend,
           },
         }

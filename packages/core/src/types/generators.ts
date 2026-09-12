@@ -1,5 +1,6 @@
 import type { UserConfig } from "vite";
 
+import type { DeepPartial } from "./generic";
 import type { FolderConfig, ProjectSettings, SourceFolder } from "./project";
 import type { ResolvedEntry } from "./routes";
 
@@ -101,7 +102,7 @@ export type VirtualModule = {
  * */
 type GeneratorDependencies =
   | Record<string, string>
-  | ((c: FolderConfig) => Record<string, string>);
+  | ((c: DeepPartial<FolderConfig>) => Record<string, string>);
 
 export type GeneratorSignature<Options extends object = object> = {
   meta: GeneratorMeta;

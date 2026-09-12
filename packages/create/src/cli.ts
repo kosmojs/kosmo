@@ -115,28 +115,39 @@ const run = async () => {
     .join("\n");
 
   {
-    const [name, base] = ["app", "/"];
+    const name = "app";
+
+    const folderDefaults = {
+      frontend: { base: "/" },
+      backend: { base: "/api" },
+    };
 
     if (isCLI(Object.keys(values).length)) {
       // cli mode
       await createProject(root, project, { input: values });
-      await createFolder(root, {
+      await createFolder(
+        root,
         name,
-        base,
-        input: values,
-        intro: () => doneText,
-        note: () => nextStepsText,
-      });
+        {
+          input: values,
+          intro: () => doneText,
+          note: () => nextStepsText,
+        },
+        folderDefaults,
+      );
     } else {
       // interactive mode
       await createProject(root, project);
-      await createFolder(root, {
+      await createFolder(
+        root,
         name,
-        base,
-        intro: () => readyText,
-        note: () => nextStepsText,
-        outro: () => doneText,
-      });
+        {
+          intro: () => readyText,
+          note: () => nextStepsText,
+          outro: () => doneText,
+        },
+        folderDefaults,
+      );
     }
   }
 };

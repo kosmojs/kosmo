@@ -121,8 +121,7 @@ const run = async () => {
 
     if (input) {
       // cli mode
-      await createFolder(root, {
-        name,
+      await createFolder(root, name, {
         input,
         intro: () => "",
         note: () => "",
@@ -134,7 +133,7 @@ const run = async () => {
       });
     } else {
       // interactive mode
-      await createFolder(root, { name, intro, note, outro });
+      await createFolder(root, name, { intro, note, outro });
     }
 
     return;
