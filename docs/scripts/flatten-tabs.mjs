@@ -23,7 +23,6 @@
 
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { pathToFileURL } from "node:url";
 
 const FENCE = /^(```+|~~~+)/;
 const HEADING = /^(#{1,6})\s+(.*)$/;
@@ -63,6 +62,7 @@ const flush = (state) => {
   state.out.push(...sections, "");
   state.groups += 1;
   state.panes = null;
+  state.cont = true;
   return state;
 };
 
@@ -72,6 +72,18 @@ const step = (state, line) => {
     sink(state).push(line);
     if (line.startsWith(state.fence)) state.fence = null;
     return state;
+  }
+
+  if (state.cont && line.trim()) {
+    state.cont = false;
+    if (!HEADING.test(line) && !TABS_OPEN.test(line) && state.heading.text) {
+      const level = Math.min(state.heading.level + 1, 6);
+      state.out.push(
+        "",
+        `${"#".repeat(level)} ${state.heading.text} (cont.)`,
+        "",
+      );
+    }
   }
 
   const fence = line.match(FENCE);
@@ -120,6 +132,7 @@ export const flattenTabs = (source) => {
     panes: null,
     fence: null,
     depth: 0,
+    cont: false,
     heading: { level: 2, text: "" },
     groups: 0,
   });
