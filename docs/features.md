@@ -119,7 +119,7 @@ frontend: {
 }
 ```
 
-Available for `React`, `SolidJS`, and `Vue`; `MDX` renders to a string.
+Available for `React`, `SolidJS`, and `Vue`; `Svelte` and `MDX` render to a string.
 
 [Details&nbsp;›](/frontend/server-side-render#stream-rendering)
 
@@ -140,7 +140,7 @@ Slots give you surgical control over middleware composition:
 replace only what needs replacing, inherit everything else.
 Custom slot names are supported by extending the `UseSlots` interface.
 
-[Details&nbsp;›](/backend/middleware)
+[Details&nbsp;›](/backend/middleware#slot-composition)
 
 ## Cascading Middleware
 

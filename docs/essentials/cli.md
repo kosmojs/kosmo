@@ -250,7 +250,7 @@ pnpm build admin svc  # several
 A name that isn't a source folder - no `src/<name>/kosmo.config.ts` - stops the command with
 
 ```txt
-Some of given names does not contain a valid KosmoJS source folder.
+Some of the given names do not contain a valid KosmoJS source folder.
 ```
 
 A project with no folders at all reports `No source folders detected`.
@@ -332,7 +332,7 @@ The first folder that fails prints its errors and exits `1` - the remaining fold
 | package.json does not exist or some of distDir / devPort / previewPort is not set | Not in the project root, or some of listed key(s) are missing. |
 | Invalid command, use one of folder, serve, build, preview, typecheck | Typo, or a command from another framework's CLI. |
 | No source folders detected | No `src/*/kosmo.config.ts` anywhere. |
-| Some of given names does not contain a valid KosmoJS source folder | A named folder doesn't exist or has no config. |
+| Some of the given names do not contain a valid KosmoJS source folder | A named folder doesn't exist or has no config. |
 | No folder name provided | `kosmo folder` in CLI mode with no name positional - including the non-TTY case. |
 | frontend is required: either provide `--frontend <name>` or `--no-frontend` flag | Neither half of the pair was passed. |
 | `--frontend` and `--no-frontend` are mutually exclusive; use only one | Both halves were. |

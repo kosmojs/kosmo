@@ -45,7 +45,7 @@ npm create kosmo .
 
 ---
 
-After bootstrap, `cd` into freshly created project (unless project bootstraped in current folder):
+After bootstrap, `cd` into freshly created project (unless the project was bootstrapped in the current folder):
 
 ```sh
 cd ./demo

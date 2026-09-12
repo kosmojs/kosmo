@@ -395,10 +395,9 @@ Both blocks accept it:
 [Custom Route Templates&nbsp;›](/backend/custom-templates#configuration)
 
 #### Which seeded files can templates override?
-Only route files. On the frontend that means `pages/**/index.*` - **not** layouts and **not** the root `index` route,
-which always get their built-ins.
-On the backend it means `api/**/index.ts` - **not** `use.ts`.
-Folder-level files (`app.ts`, `errors.ts`, `dev.ts`) are deployed once at folder creation and are not templatable.
+Route `index` files and nothing else - `pages/**/index.*` on the frontend,
+`api/**/index.ts` on the backend.
+Every other seeded file gets the built-in minimal boilerplate to start from.
 [Frontend&nbsp;›](/frontend/custom-templates) ·
 [Backend&nbsp;›](/backend/custom-templates)
 
@@ -922,7 +921,7 @@ turning a clear validation error into a confusing DB error.
 
 #### How do I surface field-level form errors?
 Map `error.errors` to `{path, message}` pairs; `target` tells you which request part failed.
-Nested field paths use arrow notation (`customer > address > city`) -
+Nested field paths use arrow notation (`customer -> address -> city`) -
 match them with word-boundary regex to avoid false positives.
 [Details&nbsp;›](/validation/error-handling#validationerror-properties)
 

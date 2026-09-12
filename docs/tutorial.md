@@ -90,7 +90,7 @@ Same for the frontend, provide the `--no-frontend` flag to get a backend-only se
 
 ---
 
-After bootstrap, `cd` into freshly created project (unless project bootstraped in current folder):
+After bootstrap, `cd` into freshly created project (unless the project was bootstrapped in the current folder):
 
 ```sh
 cd ./demo

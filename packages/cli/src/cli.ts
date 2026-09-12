@@ -150,7 +150,7 @@ const run = async () => {
   assertNoError(() => {
     if (rest.length) {
       return rest.length !== configFiles.length
-        ? "Some of given names does not contain a valid KosmoJS source folder"
+        ? "Some of the given names do not contain a valid KosmoJS source folder"
         : undefined;
     }
     return !configFiles.length //

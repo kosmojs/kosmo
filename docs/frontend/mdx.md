@@ -106,7 +106,7 @@ Every markdown element (`# heading`, `` `code` ``, `[link](url)`) compiles to
 a JSX call. Override any of them globally via the component map in
 `components/mdx.ts`:
 
-```tsx [src/components/mdx.ts]
+```tsx [components/mdx.ts]
 import Link from "./Link";
 
 export const components = {
@@ -421,13 +421,13 @@ keeping project structure consistent:
 ```txt
 src/content/
 ├── app.mdx                ← global layout
-├── router.tsx             ← Actual router using createRouter
+├── router.ts              ← routes wired into the native router
 ├── index.html             ← HTML shell with placeholders
 ├── components/
 │   ├── Link.tsx           ← typed navigation component
-│   └── mdx.tsx            ← MDXProvider component overrides
+│   └── mdx.ts             ← MDXProvider component overrides
 ├── entry/
-│   ├── client.tsx         ← minimal client entry
+│   ├── client.ts          ← minimal client entry
 │   └── server.ts          ← SSR rendering with Preact
 └── pages/
     └── *.mdx              ← content pages, optionally exporting `loader`
@@ -435,23 +435,24 @@ src/content/
 
 ### Router Configuration
 
-The MDX router uses `createRouter` to resolve routes at render time.
+`router.ts` follows the same `routerFactory` pattern as every other framework -
+the only MDX-specific part is the `components` map handed to `createRouters` alongside the app,
+so the MDXProvider overrides apply to every page.
 
-```tsx [router.tsx]
-import { createRouter } from "_/mdx";
-import routerFactory from "_/router";
+```ts [router.ts]
+import routerFactory, { createRouters } from "_/router";
 
-import App from "./app.mdx";
+import app from "./app.mdx";
 import { components } from "./components/mdx"
 
 export default routerFactory((routes) => {
-  const router = createRouter(routes, App, { components });
+  const { clientRouter, serverRouter } = createRouters(routes, { app, components });
   return {
-    async clientRouter() {
-      return router.resolve();
+    clientRouter() {
+      return clientRouter()
     },
-    async serverRouter(url) {
-      return router.resolve(url);
+    serverRouter(url) {
+      return serverRouter(url)
     },
   };
 });
@@ -466,8 +467,8 @@ Both client and server entries follow the same `renderFactory` pattern as React/
   that omits `renderToStream`.
 
 :::tabs variant:code
-== entry/client.tsx
-```tsx
+== entry/client.ts
+```ts
 import renderFactory, {
   createRoutes,
   hydrate,

@@ -40,7 +40,7 @@ and expensive to maintain.
 Each app lives in its own folder with its own framework stack, base URL, and build output -
 but they're not separate packages. They share one `package.json`, one `node_modules`,
 one database layer, one set of types. You choose backend/frontend framework for each source folder,
-while routing and validation patterns statys the same across all frameworks:
+while routing and validation patterns stay the same across all frameworks:
 
 ```
 src/

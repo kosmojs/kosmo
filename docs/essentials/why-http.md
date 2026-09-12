@@ -147,7 +147,7 @@ The round trip was never the point of the boundary; it was just the usual way of
 ::: tip Where the fetch fires still matters
 In-process dispatch applies to requests made **during rendering** - loaders, preloads, `createAsync`.
 A fetch in `useEffect` / `onMounted` runs after hydration, in the browser, over the network -
-because that is where and when it naturaly happens.
+because that is where and when it naturally happens.
 :::
 
 ## Declared once, enforced on both ends

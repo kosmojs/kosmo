@@ -12,6 +12,9 @@ head:
 Every frontend framework supports template overrides for specific routes through <span style="white-space: nowrap">pattern-based</span> matching.
 Useful for standardizing structure across landing pages, admin tools, or any section requiring a consistent starting point.
 
+Templates seed page `index` files - `pages/**/index.*` - and nothing else.
+Every other seeded file gets the built-in minimal boilerplate to start from.
+
 ## Configuration
 
 Pass custom templates through the `frontend` block in your source folder's `kosmo.config.ts`:
@@ -88,13 +91,11 @@ When multiple patterns match, the first matching pattern wins - in the order the
 written, so order them most specific first:
 
 ```ts
-generator({
-  templates: {
-    "landing/home": homeTemplate,   // highest specificity
-    "landing/*": landingTemplate,   // medium specificity
-    "**": fallbackTemplate,         // lowest specificity
-  },
-})
+templates: {
+  "landing/home": homeTemplate,   // highest specificity
+  "landing/*": landingTemplate,   // medium specificity
+  "**": fallbackTemplate,         // lowest specificity
+}
 ```
 
 ::: warning Numeric-looking patterns jump the queue
@@ -229,23 +230,27 @@ wrap in quotes or escape as needed to prevent accidental Handlebars evaluation.
 ### Landing & Marketing Pages
 
 ```ts
-generator({
+frontend: {
+  stack: "react",
+  base: "/front",
   templates: {
     "landing/**": landingTemplate,
     "marketing/**": marketingTemplate,
     "promo/**": promoTemplate,
   },
-})
+}
 ```
 
 ### Admin Interfaces
 
 ```ts
-generator({
+frontend: {
+  stack: "react",
+  base: "/front",
   templates: {
     "admin/**": adminTemplate,
   },
-})
+}
 ```
 
 ## Default Template Override
@@ -254,9 +259,7 @@ Routes without a matching pattern use the built-in default, which
 displays the route name as a placeholder. Replace it globally with:
 
 ```ts
-generator({
-  templates: {
-    "**": myDefaultTemplate,
-  },
-})
+templates: {
+  "**": myDefaultTemplate,
+}
 ```

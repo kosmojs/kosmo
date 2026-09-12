@@ -140,5 +140,5 @@ api/{v:version}/users     -> /api/users or /api/v2/users
 ::: info Limited support across frameworks
 Power Syntax fully works with Koa routes only. Hono will match that routes
 but params will be registered using positional index + a hash, e.g. `_0abc` or `_1xyz`.
-H3 wont match any of these routes. For client pages use simple segments instead.
+H3 won't match any of these routes. For client pages use simple segments instead.
 :::

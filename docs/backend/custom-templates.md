@@ -13,25 +13,8 @@ Every backend generator accepts a `templates` option.
 When you create a new route file whose name matches one of your patterns,
 **your** boilerplate is written into it instead of the built-in placeholder.
 
-This is the backend half of the feature; pages have their own.
-[Custom Page Templates&nbsp;›](/frontend/custom-templates)
-
-## What It Overrides
-
-Only the route file - the `index.ts` holding your `defineRoute` definition.
-
-| File | Templatable? |
-|---|:---:|
-| `api/**/index.ts` - route definitions | ✅ |
-| `api/**/use.ts` - cascading middleware | ❌ always the built-in |
-| `api/app.ts`, `errors.ts`, `dev.ts`, `server.ts`, `env.d.ts` | ❌ deployed once at folder creation |
-
-::: warning Templates only fill blank files
-Boilerplate is written into a file **only when that file is empty**.
-It never overwrites work you have already done -
-which is also why changing a template does not retroactively rewrite existing routes.
-To re-seed one, empty the file and it will be filled again.
-:::
+Templates seed route `index` files - `api/**/index.ts` - and nothing else.
+Every other seeded file gets the built-in minimal boilerplate to start from.
 
 ## Configuration
 

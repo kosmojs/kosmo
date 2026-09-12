@@ -177,7 +177,8 @@ it doesn't inherit from the middleware being replaced.
 Custom slot names, like `logger`, should be added to `api/env.d.ts`:
 
 ```ts [api/env.d.ts]
-export declare module "@kosmojs/core/api" {
+export declare module "_/api" {
+  // ...
   interface UseSlots {
     logger: string; // [!code hl]
   }
@@ -204,19 +205,19 @@ That is [edge middleware](/backend/edge-middleware).
 ## Overriding Validation
 
 Validation is middleware too, and every target sits in a reserved slot -
-so any of them can be replaced exactly the way you replace a `logger`:
+so any of them can be replaced exactly the way you replace a `logger`.
 
-```ts
-export interface UseSlots {
-  "validate:params": string;
-  "validate:query": string;
-  "validate:headers": string;
-  "validate:cookies": string;
-  "validate:json": string;
-  "validate:form": string;
-  "validate:raw": string;
-  "validate:response": string;
-}
+Available validation slots, each reserved for a specific validation target:
+
+```
+validate:params
+validate:query
+validate:headers
+validate:cookies
+validate:json
+validate:form
+validate:raw
+validate:response
 ```
 
 > These are reserved slots - no `UseSlots` declaration in `api/env.d.ts` needed.

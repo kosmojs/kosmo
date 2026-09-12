@@ -234,6 +234,34 @@ Options is an object with following properties:
 | `manifest` | Vite's `manifest.json` - the full dependency graph for client modules |
 | `assets` | SSR-related assets, must be injected manually |
 
+Each `assets` entry offers several ways to consume the same asset:
+
+```ts
+{
+  kind: "js" | "css";
+  tag: string;      // ready-to-use <script> / <link>, for direct injection
+  content: string;  // raw contents, for inlining as <style> or inline <script>
+  size: number;     // for Content-Length or preload hints
+  path?: string;    // asset URL, for building a tag with your own attributes.
+                    // Absent for content-only assets, which have no standalone URL
+}
+```
+
+The seeded entry passes `tag` straight through, which is the right default.
+Reach for the other fields when an asset should be treated differently -
+inlining CSS to avoid a blocking request, say, while leaving scripts as tags:
+
+```ts
+renderToString(
+  () => serverRouter(url),
+  {
+    headerTags: assets.map(({ kind, tag, content }) =>
+      kind === "css" ? `<style>${content}</style>` : tag,
+    ),
+  },
+);
+```
+
 Most renderers only need `assets` to build `head`. `template` and `manifest` are
 available for advanced cases. The stream passed to `renderToStream` is a Hono
 `StreamingApi` instance - an escape hatch for custom flushing; default renderers
