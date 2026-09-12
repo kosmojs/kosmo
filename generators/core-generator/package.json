@@ -3,6 +3,7 @@
   "private": true,
   "name": "@kosmojs/core-generator",
   "version": "0.3.0",
+  "description": "Baseline file generation shared by all KosmoJS generators (internal)",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [

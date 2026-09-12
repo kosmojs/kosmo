@@ -3,6 +3,7 @@
   "private": true,
   "name": "@kosmojs/koa-generator",
   "version": "0.3.0",
+  "description": "Koa backend integration for KosmoJS (internal)",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [

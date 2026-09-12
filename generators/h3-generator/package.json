@@ -3,6 +3,7 @@
   "private": true,
   "name": "@kosmojs/h3-generator",
   "version": "0.3.0",
+  "description": "H3 backend integration for KosmoJS (internal)",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [

@@ -3,6 +3,7 @@
   "private": true,
   "name": "@kosmojs/openapi-generator",
   "version": "0.3.0",
+  "description": "OpenAPI specification generation for KosmoJS backends (internal)",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [

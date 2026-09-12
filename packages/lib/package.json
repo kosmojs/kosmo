@@ -2,6 +2,7 @@
   "type": "module",
   "name": "@kosmojs/lib",
   "version": "0.5.0",
+  "description": "Shared internals for the KosmoJS CLI and generators (not a public API)",
   "author": "Slee Woo",
   "license": "MIT",
   "repository": {

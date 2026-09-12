@@ -3,6 +3,7 @@
   "private": true,
   "name": "@kosmojs/react-generator",
   "version": "0.3.0",
+  "description": "React integration for KosmoJS (internal)",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [

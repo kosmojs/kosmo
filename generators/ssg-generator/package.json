@@ -3,6 +3,7 @@
   "private": true,
   "name": "@kosmojs/ssg-generator",
   "version": "0.3.0",
+  "description": "Static site generation support for KosmoJS source folders (internal)",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [

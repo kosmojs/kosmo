@@ -3,6 +3,7 @@
   "private": true,
   "name": "@kosmojs/typebox-generator",
   "version": "0.3.0",
+  "description": "TypeBox validation schema generation for KosmoJS (internal)",
   "cacheVersion": "1",
   "author": "Slee Woo",
   "license": "MIT",

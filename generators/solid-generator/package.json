@@ -3,6 +3,7 @@
   "private": true,
   "name": "@kosmojs/solid-generator",
   "version": "0.3.0",
+  "description": "SolidJS integration for KosmoJS (internal)",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [

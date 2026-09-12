@@ -3,6 +3,7 @@
   "private": true,
   "name": "@kosmojs/ssr-generator",
   "version": "0.3.0",
+  "description": "Server-side rendering support for KosmoJS source folders (internal)",
   "author": "Slee Woo",
   "license": "MIT",
   "files": [

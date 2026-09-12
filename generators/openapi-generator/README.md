@@ -1,11 +1,29 @@
 # @kosmojs/openapi-generator
 
-Automatically generates OpenAPI 3.1 specifications from KosmoJS API routes, analyzing route structure,
-TypeScript types, and validation schemas to produce standards-compliant documentation.
+OpenAPI specification generation for KosmoJS backends.
+
+> **Internal package.** Not published to npm and not installed directly.
+> It reaches your project as a dependency of [`@kosmojs/dev`](../../packages/dev),
+> which decides at build time which generators to run.
+
+Selected with:
+
+```ts
+// kosmo.config.ts
+openapi: { /* ... */ }
+```
+
+## Generates
+
+a specification derived from route definitions and their declared validation targets. Template-free - it builds the document directly.
+
+## Notes
+
+Resolves types from source (`resolveTypes`). A route contributes a documented response only when its handler declares a `response` target.
 
 ## Documentation
 
-See [kosmojs.dev](https://kosmojs.dev/openapi.html)
+- [OpenAPI](https://kosmojs.dev/openapi.html)
 
 ## License
 
