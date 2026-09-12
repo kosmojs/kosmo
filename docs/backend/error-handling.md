@@ -134,7 +134,10 @@ It's a regular file - customize it freely. It is then wired into `api/app.ts`:
 The whole point of a central handler is that route code doesn't have to think about error responses.
 So don't wrap handler logic in `try`/`catch` just to turn a failure into a response - throw, and let it propagate:
 
-```ts [api/users/[id]/index.ts]
+:::tabs key:backend variant:code
+== Hono
+```ts
+// api/users/[id]/index.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
 export default defineRoute<"users/[id]", [number]>(({ GET }) => [
@@ -150,6 +153,43 @@ export default defineRoute<"users/[id]", [number]>(({ GET }) => [
 ]);
 ```
 
+== H3
+```ts
+// api/users/[id]/index.ts
+import { HTTPError } from "@kosmojs/core/errors";
+
+export default defineRoute<"users/[id]", [number]>(({ GET }) => [
+  GET(async (event) => {
+    const { id } = event.validated.params;
+    const user = await db.users.find(id);
+
+    // ✅ throw - api/errors.ts turns it into a response
+    if (!user) throw new HTTPError([404, "User not found"]);
+
+    return user;
+  }),
+]);
+```
+
+== Koa
+```ts
+// api/users/[id]/index.ts
+import { HTTPError } from "@kosmojs/core/errors";
+
+export default defineRoute<"users/[id]", [number]>(({ GET }) => [
+  GET(async (ctx) => {
+    const { id } = ctx.validated.params;
+    const user = await db.users.find(id);
+
+    // ✅ throw - api/errors.ts turns it into a response
+    if (!user) throw new HTTPError([404, "User not found"]);
+
+    ctx.body = user;
+  }),
+]);
+```
+:::
+
 > `HTTPError` takes a single `[status, message]` **tuple**, not two arguments.
 
 ```ts
@@ -157,9 +197,9 @@ export default defineRoute<"users/[id]", [number]>(({ GET }) => [
 //    the status is invented locally, and nothing gets logged centrally
 GET(async (ctx) => {
   try {
-    return ctx.json(await db.users.find(id));
+    // ...
   } catch (error) {
-    return ctx.json({ error: "something went wrong" }, 500);
+    // ...
   }
 });
 ```
@@ -182,10 +222,10 @@ Then re-throw what you can't handle:
 
 ```ts
 try {
-  return ctx.json(await upstream.fetchProfile(id));
+  // ...
 } catch (error) {
   if (error instanceof UpstreamTimeout) {
-    return ctx.json(await cache.profile(id)); // real recovery
+    // ... real recovery
   }
   throw error; // not ours to handle - let api/errors.ts decide
 }

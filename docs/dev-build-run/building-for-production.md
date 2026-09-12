@@ -193,7 +193,7 @@ Bun.serve({ port: 3000, fetch: app.fetch });
 **Koa** - `app.callback()` is a Node.js `(IncomingMessage, ServerResponse)` handler.
 Deno and Bun support it via their `node:http` compat layer, not via their native serve APIs:
 
-```js [Node / Bun / Deno ~vscode-icons:file-type-js~]
+```js [Koa on Node / Bun / Deno ~vscode-icons:file-type-js~]
 import { createServer } from "node:http";
 
 import app from "./dist/front/api/app.js";
@@ -203,7 +203,7 @@ createServer(app.callback()).listen(3000);
 
 Or use `app.listen()` directly for Node only support:
 
-```js [Node ~vscode-icons:file-type-js~]
+```js [Koa on Node ~vscode-icons:file-type-js~]
 import app from "./dist/front/api/app.js";
 
 app.listen(3000);

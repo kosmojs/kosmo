@@ -42,7 +42,64 @@ The `target` property tells you exactly which part of the request failed:
 
 **Common handling patterns:**
 
+:::tabs key:backend variant:code
+== Hono
 ```ts
+// api/errors.ts
+
+// All errors as a readable string
+if (error instanceof ValidationError) {
+  const { target, errorMessage } = error;
+  // e.g. "Validation failed: user: missing required properties: "email", "name";
+  //       password: must be at least 8 characters long"
+  return ctx.json({ error: errorMessage }, 400);
+}
+
+// Field-level errors (useful for form responses)
+if (error instanceof ValidationError) {
+  const messages = error.errors.map(e => `${e.path}: ${e.message}`);
+  return ctx.json({ error: "validation_error", target: error.target, messages }, 400);
+}
+
+// Log the invalid data, return a summary
+if (error instanceof ValidationError) {
+  logger.error("Validation failed", { target: error.target, data: error.data });
+  return ctx.json({ error: error.errorSummary }, 400);
+}
+```
+
+== H3
+```ts
+// api/errors.ts
+
+// All errors as a readable string
+if (error instanceof ValidationError) {
+  const { target, errorMessage } = error;
+  // e.g. "Validation failed: user: missing required properties: "email", "name";
+  //       password: must be at least 8 characters long"
+  event.res.status = 400;
+  return { error: errorMessage };
+}
+
+// Field-level errors (useful for form responses)
+if (error instanceof ValidationError) {
+  const messages = error.errors.map(e => `${e.path}: ${e.message}`);
+  event.res.status = 400;
+  return { error: "validation_error", target: error.target, messages };
+}
+
+// Log the invalid data, return a summary
+if (error instanceof ValidationError) {
+  logger.error("Validation failed", { target: error.target, data: error.data });
+  event.res.status = 400;
+  return { error: error.errorSummary };
+}
+```
+
+== Koa
+```ts
+// api/errors.ts
+
 // All errors as a readable string
 if (error instanceof ValidationError) {
   const { target, errorMessage } = error;
@@ -66,6 +123,7 @@ if (error instanceof ValidationError) {
   ctx.body = { error: error.errorSummary };
 }
 ```
+:::
 
 ## Custom Error Messages
 

@@ -39,7 +39,10 @@ They should have got a `401`.
 
 **Solution: make your auth middleware run before validation by using an `edge:` prefixed slot:**
 
-```ts [api/use.ts]
+:::tabs key:backend variant:code
+== Hono
+```ts
+// api/use.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
 import { use } from "_/api";
@@ -56,6 +59,47 @@ export default [
   }),
 ];
 ```
+
+== H3
+```ts
+// api/use.ts
+import { HTTPError } from "@kosmojs/core/errors";
+
+import { use } from "_/api";
+
+export default [
+  use(async (event, next) => {
+    const token = event.req.headers.get("authorization")?.replace("Bearer ", "");
+    if (!token) {
+      throw new HTTPError([401, "Authentication required"]);
+    }
+    return next();
+  }, {
+    slot: "edge:auth", // [!code hl]
+  }),
+];
+```
+
+== Koa
+```ts
+// api/use.ts
+import { HTTPError } from "@kosmojs/core/errors";
+
+import { use } from "_/api";
+
+export default [
+  use(async (ctx, next) => {
+    const token = ctx.headers.authorization?.replace("Bearer ", "");
+    if (!token) {
+      throw new HTTPError([401, "Authentication required"]);
+    }
+    return next();
+  }, {
+    slot: "edge:auth", // [!code hl]
+  }),
+];
+```
+:::
 
 Now an unauthenticated request is rejected before a single schema is consulted.
 
@@ -134,9 +178,79 @@ Depends on whether any route needs to opt out.
 It is the simpler setup: one middleware, no slots, nothing downstream can replace it by accident.
 It also covers what a route chain never sees - unmatched URLs, preflights, `405`s.
 
+`api/app.ts` hands you the native app instance, so the check is registered the way that framework documents it -
+no `use()`, no slot, nothing imported from `_/api`:
+
+:::tabs key:backend variant:code
+== Hono
+```ts
+// api/app.ts
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
+
+export default appFactory(routes, ({ app }) => {
+  app.onError(defaultErrorHandler);
+
+  app.use(async (ctx, next) => {
+    const token = ctx.req.header("authorization")?.replace("Bearer ", "");
+    if (!token) return ctx.text("Authentication required", 401);
+    await next();
+  });
+});
+```
+
+== H3
+```ts
+// api/app.ts
+import { onError } from "h3";
+
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
+
+export default appFactory(routes, ({ app }) => {
+  app.use(onError(defaultErrorHandler));
+
+  app.use(async (event, next) => {
+    const token = event.req.headers.get("authorization")?.replace("Bearer ", "");
+    if (!token) return new Response("Authentication required", { status: 401 });
+    return next();
+  });
+});
+```
+
+== Koa
+```ts
+// api/app.ts
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
+
+export default appFactory(routes, ({ app }) => {
+  app.use(defaultErrorHandler);
+
+  app.use(async (ctx, next) => {
+    const token = ctx.headers.authorization?.replace("Bearer ", "");
+    ctx.assert(token, 401, "Authentication required");
+    await next();
+  });
+});
+```
+:::
+
 **Some routes authenticate differently** - a webhook verifying a signature, a public health check,
 an endpoint behind its own token - use an `edge:` slot, in `api/use.ts` or wherever the check belongs.
 You keep the 401-before-400 ordering, and any route or subtree can substitute its own check.
+
+That is a different file with a different shape - an array of `use()` calls, not a callback receiving the app instance:
+
+```ts [api/use.ts]
+import { use } from "_/api";
+
+import { authenticate } from "./auth";
+
+export default [
+  use(authenticate, { slot: "edge:auth" }),
+];
+```
 
 ::: warning They don't stack
 A route claiming `edge:auth` replaces the `edge:auth` entry from `api/use.ts` -

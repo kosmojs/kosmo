@@ -88,9 +88,13 @@ export default defineRoute<"example">(({ use, GET, POST }) => [
 
 Wiring same middleware into every route is tedious and dangerous.
 
-Use **global middleware** instead - add middleware to `api/use.ts` and it runs for **every route** - no imports, no registration, nothing to wire:
+Use **global middleware** instead - add middleware to `api/use.ts` and it runs for **every route** -
+no imports, no registration, nothing to wire:
 
-```ts [api/use.ts]
+:::tabs key:backend variant:code
+== Hono
+```ts
+// api/use.ts
 import { use } from "_/api";
 
 export default [
@@ -101,6 +105,35 @@ export default [
   }),
 ];
 ```
+
+== H3
+```ts
+// api/use.ts
+import { use } from "_/api";
+
+export default [
+  // will run on every route
+  use(async function requestId(event, next) {
+    event.context.requestId = crypto.randomUUID();
+    return next();
+  }),
+];
+```
+
+== Koa
+```ts
+// api/use.ts
+import { use } from "_/api";
+
+export default [
+  // will run on every route
+  use(async function requestId(ctx, next) {
+    ctx.state.requestId = crypto.randomUUID();
+    return next();
+  }),
+];
+```
+:::
 
 This is the place for work that belongs to **routes**: loading the current user onto the context,
 permission checks, audit logging of writes - things that need a route to exist,
@@ -122,7 +155,52 @@ CORS - and anything else that must appear on *every* response - belongs to [app&
 
 Use the `on` option to restrict middleware to specific HTTP methods:
 
-```ts [api/example/index.ts]
+:::tabs key:backend variant:code
+== Hono
+```ts
+// api/example/index.ts
+export default defineRoute<"example">(({ GET, POST, use }) => [
+  use(async (ctx, next) => {
+    ctx.set("user", await verifyToken(ctx.req.header("authorization")));
+    return next();
+  }, {
+    on: ["POST"], // [!code hl]
+  }),
+
+  GET(async (ctx) => {
+    // no auth required
+  }),
+
+  POST(async (ctx) => {
+    // ctx.get("user") is available
+  }),
+]);
+```
+
+== H3
+```ts
+// api/example/index.ts
+export default defineRoute<"example">(({ GET, POST, use }) => [
+  use(async (event, next) => {
+    event.context.user = await verifyToken(event.req.headers.get("authorization"));
+    return next();
+  }, {
+    on: ["POST"], // [!code hl]
+  }),
+
+  GET(async (event) => {
+    // no auth required
+  }),
+
+  POST(async (event) => {
+    // event.context.user is available
+  }),
+]);
+```
+
+== Koa
+```ts
+// api/example/index.ts
 export default defineRoute<"example">(({ GET, POST, use }) => [
   use(async (ctx, next) => {
     ctx.state.user = await verifyToken(ctx.headers.authorization);
@@ -140,6 +218,7 @@ export default defineRoute<"example">(({ GET, POST, use }) => [
   }),
 ]);
 ```
+:::
 
 ## Slot Composition
 
@@ -284,6 +363,10 @@ you do here - written exactly as that framework's own docs describe:
 :::tabs key:backend variant:code
 == Hono
 ```ts
+// api/app.ts
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
+
 export default appFactory(routes, ({ app }) => {
   app.onError(defaultErrorHandler);
 
@@ -297,6 +380,12 @@ export default appFactory(routes, ({ app }) => {
 
 == H3
 ```ts
+// api/app.ts
+import { onError } from "h3";
+
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
+
 export default appFactory(routes, ({ app }) => {
   app.use(onError(defaultErrorHandler));
 
@@ -310,6 +399,10 @@ export default appFactory(routes, ({ app }) => {
 
 == Koa
 ```ts
+// api/app.ts
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
+
 export default appFactory(routes, ({ app }) => {
   app.use(defaultErrorHandler);
 

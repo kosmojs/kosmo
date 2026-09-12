@@ -171,7 +171,8 @@ export default defineRoute<
 :::
 
 If you find yourself declaring the same properties across many routes,
-move them to the global declarations in `api/env.d.ts` instead.
+move them to the global declarations in `api/env.d.ts` instead -
+a `declare module "_/api"` augmentation rather than a `defineRoute` type argument.
 
 ## Global Context Types - `api/env.d.ts`
 

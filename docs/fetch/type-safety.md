@@ -76,7 +76,12 @@ A method whose handler declares no `response` returns `Promise<unknown>`:
 ```ts
 // api/users/index.ts - no `response` declared
 export default defineRoute<"users">(({ GET }) => [
-  GET(async (ctx) => ctx.json(await listUsers())),
+  GET<{
+    query: { page?: number },
+    // no response schema // [!code hl]
+  }>(async (ctx) => {
+    // ...
+  }),
 ]);
 ```
 

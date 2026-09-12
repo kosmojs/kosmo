@@ -677,7 +677,7 @@ Pass the `on` option to `use`, listing the methods the middleware should run for
 Handlers for other methods skip it:
 ```ts
 use(async (ctx, next) => {
-  ctx.state.user = await verifyToken(ctx.headers.authorization);
+  // ...
   return next();
 }, { on: ["POST", "PUT", "DELETE"] })
 ```
@@ -710,9 +710,9 @@ Parent always runs before child; children cannot skip parent middleware.
 [Details&nbsp;›](/backend/cascading-middleware#how-it-works)
 
 #### What is `UseT`?
-A type every folder-level `use.ts` exports (even when empty) describing
-what the middleware adds to context. These are merged so every route underneath
-is typed automatically - no imports, no type args on `defineRoute`.
+A type every `use.ts` in an `api/` subfolder exports (even when empty) describing what the middleware adds to context.
+The global `api/use.ts` is the exception - it may export `UseT`, but the export is ignored there.
+These are merged so every route underneath is typed automatically - no imports, no type args on `defineRoute`.
 Inner definitions override outer ones, mirroring runtime.
 [Details&nbsp;›](/backend/cascading-middleware#type-safe-context-extension)
 
@@ -732,7 +732,7 @@ where the param is guaranteed to exist.
 #### How do I implement auth / logging / rate limiting?
 However your framework already does it - KosmoJS imposes nothing here and stays fully transparent.
 Any Hono/H3/Koa middleware package works unchanged, wired the native way for your framework.
-You can wire it directly in a route's `index.ts` via `use(...)`, or in a folder-level `use.ts` to cascade it over a subtree.
+You can wire it directly in a route's `index.ts` via `use(...)`, or in an `api/` subfolder's `use.ts` to cascade it over a subtree.
 Nothing is KosmoJS-specific about the middleware itself; it's plain Hono/H3/Koa.
 [Details&nbsp;›](/backend/cascading-middleware#common-use-cases)
 

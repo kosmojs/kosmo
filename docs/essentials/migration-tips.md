@@ -213,6 +213,20 @@ You don't write `Response.json()`, and there is no`NextRequest`/`NextResponse`: 
 Global middleware lives in [api/use.ts](/backend/middleware) file.
 Whatever it default-exports runs for every route in that app, with no registration.
 
+```ts [api/use.ts]
+import { use } from "_/api";
+
+export default [
+  use(async (ctx, next) => {
+    // runs for every route under this folder's `backend.base`
+    return next();
+  }),
+];
+```
+
+There is no `middleware.ts`, and nothing is exported from a config file to enable it -
+the default export of `api/use.ts` is the registration.
+
 Below it, a [cascading `use.ts`](/backend/cascading-middleware) in any `api/` subfolder wraps everything beneath it,
 carrying typed context via `UseT`, and [slots](/backend/middleware#slot-composition) let a route substitute a global default in place.
 

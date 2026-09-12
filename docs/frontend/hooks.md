@@ -46,6 +46,8 @@ useLoaderData<T>(key?: string): T | undefined
 
 Reads the result of the page's `loader` export, resolved before render.
 
+:::tabs key:frontend variant:code
+== Vue
 ```vue
 <script setup lang="ts">
 import { useLoaderData } from "_/use";
@@ -54,6 +56,34 @@ import type { ResponseT } from "_/fetch";
 const user = useLoaderData<ResponseT["users/[id]"]["GET"]>();
 </script>
 ```
+
+== Svelte
+```svelte
+<script lang="ts">
+import { useLoaderData } from "_/use";
+import type { ResponseT } from "_/fetch";
+
+const user = useLoaderData<ResponseT["users/[id]"]["GET"]>();
+</script>
+```
+
+== MDX
+```mdx
+import { useLoaderData } from "_/use";
+import type { ResponseT } from "_/fetch";
+
+export const Profile = () => {
+  const user = useLoaderData<ResponseT["users/[id]"]["GET"]>();
+  return <p>{user?.name}</p>;
+};
+
+<Profile />
+```
+:::
+
+`useLoaderData` exists only where `_/use` does - Vue, Svelte and MDX.
+React reads loader data through `useLoaderData` from `react-router`, and
+SolidJS through `createAsync` from `@solidjs/router`.
 
 Two things to keep in mind:
 
@@ -131,7 +161,7 @@ through the `query` validation target and the fetch clients.
 MDX only. Reads the current page's YAML frontmatter,
 for dynamic head content or conditional rendering in a layout:
 
-```mdx
+```mdx [MDX]
 import { useFrontmatter } from "_/use";
 
 export const Header = () => {

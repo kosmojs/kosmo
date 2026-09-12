@@ -42,7 +42,7 @@ Parent middleware always runs before child middleware.
 
 > Child routes can't skip parent `use.ts`
 
-The seeded boilerplate when you create a new `use.ts`:
+The seeded boilerplate when you create a `use.ts` in an `api/` subfolder:
 
 ```ts [api/users/use.ts]
 import { use } from "_/api";
@@ -58,9 +58,11 @@ export default [
 
 > Some editors load the seeded content immediately, others require a brief unfocus/refocus.
 
-Beside the default exported middleware, every `use.ts` exports the `UseT` type - even if empty.
-This type extends the context for all routes underneath, giving you
-automatic type safety for anything the middleware adds.
+Beside the default exported middleware, every `use.ts` **in an `api/` subfolder** exports the `UseT` type - even if empty.
+This type extends the context for all routes underneath, giving you automatic type safety for anything the middleware adds.
+
+The global `api/use.ts` is the exception: it may export `UseT`, but the export is ignored there -
+global middleware types come from `api/env.d.ts` instead.
 
 ## Type-Safe Context Extension
 
@@ -167,8 +169,7 @@ where inner middleware runs after outer middleware and can overwrite context val
 
 > The global `api/use.ts` does not need to export `UseT`.
 Even if it does, the export is ignored - global middleware operates on types defined in `api/env.d.ts`.
-`UseT` is for folder-level `use.ts` files only, where the types cascade
-alongside the middleware itself.
+`UseT` is for `use.ts` files in `api/` subfolders only, where the types cascade alongside the middleware itself.
 
 **Tip:** inner `use.ts` files can import `UseT` from outer ones, extend it, and re-export -
 avoiding duplicate type definitions across the hierarchy:
@@ -202,6 +203,7 @@ A single `use.ts` can define multiple functions, and each supports the `on` opti
 to run only on specific request method(s):
 
 ```ts
+// api/users/use.ts
 import { use } from "_/api";
 
 export type UseT = {
@@ -284,6 +286,55 @@ export default [
 A `use.ts` is composed into each route's chain, so it only runs once a route has matched.
 A preflight `OPTIONS` is answered before that, and never reaches it.
 CORS belongs in `api/app.ts`, as [app&nbsp;middleware](/backend/middleware#app-middleware).
+:::
+
+`api/app.ts` takes a callback receiving the native app instance - not the array of `use()` calls above -
+so third-party middleware is registered exactly as that framework documents it:
+
+`cors` below is whatever CORS middleware you wire up - `hono/cors`, `@koa/cors`, or your own header-setting middleware.
+What differs per backend is only how the error handler attaches:
+
+:::tabs key:backend variant:code
+== Hono
+```ts
+// api/app.ts
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
+import { cors } from "./cors"; // [!code ++]
+
+export default appFactory(routes, ({ app }) => {
+  app.onError(defaultErrorHandler);
+  app.use(cors({ origin: "https://example.com" })); // [!code ++]
+});
+```
+
+== H3
+```ts
+// api/app.ts
+import { onError } from "h3";
+
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
+import { cors } from "./cors"; // [!code ++]
+
+export default appFactory(routes, ({ app }) => {
+  app.use(onError(defaultErrorHandler));
+  app.use(cors({ origin: "https://example.com" })); // [!code ++]
+});
+```
+
+== Koa
+```ts
+// api/app.ts
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
+import { cors } from "./cors"; // [!code ++]
+
+export default appFactory(routes, ({ app }) => {
+  app.use(defaultErrorHandler);
+  app.use(cors({ origin: "https://example.com" })); // [!code ++]
+});
+```
 :::
 
 ### Authentication for a subtree
