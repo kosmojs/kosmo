@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "vitepress dev",
-    "build": "echo true",
+    "build": "vitepress build",
+    "postbuild": "node ./scripts/flatten-tabs.mjs",
     "preview": "vitepress preview"
   },
   "devDependencies": {
