@@ -44,7 +44,7 @@ They read `distDir`, `devPort` and `previewPort` from it, and refuse to start if
 | [kosmo serve](/cli/serve) | Dev server on `devPort`, Vite + HMR, always client-rendered |
 | [kosmo preview](/cli/preview) | Production build served on `previewPort`, rebuilt on change |
 | [kosmo build](/cli/build) | Production build only - `dist/run.js` plus a per-folder tree |
-| [kosmo typecheck](/cli/typecheck) | `tsc --noEmit` per source folder, plus an opt-in root run |
+| [kosmo typecheck](/cli/typecheck) | `tsc --noEmit` per source folder, plus the project root |
 
 ## Interactive vs CLI mode
 

@@ -1023,6 +1023,11 @@ validated optional params round-trip exactly as declared (`status?: T` means *ab
 which most codebases coming from looser configs notice immediately.
 Relaxing it - or any other strictness flag - is a per-folder choice and only affects that folder's typecheck.
 
+`compilerOptions` is the safe thing to add. An `include` is not:
+it replaces the base one rather than merging, and the base is what puts the folder,
+its `lib/` output and the ambient declarations in scope.
+[Details&nbsp;›](/essentials/config#typescript-config)
+
 #### How do I typecheck?
 `pnpm typecheck` - the same shape as `dev` and `build`:
 no arguments checks every source folder, folder names check just those (`pnpm typecheck admin front`).
@@ -1034,9 +1039,9 @@ Every selected tsconfig is checked even if an earlier one fails,
 so a single run reports all of them rather than stopping at the first.
 The command exits `1` if any of them reported errors, which makes it usable as a CI gate directly.
 
-A full run also checks the project root, so code outside `src/` is covered.
-That run is opt-in: the root `tsconfig.json` ships with an empty `include`,
-and stays skipped until you list what belongs to it.
+A full run also checks the project root, so code outside `src/` can be covered.
+What it covers is up to you: the root `tsconfig.json` starts with only `./lib/*.d.ts` in its `include`,
+so the run happens but has nothing of yours in scope until you add paths to that list.
 The folders are checked separately rather than in one pass because each has its own path mappings -
 one `tsc` over everything would resolve `_/` against the wrong folder.
 [Details&nbsp;›](/cli/typecheck)
@@ -1050,9 +1055,10 @@ and alongside folder names it adds the root to them - `pnpm typecheck . admin` c
 
 Useful after touching a script or a shared package while `src/` is untouched.
 
-The root's `tsconfig.json` decides what "the root" covers, so `.` is only meaningful once you have filled its `include` in.
-Ask for it while `include` is still the seeded `[]` and you get a warning that nothing was checked -
-a full run skips the root quietly instead, since having nothing outside `src/` is a normal shape rather than a mistake.
+The root's `tsconfig.json` decides what "the root" covers,
+and out of the box that is nothing of yours - its `include` holds only `./lib/*.d.ts`.
+Add the paths you want checked, keeping that entry: `include` replaces rather than merges with the config it extends,
+so dropping it takes the ambient declarations in `lib/` out of scope.
 [Details&nbsp;›](/cli/typecheck#selective-typechecking)
 
 ### Fetch Clients

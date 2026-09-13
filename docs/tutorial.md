@@ -644,7 +644,10 @@ Same pattern for API and pages - learn once, use everywhere.
 Your project starts with a minimal `tsconfig.json`:
 
 ```json [tsconfig.json]
-{ "extends": "./lib/tsconfig.json" }
+{
+  "extends": "./lib/tsconfig.json",
+  "include": ["./lib/*.d.ts"]
+}
 ```
 
 The extended config provides path mappings used throughout the framework.

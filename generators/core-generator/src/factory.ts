@@ -101,7 +101,10 @@ export default defineGeneratorFactory((sourceFolder) => {
       await renderToFile(
         resolve(sourceFolder.root, "tsconfig.json"),
         JSON.stringify(
-          { extends: `./${defaults.libDir}/tsconfig.json` },
+          {
+            extends: `./${defaults.libDir}/tsconfig.json`,
+            include: [`./${defaults.libDir}/*.d.ts`],
+          },
           undefined,
           2,
         ),

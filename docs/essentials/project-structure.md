@@ -15,7 +15,7 @@ Once that clicks, the rest of the docs read much faster.
 ```txt
 my-app/
 ├── package.json          -> project settings: distDir, devPort, previewPort, scripts
-├── tsconfig.json         -> minimal config with an empty `include`
+├── tsconfig.json         -> minimal config, add paths to `include` to have them typechecked
 │
 ├── src/                  ✍️  YOU WRITE THIS
 │   ├── front/            ->   one source folder
