@@ -3,7 +3,7 @@
 import { execFile } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { basename, dirname, join, relative, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { parseArgs, styleText } from "node:util";
 
 import { createJiti } from "jiti";
@@ -139,63 +139,105 @@ const run = async () => {
     return;
   }
 
-  const configFiles = await glob(
-    rest.length
-      ? rest.map((e) => `${defaults.srcDir}/${e}/kosmo.config.ts`)
-      : `${defaults.srcDir}/*/kosmo.config.ts`,
-    { cwd: root, absolute: true, deep: 2 },
-  );
+  const folderNames = rest.flatMap((e) => (e === "." ? [] : [e]));
 
-  assertNoError(() => {
-    if (rest.length) {
-      return rest.length !== configFiles.length
-        ? "Some of the given names do not contain a valid KosmoJS source folder"
+  const configFilePattern = (folder: string) => {
+    return join(defaults.srcDir, folder, "kosmo.config.ts");
+  };
+
+  const scanConfigFiles = async () => {
+    const configFiles = await glob(
+      folderNames.length
+        ? folderNames.map(configFilePattern)
+        : configFilePattern("*"),
+      { cwd: root, absolute: true, deep: 2 },
+    );
+
+    assertNoError(() => {
+      if (folderNames.length) {
+        return folderNames.length !== configFiles.length
+          ? "Some of the given names do not contain a valid KosmoJS source folder"
+          : undefined;
+      }
+      return !configFiles.length //
+        ? "No source folders detected"
         : undefined;
-    }
-    return !configFiles.length //
-      ? "No source folders detected"
-      : undefined;
-  });
+    });
+
+    return configFiles;
+  };
 
   if (command === "typecheck") {
-    const spinner = spinnerFactory("Typecheck in progress");
+    const configFiles =
+      folderNames.length || !rest.length //
+        ? await scanConfigFiles()
+        : [];
 
     const require = createRequire(packageFile);
-    const pkgDir = dirname(require.resolve("typescript/package.json"));
-    const { bin } = require("typescript/package.json");
-    const tscBin = join(pkgDir, typeof bin === "string" ? bin : bin.tsc);
+    const pkgFile = require.resolve("typescript/package.json");
 
-    const runTsc = async (cwd: string) => {
-      const tsconfig = resolve(cwd, "tsconfig.json");
-      spinner.append(relative(root, tsconfig));
+    const { default: pkg } = await import(pkgFile, { with: { type: "json" } });
 
-      const { error } = await new Promise<{ error?: string }>((r) => {
+    const tsc = resolve(dirname(pkgFile), pkg.bin.tsc || pkg.bin);
+
+    const runTsc = async (project: string): Promise<string | undefined> => {
+      const { error } = await new Promise<{ error?: string }>((resolve) => {
         execFile(
           process.execPath,
-          [tscBin, "--project", tsconfig, "--noEmit", "--pretty"],
-          { cwd },
+          [tsc, "--project", project, "--noEmit", "--pretty"],
+          { cwd: dirname(project) },
           (error, stdout) => {
-            r(error ? { error: stdout } : {});
+            resolve(error ? { error: stdout } : {});
           },
         );
       });
-
-      if (error) {
-        spinner.failed();
-        console.error(error);
-        process.exit(1);
-      }
+      return error;
     };
 
-    for (const file of configFiles) {
-      await runTsc(dirname(file));
+    const rootOpted = rest.includes(".");
+
+    const projects: Array<string> = [
+      ...configFiles.map((e) => {
+        return `${dirname(e.replace(root, "."))}/tsconfig.json`;
+      }),
+      ...(rootOpted || !rest.length ? ["./tsconfig.json"] : []),
+    ];
+
+    const errors: Array<string> = [];
+
+    const columns = process.stdout.isTTY
+      ? Number(process.stdout.columns || 0)
+      : 0;
+
+    const delimiter = styleText(
+      "dim",
+      styleText("gray", Array(columns).fill("·").join("")),
+    );
+
+    for (const project of projects) {
+      console.log(delimiter);
+      const spinner = spinnerFactory(project);
+      const error = await runTsc(resolve(root, project));
+      if (error) {
+        errors.push(error);
+        spinner.text(styleText(["black", "bgRed"], ` ${project} `));
+        spinner.failed();
+        console.error(error);
+      } else {
+        spinner.text(styleText(["black", "bgGreen"], ` ${project} `));
+        spinner.succeed();
+      }
     }
 
-    spinner.text("Typecheck OK ✨");
-    spinner.succeed();
+    if (errors.length) {
+      console.log();
+      process.exit(1);
+    }
 
     return;
   }
+
+  const configFiles = await scanConfigFiles();
 
   const settings: ProjectSettings = {
     root,
