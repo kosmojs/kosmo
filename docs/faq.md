@@ -198,6 +198,7 @@ and `fetch` only produces clients when there are backend routes to derive them f
 
 #### Should I add my stack's Vite plugin to `viteConfig.plugins`?
 No - it reaches Vite through `stack`, so listing it in `viteConfig.plugins` runs the transform twice.
+Only the stack plugin is special this way; every other plugin goes in `viteConfig.plugins` as usual.
 To configure it, construct it yourself and pass it as `plugin`:
 `frontend: { stack: { name: "react", plugin: react({ jsxRuntime: "classic" }) }, base: "/" }`.
 With a bare name KosmoJS builds the plugin with the arguments the current command needs;
@@ -238,6 +239,23 @@ is an obviously-colocated helper. File-based routing leaves `schema.ts`/`auth.ts
 route or helper? Directory-based removes that ambiguity.
 The only cost is creating a folder even when it holds just `index.ts`.
 [Details&nbsp;›](/routing/rationale)
+
+#### Where do helpers shared by several routes go?
+Wherever you decide - `index.*` and `use.ts` are the only names the scanner looks for, so nothing else is claimed.
+
+The tree gives you a default: put a helper in the deepest folder that covers every route using it,
+and move it up when that stops being true.
+Its position then shows its reach. Code with no place in the route tree - a mailer, a queue client, a domain model -
+goes at the folder root and is reached through `~/`, as these docs do with `~/types/`.
+[Details&nbsp;›](/routing/rationale#helpers-shared-by-several-routes)
+
+#### Where does code shared by several source folders go?
+Outside `src/`, at the project root, imported through `@/` - `@/db/models`, `@/shared/user`, etc.
+Nothing there is scanned, so the layout is yours; the docs use `db/` and `shared/` in examples without enforcing either.
+
+It is typechecked through whichever folder imports it. Listing it in the root `tsconfig.json` is still worth it:
+that is what lets your editor resolve the file when you open it on its own, and what covers code nothing imports yet.
+[Details&nbsp;›](/essentials/project-structure#path-mappings)
 
 #### Why must every route be a folder with an `index` file, even the root?
 Consistency - no special cases. The base route uses a folder named `index`

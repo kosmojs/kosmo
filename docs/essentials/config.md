@@ -110,9 +110,12 @@ stack: {
 }
 ```
 
-::: warning Don't also list the plugin in `viteConfig.plugins`
-Whichever form you use, the plugin reaches Vite through `stack`.
-Adding it to `viteConfig.plugins` as well runs the transform twice.
+::: warning Don't also list the **stack** plugin in `viteConfig.plugins`
+Whichever form you use above, the stack plugin reaches Vite through `stack`.
+Listing it in `viteConfig.plugins` as well runs its transform twice.
+
+This applies to the stack plugin alone. Every other plugin - Tailwind, SVGR, whatever else -
+belongs in [viteConfig.plugins](#frontend-viteconfig) as usual.
 :::
 
 ### frontend.base - required
@@ -200,7 +203,8 @@ frontend: {
   stack: "react",
   base: "/",
   viteConfig: {
-    plugins: [tailwindcss()],
+    // the React plugin reaches Vite through `stack`; anything else goes here // [!code hl]
+    plugins: [tailwindcss() as never],
     resolve: {
       alias: { "#shared": "/src/shared" },
     },
@@ -210,6 +214,30 @@ frontend: {
   },
 }
 ```
+
+::: tip `as never` on plugins
+Vite's `PluginOption` is deeply recursive, and plugins that return an array -
+Tailwind among them - nest one level further as `Plugin[][]`.
+That is enough to push the comparison past TypeScript's limit:
+
+```txt
+error TS2321: Excessive stack depth comparing types
+  '{ frontend: { ... viteConfig: { plugins: Plugin<any>[][]; }; }; ... }'
+  and 'FolderConfig'.
+```
+
+The error is reported on `defineConfig(...)`, not on the plugin line,
+because what fails is the whole config object being compared against `FolderConfig` -
+the plugin is just what made the comparison too deep.
+The fix still goes on the plugin entry:
+
+```ts
+plugins: [tailwindcss() as never]
+```
+
+`never` is assignable to every type, so the recursion stops there without widening anything.
+Reach for it when [typecheck](/cli/typecheck) reports TS2321 on a `defineConfig` call; it is not needed otherwise.
+:::
 
 A handful of Vite keys are **not** accepted, because KosmoJS derives them from the source-folder layout:
 `root`, `base` (the folder's prefixes come from `frontend.base` / `backend.base`),

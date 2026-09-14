@@ -74,6 +74,9 @@ src/front/
 ├── components/
 │   └── Link.tsx          -> type-safe navigation component
 │
+├── types/                -> yours - nothing outside the names above is scanned
+│   └── user.ts           -> reached as `~/types/user`
+│
 └── entry/
     ├── client.ts         -> mount / hydrate in the browser
     └── server.ts         -> renderToString / renderToStream  (SSR only)
@@ -91,6 +94,10 @@ Neither directory name appears in a URL.
 [Details&nbsp;›](/frontend/layouts#global-layout-via-app-file)
 - **`use.ts` is not a route either.** Drop one in any `api/` folder and it wraps that subtree.
 [Details&nbsp;›](/backend/cascading-middleware)
+- **Everything else is yours.** `index.*` and `use.ts` are the only names the scanner looks for,
+so any other file or directory - `types/`, `server/`, `domain/` - is ignored by it and reachable through `~/`.
+Where to put it is a judgement call, not a convention KosmoJS imposes.
+[Suggestions&nbsp;›](/routing/rationale#helpers-shared-by-several-routes)
 
 A folder created with `--no-backend` simply has no `api/`;
 one created with `--no-frontend` has no `pages/`, `app.*`, `router.ts`, `index.html` or `entry/`.
@@ -160,6 +167,14 @@ That is what keeps folders isolated - `admin`'s route names and navigation types
 `@/` is how folders share without packages. Put a type in `db/models.ts`,
 import it as `@/db/models` from every folder, change it once, and every folder sees it -
 no workspaces, no publishing, no version bumps.
+
+Nothing outside `src/<folder>/` is ever scanned for routes, so the layout there is entirely yours -
+these docs use `db/` and `shared/` in examples, nothing enforces either.
+
+It is still typechecked: a folder's run follows its imports, so `@/db/models` is checked whenever a folder that imports it is.
+Adding it to the root [include](/essentials/config#root-tsconfig-json) is worth doing anyway -
+that is what gives your editor a project for the file when you open it directly,
+and what covers code no folder imports yet.
 
 ## Build Output
 

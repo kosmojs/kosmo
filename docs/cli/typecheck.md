@@ -38,6 +38,8 @@ Add a `prebuild` script in `package.json`:
 ```
 :::
 
+> By default the project root checks nothing of yours - [include](/essentials/config#typescript-config) code you want typechecked.
+
 ## Under the hood
 
 It runs `tsc --project <tsconfig> --noEmit` in sequence,
@@ -87,3 +89,5 @@ Provide `.` with folder name(s) and you get the root checked along with the prov
 # the root and admin folder
 pnpm typecheck . admin
 ```
+
+> By default the project root checks nothing of yours - [include](/essentials/config#typescript-config) code you want typechecked.

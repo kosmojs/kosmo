@@ -75,6 +75,32 @@ Each route's complexity is isolated in its own folder.
 New developers understand the structure immediately.
 Six months later, you can still navigate it without re-reading the codebase.
 
+### Helpers shared by several routes
+
+The same rule answers this one: nothing is scanned except `index.*` and `use.ts`,
+so everything else is yours to place. Two spots follow from the tree itself:
+
+```
+api/
+  helpers.ts             -> used across the whole api tree
+  products/
+    pricing.ts           -> used by products and everything under it
+    index.ts
+    [id]/
+      index.ts
+      cache.ts           -> used by this route only
+```
+
+Put it in the deepest folder that covers every route using it, and move it up when that stops being true.
+A helper's position then tells you its reach, the same way a route's position tells you its URL.
+
+For code with no natural place in the route tree - a mailer, a queue client, a domain model -
+use the folder root and reach it through `~/`, which is what the examples in these docs do with `~/types/`.
+
+One more step up: code shared by *several source folders* goes outside `src/` entirely and is reached through `@/`.
+Same idea, one level higher - the deepest place that covers everyone who needs it.
+[Path&nbsp;mappings&nbsp;›](/essentials/project-structure#path-mappings)
+
 ## The Trade-off
 
 You create a folder even when it only contains `index.ts`. That's the entire cost.
