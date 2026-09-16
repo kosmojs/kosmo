@@ -21,7 +21,14 @@ export const folderManifestFactory = (
   } = sourceFolder;
   return {
     name,
-    ...(frontend?.base ? { frontend: { base: frontend.base } } : {}),
+    ...(frontend?.base
+      ? {
+          frontend: {
+            base: frontend.base,
+            ssr: frontend?.ssr ? true : false,
+          },
+        }
+      : {}),
     ...(backend?.base
       ? {
           backend: {
@@ -30,7 +37,6 @@ export const folderManifestFactory = (
           },
         }
       : {}),
-    ssr: frontend?.ssr ? true : false,
   };
 };
 

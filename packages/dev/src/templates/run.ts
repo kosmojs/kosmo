@@ -169,13 +169,13 @@ const mountFolders = async (
 ): Promise<Array<Handler>> => {
   const handlers: Array<Handler> = [];
 
-  for (const { dir, name, frontend, backend, ssr } of folders) {
+  for (const { dir, name, frontend, backend } of folders) {
     const aliasPatterns =
       backend?.aliasPatterns.map((alias) => {
         return pathToRegexp(posix.join("/", alias)).regexp;
       }) || [];
 
-    if (ssr) {
+    if (frontend?.ssr) {
       // ssr/server.js bundles the backend
       const { createListener } = (await import(
         resolve(dir, "ssr", "server.js")
@@ -183,20 +183,18 @@ const mountFolders = async (
 
       const listener = await createListener();
 
+      handlers.push({
+        name,
+        base: frontend.base as string,
+        aliasPatterns: [],
+        listener,
+      });
+
       if (backend) {
         handlers.push({
           name,
           base: backend.base,
           aliasPatterns: aliasPatterns,
-          listener,
-        });
-      }
-
-      if (frontend) {
-        handlers.push({
-          name,
-          base: frontend?.base as string,
-          aliasPatterns: [],
           listener,
         });
       }
