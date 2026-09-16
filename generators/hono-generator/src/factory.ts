@@ -155,7 +155,7 @@ export default defineGeneratorFactory((sourceFolder) => {
   };
 
   return {
-    async start() {
+    async seed() {
       // deploy global lib files that does not change on routes updates
       for (const [file, template] of [
         ["api.ts", templates.libApi],

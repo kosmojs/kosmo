@@ -30,6 +30,7 @@ export default defineGeneratorFactory<SSROptions>((sourceFolder, options) => {
   });
 
   return {
+    async seed() {},
     async build(entries) {
       const renderModeResolver = options?.renderMode
         ? typeof options.renderMode === "string"

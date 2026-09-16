@@ -168,7 +168,7 @@ export default defineGeneratorFactory<TypeboxOptions>(
     };
 
     return {
-      async start() {
+      async seed() {
         for (const [file, template] of [
           ["custom-types.ts", templates.libTypeboxCustomTypes],
           ["error-handler.ts", templates.libTypeboxErrorHandler],

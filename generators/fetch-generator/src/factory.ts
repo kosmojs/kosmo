@@ -131,7 +131,7 @@ export default defineGeneratorFactory((sourceFolder) => {
   };
 
   return {
-    async start() {
+    async seed() {
       for (const [file, template] of [
         // unwrap file supposed to be replaced by specialized generators, write it only at initialization.
         // fetch generator always runs before other generators

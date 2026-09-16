@@ -113,7 +113,7 @@ export default defineGeneratorFactory((sourceFolder) => {
       };
     },
 
-    async start() {
+    async seed() {
       // deploy global lib files that does not change on routes updates
       for (const [file, template] of [
         ["env.d.ts", templates.libEnvD],

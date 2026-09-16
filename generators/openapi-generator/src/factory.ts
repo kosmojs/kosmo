@@ -40,6 +40,7 @@ export default defineGeneratorFactory<OpenAPIOptions>(
     };
 
     return {
+      async seed() {},
       async watch(entries) {
         await generateSchemas(entries);
       },

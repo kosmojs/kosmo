@@ -63,7 +63,7 @@ export type GeneratorFactory = {
     command: ProjectSettings["command"];
   }) => UserConfig;
 
-  start?: () => Promise<void>;
+  seed: () => Promise<void>;
 
   watch?: (
     entries: Array<ResolvedEntry>,

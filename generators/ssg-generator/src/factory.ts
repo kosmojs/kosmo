@@ -50,7 +50,7 @@ export default defineGeneratorFactory((sourceFolder) => {
   };
 
   return {
-    async start() {
+    async seed() {
       await deployLibFile(createPath.lib("ssg.ts"), templates.libSsg, {});
     },
 
@@ -82,10 +82,10 @@ export default defineGeneratorFactory((sourceFolder) => {
         console.error(
           styleText(
             "red",
-            `❗Please enable ssrGenerator in ${sourceFolder.name}/kosmo.config.ts`,
+            `❗Please set frontend.ssr to true in ${sourceFolder.name}/kosmo.config.ts`,
           ),
         );
-        console.error("  SSG generator can not run without SSR server");
+        console.error("  SSG can not run without SSR server");
         console.error();
         return;
       }
@@ -187,7 +187,7 @@ export default defineGeneratorFactory((sourceFolder) => {
         });
 
         if (failed.length) {
-          spinner.failed("failed ❗");
+          spinner.failed();
           // A quietly skipped route would ship an incomplete static site;
           // surface every broken route at once and fail the build.
           throw new Error(

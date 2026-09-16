@@ -18,7 +18,7 @@ export default defineGeneratorFactory((sourceFolder) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
   const { frontend, backend } = sourceFolder.config;
 
-  const start = async () => {
+  const seed = async () => {
     const { dependencies = {}, devDependencies = {} } = await import(
       resolve(sourceFolder.root, "package.json"),
       { with: { type: "json" } }
@@ -202,7 +202,7 @@ export default defineGeneratorFactory((sourceFolder) => {
   };
 
   return {
-    start,
+    seed,
     watch: generateLibFiles,
     build: generateLibFiles,
     virtualModules() {
