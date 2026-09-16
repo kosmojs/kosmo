@@ -15,6 +15,7 @@ import { pathExists, spinnerFactory } from "@kosmojs/lib";
 
 import {
   assertNoError,
+  checkDependencies,
   compareDependencies,
   FOLDER_OPTIONS,
   type PackageJSON,

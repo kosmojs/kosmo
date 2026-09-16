@@ -171,5 +171,69 @@ export const printUsage = () => {
 
   for (const line of usage) {
     console.log(line);
+export const checkDependencies = async (
+  packageJson: PackageJSON,
+  generators: Array<GeneratorSignature>,
+) => {
+  const { dependencies = {}, devDependencies = {} } = packageJson;
+
+  const missing: Array<[string, string, string]> = [];
+  const outdated: Array<[string, string, string]> = [];
+
+  const required = generators.flatMap((generator) => {
+    return (["dependencies", "devDependencies"] as const).flatMap((key) => {
+      return generator[key]
+        ? Object.entries(
+            typeof generator[key] === "function"
+              ? (generator[key] as Function)(generator.options)
+              : (generator[key] as object),
+          ).flatMap(([name, v]) => {
+            const minVersion = semver.minVersion(v as string)?.version;
+            return minVersion ? [[name, minVersion, key]] : [];
+          })
+        : [];
+    });
+  });
+
+  for (const [name, minVersion, key] of required) {
+    const rawVersion = dependencies[name] || devDependencies[name];
+    const version = rawVersion
+      ? semver.minVersion(rawVersion)?.version
+      : undefined;
+    if (!rawVersion || !version) {
+      missing.push([name, minVersion, key]);
+    } else {
+      if (semver.lt(version, minVersion)) {
+        outdated.push([name, minVersion, key]);
+      }
+    }
+  }
+
+  if (missing.length) {
+    console.error(
+      styleText(
+        ["red", "italic"],
+        `There are ${missing.length} missing dependencies, please consider installing them.`,
+      ),
+    );
+    for (const key of ["dependencies", "devDependencies"]) {
+      const deps = missing.filter((e) => e[2] === key);
+      if (deps.length) {
+        console.error(
+          `${key}: ${styleText(["blue"], deps.map(([name]) => name).join(" "))}`,
+        );
+      }
+    }
+  }
+
+  if (outdated.length) {
+    console.error(
+      styleText(
+        ["yellow", "italic"],
+        `There are ${outdated.length} outdated dependencies, please consider updating them:`,
+      ),
+    );
+    console.error(outdated.map(([name]) => name).join(" "));
+    console.error();
   }
 };
