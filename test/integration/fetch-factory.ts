@@ -57,17 +57,25 @@ export const createTestGroups = async (opt: {
           }
         }
 
-        const project = await setupTestProject({
-          mode,
-          backend: backend as never,
-          frontend: frontend as never,
-          tsq,
-          ...(renderMode ? { ssr: { renderMode } } : {}),
-          ...(opt?.skip ? { skip: opt.skip } : {}),
-        });
+        const project = await setupTestProject(
+          {
+            mode,
+            backend: backend as never,
+            frontend: frontend as never,
+            ...(opt?.skip ? { skip: opt.skip } : {}),
+          },
+          {
+            frontend: {
+              ...(renderMode ? { ssr: { renderMode } } : {}),
+              tanstack: { query: tsq ? true : false },
+            },
+          },
+        );
 
         const group: TestGroup = {
-          name: [backend, frontend, renderMode, tsq].filter(Boolean).join(":"),
+          name: [backend, frontend, renderMode, tsq ? "tsq" : ""]
+            .filter(Boolean)
+            .join(":"),
           project,
           tests: [],
         };
@@ -132,8 +140,9 @@ export const createTestGroups = async (opt: {
                         tsq,
                         route: route as never,
                         path,
-                        params: JSON.stringify(params),
                         method,
+                        params: JSON.stringify(params),
+                        headers,
                         payload,
                         file,
                       });
@@ -282,8 +291,9 @@ const renderPageFile = (data: {
   tsq: boolean;
   route: keyof typeof routes;
   path: string;
-  params: string;
   method: string;
+  params: string;
+  headers: Record<string, unknown> | undefined;
   payload: Record<string, unknown>;
   file: "index" | "layout";
 }) => {
@@ -310,7 +320,7 @@ const renderPageFile = (data: {
       ...payload,
       {
         key: "headers",
-        val: JSON.stringify({ "x-request-origin": data.file }),
+        val: JSON.stringify({ ...data.headers, "x-request-origin": data.file }),
       },
     ],
     loaderHash: crc(JSON.stringify(data)),

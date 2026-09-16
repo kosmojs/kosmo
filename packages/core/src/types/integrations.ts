@@ -19,7 +19,6 @@ type BackendStack = keyof typeof BACKENDS;
 export type FrontendOptions = {
   stack: FrontendStack | { name: FrontendStack; plugin: PluginOption };
   base: string;
-  fetch?: boolean | { generator?: GeneratorSignature };
   ssr?: boolean | SSROptions | { generator?: GeneratorSignature<SSROptions> };
   ssg?: boolean | { generator?: GeneratorSignature };
   tanstack?: { query?: boolean };

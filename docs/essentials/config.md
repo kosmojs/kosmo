@@ -36,7 +36,6 @@ export default defineConfig({
   frontend: {
     stack: "react", // or solid, vue, svelte, mdx
     base: "/",
-    fetch: true,
     ssr: true,
     ssg: false,
     tanstack: { query: false },
@@ -45,6 +44,7 @@ export default defineConfig({
     stack: "hono", // or h3, koa
     base: "/api",
   },
+  fetch: true,
   validation: true,
   typecheck: true,
 });
@@ -406,7 +406,6 @@ export default defineConfig({
   frontend: {
     stack: "react",
     base: "/front",
-    fetch: true,
     ssr: false,
     ssg: false,
     tanstack: { query: false },
@@ -415,6 +414,7 @@ export default defineConfig({
     stack: "hono",
     base: "/front/api",
   },
+  fetch: true,
   validation: true,
   typecheck: true,
 });
@@ -434,6 +434,7 @@ export default defineConfig({
     ssg: false,
     tanstack: { query: false },
   },
+  fetch: false,
   typecheck: true,
 });
 ```
@@ -448,6 +449,7 @@ export default defineConfig({
     stack: "koa",
     base: "/front/api",
   },
+  fetch: false,
   validation: true,
 });
 ```
@@ -461,10 +463,10 @@ export default defineConfig({
   frontend: {
     stack: "mdx",
     base: "/docs",
-    fetch: true,
     ssr: true,
     ssg: true,
   },
+  fetch: false,
   typecheck: true,
 });
 ```

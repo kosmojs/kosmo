@@ -8,6 +8,7 @@ import type {
 export type FolderConfig = {
   frontend?: FrontendOptions;
   backend?: BackendOptions;
+  fetch?: boolean | { generator?: GeneratorSignature };
   validation?:
     | boolean
     | TypeboxOptions

@@ -57,6 +57,7 @@ export const defineConfig = (
   origConfig: FolderConfig,
 ): SourceFolder["config"] => {
   const config = { ...origConfig };
+  const { frontend, backend, fetch, validation } = config;
   const { frontend, backend, validation } = config;
 
   for (const key of ["frontend", "backend"] as const) {
@@ -124,11 +125,11 @@ export const defineConfig = (
         : frontend.stack;
 
     // fetch generator should run before frontend
-    if (frontend.fetch) {
-      if (frontend.fetch === true) {
+    if (fetch) {
+      if (fetch === true) {
         generators.push(fetchGenerator());
-      } else if (frontend.fetch.generator) {
-        generators.push(frontend.fetch.generator);
+      } else if (fetch.generator) {
+        generators.push(fetch.generator);
       }
     }
 
