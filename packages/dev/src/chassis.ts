@@ -35,15 +35,14 @@ export default async (
 
   // NOTE: initialize generators before anything else, regardless command
   for (const sourceFolder of projectSettings.sourceFolders) {
-    for (const generator of sourceFolder.config.generators) {
+    for (const generator of sourceFolder.generators) {
       if (!generator.meta?.name || typeof generator.factory !== "function") {
         throw new Error(
           `${sourceFolder.name}: Unrecognized generator - must be created via defineGenerator()`,
         );
       }
-
       try {
-        await generator.factory(sourceFolder).start?.();
+        await generator.factory(sourceFolder).seed();
       } catch (error) {
         console.error(
           styleText(
@@ -95,7 +94,7 @@ export default async (
 
   for (const sourceFolder of projectSettings.sourceFolders) {
     const { createPath } = pathResolver(sourceFolder);
-    const { generators, frontend, backend } = sourceFolder.config;
+    const { frontend, backend } = sourceFolder.config;
 
     const requestMatchers = matchersFactory(sourceFolder);
 
@@ -118,7 +117,7 @@ export default async (
           // user-provided config - lowest priority
           frontend?.viteConfig,
           // generators configs - higher priority
-          ...generators.map(({ factory }) => {
+          ...sourceFolder.generators.map(({ factory }) => {
             return factory(sourceFolder).viteConfig?.({
               kind: "client",
               command,
@@ -156,7 +155,9 @@ export default async (
 
     // INFO: === start backend server ===
     if (backend) {
-      const generator = generators.find((e) => e.meta.slot === "backend");
+      const generator = sourceFolder.generators.find(
+        (e) => e.meta.slot === "backend",
+      );
       // NOTE: sourceFolder.config is client-specific config - not using for backend!
       // To provide backend-specific config pass it as api generator options.
       const viteServer = await createServer(
@@ -312,7 +313,7 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
   const command = "build";
 
   const { createPath } = pathResolver(sourceFolder);
-  const { generators, frontend, backend } = sourceFolder.config;
+  const { frontend, backend } = sourceFolder.config;
 
   const resolvedRoutes = [];
 
@@ -342,7 +343,7 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
     }),
   ];
 
-  for (const generator of generators) {
+  for (const generator of sourceFolder.generators) {
     await generator.factory(sourceFolder).build?.(resolvedRoutes);
   }
 
@@ -353,7 +354,7 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
         // user-provided config - lowest priority
         frontend.viteConfig,
         // generators configs - higher priority
-        ...generators.map(({ factory }) => {
+        ...sourceFolder.generators.map(({ factory }) => {
           return factory(sourceFolder).viteConfig?.({
             kind: "client",
             command,
@@ -377,7 +378,9 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
 
   // INFO: === build backend ===
   if (backend) {
-    const generator = generators.find((e) => e.meta.slot === "backend");
+    const generator = sourceFolder.generators.find(
+      (e) => e.meta.slot === "backend",
+    );
 
     // NOTE: sourceFolder.config is client-specific config - not using for backend!
     // To provide backend-specific config pass it as api generator options.
@@ -422,7 +425,7 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
     );
   }
 
-  for (const generator of generators) {
+  for (const generator of sourceFolder.generators) {
     await generator.factory(sourceFolder).postBuild?.(resolvedRoutes);
   }
 };
@@ -444,7 +447,7 @@ const eventFactory = async (
     factory: GeneratorFactory;
   }> = [];
 
-  for (const generator of sourceFolder.config.generators) {
+  for (const generator of sourceFolder.generators) {
     const factory = generator.factory(sourceFolder);
     generators.push({ name: generator.meta.name, factory });
   }

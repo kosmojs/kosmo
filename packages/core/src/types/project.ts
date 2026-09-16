@@ -20,9 +20,9 @@ export type SourceFolder = {
   // Source folder name, e.g. "front", "admin", "app"
   name: string;
   // Resolved folder configuration
-  config: FolderConfig & {
-    generators: Array<GeneratorSignature>;
-  };
+  config: FolderConfig;
+  // Resolved folder generators
+  generators: Array<GeneratorSignature>;
   // Absolute path to the project root
   root: string;
   // output directory name, configured as `distDir` in package.json

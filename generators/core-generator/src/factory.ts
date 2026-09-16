@@ -16,7 +16,7 @@ import * as templates from "./templates";
 
 export default defineGeneratorFactory((sourceFolder) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
-  const { generators, frontend, backend } = sourceFolder.config;
+  const { frontend, backend } = sourceFolder.config;
 
   const start = async () => {
     const { dependencies = {}, devDependencies = {} } = await import(
@@ -80,7 +80,7 @@ export default defineGeneratorFactory((sourceFolder) => {
 
       const types = new Set<string>(tsconfig.compilerOptions.types || []);
 
-      for (const { meta } of generators) {
+      for (const { meta } of sourceFolder.generators) {
         if (meta.jsx) {
           compilerOptions.jsx = meta.jsx;
         }
@@ -129,7 +129,7 @@ export default defineGeneratorFactory((sourceFolder) => {
       { overwrite: false },
     );
 
-    if (generators.some((e) => e.meta.slot === "frontend")) {
+    if (sourceFolder.generators.some((e) => e.meta.slot === "frontend")) {
       // deploy default index.html file; generators may override as needed
       await renderToFile(
         createPath.src("index.html"),
@@ -208,7 +208,7 @@ export default defineGeneratorFactory((sourceFolder) => {
     virtualModules() {
       const { createImport } = pathResolver(sourceFolder);
 
-      const backendGenerator = generators.some(
+      const backendGenerator = sourceFolder.generators.some(
         (e) => e.meta.slot === "backend",
       );
 

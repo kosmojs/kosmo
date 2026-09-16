@@ -179,7 +179,7 @@ export const virtualModules = (
    * */
   const VIRTUAL_PREFIX = "\0";
 
-  const modules = sourceFolder.config.generators.flatMap(({ factory }) => {
+  const modules = sourceFolder.generators.flatMap(({ factory }) => {
     return factory(sourceFolder).virtualModules?.() || [];
   });
 

@@ -55,10 +55,9 @@ const backendGenerators = {
 
 export const defineConfig = (
   origConfig: FolderConfig,
-): SourceFolder["config"] => {
+): Pick<SourceFolder, "config" | "generators"> => {
   const config = { ...origConfig };
   const { frontend, backend, fetch, validation } = config;
-  const { frontend, backend, validation } = config;
 
   for (const key of ["frontend", "backend"] as const) {
     if (config[key]) {
@@ -159,7 +158,7 @@ export const defineConfig = (
   }
 
   return {
-    ...config,
+    config,
     generators,
   };
 };

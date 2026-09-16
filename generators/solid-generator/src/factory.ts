@@ -20,7 +20,6 @@ import * as templates from "./templates";
 
 export default defineGeneratorFactory((sourceFolder) => {
   const { frontend } = sourceFolder.config;
-  const { generators = [] } = sourceFolder.config;
 
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
@@ -105,7 +104,7 @@ export default defineGeneratorFactory((sourceFolder) => {
     viteConfig() {
       const defaultPlugin = () => {
         return vitePlugin({
-          ...(generators.some((e) => e.meta.slot === "ssr")
+          ...(sourceFolder.generators.some((e) => e.meta.slot === "ssr")
             ? {
                 ssr: true,
                 solid: { hydratable: true },

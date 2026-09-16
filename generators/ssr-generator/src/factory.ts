@@ -21,7 +21,7 @@ const DEFAULT_RENDER_MODE = RENDER_MODES[0];
 
 export default defineGeneratorFactory<SSROptions>((sourceFolder, options) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
-  const { frontend, generators } = sourceFolder.config;
+  const { frontend } = sourceFolder.config;
 
   const { renderToFile: deployLibFile } = renderFactory({
     helpers: {
@@ -90,7 +90,7 @@ export default defineGeneratorFactory<SSROptions>((sourceFolder, options) => {
           // user config - lowest priority
           frontend.viteConfig,
           // generators configs - higher priority
-          ...generators.map(({ factory }) => {
+          ...sourceFolder.generators.map(({ factory }) => {
             return factory(sourceFolder).viteConfig?.({
               kind: "client",
               command: "build",

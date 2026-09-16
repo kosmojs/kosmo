@@ -32,7 +32,7 @@ export const resolverFactory = (
   | "apiRouteResolver",
   (entry: RouteEntry) => ResolverSignature
 > => {
-  const { generators } = sourceFolder.config;
+  const { generators } = sourceFolder;
 
   const { refineTypeName = defaults.refineTypeName } =
     typeof sourceFolder.config.validation === "object"
