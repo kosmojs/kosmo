@@ -542,13 +542,16 @@ export const createKosmoConfig = (
     frontend,
     backend,
     options: Object.fromEntries(
-      // frontend/backend etc.
-      Object.entries(options).map(([key, val]) => [
+      Object.entries(folderConfig).map(([key, val]) => [
         key,
-        Object.fromEntries(
-          // stack/base etc.
-          Object.entries(val).map(([key, val]) => [key, JSON.stringify(val)]),
-        ),
+        Object.prototype.toString.call(val) === "[object Object]"
+          ? Object.fromEntries(
+              Object.entries(val).map(([key, val]) => [
+                key,
+                JSON.stringify(val),
+              ]),
+            )
+          : JSON.stringify(val),
       ]),
     ),
   };

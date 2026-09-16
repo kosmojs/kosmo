@@ -58,6 +58,24 @@ passed - so `pnpm typecheck` works as a CI gate without any extra wiring.
 Each source folder has its own [tsconfig.json](/essentials/config#typescript-config) with its own path mappings.
 A single `tsc` over the whole project would resolve them against the wrong one, so the folders are checked one at a time instead.
 
+## Opting a folder out
+
+A folder whose config carries `typecheck: false` is left out of every run.
+Useful for a [sidecar](/dev-build-run/sidecar) wrapping third-party JavaScript,
+or a folder mid-migration where a red `tsc` is noise rather than signal.
+
+```ts [src/mailer/kosmo.config.ts]
+defineConfig({
+  // ...
+  typecheck: false, // [!code hl]
+})
+```
+
+Naming it explicitly does not force the issue - `pnpm typecheck mailer` reports
+that the folder opts out and checks nothing.
+
+The folder still builds and still runs; only typechecking skips it.
+
 ## Selective typechecking
 
 Provide no arguments and every source folder is checked, along with the project root.

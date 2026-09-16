@@ -214,18 +214,22 @@ const run = async () => {
       styleText("gray", Array(columns).fill("·").join("")),
     );
 
-    for (const project of projects) {
+    for (const [project, typecheck] of projects) {
       console.log(delimiter);
-      const spinner = spinnerFactory(project);
-      const error = await runTsc(resolve(root, project));
-      if (error) {
-        errors.push(error);
-        spinner.text(styleText(["black", "bgRed"], ` ${project} `));
-        spinner.failed();
-        console.error(error);
+      if (typecheck) {
+        const spinner = spinnerFactory(project);
+        const error = await runTsc(resolve(root, project));
+        if (error) {
+          errors.push(error);
+          spinner.text(styleText(["black", "bgRed"], ` ${project} `));
+          spinner.failed();
+          console.error(error);
+        } else {
+          spinner.text(styleText(["black", "bgGreen"], ` ${project} `));
+          spinner.succeed();
+        }
       } else {
-        spinner.text(styleText(["black", "bgGreen"], ` ${project} `));
-        spinner.succeed();
+        spinnerFactory(`${project} - ${styleText("yellow", "SKIP")}`).succeed();
       }
     }
 

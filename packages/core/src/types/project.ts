@@ -12,6 +12,7 @@ export type FolderConfig = {
     | boolean
     | TypeboxOptions
     | { generator?: GeneratorSignature<TypeboxOptions> };
+  typecheck?: boolean;
 };
 
 export type SourceFolder = {

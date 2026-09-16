@@ -46,6 +46,7 @@ export default defineConfig({
     base: "/api",
   },
   validation: true,
+  typecheck: true,
 });
 ```
 
@@ -415,6 +416,7 @@ export default defineConfig({
     base: "/front/api",
   },
   validation: true,
+  typecheck: true,
 });
 ```
 
@@ -432,6 +434,7 @@ export default defineConfig({
     ssg: false,
     tanstack: { query: false },
   },
+  typecheck: true,
 });
 ```
 
@@ -462,6 +465,7 @@ export default defineConfig({
     ssr: true,
     ssg: true,
   },
+  typecheck: true,
 });
 ```
 :::
