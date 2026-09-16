@@ -1,6 +1,4 @@
-import { readFileSync } from "node:fs";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
-import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { styleText } from "node:util";
 
@@ -35,7 +33,6 @@ import {
 } from "@kosmojs/dev";
 import { render, renderToFile } from "@kosmojs/lib";
 
-import self from "../package.json" with { type: "json" };
 import {
   assertNoError,
   isCLI,
@@ -46,133 +43,38 @@ import {
 } from "./base";
 import * as templates from "./templates";
 
-/**
- * Read the installed package.json at runtime to get the actual version.
- * A static import would be inlined by the bundler with the pre-bump version.
- *
- * INFO: For best compatibility, all packages should share the same version.
- * When bumping the version (even a patch) for a single package,
- * bump it for all packages to keep versions fully synchronized across the project.
- * */
-const { version } = JSON.parse(
-  readFileSync(
-    createRequire(import.meta.url).resolve("@kosmojs/cli/package.json"),
-    "utf-8",
-  ),
-);
 
-const SELF_VERSION = `^${version}`;
+  await mkdir(srcDir, { recursive: true });
+  const entries = await readdir(srcDir);
 
-// Resolve a clack prompt, exiting cleanly on ctrl-c / escape
-const readAnswer = async <T>(input: Promise<T | symbol>) => {
-  const value = await input;
-  if (prompts.isCancel(value)) {
-    prompts.cancel("Cancelled");
-    process.exit(0);
-  }
-  return value;
-};
-
-export const createProject = async (
-  path: string,
-  project: Project,
-  assets?: {
-    dependencies?: Record<string, string>;
-    devDependencies?: Record<string, string>;
-    input?: {
-      overwrite?: boolean;
-    };
-  },
-) => {
-  await mkdir(path, { recursive: true });
-
-  const entries = await readdir(path);
-
-  const exemptPatterns = [/^\.git/, /^readme/i, /^license/i];
-
-  if (entries.some((e) => !exemptPatterns.some((r) => r.test(e)))) {
-    if (isCLI(assets?.input)) {
-      // cli mode
-      assertNoError(() => {
-        return !assets?.input?.overwrite
-          ? "Target dir is not empty. Either remove dir contents or provide --overwrite flag"
-          : undefined;
-      });
-    } else {
-      // interactive mode
-      const answer = await readAnswer(
+  if (entries.includes(name) && !input?.overwrite) {
+    const path = `./${defaults.srcDir}/${name}/`;
+    const message = `${styleText(["blue", "bold"], path)} already exists`;
+    if (isTTY()) {
+      const answer = await readAnswer<"remove" | "overwrite" | "cancel">(
         prompts.select({
-          message: "Target dir is not empty",
+          message,
           options: [
             { value: "remove", label: "Remove existing files" },
-            {
-              value: "overwrite",
-              label: "Keep existing files, overwrite as needed",
-            },
+            { value: "overwrite", label: "Overwrite existing files" },
             { value: "cancel", label: "Cancel" },
           ],
         }),
       );
-
       if (answer === "remove") {
-        for (const entry of entries) {
-          if (!exemptPatterns.some((r) => r.test(entry))) {
-            await rm(resolve(path, entry), { recursive: true });
-          }
-        }
+        await rm(resolve(srcDir, name), { recursive: true });
       } else if (answer === "cancel") {
         prompts.cancel("Cancelled");
         process.exit(0);
       }
-
-      prompts.outro();
+    } else {
+      assertNoError(() => {
+        return `${message}. Either remove it or provide --overwrite flag.`;
+      });
     }
   }
 
-  const packageJson = {
-    type: "module",
-    distDir: project.distDir || DEFAULT_DIST,
-    devPort: project.devPort || DEFAULT_PORT,
-    previewPort: project.previewPort || DEFAULT_PREVIEW_PORT,
-    scripts: {
-      dev: "kosmo serve",
-      preview: "kosmo preview",
-      build: "kosmo build",
-      typecheck: "kosmo typecheck",
-      folder: "kosmo folder",
-    },
-    dependencies: {
-      "@kosmojs/core": SELF_VERSION,
-      ...assets?.dependencies,
-    },
-    devDependencies: {
-      "@kosmojs/cli": SELF_VERSION,
-      "@kosmojs/dev": SELF_VERSION,
-      "@types/node": self.devDependencies["@types/node"],
-      "@types/deno": self.devDependencies["@types/deno"],
-      "@types/bun": self.devDependencies["@types/bun"],
-      typescript: self.devDependencies["typescript"],
-      vite: self.devDependencies["vite"],
-      ...assets?.devDependencies,
-    },
-  };
-
-  await renderToFile(
-    resolve(path, "package.json"),
-    JSON.stringify(packageJson, undefined, 2),
-    {},
-    {
-      // overwrite regardless, project should start with a clean package.json
-      overwrite: true,
-    },
-  );
-
-  await renderToFile(
-    resolve(path, ".gitignore"),
-    templates.gitignore,
-    {},
-    { overwrite: false },
-  );
+  return { name };
 };
 
 export const createFolder = async (

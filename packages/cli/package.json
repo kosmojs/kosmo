@@ -20,8 +20,7 @@
     ".": {
       "types": "./pkg/index.d.ts",
       "default": "./pkg/index.js"
-    },
-    "./package.json": "./package.json"
+    }
   },
   "scripts": {
     "build": "wsbuild src/cli.ts src/index.ts",
@@ -39,9 +38,6 @@
   },
   "devDependencies": {
     "@types/semver": "^7.8.0",
-    "@types/bun": "^1.4.2",
-    "@types/deno": "^2.7.0",
-    "@types/node": "^26.5.0",
     "typescript": "^7.0.2",
     "vite": "^8.2.2"
   }
