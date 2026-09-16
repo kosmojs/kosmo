@@ -8,6 +8,7 @@ import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   createAliasPatterns,
   defineGeneratorFactory,
+  generateTsconfig,
   pathResolver,
   renderFactory,
   renderToFile,
@@ -15,7 +16,6 @@ import {
 } from "@kosmojs/lib";
 
 import * as templates from "./templates";
-import { generateTsconfig } from "./tsconfig";
 
 /**
  * Generates stub files required by various generators.
