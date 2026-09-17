@@ -138,7 +138,7 @@ export const prepareSourceFolder = async (
   return folder;
 };
 
-export const createSourceFolder = async (
+export const createHTTPFolder = async (
   root: string,
   folder: SourceFolder,
   configPatch?: DeepPartial<FolderConfig>,

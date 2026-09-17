@@ -31,8 +31,8 @@ import {
   validateName,
 } from "./base";
 import {
+  createHTTPFolder,
   createSidecarFolder,
-  createSourceFolder,
   prepareFolder,
   prepareSourceFolder,
 } from "./factory";
@@ -231,7 +231,7 @@ const run = async () => {
 
     const folder = await prepareSourceFolder(root, name, input);
 
-    await createSourceFolder(root, folder);
+    await createHTTPFolder(root, folder);
 
     // Using readFile cause import() returns cached content
     const { dependencies, devDependencies } = JSON.parse(
@@ -364,7 +364,9 @@ const run = async () => {
           spinner.succeed();
         }
       } else {
-        spinnerFactory(`${project} - ${styleText("yellow", "SKIP")}`).succeed();
+        spinnerFactory(
+          `${project} - ${styleText(["black", "bgYellow"], " SKIP ")}`,
+        ).succeed();
       }
     }
 

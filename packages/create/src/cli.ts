@@ -6,7 +6,7 @@ import { parseArgs, styleText } from "node:util";
 
 import {
   assertNoError,
-  createSourceFolder,
+  createHTTPFolder,
   FOLDER_OPTIONS,
   isTTY,
   type Project,
@@ -146,7 +146,7 @@ const run = async () => {
   const input = Object.keys(values).length ? values : undefined;
   const folder = await prepareSourceFolder(root, "app", input);
 
-  await createSourceFolder(root, folder, {
+  await createHTTPFolder(root, folder, {
     frontend: { base: "/" },
     backend: { base: "/api" },
   });
