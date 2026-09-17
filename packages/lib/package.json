@@ -29,6 +29,7 @@
     "crc": "^4.3.2",
     "handlebars": "^4.7.9",
     "mrmime": "^2.0.1",
+    "oxfmt": "^0.67.0",
     "path-to-regexp": "^8.4.2",
     "picomatch": "^4.0.7",
     "tfusion": "^0.2.2",
