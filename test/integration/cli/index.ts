@@ -2,9 +2,8 @@ import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 
-import { env, execFile } from "..";
+import { env, execFile, pkgsDir } from "..";
 
-export const pkgsDir = resolve(import.meta.dirname, "../../../packages");
 export const createBin = resolve(pkgsDir, "create/pkg/cli.js");
 export const kosmoBin = resolve(pkgsDir, "cli/pkg/cli.js");
 

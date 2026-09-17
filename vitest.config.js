@@ -121,6 +121,10 @@ export default defineConfig({
           MODE: "ssg",
         },
       }),
+
+      setupFactory("integration:sidecar", {
+        include: ["integration/sidecar/*.test.ts"],
+      }),
     ],
   },
 });

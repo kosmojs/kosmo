@@ -1,5 +1,4 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import net from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, posix, resolve } from "node:path";
 import { styleText } from "node:util";
@@ -11,7 +10,7 @@ import { createJiti } from "jiti";
 import { chromium } from "playwright";
 import { inject, type ProvidedContext } from "vitest";
 
-import { createSourceFolder } from "@kosmojs/cli";
+import { createHTTPFolder } from "@kosmojs/cli";
 import {
   BACKENDS,
   defaults,
@@ -23,7 +22,14 @@ import {
 import chassis from "@kosmojs/dev/chassis";
 import { pathResolver } from "@kosmojs/lib";
 
-import { contentPatternFor, createRoutePath, env, exec } from ".";
+import {
+  buildProject,
+  contentPatternFor,
+  createRoutePath,
+  findFreePort,
+  installDependencies,
+  pkgsDir,
+} from ".";
 
 // Lazy: launched on first use, so browser-free suites (ssg, cli, backend)
 // run without playwright binaries installed.
@@ -38,8 +44,6 @@ const getBrowser = async () => {
   return browserInstance;
 };
 
-const pnpmDir = resolve(tmpdir(), ".kosmojs/pnpm-store");
-
 const httpClient = got.extend({
   retry: {
     limit: 0, // ✅ Fast failures in tests
@@ -48,26 +52,6 @@ const httpClient = got.extend({
     request: 5000, // Also set reasonable timeout
   },
 });
-
-// Ports are allocated long before servers actually bind(dependency install and build run in between),
-// so the range must sit below the kernel's ephemeral source-port range (32768-60999 on Linux);
-// otherwise outbound connections made by pnpm/got/playwright during that window
-// can take a port that was already checked as free.
-const PORT_RANGE = [20_000, 29_999];
-
-// Width of the sub-range reserved for each vitest worker process.
-const PORTS_PER_WORKER = 500;
-
-// Parallel workers each run their own copy of this module;
-// scanning a worker-specific sub-range prevents two workers from picking the same port
-// between the check and the actual bind.
-const workerOffset =
-  (Number(process.env.VITEST_POOL_ID ?? 0) * PORTS_PER_WORKER) %
-  (PORT_RANGE[1] - PORT_RANGE[0] + 1);
-
-// Cursor advancing through the worker's sub-range so the same port is
-// never handed out twice within a worker, even before servers bind.
-let portCursor = 0;
 
 export const setupTestProject = async (
   setup: {
@@ -144,11 +128,6 @@ export const setupTestProject = async (
     cssFile: string;
     cssText: string;
   }) => Promise<() => string>;
-
-  const buildProject = async () => {
-    await installDependencies(projectRoot);
-    await exec("pnpm", ["build"], { cwd: projectRoot, env });
-  };
 
   const createPageRoute = async (
     name: string,
@@ -417,8 +396,6 @@ export const setupTestProject = async (
 
       await cleanup();
 
-      const pkgsDir = resolve(import.meta.dirname, "../../packages");
-
       await createProject(
         resolve(tempDir, projectName),
         { name: projectName, devPort },
@@ -435,7 +412,7 @@ export const setupTestProject = async (
         },
       );
 
-      await createSourceFolder(
+      await createHTTPFolder(
         projectRoot,
         { name: sourceFolder.name, frontend, backend },
         {
@@ -484,14 +461,18 @@ export const setupTestProject = async (
 
       await installDependencies(projectRoot);
     },
-    buildProject,
+    async buildProject() {
+      await installDependencies(projectRoot);
+      await buildProject(projectRoot);
+    },
     createServer,
     async startServer() {
       if (skip) {
         return;
       }
 
-      await buildProject();
+      await installDependencies(projectRoot);
+      await buildProject(projectRoot);
 
       closeServer = await createServer();
 
@@ -565,25 +546,6 @@ export const snapshotNameFor = (
   ].join("/");
 };
 
-const findFreePort = async (): Promise<number> => {
-  const [minPort] = PORT_RANGE;
-
-  for (let i = 0; i < PORTS_PER_WORKER; i++) {
-    const port = minPort + workerOffset + ((portCursor + i) % PORTS_PER_WORKER);
-
-    if (await isPortFree(port)) {
-      portCursor = (portCursor + i + 1) % PORTS_PER_WORKER;
-      return port;
-    }
-  }
-
-  throw new Error(
-    `No free ports found in worker range ${minPort + workerOffset}-${
-      minPort + workerOffset + PORTS_PER_WORKER - 1
-    }`,
-  );
-};
-
 const createBackendPicker = () => {
   const backends = Object.keys(BACKENDS) as Array<keyof typeof BACKENDS>;
   let i = 0;
@@ -594,35 +556,3 @@ const createBackendPicker = () => {
 };
 
 const { pick: pickBackend } = createBackendPicker();
-
-const isPortFree = (port: number): Promise<boolean> => {
-  return new Promise((resolve) => {
-    const server = net.createServer();
-
-    server.once("error", () => resolve(false));
-
-    server.once("listening", () => {
-      server.close();
-      resolve(true);
-    });
-
-    // Bind the unspecified host, same as the servers under test do;
-    // checking 127.0.0.1 alone misses ports taken only on "::".
-    server.listen(port);
-  });
-};
-
-const installDependencies = async (cwd: string, args?: Array<string>) => {
-  await exec(
-    "pnpm",
-    [
-      "install",
-      "--store-dir",
-      pnpmDir,
-      "--no-frozen-lockfile",
-      "--prefer-offline",
-      ...(args || []),
-    ],
-    { cwd, env },
-  );
-};

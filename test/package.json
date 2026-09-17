@@ -12,7 +12,8 @@
     "test:integration:backend": "pnpm -C .. run test:integration:backend",
     "test:integration:csr": "pnpm -C .. run test:integration:csr",
     "test:integration:ssr": "pnpm -C .. run test:integration:ssr",
-    "test:integration:ssg": "pnpm -C .. run test:integration:ssg"
+    "test:integration:ssg": "pnpm -C .. run test:integration:ssg",
+    "test:integration:sidecar": "pnpm -C .. run test:integration:sidecar"
   },
   "dependencies": {
     "@kosmojs/cli": "workspace:^",
