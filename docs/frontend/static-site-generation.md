@@ -14,10 +14,7 @@ head:
 SSG renders pages to static HTML at build time,
 for deploying to a CDN or any static host without a running server.
 
-## Adding SSG Support
-
-SSG is automatically enabled if selected during source folder creation (or via `--ssg` flag in CLI mode).
-To add it to an existing folder, flip `ssg` on in your source folder's `kosmo.config.ts`:
+Every folder comes with `ssg: false`. Flip it on in the folder's `kosmo.config.ts`:
 
 ```ts [kosmo.config.ts]
 import { defineConfig } from "@kosmojs/dev";
@@ -25,15 +22,15 @@ import { defineConfig } from "@kosmojs/dev";
 export default defineConfig({
   frontend: {
     stack: "react",
-    base: "/front",
+    base: "/",
     ssr: true,
-    ssg: true, // [!code ++]
+    ssg: true, // [!code hl]
   },
 });
 ```
 
-It works on source folders with a frontend and [SSR enabled](/frontend/server-side-render):
-pages are rendered by the folder's own SSR server.
+> It works only on source folders with a frontend and [SSR enabled](/frontend/server-side-render):
+> pages are rendered by the folder's own SSR server.
 
 ## Declaring `staticParams`
 

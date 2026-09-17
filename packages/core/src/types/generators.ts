@@ -53,13 +53,13 @@ export type GeneratorMeta = {
 
 export type GeneratorCustomTemplates<T> = Record<
   string,
-  string | ((r: T) => string)
+  string | ((r: T) => string) | undefined
 >;
 
 export type GeneratorFactory = {
   // Vite config provided by generator itself
   viteConfig?: (o: {
-    kind: "client" | "backend";
+    kind: "frontend" | "backend";
     command: ProjectSettings["command"];
   }) => UserConfig;
 

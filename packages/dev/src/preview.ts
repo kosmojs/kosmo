@@ -21,8 +21,8 @@ type Build = (sourceFolder: SourceFolder) => Promise<void>;
  * Preview = production build + watcher + `dist/run.js`.
  *
  * The runner is a child process rather than an in-process import:
- * a fresh process is the only way to reload an ESM graph, and it is exactly
- * what production does - `node dist/run.js`.
+ * a fresh process is the only way to reload an ESM graph,
+ * and it is exactly what production does - `node dist/run.js`.
  *
  * Watching is chokidar over the `src/<folder>` trees - no Vite server,
  * no module graph: the unit of work is "rebuild this folder", so folder-level
@@ -145,10 +145,17 @@ export const previewFactory = async (
     timer = setTimeout(rebuild, DEBOUNCE_MS);
   };
 
-  const watchedFolders = sourceFolders.map((sourceFolder) => {
-    const { createPath } = pathResolver(sourceFolder);
-    return { dir: createPath.src(), sourceFolder };
+  const watchedFolders = sourceFolders.flatMap((sourceFolder) => {
+    if (sourceFolder.config.frontend || sourceFolder.config.backend) {
+      const { createPath } = pathResolver(sourceFolder);
+      return [{ dir: createPath.src(), sourceFolder }];
+    }
+    return [];
   });
+
+  if (!watchedFolders.length) {
+    return async () => {};
+  }
 
   const watcher = watch(
     watchedFolders.map(({ dir }) => dir),

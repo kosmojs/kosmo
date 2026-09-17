@@ -9,7 +9,14 @@ import { parseArgs, styleText } from "node:util";
 import { createJiti } from "jiti";
 import { glob } from "tinyglobby";
 
-import { defaults, type ProjectSettings } from "@kosmojs/core";
+import {
+  BACKENDS,
+  defaults,
+  FRONTENDS,
+  type GeneratorSignature,
+  type ProjectSettings,
+  type SourceFolder,
+} from "@kosmojs/core";
 import chassis from "@kosmojs/dev/chassis";
 import { pathExists, spinnerFactory } from "@kosmojs/lib";
 
@@ -19,19 +26,125 @@ import {
   compareDependencies,
   FOLDER_OPTIONS,
   type PackageJSON,
-  printUsage,
-  type SourceFolder,
+  packageManager,
+  printMessage,
+  validateName,
 } from "./base";
-import { createFolder } from "./factory";
+import {
+  createSidecarFolder,
+  createSourceFolder,
+  prepareFolder,
+  prepareSourceFolder,
+} from "./factory";
 
-const COMMANDS = ["folder", "serve", "build", "preview", "typecheck"] as const;
+const COMMANDS = [
+  "folder",
+  "sidecar",
+  "serve",
+  "build",
+  "preview",
+  "typecheck",
+] as const;
+
+export const printUsage = () => {
+  const usage = [
+    "",
+    `🚀 ${styleText(["bold", "underline", "cyan"], "KosmoJS CLI")}`,
+    "",
+
+    styleText("bold", "FOLDER COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo folder <name>")}`,
+    `  Create <name> Source Folder in interactive mode, prompting for each step`,
+    "",
+    styleText(
+      "bold",
+      "  Use these options to create a Source Folder in CLI mode:",
+    ),
+    `  ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))} ${styleText("dim", "(--no-frontend for API-only folders)")}`,
+    `  ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(--no-backend for client-only folders use)")}`,
+    `  ${styleText("cyan", "--overwrite")} ${styleText("dim", "overwrite existing files (use with caution)")}`,
+    "",
+
+    styleText("bold", "SIDECAR COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo sidecar <name>")}`,
+    `  Create <name> Sidecar Folder - builds a standalone process, serves no routes`,
+    "",
+    `  ${styleText("dim", "The entry default-exports defineService({ start, teardown }).")}`,
+    `  ${styleText("dim", "Set sidecar.serve in kosmo.config.ts to run it under kosmo serve.")}`,
+    "",
+    `  ${styleText("cyan", "--overwrite")} ${styleText("dim", "overwrite existing files (use with caution)")}`,
+    "",
+
+    styleText("bold", "SERVE COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo serve")}`,
+    `  Start dev server for all source folders`,
+    "",
+    `  ${styleText("blue", "kosmo serve")} ${styleText("magenta", "admin")}`,
+    `  Start dev server for single source folder`,
+    "",
+    `  ${styleText("blue", "kosmo serve")} ${styleText("magenta", "admin front")}`,
+    `  Start dev server for multiple source folders`,
+    "",
+
+    styleText("bold", "PREVIEW COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo preview")}`,
+    `  Build all source folders and serve the build output, rebuilding on change`,
+    "",
+    `  ${styleText("blue", "kosmo preview")} ${styleText("magenta", "admin front")}`,
+    `  Preview selected source folders only`,
+    "",
+
+    styleText("bold", "BUILD COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo build")}`,
+    `  Build all source folders`,
+    "",
+    `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "admin")}`,
+    `  Build single source folder`,
+    "",
+    `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "admin front")}`,
+    `  Build multiple source folders`,
+    "",
+
+    styleText("bold", "TYPECHECK COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo typecheck")}`,
+    `  Typecheck all source folders`,
+    "",
+    `  ${styleText("blue", "kosmo typecheck")} ${styleText("magenta", "admin")}`,
+    `  Typecheck single source folder`,
+    "",
+    `  ${styleText("blue", "kosmo typecheck")} ${styleText("magenta", "admin front")}`,
+    `  Typecheck multiple source folders`,
+    "",
+    `  ${styleText("blue", "kosmo typecheck")} ${styleText("magenta", ".")}`,
+    `  Typecheck the project root only`,
+    "",
+    `  ${styleText("blue", "kosmo typecheck")} ${styleText("magenta", ". admin")}`,
+    `  Typecheck the project root along with given folders`,
+    "",
+
+    styleText("bold", "COMMON OPTIONS"),
+    "",
+    `  ${styleText("cyan", "-h, --help")}`,
+    `  Display this help message and exit`,
+    "",
+  ];
+
+  for (const line of usage) {
+    console.log(line);
+  }
+};
 
 const run = async () => {
   const { values, positionals } = parseArgs({
     options: {
       ...FOLDER_OPTIONS,
       overwrite: { type: "boolean" },
-      quiet: { type: "boolean", short: "q" },
       help: { type: "boolean", short: "h" },
     },
     strict: true,
@@ -73,80 +186,15 @@ const run = async () => {
 
   assertNoError(() => {
     return !COMMANDS.includes(command)
-      ? `Invalid command, use one of ${COMMANDS.join(", ")}`
+      ? `Unknown command; use one of ${styleText("blue", COMMANDS.join(", "))}`
       : undefined;
   });
-
-  if (command === "folder") {
-    const [name] = rest;
-
-    const intro = () => {
-      return styleText(
-        ["blue", "bold"],
-        "› Ready to create a new Source Folder",
-      );
-    };
-
-    const note = async () => {
-      // Using readFile cause import() returns cached content
-      const { dependencies, devDependencies } = JSON.parse(
-        await readFile(packageFile, "utf8"),
-      );
-
-      const newDependencies = compareDependencies(packageJson, {
-        dependencies,
-        devDependencies,
-      });
-
-      if (!newDependencies.length) {
-        return;
-      }
-
-      return [
-        `💡 ${styleText(["bold", "italic", "red"], "New dependencies added: ")}`,
-        styleText("dim", newDependencies.map(([, pkg]) => pkg).join(", ")),
-        "",
-        `📦 ${styleText(["bold", "blueBright"], "Install them before continue: ")}`,
-        `$ npm install ${styleText(["dim"], "# pnpm install / yarn install")}`,
-      ].join("\n");
-    };
-
-    const outro = (folder: SourceFolder) => {
-      return [
-        styleText(["green"], `✨ Well done! A new Source Folder created:`),
-        styleText(["blue", "bold"], `./${defaults.srcDir}/${folder.name}`),
-      ].join(" ");
-    };
-
-    const input = Object.keys(values).length ? values : undefined;
-
-    if (input) {
-      // cli mode
-      await createFolder(root, name, {
-        input,
-        intro: () => "",
-        note: () => "",
-        outro: async (f: SourceFolder) => {
-          const output = outro(f);
-          const notes = await note();
-          return notes ? [output, notes].join("\n\n") : output;
-        },
-      });
-    } else {
-      // interactive mode
-      await createFolder(root, name, { intro, note, outro });
-    }
-
-    return;
-  }
-
-  const folderNames = rest.flatMap((e) => (e === "." ? [] : [e]));
 
   const configFilePattern = (folder: string) => {
     return join(defaults.srcDir, folder, "kosmo.config.ts");
   };
 
-  const scanConfigFiles = async () => {
+  const scanConfigFiles = async (folderNames: Array<string>) => {
     const configFiles = await glob(
       folderNames.length
         ? folderNames.map(configFilePattern)
@@ -168,10 +216,89 @@ const run = async () => {
     return configFiles;
   };
 
-  if (command === "typecheck") {
+  const folderNames = rest.flatMap((e) => (e === "." ? [] : [e]));
+  const input = Object.keys(values).length ? values : undefined;
+
+  const createFolder = async () => {
+    const [name] = rest;
+
+    assertNoError(() => validateName(name, "No folder name provided"));
+
+    printMessage(
+      styleText(["blue", "bold"], "› Preparing a new source folder"),
+      "intro",
+    );
+
+    const folder = await prepareSourceFolder(root, name, input);
+
+    await createSourceFolder(root, folder);
+
+    // Using readFile cause import() returns cached content
+    const { dependencies, devDependencies } = JSON.parse(
+      await readFile(packageFile, "utf8"),
+    );
+
+    const newDependencies = compareDependencies(packageJson, {
+      dependencies,
+      devDependencies,
+    });
+
+    if (newDependencies.length) {
+      const pm = await packageManager();
+      printMessage(
+        [
+          `💡 ${styleText(["bold", "italic", "red"], "New dependencies added: ")}`,
+          styleText("dim", newDependencies.map(([, pkg]) => pkg).join(", ")),
+          "",
+          `📦 ${styleText(["bold", "blueBright"], "Install them before continue: ")}`,
+          pm.command("install"),
+        ].join("\n"),
+        "note",
+      );
+    }
+
+    printMessage(
+      [
+        styleText(["green"], `✨ Well done!`),
+        styleText(["blue", "bold"], `./${defaults.srcDir}/${folder.name}`),
+        "is ready to perform",
+      ].join(" "),
+      "outro",
+    );
+
+    return;
+  };
+
+  const createSidecar = async () => {
+    const [name] = rest;
+
+    assertNoError(() => validateName(name, "No sidecar name provided"));
+
+    printMessage(
+      styleText(["blue", "bold"], "› Preparing a new sidecar"),
+      "intro",
+    );
+
+    const sidecar = await prepareFolder(root, name, input);
+
+    printMessage(
+      [
+        styleText(["green"], `✨ Well done!`),
+        styleText(["blue", "bold"], `./${defaults.srcDir}/${sidecar.name}`),
+        "sidecar is ready to perform",
+      ].join(" "),
+      "outro",
+    );
+
+    await createSidecarFolder(root, { ...sidecar, sidecar: true });
+
+    return;
+  };
+
+  const runTypecheck = async () => {
     const configFiles =
       folderNames.length || !rest.length //
-        ? await scanConfigFiles()
+        ? await scanConfigFiles(folderNames)
         : [];
 
     const require = createRequire(packageFile);
@@ -195,14 +322,21 @@ const run = async () => {
       return error;
     };
 
-    const rootOpted = rest.includes(".");
+    const projects: Array<[string, boolean]> = [];
 
-    const projects: Array<string> = [
-      ...configFiles.map((e) => {
-        return `${dirname(e.replace(root, "."))}/tsconfig.json`;
-      }),
-      ...(rootOpted || !rest.length ? ["./tsconfig.json"] : []),
-    ];
+    for (const file of configFiles) {
+      const { config } = await jiti.import<Pick<SourceFolder, "config">>(file, {
+        default: true,
+      });
+      projects.push([
+        `${dirname(file.replace(root, "."))}/tsconfig.json`,
+        "typecheck" in config ? config.typecheck : true,
+      ]);
+    }
+
+    if (rest.includes(".") || !rest.length) {
+      projects.push(["./tsconfig.json", true]);
+    }
 
     const errors: Array<string> = [];
 
@@ -240,57 +374,84 @@ const run = async () => {
     }
 
     return;
-  }
-
-  const configFiles = await scanConfigFiles();
-
-  const settings: ProjectSettings = {
-    root,
-    command,
-    sourceFolders: [],
-    distDir: packageJson.distDir,
-    devPort: packageJson.devPort,
-    previewPort: packageJson.previewPort,
   };
 
-  for (const file of configFiles) {
-    const { config, error } = await jiti
-      .import<import("@kosmojs/core").SourceFolder["config"]>(file, {
-        default: true,
-      })
-      .then(
-        (config) => {
-          return { config, error: undefined };
-        },
-        (error) => {
-          return { config: undefined, error };
-        },
-      );
+  const runCommand = async (
+    command: ProjectSettings["command"],
+    folderNames: Array<string>,
+  ) => {
+    const configFiles = await scanConfigFiles(folderNames);
 
-    if (!config || error) {
-      console.error(
-        styleText(["red"], `Failed loading ${file.replace(`${root}/`, "")}`),
-      );
-      throw new Error(error || "No config defined");
+    const settings: ProjectSettings = {
+      root,
+      command,
+      sourceFolders: [],
+      distDir: packageJson.distDir as never,
+      devPort: packageJson.devPort as never,
+      previewPort: packageJson.previewPort as never,
+    };
+
+    const projectGenerators: Array<GeneratorSignature> = [];
+
+    for (const file of configFiles) {
+      const { config, generators, error } = await jiti
+        .import<
+          Pick<import("@kosmojs/core").SourceFolder, "config" | "generators">
+        >(file, {
+          default: true,
+        })
+        .then(
+          ({ config, generators }) => {
+            return { config, generators, error: undefined };
+          },
+          (error) => {
+            return { config: undefined, generators: undefined, error };
+          },
+        );
+
+      if (!config || error) {
+        console.error(
+          styleText(["red"], `Failed loading ${file.replace(root, ".")}`),
+        );
+        throw new Error(error || "No config defined");
+      }
+
+      settings.sourceFolders.push({
+        name: basename(dirname(file)),
+        config,
+        generators,
+        root,
+        distDir: packageJson.distDir as never,
+      });
+
+      projectGenerators.push(...generators);
     }
 
-    settings.sourceFolders.push({
-      name: basename(dirname(file)),
-      config,
-      root,
-      distDir: packageJson.distDir,
-    });
+    await checkDependencies(packageJson, projectGenerators);
+
+    await chassis(settings);
+
+    return;
+  };
+
+  if (command === "folder") {
+    return createFolder();
   }
 
-  await chassis(settings);
+  if (command === "sidecar") {
+    return createSidecar();
+  }
+
+  if (command === "typecheck") {
+    return runTypecheck();
+  }
+
+  return runCommand(command, folderNames);
 };
 
-try {
-  await run();
-} catch (
-  // biome-ignore lint: any
-  error: any
-) {
-  console.error(error.message);
+await run().catch((error) => {
+  process.env.DEBUG?.includes("cli")
+    ? console.error(error)
+    : console.error(error.message);
   process.exit(1);
-}
+});

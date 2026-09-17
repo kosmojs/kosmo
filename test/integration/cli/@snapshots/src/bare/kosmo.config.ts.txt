@@ -1,0 +1,7 @@
+import { defineConfig } from "@kosmojs/dev";
+
+export default defineConfig({
+  fetch: false,
+  validation: false,
+  typecheck: true,
+});

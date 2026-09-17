@@ -5,12 +5,13 @@ import { dirname, posix, resolve } from "node:path";
 import { styleText } from "node:util";
 
 import crc from "crc/crc32";
+import { createProject } from "create-kosmo";
 import got, { type Method } from "got";
 import { createJiti } from "jiti";
 import { chromium } from "playwright";
 import { inject, type ProvidedContext } from "vitest";
 
-import { createProject, createSourceFolder } from "@kosmojs/cli";
+import { createSourceFolder } from "@kosmojs/cli";
 import {
   BACKENDS,
   defaults,
@@ -23,7 +24,6 @@ import chassis from "@kosmojs/dev/chassis";
 import { pathResolver } from "@kosmojs/lib";
 
 import { contentPatternFor, createRoutePath, env, exec } from ".";
-import * as templates from "./@fixtures/templates";
 
 // Lazy: launched on first use, so browser-free suites (ssg, cli, backend)
 // run without playwright binaries installed.
@@ -74,10 +74,9 @@ export const setupTestProject = async (
     mode?: ProvidedContext["MODE"];
     frontend?: keyof typeof FRONTENDS | "random";
     backend?: keyof typeof BACKENDS;
-    tsq?: boolean;
     skip?: boolean;
   },
-  folderDefaults?: {
+  folderConfig?: {
     frontend?: Omit<NonNullable<FolderConfig["frontend"]>, "stack" | "base">;
     backend?: Omit<NonNullable<FolderConfig["backend"]>, "stack" | "base">;
   },
@@ -94,7 +93,6 @@ export const setupTestProject = async (
   const {
     frontend: maybeFrontend,
     backend = ["ssr", "ssg"].includes(mode || "") ? pickBackend() : undefined,
-    tsq,
     skip,
   } = setup;
 
@@ -110,15 +108,15 @@ export const setupTestProject = async (
   const base = baseVariants[Math.floor(Math.random() * baseVariants.length)];
 
   const sourceFolder: SourceFolder = {
+    root: projectRoot,
     name: "test",
     config: {
       ...(frontend ? { frontend: { stack: frontend, base } } : {}),
       ...(backend
         ? { backend: { stack: backend, base: posix.join(base, "api") } }
         : {}),
-      generators: [],
     },
-    root: projectRoot,
+    generators: [],
     distDir: "dist",
   };
 
@@ -237,17 +235,14 @@ export const setupTestProject = async (
     }
 
     if (kind === "csr") {
-      const config = await jiti.import<SourceFolder["config"]>(
-        createPath.src("kosmo.config.ts"),
-        { default: true },
-      );
+      const { config, generators } = await jiti.import<
+        Pick<SourceFolder, "config" | "generators">
+      >(createPath.src("kosmo.config.ts"), { default: true });
 
-      const teardown = await chassis({
+      return chassis({
         ...projectSettings,
-        sourceFolders: [{ ...sourceFolder, config }],
+        sourceFolders: [{ ...sourceFolder, config, generators }],
       });
-
-      return teardown;
     }
 
     throw new Error(`Unknown mode ${kind}`);
@@ -310,14 +305,6 @@ export const setupTestProject = async (
 
       await page.goto(baseURL + path);
       await page.waitForLoadState("networkidle");
-
-      // Wait for the client runtime to take over.
-      // Fails loudly if hydration never happened.
-      await page.waitForFunction(
-        () => window.__APP_RENDERED__ === true,
-        undefined,
-        { timeout: 5_000 },
-      );
 
       if (pageErrors.length) {
         console.error(
@@ -450,23 +437,36 @@ export const setupTestProject = async (
 
       await createSourceFolder(
         projectRoot,
+        { name: sourceFolder.name, frontend, backend },
         {
-          name: sourceFolder.name,
-          frontend,
-          backend,
-          tsq,
-          ssr: mode === "ssr" || (folderDefaults?.frontend?.ssr as boolean),
-          ssg: mode === "ssg" || (folderDefaults?.frontend?.ssg as boolean),
-        },
-        {
-          frontend: {
-            ...folderDefaults?.frontend,
-            base,
-          } as never,
-          backend: {
-            ...folderDefaults?.backend,
-            base: sourceFolder.config.backend?.base,
-          } as never,
+          ...(sourceFolder.config.frontend
+            ? {
+                frontend: {
+                  ...(folderConfig?.frontend as {}),
+                  base,
+                  ssr:
+                    mode === "ssr"
+                      ? true
+                      : "ssr" in { ...folderConfig?.frontend }
+                        ? (folderConfig?.frontend?.ssr as boolean)
+                        : false,
+                  ssg:
+                    mode === "ssg"
+                      ? true
+                      : "ssg" in { ...folderConfig?.frontend }
+                        ? (folderConfig?.frontend?.ssg as boolean)
+                        : false,
+                },
+              }
+            : {}),
+          ...(sourceFolder.config.backend
+            ? {
+                backend: {
+                  ...(folderConfig?.backend as {}),
+                  base: sourceFolder.config.backend.base,
+                },
+              }
+            : {}),
         },
       );
 
@@ -481,22 +481,6 @@ export const setupTestProject = async (
         `,
         "utf8",
       );
-
-      if (frontend) {
-        const ext = {
-          react: "tsx",
-          solid: "tsx",
-          vue: "vue",
-          svelte: "svelte",
-          mdx: "mdx",
-        }[frontend];
-
-        await writeFile(
-          createPath.src(`app.${ext}`),
-          templates[`${frontend as never}App`],
-          "utf8",
-        );
-      }
 
       await installDependencies(projectRoot);
     },

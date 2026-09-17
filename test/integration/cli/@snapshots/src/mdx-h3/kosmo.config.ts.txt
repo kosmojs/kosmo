@@ -4,13 +4,15 @@ export default defineConfig({
   frontend: {
     stack: "mdx",
     base: "/mdx-h3",
-    fetch: true,
-    ssr: false,
+    ssr: true,
     ssg: false,
+    tanstack: { query: false },
   },
   backend: {
     stack: "h3",
     base: "/mdx-h3/api",
   },
+  fetch: true,
   validation: true,
+  typecheck: true,
 });

@@ -1,4 +1,5 @@
 import type { GeneratorSignature } from "./generators";
+import type { ViteConfig } from "./generic";
 import type {
   BackendOptions,
   FrontendOptions,
@@ -8,6 +9,12 @@ import type {
 export type FolderConfig = {
   frontend?: FrontendOptions;
   backend?: BackendOptions;
+  sidecar?: {
+    entry: string;
+    run?: string;
+    serve?: boolean | undefined;
+    viteConfig?: ViteConfig;
+  };
   fetch?: boolean | { generator?: GeneratorSignature };
   validation?:
     | boolean
@@ -49,7 +56,7 @@ export type SourceFolderManifest = {
 export type ProjectSettings = {
   root: string;
   sourceFolders: Array<SourceFolder>;
-  command: "serve" | "build" | "preview" | "typecheck";
+  command: "serve" | "build" | "preview";
   // output directory name, configured as `distDir` in package.json
   distDir: string;
   // port the dev server listens on, configured as `devPort` in package.json

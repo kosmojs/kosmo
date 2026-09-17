@@ -71,13 +71,7 @@ importers:
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../packages/lib
-      semver:
-        specifier: ^7.8.5
-        version: 7.8.5
     devDependencies:
-      '@types/semver':
-        specifier: ^7.8.0
-        version: 7.8.0
       path-to-regexp:
         specifier: ^8.4.2
         version: 8.4.2
@@ -422,8 +416,8 @@ importers:
   packages/cli:
     dependencies:
       '@clack/prompts':
-        specifier: ^1.8.0
-        version: 1.8.0
+        specifier: ^1.8.1
+        version: 1.8.1
       '@kosmojs/core':
         specifier: workspace:^
         version: link:../core
@@ -436,22 +430,122 @@ importers:
       jiti:
         specifier: ^2.7.0
         version: 2.7.0
-      oxfmt:
-        specifier: ^0.67.0
-        version: 0.67.0(svelte@5.57.0)
+      package-manager-detector:
+        specifier: ^1.8.0
+        version: 1.8.0
+      semver:
+        specifier: ^7.8.5
+        version: 7.8.5
       tinyglobby:
         specifier: ^0.2.17
         version: 0.2.17
     devDependencies:
+      '@types/semver':
+        specifier: ^7.8.0
+        version: 7.8.0
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+      vite:
+        specifier: ^8.2.2
+        version: 8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)
+
+  packages/cli/var/demo:
+    dependencies:
+      '@hono/node-server':
+        specifier: ^2.1.1
+        version: 2.1.1(hono@4.13.7)
+      '@koa/router':
+        specifier: ^15.7.0
+        version: 15.7.0(koa@3.2.1)
+      '@kosmojs/core':
+        specifier: ^0.5.0
+        version: 0.5.0
+      '@mdx-js/preact':
+        specifier: ^3.1.1
+        version: 3.1.1(preact@10.29.8)
+      '@tanstack/vue-query':
+        specifier: ^5.102.8
+        version: 5.102.8(vue@3.5.42(typescript@7.0.2))
+      formidable:
+        specifier: ^3.5.4
+        version: 3.5.4
+      hono:
+        specifier: ^4.13.7
+        version: 4.13.7
+      koa:
+        specifier: ^3.2.1
+        version: 3.2.1
+      light-my-request:
+        specifier: ^6.6.0
+        version: 6.6.0
+      path-to-regexp:
+        specifier: ^8.4.2
+        version: 8.4.2
+      preact:
+        specifier: ^10.29.8
+        version: 10.29.8(preact-render-to-string@6.7.0)
+      preact-render-to-string:
+        specifier: ^6.7.0
+        version: 6.7.0(preact@10.29.8)
+      raw-body:
+        specifier: ^4.0.0
+        version: 4.0.0
+      react:
+        specifier: ^19.2.8
+        version: 19.2.8
+      react-router:
+        specifier: ^8.3.1
+        version: 8.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      remark-frontmatter:
+        specifier: ^5.0.0
+        version: 5.0.0
+      remark-mdx-frontmatter:
+        specifier: ^5.2.0
+        version: 5.2.0
+      tinyglobby:
+        specifier: ^0.2.17
+        version: 0.2.17
+      typebox:
+        specifier: ^1.3.30
+        version: 1.3.30
+      vue:
+        specifier: ^3.5.42
+        version: 3.5.42(typescript@7.0.2)
+      vue-router:
+        specifier: ^5.3.1
+        version: 5.3.1(@vue/compiler-sfc@3.5.42)(esbuild@0.28.2)(rolldown@1.2.7)(rollup@4.63.1)(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))(vue@3.5.42(typescript@7.0.2))
+    devDependencies:
+      '@kosmojs/cli':
+        specifier: ^0.5.0
+        version: 0.5.0(@types/node@26.5.0)(esbuild@0.28.2)(rollup@4.63.1)(solid-js@1.9.15)(svelte@5.57.0)(vue@3.5.42(typescript@7.0.2))
+      '@kosmojs/dev':
+        specifier: ^0.5.0
+        version: 0.5.0(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(rollup@4.63.1)(solid-js@1.9.15)(svelte@5.57.0)(vue@3.5.42(typescript@7.0.2))
       '@types/bun':
         specifier: ^1.4.2
         version: 1.4.2
       '@types/deno':
         specifier: ^2.7.0
         version: 2.7.0
+      '@types/formidable':
+        specifier: ^3.5.1
+        version: 3.5.1
+      '@types/koa':
+        specifier: ^3.0.3
+        version: 3.0.3
       '@types/node':
         specifier: ^26.5.0
         version: 26.5.0
+      '@types/react':
+        specifier: ^19.2.18
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.2.7
+        version: 19.2.7(@types/react@19.2.18)
+      react-dom:
+        specifier: ^19.2.8
+        version: 19.2.8(react@19.2.8)
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -501,6 +595,25 @@ importers:
       '@kosmojs/core':
         specifier: workspace:^
         version: link:../core
+      '@kosmojs/lib':
+        specifier: workspace:^
+        version: link:../lib
+    devDependencies:
+      '@types/bun':
+        specifier: ^1.4.2
+        version: 1.4.2
+      '@types/deno':
+        specifier: ^2.7.0
+        version: 2.7.0
+      '@types/node':
+        specifier: ^26.5.0
+        version: 26.5.0
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+      vite:
+        specifier: ^8.2.2
+        version: 8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)
 
   packages/dev:
     dependencies:
@@ -607,6 +720,9 @@ importers:
       mrmime:
         specifier: ^2.0.1
         version: 2.0.1
+      oxfmt:
+        specifier: ^0.67.0
+        version: 0.67.0(svelte@5.57.0)
       path-to-regexp:
         specifier: ^8.4.2
         version: 8.4.2
@@ -665,6 +781,9 @@ importers:
       crc:
         specifier: ^4.3.2
         version: 4.3.2
+      create-kosmo:
+        specifier: workspace:^
+        version: link:../packages/create
       got:
         specifier: ^16.0.0
         version: 16.0.0
@@ -910,8 +1029,16 @@ packages:
     resolution: {integrity: sha512-zNikCcd8BbcEvzzG1sbXFrRHFk5kHPrpwZwksPvf9qyQO1Teb7JaXaOAxXZei9nZLDW0gaZawiuTCji88bTBhw==}
     engines: {node: '>= 20.12.0'}
 
+  '@clack/core@1.5.1':
+    resolution: {integrity: sha512-iHTrHA8MtVuLl2TfZySmcKv1qO2PoyC9Z7pfSDozEuV5vtY3/wcOPKJXlqJ5Oq2Cx5DDGQGAMVx6HZfRRoVEbQ==}
+    engines: {node: '>= 20.12.0'}
+
   '@clack/prompts@1.8.0':
     resolution: {integrity: sha512-PXzLZ8N34rxmuo4dJg3xtOXhcBse94qGjDqsteoEYrFrrZ5FSjIGwMAuOcv64ln8rHVBBD06XeVGr+/JX+plcA==}
+    engines: {node: '>= 20.12.0'}
+
+  '@clack/prompts@1.8.1':
+    resolution: {integrity: sha512-dlT1m5e/0yUL0kRNcQn7yGLVThkgbB0Ga/1AmfDDC/8ik6AIiSf2QLQO2zPYvefsHP0aFgxO93cVLCCfDp7kzQ==}
     engines: {node: '>= 20.12.0'}
 
   '@conventional-changelog/git-client@3.1.2':
@@ -1193,6 +1320,19 @@ packages:
     engines: {node: '>= 20'}
     peerDependencies:
       koa: ^2.0.0 || ^3.0.0
+
+  '@kosmojs/cli@0.5.0':
+    resolution: {integrity: sha512-U2oOt/z7HUEoxiG46UW1Z5raYmwYm5X4SBYygCnLHmhqht6aO7uNM1lkyakOfrB3FgdB+rc5uP4ULxAtVnYLhQ==}
+    hasBin: true
+
+  '@kosmojs/core@0.5.0':
+    resolution: {integrity: sha512-CM1DPchTdv7Ig0uSyQk8JnQFlycsAS68f3YmsnnJhuZ7d3B8J8V6tbOL6LJeZ+sjOpMZDUQ7OfaMCZyomK/M7w==}
+
+  '@kosmojs/dev@0.5.0':
+    resolution: {integrity: sha512-xD24CrrO998OnB1kB6QcKja18Rd4gPZU8juqIFqVsyNJ6H9CVuJjWYBmnG4AsJ+rCqSZjn3a0JChFo9kNLMb1Q==}
+
+  '@kosmojs/lib@0.5.0':
+    resolution: {integrity: sha512-dae/+MJQ/YvG4ofR429dVFqMhqQiuJLeoAqC8O4w7QZtAtvBgNYGnZVQCgdETKTcb035K7C2AWuTR8OywdKL8w==}
 
   '@manypkg/find-root@3.1.0':
     resolution: {integrity: sha512-BcSqCyKhBVZ5YkSzOiheMCV41kqAFptW6xGqYSTjkVTl9XQpr+pqHhwgGCOHQtjDCv7Is6EFyA14Sm5GVbVABA==}
@@ -4817,9 +4957,21 @@ snapshots:
       fast-wrap-ansi: 0.2.2
       sisteransi: 1.0.5
 
+  '@clack/core@1.5.1':
+    dependencies:
+      fast-wrap-ansi: 0.2.2
+      sisteransi: 1.0.5
+
   '@clack/prompts@1.8.0':
     dependencies:
       '@clack/core': 1.5.0
+      fast-string-width: 3.0.2
+      fast-wrap-ansi: 0.2.2
+      sisteransi: 1.0.5
+
+  '@clack/prompts@1.8.1':
+    dependencies:
+      '@clack/core': 1.5.1
       fast-string-width: 3.0.2
       fast-wrap-ansi: 0.2.2
       sisteransi: 1.0.5
@@ -5012,6 +5164,99 @@ snapshots:
       path-to-regexp: 8.4.2
     transitivePeerDependencies:
       - supports-color
+
+  '@kosmojs/cli@0.5.0(@types/node@26.5.0)(esbuild@0.28.2)(rollup@4.63.1)(solid-js@1.9.15)(svelte@5.57.0)(vue@3.5.42(typescript@7.0.2))':
+    dependencies:
+      '@clack/prompts': 1.8.1
+      '@kosmojs/core': 0.5.0
+      '@kosmojs/dev': 0.5.0(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(rollup@4.63.1)(solid-js@1.9.15)(svelte@5.57.0)(vue@3.5.42(typescript@7.0.2))
+      '@kosmojs/lib': 0.5.0
+      jiti: 2.7.0
+      oxfmt: 0.67.0(svelte@5.57.0)
+      tinyglobby: 0.2.17
+    transitivePeerDependencies:
+      - '@rolldown/plugin-babel'
+      - '@testing-library/jest-dom'
+      - '@types/node'
+      - '@vitejs/devtools'
+      - babel-plugin-react-compiler
+      - buffer
+      - esbuild
+      - less
+      - oxc-transform-react
+      - rollup
+      - sass
+      - sass-embedded
+      - solid-js
+      - stylus
+      - sugarss
+      - supports-color
+      - svelte
+      - terser
+      - tsx
+      - vite-plus
+      - vue
+
+  '@kosmojs/core@0.5.0':
+    dependencies:
+      cookie: 2.0.1
+      picomatch: 4.0.7
+      picoquery: 2.5.0
+      string-width: 8.2.2
+
+  '@kosmojs/dev@0.5.0(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(rollup@4.63.1)(solid-js@1.9.15)(svelte@5.57.0)(vue@3.5.42(typescript@7.0.2))':
+    dependencies:
+      '@kosmojs/core': 0.5.0
+      '@kosmojs/lib': 0.5.0
+      '@mdx-js/rollup': 3.1.1(rollup@4.63.1)
+      '@sveltejs/vite-plugin-svelte': 7.3.0(svelte@5.57.0)(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))
+      '@vitejs/plugin-react': 6.1.1(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))
+      '@vitejs/plugin-vue': 6.0.8(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))(vue@3.5.42(typescript@7.0.2))
+      chokidar: 5.0.0
+      crc: 4.3.2
+      path-to-regexp: 8.4.2
+      semver: 7.8.5
+      typebox: 1.3.30
+      vite: 8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)
+      vite-plugin-solid: 2.11.14(solid-js@1.9.15)(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))
+      yaml: 2.9.0
+    transitivePeerDependencies:
+      - '@rolldown/plugin-babel'
+      - '@testing-library/jest-dom'
+      - '@types/node'
+      - '@vitejs/devtools'
+      - babel-plugin-react-compiler
+      - buffer
+      - esbuild
+      - jiti
+      - less
+      - oxc-transform-react
+      - rollup
+      - sass
+      - sass-embedded
+      - solid-js
+      - stylus
+      - sugarss
+      - supports-color
+      - svelte
+      - terser
+      - tsx
+      - vue
+
+  '@kosmojs/lib@0.5.0':
+    dependencies:
+      '@kosmojs/core': 0.5.0
+      '@topcli/spinner': 5.0.0
+      crc: 4.3.2
+      handlebars: 4.7.9
+      mrmime: 2.0.1
+      path-to-regexp: 8.4.2
+      picomatch: 4.0.7
+      tfusion: 0.2.2
+      tinyglobby: 0.2.17
+      ts-morph: 28.0.0
+    transitivePeerDependencies:
+      - buffer
 
   '@manypkg/find-root@3.1.0':
     dependencies:

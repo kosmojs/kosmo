@@ -93,7 +93,7 @@ export default defineGeneratorFactory<SSROptions>((sourceFolder, options) => {
           // generators configs - higher priority
           ...sourceFolder.generators.map(({ factory }) => {
             return factory(sourceFolder).viteConfig?.({
-              kind: "client",
+              kind: "frontend",
               command: "build",
             });
           }),

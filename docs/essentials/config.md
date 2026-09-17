@@ -50,8 +50,8 @@ export default defineConfig({
 });
 ```
 
-Three top-level keys, all optional: `frontend`, `backend`, `validation`.
-A folder can have both sides, or just one.
+A folder can have both web sides, or just one, or neither -
+a folder with only [sidecar](/sidecar/intro) builds an entry point and KosmoJS routes nothing to it.
 
 Every feature key follows the same pattern: a plain value turns it on with defaults,
 or an object turns it on and hands KosmoJS the instance to use -
@@ -131,17 +131,6 @@ base: "/admin"     // admin dashboard under /admin
 Duplicate slashes are collapsed and a trailing slash is stripped,
 so `"/admin/"` and `"//admin"` both resolve to `"/admin"`.
 Path traversal segments (`../`, `/./`) are rejected at startup.
-
-### frontend.fetch
-
-Typed [fetch clients](/fetch/intro) in `_/fetch`.
-
-```ts
-fetch: true
-```
-
-Clients are derived from the backend's routes, so this only produces anything
-when the folder also has a `backend`.
 
 ### frontend.ssr
 
@@ -347,6 +336,80 @@ backend: {
 
 The two sides are built separately, so `frontend.viteConfig` and `backend.viteConfig` are independent.
 
+## sidecar
+
+Makes this folder a **sidecar**: a process to build, and nothing KosmoJS routes to -
+a queue consumer, a mail sender, a listener speaking another protocol.
+
+```ts [kosmo.config.ts]
+defineConfig({
+  // ...
+  sidecar: {
+    entry: "./entry.ts",
+    run: "./run.ts",
+    serve: false,
+  },
+});
+```
+
+| Option | |
+|---|---|
+| `entry` | **required** - the service; default-exports [defineService](/sidecar/entry#the-entry) |
+| `run` | the [runner](/sidecar/entry#the-runner) that starts it in production |
+| `serve` | import and run it under `kosmo serve` - development only |
+| `viteConfig` | Vite's `UserConfig` for this build, same exclusions as above |
+
+Both paths are relative to the source folder, and `kosmo sidecar` seeds both files.
+The entry says what the service is; the runner says how it is supervised -
+which is why the dev server needs only the entry, and replaces the runner with itself.
+
+One sidecar per folder; a second process is a second folder.
+
+The build writes into `dist/<folder>/sidecar/`, clear of the `api/`, `client/` and `ssr/` trees a web build owns.
+
+A sidecar is built the way the backend side is - a Node bundle, no client assets -
+so `viteConfig` here carries the same shape and the same exclusions as [backend.viteConfig](#backend-viteconfig):
+
+```ts [kosmo.config.ts]
+defineConfig({
+  // ...
+  sidecar: {
+    entry: "./entry.ts",
+    serve: false,
+    viteConfig: {
+      define: { __WORKER_BUILD__: true },
+    },
+  },
+});
+```
+
+## fetch
+
+Typed [fetch clients](/fetch/intro) in `_/fetch`.
+
+```ts
+fetch: true
+```
+
+Clients are derived from the backend's routes, so this only produces anything
+when the folder also has a `backend`.
+
+## typecheck
+
+Whether [kosmo typecheck](/cli/typecheck) covers this folder. On by default:
+
+```ts
+defineConfig({
+  // ...
+  typecheck: true,
+});
+```
+
+Set it to `false` for a folder you do not want checked - a sidecar wrapping third-party JavaScript,
+a folder mid-migration, anything where a red `tsc` is noise rather than signal.
+
+The folder still builds and still runs; it is only left out of typecheck runs.
+
 ## validation
 
 Runtime [validators derived from your types](/validation/intro).
@@ -406,7 +469,7 @@ export default defineConfig({
   frontend: {
     stack: "react",
     base: "/front",
-    ssr: false,
+    ssr: true,
     ssg: false,
     tanstack: { query: false },
   },
@@ -430,11 +493,12 @@ export default defineConfig({
     stack: "react",
     base: "/front",
     fetch: true,
-    ssr: false,
+    ssr: true,
     ssg: false,
     tanstack: { query: false },
   },
   fetch: false,
+  validation: false,
   typecheck: true,
 });
 ```
@@ -451,6 +515,7 @@ export default defineConfig({
   },
   fetch: false,
   validation: true,
+  typecheck: true,
 });
 ```
 
@@ -464,9 +529,10 @@ export default defineConfig({
     stack: "mdx",
     base: "/docs",
     ssr: true,
-    ssg: true,
+    ssg: false,
   },
   fetch: false,
+  validation: false,
   typecheck: true,
 });
 ```

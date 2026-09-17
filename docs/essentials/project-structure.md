@@ -102,6 +102,9 @@ Where to put it is a judgement call, not a convention KosmoJS imposes.
 A folder created with `--no-backend` simply has no `api/`;
 one created with `--no-frontend` has no `pages/`, `app.*`, `router.ts`, `index.html` or `entry/`.
 
+A [sidecar](/sidecar/intro) folder has neither - just a `kosmo.config.ts`,
+a `tsconfig.json` and the entry points it builds.
+
 ## Inside `lib/`
 
 You never edit `lib/`, but knowing what lives there makes the `_/` imports legible.
@@ -182,7 +185,9 @@ and what covers code no folder imports yet.
 dist/front/
 ├── api/
 │   ├── app.js            -> the app instance, for custom mounting
-│   └── server.js         -> ready-to-run API server
+│   └── server.js         -> ready-to-run backend server
+├── sidecar/              -> only when the folder declares one
+│   └── entry.js
 ├── client/
 │   ├── assets/           -> hashed JS, CSS, images
 │   └── index.html

@@ -155,9 +155,9 @@ describe("folder: flag matrix", async () => {
       "test",
       "--frontend",
       "solid",
-      "--no-frontend",
       "--backend",
       "h3",
+      "--no-backend",
     ]);
     expect(code).not.toEqual(0);
     expect(stderr).toMatch(/mutually exclusive/i);

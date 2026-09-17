@@ -112,7 +112,7 @@ export default defineGeneratorFactory((sourceFolder) => {
           // generators configs - higher priority
           ...sourceFolder.generators.map(({ factory }) => {
             return factory(sourceFolder).viteConfig?.({
-              kind: "client",
+              kind: "frontend",
               command: "build",
             });
           }),

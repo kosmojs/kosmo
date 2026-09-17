@@ -52,12 +52,12 @@ export const createTestGroups = async ({
       {
         frontend,
         backend: "hono",
-        tsq,
         skip,
       },
       {
         frontend: {
           ssr: { renderMode: "string" },
+          tanstack: { query: tsq ? true : false },
         },
       },
     );

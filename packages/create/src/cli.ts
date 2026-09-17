@@ -51,6 +51,9 @@ const usage = [
   ` ${styleText("blue", "-h, --help")}`,
   " Display this help message and exit",
   "",
+  " The first Source Folder is always `app`, with pages at / and backend at /api",
+  " Add more folders later with `kosmo folder`, or a standalone process with `kosmo sidecar`.",
+  "",
 ];
 
 const printUsage = () => {
@@ -182,8 +185,8 @@ const run = async () => {
 };
 
 await run().catch((error) => {
-  error.code === "ERR_PARSE_ARGS_UNKNOWN_OPTION"
-    ? console.error(error.message)
-    : console.error(error);
+  process.env.DEBUG?.includes("cli")
+    ? console.error(error)
+    : console.error(error.message);
   process.exit(1);
 });

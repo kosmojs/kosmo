@@ -3,18 +3,32 @@ import { defineConfig } from "@kosmojs/dev";
 export default defineConfig({
 {{#if frontend}}
   frontend: {
-    {{#each options.frontend}}
+    {{#each config.frontend}}
     "{{@key}}": {{.}},
     {{/each}}
   },
 {{/if}}
 {{#if backend}}
   backend: {
-    {{#each options.backend}}
+    {{#each config.backend}}
     "{{@key}}": {{.}},
     {{/each}}
   },
-  validation: true,
 {{/if}}
-  typecheck: {{options.typecheck}},
+{{#if sidecar}}
+  sidecar: {
+    {{#each config.sidecar}}
+    "{{@key}}": {{.}},
+    {{/each}}
+  },
+{{/if}}
+{{#if config.fetch}}
+  fetch: {{config.fetch}},
+{{/if}}
+{{#if config.validation}}
+  validation: {{config.validation}},
+{{/if}}
+{{#if config.typecheck}}
+  typecheck: {{config.typecheck}},
+{{/if}}
 });

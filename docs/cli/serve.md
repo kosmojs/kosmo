@@ -16,6 +16,7 @@ One process covers every selected folder, and both halves of each:
 - client modules go through Vite, with HMR
 - API routes run in the same process, hot-reloaded on change
 - requests are dispatched between the two by the folder's `backend.base`
+- [sidecar](/sidecar/intro) entries marked `serve` are watched, rebuilt and restarted
 
 No second command to start, no proxy to configure.
 

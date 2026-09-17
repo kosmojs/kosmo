@@ -37,43 +37,17 @@ describe("should create the project and folders", async () => {
 
   const folders = [...Object.keys(FRONTENDS), undefined].flatMap((frontend) => {
     return [...Object.keys(BACKENDS), undefined].flatMap((backend) => {
-      if (frontend) {
-        return ["ssr", undefined].flatMap((ssr) => {
-          return ["ssg", undefined].flatMap((ssg) => {
-            return ["tsq", undefined].flatMap((tsq) => {
-              const name = [frontend, backend, ssr, ssg, tsq]
-                .filter(Boolean)
-                .join("-");
-              return [
-                {
-                  name,
-                  frontend: frontend as string | undefined,
-                  backend,
-                  ssr,
-                  ssg,
-                  tsq,
-                },
-              ];
-            });
-          });
-        });
-      }
-      return backend
-        ? [
-            {
-              name: backend,
-              frontend,
-              backend,
-              ssr: undefined,
-              ssg: undefined,
-              tsq: undefined,
-            },
-          ]
-        : [];
+      return [
+        {
+          name: [frontend, backend].filter(Boolean).join("-") || "bare",
+          frontend,
+          backend,
+        },
+      ];
     });
   });
 
-  for (const { name, frontend, backend, ssr, ssg, tsq } of folders) {
+  for (const { name, frontend, backend } of folders) {
     test(`create ${name} folder`, async ({ expect }) => {
       // the bin directly rather than the project's folder script:
       // the scaffolded project has no node_modules installed
@@ -84,9 +58,6 @@ describe("should create the project and folders", async () => {
           name,
           ...(frontend ? ["--frontend", frontend] : ["--no-frontend"]),
           ...(backend ? ["--backend", backend] : ["--no-backend"]),
-          ...(ssr ? ["--ssr"] : []),
-          ...(ssg ? ["--ssg"] : []),
-          ...(tsq ? ["--tsq"] : []),
         ],
         projectRoot,
       );

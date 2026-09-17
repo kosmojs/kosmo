@@ -47,7 +47,7 @@ Choose the framework and backend up front - when flags are present no prompts ap
 Required: `--frontend <name>` or `--no-frontend`, and `--backend <name>` or `--no-backend` -
 the choice is always explicit; a missing flag is an error, never a silent default.
 
-Optional: `--ssr`, `--ssg`, `--tsq`, `--overwrite`.
+Optional: `--overwrite`.
 The first folder is always `app`, with pages at `/` and its API at `/api`.
 [Full flag reference&nbsp;›](/cli/create#cli-mode)
 
@@ -62,7 +62,7 @@ Run `npm run folder` (or `pnpm folder` / `yarn folder`) - interactively, or with
 Frontend, backend, SSR, SSG (only if SSR is on) and TanStack Query.
 Non-interactive: the name is a positional, plus
 `--frontend solid|react|vue|svelte|mdx` or `--no-frontend`,
-`--backend hono|h3|koa` or `--no-backend`, `--ssr`, `--ssg`, `--tsq`, `--overwrite`.
+`--backend hono|h3|koa` or `--no-backend`, `--overwrite`.
 Frontend and backend each require a value or its negation flag,
 and the name is required here - unlike at project creation, it has no default.
 The folder gets pages at `/<name>` and its API at `/<name>/api`.
@@ -174,8 +174,8 @@ Project-wide settings (`distDir`, `devPort`, `previewPort`, scripts) live in the
 [Details&nbsp;›](/essentials/config)
 
 #### What options does a source folder config take?
-Three optional blocks: `frontend`, `backend`, `validation`.
-`frontend` takes `stack`, `base` (required), `fetch`, `ssr`, `ssg`, `tanstack`, `templates` and `viteConfig`.
+Six optional keys: `frontend`, `backend`, `sidecar`, `fetch`, `validation`, `typecheck`.
+`frontend` takes `stack`, `base` (required), `ssr`, `ssg`, `tanstack`, `templates` and `viteConfig`.
 `backend` takes `stack`, `base` (required), `openapi`, `alias`, `templates` and `viteConfig`.
 `stack` is either a name or `{ name, plugin }`, where `plugin` is a Vite plugin instance you construct.
 `validation` is `true` or a TypeBox options object.
@@ -248,6 +248,27 @@ and move it up when that stops being true.
 Its position then shows its reach. Code with no place in the route tree - a mailer, a queue client, a domain model -
 goes at the folder root and is reached through `~/`, as these docs do with `~/types/`.
 [Details&nbsp;›](/routing/rationale#helpers-shared-by-several-routes)
+
+#### How do I run a background worker or a non-HTTP process?
+Give it a [sidecar](/sidecar/intro) folder - a source folder with a `sidecar` block instead of `frontend`/`backend`.
+It declares entry points to build and serves no HTTP:
+
+```ts [kosmo.config.ts]
+defineConfig({
+  // ...
+  sidecar: {
+    entry: "./entry.ts",
+    serve: false,
+  },
+});
+```
+
+`pnpm sidecar <name>` scaffolds one. It builds / typechecks like any other folder, and reaches `~/` and `@/` like any other code.
+With `serve`, `pnpm dev` watches and restarts it. One per folder - a second worker is a second folder.
+
+A sidecar is built like any other folder, but `preview` and `dist/run.js` never start them - those are HTTP, and a sidecar is not.
+Start it yourself: `node dist/mailer/sidecar/run.js` - your own `run.ts`, built.
+[Details&nbsp;›](/sidecar/intro)
 
 #### Where does code shared by several source folders go?
 Outside `src/`, at the project root, imported through `@/` - `@/db/models`, `@/shared/user`, etc.
@@ -1079,6 +1100,16 @@ Add the paths you want checked, keeping that entry: `include` replaces rather th
 so dropping it takes the ambient declarations in `lib/` out of scope.
 [Details&nbsp;›](/cli/typecheck#selective-typechecking)
 
+#### Can I exclude a folder from typechecking?
+Set `typecheck: false` in that folder's `kosmo.config.ts`.
+
+The folder still builds and still runs - only typecheck skips it.
+Naming it does not override the setting: `pnpm typecheck mailer` reports that the folder opts out and checks nothing.
+
+Useful for a [sidecar](/sidecar/intro) wrapping third-party JavaScript,
+or a folder mid-migration where a red `tsc` is noise rather than signal.
+[Details&nbsp;›](/cli/typecheck#opting-a-folder-out)
+
 ### Fetch Clients
 
 #### How are fetch clients derived?
@@ -1388,9 +1419,11 @@ layouts must be `.mdx` not `.md` (`.md` can't render `{props.children}`).
 ### SSR
 
 #### Is SSR on by default?
-No - folders default to client-side rendering (with Vite's dev server and HMR in dev). Enable
-SSR when you create the folder (choose it in the interactive prompt, or pass `--ssr` in CLI mode),
-or add it later by setting `frontend.ssr: true` in `kosmo.config.ts` and restarting dev.
+In a build, yes - the scaffolder writes `ssr: true` into every new frontend folder.
+Set `frontend.ssr: false` in `kosmo.config.ts` to opt out, and restart dev after changing it.
+
+Dev is a separate matter: `kosmo serve` is always client-rendered whatever `ssr` says.
+SSR shows up in `kosmo preview` and in production builds.
 [Details&nbsp;›](/frontend/server-side-render#adding-ssr-support)
 
 #### Does SSR run in dev?
@@ -1511,8 +1544,7 @@ Use SSR instead when a page depends on the request (a signed-in user, live data,
 [Details&nbsp;›](/frontend/static-site-generation)
 
 #### How do I enable SSG?
-Choose it when creating the source folder (the interactive prompt asks, or pass `--ssg`),
-or set `frontend.ssg: true` in an existing folder's `kosmo.config.ts`.
+Set `frontend.ssg: true` in the folder's `kosmo.config.ts` - scaffolded folders have it off.
 
 It requires **SSR enabled** on that folder - pages are rendered at build time by the folder's own SSR server -
 which is why the creation prompt only offers SSG once you've chosen SSR.
@@ -1907,10 +1939,8 @@ For real caching, enable TanStack Query (a first-class option).
 [Details&nbsp;›](/frontend/tanstack-query)
 
 #### How do I enable TanStack Query?
-Turn it on when you create the source folder - interactive mode asks,
-or pass `--tsq` non-interactively (`pnpm folder front --frontend react --tsq`).
-
-To add it later, set `tanstack` in the `frontend` block of `kosmo.config.ts`
+Scaffolded folders have `tanstack: { query: false }`.
+Set `tanstack` in the `frontend` block of `kosmo.config.ts`
 (`frontend: { tanstack: { query: true } }`).
 
 Once it's on, everything is wired - no setup, no provider to place - you just start using it in your components.
@@ -2103,8 +2133,8 @@ Don't add `lib/` to the root `.gitignore` - that would drop the cache and make e
 ### Rendering & SSR
 
 #### What decides whether a folder renders on the server or the client?
-You do, per folder - set `frontend.ssr` (or pass `--ssr` at creation),
-and that folder's production build renders on the server.
+You do, per folder - `frontend.ssr`, which the scaffolder writes on by default.
+That folder's production build then renders on the server.
 A project can mix freely: an SSR marketing folder next to a CSR app folder.
 
 Dev is the exception, and not a choice: `pnpm dev` is always Vite with HMR and client-side rendering,

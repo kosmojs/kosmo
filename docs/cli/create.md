@@ -4,7 +4,7 @@ description: Bootstrapping a KosmoJS project with npm create kosmo - the interac
 head:
   - - meta
     - name: keywords
-      content: create kosmo, npm create kosmo, scaffolding, --frontend, --backend, --ssr, --ssg, --tsq
+      content: create kosmo, npm create kosmo, scaffolding, --frontend, --backend, --overwrite
 ---
 
 :::tabs key:pm variant:code
@@ -57,7 +57,7 @@ Add differently-shaped folders at any time with [kosmo folder](/cli/folder).
 npm create kosmo demo -- --frontend react --backend hono
 
 # pnpm and yarn do not
-pnpm create kosmo demo --frontend react --backend hono --ssr
+pnpm create kosmo demo --frontend react --backend hono
 ```
 
 | Flag | Meaning |
@@ -66,9 +66,6 @@ pnpm create kosmo demo --frontend react --backend hono --ssr
 | `--no-frontend` | API-only folder - no `pages/`, no client entries. |
 | `--backend <name>` | `hono`, `h3`, `koa`. |
 | `--no-backend` | Client-only folder - no `api/` directory. |
-| `--ssr` | Enable [server-side rendering](/frontend/server-side-render). |
-| `--ssg` | Enable [static site generation](/frontend/static-site-generation). Implies SSR. |
-| `--tsq` | Enable [TanStack Query](/frontend/tanstack-query). Ignored on MDX folders. |
 | `--overwrite` | Proceed even though the target directory is not empty. |
 | `-q, --quiet` | Suppress output. |
 | `-h, --help` | Print usage and exit. |
@@ -87,13 +84,10 @@ demo/
 └── src/app/
     ├── kosmo.config.ts        # the frontend / backend blocks your answers imply
     ├── public/favicon.svg
-    ├── api/index/index.ts     # empty stub, if a backend was chosen
-    ├── pages/index/index.tsx  # empty stub, extension per framework
-    └── entry/client.ts        # empty stub, if a frontend was chosen
+    ├── api/index/index.ts     # a working route, if a backend was chosen
+    ├── pages/index/index.tsx  # a working page, extension per framework
+    └── entry/client.ts        # the client entry, if a frontend was chosen
 ```
-
-The stubs are **empty on purpose**. They are filled on the first `pnpm dev` or `pnpm build`,
-along with everything else the folder needs.
 
 `package.json` carries three project-level settings alongside the usual fields -
 [distDir, devPort, previewPort](/essentials/config#project-settings-package-json) -

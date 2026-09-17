@@ -21,9 +21,8 @@ export { defineRoute } from "@kosmojs/koa-generator/lib";
 
 export const sourceFolder: SourceFolder = {
   name: "test",
-  config: {
-    generators: [coreGenerator(), typeboxGenerator()],
-  },
+  config: {},
+  generators: [coreGenerator(), typeboxGenerator()],
   root: appRoot,
   distDir: "dist",
 };

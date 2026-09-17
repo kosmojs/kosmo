@@ -1,7 +1,55 @@
 import { styleText } from "node:util";
 
-import { BACKENDS, FRONTENDS } from "@kosmojs/core";
+import * as prompts from "@clack/prompts";
+import { detect, resolveCommand } from "package-manager-detector";
+import semver from "semver";
+
+import type {
+  BACKENDS,
+  DeepPartial,
+  FolderConfig,
+  FRONTENDS,
+  GeneratorSignature,
+} from "@kosmojs/core";
+import {
+  coreGenerator,
+  fetchGenerator,
+  h3Generator,
+  honoGenerator,
+  koaGenerator,
+  mdxGenerator,
+  reactGenerator,
+  solidGenerator,
+  ssgGenerator,
+  ssrGenerator,
+  svelteGenerator,
+  typeboxGenerator,
+  vueGenerator,
+} from "@kosmojs/dev";
 import { containsPathTraversalPatterns } from "@kosmojs/lib";
+
+export const readAnswer = async <T>(input: Promise<T | symbol>) => {
+  const value = await input;
+  if (prompts.isCancel(value)) {
+    prompts.cancel("Cancelled");
+    process.exit(0);
+  }
+  return value;
+};
+
+export const printAnswer = (message: string, value: string) => {
+  prompts.log.step(`${message}\n${styleText("dim", value)}`);
+};
+
+export const printMessage = (
+  message: string,
+  ttyLogger: "intro" | "note" | "outro",
+) => {
+  // biome-ignore lint: performance/noDynamicNamespaceImportAccess
+  isTTY() ? prompts[ttyLogger](message) : console.log(message);
+};
+
+export { prompts };
 
 export type PackageJSON = {
   devPort?: number;
@@ -22,23 +70,14 @@ export type SourceFolder = {
   name: string;
   frontend?: keyof typeof FRONTENDS | undefined;
   backend?: keyof typeof BACKENDS | undefined;
-  ssr?: boolean | undefined;
-  ssg?: boolean | undefined;
-  tsq?: boolean | undefined;
+  sidecar?: boolean | undefined;
 };
-
-export type MaybePromise<T> = T | Promise<T>;
-
-export const CREATE_OPTIONS = ["project", "folder"] as const;
 
 export const FOLDER_OPTIONS = {
   frontend: { type: "string" },
   "no-frontend": { type: "boolean" },
   backend: { type: "string" },
   "no-backend": { type: "boolean" },
-  ssr: { type: "boolean" },
-  ssg: { type: "boolean" },
-  tsq: { type: "boolean" },
 } as const;
 
 type DependencyEntry = ["dependencies" | "devDependencies", string, string];
@@ -62,8 +101,8 @@ export const compareDependencies = (
   return newDependencies;
 };
 
-export const isCLI = (unconditionalCLI?: unknown) => {
-  return unconditionalCLI ? true : !process.stdout.isTTY;
+export const isTTY = () => {
+  return process.env.CI || !process.stdout.isTTY ? false : true;
 };
 
 export const validateName = (
@@ -92,85 +131,89 @@ export const assertNoError = (validator: () => string | undefined) => {
   }
 };
 
-export const printUsage = () => {
-  const usage = [
-    "",
-    `🚀 ${styleText(["bold", "underline", "cyan"], "KosmoJS CLI")}`,
-    "",
+export const resolveFolderGenerators = (
+  folder: SourceFolder,
+  folderConfig?: DeepPartial<FolderConfig>,
+) => {
+  const { frontend, backend } = folder;
 
-    styleText("bold", "FOLDER COMMAND"),
-    "",
-    `  ${styleText("blue", "kosmo folder <name>")}`,
-    `  Create <name> Source Folder in interactive mode, prompting for each step`,
-    "",
-    styleText(
-      "bold",
-      "  Use these options to create a Source Folder in CLI mode:",
-    ),
-    `  ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))} ${styleText("dim", "(--no-frontend for API-only folders)")}`,
-    `  ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(--no-backend for client-only folders use)")}`,
-    `  ${styleText("cyan", "--ssr")} ${styleText("dim", "enable server-side rendering (SSR)")}`,
-    `  ${styleText("cyan", "--ssg")} ${styleText("dim", "enable static site generation (SSG); implies --ssr")}`,
-    `  ${styleText("cyan", "--tsq")} ${styleText("dim", "enable TanStack Query")}`,
-    `  ${styleText("cyan", "--overwrite")} ${styleText("dim", "overwrite existing files (use with caution)")}`,
-
-    styleText("bold", "SERVE COMMAND"),
-    "",
-    `  ${styleText("blue", "kosmo serve")}`,
-    `  Start dev server for all source folders`,
-    "",
-    `  ${styleText("blue", "kosmo serve")} ${styleText("magenta", "admin")}`,
-    `  Start dev server for single source folder`,
-    "",
-    `  ${styleText("blue", "kosmo serve")} ${styleText("magenta", "admin front")}`,
-    `  Start dev server for multiple source folders`,
-    "",
-
-    styleText("bold", "PREVIEW COMMAND"),
-    "",
-    `  ${styleText("blue", "kosmo preview")}`,
-    `  Build all source folders and serve the build output, rebuilding on change`,
-    "",
-    `  ${styleText("blue", "kosmo preview")} ${styleText("magenta", "admin front")}`,
-    `  Preview selected source folders only`,
-    "",
-
-    styleText("bold", "BUILD COMMAND"),
-    "",
-    `  ${styleText("blue", "kosmo build")}`,
-    `  Build all source folders`,
-    "",
-    `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "admin")}`,
-    `  Build single source folder`,
-    "",
-    `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "admin front")}`,
-    `  Build multiple source folders`,
-    "",
-
-    styleText("bold", "TYPECHECK COMMAND"),
-    "",
-    `  ${styleText("blue", "kosmo typecheck")}`,
-    `  Typecheck all source folders`,
-    "",
-    `  ${styleText("blue", "kosmo typecheck")} ${styleText("magenta", "admin")}`,
-    `  Typecheck single source folder`,
-    "",
-    `  ${styleText("blue", "kosmo typecheck")} ${styleText("magenta", "admin front")}`,
-    `  Typecheck multiple source folders`,
-    "",
-
-    styleText("bold", "COMMON OPTIONS"),
-    "",
-    `  ${styleText("cyan", "-q, --quiet")}`,
-    `  Suppress all output in CLI mode (errors still shown)`,
-    "",
-    `  ${styleText("cyan", "-h, --help")}`,
-    `  Display this help message and exit`,
-    "",
+  const generators: Array<GeneratorSignature> = [
+    // always present and always first
+    coreGenerator(),
   ];
 
-  for (const line of usage) {
-    console.log(line);
+  if (frontend === "solid") {
+    generators.push(solidGenerator());
+  } else if (frontend === "react") {
+    generators.push(reactGenerator());
+  } else if (frontend === "vue") {
+    generators.push(vueGenerator());
+  } else if (frontend === "svelte") {
+    generators.push(svelteGenerator());
+  } else if (frontend === "mdx") {
+    generators.push(mdxGenerator());
+  } else if (frontend !== undefined) {
+    throw new Error(`Unknown frontend: ${frontend}`);
+  }
+
+  if (backend === "hono") {
+    generators.push(honoGenerator());
+  } else if (backend === "h3") {
+    generators.push(h3Generator());
+  } else if (backend === "koa") {
+    generators.push(koaGenerator());
+  } else if (backend !== undefined) {
+    throw new Error(`Unknown backend: ${backend}`);
+  }
+
+  if (frontend) {
+    if (folderConfig?.frontend?.ssr !== false) {
+      generators.push(ssrGenerator());
+    }
+
+    if (
+      folderConfig?.frontend?.ssg !== false &&
+      folderConfig?.frontend?.ssr !== false
+    ) {
+      generators.push(ssgGenerator());
+    }
+  }
+
+  if (backend) {
+    if (folderConfig?.fetch !== false) {
+      generators.push(fetchGenerator());
+    }
+    if (folderConfig?.validation !== false) {
+      generators.push(typeboxGenerator());
+    }
+  }
+
+  return generators;
+};
+
+export const packageManager = async () => {
+  const pm = await detect();
+  return {
+    name: pm?.name,
+    command(command: "install" | "run", ...args: Array<string>) {
+      const a = args.length ? ` ${args.join(" ")}` : "";
+      const resolved = pm ? resolveCommand(pm.agent, command, args) : undefined;
+      return resolved
+        ? `${resolved.command} ${resolved.args.join(" ")}`.trim()
+        : {
+            install: [
+              `npm install${a}`,
+              `${styleText(["dim"], `# pnpm install${a} / yarn install${a}`)}`,
+            ].join(" "),
+            run: [
+              `npm run${a}`,
+              `${styleText(["dim"], `# pnpm dev${a} / yarn dev${a}`)}`,
+            ].join(" "),
+          }[command];
+    },
+  };
+};
+
 export const checkDependencies = async (
   packageJson: PackageJSON,
   generators: Array<GeneratorSignature>,

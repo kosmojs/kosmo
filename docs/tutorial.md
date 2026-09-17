@@ -489,7 +489,7 @@ Layouts can be nested - deeper layouts wrap inner layouts, matching your route h
 
 ## Server-Side Rendering
 
-Enable when creating a source folder (`--ssr`), or add it later in `kosmo.config.ts`:
+Every folder has it on already. To turn it off, or back on, edit `kosmo.config.ts`:
 
 ```ts [kosmo.config.ts]
 import { defineConfig } from "@kosmojs/dev";
@@ -497,7 +497,7 @@ import { defineConfig } from "@kosmojs/dev";
 export default defineConfig({
   frontend: {
     // ...
-    ssr: true, // [!code ++]
+    ssr: true, // [!code hl]
   },
 });
 ```
@@ -550,9 +550,10 @@ Non-interactive mode is also supported; pass any flag and no prompts appear:
 
 - `--frontend solid|react|vue|svelte|mdx` or `--no-frontend` (one required)
 - `--backend hono|h3|koa` or `--no-backend` (one required)
-- `--ssr` to enable server-side rendering
-- `--ssg` to enable static side generation
-- `--tsq` to enable TanStack Query
+- `--overwrite` to proceed into a non-empty directory
+
+Everything else - SSR, SSG, TanStack Query - is a key in the folder's `kosmo.config.ts`,
+not a flag at creation.
 
 :::tabs key:pm variant:code
 == npm

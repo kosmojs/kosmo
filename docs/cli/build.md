@@ -33,7 +33,8 @@ this is what produces the validation schemas and the fetch client signatures.
 with `base` set to the folder's `frontend.base` and a Vite manifest alongside it.
 4. **Bundle the backend**, if the folder has a `backend` - into `dist/<folder>/api`, as ESM with sourcemaps.
 Two entry points: `api/app.ts` and `api/server.ts`.
-5. **Run each generator's post-build step.** This is where the SSR/SSG bundles produced, if either enabled.
+5. **Run each generator's post-build step.** This is where the SSR/SSG bundles produced, if either enabled,
+and where [sidecar](/sidecar/intro) entries are bundled.
 
 Then the folder's manifest is written, and once every folder is done, `dist/run.js` is deployed.
 
@@ -54,9 +55,8 @@ Each build writes `dist/<folder>/kosmo.json`, describing the folder in the terms
 ```json [dist/front/kosmo.json]
 {
   "name": "app",
-  "frontend": { "base": "/" },
-  "backend": { "base": "/api", "aliasPatterns": [] },
-  "ssr": false
+  "frontend": { "base": "/", "ssr": true },
+  "backend": { "base": "/api", "aliasPatterns": [] }
 }
 ```
 

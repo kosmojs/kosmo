@@ -5,5 +5,7 @@ export default defineConfig({
     stack: "koa",
     base: "/koa/api",
   },
+  fetch: false,
   validation: true,
+  typecheck: true,
 });

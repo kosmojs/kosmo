@@ -56,12 +56,13 @@ passed - so `pnpm typecheck` works as a CI gate without any extra wiring.
 ### Why separate runs
 
 Each source folder has its own [tsconfig.json](/essentials/config#typescript-config) with its own path mappings.
+That covers everything in the folder, [sidecar](/sidecar/intro) entries included.
 A single `tsc` over the whole project would resolve them against the wrong one, so the folders are checked one at a time instead.
 
 ## Opting a folder out
 
 A folder whose config carries `typecheck: false` is left out of every run.
-Useful for a [sidecar](/dev-build-run/sidecar) wrapping third-party JavaScript,
+Useful for a [sidecar](/sidecar/intro) wrapping third-party JavaScript,
 or a folder mid-migration where a red `tsc` is noise rather than signal.
 
 ```ts [src/mailer/kosmo.config.ts]

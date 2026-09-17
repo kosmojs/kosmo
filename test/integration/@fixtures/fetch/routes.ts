@@ -43,7 +43,7 @@ export const routes = {
   cookies: {
     GET: `{
       cookies: {
-        session: string;
+        session?: string;
       };
     }`,
   },
@@ -51,7 +51,7 @@ export const routes = {
     GET: `{
       query: { page?: number };
       headers: { authorization: string };
-      cookies: { session: string };
+      cookies: { session?: string };
     }`,
   },
   json: {

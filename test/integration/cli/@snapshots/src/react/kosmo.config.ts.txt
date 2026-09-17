@@ -4,9 +4,11 @@ export default defineConfig({
   frontend: {
     stack: "react",
     base: "/react",
-    fetch: true,
-    ssr: false,
+    ssr: true,
     ssg: false,
     tanstack: { query: false },
   },
+  fetch: false,
+  validation: false,
+  typecheck: true,
 });

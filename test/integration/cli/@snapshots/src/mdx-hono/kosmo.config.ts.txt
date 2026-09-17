@@ -4,13 +4,15 @@ export default defineConfig({
   frontend: {
     stack: "mdx",
     base: "/mdx-hono",
-    fetch: true,
-    ssr: false,
+    ssr: true,
     ssg: false,
+    tanstack: { query: false },
   },
   backend: {
     stack: "hono",
     base: "/mdx-hono/api",
   },
+  fetch: true,
   validation: true,
+  typecheck: true,
 });

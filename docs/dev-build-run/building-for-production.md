@@ -19,7 +19,8 @@ Splitting them across hosts stays available: each folder's bundles are runnable 
 
 ## One Entry Point for the Whole Project
 
-The build writes `dist/run.js` - a dispatcher over every source folder in the project.
+The build writes `dist/run.js` - a dispatcher over every folder in the project
+(except&nbsp;[sidecars](/sidecar/intro)).
 Start it and the whole application is up:
 
 ```sh
@@ -128,6 +129,14 @@ run `dist/front/api/server.js` and put `dist/front/client/` behind any static ho
 ### API-only folders (no frontend)
 
 Deploy the API server, same as CSR minus the static assets.
+
+### Sidecar folders - a process of their own.
+
+Run `dist/<folder>/sidecar/run.js` as a separate process - a worker dyno, a second container, a systemd unit.
+Do not fold it into whatever serves HTTP:
+a crash or a blocked event loop in a background job would take your routes with it,
+and the two scale on different signals.
+[Sidecar&nbsp;Folders&nbsp;›](/sidecar/production)
 
 ## Running the API server
 

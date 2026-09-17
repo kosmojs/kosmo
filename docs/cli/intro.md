@@ -25,6 +25,7 @@ and `package.json` wires it to scripts so you rarely type the binary name:
 | `pnpm build` | `kosmo build` | Production build |
 | `pnpm typecheck` | `kosmo typecheck` | `tsc --noEmit` per source folder, plus the project root |
 | `pnpm folder` | `kosmo folder` | Add a source folder to the project |
+| `pnpm sidecar` | `kosmo sidecar` | Add a sidecar folder - builds, serves no HTTP |
 
 All five run from the **project root** - the directory holding `package.json`.
 
@@ -38,6 +39,7 @@ They read `distDir`, `devPort` and `previewPort` from it, and refuse to start if
 |---|---|
 | [create kosmo](/cli/create) | Bootstrap a new project - run once |
 | [kosmo folder](/cli/folder) | Add a source folder to an existing project |
+| [kosmo sidecar](/cli/sidecar) | Add a [sidecar](/sidecar/intro) folder - entry points, no HTTP |
 
 | Running a project | |
 |---|---|
@@ -83,7 +85,7 @@ one that tells you which flag is missing.
 | Message | Cause |
 |---|---|
 | package.json does not exist or some of distDir / devPort / previewPort is not set | Not in the project root, or some of listed key(s) are missing. |
-| Invalid command, use one of folder, serve, build, preview, typecheck | Typo, or a command from another framework's CLI. |
+| Unknown command; use one of folder, sidecar, serve, build, preview, typecheck | Typo, or a command from another framework's CLI. |
 | No source folders detected | No `src/*/kosmo.config.ts` anywhere. |
 | Some of the given names do not contain a valid KosmoJS source folder | A named folder doesn't exist or has no config. |
 | No folder name provided | `kosmo folder` in CLI mode with no name positional - including the non-TTY case. |

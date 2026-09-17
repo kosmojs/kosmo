@@ -4,6 +4,7 @@ export * from "./generic";
 export * from "./integrations";
 export * from "./project";
 export * from "./routes";
+export * from "./sidecar";
 export * from "./ssr";
 export * from "./typebox";
 export * from "./validation";

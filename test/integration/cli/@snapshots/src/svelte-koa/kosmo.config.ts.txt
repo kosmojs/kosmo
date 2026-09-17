@@ -4,8 +4,7 @@ export default defineConfig({
   frontend: {
     stack: "svelte",
     base: "/svelte-koa",
-    fetch: true,
-    ssr: false,
+    ssr: true,
     ssg: false,
     tanstack: { query: false },
   },
@@ -13,5 +12,7 @@ export default defineConfig({
     stack: "koa",
     base: "/svelte-koa/api",
   },
+  fetch: true,
   validation: true,
+  typecheck: true,
 });

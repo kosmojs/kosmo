@@ -4,8 +4,7 @@ export default defineConfig({
   frontend: {
     stack: "react",
     base: "/react-h3",
-    fetch: true,
-    ssr: false,
+    ssr: true,
     ssg: false,
     tanstack: { query: false },
   },
@@ -13,5 +12,7 @@ export default defineConfig({
     stack: "h3",
     base: "/react-h3/api",
   },
+  fetch: true,
   validation: true,
+  typecheck: true,
 });

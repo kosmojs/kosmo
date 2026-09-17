@@ -12,15 +12,18 @@ head:
         generateHydrationScript, ssr warmup, hydration, useQuery, mutations, invalidateQueries
 ---
 
-Enable TanStack Query when you create the source folder.
-Interactive mode asks whether to enable it; for non-interactive runs pass `--tsq`:
+[TanStack Query](https://tanstack.com/query) handles caching,
+revalidation and request deduplication on the client.
 
-```sh [CLI mode]
-pnpm folder front --frontend react --tsq
-```
+KosmoJS does not wrap it - it wires the client in, gives each SSR request its own, and leaves the querying to you.
 
-Opting in sets `tanstack.query` in the `frontend` block.
-You can also add it by hand later if you did not enable it at folder creation:
+What you get is the `_/query` module and a provider around your app.
+What you write is ordinary TanStack Query.
+
+## Enabling and using it
+
+Every folder comes with `tanstack: { query: false }`.
+Turn it on in the folder's config:
 
 ```ts [kosmo.config.ts]
 import { defineConfig } from "@kosmojs/dev";
@@ -56,20 +59,6 @@ proprietary helper - warm SSR uses TanStack's own `dehydrate` and
 
 MDX folders render static HTML with no client runtime, so TanStack Query is not
 available there - fetch data with an MDX `loader` instead (see [MDX](/frontend/mdx)).
-
-## Enabling and using it
-
-Enabling the `tanstack.query` option wires everything for you.
-The `_/query` runtime is deployed, `_/app` is swapped for a provider that supplies
-the query client, and - on the server - each request gets its own client.
-
-None of this touches your app code: the provider seam is part of the
-derived foundation (see [Application Structure](/frontend/application)), and it is
-composed the same way whether the option is on or off.
-Toggling the option never asks you to edit, copy, or paste anything.
-
-So there is no setup step here. Once the option is on, the only thing you write is
-the read itself - `useQuery` in a component (shown per framework in [Basic Usage](#basic-usage)).
 
 ## Basic Usage
 

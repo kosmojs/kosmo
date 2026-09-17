@@ -21,20 +21,19 @@ export const openapiOptions = {
 
 export const sourceFolder: SourceFolder = {
   name: "test",
-  config: {
-    generators: [
-      coreGenerator(),
-      openapiGenerator({
-        outfile: "",
-        openapi: "3.1.0",
-        info: {
-          title: "",
-          version: "",
-        },
-        servers: [],
-      }),
-    ],
-  },
+  config: {},
+  generators: [
+    coreGenerator(),
+    openapiGenerator({
+      outfile: "",
+      openapi: "3.1.0",
+      info: {
+        title: "",
+        version: "",
+      },
+      servers: [],
+    }),
+  ],
   root: appRoot,
   distDir: "",
 };

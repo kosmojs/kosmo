@@ -5,5 +5,7 @@ export default defineConfig({
     stack: "h3",
     base: "/h3/api",
   },
+  fetch: false,
   validation: true,
+  typecheck: true,
 });

@@ -38,7 +38,7 @@ The same flags as `create kosmo`, providing folder name as first argument.
 ```sh
 pnpm folder admin --frontend solid --backend h3
 pnpm folder svc   --no-frontend    --backend hono
-pnpm folder docs  --frontend mdx   --no-backend --ssg
+pnpm folder docs  --frontend mdx   --no-backend
 ```
 
 > Folder name is required, omit it and you get an error: `No folder name provided`.

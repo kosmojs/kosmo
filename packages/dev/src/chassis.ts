@@ -4,13 +4,19 @@ import { join, posix, resolve } from "node:path";
 import { styleText } from "node:util";
 
 import { pathToRegexp } from "path-to-regexp";
-import { build, createServer, type RunnableDevEnvironment } from "vite";
+import {
+  build,
+  createServer,
+  type Plugin,
+  type RunnableDevEnvironment,
+} from "vite";
 
 import {
   defaults,
   type GeneratorFactory,
   type ProjectSettings,
   type ResolvedEntry,
+  type SidecarService,
   type SourceFolder,
   type WatcherEvent,
 } from "@kosmojs/core";
@@ -33,7 +39,7 @@ export default async (
 ): Promise<() => Promise<void>> => {
   const { devPort, command } = projectSettings;
 
-  // NOTE: initialize generators before anything else, regardless command
+  // NOTE: seed before anything else, regardless command
   for (const sourceFolder of projectSettings.sourceFolders) {
     for (const generator of sourceFolder.generators) {
       if (!generator.meta?.name || typeof generator.factory !== "function") {
@@ -47,7 +53,7 @@ export default async (
         console.error(
           styleText(
             "red",
-            `${sourceFolder.name}: ${generator.meta.name} generator failed to initialize`,
+            `${sourceFolder.name}: ${generator.meta.name} generator failed to seed`,
           ),
         );
         throw error;
@@ -58,7 +64,9 @@ export default async (
   if (command === "build" || command === "preview") {
     for (const sourceFolder of projectSettings.sourceFolders) {
       await buildSourceFolder(sourceFolder);
-      await writeFolderManifest(sourceFolder);
+      if (sourceFolder.config.frontend || sourceFolder.config.backend) {
+        await writeFolderManifest(sourceFolder);
+      }
     }
 
     await deployRunner(projectSettings);
@@ -87,14 +95,16 @@ export default async (
 
   // WARN: call this before starting any server!
   for (const sourceFolder of projectSettings.sourceFolders) {
-    eventMap[sourceFolder.name] = await eventFactory(sourceFolder);
+    if (sourceFolder.config.frontend || sourceFolder.config.backend) {
+      eventMap[sourceFolder.name] = await eventFactory(sourceFolder);
+    }
   }
 
   let port = await findFreePort(devPort);
 
   for (const sourceFolder of projectSettings.sourceFolders) {
     const { createPath } = pathResolver(sourceFolder);
-    const { frontend, backend } = sourceFolder.config;
+    const { frontend, backend, sidecar } = sourceFolder.config;
 
     const requestMatchers = matchersFactory(sourceFolder);
 
@@ -110,19 +120,21 @@ export default async (
       }),
     ];
 
-    // INFO: === start client server ===
     if (frontend) {
+      // INFO: === start client server ===
+
+      const generator = sourceFolder.generators.find(
+        (e) => e.meta.slot === "frontend",
+      );
+
       const viteServer = await createServer(
         mergeConfigs(
           // user-provided config - lowest priority
           frontend?.viteConfig,
-          // generators configs - higher priority
-          ...sourceFolder.generators.map(({ factory }) => {
-            return factory(sourceFolder).viteConfig?.({
-              kind: "client",
-              command,
-            });
-          }),
+          // generator config - higher priority
+          generator
+            ?.factory(sourceFolder)
+            .viteConfig?.({ kind: "frontend", command }),
           // main config - highest priority
           {
             base: frontend.base,
@@ -153,13 +165,13 @@ export default async (
       teardownHandlers.push(viteServer.close);
     }
 
-    // INFO: === start backend server ===
     if (backend) {
+      // INFO: === start backend server ===
+
       const generator = sourceFolder.generators.find(
         (e) => e.meta.slot === "backend",
       );
-      // NOTE: sourceFolder.config is client-specific config - not using for backend!
-      // To provide backend-specific config pass it as api generator options.
+
       const viteServer = await createServer(
         mergeConfigs(
           // user-provided config - lowest priority
@@ -183,7 +195,7 @@ export default async (
               conditions: ["node"],
             },
             environments: {
-              api: {
+              backend: {
                 resolve: {
                   conditions: ["node"],
                 },
@@ -193,7 +205,7 @@ export default async (
         ),
       );
 
-      const env = viteServer.environments.api as RunnableDevEnvironment;
+      const env = viteServer.environments.backend as RunnableDevEnvironment;
 
       const loadDevSetup = async () => {
         env.runner.clearCache();
@@ -215,16 +227,9 @@ export default async (
               await devSetup?.teardownHandler?.();
               devSetup = await loadDevSetup();
             } catch (error) {
-              /**
-               * A transiently-invalid module (half-saved file, atomic rewrite mid-flight, syntax error)
-               * must not take the dev server down: an uncaught rejection here is fatal to the whole process.
-               * Keep serving the previous api program; the next successful change reloads it.
-               * */
+              // keep the dev server alive; the next good save reloads
               console.error(
-                styleText(
-                  "red",
-                  `${sourceFolder.name}: api reload failed - keeping previous api program`,
-                ),
+                styleText("red", `${sourceFolder.name}: backend reload failed`),
               );
               console.error(error);
             }
@@ -237,6 +242,103 @@ export default async (
         () => devSetup.requestMatcher || requestMatchers.backend,
         () => devSetup.requestHandler(),
       ]);
+
+      teardownHandlers.push(viteServer.close);
+    }
+
+    if (sidecar?.serve) {
+      /**
+       * Assigned once the service is up; the reload plugin below is installed during `createServer`,
+       * so the hook has to reach it through a binding rather than a closure over something that does not exist yet.
+       * */
+      let reload = async () => {};
+
+      /**
+       * Restarting on a raw `watcher.on("change")` reads the module graph before Vite has invalidated it,
+       * and the service comes back up running the source as it was before the save.
+       *
+       * `hotUpdate` is called after that invalidation.
+       * Returning `[]` says the update is handled and leaves Vite nothing to propagate.
+       *
+       * The hook runs once per environment; nothing but `sidecar` resolves a module on this server.
+       * */
+      const reloadPlugin: Plugin = {
+        name: "kosmo:sidecar-reload",
+        hotUpdate({ modules }) {
+          if (modules.length) {
+            void reload();
+          }
+          return [];
+        },
+      };
+
+      const viteServer = await createServer(
+        mergeConfigs(
+          // user-provided config - lowest priority
+          sidecar.viteConfig,
+          // main config - highest priority
+          {
+            root: createPath.src(),
+            appType: "custom",
+            cacheDir: cacheDir(sourceFolder, command, "sidecar"),
+            plugins: [...plugins, reloadPlugin],
+            // `hotUpdate` is part of the HMR pipeline, so it runs only with `hmr` on -
+            // but this server is never listened on, so no socket is ever bound and no port is taken.
+            server: { hmr: true },
+            resolve: {
+              conditions: ["node"],
+            },
+            environments: {
+              sidecar: {
+                resolve: {
+                  conditions: ["node"],
+                },
+              },
+            },
+          },
+        ),
+      );
+
+      const env = viteServer.environments.sidecar as RunnableDevEnvironment;
+
+      const loadService = async () => {
+        env.runner.clearCache();
+        return env.runner
+          .import<{ default: SidecarService }>(sidecar.entry)
+          .then((e) => e.default);
+      };
+
+      let service = await loadService();
+      let close = await service.start();
+
+      reload = async () => {
+        try {
+          /**
+           * Load before tearing anything down: a save that cannot compile throws here,
+           * and the running service is left untouched rather than closed with nothing to replace it -
+           * which is unrecoverable for a service whose close function cannot run twice.
+           *
+           * Starting still happens after closing, so a service holding a port frees it before the new one binds.
+           * */
+          const next = await loadService();
+          await service.teardown?.();
+          await close();
+          /**
+           * Nothing is running between here and `start()`, so drop the closer:
+           * a `start()` that throws would otherwise leave the next reload calling it a second time,
+           * which for a real one throws too - and the sidecar never comes back.
+           * */
+          close = async () => {};
+          service = next;
+          close = await service.start();
+        } catch (error) {
+          // keep the dev server alive; the next good save reloads
+          console.error(
+            styleText("red", `${sourceFolder.name}: sidecar reload failed`),
+          );
+          console.error(error);
+        }
+      };
 
       teardownHandlers.push(viteServer.close);
     }
@@ -298,7 +400,7 @@ export default async (
 const cacheDir = (
   { root, name }: SourceFolder,
   command: ProjectSettings["command"],
-  mode: "client" | "backend",
+  mode: "client" | "backend" | "sidecar",
 ) => {
   return resolve(root, `var/.vite/${name}/${command}/${mode}`);
 };
@@ -313,11 +415,11 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
   const command = "build";
 
   const { createPath } = pathResolver(sourceFolder);
-  const { frontend, backend } = sourceFolder.config;
+  const { frontend, backend, sidecar } = sourceFolder.config;
 
   const resolvedRoutes = [];
 
-  {
+  if (!sidecar) {
     const { resolvers } = await routesFactory(sourceFolder, cacheFactory);
 
     const spinner = spinnerFactory(`${sourceFolder.name}: resolving routes`);
@@ -347,19 +449,21 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
     await generator.factory(sourceFolder).build?.(resolvedRoutes);
   }
 
-  // INFO: === build client ===
   if (frontend) {
+    // INFO: === build the frontend ===
+
+    const generator = sourceFolder.generators.find(
+      (e) => e.meta.slot === "frontend",
+    );
+
     await build(
       mergeConfigs(
         // user-provided config - lowest priority
         frontend.viteConfig,
-        // generators configs - higher priority
-        ...sourceFolder.generators.map(({ factory }) => {
-          return factory(sourceFolder).viteConfig?.({
-            kind: "client",
-            command,
-          });
-        }),
+        // generator config - higher priority
+        generator
+          ?.factory(sourceFolder)
+          .viteConfig?.({ kind: "frontend", command }),
         // main config - highest priority
         {
           base: frontend.base,
@@ -376,14 +480,13 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
     );
   }
 
-  // INFO: === build backend ===
   if (backend) {
+    // INFO: === build the backend ===
+
     const generator = sourceFolder.generators.find(
       (e) => e.meta.slot === "backend",
     );
 
-    // NOTE: sourceFolder.config is client-specific config - not using for backend!
-    // To provide backend-specific config pass it as api generator options.
     await build(
       mergeConfigs(
         // user-provided config - lowest priority
@@ -420,6 +523,43 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
             },
           },
           cacheDir: cacheDir(sourceFolder, command, "backend"),
+        },
+      ),
+    );
+  }
+
+  if (sidecar) {
+    // INFO: === build the sidecar ===
+    await build(
+      mergeConfigs(
+        // user-provided config - lowest priority
+        sidecar.viteConfig,
+        // main config - highest priority
+        {
+          base: "./",
+          root: createPath.src(),
+          appType: "custom",
+          plugins,
+          resolve: {
+            conditions: ["node"],
+          },
+          build: {
+            ssr: true,
+            target: "esnext",
+            sourcemap: true,
+            emptyOutDir: true,
+            rolldownOptions: {
+              input: {
+                entry: createPath.src(sidecar.entry),
+                ...(sidecar.run ? { run: sidecar.run } : {}),
+              },
+              output: {
+                dir: createPath.distDir("sidecar"),
+                format: "esm",
+              },
+            },
+          },
+          cacheDir: cacheDir(sourceFolder, command, "sidecar"),
         },
       ),
     );

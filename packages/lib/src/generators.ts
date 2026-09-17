@@ -15,14 +15,9 @@ export const defineGenerator = <O extends object, R extends boolean = false>({
 }: Omit<GeneratorSignature<O>, "factory"> & {
   factory: (f: SourceFolder, o?: O) => GeneratorFactory;
 }): [R] extends [true]
-  ? ((o: O) => GeneratorSignature<O>) &
-      Pick<GeneratorSignature, "meta" | "dependencies" | "devDependencies">
-  : ((o?: O) => GeneratorSignature<O>) &
-      Pick<
-        GeneratorSignature<O>,
-        "meta" | "dependencies" | "devDependencies"
-      > => {
-  const wrapper = ((options?: O) => {
+  ? (o: O) => GeneratorSignature<O>
+  : (o?: O) => GeneratorSignature<O> => {
+  return ((options?: O) => {
     return {
       meta,
       factory: (folder: SourceFolder) => factory(folder, options),
@@ -31,10 +26,6 @@ export const defineGenerator = <O extends object, R extends boolean = false>({
       options,
     };
   }) as never;
-
-  Object.assign(wrapper, { meta, dependencies, devDependencies });
-
-  return wrapper;
 };
 
 export const defineGeneratorFactory = <O extends object>(

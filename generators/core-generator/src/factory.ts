@@ -112,8 +112,8 @@ export default defineGeneratorFactory((sourceFolder) => {
 
     // deploy .d.ts files
     for (const [file, template] of [
-      ["env.d.ts", templates.envD],
-      ["global.d.ts", templates.globalD],
+      ["env.d.ts", templates.libEnvD],
+      ["global.d.ts", templates.libGlobalD],
     ]) {
       await renderToFile(createPath.lib(`../${file}`), template, {});
     }
@@ -124,19 +124,42 @@ export default defineGeneratorFactory((sourceFolder) => {
      * */
     await renderToFile(
       createPath.lib("../.gitignore"),
-      templates.gitignore,
+      templates.libGitignore,
       {},
       { overwrite: false },
     );
 
-    if (sourceFolder.generators.some((e) => e.meta.slot === "frontend")) {
+    if (sourceFolder.config.frontend) {
       // deploy default index.html file; generators may override as needed
       await renderToFile(
         createPath.src("index.html"),
-        templates.index,
+        templates.srcIndex,
         { entryDir: defaults.entryDir },
         { overwrite: (c) => !c?.trim() /** overwrite only if empty */ },
       );
+    }
+
+    if (sourceFolder.config.sidecar) {
+      // seed sidecar files
+      await renderToFile(
+        createPath.lib("sidecar.ts"),
+        templates.libSidecar,
+        {},
+      );
+
+      for (const [file, template] of [
+        ["entry.ts", templates.srcSidecarEntry],
+        ["run.ts", templates.srcSidecarRun],
+      ]) {
+        await renderFactory({
+          helpers: createImportHelpers({ origin: "src" }),
+        }).renderToFile(
+          createPath.src(file),
+          template,
+          {},
+          { overwrite: false },
+        );
+      }
     }
   };
 
@@ -147,7 +170,7 @@ export default defineGeneratorFactory((sourceFolder) => {
         ...routeRenderHelpers(),
       },
       partials: {
-        routeMapperPartial: templates.coreRouteMapperPartial,
+        routeMapperPartial: templates.libCoreRouteMapperPartial,
       },
     });
 
@@ -165,15 +188,15 @@ export default defineGeneratorFactory((sourceFolder) => {
 
     await renderToFile(
       createPath.libCore("routes.ts"),
-      templates.coreRouteMapper,
+      templates.libCoreRouteMapper,
       { apiRoutes, pageRoutes },
     );
 
     for (const [file, template] of [
-      ["config.ts", templates.coreConfig],
-      ["types.ts", templates.coreTypes],
-      ["ssr.ts", templates.coreSSR],
-      ["index.ts", templates.coreIndex],
+      ["config.ts", templates.libCoreConfig],
+      ["types.ts", templates.libCoreTypes],
+      ["ssr.ts", templates.libCoreSSR],
+      ["index.ts", templates.libCoreIndex],
     ]) {
       await renderToFile(createPath.libCore(file), template, {
         base: frontend?.base ? JSON.stringify(frontend.base) : "undefined",
@@ -193,7 +216,7 @@ export default defineGeneratorFactory((sourceFolder) => {
         // Specialized generators (e.g. typebox-generator) may override this later.
         await renderToFile(
           createPath.libApi(dirname(entry.file), "schemas.ts"),
-          templates.schemas,
+          templates.libSchemas,
           { route: entry },
           { overwrite: false },
         );
@@ -207,16 +230,11 @@ export default defineGeneratorFactory((sourceFolder) => {
     build: generateLibFiles,
     virtualModules() {
       const { createImport } = pathResolver(sourceFolder);
-
-      const backendGenerator = sourceFolder.generators.some(
-        (e) => e.meta.slot === "backend",
-      );
-
       return [
         {
           specifier: "virtual:kosmo/backend-app",
           csr: "export default undefined;",
-          ssr: backendGenerator
+          ssr: sourceFolder.config.backend
             ? `export { default } from "${createImport.api(["app"], { origin: "lib" })}";`
             : "export default undefined;",
         },

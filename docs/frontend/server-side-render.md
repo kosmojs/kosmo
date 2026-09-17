@@ -10,13 +10,10 @@ head:
         production rendering, stream rendering, kosmojs ssr
 ---
 
-Source folders default to client-side rendering with Vite's dev server and HMR.
-SSR adds production-ready server rendering while keeping your development workflow unchanged.
+SSR adds production-ready server rendering while keeping your dev workflow unchanged.
 
-## Adding SSR Support
-
-SSR is automatically enabled if selected during source folder creation (or via `--ssr` flag in CLI mode).
-To add it to an existing folder, flip `ssr` on in your source folder's `kosmo.config.ts`:
+Every folder comes with `ssr: true`.
+Flip it in the folder's `kosmo.config.ts` to turn it off:
 
 ```ts [kosmo.config.ts]
 import { defineConfig } from "@kosmojs/dev";
@@ -24,7 +21,7 @@ import { defineConfig } from "@kosmojs/dev";
 export default defineConfig({
   frontend: {
     stack: "react",
-    base: "/front",
+    base: "/",
     ssr: true, // [!code ++]
   },
 });
@@ -38,7 +35,7 @@ To see, test or debug anything server-rendered, use [kosmo preview](/dev-build-r
 it serves the production build and rebuilds on change:
 
 ```sh
-pnpm preview front
+pnpm preview
 ```
 
 This trips up people arriving from Next/Nuxt/TanStack Start, where dev mirrors prod rendering.

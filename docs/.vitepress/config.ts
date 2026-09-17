@@ -242,6 +242,11 @@ export default defineConfig({
               link: "/cli/folder",
             },
             {
+              text: "kosmo sidecar",
+              docFooterText: "kosmo sidecar",
+              link: "/cli/sidecar",
+            },
+            {
               text: "kosmo serve",
               docFooterText: "kosmo serve",
               link: "/cli/serve",
@@ -486,6 +491,37 @@ export default defineConfig({
           ],
         },
         {
+          text: "Sidecar Folders",
+          collapsed: false,
+          items: [
+            {
+              text: "Intro",
+              docFooterText: "Sidecars",
+              link: "/sidecar/intro",
+            },
+            {
+              text: "Config",
+              docFooterText: "Sidecar config",
+              link: "/sidecar/config",
+            },
+            {
+              text: "Entry and runner",
+              docFooterText: "Entry and runner",
+              link: "/sidecar/entry",
+            },
+            {
+              text: "In development",
+              docFooterText: "Sidecars in development",
+              link: "/sidecar/development",
+            },
+            {
+              text: "Preview and production",
+              docFooterText: "Preview and production",
+              link: "/sidecar/production",
+            },
+          ],
+        },
+        {
           text: "Dev / Build / Run",
           collapsed: false,
           items: [
@@ -501,6 +537,10 @@ export default defineConfig({
             {
               text: "Building for Production",
               link: "/dev-build-run/building-for-production",
+            },
+            {
+              text: "Sidecars",
+              link: "/dev-build-run/sidecar",
             },
           ],
         },

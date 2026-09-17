@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@kosmojs/cli": "workspace:^",
+    "create-kosmo": "workspace:^",
     "@kosmojs/core": "workspace:^",
     "@kosmojs/dev": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",

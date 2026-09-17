@@ -2,47 +2,33 @@ import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { styleText } from "node:util";
 
-import * as prompts from "@clack/prompts";
-import { format } from "oxfmt";
-
 import {
   BACKENDS,
   DEFAULT_DIST,
-  DEFAULT_PORT,
-  DEFAULT_PREVIEW_PORT,
   type DeepPartial,
   defaults,
   type FolderConfig,
   FRONTENDS,
-  type GeneratorSignature,
 } from "@kosmojs/core";
-import {
-  coreGenerator,
-  fetchGenerator,
-  h3Generator,
-  honoGenerator,
-  koaGenerator,
-  mdxGenerator,
-  reactGenerator,
-  solidGenerator,
-  ssgGenerator,
-  ssrGenerator,
-  svelteGenerator,
-  typeboxGenerator,
-  vueGenerator,
-} from "@kosmojs/dev";
-import { render, renderToFile } from "@kosmojs/lib";
+import { formatCode, render, renderToFile } from "@kosmojs/lib";
 
 import {
   assertNoError,
-  isCLI,
-  type MaybePromise,
-  type Project,
+  isTTY,
+  printAnswer,
+  prompts,
+  readAnswer,
+  resolveFolderGenerators,
   type SourceFolder,
-  validateName,
 } from "./base";
 import * as templates from "./templates";
 
+export const prepareFolder = async (
+  root: string,
+  name: string,
+  input: Partial<{ overwrite: boolean }> | undefined,
+): Promise<SourceFolder> => {
+  const srcDir = resolve(root, defaults.srcDir);
 
   await mkdir(srcDir, { recursive: true });
   const entries = await readdir(srcDir);
@@ -77,348 +63,145 @@ import * as templates from "./templates";
   return { name };
 };
 
-export const createFolder = async (
+export const prepareSourceFolder = async (
   root: string,
   name: string,
-  {
-    input,
-    intro,
-    outro,
-    note,
-  }: {
-    input?: {
-      frontend?: string;
-      "no-frontend"?: boolean;
-      backend?: string;
-      "no-backend"?: boolean;
-      ssr?: boolean;
-      ssg?: boolean;
-      tsq?: boolean;
-      quiet?: boolean;
-      overwrite?: boolean;
-    };
-    intro?: () => MaybePromise<string | undefined>;
-    outro?: (f: SourceFolder) => MaybePromise<string | undefined>;
-    note?: (f: SourceFolder) => MaybePromise<string | undefined>;
-  },
-  folderDefaults?: DeepPartial<FolderConfig>,
+  input:
+    | Partial<{
+        frontend: string;
+        "no-frontend": boolean;
+        backend: string;
+        "no-backend": boolean;
+        overwrite: boolean;
+      }>
+    | undefined,
 ): Promise<SourceFolder> => {
-  assertNoError(() => validateName(name, "No folder name provided"));
+  const tty = isTTY();
 
-  const srcDir = resolve(root, defaults.srcDir);
+  const folder = await prepareFolder(root, name, input);
 
-  await mkdir(srcDir, { recursive: true });
-  const entries = await readdir(srcDir);
-
-  if (isCLI(input)) {
-    // cli mode
-
-    if (intro) {
-      input?.quiet || console.log(await intro());
-    }
-
-    if (!input?.overwrite) {
+  for (const [key, values] of [
+    ["frontend", FRONTENDS],
+    ["backend", BACKENDS],
+  ] as const) {
+    if (input?.[key] && input?.[`no-${key}`]) {
+      // both value and negation given, fail
       assertNoError(() => {
-        return entries.includes(name ?? "") //
-          ? `./${defaults.srcDir}/${name} already exists. Either remove it or provide --overwrite flag.`
-          : undefined;
+        return `--${key} and --no-${key} are mutually exclusive; use only one`;
       });
     }
 
-    for (const [key, values] of [
-      ["frontend", FRONTENDS],
-      ["backend", BACKENDS],
-    ] as const) {
-      if (input?.[key]) {
-        assertNoError(() => {
-          return !Object.keys(values).includes(input[key] as never)
-            ? `Invalid ${key}, use one of: ${Object.keys(values).join(", ")}`
-            : undefined;
-        });
-      } else if (!input?.[`no-${key}`]) {
+    const message = key.replace(/^./, (e) => e.toUpperCase());
+
+    if (input?.[key]) {
+      // value given, validate it
+      assertNoError(() => {
+        return !Object.keys(values).includes(input[key] as never)
+          ? `Invalid ${key}, use one of: ${Object.keys(values).join(", ")}`
+          : undefined;
+      });
+      // value validated
+      folder[key] = input[key] as never;
+      if (tty) {
+        printAnswer(message, folder[key]);
+      }
+    } else if (input?.[`no-${key}`]) {
+      if (tty) {
+        printAnswer(message, "none");
+      }
+    } else {
+      if (tty) {
+        // no value nor negation given, ask for the value
+
+        const answer = await readAnswer(
+          prompts.select({
+            message,
+            options: [
+              ...Object.entries(values).map(([value, label]) => {
+                return { value, label };
+              }),
+              { value: undefined, label: "none" },
+            ],
+          }),
+        );
+
+        folder[key] = answer as never;
+      } else {
+        // no value nor negation given, and no tty to ask, fail
         assertNoError(() => {
           return `${key} is required: either provide --${key} <name> or --no-${key} flag`;
         });
       }
-      assertNoError(() => {
-        return !input?.[key] || !input?.[`no-${key}`]
-          ? undefined
-          : `--${key} and --no-${key} are mutually exclusive; use only one`;
-      });
     }
-
-    const folder = { ...input, name } as SourceFolder;
-
-    await createSourceFolder(root, folder, folderDefaults);
-
-    if (note) {
-      input?.quiet || console.log(await note(folder));
-    }
-
-    if (outro) {
-      input?.quiet || console.log(await outro(folder));
-    }
-
-    return folder;
   }
 
-  // interactive mode
-  {
-    if (intro) {
-      const output = await intro();
-      !output || prompts.intro(output);
-    }
-
-    if (entries.includes(name)) {
-      const answer = await readAnswer(
-        prompts.select({
-          message: [
-            styleText(["blue", "bold"], `./${defaults.srcDir}/${name}`),
-            "already exists",
-          ].join(" "),
-          options: [
-            { value: "remove", label: "Remove existing files" },
-            {
-              value: "overwrite",
-              label: "Keep existing files, overwrite as needed",
-            },
-            { value: "cancel", label: "Cancel" },
-          ],
-        }),
-      );
-      if (answer === "remove") {
-        await rm(resolve(srcDir, name), { recursive: true });
-      } else if (answer === "cancel") {
-        prompts.cancel("Cancelled");
-        process.exit(0);
-      }
-    }
-
-    const frontend = (await readAnswer(
-      prompts.select({
-        message: "Frontend",
-        options: [
-          ...Object.entries(FRONTENDS).map(([value, label]) => {
-            return { value, label };
-          }),
-          { value: undefined, label: "None (API-only folder)" },
-        ],
-      }),
-    )) as SourceFolder["frontend"];
-
-    const backend = (await readAnswer(
-      prompts.select({
-        message: "Backend Framework",
-        options: [
-          ...Object.entries(BACKENDS).map(([value, label]) => {
-            return { value, label };
-          }),
-          { value: undefined, label: "None (client-only folder)" },
-        ],
-      }),
-    )) as SourceFolder["backend"];
-
-    // SSR enabled unconditionally on mdx folders
-    const ssr = frontend
-      ? frontend === "mdx"
-        ? true
-        : await readAnswer(
-            prompts.confirm({
-              message: "Enable server-side rendering (SSR)?",
-              initialValue: false,
-              active: "yes",
-              inactive: "no",
-            }),
-          )
-      : false;
-
-    // ssg can be enabled only if ssr enabled
-    const ssg = ssr
-      ? await readAnswer(
-          prompts.confirm({
-            message: "Enable static site generation (SSG)?",
-            initialValue: false,
-            active: "yes",
-            inactive: "no",
-          }),
-        )
-      : false;
-
-    // TanStack Query not available on mdx folders
-    const tsq = frontend
-      ? frontend === "mdx"
-        ? false
-        : await readAnswer(
-            prompts.confirm({
-              message: "Enable TanStack Query?",
-              initialValue: false,
-              active: "yes",
-              inactive: "no",
-            }),
-          )
-      : false;
-
-    const folder: SourceFolder = {
-      name,
-      frontend,
-      backend,
-      ssr: ssr === true,
-      ssg: ssg === true,
-      tsq: tsq === true,
-    };
-
-    await createSourceFolder(root, folder, folderDefaults);
-
-    if (note) {
-      const output = await note(folder);
-      !output || prompts.note(output);
-    }
-
-    if (outro) {
-      const output = await outro(folder);
-      !output || prompts.outro(output);
-    }
-
-    return folder;
-  }
+  return folder;
 };
 
 export const createSourceFolder = async (
-  projectRoot: string,
+  root: string,
   folder: SourceFolder,
-  folderDefaults?: DeepPartial<FolderConfig>,
+  configPatch?: DeepPartial<FolderConfig>,
 ) => {
-  const folderPath = resolve(projectRoot, defaults.srcDir, folder.name);
+  const folderPath = resolve(root, defaults.srcDir, folder.name);
 
   await mkdir(folderPath, { recursive: true });
 
-  const packageFile = resolve(projectRoot, "package.json");
+  const packageFile = resolve(root, "package.json");
 
   // Using readFile cause import() returns cached content
   const packageJson = JSON.parse(await readFile(packageFile, "utf8"));
 
   const { frontend, backend } = folder;
 
-  const options = {
+  const { frontend: frontendPatch = {} } = { ...configPatch };
+
+  const config: DeepPartial<FolderConfig> = {
     ...(frontend
       ? {
           frontend: {
+            ...frontendPatch,
             stack: frontend,
-            base: folderDefaults?.frontend?.base || `/${folder.name}`,
-            fetch: true,
-            ssr: folder.ssr || folder.ssg ? true : false,
-            ssg: folder.ssg ? true : false,
-            ...(["mdx"].includes(frontend)
-              ? {}
-              : { tanstack: { query: folder.tsq ? true : false } }),
-            ...folderDefaults?.frontend,
+            base: frontendPatch.base || `/${folder.name}`,
+            ssr: "ssr" in frontendPatch ? frontendPatch.ssr : true,
+            ssg: "ssg" in frontendPatch ? frontendPatch.ssg : false,
+            tanstack:
+              "tanstack" in frontendPatch
+                ? frontendPatch.tanstack
+                : { query: false },
           },
         }
       : {}),
     ...(backend
       ? {
           backend: {
+            ...configPatch?.backend,
             stack: backend,
-            base: folderDefaults?.backend?.base || `/${folder.name}/api`,
-            ...folderDefaults?.backend,
+            base: configPatch?.backend?.base || `/${folder.name}/api`,
           },
         }
       : {}),
+    fetch: configPatch?.fetch === false || !backend || !frontend ? false : true,
+    validation: configPatch?.validation === false || !backend ? false : true,
+    typecheck: configPatch?.typecheck === false ? false : true,
   };
 
-  const kosmoConfig = createKosmoConfig(folder, options);
+  const kosmoConfig = createKosmoConfig(folder, config);
 
   await writeFile(
     resolve(folderPath, "kosmo.config.ts"),
-    await format("kosmo.config.ts", kosmoConfig, {
-      sortImports: true,
-    }).then((e) => (e.errors.length ? kosmoConfig : e.code)),
+    await formatCode(kosmoConfig, "kosmo.config.ts"),
     "utf8",
   );
 
-  for (const file of [
-    // stub files for initial build to pass;
-    // generators will seed them with appropriate content.
-    ...(folder.backend ? [`${defaults.apiDir}/index/index.ts`] : []),
-    ...(["solid", "react"].includes(folder.frontend ?? "")
-      ? [
-          `${defaults.pagesDir}/index/index.tsx`,
-          `${defaults.entryDir}/client.ts`,
-        ]
-      : []),
-    ...(["vue"].includes(folder.frontend ?? "")
-      ? [
-          `${defaults.pagesDir}/index/index.vue`,
-          `${defaults.entryDir}/client.ts`,
-        ]
-      : []),
-    ...(["svelte"].includes(folder.frontend ?? "")
-      ? [
-          `${defaults.pagesDir}/index/index.svelte`,
-          `${defaults.entryDir}/client.ts`,
-        ]
-      : []),
-    ...(["mdx"].includes(folder.frontend ?? "")
-      ? [
-          `${defaults.pagesDir}/index/index.mdx`,
-          `${defaults.entryDir}/client.ts`,
-        ]
-      : []),
-  ] as const) {
-    await renderToFile(
-      resolve(folderPath, file),
-      "",
-      {},
-      {
-        // do not overwrite real files with a stub!
-        // if at any point file should be re-seeded,
-        // just empty or delete it and dev server will seed a clean version.
-        overwrite: false,
-      },
-    );
-  }
-
-  const generators: Array<GeneratorSignature> = [coreGenerator()];
-
-  if (frontend === "solid") {
-    generators.push(solidGenerator as never);
-  } else if (frontend === "react") {
-    generators.push(reactGenerator as never);
-  } else if (frontend === "vue") {
-    generators.push(vueGenerator as never);
-  } else if (frontend === "svelte") {
-    generators.push(svelteGenerator as never);
-  } else if (frontend === "mdx") {
-    generators.push(mdxGenerator as never);
-  }
-
-  if (backend === "hono") {
-    generators.push(honoGenerator as never);
-  } else if (backend === "h3") {
-    generators.push(h3Generator as never);
-  } else if (backend === "koa") {
-    generators.push(koaGenerator as never);
-  }
-
-  if (folder.ssr || folder.ssg || frontend === "mdx") {
-    generators.push(ssrGenerator());
-  }
-
-  if (folder.ssg) {
-    generators.push(ssgGenerator());
-  }
-
-  if (Object.values(generators).some((e) => e.meta.slot === "backend")) {
-    generators.push(fetchGenerator());
-    generators.push(typeboxGenerator());
-  }
+  const generators = resolveFolderGenerators(folder);
 
   for (const generator of generators) {
     for (const key of ["dependencies", "devDependencies"] as const) {
       packageJson[key] = {
         ...packageJson[key],
         ...(typeof generator[key] === "function"
-          ? generator[key](options)
+          ? generator[key](config)
           : generator[key]),
       };
     }
@@ -432,19 +215,67 @@ export const createSourceFolder = async (
     {},
     { overwrite: false },
   );
+
+  await seedFolder(root, folder, config as never);
 };
 
-export const createKosmoConfig = (
-  folder: SourceFolder,
-  options: Record<string, Record<string, unknown>>,
+export const createSidecarFolder = async (
+  root: string,
+  sidecar: SourceFolder,
 ) => {
-  const { frontend, backend } = folder;
+  const path = resolve(root, defaults.srcDir, sidecar.name);
+
+  await mkdir(path, { recursive: true });
+
+  const config = {
+    sidecar: {
+      entry: "./entry.ts",
+      run: "./run.ts",
+      serve: false,
+    },
+  };
+
+  const kosmoConfig = createKosmoConfig(sidecar, config);
+
+  await writeFile(
+    resolve(path, "kosmo.config.ts"),
+    await formatCode(kosmoConfig, "kosmo.config.ts"),
+    "utf8",
+  );
+
+  await seedFolder(root, sidecar, config);
+};
+
+const seedFolder = async (
+  root: string,
+  folder: SourceFolder,
+  config: FolderConfig,
+) => {
+  for (const generator of resolveFolderGenerators(folder)) {
+    await generator
+      .factory({
+        root,
+        name: folder.name,
+        config,
+        generators: [],
+        distDir: DEFAULT_DIST,
+      })
+      .seed();
+  }
+};
+
+const createKosmoConfig = (
+  folder: SourceFolder,
+  config: DeepPartial<FolderConfig>,
+) => {
+  const { frontend, backend, sidecar } = folder;
 
   const context = {
     frontend,
     backend,
-    options: Object.fromEntries(
-      Object.entries(folderConfig).map(([key, val]) => [
+    sidecar,
+    config: Object.fromEntries(
+      Object.entries(config).map(([key, val]) => [
         key,
         Object.prototype.toString.call(val) === "[object Object]"
           ? Object.fromEntries(
