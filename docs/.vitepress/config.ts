@@ -538,10 +538,6 @@ export default defineConfig({
               text: "Building for Production",
               link: "/dev-build-run/building-for-production",
             },
-            {
-              text: "Sidecars",
-              link: "/dev-build-run/sidecar",
-            },
           ],
         },
         {

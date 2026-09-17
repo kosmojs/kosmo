@@ -1424,7 +1424,7 @@ Set `frontend.ssr: false` in `kosmo.config.ts` to opt out, and restart dev after
 
 Dev is a separate matter: `kosmo serve` is always client-rendered whatever `ssr` says.
 SSR shows up in `kosmo preview` and in production builds.
-[Details&nbsp;›](/frontend/server-side-render#adding-ssr-support)
+[Details&nbsp;›](/frontend/server-side-render)
 
 #### Does SSR run in dev?
 No - in dev, Vite handles all requests with HMR and CSR for immediate feedback.
@@ -1548,7 +1548,7 @@ Set `frontend.ssg: true` in the folder's `kosmo.config.ts` - scaffolded folders 
 
 It requires **SSR enabled** on that folder - pages are rendered at build time by the folder's own SSR server -
 which is why the creation prompt only offers SSG once you've chosen SSR.
-[Details&nbsp;›](/frontend/static-site-generation#adding-ssg-support)
+[Details&nbsp;›](/frontend/static-site-generation)
 
 #### How does SSG handle dynamic routes?
 Static routes render automatically.
@@ -2140,7 +2140,7 @@ A project can mix freely: an SSR marketing folder next to a CSR app folder.
 Dev is the exception, and not a choice: `pnpm dev` is always Vite with HMR and client-side rendering,
 whatever the folder is configured for. The SSR path is exercised by kosmo preview and in production.
 To see server-rendered output during dev, run `pnpm preview`.
-[Details&nbsp;›](/frontend/server-side-render#adding-ssr-support)
+[Details&nbsp;›](/frontend/server-side-render)
 
 #### ISR / on-demand revalidation / PPR?
 No ISR/revalidation and no partial prerendering.

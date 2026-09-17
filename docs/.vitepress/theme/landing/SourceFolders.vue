@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useReveal } from "./reveal";
 
-const { rootEl, ready } = useReveal();
+const { ready } = useReveal();
 </script>
 
 <template>
@@ -17,10 +17,16 @@ const { rootEl, ready } = useReveal();
           each with its own backend and frontend framework, base URL, and build output.
           None of them are separate packages.
         </p>
+        <p class="sol-lead">
+          Or nothing served at all. A <b>sidecar</b> folder builds a standalone process -
+          a queue consumer, a mail sender, a listener speaking another protocol -
+          with the same types, the same imports, and its own build.
+          Folders build together and run apart.
+        </p>
         <ul class="sol-points">
           <li><span class="ok">OK</span><span>One <b>package.json</b>, one <b>node_modules</b>, one set of <b>types</b> shared across every folder.</span></li>
           <li><span class="ok">OK</span><span>Need a type from the customer app in the admin panel? <b>Import it.</b> Change a model and every folder sees it immediately.</span></li>
-          <li><span class="ok">OK</span><span>One command starts them all. One builds them all. Or build a <b>single folder</b> when that is all you need.</span></li>
+          <li><span class="ok">OK</span><span>One command starts them all. One builds them all. Or build the named folders only, your take.</span></li>
           <li><span class="ok">OK</span><span>No publishing, no versioning, no workspace protocols. The directory structure <b>enforces boundaries</b> code review can't.</span></li>
         </ul>
       </div>

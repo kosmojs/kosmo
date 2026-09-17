@@ -18,6 +18,7 @@
 - [Typed, isomorphic fetch clients](https://kosmojs.dev/fetch/intro.html)
 - [Streaming SSR](https://kosmojs.dev/frontend/server-side-render.html)
 - [OpenAPI spec](https://kosmojs.dev/openapi.html)
+- [Sidecars for non-HTTP processes](https://kosmojs.dev/sidecar/intro.html)
 
 ### Supported frameworks
 - Hono
@@ -130,6 +131,8 @@ npm install
 - **Cascading Middleware** - place a `use.ts` in any folder and its middleware automatically wraps all routes in that folder and its subfolders. No imports or wiring needed.
 
 - **TanStack Query Integration** - opt in per source folder and KosmoJS wires the query client for you (per-request on the server, singleton in the browser). Enabling it is one option; using it is just importing `useQuery`. Works across React, SolidJS, Vue, and Svelte.
+
+- **Sidecars** - a source folder that builds a standalone process instead of serving routes: a queue consumer, a mail sender, a cron runner.
 
 - **Multiple Frameworks** - `Hono`, `H3`, `Koa` for backend; `React`, `Vue`, `SolidJS`, `Svelte`, `MDX` for frontend. Different source folders can use different combinations.
 

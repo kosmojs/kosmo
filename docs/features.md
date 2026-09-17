@@ -198,6 +198,26 @@ the rest: advanced SSR warmup uses TanStack's own `dehydrate` and
 
 [Details&nbsp;›](/frontend/tanstack-query)
 
+## Sidecars
+
+A **sidecar** is a source folder that builds a standalone process instead of serving routes -
+a queue consumer, a mail sender, a cron runner, a listener speaking another protocol.
+
+```
+src/
+  front/        React + Hono, base "/"
+  mailer/       sidecar - entry.ts + run.ts, no pages/ no api/
+```
+
+It is still a source folder, so `~/` and `@/` work as usual,
+`pnpm build mailer` builds just it, and `pnpm typecheck mailer` checks it.
+With `serve` on, `kosmo serve` runs it beside your app and reloads it on change.
+
+Folders build together and run apart: the HTTP dispatcher never starts a sidecar,
+so a background job cannot take your routes down with it.
+
+[Details&nbsp;›](/sidecar/intro)
+
 ## Multiple Frameworks
 
 - **Backend:** `Hono`, `H3`, `Koa` - same routing architecture, middleware, validation and type safety.
