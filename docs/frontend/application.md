@@ -88,7 +88,7 @@ import { AppProvider } from "_/app";
 
 == MDX
 ```mdx
-// MDX: app.mdx
+{/* MDX: app.mdx */}
 import { AppProvider } from "_/app";
 
 <AppProvider>{props.children}</AppProvider>
@@ -426,3 +426,7 @@ If you need custom mounting, ignore them and build the component yourself:
 the entry only needs to render the router's component into `root`.
 
 Read the derived `_/entry/client` source to see exactly what they do, then substitute your own.
+
+---
+
+<!--@include: @/parts/agents-versions.md#frontend-->

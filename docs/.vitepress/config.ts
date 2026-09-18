@@ -6,15 +6,7 @@ import {
 import llmstxtPlugin from "vitepress-plugin-llms";
 import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 
-// retired URL -> its replacement, both as site-absolute .html paths
-const redirects: Array<[string, string]> = [
-  // CLI moved
-  ["/essentials/cli.html", "/cli/intro.html"],
-  // OpenAPI moved
-  ["/openapi.html", "/openapi/intro.html"],
-  // Agents notes moved
-  ["/agents.html", "/agents/intro.html"],
-];
+import { redirects } from "../scripts/redirects.mjs";
 
 // the URL a page is published at, to match a redirect key against
 const pageUrl = (relativePath: string) => {
@@ -32,6 +24,9 @@ export default defineConfig({
 
   // Force .html on all URLs
   cleanUrls: false,
+
+  // exclude partials
+  srcExclude: ["parts/**"],
 
   transformHead({ pageData }) {
     if (pageData.relativePath === "index.md") {
@@ -132,10 +127,14 @@ export default defineConfig({
   vite: {
     plugins: [
       llmstxtPlugin({
-        // redirect stubs carry no content - keep them out of llms.txt
-        ignoreFiles: redirects.map(([from]) => {
-          return from.replace(/^\//, "").replace(/\.html$/, ".md");
-        }),
+        // redirect stubs carry no content, and parts/ holds include partials -
+        // keep both out of the generated artifacts
+        ignoreFiles: [
+          "parts/**",
+          ...redirects.map(([from]) => {
+            return from.replace(/^\//, "").replace(/\.html$/, ".md");
+          }),
+        ],
       }) as never,
       groupIconVitePlugin() as never,
     ],

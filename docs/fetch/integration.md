@@ -101,11 +101,11 @@ const user = useLoaderData();
 
 == MDX
 ```mdx
-// MDX: pages/users/[id]/index.mdx
+{/* MDX: pages/users/[id]/index.mdx */}
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 
-const { GET } = fetchClients["users/[id]"];
+export const { GET } = fetchClients["users/[id]"];
 export const loader = ({ params }) => GET([params.id]);
 
 export const user = () => useLoaderData();
@@ -176,3 +176,7 @@ Wrapping the whole app in one boundary does work if you accept the
 tradeoff - it is your call, not a default KosmoJS makes for you. See
 [Data Preloading](/frontend/data-preload#suspense-is-your-responsibility) for the
 full breakdown.
+
+---
+
+<!--@include: @/parts/agents-versions.md#frontend-->

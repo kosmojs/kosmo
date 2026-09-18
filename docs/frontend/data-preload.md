@@ -183,7 +183,7 @@ const data = useLoaderData();
 
 == MDX
 ```mdx
-// MDX: pages/users/data/index.mdx
+{/* MDX: pages/users/data/index.mdx */}
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 
@@ -283,3 +283,7 @@ Wrapping the entire app in one boundary does work if you accept the tradeoff -
 it is your call, not a default KosmoJS will make for you. The guidance is to
 scope boundaries to the components or sections that actually fetch, so a
 spinner in one area never blanks the rest of the page.
+
+---
+
+<!--@include: @/parts/agents-versions.md#all-->

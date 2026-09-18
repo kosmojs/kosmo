@@ -240,11 +240,11 @@ const user = useLoaderData();
 
 == MDX
 ```mdx
-// MDX: pages/users/[id]/index.mdx
+{/* MDX: pages/users/[id]/index.mdx */}
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 
-const { GET } = fetchClients["users/[id]"];
+export const { GET } = fetchClients["users/[id]"];
 
 export const loader = ({ params }) => GET([params.id]);
 
@@ -289,3 +289,7 @@ That's the foundation. From here:
 - [Routing](/routing/intro) - parameters, mixed segments, power syntax
 - [Framework Support](/essentials/frameworks) - what each framework does and doesn't support
 - [Features](/features) - everything KosmoJS provides, at a glance
+
+---
+
+<!--@include: @/parts/agents-versions.md#all-->

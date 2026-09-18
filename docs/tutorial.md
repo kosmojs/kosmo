@@ -448,11 +448,11 @@ const user = useLoaderData();
 
 == MDX
 ```mdx
-// MDX: pages/users/[id]/index.mdx
+{/* MDX: pages/users/[id]/index.mdx */}
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 
-const { GET } = fetchClients["users/[id]"];
+export const { GET } = fetchClients["users/[id]"];
 
 export const loader = ({ params }) => GET([params.id]);
 
@@ -661,8 +661,6 @@ You can add your own paths, but these prefixes are reserved:
 [Project Structure ›](/essentials/project-structure#path-mappings) walks the whole layout - what
 lives in `src/` versus `lib/`, and what each alias resolves to.
 
-
-
 ---
 
 ### Next Steps
@@ -670,3 +668,7 @@ lives in `src/` versus `lib/`, and what each alias resolves to.
 **Core patterns:** [Routing](/routing/intro) · [Validation](/validation/intro) · [Middleware](/backend/middleware) · [Layouts](/frontend/routing) · [Fetch Clients](/fetch/start)
 
 **Advanced:** [VRefine](/validation/refine) · [OpenAPI](/openapi/intro) · [Production Builds](/dev-build-run/building-for-production)
+
+---
+
+<!--@include: @/parts/agents-versions.md#all-->

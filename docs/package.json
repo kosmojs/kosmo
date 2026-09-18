@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
-    "postbuild": "node ./scripts/flatten-tabs.mjs",
+    "postbuild": "node ./scripts/compose-llms.mjs",
     "preview": "vitepress preview"
   },
   "devDependencies": {

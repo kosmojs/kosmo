@@ -138,7 +138,6 @@ or match any `backend.alias`.
 
 Use this to implement custom heuristics for detecting API requests:
 
-
 ```ts
 export default devSetup({
   requestHandler() {
@@ -250,3 +249,7 @@ The `log` signature:
   full: string;
 }
 ```
+
+---
+
+<!--@include: @/parts/agents-versions.md#backend-->

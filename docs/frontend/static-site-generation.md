@@ -218,3 +218,7 @@ a folder with `base: "/admin"` produces `ssg/index.html`, `ssg/items/1/index.htm
 and the HTML references `/admin/assets/...` - deploy the `ssg/` directory at `/admin/` on the host.
 
 Nothing in the output depends on the `ssr/` or `client/` directories at serve time.
+
+---
+
+<!--@include: @/parts/agents-versions.md#frontend-->

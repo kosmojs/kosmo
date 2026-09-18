@@ -90,7 +90,7 @@ export default function Alert(props: {
 
 == pages/blog/index.mdx
 ```mdx
-// pages/blog/index.mdx
+{/* pages/blog/index.mdx */}
 import Alert from "./Alert.tsx"
 
 <Alert type="warning">
@@ -312,12 +312,14 @@ rendering a component. Instead, `loader` receives the resolved route object
 directly as first argument:
 
 ```ts
-// the object passed to `loader` - a subset of the route context,
-// without frontmatter or loaderData (which aren't resolved yet at loader time)
+// the object passed to `loader` - a subset of the route context:
+// no frontmatter (loaded with the module by then, but not passed to loaders)
+// and no loaderData (not resolved yet at loader time)
 type LoaderRoute = {
   name: string;
   params: Record<string, string | Array<string>>;
   paramsEntries: [keys: Array<string>, values: Array<unknown>];
+  searchParams: Record<string, unknown>;
 };
 ```
 
@@ -549,6 +551,10 @@ with occasional content, use React/Vue/Solid.
 - **No TypeScript in MDX.** Keep typed code in `.tsx` files and import into MDX. MDX only supports plain JavaScript expressions.
 - **Hooks at module scope.** `export const x = useHook()` runs on import, not during render. Always call hooks inside component functions.
 - **`loader` can't use hooks.** `useParams()`, `useRoute()`, and any other hook only work inside a rendered component.
-`loader` runs before the tree exists - use the `Route` object passed as its argument (`paramsEntries`, `frontmatter`, etc.) instead.
+`loader` runs before the tree exists - use the `Route` object passed as its argument (`params`, `paramsEntries`, `searchParams`) instead.
 - **Curly braces in prose.** `{...spread}` in markdown text is parsed as a JSX expression. Use backticks for code containing curly braces: `` `{...spread}` ``.
 - **Layouts must be `.mdx`.** Plain `.md` files cannot render `{props.children}` and will not work as layouts.
+
+---
+
+<!--@include: @/parts/agents-versions.md#frontend-->

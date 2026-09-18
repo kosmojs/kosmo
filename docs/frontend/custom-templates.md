@@ -217,7 +217,7 @@ const params = useParams();
 
 == MDX
 ```mdx
-// MDX: kosmo.config.ts
+{/* MDX: kosmo.config.ts */}
 import { useParams } from "_/use";
 
 # Custom Template
@@ -268,3 +268,7 @@ templates: {
   "**": myDefaultTemplate,
 }
 ```
+
+---
+
+<!--@include: @/parts/agents-versions.md#frontend-->

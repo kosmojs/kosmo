@@ -151,7 +151,7 @@ let { children } = $props();
 
 == MDX
 ```mdx
-// MDX: layout.mdx
+{/* MDX: layout.mdx */}
 <nav>
   <a href="/">Home</a>
   <a href="/docs">Docs</a>
@@ -278,11 +278,11 @@ const data = useLoaderData("dashboard/layout");
 
 == MDX
 ```mdx
-// MDX: layout.mdx
+{/* MDX: layout.mdx */}
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 
-const { GET } = fetchClients["dashboard/data"];
+export const { GET } = fetchClients["dashboard/data"];
 
 export const loader = () => GET();
 
@@ -368,3 +368,7 @@ App
 - **Data loading uses hooks, not props.** All frameworks load layout data through a `loader`/`preload` export read with a hook (`useLoaderData`/`createAsync`).
 Keeping a layout's data separate from its page's is automatic in React (per-route) and Solid (via the `query()` key);
 in Vue, Svelte, and MDX the layout passes its path-qualified name to `useLoaderData` (a page passes nothing).
+
+---
+
+<!--@include: @/parts/agents-versions.md#frontend-->

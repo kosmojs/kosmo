@@ -138,7 +138,7 @@ const reset = () => (error.value = null);
     <p>Something went wrong: {{ error.message }}</p>
     <button @click="reset">Try again</button>
   </div>
-  <slot v-else />
+  <RouterView v-else />
 </template>
 ```
 
@@ -231,3 +231,7 @@ but it is a UX convenience, not a security boundary.
 The server always re-validates with the same schemas.
 Treat client validation as fast feedback and the server's `ValidationError` response as the authority.
 [Details&nbsp;›](/fetch/validation)
+
+---
+
+<!--@include: @/parts/agents-versions.md#frontend-->

@@ -688,3 +688,7 @@ Anything you import is typechecked along with the file importing it.
 folder's program whatever `include` says - the `@/` prefix resolves it,
 and there is nothing to add to any `tsconfig.json`.
 :::
+
+---
+
+<!--@include: @/parts/agents-versions.md#all-->

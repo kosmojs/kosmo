@@ -11,11 +11,25 @@ head:
         llms.txt, llms-full.txt, cursor, copilot, claude code
 ---
 
-This page is for **LLM agents** writing KosmoJS code - and for anyone who wants the failure modes in one place.
-The conventions here are dense, and most of them fail *silently*: the code typechecks, the server starts, and the wrong thing happens at runtime.
+This page is for **LLM agents** writing KosmoJS code.
 
 ::: tip Prefer the source over memory
 Fetch **`https://kosmojs.dev/llms-full.txt`** before relying on recall for details.
+:::
+
+::: warning Where to read
+**For anything framework-specific, read the per-framework page - not the general docs.**
+
+General pages present multi-framework snippets in tabs, which scrapers and retrieval routinely glue together or misattribute.
+
+The rule is simple: for any generic matter, use snippets from the general pages;
+for anything framework-specific - handlers, middleware, entries, data loading, error handling -
+use the `agents/<framework>` page, the complete, self-contained surface of that framework with no other framework's code on it:
+[Hono](/agents/hono.md) · [H3](/agents/h3.md) · [Koa](/agents/koa.md) ·
+[React](/agents/react.md) · [Solid](/agents/solid.md) · [Vue](/agents/vue.md) ·
+[Svelte](/agents/svelte.md) · [MDX](/agents/mdx.md)
+
+**Read `.md`, never scrape `.html`.** Every page is served both ways - append `.md` to any page URL to get the markdown source.
 :::
 
 ## Orient before writing
@@ -112,7 +126,7 @@ Keep cascading middleware generic. It runs for sibling routes too, so a param li
 
 ## Navigation and framework hooks
 
-The typed [Link](/frontend/link-navigation.md) takes a tuple of route name then params in path order -
+The typed `Link` component takes a tuple of route name then params in path order -
 `to={["users/[id]", 123]}` - plus an optional `query` prop.
 TypeScript enforces the param types, so renaming a route folder surfaces an error at every stale `Link`.
 

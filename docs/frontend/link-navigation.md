@@ -109,3 +109,7 @@ parameters as subsequent array elements - the type system enforces this.
 
 Renaming a route directory produces TypeScript errors at every `Link`
 referencing the old name, turning refactors into an automated checklist.
+
+---
+
+<!--@include: @/parts/agents-versions.md#frontend-->

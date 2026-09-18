@@ -71,7 +71,7 @@ const user = useLoaderData<ResponseT["users/[id]"]["GET"]>();
 
 == MDX
 ```mdx
-// MDX: pages/users/[id]/index.mdx
+{/* MDX: pages/users/[id]/index.mdx */}
 import { useLoaderData } from "_/use";
 
 export const Profile = () => {
@@ -211,3 +211,7 @@ function onClick() {
 }
 </script>
 ```
+
+---
+
+<!--@include: @/parts/agents-versions.md#frontend-->
