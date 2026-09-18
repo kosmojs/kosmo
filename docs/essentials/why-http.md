@@ -106,7 +106,7 @@ Explicitness is nice because the boundary is real. Do you actually have to pick 
 
 Server code lives in `api/`, client code in `pages/`, and an HTTP API sits between them.
 Every endpoint has a URL. You can curl it, log it, proxy it, hand it to a mobile team,
-put it in an [OpenAPI spec](/openapi), and deploy it on its own.
+put it in an [OpenAPI spec](/openapi/intro), and deploy it on its own.
 
 The part that makes this cheap is the [isomorphic fetch client](/fetch/intro) derived from each route -
 meaning the same call site works in the browser and on the server, and only the transport underneath differs:

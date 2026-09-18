@@ -1655,27 +1655,27 @@ where there's no SSR bundle to carry it.
 #### Does it derive OpenAPI automatically?
 Yes - OpenAPI 3.1 directly from route definitions, TypeScript types, `VRefine` constraints,
 parameters, and responses. No manual schema authoring or annotation layers.
-[Details&nbsp;›](/openapi)
+[Details&nbsp;›](/openapi/intro)
 
 #### How do I enable and configure it?
 Add an `openapi` block under `backend` in `kosmo.config.ts`. Required: `outfile`, `openapi` (e.g. `"3.1.0"`),
 `info` (`title` + `version`), `servers` (each `url` + optional `description`).
 Optional `info`: `summary`, `description` (markdown), `termsOfService`, `contact`, `license`.
-[Details&nbsp;›](/openapi#configuration)
+[Details&nbsp;›](/openapi/config)
 
 #### Why does one route with an optional param produce two paths?
 OpenAPI requires all path params to be mandatory, so a route like `users/[id]/posts/{postId}`
 emits both `/users/{id}/posts/{postId}` and `/users/{id}/posts` -
 both referencing the same handlers and schemas.
-[Details&nbsp;›](/openapi#derived-specification)
+[Details&nbsp;›](/openapi/spec)
 
 #### Does the spec update automatically?
 Yes - it is recomputed in the background whenever you change routes, types, or schemas, alongside validation and fetch clients.
-[Details&nbsp;›](/openapi#derived-specification)
+[Details&nbsp;›](/openapi/spec)
 
 #### How do I serve the spec?
 Point Swagger UI, Redoc, or Stoplight Elements at the derived file.
-[Details&nbsp;›](/openapi#derived-specification)
+[Details&nbsp;›](/openapi/spec)
 
 ### Dev Workflow & Internals
 
@@ -1999,7 +1999,7 @@ but it isn't required for fetch-client data to survive hydration.
 #### fetch caching / `revalidatePath` / `revalidateTag` / ISR?
 No fetch cache extensions, no tag/path revalidation, no ISR. Cache at the CDN/proxy layer;
 SSG is full static generation. After a mutation, refetch or invalidate your own client cache.
-[Details&nbsp;›](/openapi)
+[Details&nbsp;›](/openapi/intro)
 
 #### Preload on link hover/intent - which frameworks?
 React `loader` runs on load/hover/navigation; SolidJS `preload` runs on hover/intent
@@ -2208,18 +2208,18 @@ KosmoJS keeps the apps in one codebase with no zone configuration.
 Yes - OpenAPI 3.1 from routes, types, VRefine constraints, params, and responses,
 with no manual authoring, kept live as routes change (TanStack has no built-in equivalent).
 Serve it with Swagger UI, Redoc, or Stoplight Elements.
-[Details&nbsp;›](/openapi)
+[Details&nbsp;›](/openapi/intro)
 
 ---
 
 ### Agents
 
 #### Is there guidance for LLM agents writing KosmoJS code?
-Yes - [Notes for LLM Agents](/agents) collects what an agent must check before emitting code:
+Yes - [Notes for LLM Agents](/agents/intro) collects what an agent must check before emitting code:
 how to tell which frameworks a folder runs, why boilerplate should never be hand-written,
 the four validation mistakes that typecheck but fail at runtime, middleware placement,
 and why the dev server never shows the SSR path.
 
 Agents should also prefer `https://kosmojs.dev/llms-full.txt` over recall for exact config options,
 the full `VRefine` keyword set and scaffold flags.
-[Details&nbsp;›](/agents)
+[Details&nbsp;›](/agents/intro)

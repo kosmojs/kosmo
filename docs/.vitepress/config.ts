@@ -10,6 +10,10 @@ import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 const redirects: Array<[string, string]> = [
   // CLI moved
   ["/essentials/cli.html", "/cli/intro.html"],
+  // OpenAPI moved
+  ["/openapi.html", "/openapi/intro.html"],
+  // Agents notes moved
+  ["/agents.html", "/agents/intro.html"],
 ];
 
 // the URL a page is published at, to match a redirect key against
@@ -224,13 +228,9 @@ export default defineConfig({
         },
         {
           text: "CLI",
+          link: "/cli/intro",
           collapsed: false,
           items: [
-            {
-              text: "Overview",
-              docFooterText: "CLI",
-              link: "/cli/intro",
-            },
             {
               text: "create kosmo",
               docFooterText: "create kosmo",
@@ -270,13 +270,9 @@ export default defineConfig({
         },
         {
           text: "Routing",
+          link: "/routing/intro",
           collapsed: false,
           items: [
-            {
-              text: "Intro",
-              docFooterText: "Routing",
-              link: "/routing/intro",
-            },
             {
               text: "Rationale",
               link: "/routing/rationale",
@@ -289,13 +285,9 @@ export default defineConfig({
         },
         {
           text: "Backend",
+          link: "/backend/intro",
           collapsed: false,
           items: [
-            {
-              text: "Intro",
-              docFooterText: "API Intro",
-              link: "/backend/intro",
-            },
             {
               text: "Request Context",
               link: "/backend/context",
@@ -337,13 +329,9 @@ export default defineConfig({
         },
         {
           text: "Frontend",
+          link: "/frontend/intro",
           collapsed: false,
           items: [
-            {
-              text: "Intro",
-              docFooterText: "Frontend",
-              link: "/frontend/intro",
-            },
             {
               text: "Application",
               link: "/frontend/application",
@@ -402,13 +390,9 @@ export default defineConfig({
         },
         {
           text: "Runtype Validation",
+          link: "/validation/intro",
           collapsed: false,
           items: [
-            {
-              text: "Intro",
-              docFooterText: "Runtype Validation",
-              link: "/validation/intro",
-            },
             {
               text: "Params",
               link: "/validation/params",
@@ -451,13 +435,9 @@ export default defineConfig({
         },
         {
           text: "Fetch Clients",
+          link: "/fetch/intro",
           collapsed: false,
           items: [
-            {
-              text: "Intro",
-              docFooterText: "Fetch Clients",
-              link: "/fetch/intro",
-            },
             {
               text: "Quick Start",
               link: "/fetch/start",
@@ -492,13 +472,9 @@ export default defineConfig({
         },
         {
           text: "Sidecar Folders",
+          link: "/sidecar/intro",
           collapsed: false,
           items: [
-            {
-              text: "Intro",
-              docFooterText: "Sidecars",
-              link: "/sidecar/intro",
-            },
             {
               text: "Config",
               docFooterText: "Sidecar config",
@@ -516,8 +492,25 @@ export default defineConfig({
             },
             {
               text: "Preview and production",
-              docFooterText: "Preview and production",
+              docFooterText: "Sidecar folders in production",
               link: "/sidecar/production",
+            },
+          ],
+        },
+        {
+          text: "OpenAPI",
+          link: "/openapi/intro",
+          collapsed: false,
+          items: [
+            {
+              text: "Config",
+              docFooterText: "OpenAPI config",
+              link: "/openapi/config",
+            },
+            {
+              text: "Generated spec",
+              docFooterText: "OpenAPI: generated spec",
+              link: "/openapi/spec",
             },
           ],
         },
@@ -541,10 +534,6 @@ export default defineConfig({
           ],
         },
         {
-          text: "OpenAPI",
-          link: "/openapi",
-        },
-        {
           text: "FAQ / LLMs",
           collapsed: true,
           items: [
@@ -555,7 +544,50 @@ export default defineConfig({
             {
               text: "Agents",
               docFooterText: "Agents",
-              link: "/agents",
+              link: "/agents/intro",
+              collapsed: true,
+              items: [
+                {
+                  text: "Hono",
+                  docFooterText: "Hono backend",
+                  link: "/agents/hono",
+                },
+                {
+                  text: "H3",
+                  docFooterText: "H3 backend",
+                  link: "/agents/h3",
+                },
+                {
+                  text: "Koa",
+                  docFooterText: "Koa backend",
+                  link: "/agents/koa",
+                },
+                {
+                  text: "React",
+                  docFooterText: "React frontend",
+                  link: "/agents/react",
+                },
+                {
+                  text: "SolidJS",
+                  docFooterText: "SolidJS frontend",
+                  link: "/agents/solid",
+                },
+                {
+                  text: "Vue",
+                  docFooterText: "Vue frontend",
+                  link: "/agents/vue",
+                },
+                {
+                  text: "Svelte",
+                  docFooterText: "Svelte frontend",
+                  link: "/agents/svelte",
+                },
+                {
+                  text: "MDX",
+                  docFooterText: "MDX frontend",
+                  link: "/agents/mdx",
+                },
+              ],
             },
             {
               text: "Docs List",

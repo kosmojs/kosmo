@@ -77,7 +77,7 @@ const user = await fetchClients["users/[id]"].GET([123]);
 // fully typed, validates payload client-side before the request is sent
 ```
 
-[Fetch&nbsp;Clients&nbsp;›](/fetch/intro) · [OpenAPI&nbsp;›](/openapi)
+[Fetch&nbsp;Clients&nbsp;›](/fetch/intro) · [OpenAPI&nbsp;›](/openapi/intro)
 
 ## Isomorphic Fetch
 
@@ -200,6 +200,7 @@ the rest: advanced SSR warmup uses TanStack's own `dehydrate` and
 
 ## Sidecars
 
+Some work has no request behind it.
 A **sidecar** is a source folder that builds a standalone process instead of serving routes -
 a queue consumer, a mail sender, a cron runner, a listener speaking another protocol.
 

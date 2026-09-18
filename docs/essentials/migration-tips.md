@@ -277,7 +277,7 @@ Do transformation in the handler, where it's plain code.
 Effectively yes, through typed fetch clients - params, payload and response types all derive from the same route definition,
 with client-side validation before the request.
 The difference is that it's **route-based** (path key + HTTP method) rather than procedure-based,
-and it comes with automatic [runtime validators](/validation/intro) and [OpenAPI spec](/openapi),
+and it comes with automatic [runtime validators](/validation/intro) and [OpenAPI spec](/openapi/intro),
 which tRPC does not produce natively.
 [Details&nbsp;›](/fetch/intro)
 

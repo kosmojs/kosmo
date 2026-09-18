@@ -90,7 +90,7 @@ Aliases are a server-side routing concern only.
 The [fetch client](/fetch/intro) is keyed by the route's own name, so client code calls
 `fetchClients["users/[id]"]` whichever URL the route also answers on.
 
-The [OpenAPI spec](/openapi) documents the route once, under its route name.
+The [OpenAPI spec](/openapi/intro) documents the route once, under its route name.
 
 Reach for an alias when an outside consumer needs a particular URL.
 For an extra path your own frontend calls, a route file is simpler.

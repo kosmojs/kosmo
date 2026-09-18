@@ -273,7 +273,7 @@ The `api/` directory name never appears in the URL - it separates server routes 
 
 ### backend.openapi
 
-Derives an [OpenAPI 3.1 spec](/openapi) from this folder's routes. Options are required:
+Derives an [OpenAPI 3.1 spec](/openapi/intro) from this folder's routes. Options are required:
 
 ```ts
 backend: {
@@ -288,7 +288,7 @@ backend: {
 }
 ```
 
-[Details&nbsp;›](/openapi#configuration)
+[Details&nbsp;›](/openapi/config)
 
 ### backend.alias
 
