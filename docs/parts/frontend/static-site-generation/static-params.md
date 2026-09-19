@@ -1,5 +1,5 @@
 <!-- #region react -->
-```tsx [pages/docs/[slug]/index.tsx]
+```tsx
 // React: pages/docs/[slug]/index.tsx
 import { defineStaticParams } from "_/core";
 
@@ -14,7 +14,7 @@ export default function DocsPage() { /* ... */ }
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```tsx [pages/docs/[slug]/index.tsx]
+```tsx
 // Solid: pages/docs/[slug]/index.tsx
 import { defineStaticParams } from "_/core";
 
@@ -29,7 +29,7 @@ export default function DocsPage() { /* ... */ }
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```vue [pages/docs/[slug]/index.vue]
+```vue
 <!-- Vue: pages/docs/[slug]/index.vue -->
 <script lang="ts">
 // a plain <script> block: <script setup> can not have named exports,
@@ -49,7 +49,7 @@ export const staticParams = defineStaticParams<"docs/[slug]">([
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```svelte [pages/docs/[slug]/index.svelte]
+```svelte
 <!-- Svelte: pages/docs/[slug]/index.svelte -->
 <script module lang="ts">
 // module-level script: its exports are the component module's named exports
@@ -68,7 +68,7 @@ export const staticParams = defineStaticParams<"docs/[slug]">([
 <!-- #endregion svelte -->
 
 <!-- #region mdx -->
-```mdx [pages/docs/[slug]/index.mdx]
+```mdx
 ---
 title: Documentation
 staticParams:

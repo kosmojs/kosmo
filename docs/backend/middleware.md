@@ -342,6 +342,32 @@ which runs inside the route's chain and has them.
 
 Request logging, CORS, tracing, rate limiting by IP: things that are true of the connection rather than of the route.
 
+### CORS
+
+A preflight `OPTIONS` is answered before any route matches, so it never reaches a
+[cascading `use.ts`](/backend/cascading-middleware#third-party-middleware) -
+CORS has to be registered here.
+
+`cors` below is whatever CORS middleware you wire up - `hono/cors`, `@koa/cors`, or your own header-setting middleware.
+What differs per backend is only how the error handler attaches:
+
+:::tabs key:backend variant:code
+== Hono
+```ts
+<!--@include: @/parts/backend/middleware/cors.md#hono-->
+```
+
+== H3
+```ts
+<!--@include: @/parts/backend/middleware/cors.md#h3-->
+```
+
+== Koa
+```ts
+<!--@include: @/parts/backend/middleware/cors.md#koa-->
+```
+:::
+
 ---
 
 <!--@include: @/parts/agents-versions.md#backend-->

@@ -1,5 +1,5 @@
 <!-- #region react -->
-```tsx [pages/dashboard/layout.tsx]
+```tsx
 // React: pages/dashboard/layout.tsx
 import { Outlet } from "react-router";
 
@@ -18,7 +18,7 @@ export default function Layout() {
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```tsx [pages/dashboard/layout.tsx]
+```tsx
 // Solid: pages/dashboard/layout.tsx
 import type { ParentComponent } from "solid-js";
 
@@ -39,7 +39,7 @@ export default Layout;
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```vue [pages/dashboard/layout.vue]
+```vue
 <!-- Vue: pages/dashboard/layout.vue -->
 <script setup lang="ts">
 // layout-specific logic
@@ -58,7 +58,7 @@ export default Layout;
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```svelte [pages/dashboard/layout.svelte]
+```svelte
 <!-- Svelte: pages/dashboard/layout.svelte -->
 <script lang="ts">
 let { children } = $props();
@@ -75,7 +75,7 @@ let { children } = $props();
 <!-- #endregion svelte -->
 
 <!-- #region mdx -->
-```mdx [pages/docs/layout.mdx]
+```mdx
 {/* MDX: pages/docs/layout.mdx */}
 <nav>
   <a href="/">Home</a>

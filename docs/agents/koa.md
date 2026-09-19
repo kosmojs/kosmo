@@ -628,29 +628,17 @@ the native Koa instance, so anything Koa can do at app level goes here, written 
 as Koa's own docs describe:
 
 ```ts [api/app.ts]
-// Koa: api/app.ts
-import appFactory, { routes } from "_/api:factory";
-import defaultErrorHandler from "./errors";
-
-export default appFactory(routes, ({ app }) => {
-  app.use(defaultErrorHandler);
-
-  app.use(async (ctx, next) => {
-    const started = performance.now();
-    await next();
-    console.log([ ctx.method, ctx.path, performance.now() - started ]);
-  });
-});
+<!--@include: @/parts/backend/middleware/cors.md#koa-->
 ```
 
-This layer runs first, **on every request, matched or not** - the only place that can
-answer a 404, see a preflight `OPTIONS`, or touch a `405`. Which is why CORS belongs
-here and nowhere else; `app.use` takes any Koa middleware for it, `@koa/cors` among
-them. This layer runs before the context is extended - no `ctx.validated`, no
-`ctx.metaparser`, no `ctx.bodyparser`.
+> **Order matters**: the error handler goes first, or middleware registered before it throws outside its try/catch.
 
-**Order matters**: the error handler goes first, or middleware registered before it
-throws outside its try/catch.
+This layer runs first, **on every request, matched or not** - the only place that can answer a 404,
+see a preflight `OPTIONS`, or touch a `405`. Which is why CORS belongs here and nowhere else.
+
+`app.use` takes any Koa middleware for it, `@koa/cors` among them.
+
+> This layer runs before the context is extended - no `ctx.validated`, no `ctx.metaparser`, no `ctx.bodyparser`.
 
 ### So, where does auth go?
 

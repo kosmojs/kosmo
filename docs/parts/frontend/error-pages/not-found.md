@@ -1,5 +1,5 @@
 <!-- #region react -->
-```tsx [pages/404.tsx]
+```tsx
 // React: pages/404.tsx
 export default function NotFound() {
   return (
@@ -13,7 +13,7 @@ export default function NotFound() {
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```tsx [pages/404.tsx]
+```tsx
 // Solid: pages/404.tsx
 export default function NotFound() {
   return (
@@ -27,7 +27,7 @@ export default function NotFound() {
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```vue [pages/404.vue]
+```vue
 <!-- Vue: pages/404.vue -->
 <template>
   <main>
@@ -39,7 +39,7 @@ export default function NotFound() {
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```svelte [pages/404.svelte]
+```svelte
 <!-- Svelte: pages/404.svelte -->
 <main>
   <h1>404 - Not Found</h1>
@@ -49,7 +49,7 @@ export default function NotFound() {
 <!-- #endregion svelte -->
 
 <!-- #region mdx -->
-```mdx [pages/404.mdx]
+```mdx
 {/* MDX: pages/404.mdx */}
 
 # 404 - Not Found

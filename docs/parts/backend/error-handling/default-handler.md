@@ -1,5 +1,5 @@
 <!-- #region hono -->
-```ts [api/errors.ts]
+```ts
 // Hono: api/errors.ts
 import { accepts } from "hono/accepts";
 import { HTTPException } from "hono/http-exception";
@@ -35,7 +35,7 @@ export default errorHandlerFactory(async (error, ctx) => {
 <!-- #endregion hono -->
 
 <!-- #region h3 -->
-```ts [api/errors.ts]
+```ts
 // H3: api/errors.ts
 import { ValidationError } from "@kosmojs/core/errors";
 import { HTTPError } from "h3";
@@ -67,7 +67,7 @@ export default errorHandlerFactory(async (error, event) => {
 <!-- #endregion h3 -->
 
 <!-- #region koa -->
-```ts [api/errors.ts]
+```ts
 // Koa: api/errors.ts
 import { HTTPError, ValidationError } from "@kosmojs/core/errors";
 

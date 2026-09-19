@@ -1,5 +1,5 @@
 <!-- #region hono -->
-```ts [api/env.d.ts]
+```ts
 // Hono: api/env.d.ts
 export declare module "_/api" {
   interface DefaultVariables {
@@ -13,7 +13,7 @@ export declare module "_/api" {
 <!-- #endregion hono -->
 
 <!-- #region h3 -->
-```ts [api/env.d.ts]
+```ts
 // H3: api/env.d.ts
 export declare module "_/api" {
   interface DefaultContext {
@@ -24,7 +24,7 @@ export declare module "_/api" {
 <!-- #endregion h3 -->
 
 <!-- #region koa -->
-```ts [api/env.d.ts]
+```ts
 // Koa: api/env.d.ts
 export declare module "_/api" {
   interface DefaultState {

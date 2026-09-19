@@ -1,5 +1,5 @@
 <!-- #region hono -->
-```ts [api/use.ts]
+```ts
 // Hono: api/use.ts
 import { use } from "_/api";
 
@@ -14,7 +14,7 @@ export default [
 <!-- #endregion hono -->
 
 <!-- #region h3 -->
-```ts [api/use.ts]
+```ts
 // H3: api/use.ts
 import { use } from "_/api";
 
@@ -29,7 +29,7 @@ export default [
 <!-- #endregion h3 -->
 
 <!-- #region koa -->
-```ts [api/use.ts]
+```ts
 // Koa: api/use.ts
 import { use } from "_/api";
 

@@ -204,59 +204,13 @@ Add middleware to `use.ts` and it will run on every route underneath:
 <!--@include: @/parts/backend/cascading-middleware/third-party.md#koa-->
 :::
 
-::: warning Not CORS, though
-A `use.ts` is composed into each route's chain, so it only runs once a route has matched.
-A preflight `OPTIONS` is answered before that, and never reaches it.
-CORS belongs in `api/app.ts`, as [app&nbsp;middleware](/backend/middleware#app-middleware).
-:::
-
 `api/app.ts` takes a callback receiving the native app instance - not the array of `use()` calls above -
-so third-party middleware is registered exactly as that framework documents it:
+so third-party middleware is registered exactly as that framework documents it.
 
-`cors` below is whatever CORS middleware you wire up - `hono/cors`, `@koa/cors`, or your own header-setting middleware.
-What differs per backend is only how the error handler attaches:
-
-:::tabs key:backend variant:code
-== Hono
-```ts
-// Hono: api/app.ts
-import appFactory, { routes } from "_/api:factory";
-import defaultErrorHandler from "./errors";
-import { cors } from "./cors"; // [!code ++]
-
-export default appFactory(routes, ({ app }) => {
-  app.onError(defaultErrorHandler);
-  app.use(cors({ origin: "https://example.com" })); // [!code ++]
-});
-```
-
-== H3
-```ts
-// H3: api/app.ts
-import { onError } from "h3";
-
-import appFactory, { routes } from "_/api:factory";
-import defaultErrorHandler from "./errors";
-import { cors } from "./cors"; // [!code ++]
-
-export default appFactory(routes, ({ app }) => {
-  app.use(onError(defaultErrorHandler));
-  app.use(cors({ origin: "https://example.com" })); // [!code ++]
-});
-```
-
-== Koa
-```ts
-// Koa: api/app.ts
-import appFactory, { routes } from "_/api:factory";
-import defaultErrorHandler from "./errors";
-import { cors } from "./cors"; // [!code ++]
-
-export default appFactory(routes, ({ app }) => {
-  app.use(defaultErrorHandler);
-  app.use(cors({ origin: "https://example.com" })); // [!code ++]
-});
-```
+::: warning Not CORS, though
+A `use.ts` file is composed into each route's chain, so it only runs once a route has matched.
+<span class="text-nowrap">A preflight `OPTIONS` is answered before that,</span> and never reaches it.
+<span class="text-nowrap">CORS belongs in [api/app.ts](/backend/middleware#cors) instead.</span>
 :::
 
 ### Authentication for a subtree

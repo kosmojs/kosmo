@@ -646,21 +646,7 @@ This fetches on the client after mount - the seamless path, enough for most page
 active one). On Vue there is no `client` prop to pass - call `createQueryClient` in
 `app.vue`'s `<script setup>` and the provider resolves it:
 
-```vue [app.vue]
-<!-- Vue: app.vue - call createQueryClient in <script setup>; the provider resolves it -->
-<script setup lang="ts">
-import { AppProvider } from "_/app";
-import { createQueryClient } from "_/query";
-
-createQueryClient({ defaultOptions: { queries: { staleTime: 60_000 } } });
-</script>
-
-<template>
-  <AppProvider>
-    <RouterView />
-  </AppProvider>
-</template>
-```
+<!--@include: @/parts/frontend/tanstack-query/custom-client.md#vue-->
 
 ### SSR warmup (advanced)
 
@@ -669,46 +655,7 @@ The one KosmoJS-specific detail: get the request-scoped client from
 `getQueryClient()`, so you prefetch into the same client the render reads, and share
 one query-options helper so the `queryKey` matches on both sides:
 
-```vue [pages/users/[id]/index.vue]
-<!-- Vue: pages/users/[id]/index.vue -->
-<!-- Prefetch + dehydrate in the loader; hydrate the page's script setup. -->
-<script lang="ts">
-import { dehydrate } from "@tanstack/vue-query";
-import { getQueryClient } from "_/query";
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["users/[id]"];
-
-export const queryOptions = (id: string) => ({
-  queryKey: ["users", id],
-  queryFn: () => GET([id]),
-});
-
-export const loader = async ({ params }: { params: { id: string } }) => {
-  const client = getQueryClient();
-  await client.prefetchQuery(queryOptions(params.id));
-  return dehydrate(client);
-};
-</script>
-
-<script setup lang="ts">
-import { hydrate, useQuery } from "@tanstack/vue-query";
-import { useRoute } from "vue-router";
-import { getQueryClient } from "_/query";
-import { useLoaderData } from "_/use";
-
-hydrate(getQueryClient(), useLoaderData());
-
-// Vue folders read params through Vue Router's own hook;
-// `_/use` on Vue exports useLoaderData only
-const route = useRoute();
-const { data } = useQuery(queryOptions(route.params.id as string));
-</script>
-
-<template>
-  <div>{{ data?.name }}</div>
-</template>
-```
+<!--@include: @/parts/frontend/tanstack-query/ssr-warmup.md#vue-->
 
 ### Mutations
 

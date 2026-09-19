@@ -1,5 +1,5 @@
 <!-- #region react -->
-```ts [entry/client.ts]
+```ts
 // React: entry/client.ts
 import renderFactory, {
   createRoutes,
@@ -32,7 +32,7 @@ if (root) {
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```ts [entry/client.ts]
+```ts
 // Solid: entry/client.ts
 import renderFactory, {
   createRoutes,
@@ -65,7 +65,7 @@ if (root) {
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```ts [entry/client.ts]
+```ts
 // Vue: entry/client.ts
 import renderFactory, {
   createRoutes,
@@ -98,7 +98,7 @@ if (root) {
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```ts [entry/client.ts]
+```ts
 // Svelte: entry/client.ts
 import renderFactory, {
   createRoutes,
@@ -131,7 +131,7 @@ if (root) {
 <!-- #endregion svelte -->
 
 <!-- #region mdx -->
-```ts [entry/client.ts]
+```ts
 // MDX: entry/client.ts
 import renderFactory, {
   createRoutes,

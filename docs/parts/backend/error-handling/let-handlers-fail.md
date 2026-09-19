@@ -1,5 +1,5 @@
 <!-- #region hono -->
-```ts [api/users/[id]/index.ts]
+```ts
 // Hono: api/users/[id]/index.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
@@ -18,7 +18,7 @@ export default defineRoute<"users/[id]", [number]>(({ GET }) => [
 <!-- #endregion hono -->
 
 <!-- #region h3 -->
-```ts [api/users/[id]/index.ts]
+```ts
 // H3: api/users/[id]/index.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
@@ -37,7 +37,7 @@ export default defineRoute<"users/[id]", [number]>(({ GET }) => [
 <!-- #endregion h3 -->
 
 <!-- #region koa -->
-```ts [api/users/[id]/index.ts]
+```ts
 // Koa: api/users/[id]/index.ts
 import { HTTPError } from "@kosmojs/core/errors";
 

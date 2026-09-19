@@ -1,5 +1,5 @@
 <!-- #region hono -->
-```ts [api/example/index.ts]
+```ts
 // Hono: api/example/index.ts
 export default defineRoute<"example">(({ GET, POST, use }) => [
   use(async (ctx, next) => {
@@ -21,7 +21,7 @@ export default defineRoute<"example">(({ GET, POST, use }) => [
 <!-- #endregion hono -->
 
 <!-- #region h3 -->
-```ts [api/example/index.ts]
+```ts
 // H3: api/example/index.ts
 export default defineRoute<"example">(({ GET, POST, use }) => [
   use(async (event, next) => {
@@ -43,7 +43,7 @@ export default defineRoute<"example">(({ GET, POST, use }) => [
 <!-- #endregion h3 -->
 
 <!-- #region koa -->
-```ts [api/example/index.ts]
+```ts
 // Koa: api/example/index.ts
 export default defineRoute<"example">(({ GET, POST, use }) => [
   use(async (ctx, next) => {

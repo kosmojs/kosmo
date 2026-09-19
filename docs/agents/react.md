@@ -616,24 +616,7 @@ This fetches on the client after mount - the seamless path, enough for most page
 active one). For custom defaults, create the client in `app.tsx` and hand it to the
 provider:
 
-```tsx [app.tsx]
-// React: app.tsx
-import { Outlet } from "react-router";
-import { AppProvider } from "_/app";
-import { createQueryClient } from "_/query";
-
-const client = createQueryClient({
-  defaultOptions: { queries: { staleTime: 60_000 } },
-});
-
-export default function App() {
-  return (
-    <AppProvider client={client}>
-      <Outlet />
-    </AppProvider>
-  );
-}
-```
+<!--@include: @/parts/frontend/tanstack-query/custom-client.md#react-->
 
 ### SSR warmup (advanced)
 
@@ -643,41 +626,7 @@ The one KosmoJS-specific detail: get the request-scoped client from `getQueryCli
 so you prefetch into the same client the render reads, and share one query-options
 helper so the `queryKey` matches on both sides:
 
-```tsx [pages/users/[id]/index.tsx]
-// React: pages/users/[id]/index.tsx
-import { dehydrate, HydrationBoundary, useQuery } from "@tanstack/react-query";
-import { useLoaderData, useParams } from "react-router";
-import { getQueryClient } from "_/query";
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["users/[id]"];
-
-const queryOptions = (id: string) => ({
-  queryKey: ["users", id] as const,
-  queryFn: () => GET([id]),
-});
-
-export const loader = async ({ params }: { params: { id: string } }) => {
-  const client = getQueryClient();
-  await client.prefetchQuery(queryOptions(params.id));
-  return dehydrate(client);
-};
-
-function User() {
-  const { id } = useParams() as { id: string };
-  const { data } = useQuery(queryOptions(id));
-  return <div>{data?.name}</div>;
-}
-
-export default function Page() {
-  const state = useLoaderData();
-  return (
-    <HydrationBoundary state={state}>
-      <User />
-    </HydrationBoundary>
-  );
-}
-```
+<!--@include: @/parts/frontend/tanstack-query/ssr-warmup.md#react-->
 
 The warm path is exact under string rendering; streamed routes need React's
 streamed-hydration boundary to capture queries resolving mid-stream.

@@ -629,24 +629,7 @@ This fetches on the client after mount - the seamless path, enough for most page
 active one). For custom defaults, create the client in `app.svelte` and hand it to
 the provider:
 
-```svelte [app.svelte]
-<!-- Svelte: app.svelte - pass the configured client to the provider's `client` prop -->
-<script lang="ts">
-  import { AppProvider } from "_/app";
-  import { createQueryClient } from "_/query";
-  import type { Snippet } from "svelte";
-
-  let { children }: { children: Snippet } = $props();
-
-  const client = createQueryClient({
-    defaultOptions: { queries: { staleTime: 60_000 } },
-  });
-</script>
-
-<AppProvider {client}>
-  {@render children()}
-</AppProvider>
-```
+<!--@include: @/parts/frontend/tanstack-query/custom-client.md#svelte-->
 
 ### SSR warmup (advanced)
 
@@ -655,40 +638,7 @@ The one KosmoJS-specific detail: get the request-scoped client from
 `getQueryClient()`, so you prefetch into the same client the render reads, and share
 one query-options helper so the `queryKey` matches on both sides:
 
-```svelte [pages/users/[id]/index.svelte]
-<!-- Svelte: pages/users/[id]/index.svelte -->
-<!-- Prefetch + dehydrate in the loader; wrap the page in HydrationBoundary. -->
-<script module lang="ts">
-import { dehydrate } from "@tanstack/svelte-query";
-import { getQueryClient } from "_/query";
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["users/[id]"];
-
-export const queryOptions = (id: string) => ({
-  queryKey: ["users", id],
-  queryFn: () => GET([id]),
-});
-
-export const loader = async ({ params }: { params: { id: string } }) => {
-  const client = getQueryClient();
-  await client.prefetchQuery(queryOptions(params.id));
-  return dehydrate(client);
-};
-</script>
-
-<script lang="ts">
-import { HydrationBoundary, createQuery, useQueryClient } from "@tanstack/svelte-query";
-import { useParams, useLoaderData } from "_/use";
-
-const params = useParams<"users/[id]">();
-const query = createQuery(() => queryOptions(params.id));
-</script>
-
-<HydrationBoundary state={useLoaderData()} queryClient={useQueryClient()}>
-  <div>{query.data?.name}</div>
-</HydrationBoundary>
-```
+<!--@include: @/parts/frontend/tanstack-query/ssr-warmup.md#svelte-->
 
 ### Mutations
 

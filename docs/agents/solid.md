@@ -611,22 +611,7 @@ This fetches on the client after mount - the seamless path, enough for most page
 active one). For custom defaults, create the client in `app.tsx` and hand it to the
 provider:
 
-```tsx [app.tsx]
-// Solid: app.tsx - pass the configured client to the provider's `client` prop
-import { AppProvider } from "_/app";
-import { createQueryClient } from "_/query";
-import type { ParentComponent } from "solid-js";
-
-const client = createQueryClient({
-  defaultOptions: { queries: { staleTime: 60_000 } },
-});
-
-const app: ParentComponent = (props) => {
-  return <AppProvider client={client}>{props.children}</AppProvider>;
-};
-
-export default app;
-```
+<!--@include: @/parts/frontend/tanstack-query/custom-client.md#solid-->
 
 ### SSR warmup (advanced)
 
@@ -636,30 +621,7 @@ the request-scoped client (from `getQueryClient()`) inside `preload`, and the ca
 crosses to the browser automatically; share one query-options helper so the `queryKey`
 matches on both sides:
 
-```tsx [pages/users/[id]/index.tsx]
-// Solid: pages/users/[id]/index.tsx
-import { useQuery } from "@tanstack/solid-query";
-import { useParams } from "@solidjs/router";
-import { getQueryClient } from "_/query";
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["users/[id]"];
-
-const queryOptions = (id: string) => ({
-  queryKey: ["users", id],
-  queryFn: () => GET([id]),
-});
-
-export const preload = ({ params }: { params: { id: string } }) =>
-  getQueryClient().prefetchQuery(queryOptions(params.id));
-
-export default function Page() {
-  // Solid folders read params through Solid Router's own hook
-  const params = useParams();
-  const query = useQuery(() => queryOptions(params.id));
-  return <div>{query.data?.name}</div>;
-}
-```
+<!--@include: @/parts/frontend/tanstack-query/ssr-warmup.md#solid-->
 
 ### Mutations
 

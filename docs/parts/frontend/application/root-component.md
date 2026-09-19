@@ -1,5 +1,5 @@
 <!-- #region react -->
-```tsx [app.tsx]
+```tsx
 // React: app.tsx
 import { Outlet } from "react-router";
 import { AppProvider } from "_/app";
@@ -15,7 +15,7 @@ export default function App() {
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```tsx [app.tsx]
+```tsx
 // Solid: app.tsx
 import type { ParentComponent } from "solid-js";
 import { AppProvider } from "_/app";
@@ -29,7 +29,7 @@ export default app;
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```vue [app.vue]
+```vue
 <!-- Vue: app.vue -->
 <script setup lang="ts">
 import { AppProvider } from "_/app";
@@ -44,7 +44,7 @@ import { AppProvider } from "_/app";
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```svelte [app.svelte]
+```svelte
 <!-- Svelte: app.svelte -->
 <script lang="ts">
   import type { Snippet } from "svelte";
@@ -59,7 +59,7 @@ import { AppProvider } from "_/app";
 <!-- #endregion svelte -->
 
 <!-- #region mdx -->
-```mdx [app.mdx]
+```mdx
 {/* MDX: app.mdx */}
 import { AppProvider } from "_/app";
 

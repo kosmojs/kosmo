@@ -1,5 +1,5 @@
 <!-- #region react -->
-```ts [router.ts]
+```ts
 // React: router.ts
 import routerFactory, { createRouters } from "_/router";
 
@@ -20,7 +20,7 @@ export default routerFactory((routes) => {
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```ts [router.ts]
+```ts
 // Solid: router.ts
 import routerFactory, { createRouters } from "_/router";
 
@@ -41,7 +41,7 @@ export default routerFactory((routes) => {
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```ts [router.ts]
+```ts
 // Vue: router.ts
 import routerFactory, { createRouters } from "_/router";
 import { appProvider } from "_/app";
@@ -66,7 +66,7 @@ export default routerFactory((routes) => {
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```ts [router.ts]
+```ts
 // Svelte: router.ts
 import routerFactory, { createRouters } from "_/router";
 
@@ -87,7 +87,7 @@ export default routerFactory((routes) => {
 <!-- #endregion svelte -->
 
 <!-- #region mdx -->
-```ts [router.ts]
+```ts
 // MDX: router.ts
 import routerFactory, { createRouters } from "_/router";
 

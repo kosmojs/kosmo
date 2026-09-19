@@ -604,28 +604,13 @@ native Hono instance, so anything Hono can do at app level goes here, written ex
 Hono's own docs describe:
 
 ```ts [api/app.ts]
-// Hono: api/app.ts
-import appFactory, { routes } from "_/api:factory";
-import defaultErrorHandler from "./errors";
-import { cors } from "hono/cors";
-
-export default appFactory(routes, ({ app }) => {
-  app.onError(defaultErrorHandler);
-
-  app.use(cors({ origin: "https://example.com" }));
-
-  app.use(async (c, next) => {
-    const started = performance.now();
-    await next();
-    console.log([ c.req.method, c.req.path, performance.now() - started ]);
-  });
-});
+<!--@include: @/parts/backend/middleware/cors.md#hono-->
 ```
 
-This layer runs first, **on every request, matched or not** - the only place that can
-answer a 404, see a preflight `OPTIONS`, or touch a `405`. Which is why CORS belongs
-here and nowhere else. It runs before the context is extended, so no `ctx.validated`,
-no `ctx.metaparser`, no `ctx.bodyparser`.
+This layer runs first, **on every request, matched or not** - the only place that can answer a 404,
+see a preflight `OPTIONS`, or touch a `405`. Which is why CORS belongs here and nowhere else.
+
+> It runs before the context is extended, so no `ctx.validated`, no `ctx.metaparser`, no `ctx.bodyparser`.
 
 ### So, where does auth go?
 
