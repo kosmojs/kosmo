@@ -229,17 +229,7 @@ arrives as `props.children`. `_/app` is a derived seam: a pass-through by defaul
 swapped under the hood when a feature needs to wrap the tree in a provider (TanStack
 Query does this) - so toggling such a feature never changes your code:
 
-```tsx [app.tsx]
-// Solid: app.tsx
-import type { ParentComponent } from "solid-js";
-import { AppProvider } from "_/app";
-
-const app: ParentComponent = (props) => {
-  return <AppProvider>{props.children}</AppProvider>;
-};
-
-export default app;
-```
+<!--@include: @/parts/frontend/application/root-component.md#solid-->
 
 ## `router.ts`
 
@@ -247,24 +237,7 @@ export default app;
 `clientRouter()` for browser navigation and `serverRouter(url)` for SSR. The default
 file is rarely touched:
 
-```ts [router.ts]
-// Solid: router.ts
-import routerFactory, { createRouters } from "_/router";
-
-import app from "./app";
-
-export default routerFactory((routes) => {
-  const { clientRouter, serverRouter } = createRouters(routes, { app });
-  return {
-    clientRouter() {
-      return clientRouter()
-    },
-    serverRouter(url) {
-      return serverRouter(url)
-    },
-  };
-});
-```
+<!--@include: @/parts/frontend/application/router.md#solid-->
 
 ## `entry/client.ts`
 
@@ -273,36 +246,7 @@ The browser entry, referenced from `index.html`. `renderFactory` reads the
 markup is present, `mount()` for a fresh client-only render - Solid's `render`/
 `hydrate` from `solid-js/web` underneath:
 
-```ts [entry/client.ts]
-// Solid: entry/client.ts
-import renderFactory, {
-  createRoutes,
-  hydrate,
-  mount,
-} from "_/entry/client";
-
-import routerFactory from "../router";
-
-const routes = createRoutes({ withPreload: true });
-const { clientRouter } = routerFactory(routes);
-
-const root = document.getElementById("app");
-
-if (root) {
-  renderFactory(() => {
-    return {
-      hydrate() {
-        return hydrate(() => clientRouter(), root);
-      },
-      mount() {
-        return mount(() => clientRouter(), root);
-      },
-    };
-  });
-} else {
-  console.error("Root element not found!");
-}
-```
+<!--@include: @/parts/frontend/application/entry-client.md#solid-->
 
 The derived `hydrate` and `mount` are conveniences that wire the router to the DOM the
 usual way. For custom mounting, ignore them and render the router's component into
@@ -382,24 +326,7 @@ it. Variants without a body (`| [409]`) drop out of the union.
 A `layout.tsx` in any folder under `pages/` wraps every route in that folder and its
 subfolders; nest layouts by nesting folders. Child routes arrive as `props.children`:
 
-```tsx [pages/dashboard/layout.tsx]
-// Solid: pages/dashboard/layout.tsx
-import type { ParentComponent } from "solid-js";
-
-const Layout: ParentComponent = (props) => {
-  return (
-    <div class="dashboard">
-      <nav>...</nav>
-      <main>
-        {props.children}
-      </main>
-      <footer>...</footer>
-    </div>
-  );
-};
-
-export default Layout;
-```
+<!--@include: @/parts/frontend/layouts/implementation.md#solid-->
 
 Rules that bite:
 
@@ -422,43 +349,13 @@ A layout is route-level, so it loads data the same way a page does - `preload` p
 page's by the `query()` cache string you supply, not by the hook read - give each its
 own key:
 
-```tsx [pages/dashboard/layout.tsx]
-// Solid: pages/dashboard/layout.tsx
-import { Suspense, type ParentComponent } from "solid-js";
-import { createAsync, query } from "@solidjs/router";
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["dashboard/data"];
-
-// wrap in query() so preload and createAsync share one cache key
-const getData = query(() => GET(), "dashboard/data");
-
-export const preload = () => getData();
-
-const Layout: ParentComponent = (props) => {
-  const data = createAsync(() => getData());
-  // ...
-  return <Suspense>{props.children}</Suspense>;
-};
-
-export default Layout;
-```
+<!--@include: @/parts/frontend/layouts/data-loading.md#solid-->
 
 ## The 404 page
 
 `pages/404.tsx` renders for unmatched routes:
 
-```tsx [pages/404.tsx]
-// Solid: pages/404.tsx
-export default function NotFound() {
-  return (
-    <main>
-      <h1>404 - Not Found</h1>
-      <a href="/">Back home</a>
-    </main>
-  );
-}
-```
+<!--@include: @/parts/frontend/error-pages/not-found.md#solid-->
 
 It is appended to the route list as the router's catch-all, always last, so it matches
 only after every real route has failed to. `app.tsx` wraps it; **no `layout.tsx`
@@ -588,49 +485,9 @@ API requests from one process, and render-time fetches dispatch in-process.
 one, a web-standard `ReadableStream` for the other. Which one runs per route is decided
 by `renderMode`, not by precedence:
 
-```ts [entry/server.ts]
-// Solid: entry/server.ts
-import renderFactory, {
-  createRoutes,
-  renderToStream,
-  renderToString,
-} from "_/entry/server";
+<!--@include: @/parts/frontend/server-render/entry-server.md#solid-->
 
-import routerFactory from "../router";
-
-const routes = createRoutes({ withPreload: true });
-const { serverRouter } = routerFactory(routes);
-
-export default renderFactory(() => {
-  return {
-    renderToString(url, { assets }) {
-      return renderToString(
-        () => serverRouter(url),
-        { headerTags: assets.map(({ tag }) => tag) },
-      );
-    },
-    renderToStream(url, { assets }) {
-      return renderToStream(
-        () => serverRouter(url),
-        { headerTags: assets.map(({ tag }) => tag) },
-      );
-    },
-    onError(error) {
-      // reports only - it cannot change the response; never throw from it
-      reportToMonitoring(error, { url: error.url });
-    },
-  };
-});
-```
-
-Each `assets` entry offers `kind`, `tag` (ready-to-inject), `content` (for inlining), `size` and an optional `path`.
-Passing `tag` straight through is the right default. Or inline CSS instead with something like:
-
-```ts
-assets.map(({ kind, tag, content }) => {
-  return kind === "css" ? `<style>${content}</style>` : tag;
-})
-```
+<!--@include: @/parts/frontend/server-render/assets.md-->
 
 ### Streaming
 
@@ -682,18 +539,7 @@ because pages are rendered by the folder's own SSR server. Static routes render
 automatically; a dynamic route renders once per parameter set declared through
 `staticParams`, and one **without** `staticParams` is skipped entirely:
 
-```tsx [pages/docs/[slug]/index.tsx]
-// Solid: pages/docs/[slug]/index.tsx
-import { defineStaticParams } from "_/core";
-
-export const staticParams = defineStaticParams<"docs/[slug]">([
-  ["getting-started"],
-  ["routing"],
-  ["validation"],
-]);
-
-export default function DocsPage() { /* ... */ }
-```
+<!--@include: @/parts/frontend/static-site-generation/static-params.md#solid-->
 
 Each entry is positional in the route's parameter order; a splat takes an array of
 segments. The page's `preload` runs once per entry, in-process against the bundled
@@ -754,28 +600,7 @@ supplies the client - per-request on the server, a singleton in the browser. Not
 else to wire; what you write is ordinary TanStack Solid Query. **The hooks take a
 thunk** - `useQuery(() => ({ ... }))` - so the options track reactively:
 
-```tsx [components/User.tsx]
-// Solid: components/User.tsx
-import { Show } from "solid-js";
-import { useQuery } from "@tanstack/solid-query";
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["users/[id]"];
-
-export default function User(props: { id: string }) {
-  // Solid takes a thunk so the options track reactively
-  const query = useQuery(() => ({
-    queryKey: ["users", props.id],
-    queryFn: () => GET([props.id]),
-  }));
-
-  return (
-    <Show when={!query.isPending} fallback={<div>Loading...</div>}>
-      <div>{query.data?.name}</div>
-    </Show>
-  );
-}
-```
+<!--@include: @/parts/frontend/tanstack-query/basic-usage.md#solid-->
 
 This fetches on the client after mount - the seamless path, enough for most pages.
 
@@ -841,23 +666,7 @@ export default function Page() {
 Exactly as TanStack documents, with the same thunk form - `mutationFn` calls the fetch
 client, and `invalidateQueries` refetches affected queries in place:
 
-```tsx [components/RenameUser.tsx]
-// Solid: components/RenameUser.tsx
-// Solid's hooks take a thunk, like useQuery above
-import { useMutation, useQueryClient } from "@tanstack/solid-query";
-import fetchClients from "_/fetch";
-
-const { POST } = fetchClients["users/[id]"];
-
-export default function RenameUser(props: { id: string }) {
-  const qc = useQueryClient();
-  const rename = useMutation(() => ({
-    mutationFn: (name: string) => POST([props.id], { name }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["users", props.id] }),
-  }));
-  return <button onClick={() => rename.mutate("New Name")}>Rename</button>;
-}
-```
+<!--@include: @/parts/frontend/tanstack-query/mutations.md#solid-->
 
 ## Typed navigation - `Link`
 

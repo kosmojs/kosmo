@@ -37,55 +37,15 @@ From that point it is an ordinary source file: it is never re-seeded, never over
 
 :::tabs key:frontend variant:code
 == React
-```tsx
-// React: pages/404.tsx
-export default function NotFound() {
-  return (
-    <main>
-      <h1>404 - Not Found</h1>
-      <a href="/">Back home</a>
-    </main>
-  );
-}
-```
+<!--@include: @/parts/frontend/error-pages/not-found.md#react-->
 == Solid
-```tsx
-// Solid: pages/404.tsx
-export default function NotFound() {
-  return (
-    <main>
-      <h1>404 - Not Found</h1>
-      <a href="/">Back home</a>
-    </main>
-  );
-}
-```
+<!--@include: @/parts/frontend/error-pages/not-found.md#solid-->
 == Vue
-```vue
-<!-- Vue: pages/404.vue -->
-<template>
-  <main>
-    <h1>404 - Not Found</h1>
-    <a href="/">Back home</a>
-  </main>
-</template>
-```
+<!--@include: @/parts/frontend/error-pages/not-found.md#vue-->
 == Svelte
-```svelte
-<!-- Svelte: pages/404.svelte -->
-<main>
-  <h1>404 - Not Found</h1>
-  <a href="/">Back home</a>
-</main>
-```
+<!--@include: @/parts/frontend/error-pages/not-found.md#svelte-->
 == MDX
-```mdx
-{/* MDX: pages/404.mdx */}
-
-# 404 - Not Found
-
-[Back home](/)
-```
+<!--@include: @/parts/frontend/error-pages/not-found.md#mdx-->
 :::
 
 ## How it is registered

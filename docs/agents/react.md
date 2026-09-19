@@ -226,19 +226,7 @@ The default shell composes `AppProvider` from `_/app` around the routed tree.
 feature needs to wrap the tree in a provider (TanStack Query does this) - so toggling
 such a feature never changes your code:
 
-```tsx [app.tsx]
-// React: app.tsx
-import { Outlet } from "react-router";
-import { AppProvider } from "_/app";
-
-export default function App() {
-  return (
-    <AppProvider>
-      <Outlet />
-    </AppProvider>
-  );
-}
-```
+<!--@include: @/parts/frontend/application/root-component.md#react-->
 
 ## `router.ts`
 
@@ -246,24 +234,7 @@ export default function App() {
 `clientRouter()` for browser navigation and `serverRouter(url)` for SSR. The default file
 is rarely touched:
 
-```ts [router.ts]
-// React: router.ts
-import routerFactory, { createRouters } from "_/router";
-
-import app from "./app";
-
-export default routerFactory((routes) => {
-  const { clientRouter, serverRouter } = createRouters(routes, { app });
-  return {
-    clientRouter() {
-      return clientRouter()
-    },
-    serverRouter(url) {
-      return serverRouter(url)
-    },
-  };
-});
-```
+<!--@include: @/parts/frontend/application/router.md#react-->
 
 ## `entry/client.ts`
 
@@ -272,36 +243,7 @@ The browser entry, referenced from `index.html`. `renderFactory` reads the
 is present, `mount()` for a fresh client-only render - `createRoot`/`hydrateRoot` from
 `react-dom/client` underneath:
 
-```ts [entry/client.ts]
-// React: entry/client.ts
-import renderFactory, {
-  createRoutes,
-  hydrate,
-  mount,
-} from "_/entry/client";
-
-import routerFactory from "../router";
-
-const routes = createRoutes({ withPreload: true });
-const { clientRouter } = routerFactory(routes);
-
-const root = document.getElementById("app");
-
-if (root) {
-  renderFactory(() => {
-    return {
-      hydrate() {
-        return hydrate(() => clientRouter(), root);
-      },
-      mount() {
-        return mount(() => clientRouter(), root);
-      },
-    };
-  });
-} else {
-  console.error("Root element not found!");
-}
-```
+<!--@include: @/parts/frontend/application/entry-client.md#react-->
 
 The derived `hydrate` and `mount` are conveniences that wire the router to the DOM the
 usual way. For custom mounting, ignore them and render the router's component into
@@ -373,22 +315,7 @@ A `layout.tsx` in any folder under `pages/` wraps every route in that folder and
 subfolders; nest layouts by nesting folders. Child routes render through `<Outlet />`,
 not `props.children`:
 
-```tsx [pages/dashboard/layout.tsx]
-// React: pages/dashboard/layout.tsx
-import { Outlet } from "react-router";
-
-export default function Layout() {
-  return (
-    <div className="dashboard">
-      <nav>...</nav>
-      <main>
-        <Outlet />
-      </main>
-      <footer>...</footer>
-    </div>
-  );
-}
-```
+<!--@include: @/parts/frontend/layouts/implementation.md#react-->
 
 Rules that bite:
 
@@ -411,21 +338,7 @@ structurally - each route (layouts included) owns its `loader`, and `useLoaderDa
 returns the calling route's data, so a layout's data and its page's stay distinct with
 no key to pass:
 
-```tsx [pages/dashboard/layout.tsx]
-// React: pages/dashboard/layout.tsx
-import { Outlet, useLoaderData } from "react-router";
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["dashboard/data"];
-
-export const loader = () => GET();
-
-export default function Layout() {
-  const data = useLoaderData();
-  // ...
-  return <Outlet />;
-}
-```
+<!--@include: @/parts/frontend/layouts/data-loading.md#react-->
 
 The loader runs before the layout renders, so shared data is fetched once for everything
 beneath it.
@@ -434,17 +347,7 @@ beneath it.
 
 `pages/404.tsx` renders for unmatched routes:
 
-```tsx [pages/404.tsx]
-// React: pages/404.tsx
-export default function NotFound() {
-  return (
-    <main>
-      <h1>404 - Not Found</h1>
-      <a href="/">Back home</a>
-    </main>
-  );
-}
-```
+<!--@include: @/parts/frontend/error-pages/not-found.md#react-->
 
 It is appended to the route list as the router's catch-all (`path: "*"`), always last,
 so it matches only after every real route has failed to. `app.tsx` wraps it; **no
@@ -584,50 +487,9 @@ API requests from one process, and render-time fetches dispatch in-process.
 one, a web-standard `ReadableStream` for the other. Which one runs per route is decided
 by `renderMode`, not by precedence:
 
-```ts [entry/server.ts]
-// React: entry/server.ts
-import renderFactory, {
-  createRoutes,
-  renderToStream,
-  renderToString,
-} from "_/entry/server";
+<!--@include: @/parts/frontend/server-render/entry-server.md#react-->
 
-import routerFactory from "../router";
-
-const routes = createRoutes({ withPreload: true });
-const { serverRouter } = routerFactory(routes);
-
-export default renderFactory(() => {
-  return {
-    renderToString(url, { assets }) {
-      return renderToString(
-        () => serverRouter(url),
-        { headerTags: assets.map(({ tag }) => tag) },
-      );
-    },
-    renderToStream(url, { assets }) {
-      return renderToStream(
-        () => serverRouter(url),
-        { headerTags: assets.map(({ tag }) => tag) },
-      );
-    },
-    onError(error) {
-      // reports only - it cannot change the response; never throw from it
-      reportToMonitoring(error, { url: error.url });
-    },
-  };
-});
-```
-
-Each `assets` entry offers `kind`, `tag` (ready-to-inject), `content` (for inlining), `size` and an optional `path`.
-Passing `tag` straight through is the right default. Or inline CSS instead with something like:
-
-```ts
-assets.map(({ kind, tag, content }) => {
-  return kind === "css" ? `<style>${content}</style>` : tag;
-})
-```
-
+<!--@include: @/parts/frontend/server-render/assets.md-->
 
 ### Streaming
 
@@ -680,18 +542,7 @@ because pages are rendered by the folder's own SSR server. Static routes render
 automatically; a dynamic route renders once per parameter set declared through
 `staticParams`, and one **without** `staticParams` is skipped entirely:
 
-```tsx [pages/docs/[slug]/index.tsx]
-// React: pages/docs/[slug]/index.tsx
-import { defineStaticParams } from "_/core";
-
-export const staticParams = defineStaticParams<"docs/[slug]">([
-  ["getting-started"],
-  ["routing"],
-  ["validation"],
-]);
-
-export default function DocsPage() { /* ... */ }
-```
+<!--@include: @/parts/frontend/static-site-generation/static-params.md#react-->
 
 Each entry is positional in the route's parameter order; a splat takes an array of
 segments. The page's `loader` runs once per entry, in-process against the bundled API -
@@ -754,23 +605,7 @@ Enabling it deploys the `_/query` runtime and swaps `_/app` for a provider that 
 the client - per-request on the server, a singleton in the browser. Nothing else to
 wire; what you write is ordinary TanStack Query:
 
-```tsx [components/User.tsx]
-// React: components/User.tsx
-import { useQuery } from "@tanstack/react-query";
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["users/[id]"];
-
-export default function User({ id }: { id: string }) {
-  const { data, isPending } = useQuery({
-    queryKey: ["users", id],
-    queryFn: () => GET([id]),
-  });
-
-  if (isPending) return <div>Loading...</div>;
-  return <div>{data.name}</div>;
-}
-```
+<!--@include: @/parts/frontend/tanstack-query/basic-usage.md#react-->
 
 This fetches on the client after mount - the seamless path, enough for most pages.
 
@@ -852,22 +687,7 @@ streamed-hydration boundary to capture queries resolving mid-stream.
 Exactly as TanStack documents - `mutationFn` calls the fetch client, and
 `invalidateQueries` refetches affected queries in place:
 
-```tsx [components/RenameUser.tsx]
-// React: components/RenameUser.tsx
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import fetchClients from "_/fetch";
-
-const { POST } = fetchClients["users/[id]"];
-
-export default function RenameUser({ id }: { id: string }) {
-  const qc = useQueryClient();
-  const rename = useMutation({
-    mutationFn: (name: string) => POST([id], { json: { name } }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["users", id] }),
-  });
-  return <button onClick={() => rename.mutate("New Name")}>Rename</button>;
-}
-```
+<!--@include: @/parts/frontend/tanstack-query/mutations.md#react-->
 
 ## Typed navigation - `Link`
 

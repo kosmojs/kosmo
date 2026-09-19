@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vitepress dev",
+    "prebuild": "node ./scripts/lint-includes.mjs",
     "build": "vitepress build",
     "postbuild": "node ./scripts/compose-llms.mjs",
     "preview": "vitepress preview"

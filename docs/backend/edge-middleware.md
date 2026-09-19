@@ -41,64 +41,13 @@ They should have got a `401`.
 
 :::tabs key:backend variant:code
 == Hono
-```ts
-// Hono: api/use.ts
-import { HTTPError } from "@kosmojs/core/errors";
-
-import { use } from "_/api";
-
-export default [
-  use(async (ctx, next) => {
-    const token = ctx.req.header("authorization")?.replace("Bearer ", "");
-    if (!token) {
-      throw new HTTPError([401, "Authentication required"]);
-    }
-    return next();
-  }, {
-    slot: "edge:auth", // [!code hl]
-  }),
-];
-```
+<!--@include: @/parts/backend/edge-middleware/edge-slot.md#hono-->
 
 == H3
-```ts
-// H3: api/use.ts
-import { HTTPError } from "@kosmojs/core/errors";
-
-import { use } from "_/api";
-
-export default [
-  use(async (event, next) => {
-    const token = event.req.headers.get("authorization")?.replace("Bearer ", "");
-    if (!token) {
-      throw new HTTPError([401, "Authentication required"]);
-    }
-    return next();
-  }, {
-    slot: "edge:auth", // [!code hl]
-  }),
-];
-```
+<!--@include: @/parts/backend/edge-middleware/edge-slot.md#h3-->
 
 == Koa
-```ts
-// Koa: api/use.ts
-import { HTTPError } from "@kosmojs/core/errors";
-
-import { use } from "_/api";
-
-export default [
-  use(async (ctx, next) => {
-    const token = ctx.headers.authorization?.replace("Bearer ", "");
-    if (!token) {
-      throw new HTTPError([401, "Authentication required"]);
-    }
-    return next();
-  }, {
-    slot: "edge:auth", // [!code hl]
-  }),
-];
-```
+<!--@include: @/parts/backend/edge-middleware/edge-slot.md#koa-->
 :::
 
 Now an unauthenticated request is rejected before a single schema is consulted.

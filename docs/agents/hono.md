@@ -439,43 +439,14 @@ appear in the array**; to run code after the handler, put it after `await next()
 
 Restrict middleware to specific methods with `on`:
 
-```ts [api/example/index.ts]
-// Hono: api/example/index.ts
-export default defineRoute<"example">(({ GET, POST, use }) => [
-  use(async (ctx, next) => {
-    ctx.set("user", await verifyToken(ctx.req.header("authorization")));
-    return next();
-  }, {
-    on: ["POST"],
-  }),
-
-  GET(async (ctx) => {
-    // no auth required
-  }),
-
-  POST(async (ctx) => {
-    // ctx.get("user") is available
-  }),
-]);
-```
+<!--@include: @/parts/backend/middleware/method-specific.md#hono-->
 
 ### Global middleware - `api/use.ts`
 
 Whatever `api/use.ts` default-exports runs for **every route** in the folder -
 no imports, no registration:
 
-```ts [api/use.ts]
-// Hono: api/use.ts
-import { use } from "_/api";
-
-export default [
-  // will run on every route
-  use(async function requestId(ctx, next) {
-    ctx.set("requestId", crypto.randomUUID());
-    return next();
-  }),
-];
-```
+<!--@include: @/parts/backend/middleware/global.md#hono-->
 
 State goes through `ctx.set()` / `ctx.get()`, not by assignment. This is the place for
 work that belongs to routes and wants the request already validated: loading the current
@@ -492,26 +463,7 @@ middleware always runs before child middleware, and child routes cannot skip a p
 `use.ts`. Every subfolder `use.ts` also exports `UseT` - the type of what the middleware
 adds to the context, merged downward so routes underneath are typed automatically:
 
-```ts [api/users/use.ts]
-// Hono: api/users/use.ts
-import { HTTPException } from "hono/http-exception";
-
-import { use } from "_/api";
-
-export type UseT = {
-  user: { id: number; role: "admin" | "user" };
-};
-
-export default [
-  use<UseT>(async (ctx, next) => {
-    const token = ctx.req.header("authorization")?.replace("Bearer ", "");
-    // validate before adding to context - UseT promises this property exists
-    if (!token) throw new HTTPException(401, { message: "Authentication required" });
-    ctx.set("user", await verifyToken(token));
-    return next();
-  })
-];
-```
+<!--@include: @/parts/backend/cascading-middleware/context-types.md#hono-->
 
 Routes underneath read `ctx.get("user")`, fully typed - no imports, no type arguments.
 The global `api/use.ts` is the exception: its `UseT` export is ignored; global types come
@@ -530,22 +482,7 @@ Keep cascading middleware **generic** - it runs for sibling routes too, so a par
 `id` may be `undefined` there. Parameter-specific logic belongs in the route handler.
 Any Hono middleware package works unchanged here, wired through `use()`:
 
-```ts [api/users/use.ts]
-// Hono: api/users/use.ts
-import { rateLimiter } from "hono-rate-limiter";
-
-import { use } from "_/api";
-
-export default [
-  use(
-    rateLimiter({
-      windowMs: 15 * 60 * 1000,
-      limit: 100,
-      keyGenerator: (ctx) => ctx.req.header("x-forwarded-for") ?? "anonymous",
-    }),
-  ),
-];
-```
+<!--@include: @/parts/backend/cascading-middleware/third-party.md#hono-->
 
 ### Slots
 
@@ -626,24 +563,7 @@ Any `use()` entry claiming an `edge:` prefixed slot - in `api/use.ts`, a cascadi
 ahead of validation**. That is what turns an expired token into a `401` instead of the
 `400 ValidationError` a malformed body would otherwise produce:
 
-```ts [api/use.ts]
-// Hono: api/use.ts
-import { HTTPError } from "@kosmojs/core/errors";
-
-import { use } from "_/api";
-
-export default [
-  use(async (ctx, next) => {
-    const token = ctx.req.header("authorization")?.replace("Bearer ", "");
-    if (!token) {
-      throw new HTTPError([401, "Authentication required"]);
-    }
-    return next();
-  }, {
-    slot: "edge:auth",
-  }),
-];
-```
+<!--@include: @/parts/backend/edge-middleware/edge-slot.md#hono-->
 
 Every `edge:` prefixed name is reserved - nothing to declare. Name one slot per concern
 (`edge:auth`, `edge:ratelimit`); they run in declaration order, each independently
@@ -728,39 +648,7 @@ Hono's `app.onError()` catches everything (`await next()` does **not** throw), a
 handler returns a `Response`. Hono's own `HTTPException` carries one already, so the
 default handler returns `error.getResponse()` for it before anything else:
 
-```ts [api/errors.ts]
-// Hono: api/errors.ts
-import { accepts } from "hono/accepts";
-import { HTTPException } from "hono/http-exception";
-
-import { ValidationError, HTTPError } from "@kosmojs/core/errors";
-
-import { errorHandlerFactory } from "_/api:factory";
-
-export default errorHandlerFactory(async (error, ctx) => {
-  if (error instanceof HTTPException) {
-    return error.getResponse();
-  }
-
-  const [status, message] = Array.isArray(error)
-    ? error
-    : error instanceof HTTPError
-      ? [error.status, error.message]
-      : error instanceof ValidationError
-        ? [400, `${error.target}: ${error.errorMessage}`]
-        : [error.statusCode || 500, error.message];
-
-  const type = accepts(ctx, {
-    header: "Accept",
-    supports: ["application/json", "text/plain"],
-    default: "text/plain",
-  });
-
-  return type === "application/json"
-    ? ctx.json({ error: message }, status)
-    : ctx.text(message, status);
-});
-```
+<!--@include: @/parts/backend/error-handling/default-handler.md#hono-->
 
 It is a regular file you own - customize it freely, then it is wired in `api/app.ts`
 via `app.onError(defaultErrorHandler)`.
@@ -776,21 +664,7 @@ A `ValidationError` exposes `target` (which request part failed), `errors`
 Don't wrap handler logic in `try`/`catch` just to turn a failure into a response -
 throw, and let `api/errors.ts` decide:
 
-```ts [api/users/[id]/index.ts]
-// Hono: api/users/[id]/index.ts
-import { HTTPError } from "@kosmojs/core/errors";
-
-export default defineRoute<"users/[id]", [number]>(({ GET }) => [
-  GET(async (ctx) => {
-    const { id } = ctx.validated.params;
-    const user = await db.users.find(id);
-
-    if (!user) throw new HTTPError([404, "User not found"]);
-
-    return ctx.json(user);
-  }),
-]);
-```
+<!--@include: @/parts/backend/error-handling/let-handlers-fail.md#hono-->
 
 The default handler understands several shapes:
 
@@ -813,19 +687,7 @@ errors for everything downstream.
 change. Hono speaks fetch, so the default `requestHandler` turns `app.fetch` into a Node
 listener:
 
-```ts [api/dev.ts]
-// Hono: api/dev.ts
-import { getRequestListener } from "@hono/node-server";
-
-import { devSetup } from "_/api:factory";
-import app from "./app";
-
-export default devSetup({
-  requestHandler() {
-    return getRequestListener(app.fetch);
-  },
-});
-```
+<!--@include: @/parts/dev-build-run/development-workflow/request-handler.md#hono-->
 
 Two more hooks sit on the same cycle:
 
@@ -940,17 +802,7 @@ server beside it. Verify production behavior locally with
 
 Hono splits per-request values from environment bindings, so there are two interfaces:
 
-```ts [api/env.d.ts]
-// Hono: api/env.d.ts
-export declare module "_/api" {
-  interface DefaultVariables {
-    permissions: Array<"read" | "write" | "admin">;
-  }
-  interface DefaultBindings {
-    DB: D1Database;
-  }
-}
-```
+<!--@include: @/parts/backend/type-safety/env-types.md#hono-->
 
 Declaring types does not set the values - the middleware that populates them still has to
 run, usually in `api/use.ts` via `ctx.set("permissions", ...)`.

@@ -93,46 +93,13 @@ no imports, no registration, nothing to wire:
 
 :::tabs key:backend variant:code
 == Hono
-```ts
-// Hono: api/use.ts
-import { use } from "_/api";
-
-export default [
-  // will run on every route
-  use(async function requestId(ctx, next) {
-    ctx.set("requestId", crypto.randomUUID());
-    return next();
-  }),
-];
-```
+<!--@include: @/parts/backend/middleware/global.md#hono-->
 
 == H3
-```ts
-// H3: api/use.ts
-import { use } from "_/api";
-
-export default [
-  // will run on every route
-  use(async function requestId(event, next) {
-    event.context.requestId = crypto.randomUUID();
-    return next();
-  }),
-];
-```
+<!--@include: @/parts/backend/middleware/global.md#h3-->
 
 == Koa
-```ts
-// Koa: api/use.ts
-import { use } from "_/api";
-
-export default [
-  // will run on every route
-  use(async function requestId(ctx, next) {
-    ctx.state.requestId = crypto.randomUUID();
-    return next();
-  }),
-];
-```
+<!--@include: @/parts/backend/middleware/global.md#koa-->
 :::
 
 This is the place for work that belongs to **routes**: loading the current user onto the context,
@@ -157,67 +124,13 @@ Use the `on` option to restrict middleware to specific HTTP methods:
 
 :::tabs key:backend variant:code
 == Hono
-```ts
-// Hono: api/example/index.ts
-export default defineRoute<"example">(({ GET, POST, use }) => [
-  use(async (ctx, next) => {
-    ctx.set("user", await verifyToken(ctx.req.header("authorization")));
-    return next();
-  }, {
-    on: ["POST"], // [!code hl]
-  }),
-
-  GET(async (ctx) => {
-    // no auth required
-  }),
-
-  POST(async (ctx) => {
-    // ctx.get("user") is available
-  }),
-]);
-```
+<!--@include: @/parts/backend/middleware/method-specific.md#hono-->
 
 == H3
-```ts
-// H3: api/example/index.ts
-export default defineRoute<"example">(({ GET, POST, use }) => [
-  use(async (event, next) => {
-    event.context.user = await verifyToken(event.req.headers.get("authorization"));
-    return next();
-  }, {
-    on: ["POST"], // [!code hl]
-  }),
-
-  GET(async (event) => {
-    // no auth required
-  }),
-
-  POST(async (event) => {
-    // event.context.user is available
-  }),
-]);
-```
+<!--@include: @/parts/backend/middleware/method-specific.md#h3-->
 
 == Koa
-```ts
-// Koa: api/example/index.ts
-export default defineRoute<"example">(({ GET, POST, use }) => [
-  use(async (ctx, next) => {
-    ctx.state.user = await verifyToken(ctx.headers.authorization);
-    return next();
-  }, {
-    on: ["POST"], // [!code hl]
-  }),
-
-  GET(async (ctx) => {
-    // no auth required
-  }),
-
-  POST(async (ctx) => {
-    // ctx.state.user is available
-  }),
-]);
-```
+<!--@include: @/parts/backend/middleware/method-specific.md#koa-->
 :::
 
 ## Slot Composition

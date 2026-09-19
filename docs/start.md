@@ -107,43 +107,13 @@ Replace the seeded content with something real:
 
 :::tabs key:backend variant:code
 == Hono
-```ts
-// Hono: api/users/[id]/index.ts
-import { defineRoute } from "_/api";
-
-export default defineRoute<"users/[id]">(({ GET }) => [
-  GET(async (ctx) => {
-    const { id } = ctx.req.param();
-    return ctx.json({ id, name: "Jane Smith", email: "jane@example.com" });
-  }),
-]);
-```
+<!--@include: @/parts/start/create-route.md#hono-->
 
 == H3
-```ts
-// H3: api/users/[id]/index.ts
-import { defineRoute } from "_/api";
-
-export default defineRoute<"users/[id]">(({ GET }) => [
-  GET(async (event) => {
-    const { id } = event.context.params;
-    return { id, name: "Jane Smith", email: "jane@example.com" };
-  }),
-]);
-```
+<!--@include: @/parts/start/create-route.md#h3-->
 
 == Koa
-```ts
-// Koa: api/users/[id]/index.ts
-import { defineRoute } from "_/api";
-
-export default defineRoute<"users/[id]">(({ GET }) => [
-  GET(async (ctx) => {
-    const { id } = ctx.params;
-    ctx.body = { id, name: "Jane Smith", email: "jane@example.com" };
-  }),
-]);
-```
+<!--@include: @/parts/start/create-route.md#koa-->
 :::
 
 Visit `http://localhost:4556/api/users/123`. You should see JSON.

@@ -28,6 +28,21 @@ import { redirects } from "./redirects.mjs";
 const AGENTS_INCLUDE_PATTERN = /<!--\s*@include:\s*\S*agents-versions\.md#/;
 const TABS_PATTERN = /^:::\s*tabs\b.*key:(frontend|backend)/m;
 
+// website-only code annotations - they highlight a line in the browser and are noise in a text artifact.
+// Order matters: the whole comment goes when it carries nothing but the marker,
+// otherwise only the marker appended to a real comment
+const MARKER_PATTERNS = [
+  /[ \t]*\/\/[ \t]*\[!code[^\]]*\][ \t]*$/gmu,
+  /[ \t]*\[!code[^\]]*\]/gu,
+];
+
+const stripMarkers = (text) => {
+  return MARKER_PATTERNS.reduce(
+    (acc, pattern) => acc.replace(pattern, ""),
+    text,
+  );
+};
+
 const srcDir = resolve(import.meta.dirname, "..");
 
 const skipDirs = new Set([
@@ -96,7 +111,7 @@ export const compose = (dist) => {
   writeFileSync(
     join(dist, "llms-full.txt"),
     corpus
-      .map((path) => readFileSync(join(dist, path), "utf8").trim())
+      .map((e) => stripMarkers(readFileSync(join(dist, e), "utf8")).trim())
       .join("\n\n"),
   );
 

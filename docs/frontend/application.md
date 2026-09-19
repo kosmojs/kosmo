@@ -31,68 +31,19 @@ so out of the box your app behaves exactly like a plain shell.
 
 :::tabs key:frontend variant:code
 == React
-```tsx
-// React: app.tsx
-import { Outlet } from "react-router";
-import { AppProvider } from "_/app";
-
-export default function App() {
-  return (
-    <AppProvider>
-      <Outlet />
-    </AppProvider>
-  );
-}
-```
+<!--@include: @/parts/frontend/application/root-component.md#react-->
 
 == Solid
-```tsx
-// Solid: app.tsx
-import type { ParentComponent } from "solid-js";
-import { AppProvider } from "_/app";
-
-const app: ParentComponent = (props) => {
-  return <AppProvider>{props.children}</AppProvider>;
-};
-
-export default app;
-```
+<!--@include: @/parts/frontend/application/root-component.md#solid-->
 
 == Vue
-```vue
-<!-- Vue: app.vue -->
-<script setup lang="ts">
-import { AppProvider } from "_/app";
-</script>
-
-<template>
-  <AppProvider>
-    <RouterView />
-  </AppProvider>
-</template>
-```
+<!--@include: @/parts/frontend/application/root-component.md#vue-->
 
 == Svelte
-```svelte
-<!-- Svelte: app.svelte -->
-<script lang="ts">
-  import type { Snippet } from "svelte";
-  import { AppProvider } from "_/app";
-  let { children }: { children: Snippet } = $props();
-</script>
-
-<AppProvider>
-  {@render children()}
-</AppProvider>
-```
+<!--@include: @/parts/frontend/application/root-component.md#svelte-->
 
 == MDX
-```mdx
-{/* MDX: app.mdx */}
-import { AppProvider } from "_/app";
-
-<AppProvider>{props.children}</AppProvider>
-```
+<!--@include: @/parts/frontend/application/root-component.md#mdx-->
 :::
 
 ### Why the AppProvider seam
@@ -120,109 +71,19 @@ The callback must return two functions:
 
 :::tabs key:frontend variant:code
 == React
-```tsx
-// React: router.ts
-import routerFactory, { createRouters } from "_/router";
-
-import app from "./app";
-
-export default routerFactory((routes) => {
-  const { clientRouter, serverRouter } = createRouters(routes, { app });
-  return {
-    clientRouter() {
-      return clientRouter()
-    },
-    serverRouter(url) {
-      return serverRouter(url)
-    },
-  };
-});
-```
+<!--@include: @/parts/frontend/application/router.md#react-->
 
 == Solid
-```tsx
-// Solid: router.ts
-import routerFactory, { createRouters } from "_/router";
-
-import app from "./app";
-
-export default routerFactory((routes) => {
-  const { clientRouter, serverRouter } = createRouters(routes, { app });
-  return {
-    clientRouter() {
-      return clientRouter()
-    },
-    serverRouter(url) {
-      return serverRouter(url)
-    },
-  };
-});
-```
+<!--@include: @/parts/frontend/application/router.md#solid-->
 
 == Vue
-```ts
-// Vue: router.ts
-import routerFactory, { createRouters } from "_/router";
-import { appProvider } from "_/app";
-
-import app from "./app.vue";
-
-export default routerFactory((routes) => {
-  const { clientRouter, serverRouter } = createRouters(routes, {
-    app,
-    use: [[appProvider, undefined]],
-  });
-  return {
-    clientRouter() {
-      return clientRouter()
-    },
-    serverRouter(url) {
-      return serverRouter(url)
-    },
-  };
-});
-```
+<!--@include: @/parts/frontend/application/router.md#vue-->
 
 == Svelte
-```svelte
-<!-- Svelte: router.ts -->
-import routerFactory, { createRouters } from "_/router";
-
-import app from "./app.svelte";
-
-export default routerFactory((routes) => {
-  const { clientRouter, serverRouter } = createRouters(routes, { app });
-  return {
-    clientRouter() {
-      return clientRouter()
-    },
-    serverRouter(url) {
-      return serverRouter(url)
-    },
-  };
-});
-```
+<!--@include: @/parts/frontend/application/router.md#svelte-->
 
 == MDX
-```tsx
-// MDX: router.ts
-import routerFactory, { createRouters } from "_/router";
-
-import app from "./app.mdx";
-import { components } from "./components/mdx"
-
-export default routerFactory((routes) => {
-  const { clientRouter, serverRouter } = createRouters(routes, { app, components });
-  return {
-    clientRouter() {
-      return clientRouter()
-    },
-    serverRouter(url) {
-      return serverRouter(url)
-    },
-  };
-});
-```
+<!--@include: @/parts/frontend/application/router.md#mdx-->
 :::
 
 The derived `routes` are always wrapped inside your `app` component,
@@ -251,164 +112,19 @@ correct method: `hydrate()` for SSR hydration, `mount()` for a fresh client-only
 
 :::tabs key:frontend variant:code
 == React
-```tsx
-// React: entry/client.ts
-import renderFactory, {
-  createRoutes,
-  hydrate,
-  mount,
-} from "_/entry/client";
-
-import routerFactory from "../router";
-
-const routes = createRoutes({ withPreload: true });
-const { clientRouter } = routerFactory(routes);
-
-const root = document.getElementById("app");
-
-if (root) {
-  renderFactory(() => {
-    return {
-      hydrate() {
-        return hydrate(() => clientRouter(), root);
-      },
-      mount() {
-        return mount(() => clientRouter(), root);
-      },
-    };
-  });
-} else {
-  console.error("❌ Root element not found!");
-}
-```
+<!--@include: @/parts/frontend/application/entry-client.md#react-->
 
 == Solid
-```tsx
-// Solid: entry/client.ts
-import renderFactory, {
-  createRoutes,
-  hydrate,
-  mount,
-} from "_/entry/client";
-
-import routerFactory from "../router";
-
-const routes = createRoutes({ withPreload: true });
-const { clientRouter } = routerFactory(routes);
-
-const root = document.getElementById("app");
-
-if (root) {
-  renderFactory(() => {
-    return {
-      hydrate() {
-        return hydrate(() => clientRouter(), root);
-      },
-      mount() {
-        return mount(() => clientRouter(), root);
-      },
-    };
-  });
-} else {
-  console.error("❌ Root element not found!");
-}
-```
+<!--@include: @/parts/frontend/application/entry-client.md#solid-->
 
 == Vue
-```ts
-// Vue: entry/client.ts
-import renderFactory, {
-  createRoutes,
-  hydrate,
-  mount,
-} from "_/entry/client";
-
-import routerFactory from "../router";
-
-const routes = createRoutes();
-const { clientRouter } = routerFactory(routes);
-
-const root = document.getElementById("app");
-
-if (root) {
-  renderFactory(() => {
-    return {
-      hydrate() {
-        return hydrate(() => clientRouter(), root);
-      },
-      mount() {
-        return mount(() => clientRouter(), root);
-      },
-    };
-  });
-} else {
-  console.error("❌ Root element not found!");
-}
-```
+<!--@include: @/parts/frontend/application/entry-client.md#vue-->
 
 == Svelte
-```svelte
-<!-- Svelte: entry/client.ts -->
-import renderFactory, {
-  createRoutes,
-  hydrate,
-  mount,
-} from "_/entry/client";
-
-import routerFactory from "../router";
-
-const routes = createRoutes();
-const { clientRouter } = routerFactory(routes);
-
-const root = document.getElementById("app");
-
-if (root) {
-  renderFactory(() => {
-    return {
-      hydrate() {
-        return hydrate(() => clientRouter(), root);
-      },
-      mount() {
-        return mount(() => clientRouter(), root);
-      },
-    };
-  });
-} else {
-  console.error("❌ Root element not found!");
-}
-```
+<!--@include: @/parts/frontend/application/entry-client.md#svelte-->
 
 == MDX
-```tsx
-// MDX: entry/client.ts
-import renderFactory, {
-  createRoutes,
-  hydrate,
-  mount,
-} from "_/entry/client";
-
-import routerFactory from "../router";
-
-const routes = createRoutes();
-const { clientRouter } = routerFactory(routes);
-
-const root = document.getElementById("app");
-
-if (root) {
-  renderFactory(() => {
-    return {
-      hydrate() {
-        return hydrate(() => clientRouter(), root);
-      },
-      mount() {
-        return mount(() => clientRouter(), root);
-      },
-    };
-  });
-} else {
-  console.error("❌ Root element not found!");
-}
-```
+<!--@include: @/parts/frontend/application/entry-client.md#mdx-->
 :::
 
 Under the hood:

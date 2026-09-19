@@ -69,93 +69,16 @@ data ready during SSR.
 
 :::tabs key:frontend variant:code
 == React
-```tsx
-// React: components/User.tsx
-import { useQuery } from "@tanstack/react-query";
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["users/[id]"];
-
-export default function User({ id }: { id: string }) {
-  const { data, isPending } = useQuery({
-    queryKey: ["users", id],
-    queryFn: () => GET([id]),
-  });
-
-  if (isPending) return <div>Loading...</div>;
-  return <div>{data.name}</div>;
-}
-```
+<!--@include: @/parts/frontend/tanstack-query/basic-usage.md#react-->
 
 == Solid
-```tsx
-// Solid: components/User.tsx
-import { Show } from "solid-js";
-import { useQuery } from "@tanstack/solid-query";
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["users/[id]"];
-
-export default function User(props: { id: string }) {
-  // Solid takes a thunk so the options track reactively
-  const query = useQuery(() => ({
-    queryKey: ["users", props.id],
-    queryFn: () => GET([props.id]),
-  }));
-
-  return (
-    <Show when={!query.isPending} fallback={<div>Loading...</div>}>
-      <div>{query.data?.name}</div>
-    </Show>
-  );
-}
-```
+<!--@include: @/parts/frontend/tanstack-query/basic-usage.md#solid-->
 
 == Vue
-```vue
-<!-- Vue: components/User.vue -->
-<script setup lang="ts">
-import { useQuery } from "@tanstack/vue-query";
-import fetchClients from "_/fetch";
-
-const { id } = defineProps<{ id: string }>();
-const { GET } = fetchClients["users/[id]"];
-
-const { data, isPending } = useQuery({
-  queryKey: ["users", id],
-  queryFn: () => GET([id]),
-});
-</script>
-
-<template>
-  <div v-if="isPending">Loading...</div>
-  <div v-else>{{ data?.name }}</div>
-</template>
-```
+<!--@include: @/parts/frontend/tanstack-query/basic-usage.md#vue-->
 
 == Svelte
-```svelte
-<!-- Svelte: components/User.svelte -->
-<script lang="ts">
-  // Svelte uses createQuery (not useQuery) and takes a thunk
-  import { createQuery } from "@tanstack/svelte-query";
-  import fetchClients from "_/fetch";
-
-  let { id }: { id: string } = $props();
-  const { GET } = fetchClients["users/[id]"];
-
-  const query = createQuery(() => ({
-    queryKey: ["users", id],
-    queryFn: () => GET([id]),
-  }));
-</script>
-
-{#if query.isPending}
-  <div>Loading...</div>
-{:else}
-  <div>{query.data?.name}</div>
-{/if}
-```
+<!--@include: @/parts/frontend/tanstack-query/basic-usage.md#svelte-->
 :::
 
 The read hook is where the frameworks differ most:
@@ -363,86 +286,16 @@ alone cannot do without re-navigating.
 
 :::tabs key:frontend variant:code
 == React
-```tsx
-// React: components/RenameUser.tsx
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import fetchClients from "_/fetch";
-
-const { POST } = fetchClients["users/[id]"];
-
-export default function RenameUser({ id }: { id: string }) {
-  const qc = useQueryClient();
-  const rename = useMutation({
-    mutationFn: (name: string) => POST([id], { name }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["users", id] }),
-  });
-  return <button onClick={() => rename.mutate("New Name")}>Rename</button>;
-}
-```
+<!--@include: @/parts/frontend/tanstack-query/mutations.md#react-->
 
 == Solid
-```tsx
-// Solid: components/RenameUser.tsx
-// Solid's hooks take a thunk, like useQuery above
-import { useMutation, useQueryClient } from "@tanstack/solid-query";
-import fetchClients from "_/fetch";
-
-const { POST } = fetchClients["users/[id]"];
-
-export default function RenameUser(props: { id: string }) {
-  const qc = useQueryClient();
-  const rename = useMutation(() => ({
-    mutationFn: (name: string) => POST([props.id], { name }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["users", props.id] }),
-  }));
-  return <button onClick={() => rename.mutate("New Name")}>Rename</button>;
-}
-```
+<!--@include: @/parts/frontend/tanstack-query/mutations.md#solid-->
 
 == Vue
-```vue
-<!-- Vue: components/RenameUser.vue -->
-<script setup lang="ts">
-import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import fetchClients from "_/fetch";
-
-const props = defineProps<{ id: string }>();
-
-const { POST } = fetchClients["users/[id]"];
-
-const qc = useQueryClient();
-const rename = useMutation({
-  mutationFn: (name: string) => POST([props.id], { name }),
-  onSuccess: () => qc.invalidateQueries({ queryKey: ["users", props.id] }),
-});
-</script>
-
-<template>
-  <button @click="rename.mutate('New Name')">Rename</button>
-</template>
-```
+<!--@include: @/parts/frontend/tanstack-query/mutations.md#vue-->
 
 == Svelte
-```svelte
-<!-- Svelte: components/RenameUser.svelte -->
-<script lang="ts">
-  // Svelte uses createMutation (not useMutation) and takes a thunk
-  import { createMutation, useQueryClient } from "@tanstack/svelte-query";
-  import fetchClients from "_/fetch";
-
-  let { id }: { id: string } = $props();
-
-  const { POST } = fetchClients["users/[id]"];
-
-  const qc = useQueryClient();
-  const rename = createMutation(() => ({
-    mutationFn: (name: string) => POST([id], { name }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["users", id] }),
-  }));
-</script>
-
-<button onclick={() => rename.mutate("New Name")}>Rename</button>
-```
+<!--@include: @/parts/frontend/tanstack-query/mutations.md#svelte-->
 :::
 
 The shape is identical across frameworks - swap `useMutation`/`useQueryClient`

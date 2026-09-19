@@ -187,40 +187,13 @@ so every route handler picks them up automatically:
 
 :::tabs key:backend variant:code
 == Hono
-```ts
-// Hono: api/env.d.ts
-export declare module "_/api" {
-  interface DefaultVariables {
-    permissions: Array<"read" | "write" | "admin">;
-  }
-  interface DefaultBindings {
-    DB: D1Database;
-  }
-}
-```
+<!--@include: @/parts/backend/type-safety/env-types.md#hono-->
 
 == H3
-```ts
-// H3: api/env.d.ts
-export declare module "_/api" {
-  interface DefaultContext {
-    permissions: Array<"read" | "write" | "admin">;
-  }
-}
-```
+<!--@include: @/parts/backend/type-safety/env-types.md#h3-->
 
 == Koa
-```ts
-// Koa: api/env.d.ts
-export declare module "_/api" {
-  interface DefaultState {
-    permissions: Array<"read" | "write" | "admin">;
-  }
-  interface DefaultContext {
-    authorizedUser: User;
-  }
-}
-```
+<!--@include: @/parts/backend/type-safety/env-types.md#koa-->
 :::
 
 > **Important:** declaring types in `env.d.ts` doesn't set the values -

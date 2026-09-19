@@ -315,18 +315,7 @@ The default shell composes `AppProvider` from `_/app` around the routed tree.
 feature needs to wrap the tree in a provider (TanStack Query does this) - so toggling
 such a feature never changes your code:
 
-```vue [app.vue]
-<!-- Vue: app.vue -->
-<script setup lang="ts">
-import { AppProvider } from "_/app";
-</script>
-
-<template>
-  <AppProvider>
-    <RouterView />
-  </AppProvider>
-</template>
-```
+<!--@include: @/parts/frontend/application/root-component.md#vue-->
 
 ## `router.ts`
 
@@ -335,28 +324,7 @@ import { AppProvider } from "_/app";
 also registers `appProvider` as a plugin pair through `use` - part of the default
 file, which is rarely touched:
 
-```ts [router.ts]
-// Vue: router.ts
-import routerFactory, { createRouters } from "_/router";
-import { appProvider } from "_/app";
-
-import app from "./app.vue";
-
-export default routerFactory((routes) => {
-  const { clientRouter, serverRouter } = createRouters(routes, {
-    app,
-    use: [[appProvider, undefined]],
-  });
-  return {
-    clientRouter() {
-      return clientRouter()
-    },
-    serverRouter(url) {
-      return serverRouter(url)
-    },
-  };
-});
-```
+<!--@include: @/parts/frontend/application/router.md#vue-->
 
 ## `entry/client.ts`
 
@@ -365,36 +333,7 @@ The browser entry, referenced from `index.html`. `renderFactory` reads the
 markup is present, `mount()` for a fresh client-only render - `createApp` /
 `createSSRApp` underneath:
 
-```ts [entry/client.ts]
-// Vue: entry/client.ts
-import renderFactory, {
-  createRoutes,
-  hydrate,
-  mount,
-} from "_/entry/client";
-
-import routerFactory from "../router";
-
-const routes = createRoutes();
-const { clientRouter } = routerFactory(routes);
-
-const root = document.getElementById("app");
-
-if (root) {
-  renderFactory(() => {
-    return {
-      hydrate() {
-        return hydrate(() => clientRouter(), root);
-      },
-      mount() {
-        return mount(() => clientRouter(), root);
-      },
-    };
-  });
-} else {
-  console.error("Root element not found!");
-}
-```
+<!--@include: @/parts/frontend/application/entry-client.md#vue-->
 
 The derived `hydrate` and `mount` are conveniences that wire the router to the DOM the
 usual way. For custom mounting, ignore them and render the router's component into
@@ -406,22 +345,7 @@ A `layout.vue` in any folder under `pages/` wraps every route in that folder and
 subfolders; nest layouts by nesting folders. Child routes render through
 `<RouterView />`, not through a prop:
 
-```vue [pages/dashboard/layout.vue]
-<!-- Vue: pages/dashboard/layout.vue -->
-<script setup lang="ts">
-// layout-specific logic
-</script>
-
-<template>
-  <div class="dashboard">
-    <nav>...</nav>
-    <main>
-      <RouterView />
-    </main>
-    <footer>...</footer>
-  </div>
-</template>
-```
+<!--@include: @/parts/frontend/layouts/implementation.md#vue-->
 
 Rules that bite:
 
@@ -444,28 +368,7 @@ Vue, Svelte and MDX share one per-route loader store keyed by route name, which 
 a layout passes its **path-qualified name** to the hook to read its own data, where a
 page passes nothing:
 
-```vue [pages/dashboard/layout.vue]
-<!-- Vue: pages/dashboard/layout.vue -->
-<script lang="ts">
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["dashboard/data"];
-
-// loader export lives in a plain <script> block
-export const loader = () => GET();
-</script>
-
-<script setup lang="ts">
-import { useLoaderData } from "_/use";
-
-// a layout passes its path-qualified name to read its own data
-const data = useLoaderData("dashboard/layout");
-</script>
-
-<template>
-  ...
-</template>
-```
+<!--@include: @/parts/frontend/layouts/data-loading.md#vue-->
 
 The loader runs before the layout renders, so shared data is fetched once for
 everything beneath it.
@@ -474,15 +377,7 @@ everything beneath it.
 
 `pages/404.vue` renders for unmatched routes:
 
-```vue [pages/404.vue]
-<!-- Vue: pages/404.vue -->
-<template>
-  <main>
-    <h1>404 - Not Found</h1>
-    <a href="/">Back home</a>
-  </main>
-</template>
-```
+<!--@include: @/parts/frontend/error-pages/not-found.md#vue-->
 
 It is appended to the route list as the router's catch-all, always last, so it matches
 only after every real route has failed to. `app.vue` wraps it; **no `layout.vue`
@@ -619,54 +514,13 @@ API requests from one process, and render-time fetches dispatch in-process.
 
 ### `entry/server.ts`
 
-`renderFactory` returns `renderToString(url, { assets })` and
-`renderToStream(url, { assets })`, both resolving to `{ head, html }` - a string for
-one, a web-standard `ReadableStream` for the other. Which one runs per route is decided
-by `renderMode`, not by precedence:
+`renderFactory` returns `renderToString(url, { assets })` and `renderToStream(url, { assets })`,
+both resolving to `{ head, html }` - a string for one, a web-standard `ReadableStream` for the other.
+Which one runs per route is decided by `renderMode`, not by precedence:
 
-```ts [entry/server.ts]
-// Vue: entry/server.ts
-import renderFactory, {
-  createRoutes,
-  renderToStream,
-  renderToString,
-} from "_/entry/server";
+<!--@include: @/parts/frontend/server-render/entry-server.md#vue-->
 
-import routerFactory from "../router";
-
-const routes = createRoutes();
-const { serverRouter } = routerFactory(routes);
-
-export default renderFactory(() => {
-  return {
-    renderToString(url, { assets }) {
-      return renderToString(
-        () => serverRouter(url),
-        { headerTags: assets.map(({ tag }) => tag) },
-      );
-    },
-    renderToStream(url, { assets }) {
-      return renderToStream(
-        () => serverRouter(url),
-        { headerTags: assets.map(({ tag }) => tag) },
-      );
-    },
-    onError(error) {
-      // reports only - it cannot change the response; never throw from it
-      reportToMonitoring(error, { url: error.url });
-    },
-  };
-});
-```
-
-Each `assets` entry offers `kind`, `tag` (ready-to-inject), `content` (for inlining), `size` and an optional `path`.
-Passing `tag` straight through is the right default. Or inline CSS instead with something like:
-
-```ts
-assets.map(({ kind, tag, content }) => {
-  return kind === "css" ? `<style>${content}</style>` : tag;
-})
-```
+<!--@include: @/parts/frontend/server-render/assets.md-->
 
 ### Streaming
 
@@ -721,23 +575,7 @@ automatically; a dynamic route renders once per parameter set declared through
 `staticParams` - a named export, so it lives in the plain `<script>` block too - and
 one **without** `staticParams` is skipped entirely:
 
-```vue [pages/docs/[slug]/index.vue]
-<!-- Vue: pages/docs/[slug]/index.vue -->
-<script lang="ts">
-// a plain <script> block: <script setup> can not have named exports,
-// and the two blocks coexist in one SFC
-import { defineStaticParams } from "_/core";
-
-export const staticParams = defineStaticParams<"docs/[slug]">([
-  ["getting-started"],
-  ["routing"],
-]);
-</script>
-
-<script setup lang="ts">
-/* ... */
-</script>
-```
+<!--@include: @/parts/frontend/static-site-generation/static-params.md#vue-->
 
 Each entry is positional in the route's parameter order; a splat takes an array of
 segments. The page's `loader` runs once per entry, in-process against the bundled
@@ -797,26 +635,7 @@ Enabling it deploys the `_/query` runtime and swaps `_/app` for a provider that
 supplies the client - per-request on the server, a singleton in the browser. Nothing
 else to wire; what you write is ordinary TanStack Vue Query:
 
-```vue [components/User.vue]
-<!-- Vue: components/User.vue -->
-<script setup lang="ts">
-import { useQuery } from "@tanstack/vue-query";
-import fetchClients from "_/fetch";
-
-const { id } = defineProps<{ id: string }>();
-const { GET } = fetchClients["users/[id]"];
-
-const { data, isPending } = useQuery({
-  queryKey: ["users", id],
-  queryFn: () => GET([id]),
-});
-</script>
-
-<template>
-  <div v-if="isPending">Loading...</div>
-  <div v-else>{{ data?.name }}</div>
-</template>
-```
+<!--@include: @/parts/frontend/tanstack-query/basic-usage.md#vue-->
 
 This fetches on the client after mount - the seamless path, enough for most pages.
 
@@ -896,27 +715,7 @@ const { data } = useQuery(queryOptions(route.params.id as string));
 Exactly as TanStack documents - `mutationFn` calls the fetch client, and
 `invalidateQueries` refetches affected queries in place:
 
-```vue [components/RenameUser.vue]
-<!-- Vue: components/RenameUser.vue -->
-<script setup lang="ts">
-import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import fetchClients from "_/fetch";
-
-const props = defineProps<{ id: string }>();
-
-const { POST } = fetchClients["users/[id]"];
-
-const qc = useQueryClient();
-const rename = useMutation({
-  mutationFn: (name: string) => POST([props.id], { name }),
-  onSuccess: () => qc.invalidateQueries({ queryKey: ["users", props.id] }),
-});
-</script>
-
-<template>
-  <button @click="rename.mutate('New Name')">Rename</button>
-</template>
-```
+<!--@include: @/parts/frontend/tanstack-query/mutations.md#vue-->
 
 ## Typed navigation - `Link`
 

@@ -328,18 +328,7 @@ arrives as the `children` snippet. `_/app` is a derived seam: a pass-through by
 default, swapped under the hood when a feature needs to wrap the tree in a provider
 (TanStack Query does this) - so toggling such a feature never changes your code:
 
-```svelte [app.svelte]
-<!-- Svelte: app.svelte -->
-<script lang="ts">
-  import type { Snippet } from "svelte";
-  import { AppProvider } from "_/app";
-  let { children }: { children: Snippet } = $props();
-</script>
-
-<AppProvider>
-  {@render children()}
-</AppProvider>
-```
+<!--@include: @/parts/frontend/application/root-component.md#svelte-->
 
 ## `router.ts`
 
@@ -347,24 +336,7 @@ default, swapped under the hood when a feature needs to wrap the tree in a provi
 returning `clientRouter()` for browser navigation and `serverRouter(url)` for SSR.
 The default file is rarely touched:
 
-```ts [router.ts]
-// Svelte: router.ts
-import routerFactory, { createRouters } from "_/router";
-
-import app from "./app.svelte";
-
-export default routerFactory((routes) => {
-  const { clientRouter, serverRouter } = createRouters(routes, { app });
-  return {
-    clientRouter() {
-      return clientRouter()
-    },
-    serverRouter(url) {
-      return serverRouter(url)
-    },
-  };
-});
-```
+<!--@include: @/parts/frontend/application/router.md#svelte-->
 
 ## `entry/client.ts`
 
@@ -373,36 +345,7 @@ The browser entry, referenced from `index.html`. `renderFactory` reads the
 markup is present, `mount()` for a fresh client-only render - Svelte's `mount` /
 `hydrate` underneath:
 
-```ts [entry/client.ts]
-// Svelte: entry/client.ts
-import renderFactory, {
-  createRoutes,
-  hydrate,
-  mount,
-} from "_/entry/client";
-
-import routerFactory from "../router";
-
-const routes = createRoutes();
-const { clientRouter } = routerFactory(routes);
-
-const root = document.getElementById("app");
-
-if (root) {
-  renderFactory(() => {
-    return {
-      hydrate() {
-        return hydrate(() => clientRouter(), root);
-      },
-      mount() {
-        return mount(() => clientRouter(), root);
-      },
-    };
-  });
-} else {
-  console.error("Root element not found!");
-}
-```
+<!--@include: @/parts/frontend/application/entry-client.md#svelte-->
 
 The derived `hydrate` and `mount` are conveniences that wire the router to the DOM the
 usual way. For custom mounting, ignore them and render the router's component into
@@ -414,20 +357,7 @@ A `layout.svelte` in any folder under `pages/` wraps every route in that folder 
 its subfolders; nest layouts by nesting folders. Child routes arrive as the `children`
 snippet and render with `{@render children()}`:
 
-```svelte [pages/dashboard/layout.svelte]
-<!-- Svelte: pages/dashboard/layout.svelte -->
-<script lang="ts">
-let { children } = $props();
-</script>
-
-<div class="dashboard">
-  <nav>...</nav>
-  <main>
-    {@render children()}
-  </main>
-  <footer>...</footer>
-</div>
-```
+<!--@include: @/parts/frontend/layouts/implementation.md#svelte-->
 
 Rules that bite:
 
@@ -450,31 +380,7 @@ Vue, Svelte and MDX share one per-route loader store keyed by route name, which 
 a layout passes its **path-qualified name** to the hook to read its own data, where a
 page passes nothing:
 
-```svelte [pages/dashboard/layout.svelte]
-<!-- Svelte: pages/dashboard/layout.svelte -->
-<script module lang="ts">
-import fetchClients from "_/fetch";
-
-const { GET } = fetchClients["dashboard/data"];
-
-// loader export lives in the module <script> block
-export const loader = () => GET();
-</script>
-
-<script lang="ts">
-import { useLoaderData } from "_/use";
-
-let { children } = $props();
-
-// a layout passes its path-qualified name to read its own data
-const data = useLoaderData("dashboard/layout");
-</script>
-
-<nav>{data.title}</nav>
-<main>
-  {@render children()}
-</main>
-```
+<!--@include: @/parts/frontend/layouts/data-loading.md#svelte-->
 
 The loader runs before the layout renders, so shared data is fetched once for
 everything beneath it.
@@ -483,13 +389,7 @@ everything beneath it.
 
 `pages/404.svelte` renders for unmatched routes:
 
-```svelte [pages/404.svelte]
-<!-- Svelte: pages/404.svelte -->
-<main>
-  <h1>404 - Not Found</h1>
-  <a href="/">Back home</a>
-</main>
-```
+<!--@include: @/parts/frontend/error-pages/not-found.md#svelte-->
 
 It is appended to the route list as the router's catch-all, always last, so it matches
 only after every real route has failed to. `app.svelte` wraps it; **no `layout.svelte`
@@ -624,43 +524,10 @@ API requests from one process, and render-time fetches dispatch in-process.
 `renderFactory` returns `renderToString(url, { assets })`, resolving to
 `{ head, html }`:
 
-```ts [entry/server.ts]
-// Svelte: entry/server.ts
-import renderFactory, {
-  createRoutes,
-  renderToString,
-  // no renderToStream on Svelte folders
-} from "_/entry/server";
+<!--@include: @/parts/frontend/server-render/entry-server.md#svelte-->
 
-import routerFactory from "../router";
+<!--@include: @/parts/frontend/server-render/assets.md-->
 
-const routes = createRoutes();
-const { serverRouter } = routerFactory(routes);
-
-export default renderFactory(() => {
-  return {
-    renderToString(url, { assets }) {
-      return renderToString(
-        () => serverRouter(url),
-        { headerTags: assets.map(({ tag }) => tag) },
-      );
-    },
-    onError(error) {
-      // reports only - it cannot change the response; never throw from it
-      reportToMonitoring(error, { url: error.url });
-    },
-  };
-});
-```
-
-Each `assets` entry offers `kind`, `tag` (ready-to-inject), `content` (for inlining), `size` and an optional `path`.
-Passing `tag` straight through is the right default. Or inline CSS instead with something like:
-
-```ts
-assets.map(({ kind, tag, content }) => {
-  return kind === "css" ? `<style>${content}</style>` : tag;
-})
-```
 
 ### Fetch failures and recovery
 
@@ -690,22 +557,7 @@ automatically; a dynamic route renders once per parameter set declared through
 `staticParams` - a module export, so it lives in `<script module>` too - and one
 **without** `staticParams` is skipped entirely:
 
-```svelte [pages/docs/[slug]/index.svelte]
-<!-- Svelte: pages/docs/[slug]/index.svelte -->
-<script module lang="ts">
-// module-level script: its exports are the component module's named exports
-import { defineStaticParams } from "_/core";
-
-export const staticParams = defineStaticParams<"docs/[slug]">([
-  ["getting-started"],
-  ["routing"],
-]);
-</script>
-
-<script lang="ts">
-  /* ... */
-</script>
-```
+<!--@include: @/parts/frontend/static-site-generation/static-params.md#svelte-->
 
 Each entry is positional in the route's parameter order; a splat takes an array of
 segments. The page's `loader` runs once per entry, in-process against the bundled
@@ -766,28 +618,7 @@ supplies the client - per-request on the server, a singleton in the browser. Not
 else to wire; what you write is ordinary TanStack Svelte Query. **The hooks are named
 `createQuery` / `createMutation`**, not `use*`, and they take a thunk:
 
-```svelte [components/User.svelte]
-<!-- Svelte: components/User.svelte -->
-<script lang="ts">
-  // Svelte uses createQuery (not useQuery) and takes a thunk
-  import { createQuery } from "@tanstack/svelte-query";
-  import fetchClients from "_/fetch";
-
-  let { id }: { id: string } = $props();
-  const { GET } = fetchClients["users/[id]"];
-
-  const query = createQuery(() => ({
-    queryKey: ["users", id],
-    queryFn: () => GET([id]),
-  }));
-</script>
-
-{#if query.isPending}
-  <div>Loading...</div>
-{:else}
-  <div>{query.data?.name}</div>
-{/if}
-```
+<!--@include: @/parts/frontend/tanstack-query/basic-usage.md#svelte-->
 
 This fetches on the client after mount - the seamless path, enough for most pages.
 
@@ -864,26 +695,7 @@ const query = createQuery(() => queryOptions(params.id));
 Exactly as TanStack documents, with the same thunk form - `mutationFn` calls the fetch
 client, and `invalidateQueries` refetches affected queries in place:
 
-```svelte [components/RenameUser.svelte]
-<!-- Svelte: components/RenameUser.svelte -->
-<script lang="ts">
-  // Svelte uses createMutation (not useMutation) and takes a thunk
-  import { createMutation, useQueryClient } from "@tanstack/svelte-query";
-  import fetchClients from "_/fetch";
-
-  let { id }: { id: string } = $props();
-
-  const { POST } = fetchClients["users/[id]"];
-
-  const qc = useQueryClient();
-  const rename = createMutation(() => ({
-    mutationFn: (name: string) => POST([id], { name }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["users", id] }),
-  }));
-</script>
-
-<button onclick={() => rename.mutate("New Name")}>Rename</button>
-```
+<!--@include: @/parts/frontend/tanstack-query/mutations.md#svelte-->
 
 ## Typed navigation - `Link`
 
