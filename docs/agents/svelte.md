@@ -55,6 +55,8 @@ src/<folder>/
             └── index.svelte -> the route  ->  <frontend.base>/users/:id
 ```
 
+<!--@include: @/parts/agents/lib-derived.md-->
+
 Only `index.svelte` is a route and only `layout.svelte` is a layout - everything else
 in a route folder is a colocated helper, never scanned.
 [Rationale&nbsp;›](/routing/rationale.md)

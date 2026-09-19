@@ -155,7 +155,7 @@ Three prefixes are reserved. Don't reuse them for your own aliases.
 |---|---|---|
 | `@/*` | project root | anything shared across source folders - db layer, domain types |
 | `~/*` | **this** source folder | your own modules inside the folder |
-| `_/*` | `lib/<this folder>/` | derived code |
+| `_/*` | `lib/<this folder>/` | derived code - generated, never edited |
 
 ```ts
 import { db } from "@/db";                    // my-app/db.ts

@@ -67,6 +67,19 @@ File watching inside containers is prone to inotify trouble (limits, wedged inst
 which shows up as files that are silently never filled. Create the empty files and run the **build** command instead:
 it resolves routes with exactly the same code, deterministically, with no watcher involved.
 
+## Never edit `lib/`
+
+::: warning `lib/` is derived - never edit it
+Everything reached through `_/` lives in `lib/<folder>/`, regenerated from your
+sources on every change. Edits there are overwritten without warning.
+Code you want to share between folders goes at the **project root** and is imported
+through `@/` - never `lib/`, and never `~/`, which is this folder only.
+:::
+
+If a `_/` import looks wrong or missing, the cause is upstream - a source file that
+was never seeded, or a build that has not run - never `lib/` itself. Fix the source
+and let it regenerate.
+
 ## The four silent validation failures
 
 These typecheck cleanly and misbehave at runtime. Check them before debugging anything else.

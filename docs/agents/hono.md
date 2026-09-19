@@ -45,6 +45,8 @@ src/<folder>/
             └── index.ts  -> the route  ->  <backend.base>/users/:id
 ```
 
+<!--@include: @/parts/agents/lib-derived.md-->
+
 `index.ts` and `use.ts` are the only filenames the backend watcher acts on.
 Everything else in a route folder is a colocated helper - never a route, never scanned.
 [Rationale&nbsp;›](/routing/rationale.md)

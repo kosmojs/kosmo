@@ -24,6 +24,9 @@ you keep its router, its reactive model and its ecosystem, exactly as documented
 These are the files that make the folder an application.
 Every one is a real source file you own: written once when the folder is created, never re-seeded behind your back.
 
+What you import through `_/` is the opposite: derived into `lib/<folder>/`,
+regenerated on every change, [never&nbsp;edited](/essentials/project-structure#path-mappings).
+
 ```text
 src/<folder>/
 ├── kosmo.config.ts       -> this folder's config (and its Vite config)

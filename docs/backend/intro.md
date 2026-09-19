@@ -25,6 +25,8 @@ reading a body, setting a response, raising an error stay your framework's own i
 
 Creating a source folder with a backend seeds a small, fixed set of files.
 Each is a real source file you own - they are written once, never re-seeded.
+What you import through `_/` is the opposite: derived into `lib/<folder>/`,
+regenerated on every change, [never edited](/essentials/project-structure#path-mappings).
 
 ```text
 src/<folder>/api/

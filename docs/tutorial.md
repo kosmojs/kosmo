@@ -115,14 +115,13 @@ yarn install
 ```
 :::
 
-What you have at this point is deliberately minimal:
-a `package.json` and your source folder's config with a few empty stub files.
-Follow next steps to turn this skeleton into a working app.
+The scaffold is complete, not a skeleton - everything comes filled in.
+What it doesn't have yet is routes, and that is what you add next.
 
 ## Start the dev server
 
-The dev server completes the setup: it seeds the remaining project files and wires everything together.
-From then on it watches your routes and recomputes as you work:
+The dev server watches your routes and recomputes as you work -
+and seeds starter code into any route or page file you create empty:
 
 :::tabs key:pm variant:code
 == npm

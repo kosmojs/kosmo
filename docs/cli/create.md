@@ -79,15 +79,32 @@ omitting both is an error, and passing them both is an error too (same for backe
 
 ```txt
 demo/
-├── package.json               # type, distDir, devPort, previewPort, scripts, deps
 ├── .gitignore
+├── package.json               # type, distDir, devPort, previewPort, scripts, deps
+├── tsconfig.json
+├── lib/                       # generated support code, reached through `_/`
 └── src/app/
     ├── kosmo.config.ts        # the frontend / backend blocks your answers imply
+    ├── tsconfig.json
+    ├── index.html
+    ├── app.tsx                # root component, extension per framework
+    ├── router.ts
+    ├── components/Link.tsx    # the typed Link
+    ├── pages/404.tsx          # the 404 page
+    ├── entry/client.ts        # the client entry
+    ├── entry/server.ts        # the server entry, used by SSR builds
     ├── public/favicon.svg
-    ├── api/index/index.ts     # a working route, if a backend was chosen
-    ├── pages/index/index.tsx  # a working page, extension per framework
-    └── entry/client.ts        # the client entry, if a frontend was chosen
+    └── api/                   # if a backend was chosen
+        ├── app.ts             # app middleware, the native instance
+        ├── use.ts             # global middleware
+        ├── errors.ts          # the default error handler
+        ├── dev.ts             # dev-only hooks
+        ├── server.ts
+        └── env.d.ts           # global context types
 ```
+
+Every one of those files comes filled in. What the scaffold does not write is routes -
+`api/` has no endpoints and `pages/` no index page yet.
 
 `package.json` carries three project-level settings alongside the usual fields -
 [distDir, devPort, previewPort](/essentials/config#project-settings-package-json) -
@@ -124,8 +141,8 @@ yarn install
 
 ### Start the dev server
 
-The dev server completes the setup: it seeds the remaining project files and wires everything together.
-From then on it watches your routes and recomputes as you work:
+The dev server watches your routes and recomputes as you work -
+and seeds starter code into any route or page file you create empty:
 
 :::tabs key:pm variant:code
 == npm

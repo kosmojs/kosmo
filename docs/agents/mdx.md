@@ -57,6 +57,8 @@ src/<folder>/
             └── index.mdx -> the route  ->  <frontend.base>/docs/:slug
 ```
 
+<!--@include: @/parts/agents/lib-derived.md-->
+
 Only `index.mdx` / `index.md` is a route and only `layout.mdx` is a layout -
 everything else in a route folder is a colocated helper, never scanned.
 [Rationale&nbsp;›](/routing/rationale.md)

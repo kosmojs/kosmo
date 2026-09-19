@@ -16,6 +16,9 @@ The result is a fully-typed client that mirrors your route definition exactly.
 Parameters, payload shape, response type - all derived from the same source.
 Change your API, and the client updates with it. No manual sync required.
 
+The client is derived into `lib/<folder>/fetch/` and reached as `_/fetch`.
+You import it; you never edit it - `lib/` is [regenerated](/essentials/project-structure#path-mappings) on every change.
+
 ## What Gets Derived
 
 Each route's client module exports:
