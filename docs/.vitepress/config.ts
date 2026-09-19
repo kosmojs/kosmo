@@ -227,9 +227,13 @@ export default defineConfig({
         },
         {
           text: "CLI",
-          link: "/cli/intro",
           collapsed: false,
           items: [
+            {
+              text: "Overview",
+              docFooterText: "CLI",
+              link: "/cli/intro",
+            },
             {
               text: "create kosmo",
               docFooterText: "create kosmo",
@@ -269,9 +273,13 @@ export default defineConfig({
         },
         {
           text: "Routing",
-          link: "/routing/intro",
           collapsed: false,
           items: [
+            {
+              text: "Overview",
+              docFooterText: "Directory-Based Routing",
+              link: "/routing/intro",
+            },
             {
               text: "Rationale",
               link: "/routing/rationale",
@@ -284,9 +292,13 @@ export default defineConfig({
         },
         {
           text: "Backend",
-          link: "/backend/intro",
           collapsed: false,
           items: [
+            {
+              text: "Overview",
+              docFooterText: "API Server",
+              link: "/backend/intro",
+            },
             {
               text: "Request Context",
               link: "/backend/context",
@@ -328,9 +340,13 @@ export default defineConfig({
         },
         {
           text: "Frontend",
-          link: "/frontend/intro",
           collapsed: false,
           items: [
+            {
+              text: "Overview",
+              docFooterText: "Framework Integration",
+              link: "/frontend/intro",
+            },
             {
               text: "Application",
               link: "/frontend/application",
@@ -389,9 +405,13 @@ export default defineConfig({
         },
         {
           text: "Runtype Validation",
-          link: "/validation/intro",
           collapsed: false,
           items: [
+            {
+              text: "Basics",
+              docFooterText: "Runtime Validation",
+              link: "/validation/intro",
+            },
             {
               text: "Params",
               link: "/validation/params",
@@ -434,9 +454,13 @@ export default defineConfig({
         },
         {
           text: "Fetch Clients",
-          link: "/fetch/intro",
           collapsed: false,
           items: [
+            {
+              text: "Basics",
+              docFooterText: "Fetch Clients",
+              link: "/fetch/intro",
+            },
             {
               text: "Quick Start",
               link: "/fetch/start",
@@ -471,9 +495,13 @@ export default defineConfig({
         },
         {
           text: "Sidecar Folders",
-          link: "/sidecar/intro",
           collapsed: false,
           items: [
+            {
+              text: "Overview",
+              docFooterText: "Sidecars",
+              link: "/sidecar/intro",
+            },
             {
               text: "Config",
               docFooterText: "Sidecar config",
@@ -498,9 +526,13 @@ export default defineConfig({
         },
         {
           text: "OpenAPI",
-          link: "/openapi/intro",
           collapsed: false,
           items: [
+            {
+              text: "Overview",
+              docFooterText: "OpenAPI",
+              link: "/openapi/intro",
+            },
             {
               text: "Config",
               docFooterText: "OpenAPI config",
@@ -542,10 +574,13 @@ export default defineConfig({
             },
             {
               text: "Agents",
-              docFooterText: "Agents",
-              link: "/agents/intro",
               collapsed: true,
               items: [
+                {
+                  text: "Intro",
+                  docFooterText: "Notes for LLM Agents",
+                  link: "/agents/intro",
+                },
                 {
                   text: "Hono",
                   docFooterText: "Hono backend",
