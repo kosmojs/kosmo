@@ -15,13 +15,19 @@ Error handling starts with `api/errors.ts` file, customize it at your needs:
 
 :::tabs key:backend variant:code
 == Hono
+```ts
 <!--@include: @/parts/backend/error-handling/default-handler.md#hono-->
+```
 
 == H3
+```ts
 <!--@include: @/parts/backend/error-handling/default-handler.md#h3-->
+```
 
 == Koa
+```ts
 <!--@include: @/parts/backend/error-handling/default-handler.md#koa-->
+```
 :::
 
 It's a regular file - customize it freely. It is then wired into `api/app.ts`:
@@ -52,13 +58,19 @@ So don't wrap handler logic in `try`/`catch` just to turn a failure into a respo
 
 :::tabs key:backend variant:code
 == Hono
+```ts
 <!--@include: @/parts/backend/error-handling/let-handlers-fail.md#hono-->
+```
 
 == H3
+```ts
 <!--@include: @/parts/backend/error-handling/let-handlers-fail.md#h3-->
+```
 
 == Koa
+```ts
 <!--@include: @/parts/backend/error-handling/let-handlers-fail.md#koa-->
+```
 :::
 
 > `HTTPError` takes a single `[status, message]` **tuple**, not two arguments.

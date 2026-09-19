@@ -31,19 +31,29 @@ so out of the box your app behaves exactly like a plain shell.
 
 :::tabs key:frontend variant:code
 == React
+```tsx
 <!--@include: @/parts/frontend/application/root-component.md#react-->
+```
 
 == Solid
+```tsx
 <!--@include: @/parts/frontend/application/root-component.md#solid-->
+```
 
 == Vue
+```vue
 <!--@include: @/parts/frontend/application/root-component.md#vue-->
+```
 
 == Svelte
+```svelte
 <!--@include: @/parts/frontend/application/root-component.md#svelte-->
+```
 
 == MDX
+```mdx
 <!--@include: @/parts/frontend/application/root-component.md#mdx-->
+```
 :::
 
 ### Why the AppProvider seam
@@ -71,19 +81,29 @@ The callback must return two functions:
 
 :::tabs key:frontend variant:code
 == React
+```ts
 <!--@include: @/parts/frontend/application/router.md#react-->
+```
 
 == Solid
+```ts
 <!--@include: @/parts/frontend/application/router.md#solid-->
+```
 
 == Vue
+```ts
 <!--@include: @/parts/frontend/application/router.md#vue-->
+```
 
 == Svelte
+```ts
 <!--@include: @/parts/frontend/application/router.md#svelte-->
+```
 
 == MDX
+```ts
 <!--@include: @/parts/frontend/application/router.md#mdx-->
+```
 :::
 
 The derived `routes` are always wrapped inside your `app` component,
@@ -112,19 +132,29 @@ correct method: `hydrate()` for SSR hydration, `mount()` for a fresh client-only
 
 :::tabs key:frontend variant:code
 == React
+```ts
 <!--@include: @/parts/frontend/application/entry-client.md#react-->
+```
 
 == Solid
+```ts
 <!--@include: @/parts/frontend/application/entry-client.md#solid-->
+```
 
 == Vue
+```ts
 <!--@include: @/parts/frontend/application/entry-client.md#vue-->
+```
 
 == Svelte
+```ts
 <!--@include: @/parts/frontend/application/entry-client.md#svelte-->
+```
 
 == MDX
+```ts
 <!--@include: @/parts/frontend/application/entry-client.md#mdx-->
+```
 :::
 
 Under the hood:

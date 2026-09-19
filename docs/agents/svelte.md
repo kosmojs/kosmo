@@ -328,7 +328,9 @@ arrives as the `children` snippet. `_/app` is a derived seam: a pass-through by
 default, swapped under the hood when a feature needs to wrap the tree in a provider
 (TanStack Query does this) - so toggling such a feature never changes your code:
 
+```svelte [app.svelte]
 <!--@include: @/parts/frontend/application/root-component.md#svelte-->
+```
 
 ## `router.ts`
 
@@ -336,7 +338,9 @@ default, swapped under the hood when a feature needs to wrap the tree in a provi
 returning `clientRouter()` for browser navigation and `serverRouter(url)` for SSR.
 The default file is rarely touched:
 
+```ts [router.ts]
 <!--@include: @/parts/frontend/application/router.md#svelte-->
+```
 
 ## `entry/client.ts`
 
@@ -345,7 +349,9 @@ The browser entry, referenced from `index.html`. `renderFactory` reads the
 markup is present, `mount()` for a fresh client-only render - Svelte's `mount` /
 `hydrate` underneath:
 
+```ts [entry/client.ts]
 <!--@include: @/parts/frontend/application/entry-client.md#svelte-->
+```
 
 The derived `hydrate` and `mount` are conveniences that wire the router to the DOM the
 usual way. For custom mounting, ignore them and render the router's component into
@@ -357,7 +363,9 @@ A `layout.svelte` in any folder under `pages/` wraps every route in that folder 
 its subfolders; nest layouts by nesting folders. Child routes arrive as the `children`
 snippet and render with `{@render children()}`:
 
+```svelte [pages/dashboard/layout.svelte]
 <!--@include: @/parts/frontend/layouts/implementation.md#svelte-->
+```
 
 Rules that bite:
 
@@ -380,7 +388,9 @@ Vue, Svelte and MDX share one per-route loader store keyed by route name, which 
 a layout passes its **path-qualified name** to the hook to read its own data, where a
 page passes nothing:
 
+```svelte [pages/dashboard/layout.svelte]
 <!--@include: @/parts/frontend/layouts/data-loading.md#svelte-->
+```
 
 The loader runs before the layout renders, so shared data is fetched once for
 everything beneath it.
@@ -389,7 +399,9 @@ everything beneath it.
 
 `pages/404.svelte` renders for unmatched routes:
 
+```svelte [pages/404.svelte]
 <!--@include: @/parts/frontend/error-pages/not-found.md#svelte-->
+```
 
 It is appended to the route list as the router's catch-all, always last, so it matches
 only after every real route has failed to. `app.svelte` wraps it; **no `layout.svelte`
@@ -524,7 +536,9 @@ API requests from one process, and render-time fetches dispatch in-process.
 `renderFactory` returns `renderToString(url, { assets })`, resolving to
 `{ head, html }`:
 
+```ts [entry/server.ts]
 <!--@include: @/parts/frontend/server-render/entry-server.md#svelte-->
+```
 
 <!--@include: @/parts/frontend/server-render/assets.md-->
 
@@ -557,7 +571,9 @@ automatically; a dynamic route renders once per parameter set declared through
 `staticParams` - a module export, so it lives in `<script module>` too - and one
 **without** `staticParams` is skipped entirely:
 
+```svelte [pages/docs/[slug]/index.svelte]
 <!--@include: @/parts/frontend/static-site-generation/static-params.md#svelte-->
+```
 
 Each entry is positional in the route's parameter order; a splat takes an array of
 segments. The page's `loader` runs once per entry, in-process against the bundled
@@ -618,7 +634,9 @@ supplies the client - per-request on the server, a singleton in the browser. Not
 else to wire; what you write is ordinary TanStack Svelte Query. **The hooks are named
 `createQuery` / `createMutation`**, not `use*`, and they take a thunk:
 
+```svelte [components/User.svelte]
 <!--@include: @/parts/frontend/tanstack-query/basic-usage.md#svelte-->
+```
 
 This fetches on the client after mount - the seamless path, enough for most pages.
 
@@ -629,7 +647,9 @@ This fetches on the client after mount - the seamless path, enough for most page
 active one). For custom defaults, create the client in `app.svelte` and hand it to
 the provider:
 
+```svelte [app.svelte]
 <!--@include: @/parts/frontend/tanstack-query/custom-client.md#svelte-->
+```
 
 ### SSR warmup (advanced)
 
@@ -638,14 +658,18 @@ The one KosmoJS-specific detail: get the request-scoped client from
 `getQueryClient()`, so you prefetch into the same client the render reads, and share
 one query-options helper so the `queryKey` matches on both sides:
 
+```svelte [pages/users/[id]/index.svelte]
 <!--@include: @/parts/frontend/tanstack-query/ssr-warmup.md#svelte-->
+```
 
 ### Mutations
 
 Exactly as TanStack documents, with the same thunk form - `mutationFn` calls the fetch
 client, and `invalidateQueries` refetches affected queries in place:
 
+```svelte [components/RenameUser.svelte]
 <!--@include: @/parts/frontend/tanstack-query/mutations.md#svelte-->
+```
 
 ## Typed navigation - `Link`
 

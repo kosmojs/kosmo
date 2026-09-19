@@ -402,7 +402,9 @@ including the 404 page - site-wide navigation, footer, analytics. It is not a la
 it has no folder scope, it simply wraps everything. The default shell composes
 `AppProvider` from `_/app` around the routed tree:
 
+```mdx [app.mdx]
 <!--@include: @/parts/frontend/application/root-component.md#mdx-->
+```
 
 ## `router.ts`
 
@@ -411,7 +413,9 @@ MDX-specific part is the `components` map handed to `createRouters` alongside th
 app, so the MDXProvider overrides apply to every page. The default file is rarely
 touched:
 
+```ts [router.ts]
 <!--@include: @/parts/frontend/application/router.md#mdx-->
+```
 
 ## `entry/client.ts`
 
@@ -419,7 +423,9 @@ The browser entry, referenced from `index.html`. `renderFactory` reads the
 `__KOSMO_HYDRATION_BOOL__` flag the server injects and picks `hydrate()` when SSR
 markup is present, `mount()` for a fresh client-only render:
 
+```ts [entry/client.ts]
 <!--@include: @/parts/frontend/application/entry-client.md#mdx-->
+```
 
 ## Layouts
 
@@ -428,7 +434,9 @@ subfolders; nest layouts by nesting folders. The wrapped content arrives as
 `props.children` - everything else (the page's frontmatter, loader data) is read
 with hooks:
 
+```mdx [pages/docs/layout.mdx]
 <!--@include: @/parts/frontend/layouts/implementation.md#mdx-->
+```
 
 Rules that bite:
 
@@ -472,13 +480,17 @@ share one per-route loader store keyed by route name, which is why a layout pass
 its **path-qualified name** to the hook to read its own data, where a page passes
 nothing:
 
+```mdx [pages/dashboard/layout.mdx]
 <!--@include: @/parts/frontend/layouts/data-loading.md#mdx-->
+```
 
 ## The 404 page
 
 `pages/404.mdx` renders for unmatched routes:
 
+```mdx [pages/404.mdx]
 <!--@include: @/parts/frontend/error-pages/not-found.md#mdx-->
+```
 
 It is appended to the route list as the router's catch-all, always last, so it matches
 only after every real route has failed to. `app.mdx` wraps it; **no `layout.mdx`
@@ -605,7 +617,9 @@ render-time fetches dispatch in-process.
 
 `renderFactory` returns `renderToString(url, { assets })`, resolving to `{ head, html }`:
 
+```ts [entry/server.ts]
 <!--@include: @/parts/frontend/server-render/entry-server.md#mdx-->
+```
 
 <!--@include: @/parts/frontend/server-render/assets.md-->
 
@@ -638,7 +652,9 @@ for a content folder. Static routes render automatically; a dynamic route render
 once per parameter set declared through `staticParams` - **in frontmatter, not as an
 export** - and one without `staticParams` is skipped entirely:
 
+```mdx [pages/docs/[slug]/index.mdx]
 <!--@include: @/parts/frontend/static-site-generation/static-params.md#mdx-->
+```
 
 Each entry is positional in the route's parameter order; a splat takes an array of
 segments. The page's `loader` runs once per entry, in-process against the bundled

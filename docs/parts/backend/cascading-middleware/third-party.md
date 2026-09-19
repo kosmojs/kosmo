@@ -1,5 +1,4 @@
 <!-- #region hono -->
-```ts
 // Hono: api/users/use.ts
 import { rateLimiter } from "hono-rate-limiter";
 
@@ -14,11 +13,9 @@ export default [
     }),
   ),
 ];
-```
 <!-- #endregion hono -->
 
 <!-- #region h3 -->
-```ts
 // H3: api/users/use.ts
 import { use } from "_/api";
 
@@ -28,11 +25,9 @@ export default [
     return next();
   }),
 ];
-```
 <!-- #endregion h3 -->
 
 <!-- #region koa -->
-```ts
 // Koa: api/users/use.ts
 import ratelimit from "koa-ratelimit";
 
@@ -43,5 +38,4 @@ const db = new Map();
 export default [
   use(ratelimit({ driver: "memory", db, duration: 15 * 60 * 1000, max: 100 })),
 ];
-```
 <!-- #endregion koa -->

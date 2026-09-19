@@ -1,5 +1,4 @@
 <!-- #region react -->
-```ts
 // React: entry/client.ts
 import renderFactory, {
   createRoutes,
@@ -28,11 +27,9 @@ if (root) {
 } else {
   console.error("Root element not found!");
 }
-```
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```ts
 // Solid: entry/client.ts
 import renderFactory, {
   createRoutes,
@@ -61,11 +58,9 @@ if (root) {
 } else {
   console.error("Root element not found!");
 }
-```
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```ts
 // Vue: entry/client.ts
 import renderFactory, {
   createRoutes,
@@ -94,11 +89,9 @@ if (root) {
 } else {
   console.error("Root element not found!");
 }
-```
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```ts
 // Svelte: entry/client.ts
 import renderFactory, {
   createRoutes,
@@ -127,11 +120,9 @@ if (root) {
 } else {
   console.error("Root element not found!");
 }
-```
 <!-- #endregion svelte -->
 
 <!-- #region mdx -->
-```ts
 // MDX: entry/client.ts
 import renderFactory, {
   createRoutes,
@@ -160,5 +151,4 @@ if (root) {
 } else {
   console.error("Root element not found!");
 }
-```
 <!-- #endregion mdx -->

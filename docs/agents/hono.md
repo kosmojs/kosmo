@@ -439,14 +439,18 @@ appear in the array**; to run code after the handler, put it after `await next()
 
 Restrict middleware to specific methods with `on`:
 
+```ts [api/example/index.ts]
 <!--@include: @/parts/backend/middleware/method-specific.md#hono-->
+```
 
 ### Global middleware - `api/use.ts`
 
 Whatever `api/use.ts` default-exports runs for **every route** in the folder -
 no imports, no registration:
 
+```ts [api/use.ts]
 <!--@include: @/parts/backend/middleware/global.md#hono-->
+```
 
 State goes through `ctx.set()` / `ctx.get()`, not by assignment. This is the place for
 work that belongs to routes and wants the request already validated: loading the current
@@ -463,7 +467,9 @@ middleware always runs before child middleware, and child routes cannot skip a p
 `use.ts`. Every subfolder `use.ts` also exports `UseT` - the type of what the middleware
 adds to the context, merged downward so routes underneath are typed automatically:
 
+```ts [api/users/use.ts]
 <!--@include: @/parts/backend/cascading-middleware/context-types.md#hono-->
+```
 
 Routes underneath read `ctx.get("user")`, fully typed - no imports, no type arguments.
 The global `api/use.ts` is the exception: its `UseT` export is ignored; global types come
@@ -482,7 +488,9 @@ Keep cascading middleware **generic** - it runs for sibling routes too, so a par
 `id` may be `undefined` there. Parameter-specific logic belongs in the route handler.
 Any Hono middleware package works unchanged here, wired through `use()`:
 
+```ts [api/users/use.ts]
 <!--@include: @/parts/backend/cascading-middleware/third-party.md#hono-->
+```
 
 ### Slots
 
@@ -563,7 +571,9 @@ Any `use()` entry claiming an `edge:` prefixed slot - in `api/use.ts`, a cascadi
 ahead of validation**. That is what turns an expired token into a `401` instead of the
 `400 ValidationError` a malformed body would otherwise produce:
 
+```ts [api/use.ts]
 <!--@include: @/parts/backend/edge-middleware/edge-slot.md#hono-->
+```
 
 Every `edge:` prefixed name is reserved - nothing to declare. Name one slot per concern
 (`edge:auth`, `edge:ratelimit`); they run in declaration order, each independently
@@ -633,7 +643,9 @@ Hono's `app.onError()` catches everything (`await next()` does **not** throw), a
 handler returns a `Response`. Hono's own `HTTPException` carries one already, so the
 default handler returns `error.getResponse()` for it before anything else:
 
+```ts [api/errors.ts]
 <!--@include: @/parts/backend/error-handling/default-handler.md#hono-->
+```
 
 It is a regular file you own - customize it freely, then it is wired in `api/app.ts`
 via `app.onError(defaultErrorHandler)`.
@@ -649,7 +661,9 @@ A `ValidationError` exposes `target` (which request part failed), `errors`
 Don't wrap handler logic in `try`/`catch` just to turn a failure into a response -
 throw, and let `api/errors.ts` decide:
 
+```ts [api/users/[id]/index.ts]
 <!--@include: @/parts/backend/error-handling/let-handlers-fail.md#hono-->
+```
 
 The default handler understands several shapes:
 
@@ -672,7 +686,9 @@ errors for everything downstream.
 change. Hono speaks fetch, so the default `requestHandler` turns `app.fetch` into a Node
 listener:
 
+```ts [api/dev.ts]
 <!--@include: @/parts/dev-build-run/development-workflow/request-handler.md#hono-->
+```
 
 Two more hooks sit on the same cycle:
 
@@ -787,7 +803,9 @@ server beside it. Verify production behavior locally with
 
 Hono splits per-request values from environment bindings, so there are two interfaces:
 
+```ts [api/env.d.ts]
 <!--@include: @/parts/backend/type-safety/env-types.md#hono-->
+```
 
 Declaring types does not set the values - the middleware that populates them still has to
 run, usually in `api/use.ts` via `ctx.set("permissions", ...)`.

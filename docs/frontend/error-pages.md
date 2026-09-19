@@ -37,15 +37,25 @@ From that point it is an ordinary source file: it is never re-seeded, never over
 
 :::tabs key:frontend variant:code
 == React
+```tsx
 <!--@include: @/parts/frontend/error-pages/not-found.md#react-->
+```
 == Solid
+```tsx
 <!--@include: @/parts/frontend/error-pages/not-found.md#solid-->
+```
 == Vue
+```vue
 <!--@include: @/parts/frontend/error-pages/not-found.md#vue-->
+```
 == Svelte
+```svelte
 <!--@include: @/parts/frontend/error-pages/not-found.md#svelte-->
+```
 == MDX
+```mdx
 <!--@include: @/parts/frontend/error-pages/not-found.md#mdx-->
+```
 :::
 
 ## How it is registered

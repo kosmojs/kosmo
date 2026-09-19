@@ -1,5 +1,4 @@
 <!-- #region react -->
-```tsx
 // React: pages/dashboard/layout.tsx
 import { Outlet, useLoaderData } from "react-router";
 import fetchClients from "_/fetch";
@@ -13,11 +12,9 @@ export default function Layout() {
   // ...
   return <Outlet />;
 }
-```
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```tsx
 // Solid: pages/dashboard/layout.tsx
 import { Suspense, type ParentComponent } from "solid-js";
 import { createAsync, query } from "@solidjs/router";
@@ -37,11 +34,9 @@ const Layout: ParentComponent = (props) => {
 };
 
 export default Layout;
-```
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```vue
 <!-- Vue: pages/dashboard/layout.vue -->
 <script lang="ts">
 import fetchClients from "_/fetch";
@@ -62,11 +57,9 @@ const data = useLoaderData("dashboard/layout");
 <template>
   ...
 </template>
-```
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```svelte
 <!-- Svelte: pages/dashboard/layout.svelte -->
 <script module lang="ts">
 import fetchClients from "_/fetch";
@@ -90,11 +83,9 @@ const data = useLoaderData("dashboard/layout");
 <main>
   {@render children()}
 </main>
-```
 <!-- #endregion svelte -->
 
 <!-- #region mdx -->
-```mdx
 {/* MDX: pages/dashboard/layout.mdx */}
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
@@ -113,5 +104,4 @@ export const Nav = () => {
 <main>
   {props.children}
 </main>
-```
 <!-- #endregion mdx -->

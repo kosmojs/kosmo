@@ -1,6 +1,5 @@
 
 <!-- #region react -->
-```ts
 // React: entry/server.ts
 import renderFactory, {
   createRoutes,
@@ -33,11 +32,9 @@ export default renderFactory(() => {
     },
   };
 });
-```
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```ts
 // Solid: entry/server.ts
 import renderFactory, {
   createRoutes,
@@ -70,11 +67,9 @@ export default renderFactory(() => {
     },
   };
 });
-```
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```ts
 // Vue: entry/server.ts
 import renderFactory, {
   createRoutes,
@@ -107,11 +102,9 @@ export default renderFactory(() => {
     },
   };
 });
-```
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```ts
 // Svelte: entry/server.ts
 import renderFactory, {
   createRoutes,
@@ -138,11 +131,9 @@ export default renderFactory(() => {
     },
   };
 });
-```
 <!-- #endregion svelte -->
 
 <!-- #region mdx -->
-```ts
 // MDX: entry/server.ts
 import renderFactory, {
   createRoutes,
@@ -169,6 +160,5 @@ export default renderFactory(() => {
     },
   };
 });
-```
 <!-- #endregion mdx -->
 

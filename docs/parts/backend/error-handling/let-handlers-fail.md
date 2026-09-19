@@ -1,5 +1,4 @@
 <!-- #region hono -->
-```ts
 // Hono: api/users/[id]/index.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
@@ -14,11 +13,9 @@ export default defineRoute<"users/[id]", [number]>(({ GET }) => [
     return ctx.json(user);
   }),
 ]);
-```
 <!-- #endregion hono -->
 
 <!-- #region h3 -->
-```ts
 // H3: api/users/[id]/index.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
@@ -33,11 +30,9 @@ export default defineRoute<"users/[id]", [number]>(({ GET }) => [
     return user;
   }),
 ]);
-```
 <!-- #endregion h3 -->
 
 <!-- #region koa -->
-```ts
 // Koa: api/users/[id]/index.ts
 import { HTTPError } from "@kosmojs/core/errors";
 
@@ -52,5 +47,4 @@ export default defineRoute<"users/[id]", [number]>(({ GET }) => [
     ctx.body = user;
   }),
 ]);
-```
 <!-- #endregion koa -->

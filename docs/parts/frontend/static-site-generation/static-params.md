@@ -1,5 +1,4 @@
 <!-- #region react -->
-```tsx
 // React: pages/docs/[slug]/index.tsx
 import { defineStaticParams } from "_/core";
 
@@ -10,11 +9,9 @@ export const staticParams = defineStaticParams<"docs/[slug]">([
 ]);
 
 export default function DocsPage() { /* ... */ }
-```
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```tsx
 // Solid: pages/docs/[slug]/index.tsx
 import { defineStaticParams } from "_/core";
 
@@ -25,11 +22,9 @@ export const staticParams = defineStaticParams<"docs/[slug]">([
 ]);
 
 export default function DocsPage() { /* ... */ }
-```
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```vue
 <!-- Vue: pages/docs/[slug]/index.vue -->
 <script lang="ts">
 // a plain <script> block: <script setup> can not have named exports,
@@ -45,11 +40,9 @@ export const staticParams = defineStaticParams<"docs/[slug]">([
 <script setup lang="ts">
 /* ... */
 </script>
-```
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```svelte
 <!-- Svelte: pages/docs/[slug]/index.svelte -->
 <script module lang="ts">
 // module-level script: its exports are the component module's named exports
@@ -64,11 +57,9 @@ export const staticParams = defineStaticParams<"docs/[slug]">([
 <script lang="ts">
   /* ... */
 </script>
-```
 <!-- #endregion svelte -->
 
 <!-- #region mdx -->
-```mdx
 ---
 title: Documentation
 staticParams:
@@ -77,5 +68,4 @@ staticParams:
 ---
 
 {/* MDX declares staticParams in frontmatter, not as an export */}
-```
 <!-- #endregion mdx -->

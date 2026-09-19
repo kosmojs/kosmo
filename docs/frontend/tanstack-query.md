@@ -69,16 +69,24 @@ data ready during SSR.
 
 :::tabs key:frontend variant:code
 == React
+```tsx
 <!--@include: @/parts/frontend/tanstack-query/basic-usage.md#react-->
+```
 
 == Solid
+```tsx
 <!--@include: @/parts/frontend/tanstack-query/basic-usage.md#solid-->
+```
 
 == Vue
+```vue
 <!--@include: @/parts/frontend/tanstack-query/basic-usage.md#vue-->
+```
 
 == Svelte
+```svelte
 <!--@include: @/parts/frontend/tanstack-query/basic-usage.md#svelte-->
+```
 :::
 
 The read hook is where the frameworks differ most:
@@ -120,16 +128,24 @@ Sketches per framework - see the official guides above for the full picture:
 
 :::tabs key:frontend variant:code
 == React
+```tsx
 <!--@include: @/parts/frontend/tanstack-query/ssr-warmup.md#react-->
+```
 
 == Solid
+```tsx
 <!--@include: @/parts/frontend/tanstack-query/ssr-warmup.md#solid-->
+```
 
 == Vue
+```vue
 <!--@include: @/parts/frontend/tanstack-query/ssr-warmup.md#vue-->
+```
 
 == Svelte
+```svelte
 <!--@include: @/parts/frontend/tanstack-query/ssr-warmup.md#svelte-->
+```
 :::
 
 `dehydrate` returns a snapshot of the request client's cache; import it from your
@@ -149,16 +165,24 @@ alone cannot do without re-navigating.
 
 :::tabs key:frontend variant:code
 == React
+```tsx
 <!--@include: @/parts/frontend/tanstack-query/mutations.md#react-->
+```
 
 == Solid
+```tsx
 <!--@include: @/parts/frontend/tanstack-query/mutations.md#solid-->
+```
 
 == Vue
+```vue
 <!--@include: @/parts/frontend/tanstack-query/mutations.md#vue-->
+```
 
 == Svelte
+```svelte
 <!--@include: @/parts/frontend/tanstack-query/mutations.md#svelte-->
+```
 :::
 
 The shape is identical across frameworks - swap `useMutation`/`useQueryClient`
@@ -181,16 +205,24 @@ Where you call it differs slightly by framework - it goes wherever your app is c
 
 :::tabs key:frontend variant:code
 == React
+```tsx
 <!--@include: @/parts/frontend/tanstack-query/custom-client.md#react-->
+```
 
 == Solid
+```tsx
 <!--@include: @/parts/frontend/tanstack-query/custom-client.md#solid-->
+```
 
 == Vue
+```vue
 <!--@include: @/parts/frontend/tanstack-query/custom-client.md#vue-->
+```
 
 == Svelte
+```svelte
 <!--@include: @/parts/frontend/tanstack-query/custom-client.md#svelte-->
+```
 :::
 
 The `client` prop is typed as the adapter's `QueryClient` and exists only when the

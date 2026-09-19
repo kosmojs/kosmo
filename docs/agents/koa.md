@@ -458,14 +458,18 @@ appear in the array**; to run code after the handler, put it after `await next()
 
 Restrict middleware to specific methods with `on`:
 
+```ts [api/example/index.ts]
 <!--@include: @/parts/backend/middleware/method-specific.md#koa-->
+```
 
 ### Global middleware - `api/use.ts`
 
 Whatever `api/use.ts` default-exports runs for **every route** in the folder -
 no imports, no registration:
 
+```ts [api/use.ts]
 <!--@include: @/parts/backend/middleware/global.md#koa-->
+```
 
 State goes on `ctx.state`, not on `ctx` itself - properties placed directly on `ctx`
 are for the rarer cross-cutting extensions typed via `DefaultContext` (see
@@ -483,7 +487,9 @@ middleware always runs before child middleware, and child routes cannot skip a p
 `use.ts`. Every subfolder `use.ts` also exports `UseT` - the type of what the middleware
 adds to the context, merged downward so routes underneath are typed automatically:
 
+```ts [api/users/use.ts]
 <!--@include: @/parts/backend/cascading-middleware/context-types.md#koa-->
+```
 
 `ctx.assert(value, status, message)` is Koa's own guard and the idiomatic way to fail
 here. Routes underneath then read `ctx.state.user`, fully typed - no imports, no type
@@ -505,7 +511,9 @@ Keep cascading middleware **generic** - it runs for sibling routes too, so a par
 
 Koa's mature middleware ecosystem works unchanged here, wired through `use()`:
 
+```ts [api/users/use.ts]
 <!--@include: @/parts/backend/cascading-middleware/third-party.md#koa-->
+```
 
 ### Slots
 
@@ -587,7 +595,9 @@ ahead of validation**. That is what turns an expired token into a `401` instead 
 `400 ValidationError` a malformed body would otherwise produce. A slot handler is an
 ordinary Koa middleware, so it reads `ctx.headers` and can guard with `ctx.assert`:
 
+```ts [api/use.ts]
 <!--@include: @/parts/backend/edge-middleware/edge-slot.md#koa-->
+```
 
 Every `edge:` prefixed name is reserved - nothing to declare. Name one slot per concern
 (`edge:auth`, `edge:ratelimit`); they run in declaration order, each independently
@@ -679,7 +689,9 @@ On Koa the error handler is a **middleware**, not a hook - it wraps `await next(
 `app.onError()` and H3 uses `app.use(onError(...))`; copying either onto Koa leaves
 errors unhandled:
 
+```ts [api/errors.ts]
 <!--@include: @/parts/backend/error-handling/default-handler.md#koa-->
+```
 
 It is a regular file you own - customize it freely, then it is registered **first** in
 `api/app.ts` via `app.use(defaultErrorHandler)`, so everything registered after it runs
@@ -696,7 +708,9 @@ A `ValidationError` exposes `target` (which request part failed), `errors`
 Don't wrap handler logic in `try`/`catch` just to turn a failure into a response -
 throw, and let `api/errors.ts` decide:
 
+```ts [api/users/[id]/index.ts]
 <!--@include: @/parts/backend/error-handling/let-handlers-fail.md#koa-->
+```
 
 The default handler understands several shapes:
 
@@ -720,7 +734,9 @@ errors for everything downstream.
 change. Koa is Node-native, so the default `requestHandler` hands back `app.callback()`,
 the Node request listener:
 
+```ts [api/dev.ts]
 <!--@include: @/parts/dev-build-run/development-workflow/request-handler.md#koa-->
+```
 
 Two more hooks sit on the same cycle:
 
@@ -827,7 +843,9 @@ server beside it. Verify production behavior locally with
 Koa has two surfaces, so there are two interfaces to augment - `DefaultState` for
 `ctx.state`, `DefaultContext` for things placed on `ctx` itself:
 
+```ts [api/env.d.ts]
 <!--@include: @/parts/backend/type-safety/env-types.md#koa-->
+```
 
 Declaring types does not set the values - the middleware that populates them still has
 to run, usually in `api/use.ts` via `ctx.state.permissions = ...`.

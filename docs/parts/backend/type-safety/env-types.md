@@ -1,5 +1,4 @@
 <!-- #region hono -->
-```ts
 // Hono: api/env.d.ts
 export declare module "_/api" {
   interface DefaultVariables {
@@ -9,22 +8,18 @@ export declare module "_/api" {
     DB: D1Database;
   }
 }
-```
 <!-- #endregion hono -->
 
 <!-- #region h3 -->
-```ts
 // H3: api/env.d.ts
 export declare module "_/api" {
   interface DefaultContext {
     permissions: Array<"read" | "write" | "admin">;
   }
 }
-```
 <!-- #endregion h3 -->
 
 <!-- #region koa -->
-```ts
 // Koa: api/env.d.ts
 export declare module "_/api" {
   interface DefaultState {
@@ -34,5 +29,4 @@ export declare module "_/api" {
     authorizedUser: User;
   }
 }
-```
 <!-- #endregion koa -->

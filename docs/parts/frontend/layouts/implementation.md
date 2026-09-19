@@ -1,5 +1,4 @@
 <!-- #region react -->
-```tsx
 // React: pages/dashboard/layout.tsx
 import { Outlet } from "react-router";
 
@@ -14,11 +13,9 @@ export default function Layout() {
     </div>
   );
 }
-```
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```tsx
 // Solid: pages/dashboard/layout.tsx
 import type { ParentComponent } from "solid-js";
 
@@ -35,11 +32,9 @@ const Layout: ParentComponent = (props) => {
 };
 
 export default Layout;
-```
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```vue
 <!-- Vue: pages/dashboard/layout.vue -->
 <script setup lang="ts">
 // layout-specific logic
@@ -54,11 +49,9 @@ export default Layout;
     <footer>...</footer>
   </div>
 </template>
-```
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```svelte
 <!-- Svelte: pages/dashboard/layout.svelte -->
 <script lang="ts">
 let { children } = $props();
@@ -71,11 +64,9 @@ let { children } = $props();
   </main>
   <footer>...</footer>
 </div>
-```
 <!-- #endregion svelte -->
 
 <!-- #region mdx -->
-```mdx
 {/* MDX: pages/docs/layout.mdx */}
 <nav>
   <a href="/">Home</a>
@@ -89,5 +80,4 @@ let { children } = $props();
 <footer>
   Built with KosmoJS
 </footer>
-```
 <!-- #endregion mdx -->

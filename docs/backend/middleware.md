@@ -93,13 +93,19 @@ no imports, no registration, nothing to wire:
 
 :::tabs key:backend variant:code
 == Hono
+```ts
 <!--@include: @/parts/backend/middleware/global.md#hono-->
+```
 
 == H3
+```ts
 <!--@include: @/parts/backend/middleware/global.md#h3-->
+```
 
 == Koa
+```ts
 <!--@include: @/parts/backend/middleware/global.md#koa-->
+```
 :::
 
 This is the place for work that belongs to **routes**: loading the current user onto the context,
@@ -124,13 +130,19 @@ Use the `on` option to restrict middleware to specific HTTP methods:
 
 :::tabs key:backend variant:code
 == Hono
+```ts
 <!--@include: @/parts/backend/middleware/method-specific.md#hono-->
+```
 
 == H3
+```ts
 <!--@include: @/parts/backend/middleware/method-specific.md#h3-->
+```
 
 == Koa
+```ts
 <!--@include: @/parts/backend/middleware/method-specific.md#koa-->
+```
 :::
 
 ## Slot Composition

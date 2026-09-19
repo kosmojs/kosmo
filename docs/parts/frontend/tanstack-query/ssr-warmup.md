@@ -1,5 +1,4 @@
 <!-- #region react -->
-```tsx
 // React: pages/users/[id]/index.tsx
 // Prefetch in the loader, dehydrate, then wrap the page in HydrationBoundary.
 // https://tanstack.com/query/latest/docs/framework/react/guides/ssr
@@ -35,11 +34,9 @@ export default function Page() {
     </HydrationBoundary>
   );
 }
-```
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```tsx
 // Solid: pages/users/[id]/index.tsx
 // Solid Query rehydrates through Solid's generateHydrationScript(),
 // which the SSR entry already emits - so there is no HydrationBoundary to place.
@@ -66,11 +63,9 @@ export default function Page() {
   const query = useQuery(() => queryOptions(params.id));
   return <div>{query.data?.name}</div>;
 }
-```
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```vue
 <!-- Vue: pages/users/[id]/index.vue -->
 <!-- Prefetch + dehydrate in the loader; hydrate the page's script setup.
      https://tanstack.com/query/latest/docs/framework/vue/guides/ssr -->
@@ -110,11 +105,9 @@ const { data } = useQuery(queryOptions(route.params.id as string));
 <template>
   <div>{{ data?.name }}</div>
 </template>
-```
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```svelte
 <!-- Svelte: pages/users/[id]/index.svelte -->
 <!-- Prefetch + dehydrate in the loader; wrap the page in HydrationBoundary.
      https://tanstack.com/query/latest/docs/framework/svelte/ssr -->
@@ -148,5 +141,4 @@ const query = createQuery(() => queryOptions(params.id));
 <HydrationBoundary state={useLoaderData()} queryClient={useQueryClient()}>
   <div>{query.data?.name}</div>
 </HydrationBoundary>
-```
 <!-- #endregion svelte -->

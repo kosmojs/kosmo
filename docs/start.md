@@ -107,13 +107,19 @@ Replace the seeded content with something real:
 
 :::tabs key:backend variant:code
 == Hono
+```ts
 <!--@include: @/parts/start/create-route.md#hono-->
+```
 
 == H3
+```ts
 <!--@include: @/parts/start/create-route.md#h3-->
+```
 
 == Koa
+```ts
 <!--@include: @/parts/start/create-route.md#koa-->
+```
 :::
 
 Visit `http://localhost:4556/api/users/123`. You should see JSON.

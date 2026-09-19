@@ -74,13 +74,19 @@ every route underneath should know about it without importing or declaring anyth
 
 :::tabs key:backend variant:code
 == Hono
+```ts
 <!--@include: @/parts/backend/cascading-middleware/context-types.md#hono-->
+```
 
 == H3
+```ts
 <!--@include: @/parts/backend/cascading-middleware/context-types.md#h3-->
+```
 
 == Koa
+```ts
 <!--@include: @/parts/backend/cascading-middleware/context-types.md#koa-->
+```
 :::
 
 Now every route under `/api/admin` has `user` typed on the context automatically -
@@ -195,13 +201,19 @@ Add middleware to `use.ts` and it will run on every route underneath:
 
 :::tabs key:backend variant:code
 == Hono
+```ts
 <!--@include: @/parts/backend/cascading-middleware/third-party.md#hono-->
+```
 
 == H3
+```ts
 <!--@include: @/parts/backend/cascading-middleware/third-party.md#h3-->
+```
 
 == Koa
+```ts
 <!--@include: @/parts/backend/cascading-middleware/third-party.md#koa-->
+```
 :::
 
 `api/app.ts` takes a callback receiving the native app instance - not the array of `use()` calls above -

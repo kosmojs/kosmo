@@ -1,5 +1,4 @@
 <!-- #region hono -->
-```ts
 // Hono: api/users/use.ts
 import { HTTPException } from "hono/http-exception";
 
@@ -18,11 +17,9 @@ export default [
     return next();
   })
 ];
-```
 <!-- #endregion hono -->
 
 <!-- #region h3 -->
-```ts
 // H3: api/users/use.ts
 import { HTTPError } from "h3";
 
@@ -41,11 +38,9 @@ export default [
     return next();
   })
 ];
-```
 <!-- #endregion h3 -->
 
 <!-- #region koa -->
-```ts
 // Koa: api/users/use.ts
 import { use } from "_/api";
 
@@ -62,5 +57,4 @@ export default [
     return next();
   })
 ];
-```
 <!-- #endregion koa -->

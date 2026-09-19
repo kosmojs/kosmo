@@ -45,19 +45,29 @@ Where the declaration lives depends on how the framework exposes named exports f
 
 :::tabs key:frontend variant:code
 == React
+```tsx
 <!--@include: @/parts/frontend/static-site-generation/static-params.md#react-->
+```
 
 == Solid
+```tsx
 <!--@include: @/parts/frontend/static-site-generation/static-params.md#solid-->
+```
 
 == Vue
+```vue
 <!--@include: @/parts/frontend/static-site-generation/static-params.md#vue-->
+```
 
 == Svelte
+```svelte
 <!--@include: @/parts/frontend/static-site-generation/static-params.md#svelte-->
+```
 
 == MDX
+```mdx
 <!--@include: @/parts/frontend/static-site-generation/static-params.md#mdx-->
+```
 
 :::
 

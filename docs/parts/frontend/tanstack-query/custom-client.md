@@ -1,5 +1,4 @@
 <!-- #region react -->
-```tsx
 // React: app.tsx - pass the configured client to the provider's `client` prop
 import { AppProvider } from "_/app";
 import { createQueryClient } from "_/query";
@@ -16,11 +15,9 @@ export default function App() {
     </AppProvider>
   );
 }
-```
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```tsx
 // Solid: app.tsx - pass the configured client to the provider's `client` prop
 import { AppProvider } from "_/app";
 import { createQueryClient } from "_/query";
@@ -35,11 +32,9 @@ const app: ParentComponent = (props) => {
 };
 
 export default app;
-```
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```vue
 <!-- Vue: app.vue - call createQueryClient in <script setup>; the provider resolves it -->
 <script setup lang="ts">
 import { AppProvider } from "_/app";
@@ -53,11 +48,9 @@ createQueryClient({ defaultOptions: { queries: { staleTime: 60_000 } } });
     <RouterView />
   </AppProvider>
 </template>
-```
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```svelte
 <!-- Svelte: app.svelte - pass the configured client to the provider's `client` prop -->
 <script lang="ts">
   import { AppProvider } from "_/app";
@@ -74,5 +67,4 @@ createQueryClient({ defaultOptions: { queries: { staleTime: 60_000 } } });
 <AppProvider {client}>
   {@render children()}
 </AppProvider>
-```
 <!-- #endregion svelte -->

@@ -187,13 +187,19 @@ so every route handler picks them up automatically:
 
 :::tabs key:backend variant:code
 == Hono
+```ts
 <!--@include: @/parts/backend/type-safety/env-types.md#hono-->
+```
 
 == H3
+```ts
 <!--@include: @/parts/backend/type-safety/env-types.md#h3-->
+```
 
 == Koa
+```ts
 <!--@include: @/parts/backend/type-safety/env-types.md#koa-->
+```
 :::
 
 > **Important:** declaring types in `env.d.ts` doesn't set the values -

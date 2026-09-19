@@ -78,19 +78,29 @@ Each framework renders child routes differently:
 
 :::tabs key:frontend variant:code
 == React
+```tsx
 <!--@include: @/parts/frontend/layouts/implementation.md#react-->
+```
 
 == Solid
+```tsx
 <!--@include: @/parts/frontend/layouts/implementation.md#solid-->
+```
 
 == Vue
+```vue
 <!--@include: @/parts/frontend/layouts/implementation.md#vue-->
+```
 
 == Svelte
+```svelte
 <!--@include: @/parts/frontend/layouts/implementation.md#svelte-->
+```
 
 == MDX
+```mdx
 <!--@include: @/parts/frontend/layouts/implementation.md#mdx-->
+```
 :::
 
 React renders child routes via `<Outlet />`. SolidJS and MDX use `props.children`,
@@ -112,19 +122,29 @@ but how a layout's data stays distinct from its child page's differs:
 
 :::tabs key:frontend variant:code
 == React
+```tsx
 <!--@include: @/parts/frontend/layouts/data-loading.md#react-->
+```
 
 == Solid
+```tsx
 <!--@include: @/parts/frontend/layouts/data-loading.md#solid-->
+```
 
 == Vue
+```vue
 <!--@include: @/parts/frontend/layouts/data-loading.md#vue-->
+```
 
 == Svelte
+```svelte
 <!--@include: @/parts/frontend/layouts/data-loading.md#svelte-->
+```
 
 == MDX
+```mdx
 <!--@include: @/parts/frontend/layouts/data-loading.md#mdx-->
+```
 :::
 
 Loader/preload runs before the layout renders, so its data is available immediately

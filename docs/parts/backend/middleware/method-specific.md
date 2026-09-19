@@ -1,5 +1,4 @@
 <!-- #region hono -->
-```ts
 // Hono: api/example/index.ts
 export default defineRoute<"example">(({ GET, POST, use }) => [
   use(async (ctx, next) => {
@@ -17,11 +16,9 @@ export default defineRoute<"example">(({ GET, POST, use }) => [
     // ctx.get("user") is available
   }),
 ]);
-```
 <!-- #endregion hono -->
 
 <!-- #region h3 -->
-```ts
 // H3: api/example/index.ts
 export default defineRoute<"example">(({ GET, POST, use }) => [
   use(async (event, next) => {
@@ -39,11 +36,9 @@ export default defineRoute<"example">(({ GET, POST, use }) => [
     // event.context.user is available
   }),
 ]);
-```
 <!-- #endregion h3 -->
 
 <!-- #region koa -->
-```ts
 // Koa: api/example/index.ts
 export default defineRoute<"example">(({ GET, POST, use }) => [
   use(async (ctx, next) => {
@@ -61,5 +56,4 @@ export default defineRoute<"example">(({ GET, POST, use }) => [
     // ctx.state.user is available
   }),
 ]);
-```
 <!-- #endregion koa -->

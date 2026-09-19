@@ -41,13 +41,19 @@ They should have got a `401`.
 
 :::tabs key:backend variant:code
 == Hono
+```ts
 <!--@include: @/parts/backend/edge-middleware/edge-slot.md#hono-->
+```
 
 == H3
+```ts
 <!--@include: @/parts/backend/edge-middleware/edge-slot.md#h3-->
+```
 
 == Koa
+```ts
 <!--@include: @/parts/backend/edge-middleware/edge-slot.md#koa-->
+```
 :::
 
 Now an unauthenticated request is rejected before a single schema is consulted.

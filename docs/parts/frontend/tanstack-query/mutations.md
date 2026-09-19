@@ -1,5 +1,4 @@
 <!-- #region react -->
-```tsx
 // React: components/RenameUser.tsx
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchClients from "_/fetch";
@@ -14,11 +13,9 @@ export default function RenameUser({ id }: { id: string }) {
   });
   return <button onClick={() => rename.mutate("New Name")}>Rename</button>;
 }
-```
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```tsx
 // Solid: components/RenameUser.tsx
 // Solid's hooks take a thunk, like useQuery above
 import { useMutation, useQueryClient } from "@tanstack/solid-query";
@@ -34,11 +31,9 @@ export default function RenameUser(props: { id: string }) {
   }));
   return <button onClick={() => rename.mutate("New Name")}>Rename</button>;
 }
-```
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```vue
 <!-- Vue: components/RenameUser.vue -->
 <script setup lang="ts">
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
@@ -58,11 +53,9 @@ const rename = useMutation({
 <template>
   <button @click="rename.mutate('New Name')">Rename</button>
 </template>
-```
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```svelte
 <!-- Svelte: components/RenameUser.svelte -->
 <script lang="ts">
   // Svelte uses createMutation (not useMutation) and takes a thunk
@@ -81,5 +74,4 @@ const rename = useMutation({
 </script>
 
 <button onclick={() => rename.mutate("New Name")}>Rename</button>
-```
 <!-- #endregion svelte -->

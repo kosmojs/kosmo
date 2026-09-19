@@ -1,5 +1,4 @@
 <!-- #region react -->
-```tsx
 // React: components/User.tsx
 import { useQuery } from "@tanstack/react-query";
 import fetchClients from "_/fetch";
@@ -15,11 +14,9 @@ export default function User({ id }: { id: string }) {
   if (isPending) return <div>Loading...</div>;
   return <div>{data.name}</div>;
 }
-```
 <!-- #endregion react -->
 
 <!-- #region solid -->
-```tsx
 // Solid: components/User.tsx
 import { Show } from "solid-js";
 import { useQuery } from "@tanstack/solid-query";
@@ -40,11 +37,9 @@ export default function User(props: { id: string }) {
     </Show>
   );
 }
-```
 <!-- #endregion solid -->
 
 <!-- #region vue -->
-```vue
 <!-- Vue: components/User.vue -->
 <script setup lang="ts">
 import { useQuery } from "@tanstack/vue-query";
@@ -63,11 +58,9 @@ const { data, isPending } = useQuery({
   <div v-if="isPending">Loading...</div>
   <div v-else>{{ data?.name }}</div>
 </template>
-```
 <!-- #endregion vue -->
 
 <!-- #region svelte -->
-```svelte
 <!-- Svelte: components/User.svelte -->
 <script lang="ts">
   // Svelte uses createQuery (not useQuery) and takes a thunk
@@ -88,5 +81,4 @@ const { data, isPending } = useQuery({
 {:else}
   <div>{query.data?.name}</div>
 {/if}
-```
 <!-- #endregion svelte -->

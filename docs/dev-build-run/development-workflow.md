@@ -84,13 +84,19 @@ Returns the API request handler. Seeded default:
 
 :::tabs key:backend variant:code
 == Hono
+```ts
 <!--@include: @/parts/dev-build-run/development-workflow/request-handler.md#hono-->
+```
 
 == H3
+```ts
 <!--@include: @/parts/dev-build-run/development-workflow/request-handler.md#h3-->
+```
 
 == Koa
+```ts
 <!--@include: @/parts/dev-build-run/development-workflow/request-handler.md#koa-->
+```
 :::
 
 Override this for custom routing logic - WebSocket handling, multi-handler dispatch, etc.

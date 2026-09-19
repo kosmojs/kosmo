@@ -62,19 +62,29 @@ both are implemented, and the mode decides which one the server calls per route.
 
 :::tabs key:frontend variant:code
 == React
+```ts
 <!--@include: @/parts/frontend/server-render/entry-server.md#react-->
+```
 
 == Solid
+```ts
 <!--@include: @/parts/frontend/server-render/entry-server.md#solid-->
+```
 
 == Vue
+```ts
 <!--@include: @/parts/frontend/server-render/entry-server.md#vue-->
+```
 
 == Svelte
+```ts
 <!--@include: @/parts/frontend/server-render/entry-server.md#svelte-->
+```
 
 == MDX
+```ts
 <!--@include: @/parts/frontend/server-render/entry-server.md#mdx-->
+```
 :::
 
 The two methods are near-identical - `renderToString` and `renderToStream` share

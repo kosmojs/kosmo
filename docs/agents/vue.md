@@ -315,7 +315,9 @@ The default shell composes `AppProvider` from `_/app` around the routed tree.
 feature needs to wrap the tree in a provider (TanStack Query does this) - so toggling
 such a feature never changes your code:
 
+```vue [app.vue]
 <!--@include: @/parts/frontend/application/root-component.md#vue-->
+```
 
 ## `router.ts`
 
@@ -324,7 +326,9 @@ such a feature never changes your code:
 also registers `appProvider` as a plugin pair through `use` - part of the default
 file, which is rarely touched:
 
+```ts [router.ts]
 <!--@include: @/parts/frontend/application/router.md#vue-->
+```
 
 ## `entry/client.ts`
 
@@ -333,7 +337,9 @@ The browser entry, referenced from `index.html`. `renderFactory` reads the
 markup is present, `mount()` for a fresh client-only render - `createApp` /
 `createSSRApp` underneath:
 
+```ts [entry/client.ts]
 <!--@include: @/parts/frontend/application/entry-client.md#vue-->
+```
 
 The derived `hydrate` and `mount` are conveniences that wire the router to the DOM the
 usual way. For custom mounting, ignore them and render the router's component into
@@ -345,7 +351,9 @@ A `layout.vue` in any folder under `pages/` wraps every route in that folder and
 subfolders; nest layouts by nesting folders. Child routes render through
 `<RouterView />`, not through a prop:
 
+```vue [pages/dashboard/layout.vue]
 <!--@include: @/parts/frontend/layouts/implementation.md#vue-->
+```
 
 Rules that bite:
 
@@ -368,7 +376,9 @@ Vue, Svelte and MDX share one per-route loader store keyed by route name, which 
 a layout passes its **path-qualified name** to the hook to read its own data, where a
 page passes nothing:
 
+```vue [pages/dashboard/layout.vue]
 <!--@include: @/parts/frontend/layouts/data-loading.md#vue-->
+```
 
 The loader runs before the layout renders, so shared data is fetched once for
 everything beneath it.
@@ -377,7 +387,9 @@ everything beneath it.
 
 `pages/404.vue` renders for unmatched routes:
 
+```vue [pages/404.vue]
 <!--@include: @/parts/frontend/error-pages/not-found.md#vue-->
+```
 
 It is appended to the route list as the router's catch-all, always last, so it matches
 only after every real route has failed to. `app.vue` wraps it; **no `layout.vue`
@@ -518,7 +530,9 @@ API requests from one process, and render-time fetches dispatch in-process.
 both resolving to `{ head, html }` - a string for one, a web-standard `ReadableStream` for the other.
 Which one runs per route is decided by `renderMode`, not by precedence:
 
+```ts [entry/server.ts]
 <!--@include: @/parts/frontend/server-render/entry-server.md#vue-->
+```
 
 <!--@include: @/parts/frontend/server-render/assets.md-->
 
@@ -575,7 +589,9 @@ automatically; a dynamic route renders once per parameter set declared through
 `staticParams` - a named export, so it lives in the plain `<script>` block too - and
 one **without** `staticParams` is skipped entirely:
 
+```vue [pages/docs/[slug]/index.vue]
 <!--@include: @/parts/frontend/static-site-generation/static-params.md#vue-->
+```
 
 Each entry is positional in the route's parameter order; a splat takes an array of
 segments. The page's `loader` runs once per entry, in-process against the bundled
@@ -635,7 +651,9 @@ Enabling it deploys the `_/query` runtime and swaps `_/app` for a provider that
 supplies the client - per-request on the server, a singleton in the browser. Nothing
 else to wire; what you write is ordinary TanStack Vue Query:
 
+```vue [components/User.vue]
 <!--@include: @/parts/frontend/tanstack-query/basic-usage.md#vue-->
+```
 
 This fetches on the client after mount - the seamless path, enough for most pages.
 
@@ -646,7 +664,9 @@ This fetches on the client after mount - the seamless path, enough for most page
 active one). On Vue there is no `client` prop to pass - call `createQueryClient` in
 `app.vue`'s `<script setup>` and the provider resolves it:
 
+```vue [app.vue]
 <!--@include: @/parts/frontend/tanstack-query/custom-client.md#vue-->
+```
 
 ### SSR warmup (advanced)
 
@@ -655,14 +675,18 @@ The one KosmoJS-specific detail: get the request-scoped client from
 `getQueryClient()`, so you prefetch into the same client the render reads, and share
 one query-options helper so the `queryKey` matches on both sides:
 
+```vue [pages/users/[id]/index.vue]
 <!--@include: @/parts/frontend/tanstack-query/ssr-warmup.md#vue-->
+```
 
 ### Mutations
 
 Exactly as TanStack documents - `mutationFn` calls the fetch client, and
 `invalidateQueries` refetches affected queries in place:
 
+```vue [components/RenameUser.vue]
 <!--@include: @/parts/frontend/tanstack-query/mutations.md#vue-->
+```
 
 ## Typed navigation - `Link`
 

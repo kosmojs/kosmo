@@ -226,7 +226,9 @@ The default shell composes `AppProvider` from `_/app` around the routed tree.
 feature needs to wrap the tree in a provider (TanStack Query does this) - so toggling
 such a feature never changes your code:
 
+```tsx [app.tsx]
 <!--@include: @/parts/frontend/application/root-component.md#react-->
+```
 
 ## `router.ts`
 
@@ -234,7 +236,9 @@ such a feature never changes your code:
 `clientRouter()` for browser navigation and `serverRouter(url)` for SSR. The default file
 is rarely touched:
 
+```ts [router.ts]
 <!--@include: @/parts/frontend/application/router.md#react-->
+```
 
 ## `entry/client.ts`
 
@@ -243,7 +247,9 @@ The browser entry, referenced from `index.html`. `renderFactory` reads the
 is present, `mount()` for a fresh client-only render - `createRoot`/`hydrateRoot` from
 `react-dom/client` underneath:
 
+```ts [entry/client.ts]
 <!--@include: @/parts/frontend/application/entry-client.md#react-->
+```
 
 The derived `hydrate` and `mount` are conveniences that wire the router to the DOM the
 usual way. For custom mounting, ignore them and render the router's component into
@@ -315,7 +321,9 @@ A `layout.tsx` in any folder under `pages/` wraps every route in that folder and
 subfolders; nest layouts by nesting folders. Child routes render through `<Outlet />`,
 not `props.children`:
 
+```tsx [pages/dashboard/layout.tsx]
 <!--@include: @/parts/frontend/layouts/implementation.md#react-->
+```
 
 Rules that bite:
 
@@ -338,7 +346,9 @@ structurally - each route (layouts included) owns its `loader`, and `useLoaderDa
 returns the calling route's data, so a layout's data and its page's stay distinct with
 no key to pass:
 
+```tsx [pages/dashboard/layout.tsx]
 <!--@include: @/parts/frontend/layouts/data-loading.md#react-->
+```
 
 The loader runs before the layout renders, so shared data is fetched once for everything
 beneath it.
@@ -347,7 +357,9 @@ beneath it.
 
 `pages/404.tsx` renders for unmatched routes:
 
+```tsx [pages/404.tsx]
 <!--@include: @/parts/frontend/error-pages/not-found.md#react-->
+```
 
 It is appended to the route list as the router's catch-all (`path: "*"`), always last,
 so it matches only after every real route has failed to. `app.tsx` wraps it; **no
@@ -487,7 +499,9 @@ API requests from one process, and render-time fetches dispatch in-process.
 one, a web-standard `ReadableStream` for the other. Which one runs per route is decided
 by `renderMode`, not by precedence:
 
+```ts [entry/server.ts]
 <!--@include: @/parts/frontend/server-render/entry-server.md#react-->
+```
 
 <!--@include: @/parts/frontend/server-render/assets.md-->
 
@@ -542,7 +556,9 @@ because pages are rendered by the folder's own SSR server. Static routes render
 automatically; a dynamic route renders once per parameter set declared through
 `staticParams`, and one **without** `staticParams` is skipped entirely:
 
+```tsx [pages/docs/[slug]/index.tsx]
 <!--@include: @/parts/frontend/static-site-generation/static-params.md#react-->
+```
 
 Each entry is positional in the route's parameter order; a splat takes an array of
 segments. The page's `loader` runs once per entry, in-process against the bundled API -
@@ -605,7 +621,9 @@ Enabling it deploys the `_/query` runtime and swaps `_/app` for a provider that 
 the client - per-request on the server, a singleton in the browser. Nothing else to
 wire; what you write is ordinary TanStack Query:
 
+```tsx [components/User.tsx]
 <!--@include: @/parts/frontend/tanstack-query/basic-usage.md#react-->
+```
 
 This fetches on the client after mount - the seamless path, enough for most pages.
 
@@ -616,7 +634,9 @@ This fetches on the client after mount - the seamless path, enough for most page
 active one). For custom defaults, create the client in `app.tsx` and hand it to the
 provider:
 
+```tsx [app.tsx]
 <!--@include: @/parts/frontend/tanstack-query/custom-client.md#react-->
+```
 
 ### SSR warmup (advanced)
 
@@ -626,7 +646,9 @@ The one KosmoJS-specific detail: get the request-scoped client from `getQueryCli
 so you prefetch into the same client the render reads, and share one query-options
 helper so the `queryKey` matches on both sides:
 
+```tsx [pages/users/[id]/index.tsx]
 <!--@include: @/parts/frontend/tanstack-query/ssr-warmup.md#react-->
+```
 
 The warm path is exact under string rendering; streamed routes need React's
 streamed-hydration boundary to capture queries resolving mid-stream.
@@ -636,7 +658,9 @@ streamed-hydration boundary to capture queries resolving mid-stream.
 Exactly as TanStack documents - `mutationFn` calls the fetch client, and
 `invalidateQueries` refetches affected queries in place:
 
+```tsx [components/RenameUser.tsx]
 <!--@include: @/parts/frontend/tanstack-query/mutations.md#react-->
+```
 
 ## Typed navigation - `Link`
 

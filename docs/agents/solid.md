@@ -229,7 +229,9 @@ arrives as `props.children`. `_/app` is a derived seam: a pass-through by defaul
 swapped under the hood when a feature needs to wrap the tree in a provider (TanStack
 Query does this) - so toggling such a feature never changes your code:
 
+```tsx [app.tsx]
 <!--@include: @/parts/frontend/application/root-component.md#solid-->
+```
 
 ## `router.ts`
 
@@ -237,7 +239,9 @@ Query does this) - so toggling such a feature never changes your code:
 `clientRouter()` for browser navigation and `serverRouter(url)` for SSR. The default
 file is rarely touched:
 
+```ts [router.ts]
 <!--@include: @/parts/frontend/application/router.md#solid-->
+```
 
 ## `entry/client.ts`
 
@@ -246,7 +250,9 @@ The browser entry, referenced from `index.html`. `renderFactory` reads the
 markup is present, `mount()` for a fresh client-only render - Solid's `render`/
 `hydrate` from `solid-js/web` underneath:
 
+```ts [entry/client.ts]
 <!--@include: @/parts/frontend/application/entry-client.md#solid-->
+```
 
 The derived `hydrate` and `mount` are conveniences that wire the router to the DOM the
 usual way. For custom mounting, ignore them and render the router's component into
@@ -326,7 +332,9 @@ it. Variants without a body (`| [409]`) drop out of the union.
 A `layout.tsx` in any folder under `pages/` wraps every route in that folder and its
 subfolders; nest layouts by nesting folders. Child routes arrive as `props.children`:
 
+```tsx [pages/dashboard/layout.tsx]
 <!--@include: @/parts/frontend/layouts/implementation.md#solid-->
+```
 
 Rules that bite:
 
@@ -349,13 +357,17 @@ A layout is route-level, so it loads data the same way a page does - `preload` p
 page's by the `query()` cache string you supply, not by the hook read - give each its
 own key:
 
+```tsx [pages/dashboard/layout.tsx]
 <!--@include: @/parts/frontend/layouts/data-loading.md#solid-->
+```
 
 ## The 404 page
 
 `pages/404.tsx` renders for unmatched routes:
 
+```tsx [pages/404.tsx]
 <!--@include: @/parts/frontend/error-pages/not-found.md#solid-->
+```
 
 It is appended to the route list as the router's catch-all, always last, so it matches
 only after every real route has failed to. `app.tsx` wraps it; **no `layout.tsx`
@@ -485,7 +497,9 @@ API requests from one process, and render-time fetches dispatch in-process.
 one, a web-standard `ReadableStream` for the other. Which one runs per route is decided
 by `renderMode`, not by precedence:
 
+```ts [entry/server.ts]
 <!--@include: @/parts/frontend/server-render/entry-server.md#solid-->
+```
 
 <!--@include: @/parts/frontend/server-render/assets.md-->
 
@@ -539,7 +553,9 @@ because pages are rendered by the folder's own SSR server. Static routes render
 automatically; a dynamic route renders once per parameter set declared through
 `staticParams`, and one **without** `staticParams` is skipped entirely:
 
+```tsx [pages/docs/[slug]/index.tsx]
 <!--@include: @/parts/frontend/static-site-generation/static-params.md#solid-->
+```
 
 Each entry is positional in the route's parameter order; a splat takes an array of
 segments. The page's `preload` runs once per entry, in-process against the bundled
@@ -600,7 +616,9 @@ supplies the client - per-request on the server, a singleton in the browser. Not
 else to wire; what you write is ordinary TanStack Solid Query. **The hooks take a
 thunk** - `useQuery(() => ({ ... }))` - so the options track reactively:
 
+```tsx [components/User.tsx]
 <!--@include: @/parts/frontend/tanstack-query/basic-usage.md#solid-->
+```
 
 This fetches on the client after mount - the seamless path, enough for most pages.
 
@@ -611,7 +629,9 @@ This fetches on the client after mount - the seamless path, enough for most page
 active one). For custom defaults, create the client in `app.tsx` and hand it to the
 provider:
 
+```tsx [app.tsx]
 <!--@include: @/parts/frontend/tanstack-query/custom-client.md#solid-->
+```
 
 ### SSR warmup (advanced)
 
@@ -621,14 +641,18 @@ the request-scoped client (from `getQueryClient()`) inside `preload`, and the ca
 crosses to the browser automatically; share one query-options helper so the `queryKey`
 matches on both sides:
 
+```tsx [pages/users/[id]/index.tsx]
 <!--@include: @/parts/frontend/tanstack-query/ssr-warmup.md#solid-->
+```
 
 ### Mutations
 
 Exactly as TanStack documents, with the same thunk form - `mutationFn` calls the fetch
 client, and `invalidateQueries` refetches affected queries in place:
 
+```tsx [components/RenameUser.tsx]
 <!--@include: @/parts/frontend/tanstack-query/mutations.md#solid-->
+```
 
 ## Typed navigation - `Link`
 
