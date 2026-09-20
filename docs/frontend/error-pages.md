@@ -115,7 +115,3 @@ Different folders have their own, which is usually the distinction you actually 
 There is no `notFound()` helper. A route that exists but has nothing to show is a normal render decision -
 branch in the component and render your own not-found UI, or redirect.
 The catch-all page is reserved for URLs that match no route at all.
-
----
-
-<!--@include: @/parts/agents-versions.md#frontend-->

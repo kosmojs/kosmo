@@ -221,7 +221,3 @@ The `log` signature:
   full: string;
 }
 ```
-
----
-
-<!--@include: @/parts/agents-versions.md#backend-->

@@ -667,7 +667,3 @@ lives in `src/` versus `lib/`, and what each alias resolves to.
 **Core patterns:** [Routing](/routing/intro) · [Validation](/validation/intro) · [Middleware](/backend/middleware) · [Layouts](/frontend/routing) · [Fetch Clients](/fetch/start)
 
 **Advanced:** [VRefine](/validation/refine) · [OpenAPI](/openapi/intro) · [Production Builds](/dev-build-run/building-for-production)
-
----
-
-<!--@include: @/parts/agents-versions.md#all-->

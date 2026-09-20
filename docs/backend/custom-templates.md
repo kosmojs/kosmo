@@ -246,7 +246,3 @@ backend: {
   },
 }
 ```
-
----
-
-<!--@include: @/parts/agents-versions.md#backend-->

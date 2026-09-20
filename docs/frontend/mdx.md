@@ -554,7 +554,3 @@ with occasional content, use React/Vue/Solid.
 `loader` runs before the tree exists - use the `Route` object passed as its argument (`params`, `paramsEntries`, `searchParams`) instead.
 - **Curly braces in prose.** `{...spread}` in markdown text is parsed as a JSX expression. Use backticks for code containing curly braces: `` `{...spread}` ``.
 - **Layouts must be `.mdx`.** Plain `.md` files cannot render `{props.children}` and will not work as layouts.
-
----
-
-<!--@include: @/parts/agents-versions.md#frontend-->

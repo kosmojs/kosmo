@@ -268,7 +268,3 @@ templates: {
   "**": myDefaultTemplate,
 }
 ```
-
----
-
-<!--@include: @/parts/agents-versions.md#frontend-->

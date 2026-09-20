@@ -235,7 +235,3 @@ The warm-SSR path here is exact under string rendering (the default). Streaming
 (`renderToStream`) needs the framework's streamed-hydration boundary to capture
 queries that resolve mid-stream; until you move a route to streaming, string
 mode gives correct, fully-warm SSR.
-
----
-
-<!--@include: @/parts/agents-versions.md#frontend-->

@@ -217,7 +217,3 @@ Pick either one.
 
 If you're unsure, start in `api/app.ts`. Moving it to the slot later is mostly mechanical - the same handler, wrapped in `use()`.
 Moving the other way is not: every route-level `edge:*` override stops overriding anything and starts running in addition.
-
----
-
-<!--@include: @/parts/agents-versions.md#backend-->

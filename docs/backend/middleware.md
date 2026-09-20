@@ -379,7 +379,3 @@ What differs per backend is only how the error handler attaches:
 <!--@include: @/parts/backend/middleware/cors.md#koa-->
 ```
 :::
-
----
-
-<!--@include: @/parts/agents-versions.md#backend-->

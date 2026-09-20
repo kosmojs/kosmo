@@ -217,7 +217,3 @@ import app from "./dist/front/api/app.js";
 
 app.listen(3000);
 ```
-
----
-
-<!--@include: @/parts/agents-versions.md#backend-->

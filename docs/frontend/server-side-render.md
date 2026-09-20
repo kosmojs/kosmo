@@ -510,7 +510,3 @@ but complex async patterns require careful attention to ensure data is ready bef
 The hydration bundle still downloads to clients, so optimization remains important.
 - **Plan state serialization.** Applications with complex state require proper serialization for hydration.
 Each framework handles standard cases automatically, but custom stores or non-serializable data need special attention.
-
----
-
-<!--@include: @/parts/agents-versions.md#all-->

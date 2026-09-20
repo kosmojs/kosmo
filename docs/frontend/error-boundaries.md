@@ -204,7 +204,3 @@ the place to log or trace what a server-side boundary could not turn into fallba
 - A boundary is for render-time errors in a subtree;
 the root [app file](/frontend/layouts#global-layout-via-app-file) is where a truly
 global boundary would go if you want one that wraps everything.
-
----
-
-<!--@include: @/parts/agents-versions.md#frontend-->

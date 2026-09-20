@@ -216,7 +216,3 @@ App
 - **Data loading uses hooks, not props.** All frameworks load layout data through a `loader`/`preload` export read with a hook (`useLoaderData`/`createAsync`).
 Keeping a layout's data separate from its page's is automatic in React (per-route) and Solid (via the `query()` key);
 in Vue, Svelte, and MDX the layout passes its path-qualified name to `useLoaderData` (a page passes nothing).
-
----
-
-<!--@include: @/parts/agents-versions.md#frontend-->

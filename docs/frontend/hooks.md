@@ -211,7 +211,3 @@ function onClick() {
 }
 </script>
 ```
-
----
-
-<!--@include: @/parts/agents-versions.md#frontend-->

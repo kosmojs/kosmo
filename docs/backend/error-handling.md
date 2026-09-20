@@ -119,7 +119,3 @@ so wrapping `next()` in `try`/`catch` swallows errors for everything downstream.
 
 Put cross-cutting error concerns in `api/errors.ts` instead - it is a regular file
 you own, and it is the one place that sees every failure.
-
----
-
-<!--@include: @/parts/agents-versions.md#backend-->

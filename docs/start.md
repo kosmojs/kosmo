@@ -264,7 +264,3 @@ That's the foundation. From here:
 - [Routing](/routing/intro) - parameters, mixed segments, power syntax
 - [Framework Support](/essentials/frameworks) - what each framework does and doesn't support
 - [Features](/features) - everything KosmoJS provides, at a glance
-
----
-
-<!--@include: @/parts/agents-versions.md#all-->

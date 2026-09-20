@@ -260,7 +260,3 @@ updates with it, surfacing mismatches at compile time instead of in production.
 
 See [Fetch Client Integration](/fetch/integration) for the full set of framework patterns,
 and [Response Validation](/validation/response) for declaring the `response` schema on the backend.
-
----
-
-<!--@include: @/parts/agents-versions.md#frontend-->
