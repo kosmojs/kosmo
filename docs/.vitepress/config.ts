@@ -6,7 +6,12 @@ import {
 import llmstxtPlugin from "vitepress-plugin-llms";
 import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 
-import { redirects } from "../scripts/redirects.mjs";
+const redirects = [
+  // CLI moved
+  ["/essentials/cli.html", "/cli/intro.html"],
+  // OpenAPI moved
+  ["/openapi.html", "/openapi/intro.html"],
+];
 
 // the URL a page is published at, to match a redirect key against
 const pageUrl = (relativePath: string) => {
@@ -574,54 +579,7 @@ export default defineConfig({
             },
             {
               text: "Agents",
-              collapsed: true,
-              items: [
-                {
-                  text: "Intro",
-                  docFooterText: "Notes for LLM Agents",
-                  link: "/agents/intro",
-                },
-                {
-                  text: "Hono",
-                  docFooterText: "Hono backend",
-                  link: "/agents/hono",
-                },
-                {
-                  text: "H3",
-                  docFooterText: "H3 backend",
-                  link: "/agents/h3",
-                },
-                {
-                  text: "Koa",
-                  docFooterText: "Koa backend",
-                  link: "/agents/koa",
-                },
-                {
-                  text: "React",
-                  docFooterText: "React frontend",
-                  link: "/agents/react",
-                },
-                {
-                  text: "SolidJS",
-                  docFooterText: "SolidJS frontend",
-                  link: "/agents/solid",
-                },
-                {
-                  text: "Vue",
-                  docFooterText: "Vue frontend",
-                  link: "/agents/vue",
-                },
-                {
-                  text: "Svelte",
-                  docFooterText: "Svelte frontend",
-                  link: "/agents/svelte",
-                },
-                {
-                  text: "MDX",
-                  docFooterText: "MDX frontend",
-                  link: "/agents/mdx",
-                },
-              ],
+              link: "/agents",
             },
             {
               text: "Docs List",
