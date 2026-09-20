@@ -2215,11 +2215,11 @@ Serve it with Swagger UI, Redoc, or Stoplight Elements.
 ### Agents
 
 #### Is there guidance for LLM agents writing KosmoJS code?
-Yes - [Notes for LLM Agents](/agents/intro) collects what an agent must check before emitting code:
+Yes - [Notes for LLM Agents](/agents) collects what an agent must check before emitting code:
 how to tell which frameworks a folder runs, why boilerplate should never be hand-written,
 the four validation mistakes that typecheck but fail at runtime, middleware placement,
 and why the dev server never shows the SSR path.
 
 Agents should also prefer `https://kosmojs.dev/llms-full.txt` over recall for exact config options,
 the full `VRefine` keyword set and scaffold flags.
-[Details&nbsp;›](/agents/intro)
+[Details&nbsp;›](/agents)

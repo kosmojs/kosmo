@@ -16,17 +16,98 @@ Error handling starts with `api/errors.ts` file, customize it at your needs:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-<!--@include: @/parts/backend/error-handling/default-handler.md#hono-->
+// Hono: api/errors.ts
+import { accepts } from "hono/accepts";
+import { HTTPException } from "hono/http-exception";
+
+import { ValidationError, HTTPError } from "@kosmojs/core/errors";
+
+import { errorHandlerFactory } from "_/api:factory";
+
+export default errorHandlerFactory(async (error, ctx) => {
+  if (error instanceof HTTPException) {
+    return error.getResponse();
+  }
+
+  const [status, message] = Array.isArray(error)
+    ? error
+    : error instanceof HTTPError
+      ? [error.status, error.message]
+      : error instanceof ValidationError
+        ? [400, `${error.target}: ${error.errorMessage}`]
+        : [error.statusCode || 500, error.message];
+
+  const type = accepts(ctx, {
+    header: "Accept",
+    supports: ["application/json", "text/plain"],
+    default: "text/plain",
+  });
+
+  return type === "application/json"
+    ? ctx.json({ error: message }, status)
+    : ctx.text(message, status);
+});
 ```
 
 == H3
 ```ts
-<!--@include: @/parts/backend/error-handling/default-handler.md#h3-->
+// H3: api/errors.ts
+import { ValidationError } from "@kosmojs/core/errors";
+import { HTTPError } from "h3";
+
+import { errorHandlerFactory } from "_/api:factory";
+
+export default errorHandlerFactory(async (error, event) => {
+  const [status, message = "Unknown error occurred"] = Array.isArray(error)
+    ? error
+    : error instanceof HTTPError
+      ? [error.status, error.message]
+      : error instanceof ValidationError
+        ? [400, `${error.target}: ${error.errorMessage}`]
+        : [error.statusCode || 500, error.message];
+
+  const accept = event.req.headers.get("accept");
+
+  return accept?.includes("application/json")
+    ? new Response(JSON.stringify({ error: message }), {
+        status,
+        headers: { "Content-Type": "application/json" },
+      })
+    : new Response(message, {
+        status,
+        headers: { "Content-Type": "text/plain" },
+      });
+});
 ```
 
 == Koa
 ```ts
-<!--@include: @/parts/backend/error-handling/default-handler.md#koa-->
+// Koa: api/errors.ts
+import { HTTPError, ValidationError } from "@kosmojs/core/errors";
+
+import { errorHandlerFactory } from "_/api:factory";
+
+export default errorHandlerFactory(async (ctx, next) => {
+  try {
+    await next();
+  } catch (error: any) {
+    const [status, message] = Array.isArray(error)
+      ? error
+      : error instanceof HTTPError
+        ? [error.status, error.message]
+        : error instanceof ValidationError
+          ? [400, `${error.target}: ${error.errorMessage}`]
+          : [error.statusCode || 500, error.message];
+
+    ctx.status = status;
+
+    if (ctx.accepts("json")) {
+      ctx.body = { error: message };
+    } else {
+      ctx.body = message;
+    }
+  }
+});
 ```
 :::
 
@@ -59,17 +140,56 @@ So don't wrap handler logic in `try`/`catch` just to turn a failure into a respo
 :::tabs key:backend variant:code
 == Hono
 ```ts
-<!--@include: @/parts/backend/error-handling/let-handlers-fail.md#hono-->
+// Hono: api/users/[id]/index.ts
+import { HTTPError } from "@kosmojs/core/errors";
+
+export default defineRoute<"users/[id]", [number]>(({ GET }) => [
+  GET(async (ctx) => {
+    const { id } = ctx.validated.params;
+    const user = await db.users.find(id);
+
+    // throw - api/errors.ts turns it into a response
+    if (!user) throw new HTTPError([404, "User not found"]);
+
+    return ctx.json(user);
+  }),
+]);
 ```
 
 == H3
 ```ts
-<!--@include: @/parts/backend/error-handling/let-handlers-fail.md#h3-->
+// H3: api/users/[id]/index.ts
+import { HTTPError } from "@kosmojs/core/errors";
+
+export default defineRoute<"users/[id]", [number]>(({ GET }) => [
+  GET(async (event) => {
+    const { id } = event.validated.params;
+    const user = await db.users.find(id);
+
+    // throw - api/errors.ts turns it into a response
+    if (!user) throw new HTTPError([404, "User not found"]);
+
+    return user;
+  }),
+]);
 ```
 
 == Koa
 ```ts
-<!--@include: @/parts/backend/error-handling/let-handlers-fail.md#koa-->
+// Koa: api/users/[id]/index.ts
+import { HTTPError } from "@kosmojs/core/errors";
+
+export default defineRoute<"users/[id]", [number]>(({ GET }) => [
+  GET(async (ctx) => {
+    const { id } = ctx.validated.params;
+    const user = await db.users.find(id);
+
+    // throw - api/errors.ts turns it into a response
+    if (!user) throw new HTTPError([404, "User not found"]);
+
+    ctx.body = user;
+  }),
+]);
 ```
 :::
 

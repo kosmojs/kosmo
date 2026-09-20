@@ -63,27 +63,170 @@ both are implemented, and the mode decides which one the server calls per route.
 :::tabs key:frontend variant:code
 == React
 ```ts
-<!--@include: @/parts/frontend/server-render/entry-server.md#react-->
+// React: entry/server.ts
+import renderFactory, {
+  createRoutes,
+  renderToStream,
+  renderToString,
+} from "_/entry/server";
+
+import routerFactory from "../router";
+
+const routes = createRoutes({ withPreload: true });
+const { serverRouter } = routerFactory(routes);
+
+export default renderFactory(() => {
+  return {
+    renderToString(url, { assets }) {
+      return renderToString(
+        () => serverRouter(url),
+        { headerTags: assets.map(({ tag }) => tag) },
+      );
+    },
+    renderToStream(url, { assets }) {
+      return renderToStream(
+        () => serverRouter(url),
+        { headerTags: assets.map(({ tag }) => tag) },
+      );
+    },
+    onError(error) {
+      // reports only - it cannot change the response; never throw from it
+      reportToMonitoring(error, { url: error.url });
+    },
+  };
+});
 ```
 
 == Solid
 ```ts
-<!--@include: @/parts/frontend/server-render/entry-server.md#solid-->
+// Solid: entry/server.ts
+import renderFactory, {
+  createRoutes,
+  renderToStream,
+  renderToString,
+} from "_/entry/server";
+
+import routerFactory from "../router";
+
+const routes = createRoutes({ withPreload: true });
+const { serverRouter } = routerFactory(routes);
+
+export default renderFactory(() => {
+  return {
+    renderToString(url, { assets }) {
+      return renderToString(
+        () => serverRouter(url),
+        { headerTags: assets.map(({ tag }) => tag) },
+      );
+    },
+    renderToStream(url, { assets }) {
+      return renderToStream(
+        () => serverRouter(url),
+        { headerTags: assets.map(({ tag }) => tag) },
+      );
+    },
+    onError(error) {
+      // reports only - it cannot change the response; never throw from it
+      reportToMonitoring(error, { url: error.url });
+    },
+  };
+});
 ```
 
 == Vue
 ```ts
-<!--@include: @/parts/frontend/server-render/entry-server.md#vue-->
+// Vue: entry/server.ts
+import renderFactory, {
+  createRoutes,
+  renderToStream,
+  renderToString,
+} from "_/entry/server";
+
+import routerFactory from "../router";
+
+const routes = createRoutes();
+const { serverRouter } = routerFactory(routes);
+
+export default renderFactory(() => {
+  return {
+    renderToString(url, { assets }) {
+      return renderToString(
+        () => serverRouter(url),
+        { headerTags: assets.map(({ tag }) => tag) },
+      );
+    },
+    renderToStream(url, { assets }) {
+      return renderToStream(
+        () => serverRouter(url),
+        { headerTags: assets.map(({ tag }) => tag) },
+      );
+    },
+    onError(error) {
+      // reports only - it cannot change the response; never throw from it
+      reportToMonitoring(error, { url: error.url });
+    },
+  };
+});
 ```
 
 == Svelte
 ```ts
-<!--@include: @/parts/frontend/server-render/entry-server.md#svelte-->
+// Svelte: entry/server.ts
+import renderFactory, {
+  createRoutes,
+  renderToString,
+  // no renderToStream on Svelte folders
+} from "_/entry/server";
+
+import routerFactory from "../router";
+
+const routes = createRoutes();
+const { serverRouter } = routerFactory(routes);
+
+export default renderFactory(() => {
+  return {
+    renderToString(url, { assets }) {
+      return renderToString(
+        () => serverRouter(url),
+        { headerTags: assets.map(({ tag }) => tag) },
+      );
+    },
+    onError(error) {
+      // reports only - it cannot change the response; never throw from it
+      reportToMonitoring(error, { url: error.url });
+    },
+  };
+});
 ```
 
 == MDX
 ```ts
-<!--@include: @/parts/frontend/server-render/entry-server.md#mdx-->
+// MDX: entry/server.ts
+import renderFactory, {
+  createRoutes,
+  renderToString,
+  // no renderToStream on MDX folders
+} from "_/entry/server";
+
+import routerFactory from "../router";
+
+const routes = createRoutes();
+const { serverRouter } = routerFactory(routes);
+
+export default renderFactory(() => {
+  return {
+    renderToString(url, { assets }) {
+      return renderToString(
+        () => serverRouter(url),
+        { headerTags: assets.map(({ tag }) => tag) },
+      );
+    },
+    onError(error) {
+      // reports only - it cannot change the response; never throw from it
+      reportToMonitoring(error, { url: error.url });
+    },
+  };
+});
 ```
 :::
 

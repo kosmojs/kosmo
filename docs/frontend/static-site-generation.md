@@ -46,27 +46,79 @@ Where the declaration lives depends on how the framework exposes named exports f
 :::tabs key:frontend variant:code
 == React
 ```tsx
-<!--@include: @/parts/frontend/static-site-generation/static-params.md#react-->
+// React: pages/docs/[slug]/index.tsx
+import { defineStaticParams } from "_/core";
+
+export const staticParams = defineStaticParams<"docs/[slug]">([
+  ["getting-started"],
+  ["routing"],
+  ["validation"],
+]);
+
+export default function DocsPage() { /* ... */ }
 ```
 
 == Solid
 ```tsx
-<!--@include: @/parts/frontend/static-site-generation/static-params.md#solid-->
+// Solid: pages/docs/[slug]/index.tsx
+import { defineStaticParams } from "_/core";
+
+export const staticParams = defineStaticParams<"docs/[slug]">([
+  ["getting-started"],
+  ["routing"],
+  ["validation"],
+]);
+
+export default function DocsPage() { /* ... */ }
 ```
 
 == Vue
 ```vue
-<!--@include: @/parts/frontend/static-site-generation/static-params.md#vue-->
+<!-- Vue: pages/docs/[slug]/index.vue -->
+<script lang="ts">
+// a plain <script> block: <script setup> can not have named exports,
+// and the two blocks coexist in one SFC
+import { defineStaticParams } from "_/core";
+
+export const staticParams = defineStaticParams<"docs/[slug]">([
+  ["getting-started"],
+  ["routing"],
+]);
+</script>
+
+<script setup lang="ts">
+/* ... */
+</script>
 ```
 
 == Svelte
 ```svelte
-<!--@include: @/parts/frontend/static-site-generation/static-params.md#svelte-->
+<!-- Svelte: pages/docs/[slug]/index.svelte -->
+<script module lang="ts">
+// module-level script: its exports are the component module's named exports
+import { defineStaticParams } from "_/core";
+
+export const staticParams = defineStaticParams<"docs/[slug]">([
+  ["getting-started"],
+  ["routing"],
+]);
+</script>
+
+<script lang="ts">
+  /* ... */
+</script>
 ```
 
 == MDX
 ```mdx
-<!--@include: @/parts/frontend/static-site-generation/static-params.md#mdx-->
+---
+title: Documentation
+staticParams:
+  - [getting-started]
+  - [routing]
+---
+
+{/* MDX declares staticParams in frontmatter, not as an export */}
 ```
 
 :::

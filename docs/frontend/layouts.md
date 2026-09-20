@@ -79,27 +79,91 @@ Each framework renders child routes differently:
 :::tabs key:frontend variant:code
 == React
 ```tsx
-<!--@include: @/parts/frontend/layouts/implementation.md#react-->
+// React: pages/dashboard/layout.tsx
+import { Outlet } from "react-router";
+
+export default function Layout() {
+  return (
+    <div className="dashboard">
+      <nav>...</nav>
+      <main>
+        <Outlet />
+      </main>
+      <footer>...</footer>
+    </div>
+  );
+}
 ```
 
 == Solid
 ```tsx
-<!--@include: @/parts/frontend/layouts/implementation.md#solid-->
+// Solid: pages/dashboard/layout.tsx
+import type { ParentComponent } from "solid-js";
+
+const Layout: ParentComponent = (props) => {
+  return (
+    <div class="dashboard">
+      <nav>...</nav>
+      <main>
+        {props.children}
+      </main>
+      <footer>...</footer>
+    </div>
+  );
+};
+
+export default Layout;
 ```
 
 == Vue
 ```vue
-<!--@include: @/parts/frontend/layouts/implementation.md#vue-->
+<!-- Vue: pages/dashboard/layout.vue -->
+<script setup lang="ts">
+// layout-specific logic
+</script>
+
+<template>
+  <div class="dashboard">
+    <nav>...</nav>
+    <main>
+      <RouterView />
+    </main>
+    <footer>...</footer>
+  </div>
+</template>
 ```
 
 == Svelte
 ```svelte
-<!--@include: @/parts/frontend/layouts/implementation.md#svelte-->
+<!-- Svelte: pages/dashboard/layout.svelte -->
+<script lang="ts">
+let { children } = $props();
+</script>
+
+<div class="dashboard">
+  <nav>...</nav>
+  <main>
+    {@render children()}
+  </main>
+  <footer>...</footer>
+</div>
 ```
 
 == MDX
 ```mdx
-<!--@include: @/parts/frontend/layouts/implementation.md#mdx-->
+{/* MDX: pages/docs/layout.mdx */}
+<nav>
+  <a href="/">Home</a>
+  <a href="/docs">Docs</a>
+</nav>
+
+<main>
+  {props.children}
+</main>
+
+<footer>
+  Built with KosmoJS
+</footer>
 ```
 :::
 
@@ -123,27 +187,115 @@ but how a layout's data stays distinct from its child page's differs:
 :::tabs key:frontend variant:code
 == React
 ```tsx
-<!--@include: @/parts/frontend/layouts/data-loading.md#react-->
+// React: pages/dashboard/layout.tsx
+import { Outlet, useLoaderData } from "react-router";
+import fetchClients from "_/fetch";
+
+const { GET } = fetchClients["dashboard/data"];
+
+export const loader = () => GET();
+
+export default function Layout() {
+  const data = useLoaderData();
+  // ...
+  return <Outlet />;
+}
 ```
 
 == Solid
 ```tsx
-<!--@include: @/parts/frontend/layouts/data-loading.md#solid-->
+// Solid: pages/dashboard/layout.tsx
+import { Suspense, type ParentComponent } from "solid-js";
+import { createAsync, query } from "@solidjs/router";
+import fetchClients from "_/fetch";
+
+const { GET } = fetchClients["dashboard/data"];
+
+// wrap in query() so preload and createAsync share one cache key
+const getData = query(() => GET(), "dashboard/data");
+
+export const preload = () => getData();
+
+const Layout: ParentComponent = (props) => {
+  const data = createAsync(() => getData());
+  // ...
+  return <Suspense>{props.children}</Suspense>;
+};
+
+export default Layout;
 ```
 
 == Vue
 ```vue
-<!--@include: @/parts/frontend/layouts/data-loading.md#vue-->
+<!-- Vue: pages/dashboard/layout.vue -->
+<script lang="ts">
+import fetchClients from "_/fetch";
+
+const { GET } = fetchClients["dashboard/data"];
+
+// loader export lives in a plain <script> block
+export const loader = () => GET();
+</script>
+
+<script setup lang="ts">
+import { useLoaderData } from "_/use";
+
+// a layout passes its path-qualified name to read its own data
+const data = useLoaderData("dashboard/layout");
+</script>
+
+<template>
+  ...
+</template>
 ```
 
 == Svelte
 ```svelte
-<!--@include: @/parts/frontend/layouts/data-loading.md#svelte-->
+<!-- Svelte: pages/dashboard/layout.svelte -->
+<script module lang="ts">
+import fetchClients from "_/fetch";
+
+const { GET } = fetchClients["dashboard/data"];
+
+// loader export lives in the module <script> block
+export const loader = () => GET();
+</script>
+
+<script lang="ts">
+import { useLoaderData } from "_/use";
+
+let { children } = $props();
+
+// a layout passes its path-qualified name to read its own data
+const data = useLoaderData("dashboard/layout");
+</script>
+
+<nav>{data.title}</nav>
+<main>
+  {@render children()}
+</main>
 ```
 
 == MDX
 ```mdx
-<!--@include: @/parts/frontend/layouts/data-loading.md#mdx-->
+{/* MDX: pages/dashboard/layout.mdx */}
+import fetchClients from "_/fetch";
+import { useLoaderData } from "_/use";
+
+export const { GET } = fetchClients["dashboard/data"];
+
+export const loader = () => GET();
+
+export const Nav = () => {
+  // a layout passes its path-qualified name to read its own data
+  const data = useLoaderData("dashboard/layout");
+  return <nav>{data.title}</nav>;
+};
+
+<Nav />
+<main>
+  {props.children}
+</main>
 ```
 :::
 

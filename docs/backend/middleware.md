@@ -94,17 +94,44 @@ no imports, no registration, nothing to wire:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-<!--@include: @/parts/backend/middleware/global.md#hono-->
+// Hono: api/use.ts
+import { use } from "_/api";
+
+export default [
+  // will run on every route
+  use(async function requestId(ctx, next) {
+    ctx.set("requestId", crypto.randomUUID());
+    return next();
+  }),
+];
 ```
 
 == H3
 ```ts
-<!--@include: @/parts/backend/middleware/global.md#h3-->
+// H3: api/use.ts
+import { use } from "_/api";
+
+export default [
+  // will run on every route
+  use(async function requestId(event, next) {
+    event.context.requestId = crypto.randomUUID();
+    return next();
+  }),
+];
 ```
 
 == Koa
 ```ts
-<!--@include: @/parts/backend/middleware/global.md#koa-->
+// Koa: api/use.ts
+import { use } from "_/api";
+
+export default [
+  // will run on every route
+  use(async function requestId(ctx, next) {
+    ctx.state.requestId = crypto.randomUUID();
+    return next();
+  }),
+];
 ```
 :::
 
@@ -131,17 +158,65 @@ Use the `on` option to restrict middleware to specific HTTP methods:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-<!--@include: @/parts/backend/middleware/method-specific.md#hono-->
+// Hono: api/example/index.ts
+export default defineRoute<"example">(({ GET, POST, use }) => [
+  use(async (ctx, next) => {
+    ctx.set("user", await verifyToken(ctx.req.header("authorization")));
+    return next();
+  }, {
+    on: ["POST"],
+  }),
+
+  GET(async (ctx) => {
+    // no auth required
+  }),
+
+  POST(async (ctx) => {
+    // ctx.get("user") is available
+  }),
+]);
 ```
 
 == H3
 ```ts
-<!--@include: @/parts/backend/middleware/method-specific.md#h3-->
+// H3: api/example/index.ts
+export default defineRoute<"example">(({ GET, POST, use }) => [
+  use(async (event, next) => {
+    event.context.user = await verifyToken(event.req.headers.get("authorization"));
+    return next();
+  }, {
+    on: ["POST"],
+  }),
+
+  GET(async (event) => {
+    // no auth required
+  }),
+
+  POST(async (event) => {
+    // event.context.user is available
+  }),
+]);
 ```
 
 == Koa
 ```ts
-<!--@include: @/parts/backend/middleware/method-specific.md#koa-->
+// Koa: api/example/index.ts
+export default defineRoute<"example">(({ GET, POST, use }) => [
+  use(async (ctx, next) => {
+    ctx.state.user = await verifyToken(ctx.headers.authorization);
+    return next();
+  }, {
+    on: ["POST"],
+  }),
+
+  GET(async (ctx) => {
+    // no auth required
+  }),
+
+  POST(async (ctx) => {
+    // ctx.state.user is available
+  }),
+]);
 ```
 :::
 
@@ -366,16 +441,42 @@ What differs per backend is only how the error handler attaches:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-<!--@include: @/parts/backend/middleware/cors.md#hono-->
+// Hono: api/app.ts
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
+import { cors } from "hono/cors"; // [!code ++]
+
+export default appFactory(routes, ({ app }) => {
+  app.onError(defaultErrorHandler);
+  app.use(cors({ origin: "https://example.com" })); // [!code ++]
+});
 ```
 
 == H3
 ```ts
-<!--@include: @/parts/backend/middleware/cors.md#h3-->
+// H3: api/app.ts
+import { onError } from "h3";
+
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
+import { cors } from "./cors"; // [!code ++]
+
+export default appFactory(routes, ({ app }) => {
+  app.use(onError(defaultErrorHandler));
+  app.use(cors({ origin: "https://example.com" })); // [!code ++]
+});
 ```
 
 == Koa
 ```ts
-<!--@include: @/parts/backend/middleware/cors.md#koa-->
+// Koa: api/app.ts
+import appFactory, { routes } from "_/api:factory";
+import defaultErrorHandler from "./errors";
+import cors from "@koa/cors"; // [!code ++]
+
+export default appFactory(routes, ({ app }) => {
+  app.use(defaultErrorHandler);
+  app.use(cors({ credentials: true })); // [!code ++]
+});
 ```
 :::

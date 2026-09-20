@@ -85,17 +85,45 @@ Returns the API request handler. Seeded default:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-<!--@include: @/parts/dev-build-run/development-workflow/request-handler.md#hono-->
+// Hono: api/dev.ts
+import { getRequestListener } from "@hono/node-server";
+
+import { devSetup } from "_/api:factory";
+import app from "./app";
+
+export default devSetup({
+  requestHandler() {
+    return getRequestListener(app.fetch);
+  },
+});
 ```
 
 == H3
 ```ts
-<!--@include: @/parts/dev-build-run/development-workflow/request-handler.md#h3-->
+// H3: api/dev.ts
+import { toNodeHandler } from "h3/node";
+
+import { devSetup } from "_/api:factory";
+import app from "./app";
+
+export default devSetup({
+  requestHandler() {
+    return toNodeHandler(app);
+  },
+});
 ```
 
 == Koa
 ```ts
-<!--@include: @/parts/dev-build-run/development-workflow/request-handler.md#koa-->
+// Koa: api/dev.ts
+import { devSetup } from "_/api:factory";
+import app from "./app";
+
+export default devSetup({
+  requestHandler() {
+    return app.callback();
+  },
+});
 ```
 :::
 

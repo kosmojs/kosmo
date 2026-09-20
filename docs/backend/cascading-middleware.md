@@ -75,17 +75,66 @@ every route underneath should know about it without importing or declaring anyth
 :::tabs key:backend variant:code
 == Hono
 ```ts
-<!--@include: @/parts/backend/cascading-middleware/context-types.md#hono-->
+// Hono: api/users/use.ts
+import { HTTPException } from "hono/http-exception";
+
+import { use } from "_/api";
+
+export type UseT = {
+  user: { id: number; role: "admin" | "user" };
+};
+
+export default [
+  use<UseT>(async (ctx, next) => {
+    const token = ctx.req.header("authorization")?.replace("Bearer ", "");
+    // validate before adding to context - UseT promises this property exists
+    if (!token) throw new HTTPException(401, { message: "Authentication required" });
+    ctx.set("user", await verifyToken(token));
+    return next();
+  })
+];
 ```
 
 == H3
 ```ts
-<!--@include: @/parts/backend/cascading-middleware/context-types.md#h3-->
+// H3: api/users/use.ts
+import { HTTPError } from "h3";
+
+import { use } from "_/api";
+
+export type UseT = {
+  user: { id: number; role: "admin" | "user" };
+};
+
+export default [
+  use<UseT>(async (event, next) => {
+    const token = event.req.headers.get("authorization")?.replace("Bearer ", "");
+    // validate before adding to context - UseT promises this property exists
+    if (!token) throw new HTTPError({ status: 401, message: "Authentication required" });
+    event.context.user = await verifyToken(token);
+    return next();
+  })
+];
 ```
 
 == Koa
 ```ts
-<!--@include: @/parts/backend/cascading-middleware/context-types.md#koa-->
+// Koa: api/users/use.ts
+import { use } from "_/api";
+
+export type UseT = {
+  user: { id: number; role: "admin" | "user" };
+};
+
+export default [
+  use<UseT>(async (ctx, next) => {
+    const token = ctx.headers.authorization?.replace("Bearer ", "");
+    // validate before adding to state - UseT promises this property exists
+    ctx.assert(token, 401, "Authentication required");
+    ctx.state.user = await verifyToken(token);
+    return next();
+  })
+];
 ```
 :::
 
@@ -202,17 +251,47 @@ Add middleware to `use.ts` and it will run on every route underneath:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-<!--@include: @/parts/backend/cascading-middleware/third-party.md#hono-->
+// Hono: api/users/use.ts
+import { rateLimiter } from "hono-rate-limiter";
+
+import { use } from "_/api";
+
+export default [
+  use(
+    rateLimiter({
+      windowMs: 15 * 60 * 1000,
+      limit: 100,
+      keyGenerator: (ctx) => ctx.req.header("x-forwarded-for") ?? "anonymous",
+    }),
+  ),
+];
 ```
 
 == H3
 ```ts
-<!--@include: @/parts/backend/cascading-middleware/third-party.md#h3-->
+// H3: api/users/use.ts
+import { use } from "_/api";
+
+export default [
+  use(async function noStore(event, next) {
+    event.res.headers.set("cache-control", "no-store");
+    return next();
+  }),
+];
 ```
 
 == Koa
 ```ts
-<!--@include: @/parts/backend/cascading-middleware/third-party.md#koa-->
+// Koa: api/users/use.ts
+import ratelimit from "koa-ratelimit";
+
+import { use } from "_/api";
+
+const db = new Map();
+
+export default [
+  use(ratelimit({ driver: "memory", db, duration: 15 * 60 * 1000, max: 100 })),
+];
 ```
 :::
 

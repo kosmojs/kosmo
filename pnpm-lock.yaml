@@ -43,7 +43,10 @@ importers:
         version: link:wsbuild
 
   docs:
-    devDependencies:
+    dependencies:
+      gray-matter:
+        specifier: ^4.0.3
+        version: 4.0.3
       vite:
         specifier: ^8.2.2
         version: 8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)
@@ -443,109 +446,6 @@ importers:
       '@types/semver':
         specifier: ^7.8.0
         version: 7.8.0
-      typescript:
-        specifier: ^7.0.2
-        version: 7.0.2
-      vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)
-
-  packages/cli/var/demo:
-    dependencies:
-      '@hono/node-server':
-        specifier: ^2.1.1
-        version: 2.1.1(hono@4.13.7)
-      '@koa/router':
-        specifier: ^15.7.0
-        version: 15.7.0(koa@3.2.1)
-      '@kosmojs/core':
-        specifier: ^0.5.0
-        version: 0.5.0
-      '@mdx-js/preact':
-        specifier: ^3.1.1
-        version: 3.1.1(preact@10.29.8)
-      '@tanstack/vue-query':
-        specifier: ^5.102.8
-        version: 5.102.8(vue@3.5.42(typescript@7.0.2))
-      formidable:
-        specifier: ^3.5.4
-        version: 3.5.4
-      hono:
-        specifier: ^4.13.7
-        version: 4.13.7
-      koa:
-        specifier: ^3.2.1
-        version: 3.2.1
-      light-my-request:
-        specifier: ^6.6.0
-        version: 6.6.0
-      path-to-regexp:
-        specifier: ^8.4.2
-        version: 8.4.2
-      preact:
-        specifier: ^10.29.8
-        version: 10.29.8(preact-render-to-string@6.7.0)
-      preact-render-to-string:
-        specifier: ^6.7.0
-        version: 6.7.0(preact@10.29.8)
-      raw-body:
-        specifier: ^4.0.0
-        version: 4.0.0
-      react:
-        specifier: ^19.2.8
-        version: 19.2.8
-      react-router:
-        specifier: ^8.3.1
-        version: 8.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      remark-frontmatter:
-        specifier: ^5.0.0
-        version: 5.0.0
-      remark-mdx-frontmatter:
-        specifier: ^5.2.0
-        version: 5.2.0
-      tinyglobby:
-        specifier: ^0.2.17
-        version: 0.2.17
-      typebox:
-        specifier: ^1.3.30
-        version: 1.3.30
-      vue:
-        specifier: ^3.5.42
-        version: 3.5.42(typescript@7.0.2)
-      vue-router:
-        specifier: ^5.3.1
-        version: 5.3.1(@vue/compiler-sfc@3.5.42)(esbuild@0.28.2)(rolldown@1.2.7)(rollup@4.63.1)(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))(vue@3.5.42(typescript@7.0.2))
-    devDependencies:
-      '@kosmojs/cli':
-        specifier: ^0.5.0
-        version: 0.5.0(@types/node@26.5.0)(esbuild@0.28.2)(rollup@4.63.1)(solid-js@1.9.15)(svelte@5.57.0)(vue@3.5.42(typescript@7.0.2))
-      '@kosmojs/dev':
-        specifier: ^0.5.0
-        version: 0.5.0(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(rollup@4.63.1)(solid-js@1.9.15)(svelte@5.57.0)(vue@3.5.42(typescript@7.0.2))
-      '@types/bun':
-        specifier: ^1.4.2
-        version: 1.4.2
-      '@types/deno':
-        specifier: ^2.7.0
-        version: 2.7.0
-      '@types/formidable':
-        specifier: ^3.5.1
-        version: 3.5.1
-      '@types/koa':
-        specifier: ^3.0.3
-        version: 3.0.3
-      '@types/node':
-        specifier: ^26.5.0
-        version: 26.5.0
-      '@types/react':
-        specifier: ^19.2.18
-        version: 19.2.18
-      '@types/react-dom':
-        specifier: ^19.2.7
-        version: 19.2.7(@types/react@19.2.18)
-      react-dom:
-        specifier: ^19.2.8
-        version: 19.2.8(react@19.2.8)
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -1320,19 +1220,6 @@ packages:
     engines: {node: '>= 20'}
     peerDependencies:
       koa: ^2.0.0 || ^3.0.0
-
-  '@kosmojs/cli@0.5.0':
-    resolution: {integrity: sha512-U2oOt/z7HUEoxiG46UW1Z5raYmwYm5X4SBYygCnLHmhqht6aO7uNM1lkyakOfrB3FgdB+rc5uP4ULxAtVnYLhQ==}
-    hasBin: true
-
-  '@kosmojs/core@0.5.0':
-    resolution: {integrity: sha512-CM1DPchTdv7Ig0uSyQk8JnQFlycsAS68f3YmsnnJhuZ7d3B8J8V6tbOL6LJeZ+sjOpMZDUQ7OfaMCZyomK/M7w==}
-
-  '@kosmojs/dev@0.5.0':
-    resolution: {integrity: sha512-xD24CrrO998OnB1kB6QcKja18Rd4gPZU8juqIFqVsyNJ6H9CVuJjWYBmnG4AsJ+rCqSZjn3a0JChFo9kNLMb1Q==}
-
-  '@kosmojs/lib@0.5.0':
-    resolution: {integrity: sha512-dae/+MJQ/YvG4ofR429dVFqMhqQiuJLeoAqC8O4w7QZtAtvBgNYGnZVQCgdETKTcb035K7C2AWuTR8OywdKL8w==}
 
   '@manypkg/find-root@3.1.0':
     resolution: {integrity: sha512-BcSqCyKhBVZ5YkSzOiheMCV41kqAFptW6xGqYSTjkVTl9XQpr+pqHhwgGCOHQtjDCv7Is6EFyA14Sm5GVbVABA==}
@@ -2404,6 +2291,9 @@ packages:
     resolution: {integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==}
     engines: {node: '>=8'}
 
+  argparse@1.0.10:
+    resolution: {integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==}
+
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
 
@@ -2873,6 +2763,11 @@ packages:
   esm-env@1.2.2:
     resolution: {integrity: sha512-Epxrv+Nr/CaL4ZcFGPJIYLWFom+YeV1DqMLHJoEd9SYRxNbaFruBwfEX/kkHUJf55j2+TUbmDcmuilbP1TmXHA==}
 
+  esprima@4.0.1:
+    resolution: {integrity: sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==}
+    engines: {node: '>=4'}
+    hasBin: true
+
   esrap@2.3.7:
     resolution: {integrity: sha512-n2nf7fZR3c9yXf0BPEuHuXqT+KW0SJVj4cN5FMEkpCZ3scLjOQWpiccyCxVzCC2q1wubTghuEGzngJY/7Ah0Ow==}
     peerDependencies:
@@ -3040,6 +2935,10 @@ packages:
   graphql@16.14.2:
     resolution: {integrity: sha512-Chq1s4CY7jmh8gO2qvLIJyfCDIN+EHLFW/9iShnp1z8FjBQMoodWP1kDC36VAMXXIvAjj4ARa7ntfAV2BrjsbA==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
+
+  gray-matter@4.0.3:
+    resolution: {integrity: sha512-5v6yZd4JK3eMI3FqqCouswVqwugaA9r4dNZB1wwcmrD02QkV5H0y7XBQW8QwQqEaZY1pM9aqORSORhJRdNK44Q==}
+    engines: {node: '>=6.0'}
 
   h3@2.0.1-rc.31:
     resolution: {integrity: sha512-AG7qZzF99a0BSYoXT3evJgIhwSIUKow7R+hwkLRZS06WJ9nbSb7QXUDgs1ByBjp6svTvl++N/GKA7I9YPz9cQQ==}
@@ -3290,6 +3189,10 @@ packages:
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
+
+  js-yaml@3.15.2:
+    resolution: {integrity: sha512-6EuL879VkRA+1Cz578mKMiKvjPNEuk6+r1JaFzoSWejZmtf7xWbIyw1e3KkxlkzTIt9Taw6JBhEppG7utc1P+w==}
+    hasBin: true
 
   js-yaml@4.3.2:
     resolution: {integrity: sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==}
@@ -4107,6 +4010,9 @@ packages:
   space-separated-tokens@2.0.2:
     resolution: {integrity: sha512-PEGlAwrG8yXGXRjW32fGbg66JAlOAwbObuqVoJpv/mRgoWDQfgH1wDPvtzWyUSNAXBGSk8h755YDbbcEy3SH2Q==}
 
+  sprintf-js@1.0.3:
+    resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
+
   srvx@1.0.4:
     resolution: {integrity: sha512-eZmYaxUfZSo7/8m8UdsHRJNmTLSCTPPom9d7a60vMmuVeZvwhbvflRR+00/CxTCjMOFa5+H8tgBeNDVZ+w7AAQ==}
     engines: {node: '>=20.16.0'}
@@ -4163,6 +4069,10 @@ packages:
   strip-ansi@7.2.0:
     resolution: {integrity: sha512-yDPMNjp4WyfYBkHnjIRLfca1i6KMyGCtsVgoKe/z1+6vukgaENdgGBZt+ZmKPc4gavvEZ5OgHfHdrazhgNyG7w==}
     engines: {node: '>=12'}
+
+  strip-bom-string@1.0.0:
+    resolution: {integrity: sha512-uCC2VHvQRYu+lMh4My/sFNmF2klFymLX1wHJeXnbEJERpV/ZsVuonzerjfrGpIGF7LBVa1O7i9kjiWvJiFck8g==}
+    engines: {node: '>=0.10.0'}
 
   style-to-js@1.1.21:
     resolution: {integrity: sha512-RjQetxJrrUJLQPHbLku6U/ocGtzyjbJMP9lCNK7Ag0CNh690nSH8woqWH9u16nMjYBAok+i7JO1NP2pOy8IsPQ==}
@@ -5165,99 +5075,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@kosmojs/cli@0.5.0(@types/node@26.5.0)(esbuild@0.28.2)(rollup@4.63.1)(solid-js@1.9.15)(svelte@5.57.0)(vue@3.5.42(typescript@7.0.2))':
-    dependencies:
-      '@clack/prompts': 1.8.1
-      '@kosmojs/core': 0.5.0
-      '@kosmojs/dev': 0.5.0(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(rollup@4.63.1)(solid-js@1.9.15)(svelte@5.57.0)(vue@3.5.42(typescript@7.0.2))
-      '@kosmojs/lib': 0.5.0
-      jiti: 2.7.0
-      oxfmt: 0.67.0(svelte@5.57.0)
-      tinyglobby: 0.2.17
-    transitivePeerDependencies:
-      - '@rolldown/plugin-babel'
-      - '@testing-library/jest-dom'
-      - '@types/node'
-      - '@vitejs/devtools'
-      - babel-plugin-react-compiler
-      - buffer
-      - esbuild
-      - less
-      - oxc-transform-react
-      - rollup
-      - sass
-      - sass-embedded
-      - solid-js
-      - stylus
-      - sugarss
-      - supports-color
-      - svelte
-      - terser
-      - tsx
-      - vite-plus
-      - vue
-
-  '@kosmojs/core@0.5.0':
-    dependencies:
-      cookie: 2.0.1
-      picomatch: 4.0.7
-      picoquery: 2.5.0
-      string-width: 8.2.2
-
-  '@kosmojs/dev@0.5.0(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(rollup@4.63.1)(solid-js@1.9.15)(svelte@5.57.0)(vue@3.5.42(typescript@7.0.2))':
-    dependencies:
-      '@kosmojs/core': 0.5.0
-      '@kosmojs/lib': 0.5.0
-      '@mdx-js/rollup': 3.1.1(rollup@4.63.1)
-      '@sveltejs/vite-plugin-svelte': 7.3.0(svelte@5.57.0)(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))
-      '@vitejs/plugin-react': 6.1.1(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))
-      '@vitejs/plugin-vue': 6.0.8(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))(vue@3.5.42(typescript@7.0.2))
-      chokidar: 5.0.0
-      crc: 4.3.2
-      path-to-regexp: 8.4.2
-      semver: 7.8.5
-      typebox: 1.3.30
-      vite: 8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)
-      vite-plugin-solid: 2.11.14(solid-js@1.9.15)(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))
-      yaml: 2.9.0
-    transitivePeerDependencies:
-      - '@rolldown/plugin-babel'
-      - '@testing-library/jest-dom'
-      - '@types/node'
-      - '@vitejs/devtools'
-      - babel-plugin-react-compiler
-      - buffer
-      - esbuild
-      - jiti
-      - less
-      - oxc-transform-react
-      - rollup
-      - sass
-      - sass-embedded
-      - solid-js
-      - stylus
-      - sugarss
-      - supports-color
-      - svelte
-      - terser
-      - tsx
-      - vue
-
-  '@kosmojs/lib@0.5.0':
-    dependencies:
-      '@kosmojs/core': 0.5.0
-      '@topcli/spinner': 5.0.0
-      crc: 4.3.2
-      handlebars: 4.7.9
-      mrmime: 2.0.1
-      path-to-regexp: 8.4.2
-      picomatch: 4.0.7
-      tfusion: 0.2.2
-      tinyglobby: 0.2.17
-      ts-morph: 28.0.0
-    transitivePeerDependencies:
-      - buffer
-
   '@manypkg/find-root@3.1.0':
     dependencies:
       '@manypkg/tools': 2.1.2
@@ -6222,6 +6039,10 @@ snapshots:
     dependencies:
       color-convert: 2.0.1
 
+  argparse@1.0.10:
+    dependencies:
+      sprintf-js: 1.0.3
+
   argparse@2.0.1: {}
 
   argue-cli@3.2.0: {}
@@ -6757,6 +6578,8 @@ snapshots:
 
   esm-env@1.2.2: {}
 
+  esprima@4.0.1: {}
+
   esrap@2.3.7:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
@@ -6935,6 +6758,13 @@ snapshots:
       uint8array-extras: 1.5.0
 
   graphql@16.14.2: {}
+
+  gray-matter@4.0.3:
+    dependencies:
+      js-yaml: 3.15.2
+      kind-of: 6.0.3
+      section-matter: 1.0.0
+      strip-bom-string: 1.0.0
 
   h3@2.0.1-rc.31:
     dependencies:
@@ -7226,6 +7056,11 @@ snapshots:
   jju@1.4.0: {}
 
   js-tokens@4.0.0: {}
+
+  js-yaml@3.15.2:
+    dependencies:
+      argparse: 1.0.10
+      esprima: 4.0.1
 
   js-yaml@4.3.2:
     dependencies:
@@ -8338,6 +8173,8 @@ snapshots:
 
   space-separated-tokens@2.0.2: {}
 
+  sprintf-js@1.0.3: {}
+
   srvx@1.0.4: {}
 
   stackback@0.0.2: {}
@@ -8402,6 +8239,8 @@ snapshots:
   strip-ansi@7.2.0:
     dependencies:
       ansi-regex: 6.3.0
+
+  strip-bom-string@1.0.0: {}
 
   style-to-js@1.1.21:
     dependencies:

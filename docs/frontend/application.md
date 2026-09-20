@@ -32,27 +32,66 @@ so out of the box your app behaves exactly like a plain shell.
 :::tabs key:frontend variant:code
 == React
 ```tsx
-<!--@include: @/parts/frontend/application/root-component.md#react-->
+// React: app.tsx
+import { Outlet } from "react-router";
+import { AppProvider } from "_/app";
+
+export default function App() {
+  return (
+    <AppProvider>
+      <Outlet />
+    </AppProvider>
+  );
+}
 ```
 
 == Solid
 ```tsx
-<!--@include: @/parts/frontend/application/root-component.md#solid-->
+// Solid: app.tsx
+import type { ParentComponent } from "solid-js";
+import { AppProvider } from "_/app";
+
+const app: ParentComponent = (props) => {
+  return <AppProvider>{props.children}</AppProvider>;
+};
+
+export default app;
 ```
 
 == Vue
 ```vue
-<!--@include: @/parts/frontend/application/root-component.md#vue-->
+<!-- Vue: app.vue -->
+<script setup lang="ts">
+import { AppProvider } from "_/app";
+</script>
+
+<template>
+  <AppProvider>
+    <RouterView />
+  </AppProvider>
+</template>
 ```
 
 == Svelte
 ```svelte
-<!--@include: @/parts/frontend/application/root-component.md#svelte-->
+<!-- Svelte: app.svelte -->
+<script lang="ts">
+  import type { Snippet } from "svelte";
+  import { AppProvider } from "_/app";
+  let { children }: { children: Snippet } = $props();
+</script>
+
+<AppProvider>
+  {@render children()}
+</AppProvider>
 ```
 
 == MDX
 ```mdx
-<!--@include: @/parts/frontend/application/root-component.md#mdx-->
+{/* MDX: app.mdx */}
+import { AppProvider } from "_/app";
+
+<AppProvider>{props.children}</AppProvider>
 ```
 :::
 
@@ -82,27 +121,107 @@ The callback must return two functions:
 :::tabs key:frontend variant:code
 == React
 ```ts
-<!--@include: @/parts/frontend/application/router.md#react-->
+// React: router.ts
+import routerFactory, { createRouters } from "_/router";
+
+import app from "./app";
+
+export default routerFactory((routes) => {
+  const { clientRouter, serverRouter } = createRouters(routes, { app });
+  return {
+    clientRouter() {
+      return clientRouter()
+    },
+    serverRouter(url) {
+      return serverRouter(url)
+    },
+  };
+});
 ```
 
 == Solid
 ```ts
-<!--@include: @/parts/frontend/application/router.md#solid-->
+// Solid: router.ts
+import routerFactory, { createRouters } from "_/router";
+
+import app from "./app";
+
+export default routerFactory((routes) => {
+  const { clientRouter, serverRouter } = createRouters(routes, { app });
+  return {
+    clientRouter() {
+      return clientRouter()
+    },
+    serverRouter(url) {
+      return serverRouter(url)
+    },
+  };
+});
 ```
 
 == Vue
 ```ts
-<!--@include: @/parts/frontend/application/router.md#vue-->
+// Vue: router.ts
+import routerFactory, { createRouters } from "_/router";
+import { appProvider } from "_/app";
+
+import app from "./app.vue";
+
+export default routerFactory((routes) => {
+  const { clientRouter, serverRouter } = createRouters(routes, {
+    app,
+    use: [[appProvider, undefined]],
+  });
+  return {
+    clientRouter() {
+      return clientRouter()
+    },
+    serverRouter(url) {
+      return serverRouter(url)
+    },
+  };
+});
 ```
 
 == Svelte
 ```ts
-<!--@include: @/parts/frontend/application/router.md#svelte-->
+// Svelte: router.ts
+import routerFactory, { createRouters } from "_/router";
+
+import app from "./app.svelte";
+
+export default routerFactory((routes) => {
+  const { clientRouter, serverRouter } = createRouters(routes, { app });
+  return {
+    clientRouter() {
+      return clientRouter()
+    },
+    serverRouter(url) {
+      return serverRouter(url)
+    },
+  };
+});
 ```
 
 == MDX
 ```ts
-<!--@include: @/parts/frontend/application/router.md#mdx-->
+// MDX: router.ts
+import routerFactory, { createRouters } from "_/router";
+
+import app from "./app.mdx";
+import { components } from "./components/mdx"
+
+export default routerFactory((routes) => {
+  const { clientRouter, serverRouter } = createRouters(routes, { app, components });
+  return {
+    clientRouter() {
+      return clientRouter()
+    },
+    serverRouter(url) {
+      return serverRouter(url)
+    },
+  };
+});
 ```
 :::
 
@@ -133,27 +252,162 @@ correct method: `hydrate()` for SSR hydration, `mount()` for a fresh client-only
 :::tabs key:frontend variant:code
 == React
 ```ts
-<!--@include: @/parts/frontend/application/entry-client.md#react-->
+// React: entry/client.ts
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "_/entry/client";
+
+import routerFactory from "../router";
+
+const routes = createRoutes({ withPreload: true });
+const { clientRouter } = routerFactory(routes);
+
+const root = document.getElementById("app");
+
+if (root) {
+  renderFactory(() => {
+    return {
+      hydrate() {
+        return hydrate(() => clientRouter(), root);
+      },
+      mount() {
+        return mount(() => clientRouter(), root);
+      },
+    };
+  });
+} else {
+  console.error("Root element not found!");
+}
 ```
 
 == Solid
 ```ts
-<!--@include: @/parts/frontend/application/entry-client.md#solid-->
+// Solid: entry/client.ts
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "_/entry/client";
+
+import routerFactory from "../router";
+
+const routes = createRoutes({ withPreload: true });
+const { clientRouter } = routerFactory(routes);
+
+const root = document.getElementById("app");
+
+if (root) {
+  renderFactory(() => {
+    return {
+      hydrate() {
+        return hydrate(() => clientRouter(), root);
+      },
+      mount() {
+        return mount(() => clientRouter(), root);
+      },
+    };
+  });
+} else {
+  console.error("Root element not found!");
+}
 ```
 
 == Vue
 ```ts
-<!--@include: @/parts/frontend/application/entry-client.md#vue-->
+// Vue: entry/client.ts
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "_/entry/client";
+
+import routerFactory from "../router";
+
+const routes = createRoutes();
+const { clientRouter } = routerFactory(routes);
+
+const root = document.getElementById("app");
+
+if (root) {
+  renderFactory(() => {
+    return {
+      hydrate() {
+        return hydrate(() => clientRouter(), root);
+      },
+      mount() {
+        return mount(() => clientRouter(), root);
+      },
+    };
+  });
+} else {
+  console.error("Root element not found!");
+}
 ```
 
 == Svelte
 ```ts
-<!--@include: @/parts/frontend/application/entry-client.md#svelte-->
+// Svelte: entry/client.ts
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "_/entry/client";
+
+import routerFactory from "../router";
+
+const routes = createRoutes();
+const { clientRouter } = routerFactory(routes);
+
+const root = document.getElementById("app");
+
+if (root) {
+  renderFactory(() => {
+    return {
+      hydrate() {
+        return hydrate(() => clientRouter(), root);
+      },
+      mount() {
+        return mount(() => clientRouter(), root);
+      },
+    };
+  });
+} else {
+  console.error("Root element not found!");
+}
 ```
 
 == MDX
 ```ts
-<!--@include: @/parts/frontend/application/entry-client.md#mdx-->
+// MDX: entry/client.ts
+import renderFactory, {
+  createRoutes,
+  hydrate,
+  mount,
+} from "_/entry/client";
+
+import routerFactory from "../router";
+
+const routes = createRoutes();
+const { clientRouter } = routerFactory(routes);
+
+const root = document.getElementById("app");
+
+if (root) {
+  renderFactory(() => {
+    return {
+      hydrate() {
+        return hydrate(() => clientRouter(), root);
+      },
+      mount() {
+        return mount(() => clientRouter(), root);
+      },
+    };
+  });
+} else {
+  console.error("Root element not found!");
+}
 ```
 :::
 
