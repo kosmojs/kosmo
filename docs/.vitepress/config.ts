@@ -6,7 +6,7 @@ import {
 import llmstxtPlugin from "vitepress-plugin-llms";
 import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 
-const redirects = [
+export const redirects = [
   // CLI moved
   ["/essentials/cli.html", "/cli/intro.html"],
   // OpenAPI moved

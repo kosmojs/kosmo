@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "vitepress dev",
-    "prebuild": "node ./scripts/lint-includes.mjs",
     "build": "vitepress build",
-    "postbuild": "node ./scripts/compose-llms.mjs",
+    "postbuild": "node --strip-types ./scripts/postbuild.ts",
     "preview": "vitepress preview"
   },
-  "devDependencies": {
+  "dependencies": {
+    "gray-matter": "^4.0.3",
     "vite": "^8.2.2",
     "vitepress": "2.0.0-alpha.17",
     "vitepress-plugin-group-icons": "^1.7.6",
