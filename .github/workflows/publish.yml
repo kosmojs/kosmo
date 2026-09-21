@@ -58,16 +58,10 @@ jobs:
           package-manager-cache: false
 
       - name: Install dependencies
-        run: >-
-          pnpm install
-          --frozen-lockfile
-          --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build packages
-        run: >-
-          pnpm
-          --recursive
-          run build
+        run: pnpm build
 
       # Tarballs are packed AND verified in the build job.
       # `workspace:` is a pnpm protocol and only pnpm rewrites it into a real range;
@@ -103,6 +97,7 @@ jobs:
               continue
             fi
 
+            echo "Packing $directory"
             (
               cd "$directory"
               pnpm pack --pack-destination "${GITHUB_WORKSPACE}/${TARBALL_DIR}"

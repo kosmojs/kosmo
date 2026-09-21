@@ -2,6 +2,7 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/vue-generator",
+  "version": "0.0.0",
   "description": "Vue integration for KosmoJS (internal)",
   "author": "Slee Woo",
   "license": "MIT",

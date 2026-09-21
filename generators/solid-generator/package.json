@@ -2,6 +2,7 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/solid-generator",
+  "version": "0.0.0",
   "description": "SolidJS integration for KosmoJS (internal)",
   "author": "Slee Woo",
   "license": "MIT",
