@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@kosmojs/dev",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Vite integration and code-generation host for KosmoJS projects",
   "cacheVersion": "001",
   "author": "Slee Woo",
