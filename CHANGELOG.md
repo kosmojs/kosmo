@@ -1,3 +1,10 @@
+## [0.5.2](https://github.com/kosmojs/kosmo/compare/v0.5.0...v0.5.2) (2026-09-21)
+
+### Features
+
+* **backend:** add edge middleware slot to run before validation ([868bae2](https://github.com/kosmojs/kosmo/commit/868bae2412e4dac3df19d153623f4054aec26908))
+* **sidecar:** a source folder that builds a standalone process ([7ae57d2](https://github.com/kosmojs/kosmo/commit/7ae57d22591c4b73f67637163ac2c62117279670))
+
 ## [0.5.0](https://github.com/kosmojs/kosmo/compare/v0.4.4...v0.5.0) (2026-09-09)
 
 ### ⚠ BREAKING CHANGES

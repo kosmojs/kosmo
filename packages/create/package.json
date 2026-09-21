@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "create-kosmo",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Project scaffolder for KosmoJS - `npm create kosmo`",
   "author": "Slee Woo",
   "license": "MIT",

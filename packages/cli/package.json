@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@kosmojs/cli",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "The `kosmo` command line interface - dev server, build, preview, typecheck, scaffolding",
   "author": "Slee Woo",
   "license": "MIT",
