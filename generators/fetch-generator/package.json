@@ -2,7 +2,6 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/fetch-generator",
-  "version": "0.3.0",
   "description": "Typed isomorphic fetch clients for KosmoJS backends (internal)",
   "author": "Slee Woo",
   "license": "MIT",

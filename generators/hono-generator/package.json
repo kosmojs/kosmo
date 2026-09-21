@@ -2,7 +2,6 @@
   "type": "module",
   "private": true,
   "name": "@kosmojs/hono-generator",
-  "version": "0.3.0",
   "description": "Hono backend integration for KosmoJS (internal)",
   "author": "Slee Woo",
   "license": "MIT",
