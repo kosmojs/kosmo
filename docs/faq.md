@@ -188,21 +188,24 @@ You name a `stack` and flip features on; `defineConfig` assembles the generators
 that swaps a built-in generator for your own on any block.
 [Details&nbsp;›](/essentials/config#bringing-your-own-generator)
 
-#### What runs, and in what order?
-Fixed, and independent of how you write the config:
-`core -> backend -> validation -> openapi -> fetch -> frontend -> ssr -> ssg`.
-`coreGenerator` always runs first and is never listed.
-`validation` and `openapi` only apply when a `backend` is present,
-and `fetch` only produces clients when there are backend routes to derive them from.
-[Details&nbsp;›](/essentials/config#bringing-your-own-generator)
-
 #### Should I add my stack's Vite plugin to `viteConfig.plugins`?
 No - it reaches Vite through `stack`, so listing it in `viteConfig.plugins` runs the transform twice.
-Only the stack plugin is special this way; every other plugin goes in `viteConfig.plugins` as usual.
 To configure it, construct it yourself and pass it as `plugin`:
-`frontend: { stack: { name: "react", plugin: react({ jsxRuntime: "classic" }) }, base: "/" }`.
+```ts [kosmo.config.ts]
+defineConfig({
+  frontend: {
+    base: "/"
+    stack: {
+      name: "react",
+      plugin: react({ jsxRuntime: "classic" }),
+    },
+  },
+})
+```
 With a bare name KosmoJS builds the plugin with the arguments the current command needs;
 an instance you pass is used as written, so set those yourself.
+
+Only the stack plugin is special this way; every other plugin goes in `viteConfig.plugins` as usual.
 [Details&nbsp;›](/essentials/config#frontend-stack-required)
 
 #### How do I change the `/api` prefix, and where does it come from?
@@ -1201,7 +1204,10 @@ Add a `response` to the handler and the entry (and validation) appear together.
 #### What's the response type when a handler returns multiple responses?
 A handler can declare a union of responses; `ResponseT` collapses to a union of their body types,
 dropping any variant with no body (no third tuple element, like a bare `[409]`).
-So `[201, "json", User] | [202, "json", { queued: true }] | [409]` yields `User | { queued: true }`.
+So the response below yields `User | { queued: 1 }`:
+```ts
+[201, "json", User] | [202, "json", { queued: 1 }] | [409]
+```
 [Details&nbsp;›](/fetch/type-safety#multiple-responses)
 
 ### Frontend
@@ -1379,10 +1385,14 @@ through the same fetch client used elsewhere in the project.
 [Details&nbsp;›](/frontend/mdx#data-fetching)
 
 #### How do I access fetched data in MDX?
-Read it with the `useLoaderData()` hook inside a component - `props` stays yours.
-Because a hook must run during render, wrap the read in a small component
-(`export const Msg = () => { const data = useLoaderData(); return <p>{data.msg}</p>; }`)
-and place `<Msg />` in the markdown.
+Read it with the `useLoaderData()` hook inside a component.
+Because a hook must run during render, wrap the read in a small component and place `<Msg />` in the markdown.
+```tsx
+export const Msg = () => {
+  const data = useLoaderData();
+  return <p>{data.msg}</p>;
+}
+```
 [Details&nbsp;›](/frontend/mdx#data-fetching)
 
 #### How do I use route name/params inside an MDX loader?
@@ -1556,11 +1566,15 @@ A dynamic route renders once per parameter set it declares through `staticParams
 A dynamic route **without** `staticParams` is skipped entirely: no file is written for it.
 [Details&nbsp;›](/frontend/static-site-generation#declaring-staticparams)
 
-#### Where do I declare `staticParams`?
+#### Where do I declare staticParams?
 Wherever the framework exposes named exports from a page module - the value is the same list of positional parameter sets everywhere:
+```ts
+import { defineStaticParams } from "_/core";
 
-- **React / SolidJS**: `export const staticParams = defineStaticParams<"...">([...])`, importing `defineStaticParams` from `_/core`
-- **Vue**: the same, in a plain `<script>` block (`<script setup>` can't hold named exports)
+export const staticParams = defineStaticParams<"...">([]);
+```
+
+- **Vue** exports `staticParams` from a plain `<script>` block (`<script setup>` can't hold named exports)
 - **Svelte**: the same, in a `<script module>` block
 - **MDX**: a `staticParams` list in the page's frontmatter
 
