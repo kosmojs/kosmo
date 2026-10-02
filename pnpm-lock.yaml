@@ -458,6 +458,9 @@ importers:
       cookie:
         specifier: ^2.0.1
         version: 2.0.1
+      light-my-request:
+        specifier: ^6.6.0
+        version: 6.6.0
       path-to-regexp:
         specifier: ^8.4.2
         version: 8.4.2

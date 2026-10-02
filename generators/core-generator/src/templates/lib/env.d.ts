@@ -15,7 +15,8 @@ declare module "virtual:kosmo/fetch-transport" {
    * On the SSR bundle it dispatches straight into the backend app, in process.
    * Supplied by the `kosmo:virtualModules` Vite plugin - there is no file.
    * */
-  export const transport: Transport | undefined;
+  const transport: Transport | undefined;
+  export default transport;
 }
 
 /**

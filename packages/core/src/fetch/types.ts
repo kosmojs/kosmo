@@ -1,4 +1,5 @@
 import type { stringifySearchParams } from "../generic";
+import type { Transport } from "./transport";
 
 export enum HTTPMethods {
   GET = "GET",
@@ -74,15 +75,3 @@ export interface HTTPError<T extends object = object> extends Error {
 export type HostOpt =
   | string
   | { hostname: string; port?: number; secure?: boolean };
-
-/**
- * Minimal transport contract: the call signature of fetch, without
- * its runtime-specific statics (Bun's typeof fetch, for instance,
- * carries a required preconnect property). The client only ever
- * calls the transport, so the call signature is the whole contract;
- * the global fetch remains assignable to it.
- * */
-export type Transport = (
-  input: string | URL | Request,
-  init?: RequestInit,
-) => Promise<Response>;

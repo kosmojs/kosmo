@@ -1,11 +1,11 @@
-import fetchFactory, { payloadResolver } from "@kosmojs/core/fetch";
+import fetchFactory, { payloadResolver, type Options } from "@kosmojs/core/fetch";
 
 import { apiRouteMap } from "{{ createImport 'libCore' }}";
-import { transport } from "virtual:kosmo/fetch-transport";
+import transport from "virtual:kosmo/fetch-transport";
 
 import {
   type MaybeWrapped,
-  unwrap,
+  unwrap as defaultUnwrap,
 } from "{{ createImport 'lib' 'unwrap' }}";
 
 {{#each validationTypes}}
@@ -52,7 +52,7 @@ export const {{method}} = (
     {{target}}: MaybeWrapped<{{id}}>,
     {{/each}}
   },
-  opt?: {
+  options?: Options & {
     unwrap?: <T>(data: MaybeWrapped<T>) => T;
   },
 ): Promise<
@@ -62,8 +62,9 @@ export const {{method}} = (
   unknown
   {{/if}}
 > => {
+  const { unwrap, ...opts } = { ...options };
   const [params, payload] = [_params, _payload].map((data) => {
-    return typeof opt?.unwrap === "function" ? opt.unwrap(data) : unwrap(data);
+    return typeof unwrap === "function" ? unwrap(data) : defaultUnwrap(data);
   })
   // validate only on client, skip double validation in SSR mode
   if (!import.meta.env.SSR) {
@@ -85,7 +86,7 @@ export const {{method}} = (
     }
     {{/each}}
   }
-  return fetchApi.{{method}}(parametrize(params as never), payload as never);
+  return fetchApi.{{method}}(parametrize(params as never), payload as never, opts as never);
 };
 {{/each}}
 

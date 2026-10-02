@@ -18,7 +18,7 @@ import * as templates from "./templates";
 export default defineGeneratorFactory((sourceFolder) => {
   const { createPath, createImportHelpers } = pathResolver(sourceFolder);
 
-  const { render: renderLibTpl, renderToFile: deployLibFile } = renderFactory({
+  const { renderToFile: deployLibFile } = renderFactory({
     helpers: {
       ...createImportHelpers({ origin: "lib" }),
       ...routeRenderHelpers(),
@@ -33,9 +33,12 @@ export default defineGeneratorFactory((sourceFolder) => {
       .flatMap(({ kind, entry }) => (kind === "apiRoute" ? [entry] : []))
       .sort(sortRoutes);
 
-    await deployLibFile(createPath.lib("fetch.ts"), templates.fetch, {
-      routes,
-    });
+    for (const [file, template] of [
+      //
+      ["fetch/index.ts", templates.index],
+    ]) {
+      await deployLibFile(createPath.lib(file), template, { routes });
+    }
 
     for (const { kind, entry } of updatedEntries) {
       if (kind === "apiRoute") {
@@ -137,6 +140,7 @@ export default defineGeneratorFactory((sourceFolder) => {
         // fetch generator always runs before other generators
         // so it is safe to re-initialize this file before specialized generators update it.
         ["unwrap.ts", templates.unwrap],
+        ["fetch/transport.ts", templates.transport],
       ]) {
         await deployLibFile(createPath.lib(file), template, {});
       }
@@ -156,19 +160,6 @@ export default defineGeneratorFactory((sourceFolder) => {
 
     async build(entries) {
       await generateLibFiles(entries, entries);
-    },
-
-    virtualModules() {
-      return [
-        {
-          // The transport must differ between the browser and the SSR bundle
-          specifier: "virtual:kosmo/fetch-transport",
-          // `undefined` on the client, so fetch clients fall back to global fetch
-          csr: `export const transport = undefined;`,
-          // an in-process dispatch into the api app on the server
-          ssr: renderLibTpl(templates.ssr, {}),
-        },
-      ];
     },
   };
 });

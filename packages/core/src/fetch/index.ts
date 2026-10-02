@@ -32,7 +32,7 @@ export default (opts?: Options): FetchMapper => {
 
       const {
         stringifySearchParams = defaultStringifySearchParams,
-        transport = globalThis.fetch,
+        transport,
         responseMode = "json",
         ...fetchOpts // Remaining options passed directly to fetch
       } = {
@@ -89,34 +89,55 @@ export default (opts?: Options): FetchMapper => {
         ? `?${stringifySearchParams(data.query as never)}`
         : "";
 
-      return transport
-        .call(globalThis, url + searchParams, config as never)
-        .then((response) => {
-          // Return both response and parsed data based on responseMode
-          return Promise.all([
-            response,
+      const parseResponse = async (
+        response: Response,
+      ): Promise<{
+        body: unknown;
+        response: Response;
+      }> => {
+        return {
+          body:
             responseMode === "raw"
               ? response // Return full response object
-              : response[responseMode]().catch((e) => e), // Parse response body
-          ]);
-        })
-        .then(([response, data]) => {
-          // Create enhanced error object for HTTP errors
-          let error = new Error(response.statusText) as HTTPError;
+              : await response[responseMode]().catch((e) => e),
+          response,
+        };
+      };
 
-          if (response.ok) {
-            if (data instanceof Error) {
-              // response parsing failed, rethrow
-              error = data as never;
-            } else {
-              return data;
-            }
+      const returnResponse = ({
+        body,
+        response,
+      }: {
+        body: unknown;
+        response: Response;
+      }) => {
+        // Create enhanced error object for HTTP errors
+        let error = new Error(response.statusText) as HTTPError;
+
+        if (response.ok) {
+          if (body instanceof Error) {
+            // response parsing failed, rethrow
+            error = body as never;
+          } else {
+            return body;
           }
+        } else {
+          error.body = body as never;
+        }
 
-          error.response = response;
-          error.body = data;
-          throw error;
-        });
+        error.response = response;
+
+        throw error;
+      };
+
+      return transport
+        ? transport
+            .requestHandler(url + searchParams, config as never)
+            .then(parseResponse)
+            .then(transport.responseHandler || returnResponse)
+        : fetch(url + searchParams, config as never)
+            .then(parseResponse)
+            .then(returnResponse);
     };
   }
 

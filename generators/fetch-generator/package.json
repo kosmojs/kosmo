@@ -22,8 +22,5 @@
   "dependencies": {
     "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^"
-  },
-  "devDependencies": {
-    "light-my-request": "^6.6.0"
   }
 }

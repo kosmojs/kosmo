@@ -26,6 +26,10 @@
       "types": "./pkg/fetch/index.d.ts",
       "default": "./pkg/fetch/index.js"
     },
+    "./fetch/transport": {
+      "types": "./pkg/fetch/transport.d.ts",
+      "default": "./pkg/fetch/transport.js"
+    },
     "./errors": {
       "types": "./pkg/errors/index.d.ts",
       "default": "./pkg/errors/index.js"
@@ -36,11 +40,12 @@
     }
   },
   "scripts": {
-    "build": "wsbuild src/index.ts src/api/index.ts src/fetch/index.ts src/errors/index.ts src/generators/index.ts",
+    "build": "wsbuild src/index.ts src/api/index.ts src/fetch/index.ts src/fetch/transport.ts src/errors/index.ts src/generators/index.ts",
     "test": "vitest --root ../.. --project packages/core"
   },
   "dependencies": {
     "cookie": "^2.0.1",
+    "light-my-request": "^6.6.0",
     "path-to-regexp": "^8.4.2",
     "picomatch": "^4.0.7",
     "picoquery": "^2.5.0",

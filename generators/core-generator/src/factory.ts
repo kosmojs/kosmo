@@ -239,6 +239,14 @@ export default defineGeneratorFactory((sourceFolder) => {
             ? `export { default } from "${createImport.api(["app"], { origin: "lib" })}";`
             : "export default undefined;",
         },
+        {
+          // The transport must differ between the browser and the SSR bundle
+          specifier: "virtual:kosmo/fetch-transport",
+          // `undefined` on the client, so fetch clients fall back to global fetch
+          csr: "export default undefined;",
+          // an in-process dispatch into the backend app on the server
+          ssr: `export { default } from "${createImport.lib(["fetch/transport"], { origin: "lib" })}";`,
+        },
       ];
     },
   };
