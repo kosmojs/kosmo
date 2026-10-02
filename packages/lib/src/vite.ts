@@ -223,3 +223,13 @@ const isFile = async (path: string) => {
     .then((e) => e.isFile())
     .catch(() => false);
 };
+
+export const cacheDir = (
+  { root, name }: SourceFolder,
+  target:
+    | `frontend:${"build" | "serve" | "test"}`
+    | `backend:${"build" | "serve" | "test"}`
+    | "sidecar",
+) => {
+  return join(root, defaults.varDir, ".vite", name, target);
+};

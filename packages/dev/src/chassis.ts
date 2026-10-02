@@ -1,6 +1,6 @@
 import http, { type IncomingMessage, type ServerResponse } from "node:http";
 import net from "node:net";
-import { join, posix, resolve } from "node:path";
+import { join, posix } from "node:path";
 import { styleText } from "node:util";
 
 import { pathToRegexp } from "path-to-regexp";
@@ -22,6 +22,7 @@ import {
 } from "@kosmojs/core";
 import type { DevSetup } from "@kosmojs/core/api";
 import {
+  cacheDir,
   createAliasPatterns,
   mergeConfigs,
   pathResolver,
@@ -139,7 +140,7 @@ export default async (
           {
             base: frontend.base,
             root: createPath.src(),
-            cacheDir: cacheDir(sourceFolder, command, "client"),
+            cacheDir: cacheDir(sourceFolder, `frontend:${command}`),
             plugins,
             server: {
               port: port++,
@@ -184,7 +185,7 @@ export default async (
           {
             root: createPath.src(),
             appType: "custom",
-            cacheDir: cacheDir(sourceFolder, command, "backend"),
+            cacheDir: cacheDir(sourceFolder, `backend:${command}`),
             plugins,
             server: {
               port: port++,
@@ -280,7 +281,7 @@ export default async (
           {
             root: createPath.src(),
             appType: "custom",
-            cacheDir: cacheDir(sourceFolder, command, "sidecar"),
+            cacheDir: cacheDir(sourceFolder, "sidecar"),
             plugins: [...plugins, reloadPlugin],
             // `hotUpdate` is part of the HMR pipeline, so it runs only with `hmr` on -
             // but this server is never listened on, so no socket is ever bound and no port is taken.
@@ -397,14 +398,6 @@ export default async (
   };
 };
 
-const cacheDir = (
-  { root, name }: SourceFolder,
-  command: ProjectSettings["command"],
-  mode: "client" | "backend" | "sidecar",
-) => {
-  return resolve(root, `var/.vite/${name}/${command}/${mode}`);
-};
-
 /**
  * Production build of one source folder - generators, client bundle, api bundle,
  * then the generators' post-build steps (ssr, ssg).
@@ -468,7 +461,7 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
         {
           base: frontend.base,
           root: createPath.src(),
-          cacheDir: cacheDir(sourceFolder, command, "client"),
+          cacheDir: cacheDir(sourceFolder, `frontend:${command}`),
           plugins,
           build: {
             outDir: createPath.distDir("client"),
@@ -522,7 +515,7 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
               },
             },
           },
-          cacheDir: cacheDir(sourceFolder, command, "backend"),
+          cacheDir: cacheDir(sourceFolder, `backend:${command}`),
         },
       ),
     );
@@ -559,7 +552,7 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
               },
             },
           },
-          cacheDir: cacheDir(sourceFolder, command, "sidecar"),
+          cacheDir: cacheDir(sourceFolder, "sidecar"),
         },
       ),
     );
