@@ -199,6 +199,7 @@ export default defineGeneratorFactory((sourceFolder) => {
       ["index.ts", templates.libCoreIndex],
     ]) {
       await renderToFile(createPath.libCore(file), template, {
+        name: sourceFolder.name,
         base: frontend?.base ? JSON.stringify(frontend.base) : "undefined",
         backendBase: backend?.base ? JSON.stringify(backend.base) : "undefined",
         backendAliasPatterns: JSON.stringify(
