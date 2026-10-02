@@ -1,4 +1,8 @@
+import { posix } from "node:path";
+
 import { mergeConfig, type UserConfig } from "vite";
+
+import { defaults } from "@kosmojs/core";
 
 export const mergeConfigs = (
   ...configs: Array<UserConfig | undefined>
@@ -24,4 +28,8 @@ export const containsPathTraversalPatterns = (str: string): boolean => {
     /\.\.\//,
     /\/\.\//,
   ].some((e) => e.test(str));
+};
+
+export const configFilePattern = (folder: string) => {
+  return posix.join(defaults.srcDir, folder, "kosmo.config.ts");
 };

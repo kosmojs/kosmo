@@ -3,7 +3,7 @@
 import { execFile } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { basename, dirname, join, resolve } from "node:path";
+import { basename, dirname, resolve } from "node:path";
 import { parseArgs, styleText } from "node:util";
 
 import { createJiti } from "jiti";
@@ -18,7 +18,7 @@ import {
   type SourceFolder,
 } from "@kosmojs/core";
 import chassis from "@kosmojs/dev/chassis";
-import { pathExists, spinnerFactory } from "@kosmojs/lib";
+import { configFilePattern, pathExists, spinnerFactory } from "@kosmojs/lib";
 
 import {
   assertNoError,
@@ -189,10 +189,6 @@ const run = async () => {
       ? `Unknown command; use one of ${styleText("blue", COMMANDS.join(", "))}`
       : undefined;
   });
-
-  const configFilePattern = (folder: string) => {
-    return join(defaults.srcDir, folder, "kosmo.config.ts");
-  };
 
   const scanConfigFiles = async (folderNames: Array<string>) => {
     const configFiles = await glob(
