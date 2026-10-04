@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { pathToFileURL } from "node:url";
+
 /**
  * Serves every built source folder from a single process.
  *
@@ -303,7 +305,11 @@ export const startServer = async ({
   return server;
 };
 
-if (process.argv[1] === import.meta.url) {
+const self = process.argv[1] //
+  ? pathToFileURL(process.argv[1]).href
+  : undefined;
+
+if (import.meta.url === self) {
   const {
     values: { host, port, sock },
   } = parseArgs({
