@@ -18,15 +18,20 @@ export const createListener = <T extends App>(app: T): NodeListener => {
 };
 
 type Handles = {
+  host?: string | undefined;
   port?: number | undefined;
   onListen?: () => Promise<void>;
 };
 
 const getListenHandles = async (opt?: Handles) => {
-  const { port } = opt
+  const { host, port } = opt
     ? opt
     : parseArgs({
         options: {
+          host: {
+            type: "string",
+            short: "h",
+          },
           port: {
             type: "string",
             short: "p",
@@ -46,15 +51,19 @@ const getListenHandles = async (opt?: Handles) => {
   };
 
   return {
+    host,
     port: Number(port),
     onListen: opt?.onListen || onListen,
   };
 };
 
 export const serve = async <T extends App>(app: T, opt?: Handles) => {
-  const { port, onListen } = await getListenHandles(opt);
+  const { host, port, onListen } = await getListenHandles(opt);
 
-  const server = h3serve(app, { port });
+  const server = h3serve(app, {
+    ...(host ? { hostname: host } : {}),
+    port,
+  });
   await server.ready().then(onListen);
 
   return server as never;

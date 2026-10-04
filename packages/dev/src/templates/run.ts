@@ -259,9 +259,11 @@ export const createListener = async (): Promise<NodeListener> => {
 };
 
 export const startServer = async ({
+  host,
   port,
   sock,
 }: {
+  host?: string | undefined;
   port?: string | number | undefined;
   sock?: string | undefined;
 }): Promise<Server> => {
@@ -283,29 +285,37 @@ export const startServer = async ({
 
   const server = createServer(await createListener());
 
-  server.listen(sock || Number(port), async () => {
-    if (sock) {
-      // let a reverse proxy running as another user connect
-      await chmod(sock, 0o777);
-    }
-    console.log("\n  -> Server Started\n");
-  });
+  server.listen(
+    {
+      host: host || "{{ previewHost }}",
+      ...(port ? { port: Number(port) } : {}),
+      ...(sock ? { path: sock } : {}),
+    },
+    async () => {
+      if (sock) {
+        // let a reverse proxy running as another user connect
+        await chmod(sock, 0o777);
+      }
+      console.log("\n  -> Server Started\n");
+    },
+  );
 
   return server;
 };
 
 if (process.argv[1] === import.meta.url) {
   const {
-    values: { port, sock },
+    values: { host, port, sock },
   } = parseArgs({
     options: {
+      host: { type: "string", short: "h" },
       port: { type: "string", short: "p" },
       sock: { type: "string", short: "s" },
     },
   });
 
   try {
-    await startServer({ port, sock });
+    await startServer({ host, port, sock });
   } catch (error) {
     console.error("Failed starting server");
     console.error(error);

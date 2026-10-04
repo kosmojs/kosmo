@@ -410,9 +410,11 @@ export const createListener = async (): Promise<NodeListener> => {
 };
 
 export const startServer = async ({
+  host,
   sock,
   port,
 }: {
+  host?: string | undefined;
   sock?: string | undefined;
   port?: string | number | undefined;
 }) => {
@@ -438,14 +440,21 @@ export const startServer = async ({
 
   const server = createServer(await createListener());
 
-  server.listen(sock || port, async () => {
-    if (sock) {
-      // Make Unix socket world-writable so other processes (e.g. a reverse proxy)
-      // can connect without permission issues.
-      await chmod(sock, 0o777);
-    }
-    console.log("\n  ➜ Server Started ✨");
-  });
+  server.listen(
+    {
+      ...(host ? { host } : {}),
+      ...(port ? { port: Number(port) } : {}),
+      ...(sock ? { path: sock } : {}),
+    },
+    async () => {
+      if (sock) {
+        // Make Unix socket world-writable so other processes (e.g. a reverse proxy)
+        // can connect without permission issues.
+        await chmod(sock, 0o777);
+      }
+      console.log("\n  ➜ Server Started ✨");
+    },
+  );
 
   return server;
 };
@@ -458,9 +467,13 @@ if (isMain) {
    * and a standalone executable
    * */
   const {
-    values: { port, sock },
+    values: { host, port, sock },
   } = parseArgs({
     options: {
+      host: {
+        type: "string",
+        short: "h",
+      },
       port: {
         type: "string",
         short: "p",
@@ -473,7 +486,7 @@ if (isMain) {
   });
 
   try {
-    await startServer({ sock, port });
+    await startServer({ host, sock, port });
   } catch (error: any) {
     console.error(styleText("red", "✗ Failed starting SSR server"));
     console.error(error);

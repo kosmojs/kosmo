@@ -18,16 +18,21 @@ export const createListener = <T extends App>(app: T): NodeListener => {
 };
 
 type Handles = {
+  host?: string | undefined;
   port?: number | undefined;
   sock?: string | undefined;
   onListen?: () => Promise<void>;
 };
 
 const getListenHandles = async (opt?: Handles) => {
-  const { port, sock } = opt
+  const { host, port, sock } = opt
     ? opt
     : parseArgs({
         options: {
+          host: {
+            type: "string",
+            short: "h",
+          },
           port: {
             type: "string",
             short: "p",
@@ -64,6 +69,7 @@ const getListenHandles = async (opt?: Handles) => {
   };
 
   return {
+    host,
     port: Number(port),
     sock,
     onListen: opt?.onListen || onListen,
@@ -71,13 +77,17 @@ const getListenHandles = async (opt?: Handles) => {
 };
 
 export const serve = async <T extends App>(app: T, opt?: Handles) => {
-  const { port, sock, onListen } = await getListenHandles(opt);
+  const { host, port, sock, onListen } = await getListenHandles(opt);
 
   if (typeof Bun !== "undefined") {
     const server = Bun.serve(
       sock
         ? { unix: sock, fetch: app.fetch }
-        : { port: Number(port), fetch: app.fetch },
+        : {
+            ...(host ? { hostname: host } : {}),
+            port: Number(port),
+            fetch: app.fetch,
+          },
     );
     await onListen();
     return server as never;

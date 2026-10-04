@@ -16,16 +16,21 @@ export const createListener = <T extends App>(app: T): NodeListener => {
 };
 
 type Handles = {
+  host?: string | undefined;
   port?: number | undefined;
   sock?: string | undefined;
   onListen?: () => Promise<void>;
 };
 
 const getListenHandles = async (opt?: Handles): Promise<Handles> => {
-  const { port, sock } = opt
+  const { host, port, sock } = opt
     ? opt
     : parseArgs({
         options: {
+          host: {
+            type: "string",
+            short: "h",
+          },
           port: {
             type: "string",
             short: "p",
@@ -62,6 +67,7 @@ const getListenHandles = async (opt?: Handles): Promise<Handles> => {
   };
 
   return {
+    host,
     port: port ? Number(port) : undefined,
     sock,
     onListen: opt?.onListen || onListen,
@@ -69,7 +75,14 @@ const getListenHandles = async (opt?: Handles): Promise<Handles> => {
 };
 
 export const serve = async <T extends App>(app: T, opt?: Handles) => {
-  const { port, sock, onListen } = await getListenHandles(opt);
-  const server = app.listen(port || sock, onListen);
+  const { host, port, sock, onListen } = await getListenHandles(opt);
+  const server = app.listen(
+    {
+      ...(host ? { host } : {}),
+      ...(port ? { port: Number(port) } : {}),
+      ...(sock ? { path: sock } : {}),
+    },
+    onListen,
+  );
   return server as never;
 };
