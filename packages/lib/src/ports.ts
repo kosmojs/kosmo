@@ -68,27 +68,18 @@ export const findFreePortRange = async (
   );
 };
 
-/**
- * Derive a search window from the dev port declared in package.json.
- *
- * Prepends digits (3, 2, 1, none) to keep the window under 65000,
- * so a dev port like 3000 yields ranges of roughly 3000–3100, 23000–23100,
- * 123000 → rejected, etc.
- */
 const derivePortRange = (
-  devPort: number,
+  port: number,
 ): { minPort: number; maxPort: number } => {
-  let minPort = 0;
-  let maxPort = 0;
+  const BASE = 20_000;
+  const SPAN = 20;
 
-  for (const n of [3, 2, 1, ""]) {
-    minPort = Number(`${n}${devPort}`) + 100;
-    maxPort = minPort + 100;
-    if (maxPort < 65000) break;
-  }
+  const offset = (port % 100) * SPAN;
+  const minPort = BASE + offset;
+  const maxPort = minPort + SPAN - 1;
 
-  if (maxPort >= 65000) {
-    throw new Error("the devPort in package.json should be less than 64000");
+  if (maxPort > 29_999) {
+    throw new Error(`${port} port maps outside the 20000–29999 window`);
   }
 
   return { minPort, maxPort };
