@@ -1,6 +1,4 @@
-import { readFileSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
-import { createRequire } from "node:module";
 import { resolve } from "node:path";
 
 import {
@@ -10,25 +8,10 @@ import {
   DEFAULT_PREVIEW_HOST,
   DEFAULT_PREVIEW_PORT,
 } from "@kosmojs/core";
-import { renderToFile } from "@kosmojs/lib";
+import { renderToFile, VERSION } from "@kosmojs/lib";
 
 import self from "../package.json" with { type: "json" };
 import * as templates from "./templates";
-
-/**
- * Read the installed package.json at runtime to get the actual version.
- * A static import would be inlined by the bundler with the pre-bump version.
- *
- * INFO: For best compatibility, all packages should share the same version.
- * When bumping the version (even a patch) for a single package,
- * bump it for all packages to keep versions fully synchronized across the project.
- * */
-const { version } = JSON.parse(
-  readFileSync(
-    createRequire(import.meta.url).resolve("create-kosmo/package.json"),
-    "utf-8",
-  ),
-);
 
 export const createProject = async (
   root: string,
@@ -64,12 +47,12 @@ export const createProject = async (
       sidecar: "kosmo sidecar",
     },
     dependencies: {
-      "@kosmojs/core": `^${version}`,
+      "@kosmojs/core": `^${VERSION}`,
       ...dependencies,
     },
     devDependencies: {
-      "@kosmojs/cli": `^${version}`,
-      "@kosmojs/dev": `^${version}`,
+      "@kosmojs/cli": `^${VERSION}`,
+      "@kosmojs/dev": `^${VERSION}`,
       "@types/node": self.devDependencies["@types/node"],
       "@types/deno": self.devDependencies["@types/deno"],
       "@types/bun": self.devDependencies["@types/bun"],
