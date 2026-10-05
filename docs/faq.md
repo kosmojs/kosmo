@@ -97,9 +97,14 @@ Adding a folder pulls in framework-specific dependencies that need to be install
 `pnpm dev` (all folders) or `pnpm dev front` (one folder). Default port is `4556`.
 [Details&nbsp;›](/dev-build-run/development-workflow#starting-the-dev-server)
 
-#### How do I change the dev port?
-It's the `devPort` value in `package.json`.
-[Details&nbsp;›](/dev-build-run/development-workflow#starting-the-dev-server)
+#### How do I change the dev host/port?
+Both configurable in `package.json` via `kosmo.devHost` key. If omitted, default values are used:
+```json
+"kosmo": {
+  "devHost": "127.0.0.1:4556" // [!code hl]
+}
+```
+[Details&nbsp;›](/essentials/config#project-settings-package-json)
 
 #### How does this compare to Next.js / Nuxt / SolidStart / tRPC / a hand-rolled Vite setup?
 Unlike Next/Nuxt/SolidStart it doesn't choose your frontend or own your deploy model;
@@ -170,7 +175,7 @@ Vite's `UserConfig` goes in `viteConfig`, on the `frontend` and `backend` blocks
 `plugins`, `resolve`, `css`, `define`, and the rest.
 A few Vite keys are excluded because KosmoJS derives them from the folder layout:
 `root`, `base`, `cacheDir`, `mode`, `builder`, `future`, `legacy`.
-Project-wide settings (`distDir`, `devPort`, `previewPort`, scripts) live in the root `package.json`.
+Project-wide settings (`distDir`, `devHost`, `previewHost`) live in the root `package.json`, under `kosmo` key.
 [Details&nbsp;›](/essentials/config)
 
 #### What options does a source folder config take?
@@ -1629,8 +1634,19 @@ and a preview you can't trust is worse than none.
 Use `pnpm dev` to iterate, `pnpm preview` to verify.
 [Details&nbsp;›](/dev-build-run/production-preview#hot-reload-not-hmr)
 
+#### How do I change the preview host/port?
+Both configurable in `package.json` via `kosmo.previewHost` key. If omitted, default values are used:
+```json
+"kosmo": {
+  "previewHost": "127.0.0.1:4558" // [!code hl]
+}
+```
+[Details&nbsp;›](/essentials/config#project-settings-package-json)
+
 #### Can I run preview and the dev server at the same time?
-Yes - preview listens on `previewPort` (`4558` by default), separate from `devPort`.
+Yes - preview listens on [kosmo.previewHost](/essentials/config#project-settings-package-json),
+separate from [kosmo.devHost](/essentials/config#project-settings-package-json).
+
 [Details&nbsp;›](/dev-build-run/production-preview)
 
 #### What's the build output layout?

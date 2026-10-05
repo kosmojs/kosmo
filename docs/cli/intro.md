@@ -29,8 +29,6 @@ and `package.json` wires it to scripts so you rarely type the binary name:
 
 All five run from the **project root** - the directory holding `package.json`.
 
-They read `distDir`, `devPort` and `previewPort` from it, and refuse to start if any is missing.
-
 `-h` / `--help` prints the full usage for either binary.
 
 ## The commands
@@ -43,8 +41,8 @@ They read `distDir`, `devPort` and `previewPort` from it, and refuse to start if
 
 | Running a project | |
 |---|---|
-| [kosmo serve](/cli/serve) | Dev server on `devPort`, Vite + HMR, always client-rendered |
-| [kosmo preview](/cli/preview) | Production build served on `previewPort`, rebuilt on change |
+| [kosmo serve](/cli/serve) | Dev server on [kosmo.devHost](/essentials/config#project-settings-package-json), Vite + HMR, always client-rendered |
+| [kosmo preview](/cli/preview) | Production build served on [kosmo.previewHost](/essentials/config#project-settings-package-json), rebuilt on change |
 | [kosmo build](/cli/build) | Production build only - `dist/run.js` plus a per-folder tree |
 | [kosmo typecheck](/cli/typecheck) | `tsc --noEmit` per source folder, plus the project root |
 
@@ -84,7 +82,7 @@ one that tells you which flag is missing.
 
 | Message | Cause |
 |---|---|
-| package.json does not exist or some of distDir / devPort / previewPort is not set | Not in the project root, or some of listed key(s) are missing. |
+| package.json does not exist, or it is missing the "kosmo" key
 | Unknown command; use one of folder, sidecar, serve, build, preview, typecheck | Typo, or a command from another framework's CLI. |
 | No source folders detected | No `src/*/kosmo.config.ts` anywhere. |
 | Some of the given names do not contain a valid KosmoJS source folder | A named folder doesn't exist or has no config. |

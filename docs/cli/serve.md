@@ -1,11 +1,11 @@
 ---
 title: kosmo serve
 description: The development server - one process for the whole project, client modules
-    through Vite with HMR, API routes hot-reloaded in the same process, on devPort.
+    through Vite with HMR, API routes hot-reloaded in the same process, on devHost.
 head:
   - - meta
     - name: keywords
-      content: kosmo serve, pnpm dev, dev server, devPort, HMR, hot reload,
+      content: kosmo serve, pnpm dev, dev server, devHost, HMR, hot reload,
         client-side rendering, port range
 ---
 
@@ -25,7 +25,7 @@ pnpm dev               # every folder
 pnpm dev admin front   # just these two
 ```
 
-Listens on **`devPort`** (default `4556`, configured in `package.json`).
+Listens on [kosmo.devHost](/essentials/config#project-settings-package-json).
 
 ## Dev is always client-rendered
 
@@ -45,18 +45,4 @@ A name with no `src/<name>/kosmo.config.ts` stops the command before anything ru
 and a project with no folders at all reports `No source folders detected`.
 
 Narrowing changes what the one process serves: folders you left out are not mounted,
-so their paths 404 on `devPort` rather than falling through.
-
-## Ports
-
-`devPort` is the only port you address.
-
-Each folder's Vite server and HMR socket get their own, picked from a free range derived from `devPort` -
-which is why the command insists on a `devPort` below `64000`, so that range still fits.
-
-`devPort` is not negotiated.
-
-If something else holds it, the dev server reports `Failed to start dev server on port 4556` and exits rather than moving,
-so the URL you have open never silently changes under you.
-
-[Development&nbsp;workflow&nbsp;›](/dev-build-run/development-workflow)
+so their paths 404 rather than falling through.

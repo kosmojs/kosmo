@@ -3,10 +3,11 @@ import { mkdir } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 
-import type { Project } from "@kosmojs/cli";
 import {
   DEFAULT_DIST,
+  DEFAULT_HOST,
   DEFAULT_PORT,
+  DEFAULT_PREVIEW_HOST,
   DEFAULT_PREVIEW_PORT,
 } from "@kosmojs/core";
 import { renderToFile } from "@kosmojs/lib";
@@ -31,19 +32,29 @@ const { version } = JSON.parse(
 
 export const createProject = async (
   root: string,
-  project: Project,
-  projectDefaults?: {
+  {
+    devHost = [DEFAULT_HOST, DEFAULT_PORT].join(":"),
+    previewHost = [DEFAULT_PREVIEW_HOST, DEFAULT_PREVIEW_PORT].join(":"),
+    distDir = DEFAULT_DIST,
+    dependencies,
+    devDependencies,
+  }: {
+    devHost?: string;
+    previewHost?: string;
+    distDir?: string;
     dependencies?: Record<string, string>;
     devDependencies?: Record<string, string>;
-  },
+  } = {},
 ) => {
   await mkdir(root, { recursive: true });
 
   const packageJson = {
     type: "module",
-    distDir: project.distDir || DEFAULT_DIST,
-    devPort: project.devPort || DEFAULT_PORT,
-    previewPort: project.previewPort || DEFAULT_PREVIEW_PORT,
+    kosmo: {
+      devHost,
+      previewHost,
+      distDir,
+    },
     scripts: {
       dev: "kosmo serve",
       preview: "kosmo preview",
@@ -54,7 +65,7 @@ export const createProject = async (
     },
     dependencies: {
       "@kosmojs/core": `^${version}`,
-      ...projectDefaults?.dependencies,
+      ...dependencies,
     },
     devDependencies: {
       "@kosmojs/cli": `^${version}`,
@@ -64,7 +75,7 @@ export const createProject = async (
       "@types/bun": self.devDependencies["@types/bun"],
       typescript: self.devDependencies["typescript"],
       vite: self.devDependencies["vite"],
-      ...projectDefaults?.devDependencies,
+      ...devDependencies,
     },
   };
 

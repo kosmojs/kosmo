@@ -5,8 +5,8 @@ description: Complete reference for kosmo.config.ts - the frontend, backend and 
 head:
   - - meta
     - name: keywords
-      content: kosmo.config.ts, defineConfig, frontend stack, backend stack, base url, devPort,
-        previewPort, distDir, stack plugin, viteConfig, validation, openapi, ssr, ssg, tanstack query
+      content: kosmo.config.ts, defineConfig, frontend stack, backend stack, base url, devHost,
+        previewHost, distDir, stack plugin, viteConfig, validation, openapi, ssr, ssg, tanstack query
 ---
 
 Every source folder owns a `kosmo.config.ts`. It is the one file that decides what that folder *is* -
@@ -571,16 +571,24 @@ core  ->  backend  ->  validation  ->  openapi  ->  fetch  ->  frontend  ->  ssr
 
 `coreGenerator` always runs first and is never listed.
 
-## Project Settings - `package.json`
+## Project Settings - package.json
 
 A few settings are project-wide rather than per-folder, and live in the root `package.json`:
+
+- `devHost` - the host:port the dev server is listening on; default: `127.0.0.1:4556`
+- `previewHost` - the host:port the preview server is listening on; default: `127.0.0.1:4558`
+- `distDir` - build output directory for every folder; default: `dist`
+
+All goes under `kosmo` key and are optional; if any omitted, default values are used:
 
 ```json [package.json]
 {
   "type": "module",
-  "distDir": "dist", // [!code hl:3]
-  "devPort": 4556,
-  "previewPort": 4558,
+  "kosmo": { // [!code hl:5]
+    "devHost": "127.0.0.1:4556",
+    "previewHost": "127.0.0.1:4558",
+    "distDir": "dist",
+  },
   "scripts": {
     "dev": "kosmo serve",
     "build": "kosmo build",
@@ -591,19 +599,9 @@ A few settings are project-wide rather than per-folder, and live in the root `pa
 }
 ```
 
-| Field | Default | Meaning |
-|---|---|---|
-| `distDir` | `"dist"` | Build output directory for every folder |
-| `devPort` | `4556` | Port the dev server listens on |
-| `previewPort` | `4558` | Port [kosmo preview](/dev-build-run/production-preview) listens on |
+`previewHost` is separate from `devHost` so preview and the dev server can run in parallel.
 
 > Changing `distDir` also means updating `.gitignore`, which the scaffolder points at the default `/dist/`.
-
-Four scripts take optional folder names -
-`pnpm dev front`, `pnpm build admin`, `pnpm preview front`, `pnpm typecheck admin front` -
-and act on every source folder when given none.
-
-`previewPort` is separate from `devPort` so preview and the dev server can run at the same time.
 
 ## TypeScript Config
 

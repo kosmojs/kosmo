@@ -56,11 +56,9 @@ export type SourceFolderManifest = {
 export type ProjectSettings = {
   root: string;
   sourceFolders: Array<SourceFolder>;
-  command: "serve" | "build" | "preview";
-  // output directory name, configured as `distDir` in package.json
-  distDir: string;
-  // port the dev server listens on, configured as `devPort` in package.json
+  devHost: string;
   devPort: number;
-  // port the preview server listens on, configured as `previewPort` in package.json
+  previewHost: string;
   previewPort: number;
+  distDir: string;
 };

@@ -52,18 +52,13 @@ export const printMessage = (
 export { prompts };
 
 export type PackageJSON = {
-  devPort?: number;
-  previewPort?: number;
-  distDir?: string;
+  kosmo?: {
+    devHost?: string;
+    previewHost?: string;
+    distDir?: string;
+  };
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
-};
-
-export type Project = {
-  name: string;
-  distDir?: string;
-  devPort?: number;
-  previewPort?: number;
 };
 
 export type SourceFolder = {

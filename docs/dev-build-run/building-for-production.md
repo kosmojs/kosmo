@@ -9,7 +9,7 @@ head:
         serverless api, edge runtime, nodejs deployment, api bundling, source maps, ssr deployment
 ---
 
-Each source folder builds independently, into its own subdirectory of `distDir` -
+Each source folder builds independently, into its own subdirectory of [kosmo.distDir](/essentials/config#project-settings-package-json) -
 a client bundle, an API bundle when it has a backend, and an SSR bundle when SSR is on.
 
 Alongside them the build writes one entry point that serves every folder at once,

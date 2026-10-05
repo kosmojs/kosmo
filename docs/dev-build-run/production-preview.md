@@ -6,7 +6,7 @@ head:
   - - meta
     - name: keywords
       content: kosmo preview, production preview, vite preview, ssr preview,
-        previewPort, production build locally, hot reload, dist/run.js
+        previewHost, production build locally, hot reload, dist/run.js
 ---
 
 The dev server is fast: `HMR`, client-side rendering. Most of the time that is what you want.
@@ -26,9 +26,9 @@ pnpm preview front    # specific folder
 
 Then it watches your sources, and on change it rebuilds. Production output, development loop.
 
-Default port is `4558`, configured as `previewPort` in `package.json`.
-It is deliberately separate from `devPort`, so preview and the dev server can run side
-by side and you can compare the two in adjacent tabs.
+Listens on [kosmo.previewHost](/essentials/config#project-settings-package-json).
+
+Preview and the dev server can run side by side and you can compare the two in adjacent tabs.
 
 ## What You Are Actually Looking At
 

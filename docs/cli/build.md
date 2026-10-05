@@ -14,7 +14,7 @@ pnpm build front   # just this one
 ```
 
 The same build `preview` runs, minus the server and the watcher.
-Output goes to the `distDir` set in `package.json` - `dist/` by default.
+Output goes into [kosmo.distDir](/essentials/config#project-settings-package-json) - `dist/` by default.
 
 With no arguments, every source folder is built. Name one or more to narrow the scope -
 the names are directory names under `src/`.

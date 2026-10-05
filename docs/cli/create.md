@@ -80,7 +80,7 @@ omitting both is an error, and passing them both is an error too (same for backe
 ```txt
 demo/
 ├── .gitignore
-├── package.json               # type, distDir, devPort, previewPort, scripts, deps
+├── package.json
 ├── tsconfig.json
 ├── lib/                       # generated support code, reached through `_/`
 └── src/app/
@@ -105,10 +105,6 @@ demo/
 
 Every one of those files comes filled in. What the scaffold does not write is routes -
 `api/` has no endpoints and `pages/` no index page yet.
-
-`package.json` carries three project-level settings alongside the usual fields -
-[distDir, devPort, previewPort](/essentials/config#project-settings-package-json) -
-and the dependencies each chosen generator declares.
 
 ---
 

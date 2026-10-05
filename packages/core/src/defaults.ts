@@ -30,9 +30,13 @@ export enum BACKENDS {
   koa = "Koa",
 }
 
-export const DEFAULT_DIST = "dist";
+export const DEFAULT_HOST = "127.0.0.1";
 export const DEFAULT_PORT = 4556;
+
+export const DEFAULT_PREVIEW_HOST = DEFAULT_HOST;
 export const DEFAULT_PREVIEW_PORT = 4558;
+
+export const DEFAULT_DIST = "dist";
 
 export const MIME_TYPES: Record<string, string> = {
   ".html": "text/html; charset=utf-8",

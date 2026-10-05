@@ -487,12 +487,25 @@ before the build reports them together and exits non-zero without writing any ou
 Because SSR never runs under `pnpm dev`, anything server-rendered is checked against the production build.
 [kosmo preview](/dev-build-run/production-preview) does the build for you and rebuilds whenever you save:
 
+:::tabs key:pm variant:code
+== npm
 ```sh
-pnpm preview front
+npm run preview
 ```
 
-Preview listens on `previewPort` (`4558` by default), so it runs alongside
-`pnpm dev` rather than replacing it - keep both open and compare.
+== pnpm
+```sh
+pnpm preview
+```
+
+== yarn
+```sh
+yarn preview
+```
+:::
+
+Preview listens on [kosmo.previewHost](/essentials/config#project-settings-package-json),
+so it runs alongside `pnpm dev` rather than replacing it - keep both open and compare.
 
 A few things that make debugging less painful:
 

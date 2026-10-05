@@ -25,7 +25,7 @@ pnpm dev          # all source folders
 pnpm dev front    # specific folder (front, admin, app, etc.)
 ```
 
-Default port is `4556`, configured as `devPort` in `package.json`.
+Listens on [kosmo.devHost](/essentials/config#project-settings-package-json).
 
 ## What Happens on Start
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env -S node --enable-source-maps --no-warnings=ExperimentalWarning
 
 import { mkdir, readdir, rm } from "node:fs/promises";
-import { basename, resolve } from "node:path";
+import { resolve } from "node:path";
 import { parseArgs, styleText } from "node:util";
 
 import {
@@ -9,7 +9,6 @@ import {
   createHTTPFolder,
   FOLDER_OPTIONS,
   isTTY,
-  type Project,
   packageManager,
   prepareSourceFolder,
   printMessage,
@@ -86,10 +85,6 @@ const run = async () => {
 
   const root = resolve(process.cwd(), name);
 
-  const project: Project = {
-    name: basename(root),
-  };
-
   printMessage(
     styleText(["blue", "bold"], "› Preparing a new KosmoJS project"),
     "intro",
@@ -141,7 +136,7 @@ const run = async () => {
     }
   }
 
-  await createProject(root, project);
+  await createProject(root);
 
   const input = Object.keys(values).length ? values : undefined;
   const folder = await prepareSourceFolder(root, "app", input);

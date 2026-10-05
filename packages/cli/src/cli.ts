@@ -11,6 +11,12 @@ import { glob } from "tinyglobby";
 
 import {
   BACKENDS,
+  type ChassisCommand,
+  DEFAULT_DIST,
+  DEFAULT_HOST,
+  DEFAULT_PORT,
+  DEFAULT_PREVIEW_HOST,
+  DEFAULT_PREVIEW_PORT,
   defaults,
   FRONTENDS,
   type GeneratorSignature,
@@ -164,25 +170,23 @@ const run = async () => {
   const packageFileExists = await pathExists(packageFile);
 
   const packageJson = packageFileExists
-    ? await jiti.import<PackageJSON>(packageFile, { default: true })
+    ? await jiti
+        .import<PackageJSON>(packageFile, { default: true })
+        .catch(() => undefined)
     : undefined;
+
+  if (!packageJson?.kosmo) {
+    assertNoError(() => {
+      return `package.json does not exist, or it is missing the "kosmo" key`;
+    });
+    // needed for typecheck to pass
+    return;
+  }
 
   const [command, ...rest] = positionals as [
     command: (typeof COMMANDS)[number],
     ...rest: Array<string>,
   ];
-
-  if (
-    !packageJson?.distDir ||
-    !packageJson?.devPort ||
-    !packageJson?.previewPort
-  ) {
-    assertNoError(() => {
-      return "package.json does not exist or some of `distDir` / `devPort` / `previewPort` is not set";
-    });
-    // needed for typecheck to pass
-    return;
-  }
 
   assertNoError(() => {
     return !COMMANDS.includes(command)
@@ -375,29 +379,34 @@ const run = async () => {
   };
 
   const runCommand = async (
-    command: ProjectSettings["command"],
+    command: ChassisCommand,
     folderNames: Array<string>,
   ) => {
     const configFiles = await scanConfigFiles(folderNames);
 
+    const projectGenerators: Array<GeneratorSignature> = [];
+
+    const {
+      devHost = [DEFAULT_HOST, DEFAULT_PORT].join(":"),
+      previewHost = [DEFAULT_PREVIEW_HOST, DEFAULT_PREVIEW_PORT].join(":"),
+      distDir = DEFAULT_DIST,
+    } = { ...packageJson?.kosmo };
+
     const settings: ProjectSettings = {
       root,
-      command,
       sourceFolders: [],
-      distDir: packageJson.distDir as never,
-      devPort: packageJson.devPort as never,
-      previewPort: packageJson.previewPort as never,
+      devHost: devHost.split(":")[0],
+      devPort: Number(devHost.split(":")[1]),
+      previewHost: previewHost.split(":")[0],
+      previewPort: Number(previewHost.split(":")[1]),
+      distDir,
     };
-
-    const projectGenerators: Array<GeneratorSignature> = [];
 
     for (const file of configFiles) {
       const { config, generators, error } = await jiti
         .import<
           Pick<import("@kosmojs/core").SourceFolder, "config" | "generators">
-        >(file, {
-          default: true,
-        })
+        >(file, { default: true })
         .then(
           ({ config, generators }) => {
             return { config, generators, error: undefined };
@@ -419,7 +428,7 @@ const run = async () => {
         config,
         generators,
         root,
-        distDir: packageJson.distDir as never,
+        distDir,
       });
 
       projectGenerators.push(...generators);

@@ -1,11 +1,11 @@
 ---
 title: kosmo preview
-description: Building and serving the production output on previewPort, rebuilt on change -
+description: Building and serving the production output on previewHost, rebuilt on change -
     the only way to see SSR, bundling and the production validation policy locally.
 head:
   - - meta
     - name: keywords
-      content: kosmo preview, pnpm preview, previewPort, production preview, SSR locally,
+      content: kosmo preview, pnpm preview, previewHost, production preview, SSR locally,
         dist/run.js, hot reload, hydration mismatch
 ---
 
@@ -26,9 +26,8 @@ pnpm preview         # every folder
 pnpm preview front   # just this one
 ```
 
-Listens on **`previewPort`** (default `4558`, configured in `package.json`).
-That is deliberately not `devPort`: preview and the dev server run side by side,
-so you can compare client-rendered and server-rendered output in adjacent tabs.
+Listens on [kosmo.previewHost](/essentials/config#project-settings-package-json),
+alongside dev server, so you can compare client-rendered and server-rendered output in adjacent tabs.
 
 ## Selecting folders
 
@@ -38,8 +37,8 @@ Name one or more to narrow the scope - the names are directory names under `src/
 A name with no `src/<name>/kosmo.config.ts` stops the command before anything runs,
 and a project with no folders at all reports `No source folders detected`.
 
-Folders you leave out keep whatever is already in `distDir`, so the runner still serves them -
-built earlier, and not rebuilt when their sources change.
+Folders you leave out keep whatever is already in [kosmo.distDir](/essentials/config#project-settings-package-json),
+so the runner still serves them - built earlier, and not rebuilt when their sources change.
 
 ## Rebuild, not HMR
 
