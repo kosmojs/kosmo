@@ -7,18 +7,22 @@ import { pathTokensFactory } from "@kosmojs/lib";
 import { routes } from "./@fixtures/generic/routes";
 import { setupTestProject } from "./setup";
 
+type TestEntry = {
+  route: (typeof routes)[number];
+  params: Array<string>;
+  name: string;
+  runner: TestFunction;
+};
+
 export type TestGroup = {
   name: string;
-  project: Awaited<ReturnType<typeof setupTestProject>>;
-  tests: Array<{
-    route: (typeof routes)[number];
-    params: Array<string>;
-    name: string;
-    runner: TestFunction;
+  createHarness: () => Promise<{
+    tests: Array<TestEntry>;
+    teardown: () => Promise<void>;
   }>;
 };
 
-export const createTestGroups = async ({
+export const createTestGroups = ({
   frontend,
   template,
   renderModes = ["string", "stream"],
@@ -33,74 +37,84 @@ export const createTestGroups = async ({
   const testGroups: Array<TestGroup> = [];
 
   for (const renderMode of renderModes) {
-    const project = await setupTestProject(
-      { frontend },
-      {
-        frontend: {
-          ssr: { renderMode },
+    const createHarness = async () => {
+      const {
+        //
+        bootstrapProject,
+        createPageRoutes,
+        withPageResponse,
+      } = await setupTestProject(
+        { frontend },
+        {
+          frontend: {
+            ssr: { renderMode },
+          },
         },
-      },
-    );
+      );
 
-    await project.bootstrapProject();
+      const teardown = await bootstrapProject(async () => {
+        await createPageRoutes([...routes], async ({ name }) => {
+          return () => {
+            const variants = routes.filter((e) => e.name === name);
+            if (!variants.length) {
+              return "";
+            }
 
-    await project.createPageRoutes([...routes], async ({ name }) => {
-      return () => {
-        const variants = routes.filter((e) => e.name === name);
-        if (!variants.length) {
-          return "";
-        }
+            const paramsVariants = variants.flatMap(({ params }) => {
+              const values = Object.values(params);
+              return values.length ? [values] : [];
+            });
 
-        const paramsVariants = variants.flatMap(({ params }) => {
-          const values = Object.values(params);
-          return values.length ? [values] : [];
+            if (paramsVariants.length) {
+              const tokens = pathTokensFactory(name);
+              if (
+                !tokens.some(({ parts }) => {
+                  return parts.some((part) => {
+                    return part.type === "param"
+                      ? part.kind === "required"
+                      : false;
+                  });
+                })
+              ) {
+                // there are params but none required, adding a variant with zero params
+                paramsVariants.push([]);
+              }
+            }
+
+            return template({ name, paramsVariants });
+          };
         });
+      });
 
-        if (paramsVariants.length) {
-          const tokens = pathTokensFactory(name);
-          if (
-            !tokens.some(({ parts }) => {
-              return parts.some((part) => {
-                return part.type === "param" ? part.kind === "required" : false;
-              });
-            })
-          ) {
-            // there are params but none required, adding a variant with zero params
-            paramsVariants.push([]);
-          }
-        }
+      const tests = routes.map((route) => {
+        const runner: TestFunction = async ({ expect }) => {
+          const { response } = await withPageResponse([
+            route.name,
+            route.params,
+          ]);
+          const $ = load(response.body);
+          const content = $(`#content`).text();
+          expect(content).toMatch(route.name);
+        };
 
-        return template({ name, paramsVariants });
-      };
-    });
+        const params = Object.values(route.params);
 
-    const tests = routes.map((route) => {
-      const runner: TestFunction = async ({ expect }) => {
-        const { response } = await project.withPageResponse([
-          route.name,
-          route.params,
-        ]);
-        const $ = load(response.body);
-        const content = $(`#content`).text();
-        expect(content).toMatch(route.name);
-      };
+        return {
+          route,
+          params,
+          name: params.length
+            ? `${route.name}: [ ${params.join(", ")} ]`
+            : route.name,
+          runner,
+        };
+      });
 
-      const params = Object.values(route.params);
-
-      return {
-        route,
-        params,
-        name: params.length
-          ? `${route.name}: [ ${params.join(", ")} ]`
-          : route.name,
-        runner,
-      };
-    });
+      return { tests, teardown };
+    };
 
     testGroups.push({
       name: [frontend, renderMode].join(":"),
-      project,
-      tests,
+      createHarness,
     });
   }
 

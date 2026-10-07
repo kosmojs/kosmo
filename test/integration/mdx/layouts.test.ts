@@ -1,36 +1,32 @@
 import { load } from "cheerio";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
+import { snapshotNameFor } from "..";
 import { nestedRoutes } from "../@fixtures/generic/routes";
-import { setupTestProject, snapshotNameFor } from "../setup";
+import { setupTestProject } from "../setup";
 
-const {
-  bootstrapProject,
-  withPageContent,
-  createPageRoutes,
-  startServer,
-  teardown,
-} = await setupTestProject({ frontend: "mdx" });
+describe("layouts", async ({ afterAll }) => {
+  const {
+    //
+    bootstrapProject,
+    withPageContent,
+    createPageRoutes,
+  } = await setupTestProject({ frontend: "mdx" });
 
-beforeAll(async () => {
-  await bootstrapProject();
+  const teardown = await bootstrapProject(async () => {
+    await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
+      return () => {
+        if (file === "index") {
+          return `<div>{"${name}"}</div>`;
+        }
 
-  await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
-    return () => {
-      if (file === "index") {
-        return `<div>{"${name}"}</div>`;
-      }
-
-      return `<div data-layout="${name}">{props.children}</div>`;
-    };
+        return `<div data-layout="${name}">{props.children}</div>`;
+      };
+    });
   });
 
-  await startServer();
-});
+  afterAll(teardown);
 
-afterAll(teardown);
-
-describe("MDX - Layouts", async () => {
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {
@@ -38,9 +34,9 @@ describe("MDX - Layouts", async () => {
     test(snapshotName, async () => {
       const { content } = await withPageContent([name, params]);
       const $ = load(content);
-      await expect(
-        $("#app").html()?.trim()?.replace("<!--app-html-->", ""),
-      ).toMatchFileSnapshot(`../@snapshots/layouts/${snapshotName}.html`);
+      await expect($("#app").html()).toMatchFileSnapshot(
+        `../@snapshots/layouts/${snapshotName}.html`,
+      );
     });
   }
 });

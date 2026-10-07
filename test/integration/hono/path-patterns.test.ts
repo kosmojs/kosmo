@@ -1,45 +1,38 @@
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { apiRoutes } from "../@fixtures/generic/routes";
 import { setupTestProject } from "../setup";
 
-const {
-  bootstrapProject,
-  createApiRoutes,
-  withApiResponse,
-  startServer,
-  teardown,
-} = await setupTestProject({
-  backend: "hono",
-});
+describe("path patterns", async ({ afterAll }) => {
+  const {
+    //
+    bootstrapProject,
+    createApiRoutes,
+    withApiResponse,
+  } = await setupTestProject({ backend: "hono" });
 
-beforeAll(async () => {
-  await bootstrapProject();
+  const teardown = await bootstrapProject(async () => {
+    await createApiRoutes(
+      Object.keys(apiRoutes).map((name) => {
+        return { name };
+      }),
+      async ({ name }) => {
+        return () => {
+          return `
+            import { defineRoute } from "_/api";
+            export default defineRoute(({ GET }) => [
+              GET((ctx) => {
+                return ctx.json({ route: "${name}", params: ctx.validated.params });
+              }),
+            ]);
+          `;
+        };
+      },
+    );
+  });
 
-  await createApiRoutes(
-    Object.keys(apiRoutes).map((name) => {
-      return { name };
-    }),
-    async ({ name }) => {
-      return () => {
-        return `
-          import { defineRoute } from "_/api";
-          export default defineRoute(({ GET }) => [
-            GET((ctx) => {
-              return ctx.json({ route: "${name}", params: ctx.validated.params });
-            }),
-          ]);
-        `;
-      };
-    },
-  );
+  afterAll(teardown);
 
-  await startServer();
-});
-
-afterAll(teardown);
-
-describe("path patterns", async () => {
   for (const [route, variants] of Object.entries(apiRoutes)) {
     for (const params of variants) {
       test(`${route} | ${JSON.stringify(Object.values(params))}`, async () => {

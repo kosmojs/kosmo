@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { contentPatternFor } from "..";
 import { routes } from "../@fixtures/generic/routes";
@@ -16,34 +16,31 @@ const marketingTemplate = `
 <div data-testid="${marketingContentID}">${marketingContent}</div>
 `;
 
-const {
-  bootstrapProject,
-  withPageContent,
-  createPageRoutes,
-  startServer,
-  teardown,
-} = await setupTestProject(
-  { frontend: "svelte" },
-  {
-    frontend: {
-      templates: {
-        landing: landingTemplate,
-        "landing/**/*": landingTemplate,
-        "marketing/**/*": marketingTemplate,
+describe("custom templates", async ({ afterAll }) => {
+  const {
+    //
+    bootstrapProject,
+    withPageContent,
+    createPageRoutes,
+  } = await setupTestProject(
+    { frontend: "svelte" },
+    {
+      frontend: {
+        templates: {
+          landing: landingTemplate,
+          "landing/**/*": landingTemplate,
+          "marketing/**/*": marketingTemplate,
+        },
       },
     },
-  },
-);
+  );
 
-beforeAll(async () => {
-  await bootstrapProject();
-  await createPageRoutes([...routes]);
-  await startServer();
-});
+  const teardown = await bootstrapProject(async () => {
+    await createPageRoutes([...routes]);
+  });
 
-afterAll(teardown);
+  afterAll(teardown);
 
-describe("Svelte - Custom Templates", async () => {
   describe("Pattern Matching", () => {
     it("should use custom template for matching route pattern", async () => {
       const { content } = await withPageContent(["landing"]);

@@ -1,45 +1,41 @@
 import { load } from "cheerio";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
+import { snapshotNameFor } from "..";
 import { nestedRoutes } from "../@fixtures/generic/routes";
-import { setupTestProject, snapshotNameFor } from "../setup";
+import { setupTestProject } from "../setup";
 
-const {
-  bootstrapProject,
-  withPageContent,
-  createPageRoutes,
-  startServer,
-  teardown,
-} = await setupTestProject({ frontend: "react" });
+describe("layouts", async ({ afterAll }) => {
+  const {
+    //
+    bootstrapProject,
+    withPageContent,
+    createPageRoutes,
+  } = await setupTestProject({ frontend: "react" });
 
-beforeAll(async () => {
-  await bootstrapProject();
+  const teardown = await bootstrapProject(async () => {
+    await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
+      return () => {
+        if (file === "index") {
+          return `
+            export default function Page() {
+              return <div>{"${name}"}</div>;
+            };
+          `;
+        }
 
-  await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
-    return () => {
-      if (file === "index") {
         return `
-          export default function Page() {
-            return <div>{"${name}"}</div>;
+          import { Outlet } from "react-router";
+          export default function Layout(props) {
+            return <div data-layout="${name}"><Outlet /></div>;
           };
         `;
-      }
-
-      return `
-        import { Outlet } from "react-router";
-        export default function Layout(props) {
-          return <div data-layout="${name}"><Outlet /></div>;
-        };
-      `;
-    };
+      };
+    });
   });
 
-  await startServer();
-});
+  afterAll(teardown);
 
-afterAll(teardown);
-
-describe("React - Layouts", async () => {
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {
@@ -50,9 +46,7 @@ describe("React - Layouts", async () => {
       await expect(
         $("#app")
           .html()
-          ?.trim()
-          ?.replace(/<script>.+<\/script>$/m, "")
-          ?.replace("<!--app-html-->", ""),
+          ?.replace(/<script>.+<\/script>$/m, ""),
       ).toMatchFileSnapshot(`../@snapshots/layouts/${snapshotName}.html`);
     });
   }

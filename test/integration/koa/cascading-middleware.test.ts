@@ -1,55 +1,48 @@
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { routes } from "../@fixtures/cascading-middleware";
 import { setupTestProject } from "../setup";
 
-const {
-  bootstrapProject,
-  createApiRoutes,
-  withApiResponse,
-  startServer,
-  teardown,
-} = await setupTestProject({
-  backend: "koa",
-});
+describe("cascading middleware", async ({ afterAll }) => {
+  const {
+    //
+    bootstrapProject,
+    createApiRoutes,
+    withApiResponse,
+  } = await setupTestProject({ backend: "koa" });
 
-beforeAll(async () => {
-  await bootstrapProject();
-
-  await createApiRoutes(routes, async ({ name, file }) => {
-    return () => {
-      if (file === "use") {
+  const teardown = await bootstrapProject(async () => {
+    await createApiRoutes(routes, async ({ name, file }) => {
+      return () => {
+        if (file === "use") {
+          return `
+              import { use } from "_/api";
+              export type UseT = { stack: Array<string> };
+              export default [
+                use<UseT>((ctx, next) => {
+                  if (!ctx.state.stack) {
+                    ctx.state.stack = [];
+                  }
+                  ctx.state.stack.push("${name}/use");
+                  return next();
+                }),
+              ];
+            `;
+        }
         return `
-          import { use } from "_/api";
-          export type UseT = { stack: Array<string> };
-          export default [
-            use<UseT>((ctx, next) => {
-              if (!ctx.state.stack) {
-                ctx.state.stack = [];
-              }
-              ctx.state.stack.push("${name}/use");
-              return next();
-            }),
-          ];
-        `;
-      }
-      return `
-        import { defineRoute } from "_/api";
-        export default defineRoute<"${name}">(({ GET }) => [
-          GET(async (ctx) => {
-            ctx.body = [ ...ctx.state.stack, "${name}/index" ];
-          }),
-        ]);
-      `;
-    };
+            import { defineRoute } from "_/api";
+            export default defineRoute<"${name}">(({ GET }) => [
+              GET(async (ctx) => {
+                ctx.body = [ ...ctx.state.stack, "${name}/index" ];
+              }),
+            ]);
+          `;
+      };
+    });
   });
 
-  await startServer();
-});
+  afterAll(teardown);
 
-afterAll(teardown);
-
-describe("cascading middleware", async () => {
   for (const route of routes) {
     if (route.file !== "index") {
       continue;

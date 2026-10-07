@@ -7,18 +7,21 @@ import { createProject } from "create-kosmo";
 import { createJiti } from "jiti";
 
 import { createHTTPFolder, createSidecarFolder } from "@kosmojs/cli";
-import type { ProjectSettings, SourceFolder } from "@kosmojs/core";
-import chassis from "@kosmojs/dev/chassis";
-import { pathResolver, render, renderToFile } from "@kosmojs/lib";
-
 import {
-  buildProject,
-  env,
-  execFile,
-  findFreePort,
-  installDependencies,
-  pkgsDir,
-} from "..";
+  DEFAULT_DIST,
+  DEFAULT_HOST,
+  type ProjectSettings,
+  type SourceFolder,
+} from "@kosmojs/core";
+import chassis from "@kosmojs/dev/chassis";
+import {
+  findFreePortRange,
+  pathResolver,
+  render,
+  renderToFile,
+} from "@kosmojs/lib";
+
+import { env, execFile, installDependencies, pkgsDir } from "..";
 import * as templates from "../@fixtures/sidecar";
 
 type SidecarConfig = {
@@ -32,8 +35,8 @@ type SidecarConfig = {
  * A sidecar project driven the way a user drives one - scaffolded by the CLI,
  * installed, then either built (`pnpm build`) or served (chassis in-process).
  *
- * Deliberately not `setupTestProject`: that one is built around a folder that
- * serves HTTP - pages, api routes, a browser - and a sidecar has none of it.
+ * Deliberately not `setupTestProject`: that one is built around a folder that serves HTTP -
+ * pages, api routes, a browser - and a sidecar has none of it.
  * */
 export const setupSidecarProject = async ({
   name = "worker",
@@ -45,22 +48,32 @@ export const setupSidecarProject = async ({
   // a second, HTTP-serving folder - the layout the docs recommend
   httpFolder?: { name: string; base: string };
 } = {}) => {
-  const devPort = await findFreePort();
   const tempDir = await mkdtemp(resolve(tmpdir(), ".kosmojs-sidecar-"));
-  const projectRoot = resolve(tempDir, "app");
 
   const sourceFolder: SourceFolder = {
-    root: projectRoot,
     name,
     config: {},
     generators: [],
-    distDir: "dist",
   };
 
-  const { createPath } = pathResolver(sourceFolder);
-  const jiti = createJiti(projectRoot);
+  const host = DEFAULT_HOST;
+  const [port] = await findFreePortRange(host, 1);
+  const devHost = `${host}:${port}`;
+
+  const project: ProjectSettings = {
+    root: resolve(tempDir, "app"),
+    sourceFolders: [sourceFolder],
+    devHost,
+    previewHost: "",
+    distDir: DEFAULT_DIST,
+  };
+
+  const { createPath } = pathResolver(project, sourceFolder);
+
+  const jiti = createJiti(project.root);
 
   let closeServer: (() => Promise<void>) | undefined;
+
   const children = new Set<child_process.ChildProcess>();
 
   /**
@@ -74,54 +87,80 @@ export const setupSidecarProject = async ({
   // the templates place it as a literal, so it survives any path
   const logFileLiteral = JSON.stringify(logFile);
 
+  /** Rewrite the folder's kosmo.config.ts - `run: undefined` drops the key. */
+  const writeConfig = async ({
+    entry = "./entry.ts",
+    run,
+    serve,
+    typecheck,
+  }: SidecarConfig) => {
+    await renderToFile(createPath.src("kosmo.config.ts"), templates.config, {
+      entry,
+      run,
+      serve: JSON.stringify(serve === undefined ? false : serve),
+      typecheck: JSON.stringify(typecheck === undefined ? true : typecheck),
+    });
+  };
+
+  /**
+   * The CLI itself, run against the project -
+   * the shared `exec` exits the whole process on a non-zero code,
+   * and a skipped typecheck is something a test wants to read rather than die on.
+   * */
+  const runKosmo = async (args: Array<string>) => {
+    const bin = resolve(pkgsDir, "cli/pkg/cli.js");
+    try {
+      const { stdout, stderr } = await execFile(
+        process.execPath,
+        [bin, ...args],
+        { cwd: project.root, env },
+      );
+      return { code: 0, stdout, stderr };
+    } catch (error) {
+      const { code, stdout, stderr } = error as {
+        code?: unknown;
+        stdout?: unknown;
+        stderr?: unknown;
+      };
+      return {
+        code: typeof code === "number" ? code : 1,
+        stdout: String(stdout || ""),
+        stderr: String(stderr || ""),
+      };
+    }
+  };
+
   return {
-    devPort,
-    projectRoot,
+    projectSettings: project,
     logFile,
     createPath,
+    writeConfig,
+    runKosmo,
 
     async bootstrap() {
-      await createProject(
-        projectRoot,
-        { name: "app", devPort },
-        {
-          dependencies: { "@kosmojs/core": `${pkgsDir}/core` },
-          devDependencies: {
-            "@kosmojs/dev": `${pkgsDir}/dev`,
-            "@kosmojs/cli": `${pkgsDir}/cli`,
-          },
+      await createProject(project.root, {
+        devHost,
+        dependencies: { "@kosmojs/core": `${pkgsDir}/core` },
+        devDependencies: {
+          "@kosmojs/dev": `${pkgsDir}/dev`,
+          "@kosmojs/cli": `${pkgsDir}/cli`,
         },
-      );
+      });
 
       if (httpFolder) {
         await createHTTPFolder(
-          projectRoot,
+          project.root,
           { name: httpFolder.name, backend: "hono" },
           { backend: { base: httpFolder.base } },
         );
       }
 
-      await createSidecarFolder(projectRoot, { name, sidecar: true });
+      await createSidecarFolder(project.root, { name, sidecar: true });
 
       // the seeded config is the default one; tests state what they need
-      await this.writeConfig(sidecarFolder);
+      await writeConfig(sidecarFolder);
 
-      await installDependencies(projectRoot);
-    },
-
-    /** Rewrite the folder's kosmo.config.ts - `run: undefined` drops the key. */
-    async writeConfig({
-      entry = "./entry.ts",
-      run,
-      serve,
-      typecheck,
-    }: SidecarConfig) {
-      await renderToFile(createPath.src("kosmo.config.ts"), templates.config, {
-        entry,
-        run,
-        serve: JSON.stringify(serve === undefined ? false : serve),
-        typecheck: JSON.stringify(typecheck === undefined ? true : typecheck),
-      });
+      await installDependencies(project.root);
     },
 
     /** Write any file inside the source folder, e.g. "entry.ts", "lib/tick.ts". */
@@ -142,13 +181,13 @@ export const setupSidecarProject = async ({
     },
 
     /**
-     * The same service, but holding a listening socket - `close()` awaits real
-     * I/O and throws if called twice, which is what a reload has to avoid
-     * doing after one that failed. Binds an ephemeral port: nothing in the
-     * test talks to it, only the lifecycle matters.
+     * The same service, but holding a listening socket -
+     * `close()` awaits real I/O and throws if called twice,
+     * which is what a reload has to avoid doing after one that failed.
+     * Binds an ephemeral port: nothing in the test talks to it, only the lifecycle matters.
      *
-     * `failStartOn` makes `start()` throw for one tick value, so a test can
-     * provoke the other way a reload fails.
+     * `failStartOn` makes `start()` throw for one tick value,
+     * so a test can provoke the other way a reload fails.
      * */
     servingEntry({ failStartOn }: { failStartOn?: string } = {}) {
       return render(templates.servingEntry, {
@@ -160,9 +199,10 @@ export const setupSidecarProject = async ({
     },
 
     /**
-     * The same service as plain ESM - no `defineService`, no types, relative
-     * imports carrying their extension. What a sidecar wrapping third-party
-     * JavaScript looks like, and what `typecheck: false` is for.
+     * The same service as plain ESM - no `defineService`, no types,
+     * relative imports carrying their extension.
+     * What a sidecar wrapping third-party JavaScript looks like,
+     * and what `typecheck: false` is for.
      * */
     mjsEntry() {
       return render(templates.mjsEntry, { logFile: logFileLiteral });
@@ -200,35 +240,7 @@ export const setupSidecarProject = async ({
     },
 
     build() {
-      return buildProject(projectRoot);
-    },
-
-    /**
-     * The CLI itself, run against the project -
-     * the shared `exec` exits the whole process on a non-zero code,
-     * and a skipped typecheck is something a test wants to read rather than die on.
-     * */
-    async runKosmo(args: Array<string>) {
-      const bin = resolve(pkgsDir, "cli/pkg/cli.js");
-      try {
-        const { stdout, stderr } = await execFile(
-          process.execPath,
-          [bin, ...args],
-          { cwd: projectRoot, env },
-        );
-        return { code: 0, stdout, stderr };
-      } catch (error) {
-        const { code, stdout, stderr } = error as {
-          code?: unknown;
-          stdout?: unknown;
-          stderr?: unknown;
-        };
-        return {
-          code: typeof code === "number" ? code : 1,
-          stdout: String(stdout || ""),
-          stderr: String(stderr || ""),
-        };
-      }
+      return runKosmo(["build"]);
     },
 
     async distEntries(...path: Array<string>) {
@@ -241,16 +253,12 @@ export const setupSidecarProject = async ({
         Pick<SourceFolder, "config" | "generators">
       >(createPath.src("kosmo.config.ts"), { default: true });
 
-      const projectSettings: ProjectSettings = {
-        root: projectRoot,
+      const { teardown } = await chassis("serve", {
+        ...project,
         sourceFolders: [{ ...sourceFolder, config, generators }],
-        command: "serve",
-        distDir: sourceFolder.distDir,
-        devPort,
-        previewPort: devPort + 1,
-      };
+      });
 
-      closeServer = await chassis(projectSettings);
+      closeServer = teardown;
     },
 
     /** Spawn a built artifact, e.g. dist/<name>/sidecar/run.js. */
@@ -258,7 +266,7 @@ export const setupSidecarProject = async ({
       const child = child_process.spawn(
         process.execPath,
         [createPath.distDir(file)],
-        { cwd: projectRoot, env },
+        { cwd: project.root, env },
       );
 
       children.add(child);
@@ -295,9 +303,8 @@ export const setupSidecarProject = async ({
       for (const child of children) {
         child.kill("SIGKILL");
       }
-      if (!process.env.KEEP_PROJECT) {
-        await rm(tempDir, { recursive: true, force: true });
-      }
+      await rm(tempDir, { recursive: true, force: true });
+      await new Promise((resolve) => setTimeout(resolve, 100));
     },
   };
 };

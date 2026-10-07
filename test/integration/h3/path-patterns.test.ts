@@ -1,28 +1,20 @@
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { apiRoutes } from "../@fixtures/generic/routes";
 import { setupTestProject } from "../setup";
 
-const {
-  bootstrapProject,
-  createApiRoutes,
-  withApiResponse,
-  startServer,
-  teardown,
-} = await setupTestProject({
-  backend: "h3",
-});
+describe("path patterns", async ({ afterAll }) => {
+  const { bootstrapProject, createApiRoutes, withApiResponse } =
+    await setupTestProject({ backend: "h3" });
 
-beforeAll(async () => {
-  await bootstrapProject();
-
-  await createApiRoutes(
-    Object.keys(apiRoutes).map((name) => {
-      return { name };
-    }),
-    async ({ name }) => {
-      return () => {
-        return `
+  const teardown = await bootstrapProject(async () => {
+    await createApiRoutes(
+      Object.keys(apiRoutes).map((name) => {
+        return { name };
+      }),
+      async ({ name }) => {
+        return () => {
+          return `
           import { defineRoute } from "_/api";
           export default defineRoute(({ GET }) => [
             GET((event) => {
@@ -30,16 +22,13 @@ beforeAll(async () => {
             }),
           ]);
         `;
-      };
-    },
-  );
+        };
+      },
+    );
+  });
 
-  await startServer();
-});
+  afterAll(teardown);
 
-afterAll(teardown);
-
-describe("path patterns", async () => {
   for (const [route, variants] of Object.entries(apiRoutes)) {
     for (const params of variants) {
       test(`${route} | ${JSON.stringify(Object.values(params))}`, {

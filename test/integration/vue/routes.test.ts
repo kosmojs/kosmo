@@ -1,26 +1,23 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { contentPatternFor } from "..";
 import { routes } from "../@fixtures/generic/routes";
 import { setupTestProject } from "../setup";
 
-const {
-  bootstrapProject,
-  withPageContent,
-  createPageRoutes,
-  startServer,
-  teardown,
-} = await setupTestProject({ frontend: "vue" });
+describe("routes", async ({ afterAll }) => {
+  const {
+    //
+    bootstrapProject,
+    withPageContent,
+    createPageRoutes,
+  } = await setupTestProject({ frontend: "vue" });
 
-beforeAll(async () => {
-  await bootstrapProject();
-  await createPageRoutes([...routes]);
-  await startServer();
-});
+  const teardown = await bootstrapProject(async () => {
+    await createPageRoutes([...routes]);
+  });
 
-afterAll(teardown);
+  afterAll(teardown);
 
-describe("Vue - Routes", async () => {
   describe("Static Routes", () => {
     it("should render nested static route with default template", async () => {
       const { path, content, contentPattern } = await withPageContent([

@@ -1,25 +1,15 @@
-import { afterAll, beforeAll, describe, test } from "vitest";
+import { describe, test } from "vitest";
 
 import { createTestGroups } from "../fetch-factory";
 
-const testGroups = await createTestGroups({
-  frontend: "react",
-});
+const testGroups = createTestGroups({ frontend: "react" });
 
-beforeAll(async () => {
-  for (const { project } of testGroups) {
-    await project.startServer();
-  }
-});
+for (const { name, createHarness } of testGroups) {
+  describe(name, async ({ afterAll }) => {
+    const { tests, teardown } = await createHarness();
 
-afterAll(async () => {
-  for (const { project } of testGroups) {
-    await project.teardown();
-  }
-});
+    afterAll(teardown);
 
-for (const { name, tests } of testGroups) {
-  describe(name, () => {
     for (const [name, runner] of tests) {
       test(name, runner);
     }

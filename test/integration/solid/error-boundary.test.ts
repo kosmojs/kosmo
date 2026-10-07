@@ -1,20 +1,14 @@
-import { afterAll, beforeAll, describe, test } from "vitest";
+import { describe, test } from "vitest";
 
-import { createTestSuite, skip } from "../error-boundary";
+import { createHarness, skip } from "../error-boundary";
 
 const frontend = "solid";
 
-const { project, tests } = await createTestSuite({ frontend });
+describe(frontend, { skip }, async ({ afterAll }) => {
+  const { tests, teardown } = await createHarness({ frontend });
 
-beforeAll(async () => {
-  await project.startServer();
-});
+  afterAll(teardown);
 
-afterAll(async () => {
-  await project.teardown();
-});
-
-describe(frontend, { skip }, () => {
   for (const [name, runner] of tests) {
     test(name, runner);
   }

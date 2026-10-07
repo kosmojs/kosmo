@@ -22,22 +22,24 @@ const routes = [
   { name: "guarded/ok", file: "index", params: {} },
 ];
 
-export const createTestSuite = async ({
+export const createHarness = async ({
   frontend,
 }: {
   frontend: keyof typeof FRONTENDS;
 }) => {
-  const project = await setupTestProject({
+  const {
+    project,
+    sourceFolder,
+    bootstrapProject,
+    createPageRoutes,
+    withPageContent,
+  } = await setupTestProject({
     frontend,
     skip,
   });
 
-  if (!skip) {
-    const { sourceFolder, bootstrapProject, createPageRoutes } = project;
-    const { createPath } = pathResolver(sourceFolder);
-
-    await bootstrapProject();
-
+  const teardown = await bootstrapProject(async () => {
+    const { createPath } = pathResolver(project, sourceFolder);
     await createPageRoutes(routes, async ({ name, file }) => {
       const context = {
         BOUNDARY_MESSAGE,
@@ -58,13 +60,13 @@ export const createTestSuite = async ({
       }
       return () => render(templates[`${frontend}Ok`], context);
     });
-  }
+  });
 
   const tests: Array<[name: string, runner: TestFunction]> = [
     [
       "layout boundary catches a throwing child route",
       async ({ expect }) => {
-        const { content } = await project.withPageContent(["guarded/boom"]);
+        const { content } = await withPageContent(["guarded/boom"]);
         const $ = load(content);
         expect($("[data-boundary]").text()).toContain(BOUNDARY_MESSAGE);
         expect(content).not.toContain(THROW_MESSAGE);
@@ -74,7 +76,7 @@ export const createTestSuite = async ({
     [
       "a non-throwing child renders normally under the same layout",
       async ({ expect }) => {
-        const { content } = await project.withPageContent(["guarded/ok"]);
+        const { content } = await withPageContent(["guarded/ok"]);
         const $ = load(content);
         expect($("[data-ok]").text()).toContain("ok");
         expect($("[data-boundary]").length).toBe(0);
@@ -83,7 +85,7 @@ export const createTestSuite = async ({
   ];
 
   return {
-    project,
     tests,
+    teardown,
   };
 };

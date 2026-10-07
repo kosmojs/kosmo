@@ -4,7 +4,13 @@ import { resolve } from "node:path";
 import { format } from "oxfmt";
 import { afterAll, describe, test } from "vitest";
 
-import { BACKENDS, DEFAULT_DIST, DEFAULT_PORT, FRONTENDS } from "@kosmojs/core";
+import {
+  BACKENDS,
+  DEFAULT_DIST,
+  DEFAULT_HOST,
+  DEFAULT_PORT,
+  FRONTENDS,
+} from "@kosmojs/core";
 
 import { createBin, createTempDir, kosmoBin, run } from ".";
 
@@ -27,12 +33,12 @@ describe("should create the project and folders", async () => {
       tempDir,
     );
 
-    const packageJson = await import(resolve(projectRoot, "package.json"), {
+    const { kosmo } = await import(resolve(projectRoot, "package.json"), {
       with: { type: "json" },
     }).then((e) => e.default);
 
-    expect(packageJson.devPort).toEqual(DEFAULT_PORT);
-    expect(packageJson.distDir).toEqual(DEFAULT_DIST);
+    expect(kosmo.devHost).toEqual([DEFAULT_HOST, DEFAULT_PORT].join(":"));
+    expect(kosmo.distDir).toEqual(DEFAULT_DIST);
   });
 
   const folders = [...Object.keys(FRONTENDS), undefined].flatMap((frontend) => {

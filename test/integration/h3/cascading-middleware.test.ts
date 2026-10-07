@@ -1,55 +1,48 @@
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { routes } from "../@fixtures/cascading-middleware";
 import { setupTestProject } from "../setup";
 
-const {
-  bootstrapProject,
-  createApiRoutes,
-  withApiResponse,
-  startServer,
-  teardown,
-} = await setupTestProject({
-  backend: "h3",
-});
+describe("cascading middleware", async ({ afterAll }) => {
+  const {
+    //
+    bootstrapProject,
+    createApiRoutes,
+    withApiResponse,
+  } = await setupTestProject({ backend: "h3" });
 
-beforeAll(async () => {
-  await bootstrapProject();
-
-  await createApiRoutes(routes, async ({ name, file }) => {
-    return () => {
-      if (file === "use") {
+  const teardown = await bootstrapProject(async () => {
+    await createApiRoutes(routes, async ({ name, file }) => {
+      return () => {
+        if (file === "use") {
+          return `
+            import { use } from "_/api";
+            export type UseT = { stack: Array<string> };
+            export default [
+              use<UseT>((event, next) => {
+                if (!event.context.stack) {
+                  event.context.stack = [];
+                }
+                event.context.stack.push("${name}/use");
+                return next();
+              }),
+            ];
+          `;
+        }
         return `
-          import { use } from "_/api";
-          export type UseT = { stack: Array<string> };
-          export default [
-            use<UseT>((event, next) => {
-              if (!event.context.stack) {
-                event.context.stack = [];
-              }
-              event.context.stack.push("${name}/use");
-              return next();
+          import { defineRoute } from "_/api";
+          export default defineRoute<"${name}">(({ GET }) => [
+            GET(async (event) => {
+              return [ ...event.context.stack, "${name}/index" ];
             }),
-          ];
+          ]);
         `;
-      }
-      return `
-        import { defineRoute } from "_/api";
-        export default defineRoute<"${name}">(({ GET }) => [
-          GET(async (event) => {
-            return [ ...event.context.stack, "${name}/index" ];
-          }),
-        ]);
-      `;
-    };
+      };
+    });
   });
 
-  await startServer();
-});
+  afterAll(teardown);
 
-afterAll(teardown);
-
-describe("cascading middleware", async () => {
   for (const route of routes) {
     if (route.file !== "index") {
       continue;

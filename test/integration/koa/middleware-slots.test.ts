@@ -1,19 +1,13 @@
-import { afterAll, beforeAll, describe, test } from "vitest";
+import { describe, test } from "vitest";
 
 import { createTests } from "../middleware-slots";
 
-const { project, tests } = await createTests("koa");
+describe("middleware slots", async ({ afterAll }) => {
+  const { tests, teardown } = await createTests("koa");
 
-beforeAll(async () => {
-  await project.startServer();
-});
+  afterAll(teardown);
 
-afterAll(async () => {
-  await project.teardown();
-});
-
-describe("middleware slots", () => {
-  for (const { name, runner } of tests) {
+  for (const [name, runner] of tests) {
     test(name, runner);
   }
 });

@@ -1,10 +1,10 @@
-import { afterAll, beforeAll, describe, test } from "vitest";
+import { describe, test } from "vitest";
 
 import { defaults } from "@kosmojs/core";
 
 import { createTestGroups } from "../ssg-factory";
 
-const testGroups = await createTestGroups({
+const testGroups = createTestGroups({
   frontend: "vue",
   template({ name, paramsVariants }) {
     const staticParams = paramsVariants.length
@@ -30,20 +30,12 @@ const testGroups = await createTestGroups({
   },
 });
 
-beforeAll(async () => {
-  for (const { project } of testGroups) {
-    await project.startServer();
-  }
-});
+for (const { name, createHarness } of testGroups) {
+  describe(name, async ({ afterAll }) => {
+    const { tests, teardown } = await createHarness();
 
-afterAll(async () => {
-  for (const { project } of testGroups) {
-    await project.teardown();
-  }
-});
+    afterAll(teardown);
 
-for (const { name, tests } of testGroups) {
-  describe(name, () => {
     for (const { name, runner } of tests) {
       test(name, runner);
     }

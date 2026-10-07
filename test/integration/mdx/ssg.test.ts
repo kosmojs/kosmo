@@ -1,8 +1,8 @@
-import { afterAll, beforeAll, describe, test } from "vitest";
+import { describe, test } from "vitest";
 
 import { createTestGroups } from "../ssg-factory";
 
-const testGroups = await createTestGroups({
+const testGroups = createTestGroups({
   frontend: "mdx",
   template({ name, paramsVariants }) {
     const staticParams = paramsVariants.length
@@ -22,20 +22,12 @@ const testGroups = await createTestGroups({
   renderModes: ["string"],
 });
 
-beforeAll(async () => {
-  for (const { project } of testGroups) {
-    await project.startServer();
-  }
-});
+for (const { name, createHarness } of testGroups) {
+  describe(name, async ({ afterAll }) => {
+    const { tests, teardown } = await createHarness();
 
-afterAll(async () => {
-  for (const { project } of testGroups) {
-    await project.teardown();
-  }
-});
+    afterAll(teardown);
 
-for (const { name, tests } of testGroups) {
-  describe(name, () => {
     for (const { name, runner } of tests) {
       test(name, runner);
     }

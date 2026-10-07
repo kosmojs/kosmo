@@ -1,51 +1,46 @@
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { HTTPMethods } from "@kosmojs/core/api";
 
 import { setupTestProject } from "../setup";
 
-const {
-  bootstrapProject,
-  createApiRoutes,
-  withApiResponse,
-  startServer,
-  teardown,
-} = await setupTestProject({
-  backend: "hono",
-});
-
 const methods = Object.keys(HTTPMethods);
 
-beforeAll(async () => {
-  await bootstrapProject();
-
-  await createApiRoutes(
-    methods.flatMap((method) => {
-      return method === "HEAD" // HEAD handlers wired automatically
-        ? []
-        : [{ name: method }];
-    }),
-    async ({ name }) => {
-      return () => {
-        return `
-          import { defineRoute } from "_/api";
-          export default defineRoute(({ ${name} }) => [
-            ${name}<{ query: { page?: number } }>((ctx) => {
-              return ctx.json({ method: "${name}", page: ctx.validated.query.page });
-            }),
-          ]);
-        `;
-      };
-    },
-  );
-
-  await startServer();
-});
-
-afterAll(teardown);
-
 for (const method of methods as Array<never>) {
-  describe(method, { skip: method === "HEAD" }, async () => {
+  const skip = method === "HEAD";
+
+  describe(method, { skip }, async ({ afterAll }) => {
+    const {
+      //
+      bootstrapProject,
+      createApiRoutes,
+      withApiResponse,
+    } = await setupTestProject({ backend: "hono", skip });
+
+    const teardown = await bootstrapProject(async () => {
+      await createApiRoutes(
+        methods.flatMap((method) => {
+          return method === "HEAD" // HEAD handlers wired automatically
+            ? []
+            : [{ name: method }];
+        }),
+        async ({ name }) => {
+          return () => {
+            return `
+              import { defineRoute } from "_/api";
+              export default defineRoute(({ ${name} }) => [
+                ${name}<{ query: { page?: number } }>((ctx) => {
+                  return ctx.json({ method: "${name}", page: ctx.validated.query.page });
+                }),
+              ]);
+            `;
+          };
+        },
+      );
+    });
+
+    afterAll(teardown);
+
     test("200", async () => {
       const { response } = await withApiResponse(method, { method });
       expect(response.statusCode).toEqual(200);

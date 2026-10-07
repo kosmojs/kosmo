@@ -1,44 +1,40 @@
 import { load } from "cheerio";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
+import { snapshotNameFor } from "..";
 import { nestedRoutes } from "../@fixtures/generic/routes";
-import { setupTestProject, snapshotNameFor } from "../setup";
+import { setupTestProject } from "../setup";
 
-const {
-  bootstrapProject,
-  withPageContent,
-  createPageRoutes,
-  startServer,
-  teardown,
-} = await setupTestProject({ frontend: "vue" });
+describe("layouts", async ({ afterAll }) => {
+  const {
+    //
+    bootstrapProject,
+    withPageContent,
+    createPageRoutes,
+  } = await setupTestProject({ frontend: "vue" });
 
-beforeAll(async () => {
-  await bootstrapProject();
+  const teardown = await bootstrapProject(async () => {
+    await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
+      return () => {
+        if (file === "index") {
+          return `
+            <template>
+              <div>${name}</div>
+            </template>
+          `;
+        }
 
-  await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
-    return () => {
-      if (file === "index") {
         return `
-        <template>
-          <div>${name}</div>
-        </template>
-      `;
-      }
-
-      return `
-      <template>
-        <div data-layout="${name}"><router-view /></div>
-      </template>
-    `;
-    };
+          <template>
+            <div data-layout="${name}"><router-view /></div>
+          </template>
+        `;
+      };
+    });
   });
 
-  await startServer();
-});
+  afterAll(teardown);
 
-afterAll(teardown);
-
-describe("Vue - Layouts", async () => {
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {
@@ -46,12 +42,9 @@ describe("Vue - Layouts", async () => {
     test(snapshotName, async () => {
       const { content } = await withPageContent([name, params]);
       const $ = load(content);
-      await expect(
-        $("#app")
-          .html()
-          ?.trim()
-          ?.replace(/<!--\[-->|<!--\]-->/g, ""),
-      ).toMatchFileSnapshot(`../@snapshots/layouts/${snapshotName}.html`);
+      await expect($("#app").html()).toMatchFileSnapshot(
+        `../@snapshots/layouts/${snapshotName}.html`,
+      );
     });
   }
 });

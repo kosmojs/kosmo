@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { contentPatternFor } from "..";
 import { routes } from "../@fixtures/generic/routes";
@@ -22,34 +22,31 @@ export default () => {
   );
 }`;
 
-const {
-  bootstrapProject,
-  withPageContent,
-  createPageRoutes,
-  startServer,
-  teardown,
-} = await setupTestProject(
-  { frontend: "react" },
-  {
-    frontend: {
-      templates: {
-        landing: landingTemplate,
-        "landing/**/*": landingTemplate,
-        "marketing/**/*": marketingTemplate,
+describe("custom templates", async ({ afterAll }) => {
+  const {
+    //
+    bootstrapProject,
+    withPageContent,
+    createPageRoutes,
+  } = await setupTestProject(
+    { frontend: "react" },
+    {
+      frontend: {
+        templates: {
+          landing: landingTemplate,
+          "landing/**/*": landingTemplate,
+          "marketing/**/*": marketingTemplate,
+        },
       },
     },
-  },
-);
+  );
 
-beforeAll(async () => {
-  await bootstrapProject();
-  await createPageRoutes([...routes]);
-  await startServer();
-});
+  const teardown = await bootstrapProject(async () => {
+    await createPageRoutes([...routes]);
+  });
 
-afterAll(teardown);
+  afterAll(teardown);
 
-describe("React - Custom Templates", async () => {
   describe("Pattern Matching", () => {
     it("should use custom template for matching route pattern", async () => {
       const { content } = await withPageContent(["landing"]);

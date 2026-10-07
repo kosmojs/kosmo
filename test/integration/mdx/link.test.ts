@@ -1,5 +1,5 @@
 import { load } from "cheerio";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { defaults } from "@kosmojs/core";
 
@@ -29,32 +29,29 @@ import Link from "${defaults.srcPrefix}/components/Link.tsx";
 </div>
 `;
 
-const {
-  bootstrapProject,
-  withPageContent,
-  createPageRoutes,
-  startServer,
-  teardown,
-} = await setupTestProject(
-  { frontend: "mdx" },
-  {
-    frontend: {
-      templates: {
-        navigation: navigationTemplate,
+describe("Link component", async ({ afterAll }) => {
+  const {
+    //
+    bootstrapProject,
+    withPageContent,
+    createPageRoutes,
+  } = await setupTestProject(
+    { frontend: "mdx" },
+    {
+      frontend: {
+        templates: {
+          navigation: navigationTemplate,
+        },
       },
     },
-  },
-);
+  );
 
-beforeAll(async () => {
-  await bootstrapProject();
-  await createPageRoutes([...routes]);
-  await startServer();
-});
+  const teardown = await bootstrapProject(async () => {
+    await createPageRoutes([...routes]);
+  });
 
-afterAll(teardown);
+  afterAll(teardown);
 
-describe("MDX - Link Component", async () => {
   it("should render all links with correct hrefs", async () => {
     const { content } = await withPageContent(["navigation"]);
     // Verify page renders

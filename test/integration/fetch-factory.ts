@@ -7,20 +7,23 @@ import { inject, type TestFunction } from "vitest";
 import { BACKENDS, type FRONTENDS } from "@kosmojs/core";
 import { pathResolver, render, renderToFile } from "@kosmojs/lib";
 
-import { dependencies } from "../package.json";
 import { payloadMap, routes } from "./@fixtures/fetch/routes";
 import * as templates from "./@fixtures/fetch/templates";
 import { setupTestProject } from "./setup";
 
+type TestEntry = [name: string, runner: TestFunction];
+
 export type TestGroup = {
   name: string;
-  project: Awaited<ReturnType<typeof setupTestProject>>;
-  tests: Array<[name: string, runner: TestFunction]>;
+  createHarness: () => Promise<{
+    tests: Array<TestEntry>;
+    teardown: () => Promise<void>;
+  }>;
 };
 
 const mode = inject("MODE");
 
-export const createTestGroups = async (opt: {
+export const createTestGroups = (opt: {
   frontend: keyof typeof FRONTENDS;
   backends?: Array<keyof typeof BACKENDS>;
   renderModes?: Array<"string" | "stream">;
@@ -57,117 +60,128 @@ export const createTestGroups = async (opt: {
           }
         }
 
-        const project = await setupTestProject(
-          {
-            mode,
-            backend: backend as never,
-            frontend: frontend as never,
-            ...(opt?.skip ? { skip: opt.skip } : {}),
-          },
-          {
-            frontend: {
-              ...(renderMode ? { ssr: { renderMode } } : {}),
-              tanstack: { query: tsq ? true : false },
-            },
-          },
-        );
+        const tests: Array<TestEntry> = [];
 
-        const group: TestGroup = {
+        const createHarness = async () => {
+          const {
+            project,
+            sourceFolder,
+            bootstrapProject,
+            createApiRoutes,
+            createPageRoutes,
+            withPageContent,
+          } = await setupTestProject(
+            {
+              mode,
+              backend: backend as never,
+              frontend: frontend as never,
+              ...(opt?.skip ? { skip: opt.skip } : {}),
+            },
+            {
+              frontend: {
+                ...(renderMode ? { ssr: { renderMode } } : {}),
+                tanstack: { query: tsq ? true : false },
+              },
+            },
+          );
+
+          const teardown = await bootstrapProject(async () => {
+            const { createPath } = pathResolver(project, sourceFolder);
+
+            await mkdir(createPath.lib(), { recursive: true });
+
+            await renderToFile(
+              createPath.lib("@testUtils.ts"),
+              templates.testUtils,
+              {},
+            );
+
+            await createApiRoutes(
+              Object.keys(routes).map((name) => {
+                return { name };
+              }),
+              async ({ name }) => {
+                return () => renderApiFile(backend as never, name as never);
+              },
+            );
+
+            for (const [
+              route,
+              {
+                params: paramsEntries = [[]],
+                headers,
+                cookies,
+                ...payloadEntries
+              },
+            ] of Object.entries(payloadMap)) {
+              if (opt?.skip) {
+                continue;
+              }
+
+              if (opt?.routes && !opt.routes.includes(route as never)) {
+                continue;
+              }
+
+              for (const params of paramsEntries) {
+                for (const [method, payloads] of Object.entries(
+                  payloadEntries,
+                )) {
+                  for (const payload of payloads) {
+                    const path = [
+                      route.replace(/[^\w]/g, "_"),
+                      method,
+                      ...params.flatMap((p) => (Array.isArray(p) ? p : [p])),
+                      crc(route + JSON.stringify(payload)),
+                    ].join("/");
+
+                    for (const file of ["index", "layout"] as const) {
+                      await createPageRoutes(
+                        [{ name: path, file }],
+                        async () => {
+                          return () => {
+                            return renderPageFile({
+                              frontend: frontend as never,
+                              tsq,
+                              route: route as never,
+                              path,
+                              method,
+                              params: JSON.stringify(params),
+                              headers,
+                              payload,
+                              file,
+                            });
+                          };
+                        },
+                      );
+                    }
+
+                    tests.push([
+                      `[${mode}] ${path}`,
+                      createTestRunner({
+                        withPageContent,
+                        route,
+                        path,
+                        params: params as never,
+                        headers,
+                        cookies,
+                        payload,
+                      }),
+                    ]);
+                  }
+                }
+              }
+            }
+          });
+
+          return { tests, teardown };
+        };
+
+        testGroups.push({
           name: [backend, frontend, renderMode, tsq ? "tsq" : ""]
             .filter(Boolean)
             .join(":"),
-          project,
-          tests: [],
-        };
-
-        const {
-          sourceFolder,
-          bootstrapProject,
-          createApiRoutes,
-          createPageRoutes,
-        } = project;
-
-        const { createPath } = pathResolver(sourceFolder);
-
-        await bootstrapProject({
-          dependencies: { mrmime: dependencies["mrmime"] },
+          createHarness,
         });
-
-        await mkdir(createPath.lib(), { recursive: true });
-
-        await renderToFile(
-          createPath.lib("@testUtils.ts"),
-          templates.testUtils,
-          {},
-        );
-
-        await createApiRoutes(
-          Object.keys(routes).map((name) => {
-            return { name };
-          }),
-          async ({ name }) => {
-            return () => renderApiFile(backend as never, name as never);
-          },
-        );
-
-        for (const [
-          route,
-          { params: paramsEntries = [[]], headers, cookies, ...payloadEntries },
-        ] of Object.entries(payloadMap)) {
-          if (opt?.skip) {
-            continue;
-          }
-
-          if (opt?.routes && !opt.routes.includes(route as never)) {
-            continue;
-          }
-
-          for (const params of paramsEntries) {
-            for (const [method, payloads] of Object.entries(payloadEntries)) {
-              for (const payload of payloads) {
-                const path = [
-                  route.replace(/[^\w]/g, "_"),
-                  method,
-                  ...params.flatMap((p) => (Array.isArray(p) ? p : [p])),
-                  crc(route + JSON.stringify(payload)),
-                ].join("/");
-
-                for (const file of ["index", "layout"] as const) {
-                  await createPageRoutes([{ name: path, file }], async () => {
-                    return () => {
-                      return renderPageFile({
-                        frontend: frontend as never,
-                        tsq,
-                        route: route as never,
-                        path,
-                        method,
-                        params: JSON.stringify(params),
-                        headers,
-                        payload,
-                        file,
-                      });
-                    };
-                  });
-                }
-
-                group.tests.push([
-                  `[${mode}] ${path}`,
-                  createTestRunner({
-                    project,
-                    route,
-                    path,
-                    params: params as never,
-                    headers,
-                    cookies,
-                    payload,
-                  }),
-                ]);
-              }
-            }
-          }
-        }
-
-        testGroups.push(group);
       }
     }
   }
@@ -176,14 +190,16 @@ export const createTestGroups = async (opt: {
 };
 
 const createTestRunner = ({
-  project,
+  withPageContent,
   path,
   params,
   headers,
   cookies,
   payload,
 }: {
-  project: TestGroup["project"];
+  withPageContent: Awaited<
+    ReturnType<typeof setupTestProject>
+  >["withPageContent"];
   route: string;
   path: string;
   params: Array<string | Array<string>>;
@@ -192,7 +208,7 @@ const createTestRunner = ({
   payload: Record<string, unknown>;
 }): TestFunction => {
   return async ({ expect }) => {
-    const { content } = await project.withPageContent(path, {
+    const { content } = await withPageContent(path, {
       headers,
       cookies,
     });

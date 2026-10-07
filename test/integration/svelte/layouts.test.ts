@@ -1,44 +1,40 @@
 import { load } from "cheerio";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
+import { snapshotNameFor } from "..";
 import { nestedRoutes } from "../@fixtures/generic/routes";
-import { setupTestProject, snapshotNameFor } from "../setup";
+import { setupTestProject } from "../setup";
 
-const {
-  bootstrapProject,
-  withPageContent,
-  createPageRoutes,
-  startServer,
-  teardown,
-} = await setupTestProject({ frontend: "svelte" });
+describe("layouts", async ({ afterAll }) => {
+  const {
+    //
+    bootstrapProject,
+    withPageContent,
+    createPageRoutes,
+  } = await setupTestProject({ frontend: "svelte" });
 
-beforeAll(async () => {
-  await bootstrapProject();
+  const teardown = await bootstrapProject(async () => {
+    await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
+      return () => {
+        if (file === "index") {
+          // Route names contain braces (`blog/{category}`, `docs/{...path}`).
+          // Svelte parses `{...}` as an expression in both text and quoted attribute values.
+          return `<div>{${JSON.stringify(name)}}</div>`;
+        }
 
-  await createPageRoutes([...nestedRoutes], async ({ name, file }) => {
-    return () => {
-      if (file === "index") {
-        // Route names contain braces (`blog/{category}`, `docs/{...path}`).
-        // Svelte parses `{...}` as an expression in both text and quoted attribute values.
-        return `<div>{${JSON.stringify(name)}}</div>`;
-      }
-
-      return `
-        <script lang="ts">
-          import type { Snippet } from "svelte";
-          let { children }: { children: Snippet } = $props();
-        </script>
-        <div data-layout={${JSON.stringify(name)}}>{@render children()}</div>
-      `;
-    };
+        return `
+            <script lang="ts">
+              import type { Snippet } from "svelte";
+              let { children }: { children: Snippet } = $props();
+            </script>
+            <div data-layout={${JSON.stringify(name)}}>{@render children()}</div>
+          `;
+      };
+    });
   });
 
-  await startServer();
-});
+  afterAll(teardown);
 
-afterAll(teardown);
-
-describe("Svelte - Layouts", async () => {
   for (const { name, params } of nestedRoutes.filter(
     (e) => e.file === "index",
   )) {
@@ -46,16 +42,9 @@ describe("Svelte - Layouts", async () => {
     test(snapshotName, async () => {
       const { content } = await withPageContent([name, params]);
       const $ = load(content);
-      await expect(
-        // Svelte SSR emits several kinds of hydration marker - `<!--[-->`,
-        // `<!--]-->`, `<!--[0-->`, `<!--[-1-->`, `<!---->` - so every comment
-        // is stripped rather than a fixed pair (which is all Vue needs). This
-        // also removes the `<!--app-html-->` placeholder in CSR mode.
-        $("#app")
-          .html()
-          ?.replace(/<!--[\s\S]*?-->/g, "")
-          ?.trim(),
-      ).toMatchFileSnapshot(`../@snapshots/layouts/${snapshotName}.html`);
+      await expect($("#app").html()).toMatchFileSnapshot(
+        `../@snapshots/layouts/${snapshotName}.html`,
+      );
     });
   }
 });

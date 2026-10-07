@@ -1,19 +1,17 @@
-import { afterAll, beforeAll, describe, test } from "vitest";
+import { describe, test } from "vitest";
 
-import { createTests } from "../alias-factory";
+import { createTestGroups } from "../alias-factory";
 
-const { project, tests } = await createTests("h3");
+const testGroups = createTestGroups("h3");
 
-beforeAll(async () => {
-  await project.buildProject();
-});
+for (const { name, createHarness } of testGroups) {
+  describe(name, async ({ afterAll }) => {
+    const { tests, teardown } = await createHarness();
 
-afterAll(async () => {
-  await project.teardown();
-});
+    afterAll(teardown);
 
-describe("aliases", () => {
-  for (const { name, runner } of tests) {
-    test(name, runner);
-  }
-});
+    for (const [name, runner] of tests) {
+      test(name, runner);
+    }
+  });
+}
