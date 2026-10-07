@@ -22,9 +22,12 @@ import {
 
 import * as templates from "./templates";
 
-export default defineGeneratorFactory((sourceFolder) => {
+export default defineGeneratorFactory((projectSettings, sourceFolder) => {
   const { backend } = sourceFolder.config;
-  const { createPath, createImportHelpers } = pathResolver(sourceFolder);
+  const { createPath, createImportHelpers } = pathResolver(
+    projectSettings,
+    sourceFolder,
+  );
 
   const cascadingState = (ids: Array<string>): string => {
     if (ids.length === 0) {

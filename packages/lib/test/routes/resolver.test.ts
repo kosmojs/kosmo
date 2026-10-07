@@ -2,14 +2,14 @@ import { describe, expect, test } from "vitest";
 
 import { createRouteEntry, scanRoutes, sortRoutes } from "@kosmojs/lib";
 
-import { sourceFolder } from ".";
+import { project, sourceFolder } from "..";
 
 describe("Routes Resolver", async () => {
-  const routeFiles = await scanRoutes(sourceFolder);
+  const routeFiles = await scanRoutes(project, sourceFolder);
 
   const routeEntries = routeFiles
     .flatMap((file) => {
-      const entry = createRouteEntry(file, sourceFolder);
+      const entry = createRouteEntry(project, sourceFolder, file);
       return entry ? [entry] : [];
     })
     .sort(sortRoutes)

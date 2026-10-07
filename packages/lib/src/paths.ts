@@ -1,7 +1,12 @@
 import { access, constants } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
-import { defaults, type SourceFolder } from "@kosmojs/core";
+import {
+  DEFAULT_DIST,
+  defaults,
+  type ProjectSettings,
+  type SourceFolder,
+} from "@kosmojs/core";
 
 type Options = { origin: "src" | "lib" };
 
@@ -11,7 +16,8 @@ type CreateImport = Record<
 >;
 
 export const pathResolver = (
-  sourceFolder: Omit<SourceFolder, "root"> & { root?: string | undefined },
+  { root, distDir = DEFAULT_DIST }: ProjectSettings,
+  { name }: SourceFolder,
 ): {
   createPath: Record<
     | "src"
@@ -32,16 +38,14 @@ export const pathResolver = (
   };
 } => {
   const createPath = (...a: Array<string>) => {
-    return sourceFolder.root
-      ? resolve(sourceFolder.root, join(...a))
-      : join(...a);
+    return root ? resolve(root, join(...a)) : join(...a);
   };
 
   const createImport: CreateImport = {
     src(a, { origin }) {
       return origin === "src"
         ? join(defaults.srcPrefix, ...a)
-        : join(defaults.appPrefix, defaults.srcDir, sourceFolder.name, ...a);
+        : join(defaults.appPrefix, defaults.srcDir, name, ...a);
     },
     api(a, o) {
       return this.src([defaults.apiDir, ...a], o);
@@ -55,7 +59,7 @@ export const pathResolver = (
     lib(a, { origin }) {
       return origin === "src"
         ? join(defaults.libPrefix, ...a)
-        : join(defaults.appPrefix, defaults.libDir, sourceFolder.name, ...a);
+        : join(defaults.appPrefix, defaults.libDir, name, ...a);
     },
     libCore(a, o) {
       return this.lib(["core", ...a], o);
@@ -71,7 +75,7 @@ export const pathResolver = (
   return {
     createPath: {
       src(...a) {
-        return createPath(defaults.srcDir, sourceFolder.name, ...a);
+        return createPath(defaults.srcDir, name, ...a);
       },
       api(...a) {
         return this.src(defaults.apiDir, ...a);
@@ -83,7 +87,7 @@ export const pathResolver = (
         return this.src(defaults.entryDir, ...a);
       },
       lib(...a) {
-        return createPath(defaults.libDir, sourceFolder.name, ...a);
+        return createPath(defaults.libDir, name, ...a);
       },
       libCore(...a) {
         return this.lib("core", ...a);
@@ -98,7 +102,7 @@ export const pathResolver = (
         return this.lib(defaults.pagesDir, ...a);
       },
       distDir(...a) {
-        return createPath(sourceFolder.distDir, sourceFolder.name, ...a);
+        return createPath(distDir, name, ...a);
       },
     },
     createImport,

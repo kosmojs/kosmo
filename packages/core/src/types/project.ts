@@ -30,10 +30,6 @@ export type SourceFolder = {
   config: FolderConfig;
   // Resolved folder generators
   generators: Array<GeneratorSignature>;
-  // Absolute path to the project root
-  root: string;
-  // output directory name, configured as `distDir` in package.json
-  distDir: string;
 };
 
 /**
@@ -53,12 +49,11 @@ export type SourceFolderManifest = {
   };
 };
 
+export type KosmoSettings = Partial<
+  Record<"devHost" | "previewHost" | "distDir", string>
+>;
+
 export type ProjectSettings = {
   root: string;
   sourceFolders: Array<SourceFolder>;
-  devHost: string;
-  devPort: number;
-  previewHost: string;
-  previewPort: number;
-  distDir: string;
-};
+} & Required<KosmoSettings>;

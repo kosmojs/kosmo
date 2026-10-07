@@ -4,11 +4,12 @@ import { isAbsolute, join, parse } from "node:path";
 
 import type { Plugin } from "vite";
 
-import {
-  defaults,
-  type ProjectSettings,
-  type SourceFolder,
+import type {
+  ChassisCommand,
+  ProjectSettings,
+  SourceFolder,
 } from "@kosmojs/core";
+import { defaults } from "@kosmojs/core";
 
 import { pathResolver } from "./paths";
 
@@ -64,7 +65,10 @@ import { pathResolver } from "./paths";
  * tsconfig generator uses, so alias resolution here can never drift from the
  * paths that were written into the generated tsconfig.
  * */
-export const tsconfigPaths = (sourceFolder: SourceFolder): Plugin => {
+export const tsconfigPaths = (
+  projectSettings: ProjectSettings,
+  sourceFolder: SourceFolder,
+): Plugin => {
   /**
    * Candidate extensions for an extensionless specifier, in resolution priority order.
    * Mirrors the renderable file types the generators emit;
@@ -83,12 +87,12 @@ export const tsconfigPaths = (sourceFolder: SourceFolder): Plugin => {
     ".json",
   ];
 
-  const { createPath } = pathResolver(sourceFolder);
+  const { createPath } = pathResolver(projectSettings, sourceFolder);
 
   const table: Array<[prefix: string, baseDir: string]> = [
     [`${defaults.srcPrefix}/`, createPath.src()],
     [`${defaults.libPrefix}/`, createPath.lib()],
-    [`${defaults.appPrefix}/`, sourceFolder.root],
+    [`${defaults.appPrefix}/`, projectSettings.root],
   ];
 
   const resolveWithin = async (
@@ -167,11 +171,9 @@ const nodePrefix = (): Plugin => {
  * Generators declare their modules via `factory.virtualModules()`.
  * */
 export const virtualModules = (
+  projectSettings: ProjectSettings,
   sourceFolder: SourceFolder,
-  {
-    kind,
-    command,
-  }: { kind: "csr" | "ssr"; command: ProjectSettings["command"] },
+  { kind, command }: { kind: "csr" | "ssr"; command: ChassisCommand },
 ): Plugin => {
   /**
    * Rollup's / Rolldown's convention for ids owned by a plugin:
@@ -180,7 +182,7 @@ export const virtualModules = (
   const VIRTUAL_PREFIX = "\0";
 
   const modules = sourceFolder.generators.flatMap(({ factory }) => {
-    return factory(sourceFolder).virtualModules?.() || [];
+    return factory(projectSettings, sourceFolder).virtualModules?.() || [];
   });
 
   const virtualSources = new Map<string, { csr: string; ssr: string }>();
@@ -225,10 +227,11 @@ const isFile = async (path: string) => {
 };
 
 export const cacheDir = (
-  { root, name }: SourceFolder,
+  { root }: ProjectSettings,
+  { name }: SourceFolder,
   target:
-    | `frontend:${"build" | "serve" | "test"}`
-    | `backend:${"build" | "serve" | "test"}`
+    | `frontend:${ChassisCommand}`
+    | `backend:${ChassisCommand}`
     | "sidecar",
 ) => {
   return join(root, defaults.varDir, ".vite", name, target);

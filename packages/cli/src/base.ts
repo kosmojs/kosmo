@@ -10,6 +10,7 @@ import type {
   FolderConfig,
   FRONTENDS,
   GeneratorSignature,
+  KosmoSettings,
 } from "@kosmojs/core";
 import {
   coreGenerator,
@@ -52,16 +53,12 @@ export const printMessage = (
 export { prompts };
 
 export type PackageJSON = {
-  kosmo?: {
-    devHost?: string;
-    previewHost?: string;
-    distDir?: string;
-  };
+  kosmo?: KosmoSettings;
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
 };
 
-export type SourceFolder = {
+export type SourceFolderConfig = {
   name: string;
   frontend?: keyof typeof FRONTENDS | undefined;
   backend?: keyof typeof BACKENDS | undefined;
@@ -127,7 +124,7 @@ export const assertNoError = (validator: () => string | undefined) => {
 };
 
 export const resolveFolderGenerators = (
-  folder: SourceFolder,
+  folder: SourceFolderConfig,
   folderConfig?: DeepPartial<FolderConfig>,
 ) => {
   const { frontend, backend } = folder;
@@ -235,9 +232,15 @@ export const checkDependencies = async (
 
   for (const [name, minVersion, key] of required) {
     const rawVersion = dependencies[name] || devDependencies[name];
+
+    if (!semver.valid(rawVersion)) {
+      continue;
+    }
+
     const version = rawVersion
       ? semver.minVersion(rawVersion)?.version
       : undefined;
+
     if (!rawVersion || !version) {
       missing.push([name, minVersion, key]);
     } else {

@@ -15,8 +15,11 @@ import {
 
 import * as templates from "./templates";
 
-export default defineGeneratorFactory((sourceFolder) => {
-  const { createPath, createImportHelpers } = pathResolver(sourceFolder);
+export default defineGeneratorFactory((projectSettings, sourceFolder) => {
+  const { createPath, createImportHelpers } = pathResolver(
+    projectSettings,
+    sourceFolder,
+  );
 
   const { renderToFile: deployLibFile } = renderFactory({
     helpers: {

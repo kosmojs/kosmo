@@ -18,10 +18,13 @@ import {
 import { randomCongratMessage, traverseFactory } from "./base";
 import * as templates from "./templates";
 
-export default defineGeneratorFactory((sourceFolder) => {
+export default defineGeneratorFactory((projectSettings, sourceFolder) => {
   const { frontend } = sourceFolder.config;
 
-  const { createPath, createImportHelpers } = pathResolver(sourceFolder);
+  const { createPath, createImportHelpers } = pathResolver(
+    projectSettings,
+    sourceFolder,
+  );
 
   const { render: renderLibTpl, renderToFile: deployLibFile } = renderFactory({
     helpers: {

@@ -9,6 +9,7 @@ import {
   defaults,
   type PathToken,
   type PathTokenParamPart,
+  type ProjectSettings,
   type ResolvedEntry,
   type RouteEntry,
   type SourceFolder,
@@ -50,8 +51,11 @@ const ROUTE_FILE_PATTERNS = [
   `${defaults.pagesDir}/**/${PAGE_LAYOUT_PATTERN}`,
 ];
 
-export const scanRoutes = async (sourceFolder: SourceFolder) => {
-  const { createPath } = pathResolver(sourceFolder);
+export const scanRoutes = async (
+  projectSettings: ProjectSettings,
+  sourceFolder: SourceFolder,
+) => {
+  const { createPath } = pathResolver(projectSettings, sourceFolder);
   return glob(ROUTE_FILE_PATTERNS, {
     cwd: createPath.src(),
     absolute: true,
@@ -68,8 +72,9 @@ export const scanRoutes = async (sourceFolder: SourceFolder) => {
 };
 
 export const isRouteFile = (
-  file: string,
+  projectSettings: ProjectSettings,
   sourceFolder: SourceFolder,
+  file: string,
 ):
   | [
       // Either `apiDir` or `pagesDir`
@@ -84,8 +89,8 @@ export const isRouteFile = (
     // route folder, api or pages
     _folder,
     ...rest
-  ] = resolve(sourceFolder.root, file)
-    .replace(`${sourceFolder.root}/${defaults.srcDir}/`, "")
+  ] = resolve(projectSettings.root, file)
+    .replace(`${projectSettings.root}/${defaults.srcDir}/`, "")
     .split("/");
 
   /**
@@ -120,12 +125,17 @@ export const isPageLayout = (file: string) => {
 };
 
 export const createRouteEntry = (
-  fileFullpath: string,
+  projectSettings: ProjectSettings,
   sourceFolder: SourceFolder,
+  fileFullpath: string,
 ): RouteEntry | undefined => {
   // scanner already is doing a great job on matching only relevant files
   // but doing a double check here to make sure only needed files added to stack
-  const resolvedPaths = isRouteFile(fileFullpath, sourceFolder);
+  const resolvedPaths = isRouteFile(
+    projectSettings,
+    sourceFolder,
+    fileFullpath,
+  );
 
   if (!resolvedPaths) {
     return;

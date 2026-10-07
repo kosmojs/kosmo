@@ -22,13 +22,11 @@ const defaultSettings: TypeboxSettings = {
 };
 
 export default defineGeneratorFactory<TypeboxOptions>(
-  (sourceFolder, options) => {
-    const {
-      //
-      createPath,
-      createImport,
-      createImportHelpers,
-    } = pathResolver(sourceFolder);
+  (projectSettings, sourceFolder, options) => {
+    const { createPath, createImport, createImportHelpers } = pathResolver(
+      projectSettings,
+      sourceFolder,
+    );
 
     const { renderToFile: deployLibFile } = renderFactory({
       helpers: {

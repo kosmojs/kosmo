@@ -1,10 +1,12 @@
 import { resolve } from "node:path";
 
-import type {
-  SourceFolder,
-  ValidationSchema,
-  ValidationSchemas,
-  ValidationTarget,
+import {
+  DEFAULT_DIST,
+  type ProjectSettings,
+  type SourceFolder,
+  type ValidationSchema,
+  type ValidationSchemas,
+  type ValidationTarget,
 } from "@kosmojs/core";
 import { pathResolver } from "@kosmojs/lib";
 
@@ -23,15 +25,21 @@ export const sourceFolder: SourceFolder = {
   name: "test",
   config: {},
   generators: [coreGenerator(), typeboxGenerator()],
+};
+
+export const project: ProjectSettings = {
   root: appRoot,
-  distDir: "dist",
+  sourceFolders: [sourceFolder],
+  devHost: "",
+  previewHost: "",
+  distDir: DEFAULT_DIST,
 };
 
 export const importSchema = async (
   route: RouteName,
   schemaPath: "params" | `${ValidationTarget}.${"GET" | "POST"}`,
 ) => {
-  const { createPath } = pathResolver(sourceFolder);
+  const { createPath } = pathResolver(project, sourceFolder);
 
   const schemas: { validationSchemas: ValidationSchemas } = await import(
     createPath.libApi(route, `schemas.ts?${Date.now()}`)

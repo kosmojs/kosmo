@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 import { defaults, type ResolvedTypeSignature } from "@kosmojs/core";
 import { astFactory } from "@kosmojs/lib";
 
-import { sourceFolder } from "../routes";
+import { project, sourceFolder } from "..";
 
 const { refineTypeName } = defaults;
 
@@ -16,7 +16,7 @@ describe("typeResolverFactory", { timeout: 10_000 }, () => {
     //
     getSourceFile,
     literalTypesResolver,
-  } = typeResolverFactory(sourceFolder);
+  } = typeResolverFactory(project, sourceFolder);
 
   // The resolver preserves VRefine (self-override) so refinements survive flattening
   const resolveLiterals = (literalTypes: string) => {

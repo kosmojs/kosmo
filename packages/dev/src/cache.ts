@@ -1,37 +1,27 @@
-import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 
 import crc from "crc/crc32";
 
 import type {
+  ProjectSettings,
   RouteResolverCache,
   RouteResolverCacheFactory,
 } from "@kosmojs/core";
 import { pathExists, pathResolver, renderToFile } from "@kosmojs/lib";
 
-/**
- * Read the installed package.json at runtime to get the actual version.
- * A static `import ... with { type: "json" }` would be inlined by the
- * bundler with the pre-bump version, defeating the point.
- * */
-const self = JSON.parse(
-  readFileSync(
-    createRequire(import.meta.url).resolve("@kosmojs/dev/package.json"),
-    "utf-8",
-  ),
-);
+import self from "../package.json" with { type: "json" };
 
 export const cacheFactory: RouteResolverCacheFactory = (
-  route,
+  projectSettings: ProjectSettings,
   sourceFolder,
+  route,
   extraContext,
 ) => {
-  const cacheFile = pathResolver(sourceFolder).createPath.libApi(
-    dirname(route.file),
-    "cache.json",
-  );
+  const cacheFile = pathResolver(
+    projectSettings,
+    sourceFolder,
+  ).createPath.libApi(dirname(route.file), "cache.json");
 
   const validateCache = async (cache: RouteResolverCache) => {
     if (!cache?.hash) {
@@ -56,7 +46,7 @@ export const cacheFactory: RouteResolverCacheFactory = (
       if (
         !identicalHashSum(
           hash,
-          await generateFileHash(resolve(sourceFolder.root, file)),
+          await generateFileHash(resolve(projectSettings.root, file)),
         )
       ) {
         // some referenced file updated
@@ -91,7 +81,7 @@ export const cacheFactory: RouteResolverCacheFactory = (
         referencedFiles[
           // Strip project root to ensure cached paths are relative
           // and portable across environments (CI, local, etc.)
-          file.replace(`${sourceFolder.root}/`, "")
+          file.replace(`${projectSettings.root}/`, "")
         ] = await generateFileHash(file);
       }
 

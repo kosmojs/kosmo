@@ -7,10 +7,10 @@ import { routesFactory } from "@kosmojs/lib";
 
 import openapiFactory from "#/openapi";
 
-import { openapiOptions, sourceFolder } from ".";
+import { openapiOptions, project, sourceFolder } from ".";
 
 test("openapi", async ({ expect }) => {
-  const { resolvers } = await routesFactory(sourceFolder);
+  const { resolvers } = await routesFactory(project, sourceFolder);
 
   const { generateOpenAPISchema } = openapiFactory();
 

@@ -1,14 +1,16 @@
 import { resolve } from "node:path";
 
-import type { SourceFolder } from "@kosmojs/core";
+import {
+  DEFAULT_DIST,
+  type ProjectSettings,
+  type SourceFolder,
+} from "@kosmojs/core";
 
 import coreGenerator from "@kosmojs/core-generator";
 
 import openapiGenerator from "#/index";
 
 export { defineRoute } from "@kosmojs/koa-generator/lib";
-
-export const appRoot = resolve(import.meta.dirname, "@fixtures/app");
 
 export const openapiOptions = {
   openapi: "3.1.0",
@@ -34,6 +36,12 @@ export const sourceFolder: SourceFolder = {
       servers: [],
     }),
   ],
-  root: appRoot,
-  distDir: "",
+};
+
+export const project: ProjectSettings = {
+  root: resolve(import.meta.dirname, "@fixtures/app"),
+  sourceFolders: [sourceFolder],
+  devHost: "",
+  previewHost: "",
+  distDir: DEFAULT_DIST,
 };

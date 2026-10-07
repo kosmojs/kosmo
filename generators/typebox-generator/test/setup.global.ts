@@ -3,14 +3,14 @@ import { resolve } from "node:path";
 
 import { routesFactory } from "@kosmojs/lib";
 
-import { appRoot, sourceFolder } from ".";
+import { appRoot, project, sourceFolder } from ".";
 
 const cleanup = () => rm(`${appRoot}/lib`, { force: true, recursive: true });
 
 export default async () => {
   await cleanup();
 
-  const { resolvers } = await routesFactory(sourceFolder);
+  const { resolvers } = await routesFactory(project, sourceFolder);
 
   const resolvedRoutes = [];
 
@@ -19,7 +19,7 @@ export default async () => {
   }
 
   for (const generator of sourceFolder.generators) {
-    const instance = generator.factory(sourceFolder);
+    const instance = generator.factory(project, sourceFolder);
     await instance.seed();
     await instance.build?.(resolvedRoutes);
   }

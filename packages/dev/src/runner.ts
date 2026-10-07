@@ -3,12 +3,13 @@ import { resolve } from "node:path";
 
 import { transformWithOxc } from "vite";
 
-import type {
-  ProjectSettings,
-  SourceFolder,
-  SourceFolderManifest,
+import {
+  DEFAULT_DIST,
+  type ProjectSettings,
+  type SourceFolder,
+  type SourceFolderManifest,
 } from "@kosmojs/core";
-import { createAliasPatterns, pathResolver } from "@kosmojs/lib";
+import { createAliasPatterns, pathResolver, render } from "@kosmojs/lib";
 
 import runTemplate from "#templates/run";
 
@@ -40,8 +41,11 @@ export const folderManifestFactory = (
   };
 };
 
-export const writeFolderManifest = async (sourceFolder: SourceFolder) => {
-  const { createPath } = pathResolver(sourceFolder);
+export const writeFolderManifest = async (
+  projectSettings: ProjectSettings,
+  sourceFolder: SourceFolder,
+) => {
+  const { createPath } = pathResolver(projectSettings, sourceFolder);
   const dir = createPath.distDir();
   await mkdir(dir, { recursive: true });
   await writeFile(
@@ -52,7 +56,7 @@ export const writeFolderManifest = async (sourceFolder: SourceFolder) => {
 };
 
 export const runnerPath = ({ root, distDir }: ProjectSettings) => {
-  return resolve(root, distDir, "run.js");
+  return resolve(root, distDir || DEFAULT_DIST, "run.js");
 };
 
 let runnerCode: string | undefined;
@@ -79,6 +83,10 @@ const runnerCodeFactory = async (): Promise<string> => {
 export const deployRunner = async (projectSettings: ProjectSettings) => {
   const file = runnerPath(projectSettings);
   await mkdir(resolve(file, ".."), { recursive: true });
-  await writeFile(file, await runnerCodeFactory(), "utf8");
+  await writeFile(
+    file,
+    render(await runnerCodeFactory(), projectSettings),
+    "utf8",
+  );
   return file;
 };

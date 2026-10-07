@@ -1,14 +1,14 @@
 import { createFilter, type Plugin } from "vite";
 
 import {
+  type ChassisCommand,
   defaults,
-  type ProjectSettings,
   type SourceFolder,
 } from "@kosmojs/core";
 
 export default (
   sourceFolder: SourceFolder,
-  command: ProjectSettings["command"],
+  command: ChassisCommand,
 ): Array<Plugin> => {
   const hmrPlugin = (): Plugin => {
     const hmrFilters = [

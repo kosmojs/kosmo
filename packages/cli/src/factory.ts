@@ -4,11 +4,12 @@ import { styleText } from "node:util";
 
 import {
   BACKENDS,
-  DEFAULT_DIST,
   type DeepPartial,
   defaults,
   type FolderConfig,
   FRONTENDS,
+  type ProjectSettings,
+  type SourceFolder,
 } from "@kosmojs/core";
 import { formatCode, render, renderToFile } from "@kosmojs/lib";
 
@@ -19,7 +20,7 @@ import {
   prompts,
   readAnswer,
   resolveFolderGenerators,
-  type SourceFolder,
+  type SourceFolderConfig,
 } from "./base";
 import * as templates from "./templates";
 
@@ -27,7 +28,7 @@ export const prepareFolder = async (
   root: string,
   name: string,
   input: Partial<{ overwrite: boolean }> | undefined,
-): Promise<SourceFolder> => {
+): Promise<SourceFolderConfig> => {
   const srcDir = resolve(root, defaults.srcDir);
 
   await mkdir(srcDir, { recursive: true });
@@ -75,7 +76,7 @@ export const prepareSourceFolder = async (
         overwrite: boolean;
       }>
     | undefined,
-): Promise<SourceFolder> => {
+): Promise<SourceFolderConfig> => {
   const tty = isTTY();
 
   const folder = await prepareFolder(root, name, input);
@@ -140,7 +141,7 @@ export const prepareSourceFolder = async (
 
 export const createHTTPFolder = async (
   root: string,
-  folder: SourceFolder,
+  folder: SourceFolderConfig,
   configPatch?: DeepPartial<FolderConfig>,
 ) => {
   const folderPath = resolve(root, defaults.srcDir, folder.name);
@@ -221,7 +222,7 @@ export const createHTTPFolder = async (
 
 export const createSidecarFolder = async (
   root: string,
-  sidecar: SourceFolder,
+  sidecar: SourceFolderConfig,
 ) => {
   const path = resolve(root, defaults.srcDir, sidecar.name);
 
@@ -248,24 +249,32 @@ export const createSidecarFolder = async (
 
 const seedFolder = async (
   root: string,
-  folder: SourceFolder,
+  folder: SourceFolderConfig,
   config: FolderConfig,
 ) => {
-  for (const generator of resolveFolderGenerators(folder)) {
-    await generator
-      .factory({
-        root,
-        name: folder.name,
-        config,
-        generators: [],
-        distDir: DEFAULT_DIST,
-      })
-      .seed();
+  const generators = resolveFolderGenerators(folder);
+
+  const sourceFolder: SourceFolder = {
+    name: folder.name,
+    config,
+    generators,
+  };
+
+  const projectSettings: ProjectSettings = {
+    root,
+    sourceFolders: [sourceFolder],
+    devHost: "",
+    previewHost: "",
+    distDir: "/dev/null",
+  };
+
+  for (const generator of generators) {
+    await generator.factory(projectSettings, sourceFolder).seed();
   }
 };
 
 const createKosmoConfig = (
-  folder: SourceFolder,
+  folder: SourceFolderConfig,
   config: DeepPartial<FolderConfig>,
 ) => {
   const { frontend, backend, sidecar } = folder;

@@ -15,7 +15,10 @@ const DEBOUNCE_MS = 300;
 // editor scratch files - a rebuild for these would only produce the same output
 const IGNORED_FILE = /(^\.|~$|\.swp$|\.tmp$)/;
 
-type Build = (sourceFolder: SourceFolder) => Promise<void>;
+type Build = (
+  projectSettings: ProjectSettings,
+  sourceFolder: SourceFolder,
+) => Promise<void>;
 
 /**
  * Preview = production build + watcher + `dist/run.js`.
@@ -31,8 +34,8 @@ type Build = (sourceFolder: SourceFolder) => Promise<void>;
 export const previewFactory = async (
   projectSettings: ProjectSettings,
   build: Build,
-): Promise<() => Promise<void>> => {
-  const { root, previewPort, sourceFolders } = projectSettings;
+): Promise<void> => {
+  const { root, previewHost, sourceFolders } = projectSettings;
 
   const runner = runnerPath(projectSettings);
 
@@ -44,9 +47,11 @@ export const previewFactory = async (
   let child: ChildProcess | undefined;
 
   const startRunner = () => {
+    const [host, port] = previewHost.split(":");
+
     const proc = spawn(
       process.execPath,
-      ["--enable-source-maps", runner, "--port", String(previewPort)],
+      ["--enable-source-maps", runner, "--host", host, "--port", port],
       { cwd: root, stdio: "inherit" },
     );
 
@@ -108,8 +113,8 @@ export const previewFactory = async (
         for (const sourceFolder of folders) {
           log(`rebuilding ${styleText("blue", sourceFolder.name)}`);
           try {
-            await build(sourceFolder);
-            await writeFolderManifest(sourceFolder);
+            await build(projectSettings, sourceFolder);
+            await writeFolderManifest(projectSettings, sourceFolder);
           } catch (error) {
             failed = true;
             console.error(
@@ -147,14 +152,14 @@ export const previewFactory = async (
 
   const watchedFolders = sourceFolders.flatMap((sourceFolder) => {
     if (sourceFolder.config.frontend || sourceFolder.config.backend) {
-      const { createPath } = pathResolver(sourceFolder);
+      const { createPath } = pathResolver(projectSettings, sourceFolder);
       return [{ dir: createPath.src(), sourceFolder }];
     }
     return [];
   });
 
   if (!watchedFolders.length) {
-    return async () => {};
+    return;
   }
 
   const watcher = watch(
@@ -197,6 +202,4 @@ export const previewFactory = async (
       process.exit(0);
     });
   }
-
-  return teardown;
 };

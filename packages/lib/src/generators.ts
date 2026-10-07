@@ -2,6 +2,7 @@ import type {
   ApiRoute,
   GeneratorFactory,
   GeneratorSignature,
+  ProjectSettings,
   ResolvedEntry,
   SourceFolder,
   WatcherEvent,
@@ -13,14 +14,16 @@ export const defineGenerator = <O extends object, R extends boolean = false>({
   dependencies,
   devDependencies,
 }: Omit<GeneratorSignature<O>, "factory"> & {
-  factory: (f: SourceFolder, o?: O) => GeneratorFactory;
+  factory: (s: ProjectSettings, f: SourceFolder, o?: O) => GeneratorFactory;
 }): [R] extends [true]
   ? (o: O) => GeneratorSignature<O>
   : (o?: O) => GeneratorSignature<O> => {
   return ((options?: O) => {
     return {
       meta,
-      factory: (folder: SourceFolder) => factory(folder, options),
+      factory: (settings: ProjectSettings, folder: SourceFolder) => {
+        return factory(settings, folder, options);
+      },
       dependencies,
       devDependencies,
       options,
@@ -29,7 +32,7 @@ export const defineGenerator = <O extends object, R extends boolean = false>({
 };
 
 export const defineGeneratorFactory = <O extends object>(
-  factory: (f: SourceFolder, o?: O) => GeneratorFactory,
+  factory: (s: ProjectSettings, f: SourceFolder, o?: O) => GeneratorFactory,
 ) => factory;
 
 /**

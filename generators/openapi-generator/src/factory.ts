@@ -10,10 +10,10 @@ import {
 import openapiFactory from "./openapi";
 
 export default defineGeneratorFactory<OpenAPIOptions>(
-  (sourceFolder, options) => {
+  (projectSettings, sourceFolder, options) => {
     const { outfile = "", ...baseSpec } = { ...options };
 
-    const { createPath } = pathResolver(sourceFolder);
+    const { createPath } = pathResolver(projectSettings, sourceFolder);
 
     const { generateOpenAPISchema } = openapiFactory();
 

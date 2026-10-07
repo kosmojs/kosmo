@@ -2,7 +2,14 @@ import { posix } from "node:path";
 
 import { mergeConfig, type UserConfig } from "vite";
 
-import { defaults } from "@kosmojs/core";
+import {
+  DEFAULT_HOST,
+  DEFAULT_PORT,
+  DEFAULT_PREVIEW_HOST,
+  DEFAULT_PREVIEW_PORT,
+  defaults,
+  type KosmoSettings,
+} from "@kosmojs/core";
 
 export const mergeConfigs = (
   ...configs: Array<UserConfig | undefined>
@@ -32,4 +39,24 @@ export const containsPathTraversalPatterns = (str: string): boolean => {
 
 export const configFilePattern = (folder: string) => {
   return posix.join(defaults.srcDir, folder, "kosmo.config.ts");
+};
+
+export const resolveHostAddress = (
+  settings: KosmoSettings | undefined,
+  key: "devHost" | "previewHost",
+) => {
+  let [host, port] =
+    key === "devHost"
+      ? [DEFAULT_HOST, DEFAULT_PORT]
+      : [DEFAULT_PREVIEW_HOST, DEFAULT_PREVIEW_PORT];
+  if (settings?.[key]) {
+    const url = new URL(`http://${settings[key]}`);
+    if (url.hostname) {
+      host = url.hostname;
+    }
+    if (url.port) {
+      port = Number(url.port);
+    }
+  }
+  return [host, port].join(":");
 };

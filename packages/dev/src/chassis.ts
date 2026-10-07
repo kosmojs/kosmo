@@ -1,5 +1,4 @@
 import http, { type IncomingMessage, type ServerResponse } from "node:http";
-import net from "node:net";
 import { join, posix } from "node:path";
 import { styleText } from "node:util";
 
@@ -9,9 +8,11 @@ import {
   createServer,
   type Plugin,
   type RunnableDevEnvironment,
+  type UserConfig,
 } from "vite";
 
 import {
+  type ChassisCommand,
   defaults,
   type GeneratorFactory,
   type ProjectSettings,
@@ -24,6 +25,7 @@ import type { DevSetup } from "@kosmojs/core/api";
 import {
   cacheDir,
   createAliasPatterns,
+  findFreePortRange,
   mergeConfigs,
   pathResolver,
   routesFactory,
@@ -35,13 +37,25 @@ import { cacheFactory } from "./cache";
 import { previewFactory } from "./preview";
 import { deployRunner, writeFolderManifest } from "./runner";
 
-export default async (
+type ReturnSignature<C extends ChassisCommand> = C extends "serve" | "test"
+  ? {
+      restart: () => Promise<void>;
+      teardown: () => Promise<void>;
+    }
+  : undefined;
+
+export { findFreePortRange };
+
+export default async <C extends ChassisCommand>(
+  command: C,
   projectSettings: ProjectSettings,
-): Promise<() => Promise<void>> => {
-  const { devPort, command } = projectSettings;
+): Promise<ReturnSignature<C>> => {
+  const { sourceFolders } = projectSettings;
+
+  const { devHost } = projectSettings;
 
   // NOTE: seed before anything else, regardless command
-  for (const sourceFolder of projectSettings.sourceFolders) {
+  for (const sourceFolder of sourceFolders) {
     for (const generator of sourceFolder.generators) {
       if (!generator.meta?.name || typeof generator.factory !== "function") {
         throw new Error(
@@ -49,7 +63,7 @@ export default async (
         );
       }
       try {
-        await generator.factory(sourceFolder).seed();
+        await generator.factory(projectSettings, sourceFolder).seed();
       } catch (error) {
         console.error(
           styleText(
@@ -63,20 +77,20 @@ export default async (
   }
 
   if (command === "build" || command === "preview") {
-    for (const sourceFolder of projectSettings.sourceFolders) {
-      await buildSourceFolder(sourceFolder);
+    for (const sourceFolder of sourceFolders) {
+      await buildSourceFolder(projectSettings, sourceFolder);
       if (sourceFolder.config.frontend || sourceFolder.config.backend) {
-        await writeFolderManifest(sourceFolder);
+        await writeFolderManifest(projectSettings, sourceFolder);
       }
     }
 
     await deployRunner(projectSettings);
 
-    if (command === "build") {
-      return async () => {};
+    if (command === "preview") {
+      await previewFactory(projectSettings, buildSourceFolder);
     }
 
-    return previewFactory(projectSettings, buildSourceFolder);
+    return undefined as ReturnSignature<C>;
   }
 
   type RequestMatcher = (req: IncomingMessage) => boolean;
@@ -90,32 +104,48 @@ export default async (
     ]
   > = [];
 
+  const restartHandlers: Array<() => Promise<unknown>> = [];
   const teardownHandlers: Array<() => Promise<unknown>> = [];
 
   const eventMap: Record<string, Awaited<ReturnType<typeof eventFactory>>> = {};
 
   // WARN: call this before starting any server!
-  for (const sourceFolder of projectSettings.sourceFolders) {
+  for (const sourceFolder of sourceFolders) {
     if (sourceFolder.config.frontend || sourceFolder.config.backend) {
-      eventMap[sourceFolder.name] = await eventFactory(sourceFolder);
+      eventMap[sourceFolder.name] = await eventFactory(
+        projectSettings,
+        sourceFolder,
+      );
     }
   }
 
-  let [port] = await findFreePortRange(
-    devPort,
-    projectSettings.sourceFolders.length * 4,
-  );
+  const [host, port] = devHost.split(":");
 
-  for (const sourceFolder of projectSettings.sourceFolders) {
-    const { createPath } = pathResolver(sourceFolder);
+  // 4 ports per folder, 2 per server (main and hmr)
+  let [floatingPort] = await findFreePortRange(host, sourceFolders.length * 4);
+
+  const genericDefaults: UserConfig = {
+    server: {
+      watch: {
+        atomic: true,
+        awaitWriteFinish: {
+          pollInterval: 200,
+          stabilityThreshold: 600,
+        },
+      },
+    },
+  };
+
+  for (const sourceFolder of sourceFolders) {
+    const { createPath } = pathResolver(projectSettings, sourceFolder);
     const { frontend, backend, sidecar } = sourceFolder.config;
 
     const requestMatchers = matchersFactory(sourceFolder);
 
     const plugins = [
-      vitePlugins.tsconfigPaths(sourceFolder),
+      vitePlugins.tsconfigPaths(projectSettings, sourceFolder),
       vitePlugins.nodePrefix(),
-      vitePlugins.virtualModules(sourceFolder, {
+      vitePlugins.virtualModules(projectSettings, sourceFolder, {
         // The dev server is always a CSR graph - SSR runs in production builds only -
         // so env-sensitive modules resolve to their client variants here,
         // whatever a concurrent build is doing.
@@ -125,7 +155,7 @@ export default async (
     ];
 
     if (frontend) {
-      // INFO: === start client server ===
+      // INFO: === start frontend server ===
 
       const generator = sourceFolder.generators.find(
         (e) => e.meta.slot === "frontend",
@@ -133,22 +163,34 @@ export default async (
 
       const viteServer = await createServer(
         mergeConfigs(
-          // user-provided config - lowest priority
+          genericDefaults,
+
+          // user-provided config
           frontend?.viteConfig,
-          // generator config - higher priority
+
+          // generator config - will override user-provided config
           generator
-            ?.factory(sourceFolder)
+            ?.factory(projectSettings, sourceFolder)
             .viteConfig?.({ kind: "frontend", command }),
-          // main config - highest priority
+
+          // main config - will override everything
           {
             base: frontend.base,
             root: createPath.src(),
-            cacheDir: cacheDir(sourceFolder, `frontend:${command}`),
+            cacheDir: cacheDir(
+              projectSettings,
+              sourceFolder,
+              `frontend:${command}`,
+            ),
             plugins,
             server: {
-              port: port++,
+              host: devHost,
+              port: floatingPort++,
               middlewareMode: true,
-              hmr: { port: port++ },
+              ws: {
+                host,
+                port: floatingPort++,
+              },
             },
           },
         ),
@@ -166,6 +208,7 @@ export default async (
         () => viteServer.middlewares,
       ]);
 
+      restartHandlers.push(viteServer.restart);
       teardownHandlers.push(viteServer.close);
     }
 
@@ -178,22 +221,34 @@ export default async (
 
       const viteServer = await createServer(
         mergeConfigs(
-          // user-provided config - lowest priority
+          genericDefaults,
+
+          // user-provided config - will override defaults
           backend.viteConfig,
-          // generator config - higher priority
+
+          // generator config - will override user-provided config
           generator
-            ?.factory(sourceFolder)
+            ?.factory(projectSettings, sourceFolder)
             .viteConfig?.({ kind: "backend", command }),
-          // main config - highest priority
+
+          // main config - will override everything
           {
             root: createPath.src(),
             appType: "custom",
-            cacheDir: cacheDir(sourceFolder, `backend:${command}`),
+            cacheDir: cacheDir(
+              projectSettings,
+              sourceFolder,
+              `backend:${command}`,
+            ),
             plugins,
             server: {
-              port: port++,
+              host: devHost,
+              port: floatingPort++,
               middlewareMode: true,
-              hmr: { port: port++ },
+              ws: {
+                host,
+                port: floatingPort++,
+              },
             },
             resolve: {
               conditions: ["node"],
@@ -247,6 +302,7 @@ export default async (
         () => devSetup.requestHandler(),
       ]);
 
+      restartHandlers.push(viteServer.restart);
       teardownHandlers.push(viteServer.close);
     }
 
@@ -284,7 +340,7 @@ export default async (
           {
             root: createPath.src(),
             appType: "custom",
-            cacheDir: cacheDir(sourceFolder, "sidecar"),
+            cacheDir: cacheDir(projectSettings, sourceFolder, "sidecar"),
             plugins: [...plugins, reloadPlugin],
             // `hotUpdate` is part of the HMR pipeline, so it runs only with `hmr` on -
             // but this server is never listened on, so no socket is ever bound and no port is taken.
@@ -365,7 +421,7 @@ export default async (
     (a, b) => requestHandlerWeight(b) - requestHandlerWeight(a),
   );
 
-  const httpServer = http.createServer((req, res) => {
+  const server = http.createServer((req, res) => {
     for (const [, matcherFactory, handlerFactory] of handlers) {
       // should be called on every request
       const [matcher, handler] = [matcherFactory(), handlerFactory()];
@@ -378,27 +434,32 @@ export default async (
     res.end("<h1>404: Not Found</h1>");
   });
 
-  httpServer.on("error", (error) => {
-    console.error(
-      styleText("red", `Failed to start dev server on port ${devPort}`),
-    );
+  server.on("error", (error) => {
+    console.error(styleText("red", `Failed to start dev server on ${devHost}`));
     console.error(error.message);
     process.exit(1);
   });
 
-  httpServer.listen(devPort);
+  server.listen({ host, port });
 
   teardownHandlers.push(async () => {
-    httpServer.close();
+    server.close();
   });
 
-  return async () => {
-    for (const handler of teardownHandlers) {
-      await handler();
-    }
-    // Let chokidar fully release file handles
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  };
+  return {
+    restart: async () => {
+      for (const handler of restartHandlers) {
+        await handler();
+      }
+    },
+    teardown: async () => {
+      for (const handler of teardownHandlers) {
+        await handler();
+      }
+      // Let chokidar fully release file handles
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    },
+  } as ReturnSignature<C>;
 };
 
 /**
@@ -407,16 +468,23 @@ export default async (
  * Shared by `build` and `preview`: preview is a production build that reruns on change,
  * so generators are told `command: "build"` and the build cache is the same.
  * */
-const buildSourceFolder = async (sourceFolder: SourceFolder) => {
+const buildSourceFolder = async (
+  projectSettings: ProjectSettings,
+  sourceFolder: SourceFolder,
+) => {
   const command = "build";
 
-  const { createPath } = pathResolver(sourceFolder);
+  const { createPath } = pathResolver(projectSettings, sourceFolder);
   const { frontend, backend, sidecar } = sourceFolder.config;
 
   const resolvedRoutes = [];
 
   if (!sidecar) {
-    const { resolvers } = await routesFactory(sourceFolder, cacheFactory);
+    const { resolvers } = await routesFactory(
+      projectSettings,
+      sourceFolder,
+      cacheFactory,
+    );
 
     const spinner = spinnerFactory(`${sourceFolder.name}: resolving routes`);
 
@@ -431,9 +499,9 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
   }
 
   const plugins = [
-    vitePlugins.tsconfigPaths(sourceFolder),
+    vitePlugins.tsconfigPaths(projectSettings, sourceFolder),
     vitePlugins.nodePrefix(),
-    vitePlugins.virtualModules(sourceFolder, {
+    vitePlugins.virtualModules(projectSettings, sourceFolder, {
       // `kind: "csr"` everywhere except the SSR bundle,
       // which installs its own copy with `kind: "ssr"`
       kind: "csr",
@@ -442,7 +510,9 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
   ];
 
   for (const generator of sourceFolder.generators) {
-    await generator.factory(sourceFolder).build?.(resolvedRoutes);
+    await generator
+      .factory(projectSettings, sourceFolder)
+      .build?.(resolvedRoutes);
   }
 
   if (frontend) {
@@ -456,15 +526,21 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
       mergeConfigs(
         // user-provided config - lowest priority
         frontend.viteConfig,
+
         // generator config - higher priority
         generator
-          ?.factory(sourceFolder)
+          ?.factory(projectSettings, sourceFolder)
           .viteConfig?.({ kind: "frontend", command }),
+
         // main config - highest priority
         {
           base: frontend.base,
           root: createPath.src(),
-          cacheDir: cacheDir(sourceFolder, `frontend:${command}`),
+          cacheDir: cacheDir(
+            projectSettings,
+            sourceFolder,
+            `frontend:${command}`,
+          ),
           plugins,
           build: {
             outDir: createPath.distDir("client"),
@@ -487,10 +563,12 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
       mergeConfigs(
         // user-provided config - lowest priority
         backend.viteConfig,
+
         // generator config - higher priority
         generator
-          ?.factory(sourceFolder)
+          ?.factory(projectSettings, sourceFolder)
           .viteConfig?.({ kind: "backend", command }),
+
         // main config - highest priority
         {
           base: "./",
@@ -518,7 +596,11 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
               },
             },
           },
-          cacheDir: cacheDir(sourceFolder, `backend:${command}`),
+          cacheDir: cacheDir(
+            projectSettings,
+            sourceFolder,
+            `backend:${command}`,
+          ),
         },
       ),
     );
@@ -555,28 +637,32 @@ const buildSourceFolder = async (sourceFolder: SourceFolder) => {
               },
             },
           },
-          cacheDir: cacheDir(sourceFolder, "sidecar"),
+          cacheDir: cacheDir(projectSettings, sourceFolder, "sidecar"),
         },
       ),
     );
   }
 
   for (const generator of sourceFolder.generators) {
-    await generator.factory(sourceFolder).postBuild?.(resolvedRoutes);
+    await generator
+      .factory(projectSettings, sourceFolder)
+      .postBuild?.(resolvedRoutes);
   }
 };
 
 const eventFactory = async (
+  projectSettings: ProjectSettings,
   sourceFolder: SourceFolder,
 ): Promise<
   Record<"add" | "change" | "unlink", (f: string) => Promise<void>>
 > => {
   const { resolvers, resolversFactory } = await routesFactory(
+    projectSettings,
     sourceFolder,
     cacheFactory,
   );
 
-  const { createPath } = pathResolver(sourceFolder);
+  const { createPath } = pathResolver(projectSettings, sourceFolder);
 
   const generators: Array<{
     name: string | undefined;
@@ -584,7 +670,7 @@ const eventFactory = async (
   }> = [];
 
   for (const generator of sourceFolder.generators) {
-    const factory = generator.factory(sourceFolder);
+    const factory = generator.factory(projectSettings, sourceFolder);
     generators.push({ name: generator.meta.name, factory });
   }
 

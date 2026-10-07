@@ -1,5 +1,6 @@
 import {
   defaults,
+  type ProjectSettings,
   type RouteEntry,
   type RouteResolverCacheFactory,
   type SourceFolder,
@@ -21,6 +22,7 @@ export * from "./nesting";
 export * from "./paths";
 
 export const routesFactory = async (
+  projectSettings: ProjectSettings,
   sourceFolder: SourceFolder,
   cacheFactory?: RouteResolverCacheFactory,
 ) => {
@@ -29,7 +31,7 @@ export const routesFactory = async (
     apiUseResolver,
     pageRouteResolver,
     pageLayoutResolver,
-  } = resolverFactory(sourceFolder, cacheFactory);
+  } = resolverFactory(projectSettings, sourceFolder, cacheFactory);
 
   const resolversFactory = (routeFiles: Array<string>) => {
     const resolvers = new Map<
@@ -38,7 +40,7 @@ export const routesFactory = async (
     >();
 
     const entries: Array<RouteEntry> = routeFiles.flatMap((file) => {
-      const entry = createRouteEntry(file, sourceFolder);
+      const entry = createRouteEntry(projectSettings, sourceFolder, file);
       return entry ? [entry] : [];
     });
 
@@ -61,7 +63,7 @@ export const routesFactory = async (
     return resolvers;
   };
 
-  const routeFiles = await scanRoutes(sourceFolder);
+  const routeFiles = await scanRoutes(projectSettings, sourceFolder);
 
   return {
     resolvers: resolversFactory(routeFiles),

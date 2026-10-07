@@ -24,9 +24,13 @@ import { randomCongratMessage } from "./base";
 import builtinPlugins from "./plugins";
 import * as templates from "./templates";
 
-export default defineGeneratorFactory((sourceFolder) => {
+export default defineGeneratorFactory((projectSettings, sourceFolder) => {
   const { frontend } = sourceFolder.config;
-  const { createPath, createImportHelpers } = pathResolver(sourceFolder);
+
+  const { createPath, createImportHelpers } = pathResolver(
+    projectSettings,
+    sourceFolder,
+  );
 
   const { renderToFile: deployLibFile } = renderFactory({
     helpers: {

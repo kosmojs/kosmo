@@ -1,5 +1,5 @@
 import type { ResolvedTypeSignature } from "./generic";
-import type { SourceFolder } from "./project";
+import type { ProjectSettings, SourceFolder } from "./project";
 import type { ValidationDefinition } from "./validation";
 
 export type PathTokenStaticPart = {
@@ -131,8 +131,9 @@ export type RouteResolverCache = {
 >;
 
 export type RouteResolverCacheFactory = (
-  route: Pick<ApiRoute, "id" | "file" | "fileFullpath">,
+  projectSettings: ProjectSettings,
   sourceFolder: SourceFolder,
+  route: Pick<ApiRoute, "id" | "file" | "fileFullpath">,
   extraContext?: object,
 ) => {
   get: (opt?: {

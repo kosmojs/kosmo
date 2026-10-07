@@ -6,6 +6,7 @@ export const defaults = {
   coreDir: "core",
   srcDir: "src",
   libDir: "lib",
+  varDir: "var",
 
   configDir: "config",
   apiDir: "api",

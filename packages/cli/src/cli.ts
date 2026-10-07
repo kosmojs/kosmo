@@ -13,10 +13,6 @@ import {
   BACKENDS,
   type ChassisCommand,
   DEFAULT_DIST,
-  DEFAULT_HOST,
-  DEFAULT_PORT,
-  DEFAULT_PREVIEW_HOST,
-  DEFAULT_PREVIEW_PORT,
   defaults,
   FRONTENDS,
   type GeneratorSignature,
@@ -24,7 +20,12 @@ import {
   type SourceFolder,
 } from "@kosmojs/core";
 import chassis from "@kosmojs/dev/chassis";
-import { configFilePattern, pathExists, spinnerFactory } from "@kosmojs/lib";
+import {
+  configFilePattern,
+  pathExists,
+  resolveHostAddress,
+  spinnerFactory,
+} from "@kosmojs/lib";
 
 import {
   assertNoError,
@@ -386,20 +387,12 @@ const run = async () => {
 
     const projectGenerators: Array<GeneratorSignature> = [];
 
-    const {
-      devHost = [DEFAULT_HOST, DEFAULT_PORT].join(":"),
-      previewHost = [DEFAULT_PREVIEW_HOST, DEFAULT_PREVIEW_PORT].join(":"),
-      distDir = DEFAULT_DIST,
-    } = { ...packageJson?.kosmo };
-
     const settings: ProjectSettings = {
       root,
       sourceFolders: [],
-      devHost: devHost.split(":")[0],
-      devPort: Number(devHost.split(":")[1]),
-      previewHost: previewHost.split(":")[0],
-      previewPort: Number(previewHost.split(":")[1]),
-      distDir,
+      devHost: resolveHostAddress(packageJson.kosmo, "devHost"),
+      previewHost: resolveHostAddress(packageJson.kosmo, "previewHost"),
+      distDir: packageJson.kosmo?.distDir || DEFAULT_DIST,
     };
 
     for (const file of configFiles) {
@@ -427,8 +420,6 @@ const run = async () => {
         name: basename(dirname(file)),
         config,
         generators,
-        root,
-        distDir,
       });
 
       projectGenerators.push(...generators);
@@ -436,9 +427,7 @@ const run = async () => {
 
     await checkDependencies(packageJson, projectGenerators);
 
-    await chassis(settings);
-
-    return;
+    await chassis(command, settings);
   };
 
   if (command === "folder") {
@@ -457,8 +446,10 @@ const run = async () => {
 };
 
 await run().catch((error) => {
-  process.env.DEBUG?.includes("cli")
-    ? console.error(error)
-    : console.error(error.message);
+  console.error(
+    error.code === "ERR_PARSE_ARGS_UNKNOWN_OPTION" //
+      ? error.message
+      : error,
+  );
   process.exit(1);
 });

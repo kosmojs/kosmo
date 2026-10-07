@@ -14,7 +14,7 @@ import {
   type TypeNode,
 } from "ts-morph";
 
-import type { ResolvedTypeSignature } from "@kosmojs/core";
+import type { ProjectSettings, ResolvedTypeSignature } from "@kosmojs/core";
 import {
   type ApiRoute,
   defaults,
@@ -564,8 +564,11 @@ export const astFactory = () => {
     return callExpression.getTypeArguments();
   };
 
-  const typeResolverFactory = (sourceFolder: SourceFolder) => {
-    const { createPath } = pathResolver(sourceFolder);
+  const typeResolverFactory = (
+    projectSettings: ProjectSettings,
+    sourceFolder: SourceFolder,
+  ) => {
+    const { createPath } = pathResolver(projectSettings, sourceFolder);
 
     const project = createProject({
       compilerOptions: {
@@ -574,7 +577,7 @@ export const astFactory = () => {
         noLib: true,
         skipLibCheck: true,
         paths: {
-          [`${defaults.appPrefix}/*`]: [`${sourceFolder.root}/*`],
+          [`${defaults.appPrefix}/*`]: [`${projectSettings.root}/*`],
           [`${defaults.srcPrefix}/*`]: [createPath.src("*")],
           [`${defaults.libPrefix}/*`]: [createPath.lib("*")],
         },

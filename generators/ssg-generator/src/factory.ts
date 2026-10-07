@@ -19,9 +19,13 @@ import {
 
 import * as templates from "./templates";
 
-export default defineGeneratorFactory((sourceFolder) => {
-  const { config } = sourceFolder;
-  const { createPath, createImportHelpers } = pathResolver(sourceFolder);
+export default defineGeneratorFactory((projectSettings, sourceFolder) => {
+  const { frontend } = sourceFolder.config;
+
+  const { createPath, createImportHelpers } = pathResolver(
+    projectSettings,
+    sourceFolder,
+  );
 
   const { renderToFile: deployLibFile } = renderFactory({
     helpers: {
@@ -63,7 +67,7 @@ export default defineGeneratorFactory((sourceFolder) => {
     },
 
     async postBuild() {
-      if (!config.frontend) {
+      if (!frontend) {
         // no frontend generator, nothing to build
         return;
       }
@@ -108,10 +112,10 @@ export default defineGeneratorFactory((sourceFolder) => {
       await build(
         mergeConfigs(
           // user config - lowest priority
-          config.frontend.viteConfig,
+          frontend.viteConfig,
           // generators configs - higher priority
           ...sourceFolder.generators.map(({ factory }) => {
-            return factory(sourceFolder).viteConfig?.({
+            return factory(projectSettings, sourceFolder).viteConfig?.({
               kind: "frontend",
               command: "build",
             });
@@ -121,10 +125,10 @@ export default defineGeneratorFactory((sourceFolder) => {
             root: createPath.lib(),
             appType: "custom",
             plugins: [
-              vitePlugins.tsconfigPaths(sourceFolder),
+              vitePlugins.tsconfigPaths(projectSettings, sourceFolder),
               vitePlugins.nodePrefix(),
               // routes bundle, not the SSR graph - client variants apply
-              vitePlugins.virtualModules(sourceFolder, {
+              vitePlugins.virtualModules(projectSettings, sourceFolder, {
                 kind: "csr",
                 command: "build",
               }),
@@ -215,7 +219,7 @@ export default defineGeneratorFactory((sourceFolder) => {
           if ("html" in page) {
             const file = join(
               dir,
-              relative(config.frontend.base, route),
+              relative(frontend.base, route),
               "index.html",
             );
             await mkdir(dirname(file), { recursive: true });

@@ -9,6 +9,7 @@ import {
   defaults,
   type PageRoute,
   type PathTokenParamPart,
+  type ProjectSettings,
   type RouteEntry,
   type RouteResolverCacheFactory,
   type SourceFolder,
@@ -23,6 +24,7 @@ import * as templates from "../templates";
 import type { ResolverSignature } from "./base";
 
 export const resolverFactory = (
+  projectSettings: ProjectSettings,
   sourceFolder: SourceFolder,
   cacheFactory?: RouteResolverCacheFactory,
 ): Record<
@@ -48,7 +50,7 @@ export const resolverFactory = (
     literalTypesResolver,
     getSourceFile,
     refreshSourceFile,
-  } = typeResolverFactory(sourceFolder);
+  } = typeResolverFactory(projectSettings, sourceFolder);
 
   return {
     pageLayoutResolver(entry) {
@@ -144,9 +146,12 @@ export const resolverFactory = (
           : true;
 
         const cacheStore = cacheFactory
-          ? cacheFactory({ id, file, fileFullpath }, sourceFolder, {
-              resolveTypes,
-            })
+          ? cacheFactory(
+              projectSettings,
+              sourceFolder,
+              { id, file, fileFullpath },
+              { resolveTypes },
+            )
           : undefined;
 
         let cache = cacheStore
@@ -191,10 +196,10 @@ export const resolverFactory = (
               : [def.schema];
           });
 
-          const typesFile = pathResolver(sourceFolder).createPath.libApi(
-            dirname(file),
-            "types.ts",
-          );
+          const typesFile = pathResolver(
+            projectSettings,
+            sourceFolder,
+          ).createPath.libApi(dirname(file), "types.ts");
 
           const params: ApiRoute["params"] = {
             id: ["ParamsT", crc(name)].join(""),
@@ -366,7 +371,7 @@ export const resolverFactory = (
           referencedFiles: Object.keys(cache.referencedFiles).map(
             // expand referenced files path,
             // they are stored as relative in cache
-            (e) => resolve(sourceFolder.root, e),
+            (e) => resolve(projectSettings.root, e),
           ),
         };
 

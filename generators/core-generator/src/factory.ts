@@ -14,13 +14,17 @@ import {
 
 import * as templates from "./templates";
 
-export default defineGeneratorFactory((sourceFolder) => {
-  const { createPath, createImportHelpers } = pathResolver(sourceFolder);
+export default defineGeneratorFactory((projectSettings, sourceFolder) => {
+  const { createPath, createImportHelpers } = pathResolver(
+    projectSettings,
+    sourceFolder,
+  );
+
   const { frontend, backend } = sourceFolder.config;
 
   const seed = async () => {
     const { dependencies = {}, devDependencies = {} } = await import(
-      resolve(sourceFolder.root, "package.json"),
+      resolve(projectSettings.root, "package.json"),
       { with: { type: "json" } }
     ).then((m) => m.default);
 
@@ -28,7 +32,7 @@ export default defineGeneratorFactory((sourceFolder) => {
     {
       // deploy a root tsconfig file
       await renderToFile(
-        resolve(sourceFolder.root, "tsconfig.json"),
+        resolve(projectSettings.root, "tsconfig.json"),
         JSON.stringify(
           {
             extends: `./${defaults.libDir}/tsconfig.json`,
@@ -230,7 +234,7 @@ export default defineGeneratorFactory((sourceFolder) => {
     watch: generateLibFiles,
     build: generateLibFiles,
     virtualModules() {
-      const { createImport } = pathResolver(sourceFolder);
+      const { createImport } = pathResolver(projectSettings, sourceFolder);
       return [
         {
           specifier: "virtual:kosmo/backend-app",

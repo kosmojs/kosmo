@@ -3,15 +3,32 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { ResolvedType } from "tfusion";
 import type { UserConfig } from "vite";
 
-export type ViteConfig = Omit<
-  UserConfig,
-  "root" | "base" | "cacheDir" | "mode" | "builder" | "future" | "legacy"
->;
-
 export type DeepPartial<T> = {
   [K in keyof T]?: NonNullable<T[K]> extends object
     ? DeepPartial<NonNullable<T[K]>>
     : T[K];
+};
+
+export type ChassisCommand = "serve" | "build" | "preview" | "test";
+
+export type ViteConfig = Omit<
+  UserConfig,
+  | "root"
+  | "base"
+  | "cacheDir"
+  | "mode"
+  | "builder"
+  | "future"
+  | "legacy"
+  | "server"
+> & {
+  server?: Omit<
+    NonNullable<UserConfig["server"]>,
+    "host" | "port" | "middlewareMode" | "hmr" | "ws"
+  > & {
+    hmr?: Omit<NonNullable<UserConfig["server"]>["hmr"], "host" | "port">;
+    ws?: Omit<NonNullable<UserConfig["server"]>["ws"], "host" | "port">;
+  };
 };
 
 export type ResolvedTypeSignature = Omit<ResolvedType, "properties"> & {

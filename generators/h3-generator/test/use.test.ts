@@ -24,8 +24,8 @@ describe("global use", () => {
   });
 
   test("accepts slot option", () => {
-    const stack = use(async () => {}, { slot: "errorHandler" });
-    expect(stack.options?.slot).toEqual("errorHandler");
+    const stack = use(async () => {}, { slot: "validate:raw" });
+    expect(stack.options?.slot).toEqual("validate:raw");
   });
 
   test("accepts `on` option", () => {

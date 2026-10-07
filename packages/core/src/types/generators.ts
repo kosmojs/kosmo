@@ -1,6 +1,6 @@
 import type { UserConfig } from "vite";
 
-import type { DeepPartial } from "./generic";
+import type { ChassisCommand, DeepPartial } from "./generic";
 import type { FolderConfig, ProjectSettings, SourceFolder } from "./project";
 import type { ResolvedEntry } from "./routes";
 
@@ -60,7 +60,7 @@ export type GeneratorFactory = {
   // Vite config provided by generator itself
   viteConfig?: (o: {
     kind: "frontend" | "backend";
-    command: ProjectSettings["command"];
+    command: ChassisCommand;
   }) => UserConfig;
 
   seed: () => Promise<void>;
@@ -106,7 +106,10 @@ type GeneratorDependencies =
 
 export type GeneratorSignature<Options extends object = object> = {
   meta: GeneratorMeta;
-  factory: (sourceFolder: SourceFolder) => GeneratorFactory;
+  factory: (
+    projectSettings: ProjectSettings,
+    sourceFolder: SourceFolder,
+  ) => GeneratorFactory;
   options?: Options;
   dependencies?: GeneratorDependencies;
   devDependencies?: GeneratorDependencies;

@@ -8,7 +8,7 @@ import { routesFactory } from "@kosmojs/lib";
 
 import openapiFactory from "#/openapi";
 
-import { sourceFolder } from ".";
+import { project, sourceFolder } from ".";
 
 /**
  * Positive route-coverage guard.
@@ -41,7 +41,7 @@ function canonicalPath(pathPattern: string): string {
 }
 
 test("every api route contributes its canonical path", async ({ expect }) => {
-  const { resolvers } = await routesFactory(sourceFolder);
+  const { resolvers } = await routesFactory(project, sourceFolder);
 
   const apiRoutes: Array<ApiRoute> = [];
 

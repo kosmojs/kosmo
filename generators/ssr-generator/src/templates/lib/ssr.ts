@@ -435,7 +435,7 @@ export const startServer = async ({
 
   console.log(
     `\n  ➜ Starting SSR Server ${styleText(["dim"], "[ %s ]")}`,
-    sock ? `sock: ${sock}` : `port: ${port}`,
+    sock ? sock : `${host || ""}:${port}`,
   );
 
   const server = createServer(await createListener());
@@ -443,14 +443,16 @@ export const startServer = async ({
   server.listen(
     {
       ...(host ? { host } : {}),
-      ...(port ? { port: Number(port) } : {}),
+      ...(port ? { port } : {}),
       ...(sock ? { path: sock } : {}),
     },
-    async () => {
+    () => {
       if (sock) {
         // Make Unix socket world-writable so other processes (e.g. a reverse proxy)
         // can connect without permission issues.
-        await chmod(sock, 0o777);
+        chmod(sock, 0o777).catch((err) => {
+          console.error("Failed to chmod socket:", err);
+        });
       }
       console.log("\n  ➜ Server Started ✨");
     },
