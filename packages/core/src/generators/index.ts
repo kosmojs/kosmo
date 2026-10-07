@@ -141,16 +141,35 @@ export type RoutePathMethods<ParamsT extends readonly unknown[]> = {
 
   parametrize: (params: ParamsT) => string;
 
-  path: (
-    params: ParamsT,
-    query?: Record<string, unknown>,
-    opt?: { prefix?: boolean | string },
-  ) => string;
+  path: ParamsT["length"] extends 0
+    ? {
+        (): string;
+        (
+          params: ParamsT,
+          query?: Record<string, unknown>,
+          opt?: { prefix?: boolean | string },
+        ): string;
+      }
+    : (
+        params: ParamsT,
+        query?: Record<string, unknown>,
+        opt?: { prefix?: boolean | string },
+      ) => string;
 
-  href: (
-    host: HostOpt,
-    params: ParamsT,
-    query?: Record<string, unknown>,
-    opt?: { prefix?: boolean | string },
-  ) => string;
+  href: ParamsT["length"] extends 0
+    ? {
+        (host: HostOpt): string;
+        (
+          host: HostOpt,
+          params: ParamsT,
+          query?: Record<string, unknown>,
+          opt?: { prefix?: boolean | string },
+        ): string;
+      }
+    : (
+        host: HostOpt,
+        params: ParamsT,
+        query?: Record<string, unknown>,
+        opt?: { prefix?: boolean | string },
+      ) => string;
 };

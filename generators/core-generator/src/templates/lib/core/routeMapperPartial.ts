@@ -45,28 +45,25 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     }
   };
 
-  const path: RoutePathMethods<ParamsT>["path"] = (params, query, opt) => {
+  const path = ((
+    params?: ParamsT,
+    query?: Record<string, unknown>,
+    opt?: { prefix?: boolean | string },
+  ) => {
     const path = join(
       opt?.prefix === false
         ? "/"
         : typeof opt?.prefix === "string"
           ? opt.prefix
           : base,
-      parametrize(params),
+      parametrize(params as ParamsT),
     );
-    return query //
-      ? [path, stringifySearchParams(query)].join("?")
-      : path;
-  };
+    return query ? [path, stringifySearchParams(query)].join("?") : path;
+  }) as RoutePathMethods<ParamsT>["path"];
 
-  const href: RoutePathMethods<ParamsT>["href"] = (
-    host,
-    params,
-    query,
-    opt,
-  ) => {
+  const href = ((host, params, query, opt) => {
     return createHost(host) + path(params, query, opt);
-  };
+  }) as RoutePathMethods<ParamsT>["href"];
 
   return { ...route, paramsMapper, parametrize, path, href };
 };
@@ -97,7 +94,7 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
     }
   };
 
-  const path: RoutePathMethods<ParamsT>["path"] = (params, query, opt) => {
+  const path = ((params, query, opt) => {
     const path = join(
       opt?.prefix === false
         ? "/"
@@ -109,16 +106,11 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
     return query //
       ? [path, stringifySearchParams(query)].join("?")
       : path;
-  };
+  }) as RoutePathMethods<ParamsT>["path"];
 
-  const href: RoutePathMethods<ParamsT>["href"] = (
-    host,
-    params,
-    query,
-    opt,
-  ) => {
+  const href = ((host, params, query, opt) => {
     return createHost(host) + path(params, query, opt);
-  };
+  }) as RoutePathMethods<ParamsT>["href"];
 
   return { ...route, paramsMapper, parametrize, path, href };
 };
