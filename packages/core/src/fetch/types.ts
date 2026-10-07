@@ -1,5 +1,4 @@
 import type { stringifySearchParams } from "../generic";
-import type { Transport } from "./transport";
 
 export enum HTTPMethods {
   GET = "GET",
@@ -18,6 +17,22 @@ export type ResponseMode =
   | "formData"
   | "arrayBuffer"
   | "raw";
+
+/**
+ * Minimal transport contract: the call signature of fetch, without its runtime-specific statics.
+ * The client only ever calls the transport, so the call signature is the whole contract;
+ * the global fetch remains assignable to it.
+ * */
+export type Transport = {
+  requestHandler: (
+    input: string | URL | Request,
+    init?: RequestInit,
+  ) => Promise<Response>;
+  responseHandler?: (a: {
+    body: unknown;
+    response: Response;
+  }) => Promise<unknown>;
+};
 
 export type Options = {
   prefix?: string;
