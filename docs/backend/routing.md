@@ -174,20 +174,21 @@ tuple unreadable and every request is rejected.
 
 The raw, untouched params still exist on the framework's own context:
 
-::: code-group
-
-```ts [Hono]
+:::tabs key:backend variant:code
+== Hono
+```ts
 ctx.req.param()
 ```
 
-```ts [H3]
+== H3
+```ts
 event.context.params
 ```
 
-```ts [Koa]
+== Koa
+```ts
 ctx.params
 ```
-
 :::
 
 ### One handler for list and detail
