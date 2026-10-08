@@ -59,7 +59,7 @@ export const setupTestProject = async (
   setup: {
     mode?: ProvidedContext["MODE"];
     frontend?: keyof typeof FRONTENDS | "random";
-    backend?: keyof typeof BACKENDS;
+    backend?: keyof typeof BACKENDS | "random";
     skip?: boolean;
   },
   folderConfig?: {
@@ -72,18 +72,20 @@ export const setupTestProject = async (
 
   const mode = setup.mode || inject("MODE");
 
-  const {
-    frontend: maybeFrontend,
-    backend = ["ssr", "ssg"].includes(mode || "") ? pickBackend() : undefined,
-    skip,
-  } = setup;
+  const { skip } = setup;
+
+  const backend =
+    setup.backend === "random"
+      ? pickRandomValue<never>(Object.keys(BACKENDS))
+      : setup.backend ||
+        (["ssr", "ssg"].includes(mode || "")
+          ? pickRandomValue<never>(Object.keys(BACKENDS))
+          : undefined);
 
   const frontend =
-    maybeFrontend === "random"
-      ? (Object.keys(FRONTENDS)[
-          Math.floor(Math.random() * Object.keys(FRONTENDS).length)
-        ] as keyof typeof FRONTENDS)
-      : maybeFrontend;
+    setup.frontend === "random"
+      ? pickRandomValue<never>(Object.keys(FRONTENDS))
+      : setup.frontend;
 
   const baseVariants = [
     "/",
@@ -204,34 +206,34 @@ export const setupTestProject = async (
       sourceFolders: [{ ...sourceFolder, config, generators }],
     });
 
-    let closeServer: () => Promise<void>;
+    let teardown = async () => {};
 
     if (mode === "backend") {
       const { default: serve } = await import(
         createPath.distDir("api/server.js")
       );
       const server = await serve();
-      closeServer = () => server.close();
+      teardown = () => server.close();
     } else if (mode === "ssr") {
       const { startServer } = await import(createPath.distDir("ssr/server.js"));
       const server = await startServer({ host, port });
-      closeServer = () => server.close();
+      teardown = () => server.close();
     } else if (mode === "ssg") {
       const { startServer } = await import(createPath.distDir("../run.js"));
       const server = await startServer({ host, port });
-      closeServer = () => server.close();
+      teardown = () => server.close();
     } else if (mode === "csr") {
-      const { teardown } = await chassis("serve", {
+      const { teardown: closeServers } = await chassis("serve", {
         ...project,
         sourceFolders: [{ ...sourceFolder, config, generators }],
       });
-      closeServer = () => teardown();
-    } else {
+      teardown = () => closeServers();
+    } else if (mode) {
       throw new Error(`Unknown mode ${mode}`);
     }
 
     return async () => {
-      await closeServer();
+      await teardown();
       await new Promise((resolve) => setTimeout(resolve, 100));
       await cleanup();
     };
@@ -501,13 +503,6 @@ export const setupTestProject = async (
   };
 };
 
-const createBackendPicker = () => {
-  const backends = Object.keys(BACKENDS) as Array<keyof typeof BACKENDS>;
-  let i = 0;
-  return {
-    pick: () => backends[i++ % backends.length],
-    reset: () => (i = 0),
-  };
+const pickRandomValue = <T>(values: Array<string>): T => {
+  return values[Math.floor(Math.random() * values.length)] as T;
 };
-
-const { pick: pickBackend } = createBackendPicker();

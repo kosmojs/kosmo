@@ -125,6 +125,10 @@ export default defineConfig({
       setupFactory("integration:sidecar", {
         include: ["integration/sidecar/*.test.ts"],
       }),
+
+      setupFactory("integration:vitest", {
+        include: ["integration/vitest/*.test.ts"],
+      }),
     ],
   },
 });
