@@ -1,0 +1,30 @@
+{
+  "type": "module",
+  "private": true,
+  "name": "@kosmojs/vitest-generator",
+  "version": "0.0.0",
+  "description": "Vitest testing for KosmoJS projects",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "files": [
+    "pkg/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    }
+  },
+  "scripts": {
+    "build": "wsbuild src/index.ts"
+  },
+  "dependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@kosmojs/lib": "workspace:^"
+  },
+  "devDependencies": {
+    "@kosmojs/vitest": "workspace:^",
+    "vite": "^8.2.2",
+    "vitest": "^5.0.2"
+  }
+}

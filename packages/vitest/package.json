@@ -1,0 +1,34 @@
+{
+  "type": "module",
+  "name": "@kosmojs/vitest",
+  "version": "0.5.2",
+  "description": "Vitest integration for KosmoJS projects",
+  "author": "Slee Woo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kosmojs/kosmo.git",
+    "directory": "packages/vitest"
+  },
+  "files": [
+    "pkg/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    }
+  },
+  "scripts": {
+    "build": "wsbuild src/index.ts"
+  },
+  "dependencies": {
+    "@kosmojs/core": "workspace:^",
+    "@kosmojs/lib": "workspace:^",
+    "jiti": "^2.7.0",
+    "tinyglobby": "^0.2.17"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.2"
+  }
+}

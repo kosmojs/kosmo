@@ -20,6 +20,7 @@ import ssgGenerator from "@kosmojs/ssg-generator";
 import ssrGenerator from "@kosmojs/ssr-generator";
 import svelteGenerator from "@kosmojs/svelte-generator";
 import typeboxGenerator from "@kosmojs/typebox-generator";
+import vitestGenerator from "@kosmojs/vitest-generator";
 import vueGenerator from "@kosmojs/vue-generator";
 
 export {
@@ -154,6 +155,14 @@ export const defineConfig = (
       } else if (frontend.ssg.generator) {
         generators.push(frontend.ssg.generator);
       }
+    }
+  }
+
+  if (backend?.test || frontend?.test) {
+    generators.push(vitestGenerator());
+    if (!generators.some((e) => e.meta.slot === "fetch")) {
+      // backend testing implies fetch clients
+      generators.push(fetchGenerator());
     }
   }
 

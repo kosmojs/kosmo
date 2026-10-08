@@ -1,6 +1,6 @@
 # @kosmojs/dev
 
-Wires KosmoJS into Vite and runs the generators that produce `lib/`.
+Wires KosmoJS into Vite and runs the generators.
 
 ## Installation
 

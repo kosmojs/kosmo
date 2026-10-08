@@ -4,3 +4,9 @@ export declare global {
     __KOSMO_HYDRATION_DATA__: Record<string, unknown> | undefined;
   }
 }
+
+declare module "vitest" {
+  interface ProvidedContext {
+    [key: `KOSMO_TEST_URL:${string}:${"backend" | "frontend"}`]: string;
+  }
+}
