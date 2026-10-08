@@ -305,6 +305,10 @@ export default defineConfig({
               link: "/backend/intro",
             },
             {
+              text: "Routing",
+              link: "/backend/routing",
+            },
+            {
               text: "Request Context",
               link: "/backend/context",
             },
