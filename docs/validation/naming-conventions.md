@@ -1,5 +1,5 @@
 ---
-title: Validation Naming Conventions
+title: Naming Conventions
 description: Avoid TypeScript built-in type names when defining types for validation.
     Use suffix T or prefix T conventions to prevent runtime validation failures.
 head:
@@ -45,4 +45,4 @@ If validation fails unexpectedly despite correct type definitions, a naming conf
 For the full list, see the [TFusion builtins reference](https://github.com/sleewoo/tfusion/blob/main/src/builtins.ts).
 
 > This is one of four mistakes that typecheck cleanly and fail at runtime.
-[Silent Failure Checklist ›](/validation/gotchas)
+<span class="text-nowrap">[Silent Failure Checklist ›](/validation/gotchas)</span>

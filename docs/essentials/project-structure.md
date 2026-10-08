@@ -225,4 +225,4 @@ pnpm dev app              # just one
 pnpm build admin          # build one, deploy it independently
 ```
 
-[Configuration reference ›](/essentials/config) · [Why source folders ›](/about)
+[Configuration reference ›](/essentials/config)

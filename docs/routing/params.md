@@ -1,5 +1,5 @@
 ---
-title: Dynamic Route Parameters
+title: "Routing: Parameters"
 description: Handle dynamic URL segments with required [id], optional {id} and splat {...path} parameters.
     SolidStart-inspired syntax that works identically for API routes and client pages.
 head:
@@ -111,7 +111,7 @@ Mixed segments support varies by framework:
 - **SolidJS Router** - not supported
 
 Prefer simple segments for frontend routes.
-[Full support matrix ›](/essentials/frameworks#routing-syntax-support)
+<span class="text-nowrap">[Full support matrix ›](/essentials/frameworks#routing-syntax-support)</span>
 
 ## Power Syntax
 

@@ -1258,7 +1258,7 @@ keeping the initial bundle small. The derived route shape differs slightly
 per framework's router format.
 [Details&nbsp;›](/frontend/routing#lazy-loading)
 
-### Layouts
+### Frontend: Layouts
 
 #### How do layout files work?
 A `layout` file in any `pages/` folder wraps every route in that folder and its subfolders;
@@ -1304,7 +1304,7 @@ For Vue, Svelte, and MDX a layout passes its path-qualified name to `useLoaderDa
 page's; React and Solid scope per route automatically.
 [Details&nbsp;›](/frontend/layouts#data-loading-in-layouts)
 
-### Navigation (typed Link)
+### Frontend: Navigation (typed Link)
 
 #### How does the typed Link component work?
 Just import it from `~/components/Link.{tsx,vue,svelte}`.
@@ -1317,7 +1317,7 @@ Renaming a route directory produces TypeScript errors at every `Link` referencin
 turning refactors into an automated checklist.
 [Details&nbsp;›](/frontend/link-navigation#linkprops-type)
 
-### Data Preload
+### Frontend: Data Preload
 
 #### How does route-level preloading work per framework?
 

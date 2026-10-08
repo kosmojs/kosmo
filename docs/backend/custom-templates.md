@@ -1,5 +1,5 @@
 ---
-title: Custom Route Templates
+title: Custom Templates
 description: Override the seeded defineRoute boilerplate for specific API routes using
     glob pattern matching. Seed consistent CRUD endpoints across many routes in Hono, H3 and Koa.
 head:

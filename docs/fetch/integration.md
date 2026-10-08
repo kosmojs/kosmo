@@ -1,5 +1,5 @@
 ---
-title: Fetch Client Integration
+title: Integration
 description: Integrate KosmoJS fetch clients with SolidJS query/createAsync,
     React, Vue and Svelte useLoaderData, and MDX hooks. Type safety flows through all framework abstractions.
 head:

@@ -1,5 +1,5 @@
 ---
-title: CLI
+title: CLI Overview
 description: Every KosmoJS command - create kosmo and kosmo folder for scaffolding,
     serve, preview, build and typecheck for everything after, plus the interactive
     and flag-driven modes and every message a command exits with.

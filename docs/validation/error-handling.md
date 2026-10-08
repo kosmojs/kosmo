@@ -1,5 +1,5 @@
 ---
-title: Validation Error Handler
+title: Error Handling
 description: Handle ValidationError instances with detailed error information including scope,
     error messages, field paths, and structured ValidationErrorEntry data.
 head:

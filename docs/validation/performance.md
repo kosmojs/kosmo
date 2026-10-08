@@ -1,5 +1,5 @@
 ---
-title: Validation Performance
+title: About Performance
 description: Understand KosmoJS validation performance with TypeScript compiler analysis,
     intelligent caching, and background processing that doesn't impact development workflow.
 head:

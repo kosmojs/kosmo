@@ -1,5 +1,5 @@
 ---
-title: Getting Started with Fetch Client
+title: Quick Start
 description: Import and use KosmoJS fetch clients with full TypeScript typing.
     Access routes directly or through a centralized map with automatic parameter and payload validation.
 head:

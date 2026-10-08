@@ -1,5 +1,5 @@
 ---
-title: Custom Page Templates
+title: Custom Templates
 description: Override default seeded page components for specific routes using glob pattern matching.
     Seed specialized boilerplate for landing pages, admin dashboards, marketing sections etc.
 head:

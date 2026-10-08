@@ -496,7 +496,7 @@ export default defineConfig({
               link: "/fetch/error-handling",
             },
             {
-              text: "Utilities",
+              text: "Path Utilities",
               docFooterText: "Fetch Utilities",
               link: "/fetch/utilities",
             },

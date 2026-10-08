@@ -1,5 +1,5 @@
 ---
-title: Skip Runtime Validation
+title: Skip Validation
 description: Set runtimeValidation option to false to keep TypeScript type checking
     without runtime validation for gradual adoption, performance optimization, or trusted internal endpoints.
 head:

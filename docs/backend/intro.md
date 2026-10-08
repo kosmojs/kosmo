@@ -1,5 +1,5 @@
 ---
-title: API Server
+title: Backend Overview
 description: KosmoJS API layer supports Hono, H3 and Koa frameworks, with elegant middleware composition,
     end-to-end type safety, and flexible route definitions inspired by Sinatra framework.
 head:

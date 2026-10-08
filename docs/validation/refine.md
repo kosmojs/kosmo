@@ -1,5 +1,5 @@
 ---
-title: VRefine for Type Refinement
+title: VRefine for Refinement
 description: Advanced validation constraints with VRefine using JSON Schema keywords.
     Validate string formats, numeric ranges, array constraints, and custom patterns directly in TypeScript types.
 head:
@@ -221,4 +221,4 @@ Neither raises a compile error, so nothing points at the alias.
 If a route rejects input you know is valid, or a response you declared is silently not validated, check the brackets first.
 
 > This is one of the mistakes that typecheck cleanly and fail at runtime.
-[Silent Failure Checklist ›](/validation/gotchas)
+<span class="text-nowrap">[Silent Failure Checklist ›](/validation/gotchas)</span>

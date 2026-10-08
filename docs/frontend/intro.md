@@ -1,5 +1,5 @@
 ---
-title: Framework Integration
+title: Frontend Overview
 description: Integrate KosmoJS directory-based routing with React, SolidJS, Vue, Svelte, or MDX.
   Automatic route configuration, type-safe navigation, and optimized lazy loading
   for modern frontend applications.

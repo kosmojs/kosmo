@@ -1,5 +1,5 @@
 ---
-title: Fetch Client Type Safety
+title: Type Safety
 description: Fetch clients are fully typed - parameters, payload, and response all
     mirror the backend route. Access response types on the client with the ResponseT map.
 head:

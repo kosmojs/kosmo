@@ -587,7 +587,7 @@ All goes under `kosmo` key and are optional; if any omitted, default values are 
   "kosmo": { // [!code hl:5]
     "devHost": "127.0.0.1:4556",
     "previewHost": "127.0.0.1:4558",
-    "distDir": "dist",
+    "distDir": "dist"
   },
   "scripts": {
     "dev": "kosmo serve",

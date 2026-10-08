@@ -1,5 +1,5 @@
 ---
-title: Derived specification
+title: Generated spec
 description: What lands in the generated document - paths, schemas, parameters, request bodies,
     responses and VRefine constraints, including path variations for optional parameters.
 head:

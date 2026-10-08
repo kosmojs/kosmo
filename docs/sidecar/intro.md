@@ -1,5 +1,5 @@
 ---
-title: Sidecars
+title: Sidecar Folders
 description: A source folder that builds a standalone process instead of serving routes -
     background workers, queue consumers, listeners.
 head:

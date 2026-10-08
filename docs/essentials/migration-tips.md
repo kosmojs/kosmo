@@ -1,5 +1,5 @@
 ---
-title: Coming from Next.js, TanStack, tRPC, etc.
+title: Migration Tips
 description: Translation guide for developers moving to KosmoJS from Next.js App Router,
     TanStack Start/Router or tRPC - server actions, route groups, parallel routes, loading.tsx,
     revalidateTag, next/image, validateSearch, routeTree.gen.ts and middleware.ts, each mapped

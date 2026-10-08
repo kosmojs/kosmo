@@ -1,5 +1,5 @@
 ---
-title: Enhanced Context Object
+title: Request Context
 description: Learn about KosmoJS's enhanced context - unified bodyparser and metaparser APIs,
     and ctx.validated for type-safe validated data access
 head:

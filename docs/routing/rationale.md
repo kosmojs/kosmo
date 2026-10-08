@@ -1,5 +1,5 @@
 ---
-title: Directory-based nested routing
+title: "Routing: Rationale"
 description: Understanding why directory-based routing scales better than file-based routing
     for organizing large applications with clear navigation, colocalization, and visual hierarchy.
 head:

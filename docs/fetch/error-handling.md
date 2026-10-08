@@ -1,5 +1,5 @@
 ---
-title: Fetch Client Error Handling
+title: Error Handling
 description: Fetch clients always throw on failure, so every failure is catchable.
     Distinguish ValidationError from network and server errors,
     and handle them with a try-catch or an error boundary at layout or app level.

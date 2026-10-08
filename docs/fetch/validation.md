@@ -1,5 +1,5 @@
 ---
-title: Client-Side Validation
+title: Validation
 description: Automatic client-side validation with TypeBox schemas before network requests.
     Use check, errors, errorMessage methods for form validation with performance optimization patterns.
 head:

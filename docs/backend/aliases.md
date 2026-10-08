@@ -1,5 +1,5 @@
 ---
-title: Route Aliases
+title: Aliases
 description: Serve an existing API route at an additional public URL - well-known paths,
     legacy URLs, and public-facing names that differ from the route on disk.
 head:

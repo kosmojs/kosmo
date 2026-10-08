@@ -1,5 +1,5 @@
 ---
-title: Directory-Based Routing
+title: "Routing: Overview"
 description: KosmoJS uses directory-based routing to map file system structure directly to URL paths.
     Folder names become path segments with index files defining endpoints and components.
 head:
