@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://kosmojs.dev/kosmo-mark.png" width="96" alt="KosmoJS">
+  <img src="https://kosmojs.dev/logo.svg" width="96" alt="KosmoJS">
 </p>
 <h1 align="center">KosmoJS</h1>
 <h3 align="center">the composable meta-framework</h3>

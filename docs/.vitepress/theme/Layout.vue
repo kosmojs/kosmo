@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import { watchEffect } from "vue";
 import { useData } from "vitepress";
-
 import DefaultTheme from "vitepress/theme";
+import { watchEffect } from "vue";
+
 import KosmoMark from "./components/KosmoMark.vue";
 
 const { Layout: DefaultLayout } = DefaultTheme;
 const { frontmatter } = useData();
 
 watchEffect(() => {
-  const title = frontmatter.value.title
-  const root = document.documentElement
+  if (typeof document === "undefined") {
+    return;
+  }
+  const title = frontmatter.value.title;
+  const root = document.documentElement;
   if (title) {
-    // quoted string for CSS `content`, with middot separator baked in
-    root.style.setProperty('--vp-page-title', JSON.stringify(`${title} · `))
+    root.style.setProperty("--vp-page-title", JSON.stringify(`${title} · `));
   } else {
-    root.style.removeProperty('--vp-page-title')
+    root.style.removeProperty("--vp-page-title");
   }
 });
 </script>
