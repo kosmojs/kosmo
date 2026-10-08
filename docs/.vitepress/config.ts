@@ -345,6 +345,11 @@ export default defineConfig({
               text: "Custom Templates",
               link: "/backend/custom-templates",
             },
+            {
+              text: "Testing",
+              docFooterText: "Backend - Testing",
+              link: "/backend/testing",
+            },
           ],
         },
         {
@@ -407,8 +412,12 @@ export default defineConfig({
             },
             {
               text: "MDX Content",
-              docFooterText: "Frontend - MDX Content",
               link: "/frontend/mdx",
+            },
+            {
+              text: "Testing",
+              docFooterText: "Frontend - Testing",
+              link: "/frontend/testing",
             },
           ],
         },

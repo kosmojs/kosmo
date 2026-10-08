@@ -803,6 +803,59 @@ The approach is uniform too: branch on the request path or context.
 Let errors propagate to the central error handler instead of swallowing them per-route.
 [Details&nbsp;›](/backend/error-handling#let-handlers-fail)
 
+### Backend: Testing
+
+#### How do I enable backend testing?
+Set `test: true` in the `backend` block of the folder's `kosmo.config.ts`.
+Testing is off by default; `test: true` is shorthand for `{ seed: true }`,
+which also writes a starter `index.test.ts` beside each route.
+Set `seed: false` to keep the harness and write the files yourself.
+[Details&nbsp;›](/backend/testing#the-test-option)
+
+#### How do I test an API route without a running server?
+`prepareHarness` from `_/test/api` returns a client bound to a route -
+routing, middleware, validation, and your error handler all run as in production, with no network hop and no mocks.
+
+~~~ts
+import { prepareHarness } from "_/test/api";
+
+const { client, route } = await prepareHarness("account");
+~~~
+[Details&nbsp;›](/backend/testing#the-harness)
+
+#### Does `client.<method>` throw on error responses?
+No - it never throws and never follows redirects. It returns the `{ body, response }` object so you can assert on payload and status together;
+a redirect comes back as a response to inspect, not a silent second request.
+[Details&nbsp;›](/backend/testing#the-harness)
+
+#### How do I test authenticated routes?
+`withHeaders` runs a callback with headers merged over whatever is already in scope -
+the way to authenticate a subtree without mutating module state.
+`setHeaders` applies to every call in the file; `clearHeaders` is the way back.
+
+~~~ts
+await withHeaders({ authorization: "Bearer test" }, async () => {
+  await client.GET();
+});
+~~~
+[Details&nbsp;›](/backend/testing#scoped-headers)
+
+#### How do I call one route from another route's test?
+`prepareHarness` also returns `clients`, keyed by route name.
+Same transport swap, same in-process dispatch - use it when a test needs a sibling or nested route beside the current one.
+~~~ts
+const { body } = await clients["another/route"].GET();
+~~~
+[Details&nbsp;›](/backend/testing#calling-other-routes)
+
+#### How do I narrow a test run to one route?
+Pass a path filter to vitest:
+- `pnpm vitest <folder>` tests only that source folder
+- `pnpm vitest <folder>/api` only its backend routes
+- `pnpm vitest <folder>/api/<route>` a single route.
+
+[Details&nbsp;›](/backend/testing#running-tests)
+
 ### Validation
 
 #### What is runtype validation?
@@ -1354,6 +1407,65 @@ don't suspend, so they need none unless you reach for something like `React.lazy
 `use()`, or an async `<script setup>`.
 Wrapping the whole app works if you accept the tradeoff - your call, not a default.
 [Details&nbsp;›](/frontend/data-preload#suspense-is-your-responsibility)
+
+### Frontend: Testing
+
+#### How do I enable frontend testing?
+Set `test: true` in the `frontend` block of the folder's `kosmo.config.ts`.
+Testing is off by default; `test: true` is shorthand for `{ seed: true }`,
+which also writes a starter `index.test.ts` beside each route.
+Set `seed: false` to keep the harness and write the files yourself.
+[Details&nbsp;›](/frontend/testing#the-test-option)
+
+#### How do I test a page at all, with no dev server running?
+`prepareHarness` from `_/test/pages` starts a server for the run and hands back the pieces a browser test needs: `page`, `pages`, `route`, and `base`.
+The port is drawn at random, so nothing collides with a dev server you already have open.
+~~~ts
+import { prepareHarness } from "_/test/pages";
+
+const { page, pages, route, base } = await prepareHarness("account");
+~~~
+[Details&nbsp;›](/frontend/testing#the-harness)
+
+#### How do I navigate to a page in a test?
+`page.href()` returns an absolute URL for the current route, typed against that route's params -
+a params tuple for dynamic segments, and an optional query object.
+~~~ts
+const tab = await browser.newPage();
+await tab.goto(page.href());
+~~~
+[Details&nbsp;›](/frontend/testing#navigating-with-page-href)
+
+#### Do I ever need `base` directly?
+Rarely. `page.href()` already composes it with the route's path, params, and query.
+Reach for `base` yourself only when you need a URL the harness does not model -
+a static asset, an absolute link, a target outside the route tree.
+[Details&nbsp;›](/frontend/testing#the-base-property)
+
+#### How do I test a page other than the current one?
+`pages` is keyed by route name, and every entry is on the same origin as the current page - no second harness, no extra setup.
+~~~ts
+const { pages, route } = await prepareHarness("account");
+
+const tab = await browser.newPage();
+await tab.goto(pages["another/page"].href());
+~~~
+[Details&nbsp;›](/frontend/testing#other-routes-via-pages-property)
+
+#### Does the harness launch a browser for me?
+No - KosmoJS owns the server, not the client.
+Launch Playwright, Puppeteer, or whichever driver you prefer in your own test setup and point it at the URLs the harness produces.
+The same goes for headers: the backend harness's `withHeaders` / `setHeaders` / `clearHeaders` have no frontend counterpart.
+In a browser, headers and cookies belong to the driver - set them there, or carry state through `page.href()`'s query argument.
+[Details&nbsp;›](/frontend/testing#what-you-bring-yourself)
+
+#### How do I narrow a test run to one page?
+Pass a path filter to vitest:
+- `pnpm vitest <folder>` tests only that source folder
+- `pnpm vitest <folder>/pages` for its frontend routes only
+- `pnpm vitest <folder>/pages/<route>` for a single page
+
+[Details&nbsp;›](/frontend/testing#running-tests)
 
 ### MDX
 
