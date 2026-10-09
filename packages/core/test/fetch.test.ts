@@ -24,12 +24,12 @@ describe("fetch", () => {
 
       test(`${method}: with array params`, async () => {
         const res = await fetch[method]<ResponseT>(["a", "b", "c"]);
-        expect(res.params).toEqual({ path: ["a", "b", "c"] });
+        expect(res.params).toEqual({ path: "a/b/c" });
       });
 
       test(`${method}: with string params`, async () => {
         const res = await fetch[method]<ResponseT>(["a/b/c"]);
-        expect(res.params).toEqual({ path: ["a", "b", "c"] });
+        expect(res.params).toEqual({ path: "a/b/c" });
       });
     }
   });
