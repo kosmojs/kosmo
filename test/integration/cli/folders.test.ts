@@ -236,7 +236,10 @@ describe("sidecar: scaffolding", async () => {
 
     const result = await run(kosmoBin, ["sidecar", ...args], projectRoot);
 
-    const folderPath = resolve(projectRoot, join(defaults.srcDir, args[0] || ""));
+    const folderPath = resolve(
+      projectRoot,
+      join(defaults.srcDir, args[0] || ""),
+    );
 
     return {
       entries: await readdir(folderPath).catch(() => []),
@@ -316,7 +319,10 @@ describe("sidecar: scaffolding", async () => {
   });
 
   test("unknown option fails with a clean error, not a stack trace", async () => {
-    const { code, stderr } = await createSidecar(["mailer", "--unknown-option"]);
+    const { code, stderr } = await createSidecar([
+      "mailer",
+      "--unknown-option",
+    ]);
 
     expect(code).not.toEqual(0);
     expect(stderr).toMatch("Unknown option '--unknown-option'");
