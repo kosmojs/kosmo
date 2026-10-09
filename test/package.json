@@ -18,19 +18,19 @@
   },
   "dependencies": {
     "@kosmojs/cli": "workspace:^",
-    "create-kosmo": "workspace:^",
     "@kosmojs/core": "workspace:^",
     "@kosmojs/dev": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
     "@kosmojs/lib": "workspace:^",
     "cheerio": "^1.2.0",
     "crc": "^4.3.2",
+    "create-kosmo": "workspace:^",
     "got": "^16.0.0",
     "jiti": "^2.7.0",
     "mrmime": "^2.0.1",
-    "oxfmt": "^0.67.0",
+    "oxfmt": "^0.72.0",
     "path-to-regexp": "^8.4.2",
-    "playwright": "^1.63.0",
+    "playwright": "^1.64.0",
     "tinyglobby": "^0.2.17"
   }
 }

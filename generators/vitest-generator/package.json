@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@kosmojs/vitest": "workspace:^",
-    "vite": "^8.2.2",
-    "vitest": "^5.0.2"
+    "vite": "^8.3.4",
+    "vitest": "^5.0.3"
   }
 }

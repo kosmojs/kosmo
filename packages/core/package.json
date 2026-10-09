@@ -49,13 +49,13 @@
     "path-to-regexp": "^8.4.2",
     "picomatch": "^4.0.7",
     "picoquery": "^2.5.0",
-    "string-width": "^8.2.2"
+    "string-width": "^8.3.0"
   },
   "devDependencies": {
     "@types/picomatch": "^4.0.3",
-    "hono": "^4.13.7",
-    "msw": "^2.15.0",
+    "hono": "^4.13.13",
+    "msw": "^3.0.2",
     "tfusion": "^0.2.2",
-    "vite": "^8.2.2"
+    "vite": "^8.3.4"
   }
 }
