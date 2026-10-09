@@ -263,7 +263,7 @@ export const createH3Pattern = (tokens: Array<PathToken>): string => {
           return [`:${t.name}`];
         }
         if (t.type === "wildcard") {
-          return [`/**:${t.name}?`];
+          return [`/**:${t.name}`];
         }
         if (t.type === "group") {
           return [`{${tokensToPattern(t.tokens)}}?`];

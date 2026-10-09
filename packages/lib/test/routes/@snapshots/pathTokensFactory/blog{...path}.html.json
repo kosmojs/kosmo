@@ -1,7 +1,7 @@
 {
   "pathPattern": "blog{*path}.html",
   "honoPattern": ":_0{blog(?:.+)?.html}",
-  "h3Pattern": "blog{/**:path?}?.html",
+  "h3Pattern": "blog{/**:path}?.html",
   "pathTokens": [
     {
       "kind": "mixed",

@@ -1,7 +1,7 @@
 {
   "pathPattern": "products{*path}.:ext",
   "honoPattern": ":_0{products(?:.+)?.[^/]+}",
-  "h3Pattern": "products{/**:path?}?.:ext",
+  "h3Pattern": "products{/**:path}?.:ext",
   "pathTokens": [
     {
       "kind": "mixed",

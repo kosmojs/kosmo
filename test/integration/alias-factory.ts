@@ -58,8 +58,10 @@ export const createTestGroups = (backend: keyof typeof BACKENDS) => {
 
       const teardown = await bootstrapProject(async () => {
         await createApiRoutes(
-          Object.keys(apiRoutes).map((name) => {
-            return { name };
+          Object.keys(apiRoutes).flatMap((name) => {
+            return aliases.some(([, route]) => route === name)
+              ? [{ name }]
+              : [];
           }),
           async ({ name }) => {
             return () => {

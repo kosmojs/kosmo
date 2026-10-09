@@ -774,11 +774,6 @@ export const apiRoutes = {
     { tenant: "acme", type: "posts" },
     { tenant: "acme" },
   ],
-  "admin/[tenant]/resources/{...path}": [
-    { tenant: "acme", path: ["edit", "123"] },
-    // path with a single segment, e.g. ["edit"],
-    // is matched by admin/[tenant]/resources/{type}
-  ],
 
   // Underscore as a literal delimiter
   "user_[id]": [

@@ -1345,7 +1345,7 @@
     ],
     "pathPattern": "pages{/*path}.html",
     "honoPattern": "pages/:_1{(?:.+)?.html}",
-    "h3Pattern": "pages/{/**:path?}?.html"
+    "h3Pattern": "pages/{/**:path}?.html"
   },
   {
     "id": "admin_tenant_settings_general_index_tsx_4196017676",

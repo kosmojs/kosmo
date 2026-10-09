@@ -1,7 +1,7 @@
 {
   "pathPattern": "api/v1/products/book-:id/reviews{*path}.json",
   "honoPattern": "api/v1/products/:_3{book-[^/]+}/:_4{reviews(?:.+)?.json}",
-  "h3Pattern": "api/v1/products/book\\-:id/reviews{/**:path?}?.json",
+  "h3Pattern": "api/v1/products/book\\-:id/reviews{/**:path}?.json",
   "pathTokens": [
     {
       "kind": "static",
