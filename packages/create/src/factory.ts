@@ -45,6 +45,7 @@ export const createProject = async (
       typecheck: "kosmo typecheck",
       folder: "kosmo folder",
       sidecar: "kosmo sidecar",
+      test: "vitest",
     },
     dependencies: {
       "@kosmojs/core": `^${VERSION}`,
@@ -53,6 +54,7 @@ export const createProject = async (
     devDependencies: {
       "@kosmojs/cli": `^${VERSION}`,
       "@kosmojs/dev": `^${VERSION}`,
+      "@kosmojs/vitest": `^${VERSION}`,
       "@types/node": self.devDependencies["@types/node"],
       "@types/deno": self.devDependencies["@types/deno"],
       "@types/bun": self.devDependencies["@types/bun"],

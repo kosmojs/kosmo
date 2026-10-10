@@ -10,10 +10,10 @@ import {
   FOLDER_OPTIONS,
   isTTY,
   packageManager,
-  prepareSourceFolder,
   printMessage,
   prompts,
   readAnswer,
+  readFolderOptions,
   validateName,
 } from "@kosmojs/cli";
 import { BACKENDS, FRONTENDS } from "@kosmojs/core";
@@ -139,9 +139,10 @@ const run = async () => {
   await createProject(root);
 
   const input = Object.keys(values).length ? values : undefined;
-  const folder = await prepareSourceFolder(root, "app", input);
 
-  await createHTTPFolder(root, folder, {
+  const options = await readFolderOptions(root, "app", input);
+
+  await createHTTPFolder(root, options, {
     frontend: { base: "/" },
     backend: { base: "/api" },
   });

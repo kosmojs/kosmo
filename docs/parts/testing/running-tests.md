@@ -1,25 +1,19 @@
-
-After you enable testing for a source folder, restart the dev server;
-it will bring in new dependencies and seed a `vitest.config.ts` file at the project root.
-
-Dependencies are added to `package.json` automatically, just install them using your package manager.
-
-Then you can run `vitest` directly or through package manager:
+A `test` script added to `package.json`, run it using your package manager:
 
 :::tabs key:pm variant:code
 == npm
 ~~~sh
-npx vitest  # or `npm exec vitest`
+npm run test
 ~~~
 
 == pnpm
 ~~~sh
-pnpm vitest
+pnpm test
 ~~~
 
 == yarn
 ~~~sh
-yarn exec vitest
+yarn test
 ~~~
 :::
 
@@ -27,11 +21,11 @@ Vitest accepts path filters, so you can narrow a run to one source folder,
 <span class="text-nowrap">one side of it</span>, <span class="text-nowrap">or a single route</span>:
 
 ~~~sh
-pnpm vitest <folder>                 # only the given source folder
-pnpm vitest <folder>/api             # only backend routes in that folder
-pnpm vitest <folder>/api/<route>     # only the given backend route
-pnpm vitest <folder>/pages           # only frontend routes in that folder
-pnpm vitest <folder>/pages/<route>   # only the given frontend route
+pnpm test <folder>                 # only the given source folder
+pnpm test <folder>/api             # only backend routes in that folder
+pnpm test <folder>/api/<route>     # only the given backend route
+pnpm test <folder>/pages           # only frontend routes in that folder
+pnpm test <folder>/pages/<route>   # only the given frontend route
 ~~~
 
 :::info Worth Noting
@@ -40,24 +34,12 @@ If you set a custom `path`, make sure to include it in the pattern.
 E.g.: setting `path: "test"` means the patterns should look like: `<folder>/test/api` and `<folder>/test/pages`.
 :::
 
-To make this easier, add a script to `package.json`:
-
-~~~json
-{
-  "scripts": {
-    "test": "vitest"
-  }
-}
-~~~
-
-Then `pnpm test` - or `pnpm test <pattern>` - runs the suite with no extra ceremony.
-
 ### Vitest config
 
 Source folders with testing enabled are loaded as projects into `vitest.config.ts`.
 
-> Test files are matched by the `name` and `path` each source folder declares in its [own&nbsp;config](#name-and-path) -
-> `index.test.ts` beside each route, under `api/` or `pages/`, unless you say otherwise.
+Test files are matched by the `seed.name` and `seed.path` each source folder declares in its [own&nbsp;config](#name-and-path) -
+`index.test.ts` beside each route, under `api/` or `pages/`, unless you say otherwise.
 
 ~~~ts [vitest.config.ts]
 import { defineConfig, mergeConfig } from "vitest/config";
@@ -69,7 +51,7 @@ export default defineConfig(
     {
       // your config here
     },
-    await loadConfig(),
+    await loadConfig(import.meta.dirname),
   ),
 );
 ~~~

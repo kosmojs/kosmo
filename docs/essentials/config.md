@@ -39,10 +39,12 @@ export default defineConfig({
     ssr: true,
     ssg: false,
     tanstack: { query: false },
+    test: true,
   },
   backend: {
     stack: "hono", // or h3, koa
     base: "/api",
+    test: true,
   },
   fetch: true,
   validation: true,
@@ -53,12 +55,7 @@ export default defineConfig({
 A folder can have both web sides, or just one, or neither -
 a folder with only [sidecar](/sidecar/intro) builds an entry point and KosmoJS routes nothing to it.
 
-Every feature key follows the same pattern: a plain value turns it on with defaults,
-or an object turns it on and hands KosmoJS the instance to use -
-`stack` takes a `plugin`, `ssr` / `ssg` / `fetch` / `validation` take a `generator`.
-
-`defineConfig` turns that description into the right set of generators, in the right order,
-and is the only import a folder config needs.
+Every feature key follows the same pattern: a plain value turns it on with defaults.
 
 ## frontend
 
@@ -170,6 +167,12 @@ tanstack: { query: true }
 
 Deploys the `_/query` runtime, swaps `_/app` for a provider that supplies the query client,
 and gives each SSR request its own client. [Details&nbsp;›](/frontend/tanstack-query)
+
+### frontend.test
+
+Setup [frontend testing](/frontend/testing).
+
+Enabled by default, set to `false` to disable.
 
 ### frontend.templates
 
@@ -305,6 +308,12 @@ The key is absolute and is *not* prefixed by the router's base.
 If it carries dynamic segments, their names must match the target route's parameters exactly, or the request 404s.
 
 [Details&nbsp;›](/backend/aliases)
+
+### backend.test
+
+Setup [backend testing](/backend/testing).
+
+Enabled by default, set to `false` to disable.
 
 ### backend.templates
 

@@ -6,7 +6,6 @@ import semver from "semver";
 
 import type {
   BACKENDS,
-  DeepPartial,
   FolderConfig,
   FRONTENDS,
   GeneratorSignature,
@@ -25,6 +24,7 @@ import {
   ssrGenerator,
   svelteGenerator,
   typeboxGenerator,
+  vitestGenerator,
   vueGenerator,
 } from "@kosmojs/dev";
 import { containsPathTraversalPatterns } from "@kosmojs/lib";
@@ -58,7 +58,7 @@ export type PackageJSON = {
   devDependencies?: Record<string, string>;
 };
 
-export type SourceFolderConfig = {
+export type FolderOptions = {
   name: string;
   frontend?: keyof typeof FRONTENDS | undefined;
   backend?: keyof typeof BACKENDS | undefined;
@@ -124,10 +124,10 @@ export const assertNoError = (validator: () => string | undefined) => {
 };
 
 export const resolveFolderGenerators = (
-  folder: SourceFolderConfig,
-  folderConfig?: DeepPartial<FolderConfig>,
+  options: FolderOptions,
+  config: FolderConfig,
 ) => {
-  const { frontend, backend } = folder;
+  const { frontend, backend } = options;
 
   const generators: Array<GeneratorSignature> = [
     // always present and always first
@@ -159,24 +159,30 @@ export const resolveFolderGenerators = (
   }
 
   if (frontend) {
-    if (folderConfig?.frontend?.ssr !== false) {
+    if (config?.frontend?.ssr !== false) {
       generators.push(ssrGenerator());
     }
 
-    if (
-      folderConfig?.frontend?.ssg !== false &&
-      folderConfig?.frontend?.ssr !== false
-    ) {
+    if (config?.frontend?.ssg !== false && config?.frontend?.ssr !== false) {
       generators.push(ssgGenerator());
     }
   }
 
   if (backend) {
-    if (folderConfig?.fetch !== false) {
+    if (config?.fetch !== false) {
       generators.push(fetchGenerator());
     }
-    if (folderConfig?.validation !== false) {
+
+    if (config?.validation !== false) {
       generators.push(typeboxGenerator());
+    }
+  }
+
+  if (config?.frontend?.test || config?.backend?.test) {
+    generators.push(vitestGenerator());
+    if (!generators.some((e) => e.meta.slot === "fetch")) {
+      // backend testing implies fetch clients
+      generators.push(fetchGenerator());
     }
   }
 
@@ -233,7 +239,8 @@ export const checkDependencies = async (
   for (const [name, minVersion, key] of required) {
     const rawVersion = dependencies[name] || devDependencies[name];
 
-    if (!semver.valid(rawVersion)) {
+    if (/^\w+:/.test(rawVersion)) {
+      // ignore link:, file: etc.
       continue;
     }
 

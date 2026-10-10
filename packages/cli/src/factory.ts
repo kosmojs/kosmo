@@ -15,12 +15,12 @@ import { formatCode, render, renderToFile } from "@kosmojs/lib";
 
 import {
   assertNoError,
+  type FolderOptions,
   isTTY,
   printAnswer,
   prompts,
   readAnswer,
   resolveFolderGenerators,
-  type SourceFolderConfig,
 } from "./base";
 import * as templates from "./templates";
 
@@ -28,43 +28,47 @@ export const prepareFolder = async (
   root: string,
   name: string,
   input: Partial<{ overwrite: boolean }> | undefined,
-): Promise<SourceFolderConfig> => {
+) => {
   const srcDir = resolve(root, defaults.srcDir);
 
   await mkdir(srcDir, { recursive: true });
   const entries = await readdir(srcDir);
 
-  if (entries.includes(name) && !input?.overwrite) {
-    const path = `./${defaults.srcDir}/${name}/`;
-    const message = `${styleText(["blue", "bold"], path)} already exists`;
-    if (isTTY()) {
-      const answer = await readAnswer<"remove" | "overwrite" | "cancel">(
-        prompts.select({
-          message,
-          options: [
-            { value: "remove", label: "Remove existing files" },
-            { value: "overwrite", label: "Overwrite existing files" },
-            { value: "cancel", label: "Cancel" },
-          ],
-        }),
-      );
-      if (answer === "remove") {
-        await rm(resolve(srcDir, name), { recursive: true });
-      } else if (answer === "cancel") {
-        prompts.cancel("Cancelled");
-        process.exit(0);
-      }
-    } else {
-      assertNoError(() => {
-        return `${message}. Either remove it or provide --overwrite flag.`;
-      });
-    }
+  if (!entries.includes(name) || input?.overwrite) {
+    return;
   }
 
-  return { name };
+  const path = `./${defaults.srcDir}/${name}/`;
+  const message = `${styleText(["blue", "bold"], path)} already exists`;
+
+  if (isTTY()) {
+    const answer = await readAnswer<"remove" | "overwrite" | "cancel">(
+      prompts.select({
+        message,
+        options: [
+          { value: "remove", label: "Remove existing files" },
+          { value: "overwrite", label: "Overwrite existing files" },
+          { value: "cancel", label: "Cancel" },
+        ],
+      }),
+    );
+
+    if (answer === "remove") {
+      await rm(resolve(srcDir, name), { recursive: true });
+    } else if (answer === "cancel") {
+      prompts.cancel("Cancelled");
+      process.exit(0);
+    }
+
+    return;
+  }
+
+  assertNoError(() => {
+    return `${message}. Either remove it or provide --overwrite flag.`;
+  });
 };
 
-export const prepareSourceFolder = async (
+export const readFolderOptions = async (
   root: string,
   name: string,
   input:
@@ -76,10 +80,12 @@ export const prepareSourceFolder = async (
         overwrite: boolean;
       }>
     | undefined,
-): Promise<SourceFolderConfig> => {
+): Promise<FolderOptions> => {
   const tty = isTTY();
 
-  const folder = await prepareFolder(root, name, input);
+  await prepareFolder(root, name, input);
+
+  const options: FolderOptions = { name };
 
   for (const [key, values] of [
     ["frontend", FRONTENDS],
@@ -102,9 +108,9 @@ export const prepareSourceFolder = async (
           : undefined;
       });
       // value validated
-      folder[key] = input[key] as never;
+      options[key] = input[key] as never;
       if (tty) {
-        printAnswer(message, folder[key]);
+        printAnswer(message, options[key]);
       }
     } else if (input?.[`no-${key}`]) {
       if (tty) {
@@ -126,7 +132,7 @@ export const prepareSourceFolder = async (
           }),
         );
 
-        folder[key] = answer as never;
+        options[key] = answer as never;
       } else {
         // no value nor negation given, and no tty to ask, fail
         assertNoError(() => {
@@ -136,15 +142,75 @@ export const prepareSourceFolder = async (
     }
   }
 
-  return folder;
+  return options;
+};
+
+export const httpFolderConfig = (
+  options: FolderOptions,
+  {
+    frontend: frontendPartial = {},
+    backend: backendPartial = {},
+    ...configPartial
+  }: DeepPartial<Omit<FolderConfig, "sidecar">> = {},
+): FolderConfig => {
+  // frontend options with default values
+  const frontend = {
+    stack: options.frontend as never,
+    base: frontendPartial?.base || `/${options.name}`,
+    ssr: "ssr" in frontendPartial ? frontendPartial.ssr : true,
+    ssg: "ssg" in frontendPartial ? frontendPartial.ssg : false,
+    tanstack:
+      "tanstack" in frontendPartial
+        ? frontendPartial.tanstack
+        : { query: false },
+    test: "test" in frontendPartial ? frontendPartial.test : true,
+  };
+
+  // backend options with default values
+  const backend = {
+    stack: options.backend as never,
+    base: backendPartial.base || `/${options.name}/api`,
+    test: "test" in backendPartial ? backendPartial.test : true,
+  };
+
+  return {
+    ...(options.frontend
+      ? {
+          frontend: {
+            ...frontend,
+            ...Object.fromEntries(
+              Object.entries(frontendPartial).flatMap(([k, v]) => {
+                return k in frontend ? [] : [[k, v]];
+              }),
+            ),
+          },
+        }
+      : {}),
+    ...(options.backend
+      ? {
+          backend: {
+            ...backend,
+            ...Object.fromEntries(
+              Object.entries(backendPartial).flatMap(([k, v]) => {
+                return k in backend ? [] : [[k, v]];
+              }),
+            ),
+          },
+        }
+      : {}),
+    fetch: !options.backend || !options.frontend ? false : true,
+    validation: !options.backend ? false : true,
+    typecheck: true,
+    ...configPartial,
+  };
 };
 
 export const createHTTPFolder = async (
   root: string,
-  folder: SourceFolderConfig,
-  configPatch?: DeepPartial<FolderConfig>,
+  options: FolderOptions,
+  partialConfig?: DeepPartial<FolderConfig>,
 ) => {
-  const folderPath = resolve(root, defaults.srcDir, folder.name);
+  const folderPath = resolve(root, defaults.srcDir, options.name);
 
   await mkdir(folderPath, { recursive: true });
 
@@ -153,41 +219,9 @@ export const createHTTPFolder = async (
   // Using readFile cause import() returns cached content
   const packageJson = JSON.parse(await readFile(packageFile, "utf8"));
 
-  const { frontend, backend } = folder;
+  const config = httpFolderConfig(options, partialConfig);
 
-  const { frontend: frontendPatch = {} } = { ...configPatch };
-
-  const config: DeepPartial<FolderConfig> = {
-    ...(frontend
-      ? {
-          frontend: {
-            ...frontendPatch,
-            stack: frontend,
-            base: frontendPatch.base || `/${folder.name}`,
-            ssr: "ssr" in frontendPatch ? frontendPatch.ssr : true,
-            ssg: "ssg" in frontendPatch ? frontendPatch.ssg : false,
-            tanstack:
-              "tanstack" in frontendPatch
-                ? frontendPatch.tanstack
-                : { query: false },
-          },
-        }
-      : {}),
-    ...(backend
-      ? {
-          backend: {
-            ...configPatch?.backend,
-            stack: backend,
-            base: configPatch?.backend?.base || `/${folder.name}/api`,
-          },
-        }
-      : {}),
-    fetch: configPatch?.fetch === false || !backend || !frontend ? false : true,
-    validation: configPatch?.validation === false || !backend ? false : true,
-    typecheck: configPatch?.typecheck === false ? false : true,
-  };
-
-  const kosmoConfig = createKosmoConfig(folder, config);
+  const kosmoConfig = createKosmoConfig(options, config);
 
   await writeFile(
     resolve(folderPath, "kosmo.config.ts"),
@@ -195,7 +229,7 @@ export const createHTTPFolder = async (
     "utf8",
   );
 
-  const generators = resolveFolderGenerators(folder);
+  const generators = resolveFolderGenerators(options, config);
 
   for (const generator of generators) {
     for (const key of ["dependencies", "devDependencies"] as const) {
@@ -217,14 +251,14 @@ export const createHTTPFolder = async (
     { overwrite: false },
   );
 
-  await seedFolder(root, folder, config as never);
+  await seedFolder(root, options, config as never);
 };
 
 export const createSidecarFolder = async (
   root: string,
-  sidecar: SourceFolderConfig,
+  options: FolderOptions,
 ) => {
-  const path = resolve(root, defaults.srcDir, sidecar.name);
+  const path = resolve(root, defaults.srcDir, options.name);
 
   await mkdir(path, { recursive: true });
 
@@ -236,7 +270,7 @@ export const createSidecarFolder = async (
     },
   };
 
-  const kosmoConfig = createKosmoConfig(sidecar, config);
+  const kosmoConfig = createKosmoConfig(options, config);
 
   await writeFile(
     resolve(path, "kosmo.config.ts"),
@@ -244,18 +278,18 @@ export const createSidecarFolder = async (
     "utf8",
   );
 
-  await seedFolder(root, sidecar, config);
+  await seedFolder(root, options, config);
 };
 
 const seedFolder = async (
   root: string,
-  folder: SourceFolderConfig,
+  options: FolderOptions,
   config: FolderConfig,
 ) => {
-  const generators = resolveFolderGenerators(folder);
+  const generators = resolveFolderGenerators(options, config);
 
   const sourceFolder: SourceFolder = {
-    name: folder.name,
+    name: options.name,
     config,
     generators,
   };
@@ -273,11 +307,8 @@ const seedFolder = async (
   }
 };
 
-const createKosmoConfig = (
-  folder: SourceFolderConfig,
-  config: DeepPartial<FolderConfig>,
-) => {
-  const { frontend, backend, sidecar } = folder;
+const createKosmoConfig = (options: FolderOptions, config: FolderConfig) => {
+  const { frontend, backend, sidecar } = options;
 
   const context = {
     frontend,

@@ -32,6 +32,7 @@ import {
   checkDependencies,
   compareDependencies,
   FOLDER_OPTIONS,
+  type FolderOptions,
   type PackageJSON,
   packageManager,
   printMessage,
@@ -41,7 +42,7 @@ import {
   createHTTPFolder,
   createSidecarFolder,
   prepareFolder,
-  prepareSourceFolder,
+  readFolderOptions,
 } from "./factory";
 
 const COMMANDS = [
@@ -230,9 +231,9 @@ const run = async () => {
       "intro",
     );
 
-    const folder = await prepareSourceFolder(root, name, input);
+    const options = await readFolderOptions(root, name, input);
 
-    await createHTTPFolder(root, folder);
+    await createHTTPFolder(root, options);
 
     // Using readFile cause import() returns cached content
     const { dependencies, devDependencies } = JSON.parse(
@@ -261,7 +262,7 @@ const run = async () => {
     printMessage(
       [
         styleText(["green"], `✨ Well done!`),
-        styleText(["blue", "bold"], `./${defaults.srcDir}/${folder.name}`),
+        styleText(["blue", "bold"], `./${defaults.srcDir}/${options.name}`),
         "is ready to perform",
       ].join(" "),
       "outro",
@@ -280,18 +281,20 @@ const run = async () => {
       "intro",
     );
 
-    const sidecar = await prepareFolder(root, name, input);
+    await prepareFolder(root, name, input);
+
+    const options: FolderOptions = { name };
 
     printMessage(
       [
         styleText(["green"], `✨ Well done!`),
-        styleText(["blue", "bold"], `./${defaults.srcDir}/${sidecar.name}`),
+        styleText(["blue", "bold"], `./${defaults.srcDir}/${options.name}`),
         "sidecar is ready to perform",
       ].join(" "),
       "outro",
     );
 
-    await createSidecarFolder(root, { ...sidecar, sidecar: true });
+    await createSidecarFolder(root, { ...options, sidecar: true });
 
     return;
   };

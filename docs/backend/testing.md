@@ -16,15 +16,19 @@ The same in-process dispatch that lets an isomorphic fetch client call your back
 This is possible because KosmoJS already keeps the client/server boundary as an HTTP call that costs nothing on the server.
 Tests reuse that path rather than re-implementing it.
 
-Testing is **disabled by default**. Enable it per source folder in `kosmo.config.ts`:
+Backend testing can be configured per source folder in `kosmo.config.ts`:
 
 ~~~ts
 export default defineConfig({
   backend: {
+    // ...
     test: true, // [!code hl]
   },
 });
 ~~~
+
+Enabled by default; set `test: false` to disable testing entirely.
+Or set `test: { seed: false }` to keep the harness and write the files yourself.
 
 ## The test option
 

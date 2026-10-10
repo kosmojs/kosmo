@@ -16,15 +16,19 @@ It is the same transport trick the backend harness uses, seen from the other end
 The dev server that normally serves your pages is started on a random port for the duration of the run,
 and `page.href()` hands you its address.
 
-Testing stays off unless you ask for it. Turn it on per source folder in `kosmo.config.ts`:
+Frontend testing can be configured per source folder in `kosmo.config.ts`:
 
 ~~~ts
 export default defineConfig({
   frontend: {
+    // ...
     test: true, // [!code hl]
   },
 });
 ~~~
+
+Enabled by default; set `test: false` to disable testing entirely.
+Or set `test: { seed: false }` to keep the harness and write the files yourself.
 
 ## The test option
 
@@ -33,7 +37,6 @@ The option has the same shape on `frontend` and `backend`, with seeding on by de
 The one difference is where files land. Frontend seeding writes a starter `index.test.ts` beside each route in `pages/` dir.
 
 <!-- @include: ../parts/testing/options.md -->
-
 
 ## The seed option
 

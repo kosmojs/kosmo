@@ -14,9 +14,6 @@ export type TestOption = boolean | {
 
   // Custom Vite settings to use specifically for testing
   viteConfig?: ViteConfig;
-
-  // Vitest generator to use instead of the default one.
-  generator?: GeneratorSignature;
 };
 ~~~
 ==
