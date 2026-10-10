@@ -44,8 +44,6 @@ type ReturnSignature<C extends ChassisCommand> = C extends "serve" | "test"
     }
   : undefined;
 
-export { findFreePortRange };
-
 export default async <C extends ChassisCommand>(
   command: C,
   projectSettings: ProjectSettings,

@@ -37,6 +37,7 @@ export {
   ssrGenerator,
   svelteGenerator,
   typeboxGenerator,
+  vitestGenerator,
   vueGenerator,
 };
 

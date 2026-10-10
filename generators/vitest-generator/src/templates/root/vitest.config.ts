@@ -7,6 +7,6 @@ export default defineConfig(
     {
       // your config here
     },
-    await loadConfig(),
+    await loadConfig(import.meta.dirname),
   ),
 );

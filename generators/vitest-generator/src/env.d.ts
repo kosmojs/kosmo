@@ -38,5 +38,4 @@ declare module "@kosmojs/dev/chassis" {
     teardown: () => Promise<void>;
   }>;
   export default chassis;
-  export { findFreePortRange } from "@kosmojs/lib";
 }

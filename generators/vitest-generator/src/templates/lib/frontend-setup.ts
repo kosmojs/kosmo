@@ -7,8 +7,8 @@ import {
   type KosmoSettings,
   type ProjectSettings,
 } from "@kosmojs/core";
-import chassis, { findFreePortRange } from "@kosmojs/dev/chassis";
-import { resolveHostAddress } from "@kosmojs/lib";
+import chassis from "@kosmojs/dev/chassis";
+import { findFreePortRange, resolveHostAddress } from "@kosmojs/vitest";
 
 import { name } from "{{ createImport 'libCore' }}";
 import kosmo from "{{ createImport 'src' 'kosmo.config' }}";

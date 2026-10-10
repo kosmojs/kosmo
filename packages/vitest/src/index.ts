@@ -20,8 +20,10 @@ import {
   vitePlugins,
 } from "@kosmojs/lib";
 
+export { findFreePortRange, resolveHostAddress } from "@kosmojs/lib";
+
 export const loadConfig = async (
-  root: string = process.cwd(),
+  root: string,
 ): Promise<UserWorkspaceConfig> => {
   const jiti = createJiti(root);
 
