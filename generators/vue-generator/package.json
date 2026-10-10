@@ -22,7 +22,7 @@
   "dependencies": {
     "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^",
-    "@vitejs/plugin-vue": "^6.0.9"
+    "@vitejs/plugin-vue": "^6.0.10"
   },
   "devDependencies": {
     "@tanstack/vue-query": "^5.104.1",

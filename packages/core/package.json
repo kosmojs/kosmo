@@ -54,7 +54,7 @@
   "devDependencies": {
     "@types/picomatch": "^4.0.3",
     "hono": "^4.13.13",
-    "msw": "^3.0.2",
+    "msw": "^3.0.3",
     "tfusion": "^0.2.2",
     "vite": "^8.3.4"
   }
