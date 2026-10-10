@@ -148,18 +148,20 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
   };
 
   return {
-    virtualModules() {
+    virtualModules(command) {
       const { createImport } = pathResolver(projectSettings, sourceFolder);
-      return [
-        {
-          // The transport must differ between the browser and the SSR bundle
-          specifier: "virtual:kosmo/fetch-transport",
-          // `undefined` on the client, so fetch clients fall back to global fetch
-          csr: "export default undefined;",
-          // an in-process dispatch into the backend app on the server
-          ssr: `export { default } from "${createImport.lib(["test/backend-transport"], { origin: "lib" })}";`,
-        },
-      ];
+      return command === "test"
+        ? [
+            {
+              // The transport must differ between the browser and the SSR bundle
+              specifier: "virtual:kosmo/fetch-transport",
+              // `undefined` on the client, so fetch clients fall back to global fetch
+              csr: "export default undefined;",
+              // an in-process dispatch into the backend app on the server
+              ssr: `export { default } from "${createImport.lib(["test/backend-transport"], { origin: "lib" })}";`,
+            },
+          ]
+        : [];
     },
 
     async seed() {

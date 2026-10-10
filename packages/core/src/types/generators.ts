@@ -1,6 +1,6 @@
 import type { UserConfig } from "vite";
 
-import type { ChassisCommand, DeepPartial } from "./generic";
+import type { ChassisCommand } from "./generic";
 import type { FolderConfig, ProjectSettings, SourceFolder } from "./project";
 import type { ResolvedEntry } from "./routes";
 
@@ -85,7 +85,7 @@ export type GeneratorFactory = {
    * That is what lets a dev server and a production build share a project directory:
    * neither can flip a file under the other.
    * */
-  virtualModules?: () => Array<VirtualModule>;
+  virtualModules?: (command: ChassisCommand) => Array<VirtualModule>;
 };
 
 export type VirtualModule = {
@@ -102,7 +102,7 @@ export type VirtualModule = {
  * */
 type GeneratorDependencies =
   | Record<string, string>
-  | ((c: DeepPartial<FolderConfig>) => Record<string, string>);
+  | ((c: FolderConfig) => Record<string, string>);
 
 export type GeneratorSignature<Options extends object = object> = {
   meta: GeneratorMeta;

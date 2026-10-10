@@ -182,7 +182,8 @@ export const virtualModules = (
   const VIRTUAL_PREFIX = "\0";
 
   const modules = sourceFolder.generators.flatMap(({ factory }) => {
-    return factory(projectSettings, sourceFolder).virtualModules?.() || [];
+    const { virtualModules } = factory(projectSettings, sourceFolder);
+    return virtualModules ? virtualModules(command) : [];
   });
 
   const virtualSources = new Map<string, { csr: string; ssr: string }>();
