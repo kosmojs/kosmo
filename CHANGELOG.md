@@ -1,3 +1,5 @@
+## [0.6.1](https://github.com/kosmojs/kosmo/compare/v0.6.0...v0.6.1) (2026-10-10)
+
 ## [0.6.0](https://github.com/kosmojs/kosmo/compare/v0.5.2...v0.6.0) (2026-10-10)
 
 ### Features
