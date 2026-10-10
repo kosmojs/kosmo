@@ -4,6 +4,7 @@ export default defineConfig({
   backend: {
     stack: "h3",
     base: "/h3/api",
+    test: true,
   },
   fetch: false,
   validation: true,

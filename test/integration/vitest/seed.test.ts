@@ -7,6 +7,7 @@ import { DEFAULT_TEST_FILE, type VitestOptions } from "@kosmojs/core";
 import { pathResolver } from "@kosmojs/lib";
 
 import { setupTestProject } from "../setup";
+import { routes } from ".";
 
 type FileMap = Record<string, string>;
 
@@ -18,16 +19,6 @@ type FileBucket = {
   pagesCustomPath: FileMap;
 };
 
-const routes = [
-  "about",
-  "blog",
-  "blog/posts",
-  "blog/posts/{post}",
-  "landing",
-  "landing/about",
-  "landing/search/{query}",
-] as const;
-
 const exactMatchRoute: (typeof routes)[number] = "about";
 const subtreeMatchRoute: (typeof routes)[number] = "landing";
 const theOnlyEnabledRoute: (typeof routes)[number] = "blog";
@@ -38,16 +29,10 @@ functionTemplate.toJSON = () => "FUNCTION_TEMPLATE_PLACEHOLDER";
 const variants: Array<
   [
     name: string,
-    opts: undefined | boolean | VitestOptions,
+    opts: boolean | VitestOptions,
     test: Array<keyof ReturnType<typeof runnersFactory>>,
   ]
 > = [
-  [
-    "missing test key seeds nothing",
-    undefined,
-    ["noRootConfigSeeded", "noApiFilesSeeded", "noPageFilesSeeded"],
-  ],
-
   [
     "false test key seeds nothing",
     false,
@@ -186,7 +171,7 @@ const runnersFactory = (
       expect(rootConfig).toMatch(/import.+loadConfig.+from.+@kosmojs\/vitest/);
       expect(rootConfig).toMatch("defineConfig");
       expect(rootConfig).toMatch("mergeConfig");
-      expect(rootConfig).toMatch(/await.+loadConfig\(\)/);
+      expect(rootConfig).toMatch(/await.+loadConfig\(/);
     },
     noRootConfigSeeded() {
       expect(rootConfig).toBeUndefined();
@@ -394,8 +379,8 @@ for (const [name, options, runners] of variants) {
         frontend: "random",
       },
       {
-        frontend: { ...(options === undefined ? {} : { test: options }) },
-        backend: { ...(options === undefined ? {} : { test: options }) },
+        frontend: { test: options },
+        backend: { test: options },
       },
     );
 

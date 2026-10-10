@@ -7,6 +7,7 @@ export default defineConfig({
     ssr: true,
     ssg: false,
     tanstack: { query: false },
+    test: true,
   },
   fetch: false,
   validation: false,

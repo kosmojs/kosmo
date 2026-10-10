@@ -7,10 +7,12 @@ export default defineConfig({
     ssr: true,
     ssg: false,
     tanstack: { query: false },
+    test: true,
   },
   backend: {
     stack: "hono",
     base: "/solid-hono/api",
+    test: true,
   },
   fetch: true,
   validation: true,

@@ -4,6 +4,7 @@ export default defineConfig({
   backend: {
     stack: "koa",
     base: "/koa/api",
+    test: true,
   },
   fetch: false,
   validation: true,

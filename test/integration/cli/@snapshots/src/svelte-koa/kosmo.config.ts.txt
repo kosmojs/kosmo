@@ -7,10 +7,12 @@ export default defineConfig({
     ssr: true,
     ssg: false,
     tanstack: { query: false },
+    test: true,
   },
   backend: {
     stack: "koa",
     base: "/svelte-koa/api",
+    test: true,
   },
   fetch: true,
   validation: true,

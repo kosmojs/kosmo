@@ -144,6 +144,7 @@ export const setupSidecarProject = async ({
         devDependencies: {
           "@kosmojs/dev": `${pkgsDir}/dev`,
           "@kosmojs/cli": `${pkgsDir}/cli`,
+          "@kosmojs/vitest": `${pkgsDir}/vitest`,
         },
       });
 

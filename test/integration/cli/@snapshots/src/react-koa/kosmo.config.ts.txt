@@ -7,10 +7,12 @@ export default defineConfig({
     ssr: true,
     ssg: false,
     tanstack: { query: false },
+    test: true,
   },
   backend: {
     stack: "koa",
     base: "/react-koa/api",
+    test: true,
   },
   fetch: true,
   validation: true,

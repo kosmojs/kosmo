@@ -7,10 +7,12 @@ export default defineConfig({
     ssr: true,
     ssg: false,
     tanstack: { query: false },
+    test: true,
   },
   backend: {
     stack: "h3",
     base: "/mdx-h3/api",
+    test: true,
   },
   fetch: true,
   validation: true,
