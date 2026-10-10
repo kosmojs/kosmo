@@ -1,3 +1,14 @@
+## [0.6.0](https://github.com/kosmojs/kosmo/compare/v0.5.2...v0.6.0) (2026-10-10)
+
+### Features
+
+* implement Vitest integration to facilitate testing workflow ([2b60098](https://github.com/kosmojs/kosmo/commit/2b600981fd31fab62a055da0c8ac0054370b9f4e))
+
+### Bug Fixes
+
+* accept host option wherever it is relevant ([9dfd619](https://github.com/kosmojs/kosmo/commit/9dfd6194d3b9ed61cb93a9c514521a08ebe446fa))
+* **run.js:** correctly detect when it is invoked directly ([b6d42f9](https://github.com/kosmojs/kosmo/commit/b6d42f98a32c5754cab43e3ee8848eec8e7780e1))
+
 ## [0.5.2](https://github.com/kosmojs/kosmo/compare/v0.5.0...v0.5.2) (2026-09-21)
 
 ### Features
