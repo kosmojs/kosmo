@@ -13,32 +13,50 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
   base: string,
   route: ApiRouteSerialized,
 ): ApiRouteSerialized & RoutePathMethods<ParamsT> => {
-  const { name, pathPattern, params, numericProperties } = route;
+  const { name, pathPattern, numericProperties } = route;
 
   const toPath = compile(join(base, pathPattern));
 
   const paramsMapper: RoutePathMethods<ParamsT>["paramsMapper"] = (
-    input,
+    params,
     opt,
   ) => {
-    return params.reduce<Record<string, unknown>>((map, name, i) => {
-      const coerceNumbers = opt?.coerceNumbers
-        ? numericProperties.params.includes(name)
-        : false;
-      if (Array.isArray(input[i])) {
-        map[name] = coerceNumbers
-          ? input[i].map((v) => maybeNumber(v))
-          : input[i].map(String);
-      } else if (input[i] !== undefined) {
-        map[name] = coerceNumbers ? maybeNumber(input[i]) : String(input[i]);
-      }
-      return map;
-    }, {});
+    return Array.isArray(params)
+      ? Object.fromEntries(
+          route.params.flatMap((name, i) => {
+            const coerceNumbers = opt?.coerceNumbers
+              ? numericProperties.params.includes(name)
+              : false;
+            if (Array.isArray(params[i])) {
+              return [
+                [
+                  name,
+                  coerceNumbers
+                    ? params[i].map((v) => maybeNumber(v))
+                    : params[i].map(String),
+                ],
+              ];
+            }
+            if (params[i] !== undefined) {
+              return [
+                [
+                  name,
+                  coerceNumbers //
+                    ? maybeNumber(params[i])
+                    : String(params[i]),
+                ],
+              ];
+            }
+            return [];
+          }),
+        )
+      : {};
   };
 
   const parametrize: RoutePathMethods<ParamsT>["parametrize"] = (params) => {
+    const paramsMap = paramsMapper(params as never);
     try {
-      return toPath(paramsMapper(params) as never);
+      return toPath(paramsMap as never);
     } catch (error) {
       console.error(`❗ERROR: Failed building path for ${name}`);
       throw error;
@@ -75,19 +93,25 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
   const toPath = compile(join(base, route.pathPattern));
 
   const paramsMapper: RoutePathMethods<ParamsT>["paramsMapper"] = (params) => {
-    return route.params.reduce<Record<string, unknown>>((map, name, i) => {
-      if (Array.isArray(params[i])) {
-        map[name] = params[i].map(String);
-      } else if (params[i] !== undefined) {
-        map[name] = String(params[i]);
-      }
-      return map;
-    }, {});
+    return Array.isArray(params)
+      ? Object.fromEntries(
+          route.params.flatMap<[string, string | Array<string>]>((name, i) => {
+            if (Array.isArray(params[i])) {
+              return [[name, params[i].map(String)]];
+            }
+            if (params[i] !== undefined) {
+              return [[name, String(params[i])]];
+            }
+            return [];
+          }),
+        )
+      : {};
   };
 
   const parametrize: RoutePathMethods<ParamsT>["parametrize"] = (params) => {
+    const paramsMap = paramsMapper(params as never);
     try {
-      return toPath(paramsMapper(params) as never);
+      return toPath(paramsMap as never);
     } catch (error) {
       console.error(`❗ERROR: Failed building path for ${route.name}`);
       throw error;
