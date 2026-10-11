@@ -11,7 +11,7 @@ cd "$(git rev-parse --show-toplevel)"
 # `changeset version` rewrites manifests and changelogs across the workspace.
 # Starting from a dirty tree makes the resulting commit impossible to review.
 if [ -n "$(git status --porcelain)" ]; then
-  echo 'working tree is dirty - commit or stash before preparing a release' >&2
+  echo "working tree is dirty - commit or stash before preparing a release" >&2
   exit 1
 fi
 
@@ -20,24 +20,17 @@ changeset add
 # --all rather than `commit -a`: `changeset add` writes a new file that git has
 # never seen, and -a only stages modifications to already-tracked files
 git add --all
-git commit --message 'chore: add changeset'
+git commit --message "chore: add changeset"
 
 changeset version
 
-# Generate the changelog from the same conventional commits,
-# into the same commit as the version bump.
-# The latest section's version is read from --pkg,
-# not from git tags (no release tag exists on HEAD yet).
-pnpm conventional-changelog \
-  --preset conventionalcommits \
-  --release-count 0 \
-  --pkg packages/core/package.json
+node ./scripts/release/changelog.mjs
 
 # --all again, and for the same reason: `changeset version` consumes the
 # changeset files and can create a CHANGELOG.md for a package that never had one.
 # `commit -a` would stage the deletions and silently drop the new files.
 git add --all
-git commit --message 'chore: version bump'
+git commit --message "chore: version bump"
 
 echo
-echo 'prepared. review the two commits above, then run: pnpm release:commit'
+echo "prepared. review the two commits above, then run: pnpm release:commit"
