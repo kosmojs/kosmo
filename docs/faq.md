@@ -75,8 +75,8 @@ or `None (client-only folder)` in the backend select.
 In non-interactive mode, pass the matching negation flag for the side you skip:
 
 ```sh
-pnpm folder api  --backend hono --no-frontend   # backend-only, no UI
-pnpm folder docs --frontend mdx  --no-backend   # frontend-only, no backend
+pnpm folder --name api  --backend hono --no-frontend  # backend-only, no UI
+pnpm folder --name docs --frontend mdx --no-backend   # frontend-only, no backend
 ```
 
 The seeded `kosmo.config.ts` contains only the block that side needs.

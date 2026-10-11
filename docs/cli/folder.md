@@ -12,33 +12,41 @@ A project is a set of [source folders](/essentials/project-structure), and you c
 Each is a self-contained app with its own stack and its own URL prefixes -
 e.g. a marketing site at `/`, an admin app at `/admin`, an API-only service at `/svc`, etc.
 
+:::tabs key:pm variant:code
+== npm
 ```sh
-npm run folder <name>   # interactive
-# or `pnpm folder <name>`
+npm run folder
 ```
 
-**Folder Name** - becomes `src/<name>`, and gives the folder its prefixes:
+== pnpm
+```sh
+pnpm folder
+```
+
+== yarn
+```sh
+yarn folder
+```
+:::
+
+You'll be prompted for the folder name, frontend and backend.
+
+Folder name becomes `src/<name>`, and gives the folder its prefixes:
 - pages at `/<name>`
 - API at `/<name>/api`.
 
-Edit `base` in `kosmo.config.ts` afterwards if you want different prefixes.
+Edit `base` in [kosmo.config.ts](/essentials/config) afterwards if you want different prefixes.
 
 If `src/<name>` already exists, you are offered to remove / overwrite before proceed, or cancel.
 
-Interactive prompts you'll answer to:
-
-- **Frontend** and **Backend**, each with a *None* option
-- **SSR**, then **SSG** if SSR is on, then **TanStack Query**
-
-
 ## CLI mode
 
-The same flags as `create kosmo`, providing folder name as first argument.
+Provide flags up front and no prompts appears:
 
 ```sh
-pnpm folder admin --frontend solid --backend h3
-pnpm folder svc   --no-frontend    --backend hono
-pnpm folder docs  --frontend mdx   --no-backend
+pnpm folder --name admin --frontend solid --backend h3
+pnpm folder --name svc   --no-frontend    --backend hono
+pnpm folder --name docs  --frontend mdx   --no-backend
 ```
 
 > Folder name is required, omit it and you get an error: `No folder name provided`.

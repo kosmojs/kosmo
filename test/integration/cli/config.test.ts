@@ -29,7 +29,7 @@ describe("should create the project and folders", async () => {
 
     await run(
       createBin,
-      [projectName, "--no-frontend", "--no-backend"],
+      ["--name", projectName, "--no-frontend", "--no-backend"],
       tempDir,
     );
 
@@ -61,6 +61,7 @@ describe("should create the project and folders", async () => {
         kosmoBin,
         [
           "folder",
+          "--name",
           name,
           ...(frontend ? ["--frontend", frontend] : ["--no-frontend"]),
           ...(backend ? ["--backend", backend] : ["--no-backend"]),

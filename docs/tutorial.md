@@ -527,32 +527,34 @@ yarn folder
 ```
 :::
 
-You'll be prompted for the frontend, backend, and more.
-The name gives the folder its prefixes: pages at `/<name>`, API at `/<name>/api`.
+You'll be prompted for the folder name, frontend and backend.
+The name gives the folder its prefixes: pages at `/<name>`, API at `/<name>/api`,
+configurable later in folder's [kosmo.config.ts](/essentials/config).
 
-Non-interactive mode is also supported; pass any flag and no prompts appear:
+Non-interactive mode is also supported; pass flags up front and no prompts appear:
 
+- `--name` folder name, required
 - `--frontend solid|react|vue|svelte|mdx` or `--no-frontend` (one required)
 - `--backend hono|h3|koa` or `--no-backend` (one required)
 - `--overwrite` to proceed into a non-empty directory
 
-Everything else - SSR, SSG, TanStack Query - is a key in the folder's `kosmo.config.ts`,
+Everything else - SSR, SSG, TanStack Query - is a key in the folder's [kosmo.config.ts](/essentials/config),
 not a flag at creation.
 
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm run folder -- <name> --frontend solid --backend hono
+npm run folder -- --name <name> --frontend solid --backend hono
 ```
 
 == pnpm
 ```sh
-pnpm folder <name> --frontend solid --backend hono
+pnpm folder --name <name> --frontend solid --backend hono
 ```
 
 == yarn
 ```sh
-yarn folder <name> --frontend solid --backend hono
+yarn folder --name <name> --frontend solid --backend hono
 ```
 :::
 
@@ -565,20 +567,20 @@ The choice is always explicit - a forgotten flag is an error, never a silent def
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm run folder -- api  --backend hono --no-frontend   # API only, no UI
-npm run folder -- docs --frontend mdx --no-backend    # UI only, no backend
+npm run folder -- --name api  --backend hono --no-frontend   # API only, no UI
+npm run folder -- --name docs --frontend mdx --no-backend    # UI only, no backend
 ```
 
 == pnpm
 ```sh
-pnpm folder api  --backend hono --no-frontend   # API only, no UI
-pnpm folder docs --frontend mdx  --no-backend   # UI only, no backend
+pnpm folder --name api  --backend hono --no-frontend   # API only, no UI
+pnpm folder --name docs --frontend mdx  --no-backend   # UI only, no backend
 ```
 
 == yarn
 ```sh
-yarn folder api  --backend hono --no-frontend   # API only, no UI
-yarn folder docs --frontend mdx  --no-backend   # UI only, no backend
+yarn folder --name api  --backend hono --no-frontend   # API only, no UI
+yarn folder --name docs --frontend mdx  --no-backend   # UI only, no backend
 ```
 :::
 

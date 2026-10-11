@@ -28,6 +28,7 @@ import {
 } from "@kosmojs/lib";
 
 import {
+  assertFolderName,
   assertNoError,
   checkDependencies,
   compareDependencies,
@@ -36,7 +37,6 @@ import {
   type PackageJSON,
   packageManager,
   printMessage,
-  validateName,
 } from "./base";
 import {
   createHTTPFolder,
@@ -62,27 +62,30 @@ export const printUsage = () => {
 
     styleText("bold", "FOLDER COMMAND"),
     "",
-    `  ${styleText("blue", "kosmo folder <name>")}`,
-    `  Create <name> Source Folder in interactive mode, prompting for each step`,
+    `  ${styleText("blue", "kosmo folder")}`,
+    `  Create a Source Folder in interactive mode, prompting for each step`,
     "",
     styleText(
       "bold",
-      "  Use these options to create a Source Folder in CLI mode:",
+      "  Provide flags up front to create a Source Folder without prompts:",
     ),
-    `  ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))} ${styleText("dim", "(--no-frontend for API-only folders)")}`,
-    `  ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(--no-backend for client-only folders use)")}`,
-    `  ${styleText("cyan", "--overwrite")} ${styleText("dim", "overwrite existing files (use with caution)")}`,
+    `  ${styleText("cyan", `--name`)} ${styleText("yellow", "folder name")} ${styleText("dim", "(required)")}`,
+    `  ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))} ${styleText("dim", "(or --no-frontend for API-only folders)")}`,
+    `  ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(or --no-backend for client-only folders)")}`,
+    `  ${styleText("cyan", "--overwrite")} ${styleText("yellow", "overwrite existing files")} ${styleText("dim", "(use with caution)")}`,
     "",
 
     styleText("bold", "SIDECAR COMMAND"),
     "",
-    `  ${styleText("blue", "kosmo sidecar <name>")}`,
-    `  Create <name> Sidecar Folder - builds a standalone process, serves no routes`,
+    `  ${styleText("blue", "kosmo sidecar")}`,
+    `  Create a Sidecar Folder in interactive mode, prompting for each step`,
     "",
-    `  ${styleText("dim", "The entry default-exports defineService({ start, teardown }).")}`,
-    `  ${styleText("dim", "Set sidecar.serve in kosmo.config.ts to run it under kosmo serve.")}`,
-    "",
-    `  ${styleText("cyan", "--overwrite")} ${styleText("dim", "overwrite existing files (use with caution)")}`,
+    styleText(
+      "bold",
+      "  Provide flags up front to create a Sidecar Folder without prompts:",
+    ),
+    `  ${styleText("cyan", `--name`)} ${styleText("yellow", "folder name")} ${styleText("dim", "(required)")}`,
+    `  ${styleText("cyan", "--overwrite")} ${styleText("yellow", "overwrite existing files")} ${styleText("dim", "(use with caution)")}`,
     "",
 
     styleText("bold", "SERVE COMMAND"),
@@ -222,16 +225,16 @@ const run = async () => {
   const input = Object.keys(values).length ? values : undefined;
 
   const createFolder = async () => {
-    const [name] = rest;
-
-    assertNoError(() => validateName(name, "No folder name provided"));
-
     printMessage(
       styleText(["blue", "bold"], "› Preparing a new source folder"),
       "intro",
     );
 
-    const options = await readFolderOptions(root, name, input);
+    const name = await assertFolderName(values.name);
+
+    const options = await readFolderOptions(name, input);
+
+    await prepareFolder(root, name, input);
 
     await createHTTPFolder(root, options);
 
@@ -272,14 +275,12 @@ const run = async () => {
   };
 
   const createSidecar = async () => {
-    const [name] = rest;
-
-    assertNoError(() => validateName(name, "No sidecar name provided"));
-
     printMessage(
       styleText(["blue", "bold"], "› Preparing a new sidecar"),
       "intro",
     );
+
+    const name = await assertFolderName(values.name);
 
     await prepareFolder(root, name, input);
 

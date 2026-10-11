@@ -43,7 +43,7 @@ const usage = [
   `   ${styleText("cyan", `--name`)} ${styleText("yellow", "project name")} ${styleText("dim", "(ignored when using . to bootstrap in current directory)")}`,
   `   ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))} ${styleText("dim", "(or --no-frontend for API-only folders)")}`,
   `   ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(or --no-backend for client-only folders use)")}`,
-  `   ${styleText("cyan", "--overwrite")} ${styleText("dim", "overwrite existing files (use with caution)")}`,
+  `   ${styleText("cyan", "--overwrite")} ${styleText("yellow", "overwrite existing files")} ${styleText("dim", "(use with caution)")}`,
   "",
   ` ${styleText("blue", "-h, --help")}`,
   " Display this help message and exit",

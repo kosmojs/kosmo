@@ -46,43 +46,29 @@ All five run from the **project root** - the directory holding `package.json`.
 | [kosmo build](/cli/build) | Production build only - `dist/run.js` plus a per-folder tree |
 | [kosmo typecheck](/cli/typecheck) | `tsc --noEmit` per source folder, plus the project root |
 
-## Interactive vs CLI mode
+## Flags and prompts
 
-The two scaffolding commands - `npm create kosmo` and `kosmo folder` -
-each have an interactive flow and a flag-driven one.
+`npm create kosmo` and `kosmo folder` take their answers as flags.
+Pass them all and the command just runs - no questions asked:
 
-| Invocation | Mode |
-|---|---|
-| Any flag passed | CLI |
-| No flags, stdout is a terminal | Interactive |
-| No flags, stdout is **not** a terminal | CLI, with an empty flag set |
+```sh
+pnpm folder --name admin --frontend react --backend hono
+```
 
-There is no partial prompting. Once you are in CLI mode, anything you left out
-must have a default, or the command errors out.
+Leave a flag out and the command asks for it instead:
 
-`-q` / `--quiet` suppresses CLI mode's output. Errors still print.
+- **In a terminal**, you get a prompt, and the command carries on with your answer.
+- **Without a terminal** - piped output (`pnpm folder | tee setup.log`),
+a CI script, a container, an agent sandbox - there is nobody to answer,
+so the command stops with an error. See [the messages below](#when-a-command-refuses-to-run).
 
-### The non-terminal case
-
-This is the one that surprises people, and it has nothing to do with how you
-typed the command. The prompts disappear whenever stdout is not a terminal:
-
-- piping the output - `pnpm folder admin | tee setup.log`
-- running it from a setup or CI script
-- running it in a container or an agent sandbox with no terminal attached
-
-So the same invocation that prompts in your shell becomes a CLI-mode run with
-no flags. It fails on the first required value rather than hanging on a question
-nobody can answer.
-
-That is deliberate: a scaffolder blocked on an invisible prompt is worse than
-one that tells you which flag is missing.
+So in scripts and CI, pass every flag up front.
+No terminal means nobody can answer, so a run that is missing a flag fails right away instead of waiting on a question.
 
 ## When a command refuses to run
 
 | Message | Cause |
 |---|---|
-| package.json does not exist, or it is missing the "kosmo" key
 | Unknown command; use one of folder, sidecar, serve, build, preview, typecheck | Typo, or a command from another framework's CLI. |
 | No source folders detected | No `src/*/kosmo.config.ts` anywhere. |
 | Some of the given names do not contain a valid KosmoJS source folder | A named folder doesn't exist or has no config. |

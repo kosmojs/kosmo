@@ -66,6 +66,7 @@ export type FolderOptions = {
 };
 
 export const FOLDER_OPTIONS = {
+  name: { type: "string" },
   frontend: { type: "string" },
   "no-frontend": { type: "boolean" },
   backend: { type: "string" },
@@ -95,6 +96,25 @@ export const compareDependencies = (
 
 export const isTTY = () => {
   return process.env.CI || !process.stdout.isTTY ? false : true;
+};
+
+export const assertFolderName = async (
+  name: string | undefined,
+): Promise<string> => {
+  if (!name) {
+    if (isTTY()) {
+      const name = await readAnswer<string>(
+        prompts.text({ message: "Folder Name", validate: validateName }),
+      );
+      return name as string;
+    } else {
+      assertNoError(() => "No folder name provided");
+      throw new Error("Failed reading folder name");
+    }
+  } else {
+    assertNoError(() => validateName(name, "No folder name provided"));
+    return name;
+  }
 };
 
 export const validateName = (

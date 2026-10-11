@@ -69,7 +69,6 @@ export const prepareFolder = async (
 };
 
 export const readFolderOptions = async (
-  root: string,
   name: string,
   input:
     | Partial<{
@@ -82,8 +81,6 @@ export const readFolderOptions = async (
     | undefined,
 ): Promise<FolderOptions> => {
   const tty = isTTY();
-
-  await prepareFolder(root, name, input);
 
   const options: FolderOptions = { name };
 

@@ -21,7 +21,7 @@ export const run = async (bin: string, args: Array<string>, cwd: string) => {
       { cwd, env },
     );
     return { code: 0, stdout, stderr };
-  } catch (error) {
+  } catch (error: any) {
     const { code, stdout, stderr } = error as {
       code?: unknown;
       stdout?: unknown;
@@ -30,7 +30,9 @@ export const run = async (bin: string, args: Array<string>, cwd: string) => {
     if (code === "ENOENT") {
       // spawn-level failure: the bin never ran. Fires for a missing cwd
       // as well as a missing executable - never treat it as a CLI error
-      throw new Error(`spawn failed (ENOENT); bin: ${bin}, cwd: ${cwd}`);
+      throw new Error(
+        `spawn failed (ENOENT); bin: ${bin}; cwd: ${cwd}; error: ${error.message}`,
+      );
     }
     return {
       code: typeof code === "number" ? code : 1,
