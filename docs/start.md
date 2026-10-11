@@ -16,28 +16,28 @@ Zero to a working route in under five minutes.
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm create kosmo demo
+npm create kosmo
 ```
 
 == pnpm
 ```sh
-pnpm create kosmo demo
+pnpm create kosmo
 ```
 
 == yarn
 ```sh
-yarn create kosmo demo
+yarn create kosmo
 ```
 :::
 
 A short interactive setup walks you through the choices that matter:
-the frontend framework and the backend you want to build with.
+the name, the frontend and the backend you want to build with.
 Everything else starts with sensible defaults.
 
 Pick whatever feels familiar - nothing here is set in stone,
 and any folder you add later can make entirely different choices.
 
-It is also possible to bootstrap in the current folder, just use `.` as name:
+Use `.` to bootstrap in the current directory:
 
 ```sh
 npm create kosmo .
@@ -45,7 +45,7 @@ npm create kosmo .
 
 ---
 
-After bootstrap, `cd` into freshly created project (unless the project was bootstrapped in the current folder):
+After bootstrap, `cd` into freshly created project (unless bootstrapped in the current folder):
 
 ```sh
 cd ./demo
@@ -70,7 +70,7 @@ yarn install
 ```
 :::
 
-The scaffold is complete, not a skeleton - everything comes filled in.
+The scaffold is complete, everything comes filled in.
 What it doesn't have yet is routes, and that is what you add next.
 
 ## Start the dev server

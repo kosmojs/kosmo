@@ -31,27 +31,26 @@ is a tool you can use, debug, and replace independently.
 [Details&nbsp;›](/about)
 
 #### How do I create a new KosmoJS project?
-Run `npm create kosmo demo` (or `pnpm create kosmo demo` / `yarn create kosmo demo`).
+Run `npm create kosmo` (or `pnpm create kosmo` / `yarn create kosmo`).
 An interactive setup creates the project together with your first source folder,
-asking only for the framework and backend - the folder defaults to `app` at base `/`.
-Then `cd ./demo` and install dependencies.
+asking for the name, frontend and backend.
 
-Use `.` as the name to bootstrap into the current folder (e.g. a freshly cloned repo).
+Use `.` to bootstrap in the current directory: `pnpm create kosmo .`
+
 [Details&nbsp;›](/start)
 
 #### How do I create a project non-interactively?
-Choose the framework and backend up front - when flags are present no prompts appear:
-`npm create kosmo demo -- --frontend react --backend hono`
-(pnpm and yarn forward flags without the extra `--`: `pnpm create kosmo demo --frontend ...`).
+Provide the name, frontend and backend up front - when flags are present no prompts appear:
+`npm create kosmo -- --name demo --frontend react --backend hono`
+(pnpm and yarn forward flags without the extra `--`: `pnpm create kosmo --name demo ...`).
 
 Required: `--frontend <name>` or `--no-frontend`, and `--backend <name>` or `--no-backend` -
 the choice is always explicit; a missing flag is an error, never a silent default.
 
-Optional: `--overwrite`.
-The first folder is always `app`, with pages at `/` and its API at `/api`.
-[Full flag reference&nbsp;›](/cli/create#cli-mode)
+Use `.` to bootstrap in the current directory: `pnpm create kosmo .`
 
-Use `.` as the project name to scaffold into the current folder: `npm create kosmo . -- --frontend ...`
+> **Worth Noting:** `--name` ignored when using `.` to bootstrap in current directory.
+
 [Details&nbsp;›](/start)
 
 #### How do I add a source folder?

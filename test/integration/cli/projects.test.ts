@@ -51,9 +51,11 @@ for (const projectName of [
       };
     };
 
+    const nameArg = projectName === "." ? ["."] : ["--name", projectName];
+
     test("frontend + backend", async () => {
       const { code, stderr, folderEntries } = await createProject([
-        projectName,
+        ...nameArg,
         "--frontend",
         "react",
         "--backend",
@@ -67,7 +69,7 @@ for (const projectName of [
 
     test("--no-frontend creates a backend-only folder", async () => {
       const { code, folderEntries } = await createProject([
-        projectName,
+        ...nameArg,
         "--no-frontend",
         "--backend",
         "hono",
@@ -80,7 +82,7 @@ for (const projectName of [
 
     test("--no-backend creates a frontend-only folder", async () => {
       const { code, folderEntries } = await createProject([
-        projectName,
+        ...nameArg,
         "--frontend",
         "mdx",
         "--no-backend",
@@ -93,7 +95,7 @@ for (const projectName of [
 
     test("both negations create a bare folder", async () => {
       const { code, folderEntries } = await createProject([
-        projectName,
+        ...nameArg,
         "--no-frontend",
         "--no-backend",
       ]);
@@ -105,7 +107,7 @@ for (const projectName of [
 
     test("missing frontend fails", async () => {
       const { code, stderr } = await createProject([
-        projectName,
+        ...nameArg,
         "--backend",
         "hono",
       ]);
@@ -115,7 +117,7 @@ for (const projectName of [
 
     test("missing backend fails", async () => {
       const { code, stderr } = await createProject([
-        projectName,
+        ...nameArg,
         "--frontend",
         "react",
       ]);
@@ -138,7 +140,7 @@ for (const projectName of [
       expect,
     }) => {
       const { code, stderr } = await createProject([
-        projectName,
+        ...nameArg,
         "--frontend",
         "angular",
         "--backend",
@@ -151,7 +153,7 @@ for (const projectName of [
 
     test("invalid backend value fails, listing options", async () => {
       const { code, stderr } = await createProject([
-        projectName,
+        ...nameArg,
         "--frontend",
         "solid",
         "--backend",
@@ -164,7 +166,7 @@ for (const projectName of [
 
     test("frontend value + negation is a conflict", async () => {
       const { code, stderr } = await createProject([
-        projectName,
+        ...nameArg,
         "--frontend",
         "vue",
         "--no-frontend",
@@ -177,7 +179,7 @@ for (const projectName of [
 
     test("backend value + negation is a conflict", async () => {
       const { code, stderr } = await createProject([
-        projectName,
+        ...nameArg,
         "--frontend",
         "react",
         "--backend",
@@ -190,7 +192,7 @@ for (const projectName of [
 
     test("unknown option fails with a clean error, not a stack trace", async () => {
       const { code, stderr } = await createProject([
-        projectName,
+        ...nameArg,
         "--unknown-flag",
         "--frontend",
         "react",
@@ -204,7 +206,7 @@ for (const projectName of [
 
     test("existing dir fails", async () => {
       const { code, cwd } = await createProject([
-        projectName,
+        ...nameArg,
         "--no-frontend",
         "--no-backend",
       ]);
@@ -213,7 +215,7 @@ for (const projectName of [
 
       {
         const { code, stderr } = await createProject(
-          [projectName, "--no-frontend", "--no-backend"],
+          [...nameArg, "--no-frontend", "--no-backend"],
           cwd,
         );
         expect(code).not.toEqual(0);
@@ -223,7 +225,7 @@ for (const projectName of [
 
     test("existing dir succeeds with --overwrite", async () => {
       const { code, cwd } = await createProject([
-        projectName,
+        ...nameArg,
         "--no-frontend",
         "--no-backend",
       ]);
@@ -232,7 +234,7 @@ for (const projectName of [
 
       {
         const { code } = await createProject(
-          [projectName, "--no-frontend", "--no-backend", "--overwrite"],
+          [...nameArg, "--no-frontend", "--no-backend", "--overwrite"],
           cwd,
         );
         expect(code).toEqual(0);

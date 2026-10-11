@@ -16,81 +16,66 @@ A step-by-step walkthrough covering everything KosmoJS provides.
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm create kosmo demo
+npm create kosmo
 ```
 
 == pnpm
 ```sh
-pnpm create kosmo demo
+pnpm create kosmo
 ```
 
 == yarn
 ```sh
-yarn create kosmo demo
+yarn create kosmo
 ```
 :::
 
 A short interactive setup creates the project together with your first source folder,
-prompting for the framework and backend.
+prompting for the name, frontend and backend.
 
-The folder itself defaults to `app` at base `/` (override later, or via flags in CLI mode).
-
-It is also possible to bootstrap in the current folder, just use `.` as name:
+Use `.` to bootstrap in the current directory:
 
 ```sh
 npm create kosmo .
 ```
 
+The first source folder is always `app`, serving pages at `/` and its API at `/api`.
+Both `frontend` and `backend` can be further configured in folder's [kosmo.config.ts](/essentials/config).
+
 <details class="details custom-block">
 <summary>Prefer a scripted setup?</summary>
 
-Provide the framework/backend up front and no prompts appear:
+Provide up front the `--name` and `--frontend`/`--backend` (or `--no-frontend`/`--no-backend` counterparts)
+and no prompts appear:
 
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm create kosmo demo -- --frontend solid --backend hono
+# npm needs an extra -- to pass flags through
+npm create kosmo -- --name demo --frontend solid --backend hono
 ```
 
 == pnpm
 ```sh
-pnpm create kosmo demo --frontend solid --backend hono
+pnpm create kosmo --name demo --frontend solid --backend hono
 ```
 
 == yarn
 ```sh
-yarn create kosmo demo --frontend solid --backend hono
+yarn create kosmo --name demo --frontend solid --backend hono
 ```
 :::
 
-The first source folder is always `app`, serving pages at `/` and its API at `/api`.
-Both `frontend` and `backend` can be further configured in `kosmo.config.ts`.
-
-Need no backend? Provide `--no-backend` flag:
-
-:::tabs key:pm variant:code
-== npm
-```sh
-npm create kosmo demo -- --frontend solid --no-backend
-```
-
-== pnpm
-```sh
-pnpm create kosmo demo --frontend solid --no-backend
-```
-
-== yarn
-```sh
-yarn create kosmo demo --frontend solid --no-backend
-```
-:::
+Need no backend? Provide `--no-backend` flag: `--name demo --frontend solid --no-backend`
 
 Same for the frontend, provide the `--no-frontend` flag to get a backend-only setup.
+
+> **Worth Noting:** `--name` ignored when using `.` to bootstrap in current directory.
 </details>
 
 ---
 
-After bootstrap, `cd` into freshly created project (unless the project was bootstrapped in the current folder):
+After bootstrap, `cd` into freshly created project (unless bootstrapped in the current folder):
 
 ```sh
 cd ./demo
@@ -115,7 +100,7 @@ yarn install
 ```
 :::
 
-The scaffold is complete, not a skeleton - everything comes filled in.
+The scaffold is complete, everything comes filled in.
 What it doesn't have yet is routes, and that is what you add next.
 
 ## Start the dev server

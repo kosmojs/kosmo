@@ -26,25 +26,23 @@ const usage = [
   "",
   styleText("bold", "BASIC USAGE"),
   "",
-  ` ${styleText("blue", "npm create kosmo <name>")}`,
-  ` Create a project at ${styleText("blue", "./<name>")} path ${styleText("dim", "(interactive mode)")}`,
+  ` Create a project interactively, asking for name and frontend/backend:`,
+  ` ${styleText("blue", "npm create kosmo")}`,
   "",
+  " Create a project in current directory:",
   ` ${styleText("blue", "npm create kosmo .")}`,
-  " Create a project in current folder",
   "",
-  ` ${styleText("blue", "npm create kosmo <name> -- --frontend ...")}`,
-  ` Create a project at ${styleText("blue", "./<name>")} path ${styleText("dim", "(CLI mode)")}`,
-  "",
-  ` ${styleText("blue", "npm create kosmo . -- --frontend ...")}`,
-  ` Create a project in current folder`,
+  " Provide flags up front to skip interactive prompts:",
+  ` ${styleText("blue", "npm create kosmo -- --name <name> ...")}`,
   "",
   " pnpm/yarn works without extra --",
-  ` ${styleText("dim", "pnpm create kosmo . --frontend ...")}`,
-  ` ${styleText("dim", "yarn create kosmo . --frontend ...")}`,
+  ` ${styleText("blue", "pnpm create kosmo --name <name> ...")}`,
+  ` ${styleText("blue", "yarn create kosmo --name <name> ...")}`,
   "",
-  " CLI mode arguments:",
-  `   ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))} ${styleText("dim", "(--no-frontend for API-only folders)")}`,
-  `   ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(--no-backend for client-only folders use)")}`,
+  " FLAGS:",
+  `   ${styleText("cyan", `--name`)} ${styleText("yellow", "project name")} ${styleText("dim", "(ignored when using . to bootstrap in current directory)")}`,
+  `   ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))} ${styleText("dim", "(or --no-frontend for API-only folders)")}`,
+  `   ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(or --no-backend for client-only folders use)")}`,
   `   ${styleText("cyan", "--overwrite")} ${styleText("dim", "overwrite existing files (use with caution)")}`,
   "",
   ` ${styleText("blue", "-h, --help")}`,
@@ -77,18 +75,29 @@ const run = async () => {
     return;
   }
 
-  const [name] = positionals;
-
-  if (name !== ".") {
-    assertNoError(() => validateName(name, "No project name provided"));
-  }
-
-  const root = resolve(process.cwd(), name);
-
   printMessage(
     styleText(["blue", "bold"], "› Preparing a new KosmoJS project"),
     "intro",
   );
+
+  let name = positionals[0] === "." ? "." : values.name;
+
+  if (!name) {
+    if (isTTY()) {
+      const answer = await readAnswer<string>(
+        prompts.text({ message: "Project Name", validate: validateName }),
+      );
+      name = answer as string;
+    } else {
+      assertNoError(() => "No project name provided");
+    }
+  } else if (name !== ".") {
+    assertNoError(() => validateName(name, "No project name provided"));
+  }
+
+  const folderOptions = await readFolderOptions("app", values);
+
+  const root = resolve(process.cwd(), name as never);
 
   await mkdir(root, { recursive: true });
 
@@ -125,24 +134,17 @@ const run = async () => {
       } else if (answer === "cancel") {
         prompts.cancel("Cancelled");
         process.exit(0);
-      } else if (answer === "overwrite") {
-        // do not passthrough overwrite option, let user decide what to do with existing folder, if any.
-        // at the price of two consecutive prompts.
       }
     } else {
       assertNoError(() => {
-        return `$message. Either remove dir contents or provide --overwrite flag`;
+        return `${message}. Either remove dir contents or provide --overwrite flag`;
       });
     }
   }
 
   await createProject(root);
 
-  const input = Object.keys(values).length ? values : undefined;
-
-  const options = await readFolderOptions(root, "app", input);
-
-  await createHTTPFolder(root, options, {
+  await createHTTPFolder(root, folderOptions, {
     frontend: { base: "/" },
     backend: { base: "/api" },
   });
@@ -174,7 +176,7 @@ const run = async () => {
   printMessage(
     styleText(
       ["green", "bold"],
-      "✨ Well done! Your project is ready to perform",
+      "✨ Well done! Your new project is ready to perform",
     ),
     "outro",
   );

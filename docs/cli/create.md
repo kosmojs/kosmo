@@ -7,71 +7,83 @@ head:
       content: create kosmo, npm create kosmo, scaffolding, --frontend, --backend, --overwrite
 ---
 
+A KosmoJS project starts with the `create kosmo` command:
+
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm create kosmo demo
+npm create kosmo
 ```
 
 == pnpm
 ```sh
-pnpm create kosmo demo
+pnpm create kosmo
 ```
 
 == yarn
 ```sh
-yarn create kosmo demo
+yarn create kosmo
 ```
 :::
 
-The positional argument is the target directory, created if missing. Use `.` to bootstrap in the
-current directory:
+Use `.` to bootstrap in the current directory:
 
 ```sh
 npm create kosmo .
 ```
 
-A project name may contain alphanumerics and any of `. - + $ @`,
-may not start with a dash, and may not contain path traversal.
+You'll be asked for:
 
-## The interactive flow
+* **Name** - the project name (unless `.` used to bootstrap in current directory)
+* **Frontend** - React, Vue, Solid, Svelte, MDX, or *None (API-only folder)*
+* **Backend** - Hono, H3, Koa, or *None (client-only folder)*
+
+The first source folder is always **`app`**, with its pages at `/` and its API at `/api`.
+<span class="text-nowrap">Add differently-shaped folders</span> at any time with [kosmo folder](/cli/folder).
 
 If the target directory has anything in it other than `.git*`, `README*` or `LICENSE*`,
-you are asked first what to do with it - remove the existing files, keep them and overwrite as needed, or cancel.
+<span class="text-nowrap">you are asked first what to do with it:</span>
 
-Then a handful of questions, all about the **first source folder**:
-
-1. **Framework** - React, Vue, Solid, Svelte, MDX, or *None (API-only folder)*
-2. **Backend Framework** - Hono, H3, Koa, or *None (client-only folder)*
-3. **Enable server-side rendering (SSR)?** - skipped for MDX, where SSR is always on
-4. **Enable static site generation (SSG)?** - asked only if SSR is enabled
-5. **Enable TanStack Query?** - skipped for MDX, which does not support it
-
-You are not asked for the folder's name or base: the first folder is always **`app`**, with its pages at `/` and its API at `/api`.
-Add differently-shaped folders at any time with [kosmo folder](/cli/folder).
+* Remove the existing files
+* Keep them and overwrite as needed
+* Cancel
 
 ## CLI mode
 
-```sh
-# npm needs -- to pass flags through
-npm create kosmo demo -- --frontend react --backend hono
+Provide up front the `--name` and `--frontend`/`--backend` (or `--no-frontend`/`--no-backend` counterparts)
+and no prompts appear:
 
-# pnpm and yarn do not
-pnpm create kosmo demo --frontend react --backend hono
+:::tabs key:pm variant:code
+== npm
+```sh
+# npm needs an extra -- to pass flags through
+npm create kosmo -- --name demo --frontend solid --backend hono
 ```
+
+== pnpm
+```sh
+pnpm create kosmo --name demo --frontend solid --backend hono
+```
+
+== yarn
+```sh
+yarn create kosmo --name demo --frontend solid --backend hono
+```
+:::
+
 
 | Flag | Meaning |
 |---|---|
-| `--frontend <name>` | `react`, `solid`, `vue`, `svelte`, `mdx`. |
+| `--name <name>` | Project name. Ignored when using `.` to bootstrap in current directory |
+| `--frontend <stack>` | `react`, `solid`, `vue`, `svelte`, `mdx`. |
 | `--no-frontend` | API-only folder - no `pages/`, no client entries. |
-| `--backend <name>` | `hono`, `h3`, `koa`. |
+| `--backend <stack>` | `hono`, `h3`, `koa`. |
 | `--no-backend` | Client-only folder - no `api/` directory. |
 | `--overwrite` | Proceed even though the target directory is not empty. |
-| `-q, --quiet` | Suppress output. |
 | `-h, --help` | Print usage and exit. |
 
-::: warning The frontend and backend choices are never implied
-Either `--frontend <name>` **or** `--no-frontend` is required -
+:::info The frontend and backend choices are never implied
+Either `--frontend <stack>` **or** `--no-frontend` is required -
 omitting both is an error, and passing them both is an error too (same for backend).
 :::
 
