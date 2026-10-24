@@ -14,7 +14,7 @@ const generator = new ConventionalChangelog()
       { type: "revert", section: "Reverts" },
       { type: "refactor", section: "Code Refactoring" },
       { type: "refine", section: "Improvements" },
-      { type: "chore", section: "Miscellaneous" },
+      { type: "misc", section: "Miscellaneous" },
     ],
   })
   .options({
