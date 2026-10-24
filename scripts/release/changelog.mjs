@@ -13,6 +13,8 @@ const generator = new ConventionalChangelog()
       { type: "perf", section: "Performance Improvements" },
       { type: "revert", section: "Reverts" },
       { type: "refactor", section: "Code Refactoring" },
+      { type: "refine", section: "Improvements" },
+      { type: "chore", section: "Miscellaneous" },
     ],
   })
   .options({
