@@ -11,7 +11,7 @@ import {
   type ProjectSettings,
   type SourceFolder,
 } from "@kosmojs/core";
-import { formatCode, render, renderToFile } from "@kosmojs/lib";
+import { formatCode, pathResolver, render, renderToFile } from "@kosmojs/lib";
 
 import {
   assertNoError,
@@ -298,6 +298,31 @@ const seedFolder = async (
     previewHost: "",
     distDir: "/dev/null",
   };
+
+  const { createPath } = pathResolver(projectSettings, sourceFolder);
+
+  if (config.frontend) {
+    // create an empty index page, frontend generator will seed it accordingly
+    const frontend =
+      typeof config.frontend?.stack === "object"
+        ? config.frontend.stack.name
+        : config.frontend.stack;
+
+    const ext = {
+      react: "tsx",
+      solid: "tsx",
+      vue: "vue",
+      svelte: "svelte",
+      mdx: "mdx",
+    }[frontend];
+
+    await renderToFile(createPath.pages(`index/index.${ext}`), "", {});
+  }
+
+  if (config.backend) {
+    // create an empty index route, backend generator will seed it accordingly
+    await renderToFile(createPath.api(`index/index.ts`), "", {});
+  }
 
   for (const generator of generators) {
     await generator.factory(projectSettings, sourceFolder).seed();
