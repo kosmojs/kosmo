@@ -59,7 +59,13 @@ export const pathResolver = (
     lib(a, { origin }) {
       return origin === "src"
         ? join(defaults.libPrefix, ...a)
-        : join(defaults.appPrefix, defaults.libDir, name, ...a);
+        : join(
+            defaults.appPrefix,
+            defaults.varDir,
+            defaults.libDir,
+            name,
+            ...a,
+          );
     },
     libCore(a, o) {
       return this.lib(["core", ...a], o);
@@ -87,7 +93,7 @@ export const pathResolver = (
         return this.src(defaults.entryDir, ...a);
       },
       lib(...a) {
-        return createPath(defaults.libDir, name, ...a);
+        return createPath(defaults.varDir, defaults.libDir, name, ...a);
       },
       libCore(...a) {
         return this.lib("core", ...a);

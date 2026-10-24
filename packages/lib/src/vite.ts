@@ -19,51 +19,23 @@ import { pathResolver } from "./paths";
  * WHY THIS EXISTS
  * ---------------
  * Every source folder is scaffolded with three tsconfig `paths` prefixes
- * that let generated and user code import across
- * the folder's layout without long relative chains:
+ * that let generated and user code import across the folder's layout without long relative chains:
  *
  *   appPrefix "@" -> the project root            (<root>/*)
  *   srcPrefix "~" -> the folder's src dir        (<root>/src/<name>/*)
- *   libPrefix "_" -> the folder's lib dir        (<root>/lib/<name>/*)
+ *   libPrefix "_" -> the folder's lib dir        (<root>/var/lib/<name>/*)
  *
- * These are the backbone of the generated code: `defineRoute` and friends are
- * emitted with `_/...` imports, pages import layouts and components via `~/...`,
- * and `@/...` reaches shared app-level modules. If a bundler cannot resolve
- * them, nothing the framework generates can be loaded.
+ * These are the backbone of the generated code:
+ * `defineRoute` and friends are emitted with `_/...` imports,
+ * pages import layouts and components via `~/...`,
+ * and `@/...` reaches shared app-level modules.
+ * If a bundler cannot resolve them, nothing the framework generates can be loaded.
  *
- * Historically Vite resolved these through its built-in `resolve.tsconfigPaths: true`,
- * reading the `paths` straight from the generated tsconfig. That option
- * regressed in Vite 8.1.0 (still broken as of 8.1.3): it stops resolving
- * `paths` mappings, especially those defined in an extended / referenced base
- * config - which is exactly Kosmo's structure, where a source folder's
- * tsconfig `extends` `lib/<name>/tsconfig.json` and the paths use the
- * TypeScript `${configDir}` variable. The failure surfaces as:
+ * A project with custom `paths` beyond these three prefixes should install `vite-tsconfig-paths`;
+ * this plugin is internal and intentionally narrow.
  *
- *   [vite] Failed to resolve import "_/pageSamples/welcome.vue" from
- *   "src/<name>/pages/index/index.vue". Does the file exist?
- *
- * (Upstream: vitejs/vite #22139, #22047, #22371, #21889, #21856.)
- *
- * Rather than pin Vite to 8.0.x indefinitely, or depend on the general-purpose
- * `vite-tsconfig-paths` plugin, this internal plugin resolves ONLY
- * known prefixes against dirs derived from the source folder. That makes it:
- *
- *   - Correct on 8.1.x, where native `tsconfigPaths` is broken.
- *   - Faster: no tsconfig discovery, no `extends` chain walking, no glob
- *     matching - just a prefix check and a handful of `stat` probes,
- *     cached by Vite per specifier.
- *   - Non-blocking: probes via async `fs/promises` `stat`, so `resolveId` never
- *     stalls the event loop.
- *   - `.vue` / `.mdx`-aware: `resolveId` sees every specifier regardless of the
- *     importer's type, so imports from non-JS files resolve without the
- *     `loose` / `allowJs` escape hatches `vite-tsconfig-paths` needs.
- *
- * A project with custom `paths` beyond these three prefixes should install
- * `vite-tsconfig-paths`; this plugin is internal and intentionally narrow.
- *
- * The prefix -> dir bases come from `pathResolver`, the same source of truth the
- * tsconfig generator uses, so alias resolution here can never drift from the
- * paths that were written into the generated tsconfig.
+ * The prefix -> dir bases come from `pathResolver`, the same source of truth the tsconfig generator uses,
+ * so alias resolution here can never drift from the paths that were written into the generated tsconfig.
  * */
 export const tsconfigPaths = (
   projectSettings: ProjectSettings,
@@ -102,10 +74,10 @@ export const tsconfigPaths = (
     const target = join(baseDir, rest);
     const { ext } = parse(rest);
 
-    // Specifier already carries a known extension: the target IS the candidate
-    // (an explicit `foo.js` must not be probed as `foo.js.js`). Only fall back
-    // to its `/index.<ext>` for a directory import that happens to end in a
-    // known extension (rare, but keeps behaviour total).
+    // Specifier already carries a known extension:
+    // the target IS the candidate (an explicit `foo.js` must not be probed as `foo.js.js`).
+    // Only fall back to its `/index.<ext>` for a directory import
+    // that happens to end in a known extension (rare, but keeps behaviour total).
     if (EXTENSIONS.includes(ext)) {
       for (const candidate of [target, `${target}/index${ext}`]) {
         if (await isFile(candidate)) {

@@ -35,8 +35,8 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
         resolve(projectSettings.root, "tsconfig.json"),
         JSON.stringify(
           {
-            extends: `./${defaults.libDir}/tsconfig.json`,
-            include: [`./${defaults.libDir}/*.d.ts`],
+            extends: `./${defaults.varDir}/${defaults.libDir}/tsconfig.json`,
+            include: [`./${defaults.varDir}/${defaults.libDir}/*.d.ts`],
           },
           undefined,
           2,
@@ -61,7 +61,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
         createPath.src("tsconfig.json"),
         JSON.stringify(
           {
-            extends: `../../${defaults.libDir}/${sourceFolder.name}/tsconfig.json`,
+            extends: `../../${defaults.varDir}/${defaults.libDir}/${sourceFolder.name}/tsconfig.json`,
           },
           undefined,
           2,
