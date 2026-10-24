@@ -11,6 +11,7 @@ import KosmoMark from "../components/KosmoMark.vue";
         <a href="/features">Features</a>
         <a href="/routing/intro">Routing</a>
         <a href="/validation/intro">Validation</a>
+        <a href="/blog">Blog</a>
         <a href="https://github.com/kosmojs/kosmo" target="_blank" rel="noopener">GitHub</a>
       </nav>
       <div class="foot-copy">

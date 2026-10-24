@@ -22,6 +22,7 @@ const srcDir = resolve(import.meta.dirname, "..");
 const skipDirs = new Set([
   ".vitepress",
   "node_modules",
+  "blog",
   "public",
   "scripts",
   "parts",

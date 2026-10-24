@@ -5,6 +5,7 @@ import {
 } from "vitepress-plugin-group-icons";
 import llmstxtPlugin from "vitepress-plugin-llms";
 import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
+import { generateSidebar } from "vitepress-sidebar";
 
 export const redirects = [
   // CLI moved
@@ -16,6 +17,24 @@ export const redirects = [
 // the URL a page is published at, to match a redirect key against
 const pageUrl = (relativePath: string) => {
   return `/${relativePath.replace(/\.md$/, ".html")}`;
+};
+
+const blogSidebarItems = (dir: string, opts = {}) => {
+  const items = generateSidebar({
+    documentRootPath: "/",
+    scanStartPath: `blog/${dir}`,
+    useTitleFromFrontmatter: true,
+    frontmatterTitleFieldName: "title",
+    sortMenusByFrontmatterDate: true,
+    sortMenusOrderByDescending: true,
+    ...opts,
+  });
+  return Array.isArray(items)
+    ? items.map((item) => ({
+        ...item,
+        link: item.link ? `/blog/${dir}/${item.link}` : item.link,
+      }))
+    : [];
 };
 
 export default defineConfig({
@@ -167,11 +186,6 @@ export default defineConfig({
         activeMatch: "^/about",
       },
       {
-        text: "Features",
-        link: "/features",
-        activeMatch: "^/features",
-      },
-      {
         text: "Quick Start",
         link: "/start",
         activeMatch: "^/start",
@@ -190,6 +204,11 @@ export default defineConfig({
         text: "CLI",
         link: "/cli/intro",
         activeMatch: "^/cli/",
+      },
+      {
+        text: "Blog",
+        link: "/blog",
+        activeMatch: "^/blog/",
       },
     ],
 
@@ -603,6 +622,25 @@ export default defineConfig({
               link: "/llms-full.txt",
             },
           ],
+        },
+      ],
+
+      "/blog/": [
+        {
+          text: "Blog",
+          items: [{ text: "All posts", link: "/blog/" }],
+        },
+        {
+          text: "2026",
+          items: blogSidebarItems("2026") as never,
+        },
+        {
+          text: "Retrospective",
+          items: blogSidebarItems("retrospective", {
+            sortMenusOrderByDescending: false,
+            useTitleFromFrontmatter: true,
+            frontmatterTitleFieldName: "sidebarTitle",
+          }) as never,
         },
       ],
     },
