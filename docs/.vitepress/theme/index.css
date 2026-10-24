@@ -41,6 +41,10 @@
   white-space: nowrap !important;
 }
 
+.text-muted {
+  color: var(--vp-c-text-3);
+}
+
 /* a centered call to action block, as used at the foot of About and Features */
 .vp-doc .text-center {
   margin: 40px 0 8px;

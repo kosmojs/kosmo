@@ -1,12 +1,43 @@
 <script setup lang="ts">
 import { useData } from "vitepress";
 import DefaultTheme from "vitepress/theme";
-import { watchEffect } from "vue";
+import { computed, watchEffect } from "vue";
 
 import KosmoMark from "./components/KosmoMark.vue";
 
 const { Layout: DefaultLayout } = DefaultTheme;
-const { frontmatter } = useData();
+const { frontmatter, lang } = useData();
+
+const formattedDate = computed(() => {
+  const raw = frontmatter.value.date;
+
+  if (!raw) {
+    return "";
+  }
+
+  const d = new Date(raw);
+
+  if (Number.isNaN(d.getTime())) {
+    return "";
+  }
+
+  return d.toLocaleDateString(lang.value || "en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+});
+
+const isoDate = computed(() => {
+  const raw = frontmatter.value.date;
+
+  if (!raw) {
+    return "";
+  }
+
+  const d = new Date(raw);
+  return Number.isNaN(d.getTime()) ? "" : d.toISOString();
+});
 
 watchEffect(() => {
   if (typeof document === "undefined") {
@@ -33,9 +64,15 @@ watchEffect(() => {
       <KosmoMark />
     </template>
     <template #aside-outline-before>
+      <!-- Render the date only if it exists in frontmatter -->
+      <time v-if="formattedDate" :datetime="isoDate" class="text-muted">
+        {{ formattedDate }}
+      </time>
       <!-- Render the title only if it exists in frontmatter -->
       <div v-if="frontmatter.title" class="page-title-aside">
-        {{ frontmatter.title }}
+        <div>
+          {{ frontmatter.title }}
+        </div>
       </div>
     </template>
   </DefaultLayout>
