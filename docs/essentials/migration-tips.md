@@ -85,7 +85,7 @@ so `docs/{...path}` matches `/docs` as well as `/docs/a/b/c` - covering both `[.
 
 There is no route tree to register or import.
 
-Routing is filesystem-driven; the route config is derived per source folder into `lib/` and handed to the framework's native router.
+Routing is filesystem-driven; the route config is derived per source folder into `var/lib/` and handed to the framework's native router.
 Treat it as a build artifact - you never edit or read it.
 [Details&nbsp;›](/frontend/routing#routes)
 

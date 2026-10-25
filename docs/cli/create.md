@@ -94,7 +94,7 @@ demo/
 ├── .gitignore
 ├── package.json
 ├── tsconfig.json
-├── lib/                       # generated support code, reached through `_/`
+├── var/lib/                   # generated support code, reached through `_/`
 └── src/app/
     ├── kosmo.config.ts        # the frontend / backend blocks your answers imply
     ├── tsconfig.json
@@ -103,6 +103,7 @@ demo/
     ├── router.ts
     ├── components/Link.tsx    # the typed Link
     ├── pages/404.tsx          # the 404 page
+    ├── pages/index/index.tsx  # the default index page
     ├── entry/client.ts        # the client entry
     ├── entry/server.ts        # the server entry, used by SSR builds
     ├── public/favicon.svg
@@ -112,11 +113,13 @@ demo/
         ├── errors.ts          # the default error handler
         ├── dev.ts             # dev-only hooks
         ├── server.ts
+        ├── index/index.ts     # the default index route
         └── env.d.ts           # global context types
 ```
 
-Every one of those files comes filled in. What the scaffold does not write is routes -
-`api/` has no endpoints and `pages/` no index page yet.
+Every one of those files comes filled in, including a default index page and,
+if a backend was chosen, a default index route.
+The routes you add yourself sit alongside them.
 
 ---
 
@@ -169,4 +172,4 @@ yarn dev
 ```
 :::
 
-Your app is now running at `http://localhost:4556`.
+Your app is now running at `http://localhost:4556`, serving the default index page.

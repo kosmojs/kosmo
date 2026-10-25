@@ -632,8 +632,8 @@ Your project starts with a minimal `tsconfig.json`:
 
 ```json [tsconfig.json]
 {
-  "extends": "./lib/tsconfig.json",
-  "include": ["./lib/*.d.ts"]
+  "extends": "./var/lib/tsconfig.json",
+  "include": ["./var/lib/*.d.ts"]
 }
 ```
 
@@ -645,7 +645,7 @@ You can add your own paths, but these prefixes are reserved:
 - `_/*` - Derived code imports
 
 [Project Structure ›](/essentials/project-structure#path-mappings) walks the whole layout - what
-lives in `src/` versus `lib/`, and what each alias resolves to.
+lives in `src/` versus `var/lib/`, and what each alias resolves to.
 
 ---
 

@@ -24,13 +24,13 @@ you keep its router, its reactive model and its ecosystem, exactly as documented
 These are the files that make the folder an application.
 Every one is a real source file you own: written once when the folder is created, never re-seeded behind your back.
 
-What you import through `_/` is the opposite: derived into `lib/<folder>/`,
+What you import through `_/` is the opposite: derived into `var/lib/<folder>/`,
 regenerated on every change, [never&nbsp;edited](/essentials/project-structure#path-mappings).
 
 ```text
 src/<folder>/
 ├── kosmo.config.ts       -> this folder's config (and its Vite config)
-├── tsconfig.json         -> extends lib/front/tsconfig.json
+├── tsconfig.json         -> extends var/lib/front/tsconfig.json
 ├── index.html            -> Vite's HTML entry
 ├── app.tsx               -> global wrapper around EVERY route
 ├── router.ts             -> wires routes into the native router
@@ -62,7 +62,7 @@ src/<folder>/
 | `entry/server.*` | The SSR entry, exporting `renderToString` and - where the framework supports it - `renderToStream`. Only present when SSR is enabled. | Injecting SSR assets into `head` |
 | `components/Link.*` | The typed [Link](/frontend/link-navigation) component: `to` takes a `[routeName, ...params]` tuple, so renaming a route directory becomes a compile error at every call site. | Styling it |
 | `index.html` | Vite's HTML entry, loading `entry/client`. | Meta tags, fonts, the mount node |
-| `tsconfig.json` | Extends the derived `lib/<folder>/tsconfig.json`, which carries JSX and path settings. Anything you set here wins. | [Relaxing strictness](/backend/type-safety) |
+| `tsconfig.json` | Extends the derived `var/lib/<folder>/tsconfig.json`, which carries JSX and path settings. Anything you set here wins. | [Relaxing strictness](/backend/type-safety) |
 | `kosmo.config.ts` | The folder's [configuration](/essentials/config) - the `frontend`, `backend` and `validation` blocks, and any Vite option. | Turning on SSR, adding Vite plugins |
 
 ### Inside `pages/`
@@ -90,7 +90,7 @@ src/<folder>/
 A source folder runs exactly one framework and ignores the others' files - a Vue folder never picks up a stray `.tsx` page.
 [Full&nbsp;matrix&nbsp;›](/essentials/frameworks#frontends)
 
-Derived code - the route table, fetch clients, validators - lives in `lib/`, is git-ignored,
+Derived code - the route table, fetch clients, validators - lives in `var/lib/`, is git-ignored,
 and is not something you read to learn the project. [Why&nbsp;codegen&nbsp;›](/essentials/why-codegen)
 
 ## TypeScript Configuration
@@ -111,10 +111,10 @@ but differing `jsxImportSource` values cause type
 conflicts when multiple frameworks coexist in the same project.
 
 Solved by deriving a `tsconfig.json` specific to each source folder,
-placed in the `lib/` directory for the source folder to extend:
+placed in the `var/lib/` directory for the source folder to extend:
 
 ```json [src/front/tsconfig.json]
-{ "extends": "../../lib/front/tsconfig.json" }
+{ "extends": "../../var/lib/front/tsconfig.json" }
 ```
 
 Each config supplies the correct `jsxImportSource`, path mappings, and core settings.

@@ -1,6 +1,6 @@
 ---
 title: Project Structure
-description: The anatomy of a KosmoJS project - source folders, the derived lib directory,
+description: The anatomy of a KosmoJS project - source folders, the derived var/lib directory,
     build output, and the reserved @/ ~/ _/ path mappings.
 head:
   - - meta
@@ -21,7 +21,7 @@ my-app/
 │   ├── front/            ->   one source folder
 │   └── admin/            ->   another, fully independent
 │
-├── lib/                  🤖 DERIVED - never edit
+├── var/lib/              🤖 DERIVED - never edit
 │   ├── tsconfig.json     ->   base config the root tsconfig extends
 │   ├── front/            ->   derived code for src/front
 │   └── admin/            ->   derived code for src/admin
@@ -34,8 +34,8 @@ my-app/
 └── var/                  🗑️  Vite cache - disposable
 ```
 
-The rule of thumb: **you own `src/`, KosmoJS owns `lib/`.**
-Every `_/` import you write points into `lib/`.
+The rule of thumb: **you own `src/`, KosmoJS owns `var/lib/`.**
+Every `_/` import you write points into `var/lib/`.
 
 ## Inside a Source Folder
 
@@ -45,7 +45,7 @@ with SSR enabled - the fullest shape:
 ```txt
 src/front/
 ├── kosmo.config.ts       -> what this folder is
-├── tsconfig.json         -> { "extends": "../../lib/front/tsconfig.json" }
+├── tsconfig.json         -> { "extends": "../../var/lib/front/tsconfig.json" }
 ├── index.html            -> Vite's HTML entry
 ├── app.tsx               -> global wrapper, wraps EVERY route
 ├── router.ts             -> routerFactory: routes -> native router
@@ -105,16 +105,16 @@ one created with `--no-frontend` has no `pages/`, `app.*`, `router.ts`, `index.h
 A [sidecar](/sidecar/intro) folder has neither - just a `kosmo.config.ts`,
 a `tsconfig.json` and the entry points it builds.
 
-## Inside `lib/`
+## Inside `var/lib/`
 
-You never edit `lib/`, but knowing what lives there makes the `_/` imports legible.
+You never edit `var/lib/`, but knowing what lives there makes the `_/` imports legible.
 This is a React + Hono folder; exact filenames vary by framework,
 while the `_/` names you import stay the same:
 
 ```txt
-lib/
+var/lib/
 ├── tsconfig.json         -> shared base for the root tsconfig
-├── .gitignore            -> why lib/ is NOT in the root .gitignore
+├── .gitignore            -> why var/lib/ is NOT in the root .gitignore
 └── front/
     ├── tsconfig.json     -> this folder's jsxImportSource + path mappings
     ├── api.ts            -> _/api          defineRoute, use
@@ -131,9 +131,9 @@ lib/
         └── routes.ts     -> the RouteMap
 ```
 
-::: tip `lib/` has its own `.gitignore` - don't add it to the root one
-The root `.gitignore` deliberately leaves `lib/` alone,
-because `lib/.gitignore` handles it more precisely:
+::: tip `var/lib/` has its own `.gitignore` - don't add it to the root one
+The root `.gitignore` deliberately leaves `var/lib/` alone,
+because `var/lib/.gitignore` handles it more precisely:
 it ignores **everything** except `cache.json` and `types.ts` at any depth.
 
 So derived code is *not* committed - it is a build artifact.
@@ -141,10 +141,10 @@ What is committed is the per-route derivation cache
 (`cache.json`, keyed by content hashes of the route file and its type dependencies),
 so a fresh clone or a CI run doesn't pay for a full rebuild.
 
-Adding `lib/` to the root ignore file would drop that cache and make every clone slow.
+Adding `var/lib/` to the root ignore file would drop that cache and make every clone slow.
 :::
 
-Deleting `lib/` is safe but not free: it forces a full rebuild,
+Deleting `var/lib/` is safe but not free: it forces a full rebuild,
 which on a large project takes minutes. [Details&nbsp;›](/validation/performance#when-it-becomes-noticeable)
 
 ## Path Mappings
@@ -155,16 +155,16 @@ Three prefixes are reserved. Don't reuse them for your own aliases.
 |---|---|---|
 | `@/*` | project root | anything shared across source folders - db layer, domain types |
 | `~/*` | **this** source folder | your own modules inside the folder |
-| `_/*` | `lib/<this folder>/` | derived code - generated, never edited |
+| `_/*` | `var/lib/<this folder>/` | derived code - generated, never edited |
 
 ```ts
 import { db } from "@/db";                    // my-app/db.ts
 import type { User } from "~/types/user";     // src/front/types/user.ts
-import { defineRoute } from "_/api";          // lib/front/api.ts
-import fetchClients from "_/fetch";           // lib/front/fetch/
+import { defineRoute } from "_/api";          // var/lib/front/api.ts
+import fetchClients from "_/fetch";           // var/lib/front/fetch/
 ```
 
-`~/` and `_/` are **folder-relative**: the same `_/api` in `src/admin` resolves to `lib/admin/api.ts`.
+`~/` and `_/` are **folder-relative**: the same `_/api` in `src/admin` resolves to `var/lib/admin/api.ts`.
 That is what keeps folders isolated - `admin`'s route names and navigation types never leak into `front`.
 
 `@/` is how folders share without packages. Put a type in `db/models.ts`,

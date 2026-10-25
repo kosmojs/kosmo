@@ -25,7 +25,7 @@ reading a body, setting a response, raising an error stay your framework's own i
 
 Creating a source folder with a backend seeds a small, fixed set of files.
 Each is a real source file you own - they are written once, never re-seeded.
-What you import through `_/` is the opposite: derived into `lib/<folder>/`,
+What you import through `_/` is the opposite: derived into `var/lib/<folder>/`,
 regenerated on every change, [never edited](/essentials/project-structure#path-mappings).
 
 ```text
@@ -94,7 +94,7 @@ export default appFactory(routes, ({ app }) => {
 That is the whole convention: **one URL per folder, one file that defines it.**
 
 Derived code - validators, the route table, fetch clients, the OpenAPI spec - never lands here.
-It lives in `lib/`, is git-ignored, and you neither read nor edit it.
+It lives in `var/lib/`, is git-ignored, and you neither read nor edit it.
 [Details&nbsp;›](/essentials/why-codegen)
 
 ## Defining Endpoints
@@ -150,9 +150,9 @@ It isn't - and it's worth one minute to understand why, because it explains a lo
 The routing itself never needs it. The URL comes from the file's location, full stop.
 The string is there for **TypeScript**, which cannot see the file system.
 
-Everything KosmoJS knows about a route is placed into a `RouteMap` in `lib/`, keyed by route name:
+Everything KosmoJS knows about a route is placed into a `RouteMap` in `var/lib/`, keyed by route name:
 
-```ts [lib/front/@api/routes.ts]
+```ts [var/lib/front/@api/routes.ts]
 export type RouteMap = {
   "users/[id]": {
     paramsDefaults: [string],           // params, in path order

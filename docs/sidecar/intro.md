@@ -42,7 +42,7 @@ What you get:
 ```txt
 src/mailer/
 ├── kosmo.config.ts       -> the sidecar block
-├── tsconfig.json         -> extends ../../lib/mailer/tsconfig.json
+├── tsconfig.json         -> extends ../../var/lib/mailer/tsconfig.json
 ├── entry.ts              -> defineService({ start, teardown })
 └── run.ts                -> imports the entry, starts it, stops it on a signal
 ```

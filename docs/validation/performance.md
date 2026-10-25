@@ -24,7 +24,7 @@ By the time you've saved a file and switched to the browser, the schema is ready
 
 Full rebuilds happen in a few specific situations:
 
-- Deleting the `lib` folder manually
+- Deleting the `var/lib/` folder manually
 - KosmoJS releasing an update that bumps the cache version
 
 For large projects with many routes, a full rebuild can take several minutes.

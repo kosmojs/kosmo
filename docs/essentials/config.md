@@ -622,8 +622,8 @@ It starts with only the ambient declarations in scope, so add the paths you want
 
 ```json [tsconfig.json]
 {
-  "extends": "./lib/tsconfig.json",
-  "include": ["./lib/*.d.ts"]
+  "extends": "./var/lib/tsconfig.json",
+  "include": ["./var/lib/*.d.ts"]
 }
 ```
 
@@ -637,15 +637,15 @@ rather than only when its importer is.
 
 When you add such a path, add to the list rather than replacing it.
 This is **essential**: `include` replaces rather than merges with the config it extends,
-so `./lib/*.d.ts` has to stay in it.
+so `./var/lib/*.d.ts` has to stay in it.
 
 > Merging extended arrays has been [requested since 2017](https://github.com/microsoft/TypeScript/issues/20110)
 and is still open, so carrying the entries over by hand is the only option.
 
 ---
 
-::: warning Never add `lib/` itself
-`./lib/*.d.ts` matches only the ambient declarations at the top of `lib/` - that entry is meant to be there.
+::: warning Never add `var/lib/` itself
+`./var/lib/*.d.ts` matches only the ambient declarations at the top of `var/lib/` - that entry is meant to be there.
 The rest is derived code, generated against each folder's own path mappings and already checked by that folder's run.
 In the root program `_/` resolves against the wrong folder, so you get errors in files you cannot fix -
 they are rewritten on the next run.
@@ -653,10 +653,10 @@ they are rewritten on the next run.
 
 ### Per-folder tsconfig.json
 
-Each source folder has its own `tsconfig.json` extending a derived base in lib dir:
+Each source folder has its own `tsconfig.json` extending a derived base in var/lib dir:
 
 ```json [src/front/tsconfig.json]
-{ "extends": "../../lib/front/tsconfig.json" }
+{ "extends": "../../var/lib/front/tsconfig.json" }
 ```
 
 The base `tsconfig.json` supplies the framework's `jsxImportSource`, the reserved path mappings,
@@ -664,7 +664,7 @@ and strict compiler settings. Anything you add in your own `compilerOptions` win
 
 ```json [src/front/tsconfig.json]
 {
-  "extends": "../../lib/front/tsconfig.json",
+  "extends": "../../var/lib/front/tsconfig.json",
   "compilerOptions": {
     "exactOptionalPropertyTypes": false
   }
@@ -677,15 +677,15 @@ The base `tsconfig.json` already has everything a source folder normally needs.
 But if you really need to include more, carry these base entries over first:
 
 ```json
-["./", "../../lib/<folder>/", "../../lib/*.d.ts"]
+["./", "../../var/lib/<folder>/", "../../var/lib/*.d.ts"]
 ```
 
 So your file should look like this:
 
 ```json [src/front/tsconfig.json]
 {
-  "extends": "../../lib/front/tsconfig.json",
-  "include": ["./", "../../lib/front/", "../../lib/*.d.ts", "../../shared"]
+  "extends": "../../var/lib/front/tsconfig.json",
+  "include": ["./", "../../var/lib/front/", "../../var/lib/*.d.ts", "../../shared"]
 }
 ```
 

@@ -16,8 +16,8 @@ The result is a fully-typed client that mirrors your route definition exactly.
 Parameters, payload shape, response type - all derived from the same source.
 Change your API, and the client updates with it. No manual sync required.
 
-The client is derived into `lib/<folder>/fetch/` and reached as `_/fetch`.
-You import it; you never edit it - `lib/` is [regenerated](/essentials/project-structure#path-mappings) on every change.
+The client is derived into `var/lib/<folder>/fetch/` and reached as `_/fetch`.
+You import it; you never edit it - `var/lib/` is [regenerated](/essentials/project-structure#path-mappings) on every change.
 
 ## What Gets Derived
 
@@ -46,7 +46,7 @@ import fetchClients from "_/fetch";
 const response = await fetchClients["users/[id]"].GET([123]);
 ```
 
-Clients land in the `lib` directory alongside other derived artifacts
+Clients land in the `var/lib/` directory alongside other derived artifacts
 (validation routines, OpenAPI spec). Everything is updated automatically in the background
 as you modify routes during development.
 

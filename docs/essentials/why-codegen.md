@@ -1,7 +1,7 @@
 ---
 title: Why Codegen
 description: Two very different things share the word "codegen". KosmoJS only does the safe kind -
-    derivation into a git-ignored lib/ folder, plus boilerplate seeded into blank files and never touched again.
+    derivation into a git-ignored var/lib/ folder, plus boilerplate seeded into blank files and never touched again.
 head:
   - - meta
     - name: keywords
@@ -42,11 +42,11 @@ Call that **derivation** - recomputed from a single input, never edited, disposa
 ### It derives
 
 Your routes are the input.
-Routing trees, typed fetch clients, validation schemas, the OpenAPI spec - all output, all landing in `lib/`, which is git-ignored.
+Routing trees, typed fetch clients, validation schemas, the OpenAPI spec - all output, all landing in `var/lib/`, which is git-ignored.
 Not a second copy of your code; a derivative of it.
 
 Vite and friends do the same thing and hide the result in `node_modules`.
-KosmoJS keeps it in `lib/` deliberately: when something looks wrong,
+KosmoJS keeps it in `var/lib/` deliberately: when something looks wrong,
 the derived code is right there in your editor, readable, with your own route names on it.
 
 ### It seeds
@@ -65,7 +65,7 @@ And if the boilerplate isn't what you want, adapt it or switch it off entirely -
 It doesn't scaffold in user space. It reads your routes, wires them into the native routers,
 and derives assets you can import where you find them useful.
 
-KosmoJS owns the `lib/` folder, you own `src/` and everything else.
+KosmoJS owns the `var/lib/` folder, you own `src/` and everything else.
 
 ---
 

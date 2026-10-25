@@ -18,7 +18,7 @@ optionally wrapped in **layouts** inherited from the folders above it.
 
 You never register any of it. The dev server watches `pages/` dir,
 and as pages are created, renamed or deleted,
-a matching route configuration is written into `lib/` for your framework's router to consume.
+a matching route configuration is written into `var/lib/` for your framework's router to consume.
 
 This page covers the frontend specifics. The shared fundamentals are in
 <span class="text-nowrap">[Directory-Based Routing](/routing/intro)</span>,
@@ -217,7 +217,7 @@ at every stale `Link` - the same refactor-as-a-checklist property the backend
 ## Routes are derived, and native
 
 There is no central route tree to register or maintain - no `routeTree.gen.ts`, no route config object to keep in sync.
-Definitions are written into `lib/<folder>/`, and you reach them only through `createRoutes()` in your entry file,
+Definitions are written into `var/lib/<folder>/`, and you reach them only through `createRoutes()` in your entry file,
 which the seeded boilerplate already wires up.
 
 * **React, Solid, Vue** - a plain, framework-native route definition, the same object you would have written by hand.

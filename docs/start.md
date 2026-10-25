@@ -70,8 +70,9 @@ yarn install
 ```
 :::
 
-The scaffold is complete, everything comes filled in.
-What it doesn't have yet is routes, and that is what you add next.
+The scaffold is complete, everything comes filled in,
+including a default index page and, with a backend, a default index route.
+The routes you add next sit alongside them.
 
 ## Start the dev server
 
@@ -95,7 +96,7 @@ yarn dev
 ```
 :::
 
-Your app is now running at `http://localhost:4556`.
+Your app is now running at `http://localhost:4556`, serving the default index page.
 
 ## Create a route
 

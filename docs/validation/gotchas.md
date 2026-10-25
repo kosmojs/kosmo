@@ -132,7 +132,7 @@ There is no global switch.
 
 Rebuilding is the blunt instrument, and occasionally the right one.
 
-Remove `lib/` dir and restart dev server.
+Remove `var/lib/` dir and restart dev server.
 
 That forces a full rebuild of every schema - minutes on a large project, so it is not part of the normal loop.
 Reach for it when you suspect stale derived output rather than a mistake in your types.

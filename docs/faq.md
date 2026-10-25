@@ -323,7 +323,7 @@ Pages typically read data through the fetch client (`fetchClients["products"].GE
 [Details&nbsp;›](/routing/intro#route-file-requirements)
 
 #### What does the `_/` prefix and `_/api` map to?
-`_/` maps to `lib/` (derived code). `_/api` resolves to `lib/<folder>/api.ts`,
+`_/` maps to `var/lib/` (derived code). `_/api` resolves to `var/lib/<folder>/api.ts`,
 where `<folder>` is your source-folder name.
 [Details&nbsp;›](/essentials/project-structure#path-mappings)
 
@@ -871,7 +871,7 @@ closing the gap TypeScript can't cover at runtime.
 
 #### How are validators derived?
 AST parsing (via ts-morph / TFusion) extracts types and traces referenced files;
-AOT compilation produces high-performance validators in `lib` via TypeBox -
+AOT compilation produces high-performance validators in `var/lib` via TypeBox -
 direct property checks, not a generic JSON Schema interpreter.
 [Details&nbsp;›](/validation/intro#how-derivation-works)
 
@@ -1109,7 +1109,7 @@ extends the derived base config, so anything you set in its `compilerOptions` wi
 
 ```json [src/front/tsconfig.json]
 {
-  "extends": "../../lib/front/tsconfig.json",
+  "extends": "../../var/lib/front/tsconfig.json",
   "compilerOptions": { // [!code ++:3]
     "exactOptionalPropertyTypes": false
   }
@@ -1123,7 +1123,7 @@ Relaxing it - or any other strictness flag - is a per-folder choice and only aff
 
 `compilerOptions` is the safe thing to add. An `include` is not:
 it replaces the base one rather than merging, and the base is what puts the folder,
-its `lib/` output and the ambient declarations in scope.
+its `var/lib/` output and the ambient declarations in scope.
 [Details&nbsp;›](/essentials/config#typescript-config)
 
 #### How do I typecheck?
@@ -1138,7 +1138,7 @@ so a single run reports all of them rather than stopping at the first.
 The command exits `1` if any of them reported errors, which makes it usable as a CI gate directly.
 
 A full run also checks the project root, so code outside `src/` can be covered.
-What it covers is up to you: the root `tsconfig.json` starts with only `./lib/*.d.ts` in its `include`,
+What it covers is up to you: the root `tsconfig.json` starts with only `./var/lib/*.d.ts` in its `include`,
 so the run happens but has nothing of yours in scope until you add paths to that list.
 The folders are checked separately rather than in one pass because each has its own path mappings -
 one `tsc` over everything would resolve `_/` against the wrong folder.
@@ -1154,9 +1154,9 @@ and alongside folder names it adds the root to them - `pnpm typecheck . admin` c
 Useful after touching a script or a shared package while `src/` is untouched.
 
 The root's `tsconfig.json` decides what "the root" covers,
-and out of the box that is nothing of yours - its `include` holds only `./lib/*.d.ts`.
+and out of the box that is nothing of yours - its `include` holds only `./var/lib/*.d.ts`.
 Add the paths you want checked, keeping that entry: `include` replaces rather than merges with the config it extends,
-so dropping it takes the ambient declarations in `lib/` out of scope.
+so dropping it takes the ambient declarations in `var/lib/` out of scope.
 [Details&nbsp;›](/cli/typecheck#selective-typechecking)
 
 #### Can I exclude a folder from typechecking?
@@ -1174,7 +1174,7 @@ or a folder mid-migration where a red `tsc` is noise rather than signal.
 #### How are fetch clients derived?
 Automatically for every API route, derived from the same type definitions -
 change the API and the client updates, no manual sync.
-Output lands in `lib` alongside validators and the OpenAPI spec.
+Output lands in `var/lib` alongside validators and the OpenAPI spec.
 [Details&nbsp;›](/fetch/intro)
 
 #### How do I call a client?
@@ -1282,7 +1282,7 @@ The framework's Vite plugin is inserted for you - don't add the plugin yourself,
 #### What `jsxImportSource` does each framework need?
 React `"react"`, SolidJS `"solid-js"`, Vue `"vue"` (only when using JSX), MDX `"preact"`.
 Mixing frameworks needs per-folder tsconfig - KosmoJS derives a `tsconfig.json`
-per folder in `lib/` for your folder's `tsconfig.json` to extend from.
+per folder in `var/lib/` for your folder's `tsconfig.json` to extend from.
 [Details&nbsp;›](/frontend/intro#typescript-configuration)
 
 #### What foundation files does a source folder get?
@@ -1858,7 +1858,7 @@ By the time you switch to the browser, the schema is ready.
 [Details&nbsp;›](/validation/performance)
 
 #### When does a slow full rebuild happen?
-Deleting the `lib` folder manually, or a KosmoJS update bumping the cache version.
+Deleting the `var/lib` folder manually, or a KosmoJS update bumping the cache version.
 On large projects this can take minutes - the same category as clearing `node_modules`
 or regenerating a Prisma client, not part of the normal edit-test cycle.
 [Details&nbsp;›](/validation/performance#when-it-becomes-noticeable)
@@ -1870,7 +1870,7 @@ KosmoJS trades a few seconds of machine time for eliminating that manual work en
 [Details&nbsp;›](/validation/performance#machine-time-vs-human-time)
 
 #### Where does derived code live?
-In `lib`, kept out of your source directories and bundled like any other dependency
+In `var/lib`, kept out of your source directories and bundled like any other dependency
 at production build time. Treat it as a build artifact - you don't need to read it.
 [Details&nbsp;›](/validation/intro#how-derivation-works)
 
@@ -1962,7 +1962,7 @@ which doesn't validate request bodies by itself).
 
 #### Where's the central route tree (TanStack `routeTree.gen.ts`) / route config object?
 There isn't one you register. Routing is filesystem-driven;
-route configs are derived per source folder into `lib/` for the native router to consume.
+route configs are derived per source folder into `var/lib/` for the native router to consume.
 Treat derived code as a build artifact.
 [Details&nbsp;›](/frontend/routing#routes)
 
@@ -2246,7 +2246,7 @@ which doesn't validate request bodies on its own.
 #### Why is there a codegen/generation step at all?
 Validators are AOT-compiled from types (TanStack users used to instant route typing
 should expect a brief generation pass, cached per file, running alongside Vite).
-A slow full rebuild only happens when you delete `lib/` or a cache-version bump occurs -
+A slow full rebuild only happens when you delete `var/lib/` or a cache-version bump occurs -
 akin to regenerating `routeTree.gen.ts` from scratch, but heavier.
 Treat derived code as a build artifact, like the generated route tree.
 [Details&nbsp;›](/validation/performance#machine-time-vs-human-time)
@@ -2254,20 +2254,20 @@ Treat derived code as a build artifact, like the generated route tree.
 #### Isn't generated code a red flag?
 Usually, yes - but the bad reputation belongs to *scaffolding*: code generated once that
 you then edit and own, so it drifts from its input.
-KosmoJS's `lib/` output is *derivation* - recomputed from a single source on every change, never edited,
+KosmoJS's `var/lib/` output is *derivation* - recomputed from a single source on every change, never edited,
 in the same category as what `tsc`, the JSX transform and Vite already generate for you.
 The `src/` boilerplate it does seed is written **only into blank files**,
 so re-seeding can never overwrite your work.
-And nothing generated is proprietary: `lib/` holds ordinary Hono/React/TypeBox code you could walk away with.
+And nothing generated is proprietary: `var/lib/` holds ordinary Hono/React/TypeBox code you could walk away with.
 [Details&nbsp;›](/essentials/why-codegen)
 
 #### Is derived code committed to git?
-Mostly no. `lib/.gitignore` ignores everything except `cache.json` and `types.ts`,
+Mostly no. `var/lib/.gitignore` ignores everything except `cache.json` and `types.ts`,
 so derived output is treated as a build artifact. What *is* committed is the per-route
 derivation cache (`cache.json`, keyed by content hashes of the route and its type dependencies)
 so a fresh clone or CI run skips a full rebuild.
-Don't add `lib/` to the root `.gitignore` - that would drop the cache and make every clone slow.
-[Details&nbsp;›](/essentials/project-structure#inside-lib)
+Don't add `var/lib/` to the root `.gitignore` - that would drop the cache and make every clone slow.
+[Details&nbsp;›](/essentials/project-structure#inside-var-lib)
 
 ### Rendering & SSR
 

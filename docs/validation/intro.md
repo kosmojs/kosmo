@@ -55,13 +55,13 @@ Users also get instant feedback instead of waiting for a server response.
 ## How Derivation Works
 
 KosmoJS uses AST parsing to extract types from your route files,
-then AOT compilation to emit high-performance validation routines in your `lib` directory.
+then AOT compilation to emit high-performance validation routines in your `var/lib` directory.
 
 For each validated type, [TypeBox](https://github.com/sinclairzx81/typebox) produces a JSON Schema
 and a compiled validator function tailored specifically to that structure -
 direct property checks with minimal overhead, not a generic JSON Schema interpreter.
 
-The derived code lives in `lib`, keeping your source directories focused on business logic.
+The derived code lives in `var/lib/`, keeping your source directories focused on business logic.
 At production build time it's bundled like any other dependency.
 
 You don't need to read or understand the derived code to use validation.
