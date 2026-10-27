@@ -143,17 +143,33 @@ const createStaticListener = async (
 
   const index = files.get(posix.join(base, "index.html"));
 
-  return (req, res) => {
-    const { pathname } = new URL(req.url ?? "/", "http://localhost");
+  const assetsDir = posix.join(base, "assets/");
 
+  return (req, res) => {
     if (!["GET", "HEAD"].includes(req.method ?? "")) {
       res.writeHead(405, { Allow: "GET, HEAD" });
       res.end();
       return;
     }
 
-    // a real file wins; anything else is a client route, resolved by the client router
-    const file = files.get(pathname) || index;
+    let pathname: string;
+
+    try {
+      // files are keyed by their names on disk, the URL carries them percent-encoded
+      pathname = decodeURIComponent(
+        new URL(req.url ?? "/", "http://localhost").pathname,
+      );
+    } catch {
+      res.writeHead(400, { "Content-Type": "text/plain" });
+      res.end("400: Bad Request");
+      return;
+    }
+
+    // a real file wins; a missing hashed asset is a 404, not a page,
+    // anything else is a client route, resolved by the client router
+    const file =
+      files.get(pathname) ||
+      (pathname.startsWith(assetsDir) ? undefined : index);
 
     if (!file) {
       res.writeHead(404, { "Content-Type": "text/plain" });
