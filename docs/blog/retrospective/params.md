@@ -10,7 +10,7 @@ head:
     - name: keywords
       content: kosmojs routing, route params syntax, optional route params,
         splat params, catch-all route, path-to-regexp, directory based routing
-tags: retrospective, routing, params, dx
+tags: retrospective, routing, params
 ---
 
 Every routing framework has its own way of writing `[id]`.

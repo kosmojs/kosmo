@@ -5,7 +5,7 @@ date: 2026-10-25
 description: >-
     A framework's job isn't to prevent failures, it's to give them one place to land.
     How KosmoJS's error model moved, one step at a time, away from the handler and toward the framework.
-tags: typescript, javascript, node, webdev, kosmojs
+tags: retrospective, error-handling
 ---
 
 Most error-handling advice is a list of ways to be scared.

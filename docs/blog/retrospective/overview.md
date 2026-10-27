@@ -8,7 +8,7 @@ head:
   - - meta
     - name: keywords
       content: kosmojs meta-framework, framework retrospective, api stability, framework design
-tags: retrospective, design, api-stability
+tags: retrospective
 ---
 
 KosmoJS has been on GitHub for a year now. In that year, it published exactly zero blog posts.
@@ -122,15 +122,7 @@ Most of the series is biography: a feature's full arc, from the version that did
 * [Config: from wiring to describing](/blog/retrospective/config)
 * [Three backends, one route spec](/blog/retrospective/backends)
 * [Five frontends, one contract](/blog/retrospective/frontends)
-<!--
-* [SSR: what happens when it fails](/blog/retrospective/ssr)
-* [SSG: all or nothing](/blog/retrospective/ssg)
 * [Error handling: let handlers fail](/blog/retrospective/error-handling)
-* [CLI: from shortcut to contract](/blog/retrospective/cli)
-* [Runtime: three modes, one codebase](/blog/retrospective/runtime)
-* [Beyond HTTP: sidecars, harnesses, and what a folder really is](/blog/retrospective/sidecars)
-* [TanStack Query: integrate, don't wrap](/blog/retrospective/tanstack-query)
-* [Directory routing: only `index` is a route](/blog/retrospective/routing)
-* [The chassis owns the contract](/blog/retrospective/the-chassis)
-* [What didn't survive](/blog/retrospective/what-didnt-survive)
--->
+* [SSR and SSG: one powering another](/blog/retrospective/ssr-ssg)
+* [CLI: The first five minutes](/blog/retrospective/cli)
+* [Runtime: from many ports to one process](/blog/retrospective/runtime)
