@@ -28,7 +28,8 @@ node dist/run.js -p 4556
 ```
 
 It routes incoming requests by path the same way the dev server does:
-each folder's `frontend.base` and `backend.base` decide what it owns, longest prefix first.
+[route aliases](/backend/aliases) first,
+then each folder's `frontend.base` and `backend.base` decide what it owns, longest prefix first.
 
 A project with a marketing site at `/`, an admin app at `/admin` and an API-only folder at `/svc` is one process,
 one port, no reverse proxy needed to glue the folders together.
@@ -36,6 +37,11 @@ one port, no reverse proxy needed to glue the folders together.
 Each folder is served as what it is. `SSR` folders render on the server;
 `CSR` folders are served as static assets with a fallback to their `index.html`;
 `API`-only folders answer on their `backend.base`.
+
+The fallback is for client routes only.
+A missing file under `assets/`, say a hashed chunk from a previous deploy,
+is a plain `404` rather than the `index.html`, so the browser reports the missing file
+instead of failing to parse HTML as a script.
 
 You do not configure any of this - it follows from the folder's config.
 

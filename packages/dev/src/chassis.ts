@@ -3,7 +3,6 @@ import http, { type IncomingMessage, type ServerResponse } from "node:http";
 import { dirname, join, resolve, sep } from "node:path";
 import { styleText } from "node:util";
 
-import { pathToRegexp } from "path-to-regexp";
 import {
   build,
   createServer,
@@ -14,12 +13,15 @@ import {
 
 import {
   type ChassisCommand,
+  compileAliasPatterns,
   defaults,
   type GeneratorFactory,
+  matchBase,
   type ProjectSettings,
   type ResolvedEntry,
   type SidecarService,
   type SourceFolder,
+  sortByBase,
   type WatcherEvent,
 } from "@kosmojs/core";
 import type { DevSetup } from "@kosmojs/core/api";
@@ -100,6 +102,7 @@ export default async <C extends ChassisCommand>(
       path: string,
       matcherFactory: () => RequestMatcher,
       handlerFactory: () => RequestHandler,
+      aliasMatcherFactory?: () => RequestMatcher | undefined,
     ]
   > = [];
 
@@ -299,6 +302,8 @@ export default async <C extends ChassisCommand>(
         backend.base,
         () => devSetup.requestMatcher || requestMatchers.backend,
         () => devSetup.requestHandler(),
+        // a custom requestMatcher owns matching entirely, aliases included
+        () => (devSetup.requestMatcher ? undefined : requestMatchers.alias),
       ]);
 
       restartHandlers.push(viteServer.restart);
@@ -403,24 +408,18 @@ export default async <C extends ChassisCommand>(
     }
   }
 
-  /**
-   * Sorting is essential to ensure more specific paths are matched before broader ones.
-   *
-   * Correct sort order:
-   *   1. /admin/api - 10 + 3, most specific
-   *   3. /admin     - 6  + 2
-   *   2. /api       - 4  + 2
-   *   4. /          - 1  + 2
-   * */
-  const requestHandlerWeight = ([path]: (typeof requestHandlers)[number]) => {
-    return path.length + path.split("/").filter(Boolean).length;
-  };
-
-  const handlers = requestHandlers.sort(
-    (a, b) => requestHandlerWeight(b) - requestHandlerWeight(a),
-  );
+  // most specific base first, same order as dist/run.js
+  const handlers = sortByBase(requestHandlers, ([path]) => path);
 
   const server = http.createServer((req, res) => {
+    // an alias names an exact URL, so it is tried before any base,
+    // including a longer base that belongs to another folder
+    for (const [, , handlerFactory, aliasMatcherFactory] of handlers) {
+      if (aliasMatcherFactory?.()?.(req)) {
+        handlerFactory()(req, res);
+        return;
+      }
+    }
     for (const [, matcherFactory, handlerFactory] of handlers) {
       // should be called on every request
       const [matcher, handler] = [matcherFactory(), handlerFactory()];
@@ -783,8 +782,23 @@ const eventFactory = async (
 
     async unlink(file) {
       // route deleted
+      const resolved = resolvedRoutes.get(file);
+
       resolvers.delete(file);
       resolvedRoutes.delete(file);
+
+      if (resolved?.kind === "apiRoute") {
+        /**
+         * Generators regenerate the files that list all routes,
+         * but nothing rewrites the per-route files of a route that is gone:
+         * types, schemas, the fetch client and the derivation cache.
+         * */
+        await removeDerivedFiles(
+          createPath.libApi(dirname(resolved.entry.file)),
+          createPath.libApi(),
+        );
+      }
+
       await runGenerators({ kind: "delete", file });
     },
   };
@@ -792,31 +806,32 @@ const eventFactory = async (
 
 const matchersFactory: (
   sourceFolder: SourceFolder,
-) => Record<"frontend" | "backend", (req: IncomingMessage) => boolean> = ({
-  config,
-}) => {
+) => Record<
+  "frontend" | "backend" | "alias",
+  (req: IncomingMessage) => boolean
+> = ({ config }) => {
   const [frontendBase, backendBase] = [
     config.frontend?.base,
     config.backend?.base,
   ];
 
   const backendAliasPatterns = backendBase
-    ? createAliasPatterns(config.backend?.alias).map((pattern) => {
-        return pathToRegexp(posix.join("/", pattern)).regexp;
-      })
+    ? compileAliasPatterns(createAliasPatterns(config.backend?.alias))
     : [];
 
-  const prefixMatch = (base: string, path: string) => {
-    return path === base || path.startsWith(posix.join(base, "/"));
+  const pathnameOf = (req: IncomingMessage) => {
+    return new URL(req.url ?? "/", "http://localhost").pathname;
+  };
+
+  const aliasMatch = (path: string) => {
+    return backendAliasPatterns.some((pattern) => pattern.test(path));
   };
 
   const backendMatch = (path: string) => {
     if (!backendBase) {
       return false;
     }
-    return prefixMatch(backendBase, path)
-      ? true
-      : backendAliasPatterns.some((r) => r.test(path) || false);
+    return matchBase(backendBase, path) || aliasMatch(path);
   };
 
   return {
@@ -824,14 +839,14 @@ const matchersFactory: (
       if (!frontendBase) {
         return false;
       }
-      const { pathname } = new URL(req.url ?? "/", "http://localhost");
-      return backendMatch(pathname)
-        ? false
-        : prefixMatch(frontendBase, pathname);
+      const pathname = pathnameOf(req);
+      return backendMatch(pathname) ? false : matchBase(frontendBase, pathname);
     },
     backend(req) {
-      const { pathname } = new URL(req.url ?? "/", "http://localhost");
-      return backendMatch(pathname);
+      return backendMatch(pathnameOf(req));
+    },
+    alias(req) {
+      return aliasMatch(pathnameOf(req));
     },
   };
 };

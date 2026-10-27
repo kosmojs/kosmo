@@ -19,6 +19,9 @@ import { pathToFileURL } from "node:url";
  *   - CSR folders mount `api/listener.js` for the API and serve `client/` statically from memory,
  *     with the SPA fallback to index.html for unmatched page URLs.
  *
+ * Requests are routed with the same rules as the dev server,
+ * `createDispatcher` from `@kosmojs/core`: aliases first, then the most specific base.
+ *
  * Authored as TypeScript, deployed with types stripped;
  * */
 
@@ -35,9 +38,14 @@ import { createServer } from "node:http";
 import { extname, join, posix, resolve } from "node:path";
 import { parseArgs } from "node:util";
 
-import { pathToRegexp } from "path-to-regexp";
-
-import { MIME_TYPES, type SourceFolderManifest } from "@kosmojs/core";
+import {
+  compileAliasPatterns,
+  createDispatcher,
+  type DispatchEntry,
+  MIME_TYPES,
+  type SourceFolderManifest,
+  sortByBase,
+} from "@kosmojs/core";
 
 type NodeListener = (req: IncomingMessage, res: ServerResponse) => void;
 
@@ -45,11 +53,8 @@ type Folder = SourceFolderManifest & {
   dir: string;
 };
 
-type Handler = {
+type Handler = DispatchEntry<NodeListener> & {
   name: string;
-  base: string;
-  aliasPatterns: Array<RegExp>;
-  listener: NodeListener;
 };
 
 type StaticFile = {
@@ -61,10 +66,6 @@ const ROOT = import.meta.dirname;
 
 const contentTypeFor = (file: string): string => {
   return MIME_TYPES[extname(file).toLowerCase()] || "application/octet-stream";
-};
-
-const handlerWeight = ({ base }: Handler): number => {
-  return base.length + base.split("/").filter(Boolean).length;
 };
 
 const readFolders = async (): Promise<Array<Folder>> => {
@@ -188,10 +189,7 @@ const mountFolders = async (
   const handlers: Array<Handler> = [];
 
   for (const { dir, name, frontend, backend } of folders) {
-    const aliasPatterns =
-      backend?.aliasPatterns.map((alias) => {
-        return pathToRegexp(posix.join("/", alias)).regexp;
-      }) || [];
+    const aliasPatterns = compileAliasPatterns(backend?.aliasPatterns);
 
     if (frontend?.ssr) {
       // ssr/server.js bundles the backend
@@ -204,16 +202,15 @@ const mountFolders = async (
       handlers.push({
         name,
         base: frontend.base as string,
-        aliasPatterns: [],
-        listener,
+        target: listener,
       });
 
       if (backend) {
         handlers.push({
           name,
           base: backend.base,
-          aliasPatterns: aliasPatterns,
-          listener,
+          aliasPatterns,
+          target: listener,
         });
       }
 
@@ -227,8 +224,8 @@ const mountFolders = async (
       handlers.push({
         name,
         base: backend.base,
-        aliasPatterns: aliasPatterns,
-        listener,
+        aliasPatterns,
+        target: listener,
       });
     }
 
@@ -237,11 +234,11 @@ const mountFolders = async (
         join(dir, "client"),
         frontend.base,
       );
-      handlers.push({ name, base: frontend.base, aliasPatterns: [], listener });
+      handlers.push({ name, base: frontend.base, target: listener });
     }
   }
 
-  return handlers.sort((a, b) => handlerWeight(b) - handlerWeight(a));
+  return handlers;
 };
 
 export const createListener = async (): Promise<NodeListener> => {
@@ -253,22 +250,20 @@ export const createListener = async (): Promise<NodeListener> => {
 
   const handlers = await mountFolders(folders);
 
-  for (const { name, base } of handlers) {
+  for (const { name, base } of sortByBase(handlers, ({ base }) => base)) {
     console.log(`  ${base.padEnd(24)} -> ${name}`);
   }
+
+  const dispatch = createDispatcher(handlers);
 
   return (req, res) => {
     const { pathname } = new URL(req.url ?? "/", "http://localhost");
 
-    for (const { base, aliasPatterns, listener } of handlers) {
-      if (
-        pathname === base ||
-        pathname.startsWith(posix.join(base, "/")) ||
-        aliasPatterns.some((r) => r.test(pathname))
-      ) {
-        listener(req, res);
-        return;
-      }
+    const listener = dispatch(pathname);
+
+    if (listener) {
+      listener(req, res);
+      return;
     }
 
     res.writeHead(404, { "Content-Type": "text/html" });

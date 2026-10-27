@@ -4,7 +4,7 @@ import {
   type IncomingMessage,
   type ServerResponse,
 } from "node:http";
-import { extname, join, posix, resolve } from "node:path";
+import { extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs, styleText } from "node:util";
 
@@ -12,12 +12,13 @@ import { getRequestListener } from "@hono/node-server";
 import { type Context, Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { stream } from "hono/streaming";
-import { pathToRegexp } from "path-to-regexp";
 import { glob } from "tinyglobby";
 
 import {
+  compileAliasPatterns,
   type FetchApp,
   MIME_TYPES,
+  matchBase,
   type NodeApp,
   type SSRSetup,
 } from "@kosmojs/core";
@@ -392,18 +393,15 @@ export const createListener = async (): Promise<NodeListener> => {
     ? createNodeListener(backendApp as never)
     : undefined;
 
-  const aliasPatterns = backendAliasPatterns.map((alias) => {
-    return pathToRegexp(posix.join("/", alias)).regexp;
-  });
+  const aliasPatterns = compileAliasPatterns(backendAliasPatterns);
 
   return (req, res) => {
     if (!backendListener) {
       return ssrListener(req, res);
     }
     const path = new URL(req.url ?? "/", ssrOrigin).pathname;
-    return path === backendBase ||
-      path.startsWith(posix.join(backendBase, "/")) ||
-      aliasPatterns.some((regexp) => regexp.test(path))
+    return aliasPatterns.some((regexp) => regexp.test(path)) ||
+      matchBase(backendBase, path)
       ? backendListener(req, res)
       : ssrListener(req, res);
   };

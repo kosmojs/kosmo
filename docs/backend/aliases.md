@@ -49,6 +49,27 @@ backend: {
 That is the point of the feature - a well-known URL like `/feed.xml` or `/healthz`
 usually has to sit outside the API prefix, where a filesystem route could not put it.
 
+## An alias wins over any base
+
+Requests are matched against aliases before any `base`.
+An alias names one exact URL, while a base claims everything below it,
+so the alias is the more specific of the two.
+
+That holds even when the URL sits under a frontend base,
+the folder's own or another folder's:
+
+```ts
+backend: {
+  base: "/api",
+  alias: {
+    // answered by the backend, even though /shop belongs to the frontend
+    "/shop/feed.xml": "rss",
+  },
+}
+```
+
+The dev server, `kosmo preview` and `dist/run.js` apply the same rule.
+
 ## Dynamic segments must match by name
 
 When the alias carries parameters, the target route's parameters must all be present,
