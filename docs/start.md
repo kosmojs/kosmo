@@ -153,8 +153,9 @@ Visit `http://localhost:4556/api/users/123`. You should see JSON.
 With the dev server still running, create `pages/users/[id]/index.tsx`
 (or `.vue` / `.svelte` / `.mdx`).
 KosmoJS seeds a placeholder component - replace it with a page that fetches from your API route.
-React, SolidJS, and Vue fetch in the component here; Svelte and MDX read through a
-`loader` export instead (resolved before render), so they need no loading state:
+React and SolidJS fetch in the component here;
+Vue, Svelte and MDX read through a `loader` export instead (resolved before render),
+so they need no loading state:
 
 :::tabs key:frontend variant:code
 == React
@@ -200,21 +201,23 @@ export default function UserPage() {
 == Vue
 ```vue
 <!-- Vue: pages/users/[id]/index.vue -->
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+<script lang="ts">
 import fetchClients from "_/fetch";
 
 const { GET } = fetchClients["users/[id]"];
-const route = useRoute();
-const user = ref(null);
 
-onMounted(async () => { user.value = await GET([route.params.id]); });
+// a plain <script> block, since <script setup> cannot hold ES exports
+export const loader = ({ params }) => GET([params.id]);
+</script>
+
+<script setup lang="ts">
+import { useLoaderData } from "_/use";
+
+const user = useLoaderData();
 </script>
 
 <template>
-  <div v-if="user"><h1>{{ user.name }}</h1><p>{{ user.email }}</p></div>
-  <div v-else>Loading...</div>
+  <div><h1>{{ user.name }}</h1><p>{{ user.email }}</p></div>
 </template>
 ```
 

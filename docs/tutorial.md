@@ -399,15 +399,20 @@ export default function UserPage() {
 == Vue
 ```vue
 <!-- Vue: pages/users/[id]/index.vue -->
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+<script lang="ts">
 import fetchClients from "_/fetch";
 
 const { GET } = fetchClients["users/[id]"];
-const route = useRoute();
-const user = ref(null);
-onMounted(async () => { user.value = await GET([route.params.id]); });
+
+// a plain <script> block, since <script setup> cannot hold ES exports
+export const loader = ({ params }) => GET([params.id]);
+</script>
+
+<script setup lang="ts">
+import { useLoaderData } from "_/use";
+
+const user = useLoaderData();
+// ...
 </script>
 ```
 
