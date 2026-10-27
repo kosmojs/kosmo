@@ -194,8 +194,6 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       );
 
       await generateLibFiles(entries);
-
-      // TODO: handle `delete` event, cleanup lib files
     },
 
     async build(entries) {

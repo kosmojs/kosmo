@@ -188,8 +188,6 @@ export default defineGeneratorFactory<TypeboxOptions>(
             createWatchedApiRouteEntriesFilter(event, ["create", "update"]),
           ),
         );
-
-        // TODO: handle `delete` event, cleanup lib files
       },
 
       async build(entries) {

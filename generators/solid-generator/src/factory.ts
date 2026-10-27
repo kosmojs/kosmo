@@ -187,8 +187,6 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
 
       // Always regenerate index files to keep router in sync
       await generateLibFiles(entries);
-
-      // TODO: handle `delete` event, cleanup lib files
     },
 
     async build(entries) {

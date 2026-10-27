@@ -44,6 +44,7 @@ export default defineConfig({
         setupFiles: ["test/setup.ts"],
       }),
 
+      setupFactory("packages/dev"),
       setupFactory("packages/lib"),
 
       setupFactory("generators/fetch-generator", {

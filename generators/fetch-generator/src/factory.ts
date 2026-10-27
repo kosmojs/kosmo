@@ -157,8 +157,6 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
           createWatchedApiRouteEntriesFilter(event, ["create", "update"]),
         ),
       );
-
-      // TODO: handle `delete` event, cleanup lib files
     },
 
     async build(entries) {

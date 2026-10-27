@@ -25,7 +25,8 @@
     }
   },
   "scripts": {
-    "build": "wsbuild src/index.ts src/chassis.ts"
+    "build": "wsbuild src/index.ts src/chassis.ts",
+    "test": "vitest --root ../.. --project packages/dev"
   },
   "dependencies": {
     "@kosmojs/core": "workspace:^",

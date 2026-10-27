@@ -1,5 +1,6 @@
+import { readdir, rm, rmdir } from "node:fs/promises";
 import http, { type IncomingMessage, type ServerResponse } from "node:http";
-import { join, posix } from "node:path";
+import { dirname, join, resolve, sep } from "node:path";
 import { styleText } from "node:util";
 
 import { pathToRegexp } from "path-to-regexp";
@@ -833,4 +834,43 @@ const matchersFactory: (
       return backendMatch(pathname);
     },
   };
+};
+
+/**
+ * Removes the files directly inside `dir`, leaving its subdirectories alone,
+ * then removes `dir` and its parents, up to but excluding `root`, while they are empty.
+ *
+ * Used when a route is deleted: its derived files sit in a directory
+ * that may also hold the directories of nested routes, which must survive.
+ * */
+export const removeDerivedFiles = async (
+  dir: string,
+  root: string,
+): Promise<void> => {
+  const entries = await readdir(dir, { withFileTypes: true }).catch(
+    (error: NodeJS.ErrnoException) => {
+      if (error.code === "ENOENT") {
+        return [];
+      }
+      throw error;
+    },
+  );
+
+  for (const entry of entries) {
+    if (entry.isFile()) {
+      await rm(join(dir, entry.name), { force: true });
+    }
+  }
+
+  const stop = resolve(root);
+  let current = resolve(dir);
+
+  while (current.startsWith(`${stop}${sep}`)) {
+    const remaining = await readdir(current).catch(() => undefined);
+    if (!remaining || remaining.length) {
+      break;
+    }
+    await rmdir(current);
+    current = dirname(current);
+  }
 };
