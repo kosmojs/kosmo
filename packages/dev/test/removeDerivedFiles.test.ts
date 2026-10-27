@@ -4,7 +4,7 @@ import { join } from "node:path";
 
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-import { removeDerivedFiles } from "../src/chassis";
+import { removeDerivedFiles } from "@kosmojs/dev/chassis";
 
 describe("removeDerivedFiles", () => {
   let root: string;
