@@ -1,14 +1,21 @@
+## [0.6.5](https://github.com/kosmojs/kosmo/compare/v0.6.4...v0.6.5) (2026-10-27)
+
+### Bug Fixes
+
+* add var/lib exclusion to seeded gitignore ([b078846](https://github.com/kosmojs/kosmo/commit/b078846ba10d8751f3bc0cd552e6d55636d8e9a2))
+* aliases answer the same everywhere ([c975107](https://github.com/kosmojs/kosmo/commit/c975107df68023c00ff54bff4150dfc36ed4454d))
+* correctly handle static files with spaces in their names ([0c9320a](https://github.com/kosmojs/kosmo/commit/0c9320af696bb04cb535ec47b32e98da1dd8dc34))
+
+### Improvements
+
+* removeDerivedFiles after route deleted ([3894459](https://github.com/kosmojs/kosmo/commit/3894459525134b35316b1bbfcfaebcfc1136b5cc))
+
 ## [0.6.4](https://github.com/kosmojs/kosmo/compare/v0.6.3...v0.6.4) (2026-10-24)
 
 ### Improvements
 
 * add a default page and a default route on folder creation ([714f170](https://github.com/kosmojs/kosmo/commit/714f170cb0fe4f7b1cc1d44eb5f2c71cd072368f))
 * move lib/ into var/ ([cd47db3](https://github.com/kosmojs/kosmo/commit/cd47db3758a6cbe64a5f63a29ed73fc233b76ef8))
-
-### Miscellaneous
-
-* add changeset ([eff97cb](https://github.com/kosmojs/kosmo/commit/eff97cbc2267e7cb6f14aff8f0a989527055dabb))
-* add more ConventionalChangelog types ([0f9674d](https://github.com/kosmojs/kosmo/commit/0f9674d5feebbca6f60bc25e102aa26985e78d2a))
 
 ## [0.6.3](https://github.com/kosmojs/kosmo/compare/v0.6.2...v0.6.3) (2026-10-11)
 
@@ -17,25 +24,9 @@
 * **cli:** ask for fodler name interactively or provide --name flag ([982e79a](https://github.com/kosmojs/kosmo/commit/982e79a9ee5a727cb4fc23e6d904269913c6df85))
 * **create:** ask for project name interactively or provide --name flag ([c02e82e](https://github.com/kosmojs/kosmo/commit/c02e82e3be81e15a5552a1132202558e0436d9f2))
 
-### Miscellaneous
-
-* add changeset ([62666e4](https://github.com/kosmojs/kosmo/commit/62666e4bc91d2b149f4400fda99e0253f1c9285d))
-* version bump ([201484b](https://github.com/kosmojs/kosmo/commit/201484b31647fea4bc420400b42f7ddcf33f1050))
-
 ## [0.6.2](https://github.com/kosmojs/kosmo/compare/v0.6.1...v0.6.2) (2026-10-10)
 
-### Miscellaneous
-
-* add changeset ([59de844](https://github.com/kosmojs/kosmo/commit/59de844227b2f114acaf756d650f05682848cb04))
-* version bump ([c19f34b](https://github.com/kosmojs/kosmo/commit/c19f34b9302426a3acda4e188c2e8afd7a1a502e))
-
 ## [0.6.1](https://github.com/kosmojs/kosmo/compare/v0.6.0...v0.6.1) (2026-10-10)
-
-### Miscellaneous
-
-* add changeset ([2d4a40e](https://github.com/kosmojs/kosmo/commit/2d4a40e379cfa750ed795c378d9ab9e3fdc2feb6))
-* deps bump ([f8cad38](https://github.com/kosmojs/kosmo/commit/f8cad380c515584486ef79ca1537a0af1b8c4d43))
-* version bump ([417e49a](https://github.com/kosmojs/kosmo/commit/417e49a04d2e842cf87f03fb0f81208f34da7492))
 
 ## [0.6.0](https://github.com/kosmojs/kosmo/compare/v0.5.2...v0.6.0) (2026-10-10)
 
@@ -63,20 +54,6 @@
 ### Improvements
 
 * **core-generator:** add source folder name to core config ([b580164](https://github.com/kosmojs/kosmo/commit/b58016497d130172d2bc3f06c2e8a550e5df81ba))
-
-### Miscellaneous
-
-* add changeset ([c38a291](https://github.com/kosmojs/kosmo/commit/c38a2912f9574524c52297b80c0ab74ac09e3f8a))
-* **core/fetch:** move Transport type into ./types ([8806159](https://github.com/kosmojs/kosmo/commit/8806159f07b5a4646a9fa6c3ee781ef76cbe26c3))
-* deps bump ([84b79c2](https://github.com/kosmojs/kosmo/commit/84b79c26340c077e0e322ec713309a2b432274d3))
-* docs cleanup ([ae02341](https://github.com/kosmojs/kosmo/commit/ae02341e9a7a4adf0ebc7d98ca1394c54f0809c1))
-* format ([0e9d612](https://github.com/kosmojs/kosmo/commit/0e9d612db08c0e79b9d410b6b0245ee7c81f47b7))
-* move cacheDir to lib ([74e0fd9](https://github.com/kosmojs/kosmo/commit/74e0fd9029335a223ed956ceadd9ae42f16fc076))
-* move configFilePattern to lib ([4276d02](https://github.com/kosmojs/kosmo/commit/4276d021ab66cd6185a35036df4eb8b63a042bf9))
-* move findFreePortRange to lib ([5df9ee2](https://github.com/kosmojs/kosmo/commit/5df9ee25c91c07fa4e6f4b920b71073c273409ae))
-* move VERSION to lib ([52523bc](https://github.com/kosmojs/kosmo/commit/52523bc8104c4a9d99f6c53a5383b60e27987f83))
-* refactor integration tests ([b6b56b6](https://github.com/kosmojs/kosmo/commit/b6b56b6b53f0a8b8c99267160285adf8a3ce3c7e))
-* version bump ([87db4f3](https://github.com/kosmojs/kosmo/commit/87db4f35cbb88f5ae0c289ea6210db87dfee1d19))
 
 ## [0.5.2](https://github.com/kosmojs/kosmo/compare/v0.5.0...v0.5.2) (2026-09-21)
 
@@ -107,18 +84,6 @@
 * **create:** set frontend.base=/ and backend.base=/api on newly created projects ([37d3ffa](https://github.com/kosmojs/kosmo/commit/37d3ffa44145288808704be8f3e36409e3567a3c))
 * **dist/run.js:** serve only folders with a manifest file ([1c3fcf6](https://github.com/kosmojs/kosmo/commit/1c3fcf657878c01c6186e5fa100cf829fb338736))
 
-### Miscellaneous
-
-* add changeset ([e66beea](https://github.com/kosmojs/kosmo/commit/e66beea9106b9188801379dca3e8e52b1bc10849))
-* add README and description for every package ([193913c](https://github.com/kosmojs/kosmo/commit/193913c1aa03b317b1d46c239d3600200dd66f82))
-* add zeroed version to private packages ([96bd81f](https://github.com/kosmojs/kosmo/commit/96bd81ffe3bdc0549c85e50fdaa7449c5e117ac3))
-* drop cacheVersion from typebox generator ([c4b824f](https://github.com/kosmojs/kosmo/commit/c4b824f5c73bbd0f1bcc33a95ce68a81cc45b6ab))
-* drop version for private packages ([1d44820](https://github.com/kosmojs/kosmo/commit/1d448208cea04e206b8ef9ec6c0358a6433c54a5))
-* use node v24 on github/workflows/docs ([7a9caf9](https://github.com/kosmojs/kosmo/commit/7a9caf9f0fdb62975cec7a3533885c6afc667b1f))
-* version bump ([6d5648f](https://github.com/kosmojs/kosmo/commit/6d5648febdec7c1f5aba04c00134b11eebf8ea0b))
-* version bump ([3681141](https://github.com/kosmojs/kosmo/commit/368114102e6714bfe3d21867ad7b4d87fecb3603))
-* workspace build script ([819e426](https://github.com/kosmojs/kosmo/commit/819e426651480019a82c879ac37a02657bba4a52))
-
 ## [0.5.0](https://github.com/kosmojs/kosmo/compare/v0.4.4...v0.5.0) (2026-09-09)
 
 ### ⚠ BREAKING CHANGES
@@ -141,23 +106,6 @@
 
 * **cli:** ask for SSR/SSG/TSQ only if a framework selected ([c928f33](https://github.com/kosmojs/kosmo/commit/c928f3339f23f5045a30b593f642ae768b9c429e))
 * **core-generator:** sort routes to get deterministic derived files ([c65ec23](https://github.com/kosmojs/kosmo/commit/c65ec23d4a6b87db7016b039008b09294552345f))
-
-### Miscellaneous
-
-* add changeset ([e910b76](https://github.com/kosmojs/kosmo/commit/e910b76ee6074d261d7c4f5660c7e72add4e140f))
-* **cli:** update flags according to updated @clack/prompts ([150fd7c](https://github.com/kosmojs/kosmo/commit/150fd7c73228ecbe2c66ac2698105b7423ee31bf))
-* deps bump ([aae80e4](https://github.com/kosmojs/kosmo/commit/aae80e4f4129930b13b4d85b96dbc0bd1a3c8f70))
-* fix integration tests ([2f7d3ed](https://github.com/kosmojs/kosmo/commit/2f7d3eddec2b8b82b0d088166e2be3374d351cad))
-* fix unit tests ([ba35d74](https://github.com/kosmojs/kosmo/commit/ba35d74e971e58eaafc9112db5cf4419b010dc38))
-* refine seeded greetings ([2494199](https://github.com/kosmojs/kosmo/commit/24941997f7749b4150930239dd71f96dc817ab91))
-* refine tests ([aaa446c](https://github.com/kosmojs/kosmo/commit/aaa446c11300df15667d635d4c8dfac6624e3bc2))
-* revamp tests ([ff272b8](https://github.com/kosmojs/kosmo/commit/ff272b839c9082c9298a40c02ca2a5b4ac2aedc7))
-* **typebox-generator:** update tests according to updated typebox ([7b44b3b](https://github.com/kosmojs/kosmo/commit/7b44b3bcdca4fb5ce3d7b35167077f8eb5461733))
-* update favicon ([909c990](https://github.com/kosmojs/kosmo/commit/909c9906e9c0789ccad02f5b3226715fc082c123))
-* update format according to updated biome ([ecdf270](https://github.com/kosmojs/kosmo/commit/ecdf2701a30521dbb6c00a991780834622a7ea15))
-* update logo ([9c33783](https://github.com/kosmojs/kosmo/commit/9c33783e8f8d3b554e1f0318cc3997207cc4033a))
-* update logo size ([4412fb6](https://github.com/kosmojs/kosmo/commit/4412fb654d9c42581dc5b9b5b86fda308dc56724))
-* version bump ([a70a7b1](https://github.com/kosmojs/kosmo/commit/a70a7b1022d7095963c654e87c4e981268f00e5f))
 
 ## [0.4.4](https://github.com/kosmojs/kosmo/compare/v0.4.3...v0.4.4) (2026-09-03)
 
@@ -194,18 +142,6 @@
 * **cli:** ask about SSG only if SSR enabled ([feed48b](https://github.com/kosmojs/kosmo/commit/feed48b798ce8e6514c14c368aac6dfa410d2468))
 * **core-generator:** use relative path for backend-app virtual module ([5c4e950](https://github.com/kosmojs/kosmo/commit/5c4e950abfea134aa3b8d4f9ee86ac87346322a1))
 
-### Miscellaneous
-
-* add changeset ([1f0dc12](https://github.com/kosmojs/kosmo/commit/1f0dc1295488ea91ca37977f8232be2f52a1a8b8))
-* fix cli usage details ([a0f266d](https://github.com/kosmojs/kosmo/commit/a0f266dfcbea75e6c3ed71944ca337446dcf4ba1))
-* fix test workflow ([63399ed](https://github.com/kosmojs/kosmo/commit/63399ed63f9353786868192a8de2a78610408739))
-* minor fixes ([839ac08](https://github.com/kosmojs/kosmo/commit/839ac0835b6410096f8c73961e5facba4b0055cb))
-* revamp tests ([f48a683](https://github.com/kosmojs/kosmo/commit/f48a683e84d4b689d715fcb3afe045fd26291370))
-* skip docs from automated -r build ([154745e](https://github.com/kosmojs/kosmo/commit/154745ee653061a7815031f03f9997bcd0391595))
-* typo fix ([5cb4319](https://github.com/kosmojs/kosmo/commit/5cb43192c85fb87936f176c249ee1f9886ee931b))
-* update test workflow ([ed471eb](https://github.com/kosmojs/kosmo/commit/ed471eb5117e52b86a6822c873838d08938216f9))
-* version bump ([7bcff56](https://github.com/kosmojs/kosmo/commit/7bcff56852ce2863f5ccd5379a7b6e34c7e61a9c))
-
 ## [0.4.3](https://github.com/kosmojs/kosmo/compare/v0.4.2...v0.4.3) (2026-08-29)
 
 ### Bug Fixes
@@ -234,20 +170,6 @@
 
 * **create:** allow create projects without a source folder ([b998962](https://github.com/kosmojs/kosmo/commit/b998962c756d3f3a6b7ca96c91914cc066291a96))
 
-### Miscellaneous
-
-* add changeset ([9af8d46](https://github.com/kosmojs/kosmo/commit/9af8d46d38d7cc30b65aeee30b56b1c46d0d1145))
-* allow random framework on integration tests ([bb95b3d](https://github.com/kosmojs/kosmo/commit/bb95b3da030824b2ce918d89bcaa7a12691727a4))
-* **cli:** add gitignore ([efd5646](https://github.com/kosmojs/kosmo/commit/efd5646fb0d32d64090133b48519e85f353fa707))
-* **cli:** add node_modules to gitignore ([a1a2024](https://github.com/kosmojs/kosmo/commit/a1a20249eadb01fb2a6033613c5f19c1486eb2c2))
-* **cli:** fix tests ([226bb35](https://github.com/kosmojs/kosmo/commit/226bb35f7b33f1b4d533afeb495f8c27f5d09781))
-* **cli:** update test snapshots ([a8c9ebe](https://github.com/kosmojs/kosmo/commit/a8c9ebedf623edcbe4708c8aaa807bd68154b341))
-* **cli:** update test snapshots ([57f3ed0](https://github.com/kosmojs/kosmo/commit/57f3ed0fbc326bb545bab7e0ed39d6e02eb8b996))
-* **docs:** revert vitepress-plugin-group-icons ([48d028b](https://github.com/kosmojs/kosmo/commit/48d028bbff53389495989fbeec4279b4c61af138))
-* README update ([7bd3ec8](https://github.com/kosmojs/kosmo/commit/7bd3ec80c1bf18278d372e420d2e3dc6a3c56f89))
-* update docs ([5066da0](https://github.com/kosmojs/kosmo/commit/5066da0ea4f46162b70c80b65820df3de1214a77))
-* version bump ([a31f344](https://github.com/kosmojs/kosmo/commit/a31f344163a93c4c3230d6b8621f990b3a3b25d6))
-
 ## [0.4.2](https://github.com/kosmojs/kosmo/compare/v0.4.1...v0.4.2) (2026-08-24)
 
 ### Features
@@ -267,13 +189,6 @@
 
 * **core-generator:** tsconfig types vary based on installed dependencies ([3f9c510](https://github.com/kosmojs/kosmo/commit/3f9c51039f3bcf86f90f1ff89608bbcfa5834464))
 
-### Miscellaneous
-
-* add changeset ([ba8faf8](https://github.com/kosmojs/kosmo/commit/ba8faf893721d7eb53813247b108e90d40f9e91a))
-* deps bump ([afaeb53](https://github.com/kosmojs/kosmo/commit/afaeb532472f9726abf6015f35f0db1ceb5d89ed))
-* update docs ([c391f7f](https://github.com/kosmojs/kosmo/commit/c391f7f120f8977d4ce7580567cede3df1532467))
-* version bump ([b59383e](https://github.com/kosmojs/kosmo/commit/b59383ef9aaedb63c2cf0e15f56925432dc14a99))
-
 ## [0.4.1](https://github.com/kosmojs/kosmo/compare/v0.4.0...v0.4.1) (2026-08-22)
 
 ### Bug Fixes
@@ -289,14 +204,6 @@
 ### Code Refactoring
 
 * **generators:** update route mapper's path method to take the prefix option ([d6a4f9c](https://github.com/kosmojs/kosmo/commit/d6a4f9cd0a304d9713bc20ed33b458f06710b454))
-
-### Miscellaneous
-
-* add changeset ([f035ea9](https://github.com/kosmojs/kosmo/commit/f035ea93fd3e3926fdecc606e02241542a9a9e92))
-* **site:** update favicon ([a590818](https://github.com/kosmojs/kosmo/commit/a59081889f1ebdb3b3a84d84dba6b2ccf70fac59))
-* update docs ([e6b6c8e](https://github.com/kosmojs/kosmo/commit/e6b6c8ede88b9868f923ec728843e6ea111f7912))
-* update logo ([8d1e60e](https://github.com/kosmojs/kosmo/commit/8d1e60e4e503743aa93aaab3b6bd3523467a5a3a))
-* version bump ([faafd08](https://github.com/kosmojs/kosmo/commit/faafd08dfdf8913f2bed5644414da23a5979af37))
 
 ## [0.4.0](https://github.com/kosmojs/kosmo/compare/v0.3.0...v0.4.0) (2026-08-21)
 
@@ -329,21 +236,6 @@
 * **koa-generator:** revamp server ([060b268](https://github.com/kosmojs/kosmo/commit/060b2688c6d279bb16fb1ba3e5be7562542cc975))
 * unify apiRouteMapper, used by fetch and backend generators ([daa4b4b](https://github.com/kosmojs/kosmo/commit/daa4b4b143b0f74351c104741173a97c702e62d0))
 
-### Miscellaneous
-
-* add changeset ([e9ca0b1](https://github.com/kosmojs/kosmo/commit/e9ca0b16499867b478f6176d343685f517878ebb))
-* deps bump ([8e8a2be](https://github.com/kosmojs/kosmo/commit/8e8a2bedd4d263ccb440261854d0b91b25f69a9b))
-* fix release script ([9e854f8](https://github.com/kosmojs/kosmo/commit/9e854f8cb262993634f1b8d3e127afc7a47d948a))
-* **hono-generator:** move unhandledRejection handler into userspace ([643f0dc](https://github.com/kosmojs/kosmo/commit/643f0dce44d7a7fd04d04475ba68fd43d8ebaeb3))
-* **hono-generator:** re-format src/errors.ts ([6825754](https://github.com/kosmojs/kosmo/commit/68257549bebddb7a575d381a31c92f36a97d3988))
-* **koa-generator:** move unhandledRejection handler into userspace ([ca4f32a](https://github.com/kosmojs/kosmo/commit/ca4f32a5e89beee13a95ed7b991580e3c1338deb))
-* **koa-generator:** re-format src/errors.ts ([f5ba427](https://github.com/kosmojs/kosmo/commit/f5ba42794f4e8435aec784950ad5a530f0562ccb))
-* **lib:** fix tests ([f3db6a6](https://github.com/kosmojs/kosmo/commit/f3db6a6d3fbab31814fa216e0bf1fd38fbb3f1b0))
-* **tests:** import and use the project's server in tests ([e6c6ce3](https://github.com/kosmojs/kosmo/commit/e6c6ce3c203043f92762d5bb53a10a0e7c802ca9))
-* **tests:** revamp cascading-middleware tests ([9164400](https://github.com/kosmojs/kosmo/commit/916440099d60beb73039f0da21bfaf08bac9bd65))
-* update README ([2934d43](https://github.com/kosmojs/kosmo/commit/2934d43049649147e6467e002475c80356941aca))
-* version bump ([851e841](https://github.com/kosmojs/kosmo/commit/851e841fcb903c328d28f40932fca5c83f102521))
-
 ## [0.3.0](https://github.com/kosmojs/kosmo/compare/v0.2.10...v0.3.0) (2026-08-15)
 
 ### ⚠ BREAKING CHANGES
@@ -366,18 +258,6 @@
 * **ssr:** preserve query string in the router during SSR ([64856ae](https://github.com/kosmojs/kosmo/commit/64856ae0dd943fd6850e0b7feaac5f29e10264ed))
 * **vue:** ship the hydration script in head on streamed SSR routes ([844adca](https://github.com/kosmojs/kosmo/commit/844adca50125939891cffda68d5d1451a15a0e1c))
 
-### Miscellaneous
-
-* add changeset ([2ad2908](https://github.com/kosmojs/kosmo/commit/2ad2908360b0bf7181124ff25142727c74d3ea2c))
-* changelog ([5f543d9](https://github.com/kosmojs/kosmo/commit/5f543d9f03d09695f3a847f933b6e3838a4f93e7))
-* fix typing ([7a248e4](https://github.com/kosmojs/kosmo/commit/7a248e40013d82d8aa2c5382064890c57df6f23e))
-* revamp changelog generation ([8037c82](https://github.com/kosmojs/kosmo/commit/8037c8281eb5cd7b90db3c037f68d567c69c03f4))
-* **test/integration:** rename nested-routes.test.ts → layouts.test.ts ([1f717de](https://github.com/kosmojs/kosmo/commit/1f717de63ee0ab6fdb214a08e49f43039b1d98c3))
-* **tests:** move fetch tests into per-framework suites ([05c2d84](https://github.com/kosmojs/kosmo/commit/05c2d8445413a46ed7f27c3f06a77aca88c32932))
-* update docs ([57b5361](https://github.com/kosmojs/kosmo/commit/57b5361ff9d3cbdeaa70e6528d3de14ceed32820))
-* update landing page ([4a1bed3](https://github.com/kosmojs/kosmo/commit/4a1bed3749f349d307a7aa0fd68e070fc927a6c4))
-* version bump ([50bbcf1](https://github.com/kosmojs/kosmo/commit/50bbcf1694650b063adbe15b76b0155c63fbaed7))
-
 ## [0.2.10](https://github.com/kosmojs/kosmo/compare/v0.2.9...v0.2.10) (2026-08-10)
 
 ### Bug Fixes
@@ -390,22 +270,7 @@
 
 * **ast:** do not removeSourceFile ([bd0e9c5](https://github.com/kosmojs/kosmo/commit/bd0e9c516b169c646722b5f67c878d28e76115b1))
 
-### Miscellaneous
-
-* add changeset ([9a93978](https://github.com/kosmojs/kosmo/commit/9a93978b563c245c4dcf55fa9b04e9467189e86a))
-* deps bump ([9e5ecec](https://github.com/kosmojs/kosmo/commit/9e5ecec8dc47f2facafe34a0516fb13f266d7b37))
-* generate changelog ([fe4a8ab](https://github.com/kosmojs/kosmo/commit/fe4a8ab4597ccde109071e1c01900ccbdef36b40))
-* update github/workflows ([ed6f8d8](https://github.com/kosmojs/kosmo/commit/ed6f8d84addc496099c8b19c74089373c63a5a3a))
-* update readme and features ([a560b2e](https://github.com/kosmojs/kosmo/commit/a560b2e94a99c57cccda14bd64a1bef182d74c50))
-* version bump ([c4b19a8](https://github.com/kosmojs/kosmo/commit/c4b19a88d5ed5bc7aba13c246f78aca747b991ab))
-
 ## [0.2.9](https://github.com/kosmojs/kosmo/compare/v0.2.8...v0.2.9) (2026-08-06)
-
-### Miscellaneous
-
-* add changeset ([afe4cf6](https://github.com/kosmojs/kosmo/commit/afe4cf61d92359920f3138b430dff4c6789a5d58))
-* fix github/workflows ([8419783](https://github.com/kosmojs/kosmo/commit/84197836a683821d5d6c82a431f7f297f0161374))
-* version bump ([5f83758](https://github.com/kosmojs/kosmo/commit/5f83758c3aed438be0b60396ca237d7be328c87c))
 
 ## [0.2.8](https://github.com/kosmojs/kosmo/compare/v0.2.7...v0.2.8) (2026-08-06)
 
@@ -432,24 +297,11 @@
 * **cli:** format config file ([f616e41](https://github.com/kosmojs/kosmo/commit/f616e416289b587639d656967c856e32c8e96815))
 * move tsconfig generation to core-generator ([72ed660](https://github.com/kosmojs/kosmo/commit/72ed660105c1e99e10b6f17bd23a037238bfaecf))
 
-### Miscellaneous
-
-* add changeset ([109eeff](https://github.com/kosmojs/kosmo/commit/109eeffc8a450d2046ca4b89efc82c579da4f768))
-* **cli:** update tests ([06f11d9](https://github.com/kosmojs/kosmo/commit/06f11d9f83bad93fc5a24c9e6451fe2870b20176))
-* deps bump ([38ac83c](https://github.com/kosmojs/kosmo/commit/38ac83cab81e1bff901f90b4700af2cdf336cc09))
-* increase vitest testTimeout ([dadfd67](https://github.com/kosmojs/kosmo/commit/dadfd673f2e99b6fd2798211c143e6e484088564))
-* version bump ([ea9f836](https://github.com/kosmojs/kosmo/commit/ea9f83635c347b4e15a37b921ea17b398b3f1bae))
-
 ## [0.2.7](https://github.com/kosmojs/kosmo/compare/v0.2.6...v0.2.7) (2026-07-31)
 
 ### Improvements
 
 * jsx option per folder ([c7a755f](https://github.com/kosmojs/kosmo/commit/c7a755fc44434ca2442dfb831cd98bf54305141e))
-
-### Miscellaneous
-
-* add changeset ([ecf7e88](https://github.com/kosmojs/kosmo/commit/ecf7e8840fe9926e86b003b29629f058cc782eb8))
-* version bump ([c18f50b](https://github.com/kosmojs/kosmo/commit/c18f50b003a63cb71f005714ecb5153cacb8f842))
 
 ## [0.2.6](https://github.com/kosmojs/kosmo/compare/v0.2.5...v0.2.6) (2026-07-31)
 
@@ -458,31 +310,11 @@
 * drop jsx:preserve from tsconfig ([bc50058](https://github.com/kosmojs/kosmo/commit/bc500587d4f8d7a438e93d2ed93143cd5b04060f))
 * enable ssg on mdx folders only, by default ([9d7d91e](https://github.com/kosmojs/kosmo/commit/9d7d91ebb1e05e2f037d4d93d846c464901ba4f4))
 
-### Miscellaneous
-
-* add changeset ([ce99025](https://github.com/kosmojs/kosmo/commit/ce99025b9a9f4fdd0809bab059931c539a60ee40))
-* version bump ([a32a468](https://github.com/kosmojs/kosmo/commit/a32a4684f60dd4eb4566b6fbbd643ec3e3e26946))
-
 ## [0.2.5](https://github.com/kosmojs/kosmo/compare/v0.2.4...v0.2.5) (2026-07-30)
-
-### Miscellaneous
-
-* add changeset ([016fd88](https://github.com/kosmojs/kosmo/commit/016fd88f933f73eead9dce4afbfc1c4062604c82))
-* version bump ([c879e77](https://github.com/kosmojs/kosmo/commit/c879e7723fa11b7551218e88fbe7bdca32a6bf4f))
 
 ## [0.2.4](https://github.com/kosmojs/kosmo/compare/v0.2.3...v0.2.4) (2026-07-30)
 
-### Miscellaneous
-
-* add changeset ([50480d5](https://github.com/kosmojs/kosmo/commit/50480d5ed2df467b602dd7323c204e3109835b09))
-* version bump ([dd92b2c](https://github.com/kosmojs/kosmo/commit/dd92b2c3654ca83e5bd3eb1fd2ab3f811aaada80))
-
 ## [0.2.3](https://github.com/kosmojs/kosmo/compare/v0.2.2...v0.2.3) (2026-07-30)
-
-### Miscellaneous
-
-* add changeset ([fe1b4ca](https://github.com/kosmojs/kosmo/commit/fe1b4ca8cec13470232c1fcb431270262452b23b))
-* version bump ([727c603](https://github.com/kosmojs/kosmo/commit/727c6036c87f0766713f11d790bbc8dfc1820bda))
 
 ## [0.2.2](https://github.com/kosmojs/kosmo/compare/4db60b08c2ba004d0125bf19ffd38f7d4187ad72...v0.2.2) (2026-07-30)
 
@@ -709,152 +541,3 @@
 * **validation schemas:** allow direct access to schema methods ([ca2ad60](https://github.com/kosmojs/kosmo/commit/ca2ad60e99425c8ca0816ff4b93941ae4e4d913b))
 * **vue-generator:** drop meta ([4352258](https://github.com/kosmojs/kosmo/commit/43522588d2fc456cac26120d9471a01df5394a01))
 * which dependencies are bundled into the SSR output ([734e55a](https://github.com/kosmojs/kosmo/commit/734e55a3f4ed752e1d9e70fb9d54b596b979c20d))
-
-### Miscellaneous
-
-* add .envrc ([5da7c61](https://github.com/kosmojs/kosmo/commit/5da7c61efd9da43e2948d54f898c95e6b19f1e7b))
-* add back version to generators packages ([3a51d81](https://github.com/kosmojs/kosmo/commit/3a51d81699d159bf61679978fdb16bf2929bf16b))
-* add biome.json ([b3bf4f0](https://github.com/kosmojs/kosmo/commit/b3bf4f07550b474910afec58b4889140ceef4d67))
-* add changeset ([13bf655](https://github.com/kosmojs/kosmo/commit/13bf655e154d50dcfbdd96103ca2944b6d2509e0))
-* add context7 widget ([307b6fa](https://github.com/kosmojs/kosmo/commit/307b6fa87fa3888ccbbf561cd3d28eb6b41a74a2))
-* add context7.json ([684c8e4](https://github.com/kosmojs/kosmo/commit/684c8e4f9f904997f24297caa55579b813000aef))
-* add license ([7530c61](https://github.com/kosmojs/kosmo/commit/7530c61500c95b39f2aca8ba9f08f3889638f8fc))
-* add name to wsbuild and test packages ([ac90559](https://github.com/kosmojs/kosmo/commit/ac90559e17c30e51fced93b163b15a9cebb14a54))
-* add pnpm-workspace.yaml ([f1810ce](https://github.com/kosmojs/kosmo/commit/f1810ce285f36b31f75bbbda20b6d6b50096547a))
-* add renderHelpers ([476cab3](https://github.com/kosmojs/kosmo/commit/476cab3e74c5fff12a13b76b68de188b54bbc1e3))
-* add tsconfig types ([4746a14](https://github.com/kosmojs/kosmo/commit/4746a14efef434879963b464a0814d60d2d0f065))
-* **api:** refine debug output ([592f7f3](https://github.com/kosmojs/kosmo/commit/592f7f345e07bea6d7ebfec4d9a503f120add2f3))
-* avoid packages use workspace-installed dependencies ([d670264](https://github.com/kosmojs/kosmo/commit/d6702645ab36414af28c46e053594df590724d0a))
-* biome.json ([93abab6](https://github.com/kosmojs/kosmo/commit/93abab6107b5c3e847196ed34a4de40ce4e1879d))
-* bump tfusion version ([22d632e](https://github.com/kosmojs/kosmo/commit/22d632e20dc8f6d1eb0e9dc939965d7283a029fc))
-* cleanup ([f47e57a](https://github.com/kosmojs/kosmo/commit/f47e57a427dcd54b836a696afc2f90c3724f0ef1))
-* cleanup ([321b3b8](https://github.com/kosmojs/kosmo/commit/321b3b8619ca28fdcf8166961ca16c40469c7f44))
-* **cli:** expose createKosmoConfig ([2027dae](https://github.com/kosmojs/kosmo/commit/2027dae74d4ea0e169af0d42e63066c2ecf5a91d))
-* **cli:** fix tests ([05590e1](https://github.com/kosmojs/kosmo/commit/05590e1e421ed18d586fc8e8ae98eee424facf5b))
-* **cli:** reorder frameworks ([b780afa](https://github.com/kosmojs/kosmo/commit/b780afa488e2c19f65ca334b640353d26a34dc85))
-* **core-generator:** add KOSMO_SERVERSIDE_FETCH to env.d.ts ([b81b807](https://github.com/kosmojs/kosmo/commit/b81b8076f54e77f861585911bcef3fb9199a67ed))
-* **core:** deps cleanup ([cdceb42](https://github.com/kosmojs/kosmo/commit/cdceb425463c7b2384e1e6449b8eee05299d5c83))
-* **create:** fix preamble ([60a5596](https://github.com/kosmojs/kosmo/commit/60a55967f9a7a824d6ab2ad0e665992501943446))
-* default access public ([00b69fa](https://github.com/kosmojs/kosmo/commit/00b69fac8d10b65c3f053252567b5dbe501d42dc))
-* DEFAULT_PORT = 4554 ([e6438dc](https://github.com/kosmojs/kosmo/commit/e6438dcbab611137f6a5f4c3005c64fd50f9275a))
-* DEFAULT_PORT = 4556 ([764e091](https://github.com/kosmojs/kosmo/commit/764e09161077a025fab65a52352aa9b98c106379))
-* deps bump ([38be33f](https://github.com/kosmojs/kosmo/commit/38be33f4040cd1dfac5d1d3c768cc53c7d7bff61))
-* deps bump ([ccbd5e5](https://github.com/kosmojs/kosmo/commit/ccbd5e5618b70aba04db68ac123a833726c857bf))
-* deps bump ([07d9952](https://github.com/kosmojs/kosmo/commit/07d995212687c48acd9421552ae9abba12f0f314))
-* deps bump ([6b07e8a](https://github.com/kosmojs/kosmo/commit/6b07e8abbf1ec831b34719652db49b1ba0906b54))
-* deps bump ([12008a2](https://github.com/kosmojs/kosmo/commit/12008a2add36abd630e726f061378f0e122a6154))
-* deps bump ([c56f160](https://github.com/kosmojs/kosmo/commit/c56f160398116327b7d00aecf66a15508daf690c))
-* deps bump ([f0eea2d](https://github.com/kosmojs/kosmo/commit/f0eea2df43f8ee40090a8247ccb135dd1a283185))
-* deps bump ([beec7ac](https://github.com/kosmojs/kosmo/commit/beec7ac1399d629a035d9bfb15b81942f17f9412))
-* deps bump ([9a18895](https://github.com/kosmojs/kosmo/commit/9a18895394caf84a1bcfc79b57b5c373e4d77be6))
-* deps bump ([cebc81b](https://github.com/kosmojs/kosmo/commit/cebc81b92fe3cee65a18449bdc633cf4b2363d06))
-* deps bump ([8d0b9e5](https://github.com/kosmojs/kosmo/commit/8d0b9e5e8774ca9fb11817575521fd7145b1a0d4))
-* deps bump ([3f90ae0](https://github.com/kosmojs/kosmo/commit/3f90ae01ec78d28893bf300768acd98acfd46cc0))
-* deps bump ([3be6786](https://github.com/kosmojs/kosmo/commit/3be67869066ffe4f7a3c1f1c8bb9e28beb5d1055))
-* deps bump ([3b9ecf0](https://github.com/kosmojs/kosmo/commit/3b9ecf0b366310b9d33bf8c8813bfb433617e949))
-* deps bump ([d7797eb](https://github.com/kosmojs/kosmo/commit/d7797eb8fd59d1d8dc0bc78812ea9770cbb08fa4))
-* deps bump ([9b56d3f](https://github.com/kosmojs/kosmo/commit/9b56d3ffe1a66509dc6bc7c125d25715dd0766e4))
-* deps bump ([d075587](https://github.com/kosmojs/kosmo/commit/d075587bbc448e7e89c9eeec65490c1d6fa91778))
-* deps bump ([9e21796](https://github.com/kosmojs/kosmo/commit/9e2179636fba11d4b4cac0acb3b201111ef3fcb5))
-* **dev:** rename stubGenerator to coreGenerator ([a0fcc25](https://github.com/kosmojs/kosmo/commit/a0fcc25d015cd90e02c00519babb8fa8c8dd343c))
-* **dev:** share pathExists ([8c59e91](https://github.com/kosmojs/kosmo/commit/8c59e91c9737189f75e136b96dfc88ec55226415))
-* **docs:** add empty pnpm-workspace.yaml for install to work without --ignore-workspace ([87e082a](https://github.com/kosmojs/kosmo/commit/87e082afcf28cd00ae49551be93e7b3c2ca4b6a5))
-* **docs:** drop frontend utilities page ([8966749](https://github.com/kosmojs/kosmo/commit/89667492710e691e0bf59f999845b0ba298273d1))
-* **docs:** minor update ([a103582](https://github.com/kosmojs/kosmo/commit/a10358200210a98ad2904e8c0d28f032f47eb91a))
-* drop .envrc ([6dabafb](https://github.com/kosmojs/kosmo/commit/6dabafb8ea55dcadd485ab1907052f093afb3250))
-* drop dotenv ([660ed2b](https://github.com/kosmojs/kosmo/commit/660ed2b2e6848e9f16f970a88951db258839e7b3))
-* drop public/KosmoJS.svg ([b6175e5](https://github.com/kosmojs/kosmo/commit/b6175e5b6375642157dff86f855c06e54c2b2664))
-* drop redundant dependencies installed into user projects ([50aefd7](https://github.com/kosmojs/kosmo/commit/50aefd7a27068e83f48e825aa24392a48f132499))
-* **fetch-generator:** fix tests ([74a54be](https://github.com/kosmojs/kosmo/commit/74a54be7775320e01c2b87373c5abc1fffe0a4f1))
-* fix .changeset/config.json ([3556a72](https://github.com/kosmojs/kosmo/commit/3556a727d95945dab25c2862ee795f47f1291fe0))
-* fix deps ([4aabb17](https://github.com/kosmojs/kosmo/commit/4aabb177f34cb9f3e8e5cacf41c01dff4b1511e3))
-* fix README links ([f87c7ae](https://github.com/kosmojs/kosmo/commit/f87c7ae56ac6cdc993e15cb7837f316ae23f79c1))
-* fix tests to use folder's tsconfig ([ad9d65d](https://github.com/kosmojs/kosmo/commit/ad9d65da0828a3bba9d67fe1089bdafe907325a5))
-* format ([0246aad](https://github.com/kosmojs/kosmo/commit/0246aad3eec89e8c356c4b33a37e0c60257ffe37))
-* format ([e6b3480](https://github.com/kosmojs/kosmo/commit/e6b3480b56e1318ef4e849d3ed14fa32aea48e8d))
-* format ([972e578](https://github.com/kosmojs/kosmo/commit/972e57829cf97bee468197385a08aa6d3ab6a796))
-* **hono-generator:** fix tests ([97d718b](https://github.com/kosmojs/kosmo/commit/97d718b395b1c32ec3e78460e6dccbada83473fe))
-* increase openapi testTimeout ([9ef471a](https://github.com/kosmojs/kosmo/commit/9ef471ac8a74e93a857f9588d889181d842c0b86))
-* **koa-generator:** fix tests ([f3678de](https://github.com/kosmojs/kosmo/commit/f3678de2a5147547d082fcee850e052339927001))
-* **koa-generator:** multiple refinements ([aaf9820](https://github.com/kosmojs/kosmo/commit/aaf98203df97f0bc6f7950e90f61dadb555446f9))
-* **koa-generator:** remove unused deps ([7617ef0](https://github.com/kosmojs/kosmo/commit/7617ef05d5bdbd2fbdeeb40c0f7732cd67ab9039))
-* **koa-generator:** update README ([554e3cb](https://github.com/kosmojs/kosmo/commit/554e3cb93f0c751933a7c2eee16faa8a0fa159c2))
-* **lib:** fix tests ([3e3aca8](https://github.com/kosmojs/kosmo/commit/3e3aca87839000b26b3ea9f39328f4820e22b6a1))
-* load templates without type: "text" ([d1a34bc](https://github.com/kosmojs/kosmo/commit/d1a34bc439c9a597c2ea22fb13e0b8240d184f9a))
-* minor updates ([07b1919](https://github.com/kosmojs/kosmo/commit/07b19196fc69b93abec6fbf757be6a2845d3c90e))
-* new biome overrides ([a012976](https://github.com/kosmojs/kosmo/commit/a0129764c4691b34a00c17f965c4fe4e67707889))
-* **openapi-generator:** update test snapshot according to new sortRoutes ([952e530](https://github.com/kosmojs/kosmo/commit/952e5302c08a9270e17a4733bc3b29821c012f70))
-* **react-generator:** fix tests ([f0fb8c6](https://github.com/kosmojs/kosmo/commit/f0fb8c6819e438aa92207c47451c7802ce7546d0))
-* refine format ([5ad3aa6](https://github.com/kosmojs/kosmo/commit/5ad3aa6740db86e72351336420af5bc027b200ad))
-* refine generators self imports ([9a53011](https://github.com/kosmojs/kosmo/commit/9a53011654adbe262965b05ea29dd1a4297cf168))
-* refine path mappings for integration tests ([1639ddc](https://github.com/kosmojs/kosmo/commit/1639ddce376d1c7c81f982a4e552919c1252912a))
-* refine tests ([96dc4d2](https://github.com/kosmojs/kosmo/commit/96dc4d2eb24fbc82f77371ad71dcf62cf36698f1))
-* rename __KOSMO_SSR__ to __KOSMO_HYDRATABLE__ ([18f761c](https://github.com/kosmojs/kosmo/commit/18f761cb6bd02b679f9215dfa920aff2f27175a5))
-* rename pageRouteRenderHelpers to routeRenderHelpers ([cd05278](https://github.com/kosmojs/kosmo/commit/cd05278e0bbccc8aa66a0b6ca81803fdddde3024))
-* reorganize templates imports ([1514c20](https://github.com/kosmojs/kosmo/commit/1514c207952f4b1d91b89c0580239b4a98add4b8))
-* revamp vitest.config.js ([4cf4125](https://github.com/kosmojs/kosmo/commit/4cf412559ade9bbae84c894389cf198966d76681))
-* **solid-generator:** fix tests ([4893013](https://github.com/kosmojs/kosmo/commit/48930135cd3cd4a168c0d4370ab2f92f47cadc5a))
-* **solid-generator:** remove redundant dependency ([27bce7f](https://github.com/kosmojs/kosmo/commit/27bce7f541aabcfdd4a6534ef45f23b5780d1a66))
-* **ssr-generator:** more exact asset hash checking ([e19f388](https://github.com/kosmojs/kosmo/commit/e19f3886e2a59dbbed8b0ec6390abb2276416a9f))
-* **ssr-generator:** remove redundant option ([491fac4](https://github.com/kosmojs/kosmo/commit/491fac4cb6bee3708b6b20fa72d63518a94e97a9))
-* **ssr-generator:** stream as never ([88d8fa3](https://github.com/kosmojs/kosmo/commit/88d8fa3c33bd04c9bd0ce9e25bd7d710416b0a40))
-* swap icon ([69daead](https://github.com/kosmojs/kosmo/commit/69daead0663abcb0a7d52601db5de085c0cdbc49))
-* **test:** add scripts ([b3e5d43](https://github.com/kosmojs/kosmo/commit/b3e5d433ff5b4b5e5721ede4e6e58ff7bf0e4c1c))
-* **test:** increase hookTimeout, drop jsdom ([c35a4cf](https://github.com/kosmojs/kosmo/commit/c35a4cf5629eda6d571ded544c9cc795752358fb))
-* **test:** refine integration tests ([0187f04](https://github.com/kosmojs/kosmo/commit/0187f0476ca0d3d74b65929decffaf8fad7f137c))
-* **test:** rename setup files for openapi/typebox generators ([c7fd70a](https://github.com/kosmojs/kosmo/commit/c7fd70a5728d10e5446d11be13d0b8fffb69ac12))
-* **tsconfig:** add jsx preserve ([4f99a18](https://github.com/kosmojs/kosmo/commit/4f99a183225a4c19d1633d75d4b9bd5a43ce46ca))
-* **tsconfig:** drop vite/client from types ([c67c053](https://github.com/kosmojs/kosmo/commit/c67c053e36e7f955c6192fdd70f56f11e7f91643))
-* **tsconfig:** provide only @types/node by default ([60edc12](https://github.com/kosmojs/kosmo/commit/60edc12a15ab15dfdfc6110651c9783862db8cf4))
-* **typebox-generator:** rename templates/lib to index ([b30fca3](https://github.com/kosmojs/kosmo/commit/b30fca3c1fb4ab1c8f787e09bffeb6a5e3ec665c))
-* update .changeset/config.json ([d91850e](https://github.com/kosmojs/kosmo/commit/d91850e32b410c576aab081e4bea5043ac5d8b15))
-* update .gitignore ([23a82cf](https://github.com/kosmojs/kosmo/commit/23a82cf49909df135ce8951365c82aa6d4e37678))
-* update .gitignore ([16c7bbf](https://github.com/kosmojs/kosmo/commit/16c7bbfab984ce79e3d125f27ea249aa0f2c34c4))
-* update .gitignore ([c3df0e0](https://github.com/kosmojs/kosmo/commit/c3df0e0ee378254c6ae2402516144b772b2beb71))
-* update biome.json ([b1216f1](https://github.com/kosmojs/kosmo/commit/b1216f1ff3f92d07e2ea8fd0e9ae3991039d07ac))
-* update biome.json ([77b63df](https://github.com/kosmojs/kosmo/commit/77b63df6a2e93d6fd81e0625db54f259e978e3aa))
-* update biome.json ([ffd0e06](https://github.com/kosmojs/kosmo/commit/ffd0e0674d4415ac3b986074d24118ee14454b6e))
-* update biome.json ([2051582](https://github.com/kosmojs/kosmo/commit/2051582ea793951da44fea1772cc083900c5c920))
-* update biome.json ([1dd1679](https://github.com/kosmojs/kosmo/commit/1dd16794384bd6c9d5eec4fcba3bf9bb448539ba))
-* update biome.json ([2db94e8](https://github.com/kosmojs/kosmo/commit/2db94e815a7b75896b25bbe4d2460703203e2b9a))
-* update biome.json ([0cee00a](https://github.com/kosmojs/kosmo/commit/0cee00ab49f3330ff174f0b864b2d76a45efdad6))
-* update biome.json ([b6726fd](https://github.com/kosmojs/kosmo/commit/b6726fd26eb28ff8095a60d4aad95cab63d6a1ed))
-* update context7.json ([ae9a235](https://github.com/kosmojs/kosmo/commit/ae9a235dbbff3d17e5bc112d48f2e6b69963b7e6))
-* update default port to 4556 ([9de629b](https://github.com/kosmojs/kosmo/commit/9de629b5a553631e4145ca8495cecb893bdfefad))
-* update docs ([faa935d](https://github.com/kosmojs/kosmo/commit/faa935d499071210eb0ec914adf5a228cc8e21a9))
-* update docs ([ac8507a](https://github.com/kosmojs/kosmo/commit/ac8507aa3528eef566e983f1eb92b0e29fc8935f))
-* update github workflow ([255b921](https://github.com/kosmojs/kosmo/commit/255b921565fdf21b5bf4aeb562f3deda1b77f669))
-* update github workflows ([9cdc18f](https://github.com/kosmojs/kosmo/commit/9cdc18f1696b34146cba3d174c15a3d5c950228f))
-* update pnpm-lock.yaml ([44b5836](https://github.com/kosmojs/kosmo/commit/44b58362d90c277d707f85de4aea7f1e297de6f3))
-* update publish script ([8830001](https://github.com/kosmojs/kosmo/commit/8830001c21f66d95681a03ea325146910802f8da))
-* update README ([43b4f2d](https://github.com/kosmojs/kosmo/commit/43b4f2d697a720ce18c339541eeb3ab8d025c5f5))
-* update README ([5ef3e67](https://github.com/kosmojs/kosmo/commit/5ef3e67965338550b36aa35cc8db7c0e2b6b6776))
-* update README ([b78c0ea](https://github.com/kosmojs/kosmo/commit/b78c0ea40049de8fb55e1931476ea571377b7c0f))
-* update README ([a3dcd81](https://github.com/kosmojs/kosmo/commit/a3dcd81e223900bc64e160f26325eb469c338150))
-* update test workflow ([08433e6](https://github.com/kosmojs/kosmo/commit/08433e627b9794e70dba6dbd0116db6fa188c0fc))
-* update vitest.config.js ([83596ca](https://github.com/kosmojs/kosmo/commit/83596ca0911bafd7351d69fbde1e32e86a888994))
-* use named functions for better debug ([d817b3b](https://github.com/kosmojs/kosmo/commit/d817b3bd3821ad7a296db419c6a557d4418f13ce))
-* use workspace dependencies as devDependencies ([fbfc356](https://github.com/kosmojs/kosmo/commit/fbfc3564d16497076d675679c0a97cb3639712d0))
-* version bump ([13986c3](https://github.com/kosmojs/kosmo/commit/13986c30e9a285c4290c14ce49f263384c2385b3))
-* version bump ([fb9345a](https://github.com/kosmojs/kosmo/commit/fb9345a4f1190beea893cbea317e80d645a06298))
-* version bump ([4f9e4de](https://github.com/kosmojs/kosmo/commit/4f9e4de715defbb8179f0dc256587948eef2e093))
-* version bump ([c601db4](https://github.com/kosmojs/kosmo/commit/c601db43402bc549ec2cd7f2fbf0fcb2e61fc84b))
-* version bump ([60ee6f5](https://github.com/kosmojs/kosmo/commit/60ee6f5b4366b08f6e7828755c2b73fe91ac623e))
-* version bump ([bbcd0d7](https://github.com/kosmojs/kosmo/commit/bbcd0d74504b9c39b92cf6a3bbcda2a7e382ae04))
-* version bump ([885a74f](https://github.com/kosmojs/kosmo/commit/885a74f59a23edb2f3e7c8cb75e43355e02ab2d5))
-* version bump ([d6e4fd9](https://github.com/kosmojs/kosmo/commit/d6e4fd95348ee3c3a9c7b236f43c8f011e935200))
-* version bump ([a41034f](https://github.com/kosmojs/kosmo/commit/a41034fb0353a2f836a87fe71062898b746ba9e8))
-* version bump ([d721ced](https://github.com/kosmojs/kosmo/commit/d721ced0479499b99fadade9f4c9a969bb68a145))
-* version bump ([f2b6fca](https://github.com/kosmojs/kosmo/commit/f2b6fcaf4b46613dfe50ab9221b6384fb2f5186d))
-* version bump ([b242d05](https://github.com/kosmojs/kosmo/commit/b242d05ad8282579a1c819c2e265005a82a380e9))
-* version bump ([386b967](https://github.com/kosmojs/kosmo/commit/386b9673343e08ec0cef5c244b9f1751a17c9256))
-* version bump ([96b6a8c](https://github.com/kosmojs/kosmo/commit/96b6a8c0c76058e49007fd6326803cfc86b06613))
-* version bump ([5cffd27](https://github.com/kosmojs/kosmo/commit/5cffd273dbcedd548b52e319dc635d323f026e22))
-* version bump ([ab64bb4](https://github.com/kosmojs/kosmo/commit/ab64bb437ed7c564f341794830fd7f6199b47963))
-* version bump ([86b42e3](https://github.com/kosmojs/kosmo/commit/86b42e30e45b445d86ee8cfee75ac8cb2a49e070))
-* version bump ([e2904b6](https://github.com/kosmojs/kosmo/commit/e2904b659433a846372553c564c01db7e5b97ed7))
-* version bump ([db4f7e7](https://github.com/kosmojs/kosmo/commit/db4f7e70cc4070c242433104db6c67bbb9243598))
-* version bump ([0c34d60](https://github.com/kosmojs/kosmo/commit/0c34d60ce666cd70a56d8ccf4ef9878efcfa785e))
-* **vue-generator:** fix tests ([4b7a76d](https://github.com/kosmojs/kosmo/commit/4b7a76d93724b1e8aae95c0954a35a17d80f5c61))
-* **vue-generator:** minor template update ([6121618](https://github.com/kosmojs/kosmo/commit/61216183c357af489e603450e7286b91e77e72ed))
-* **workspace:** add wsbuild and test projects ([0e0bf46](https://github.com/kosmojs/kosmo/commit/0e0bf46020a0c0bdb5f966bfc412e86480c0b9b1))
