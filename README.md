@@ -50,14 +50,14 @@ A **meta-framework** that gives your `Vite` project a scalable shape:
 ### 1. Create a new `KosmoJS` project:
 
 ```sh
-npm create kosmo my-app
-# or `pnpm create kosmo my-app` / `yarn create kosmo my-app`
+npm create kosmo
+# or `pnpm create kosmo` / `yarn create kosmo`
 ```
 
-A short interactive setup asks for the frontend framework and the backend,
+A short interactive setup asks for the project name, the frontend framework and the backend,
 then creates the project **together with its first source folder** (named `app` at base `/` by default).
 
-Use `.` as the name to bootstrap into the current folder:
+Use `.` to bootstrap into the current folder:
 
 ```sh
 npm create kosmo .
@@ -95,8 +95,8 @@ Your app is now running at `http://localhost:4556`.
 ### 4. Add more source folders as the project grows
 
 ```sh
-npm run folder <name>
-# or `pnpm folder <name>` / `yarn folder <name>`
+npm run folder
+# or `pnpm folder` / `yarn folder`
 ```
 
 Each source folder runs its own set of frameworks with its own base URL, config etc.

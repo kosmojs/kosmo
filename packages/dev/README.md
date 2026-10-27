@@ -14,7 +14,7 @@ npm install -D @kosmojs/dev
 
 ## What it does
 
-Watches each source folder and regenerates its `lib/` directory as routes,
+Watches each source folder and regenerates its `var/lib/` directory as routes,
 middleware and validation types change - the typed fetch clients, the route tables,
 the framework entry points, the `_/` aliases.
 
@@ -34,7 +34,8 @@ export default defineConfig({
 
 ## Notes
 
-`lib/` is generated output. It is gitignored, safe to delete, and rebuilt on the next run -
+`var/lib/` is generated output. It is gitignored, apart from the derivation cache,
+safe to delete, and rebuilt on the next run -
 never edit it or import from it by relative path.
 
 There is no `vite.config.ts` in a KosmoJS project.

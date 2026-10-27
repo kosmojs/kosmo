@@ -16,7 +16,7 @@ backend: { stack: "koa" }
 ## Generates
 
 `api/app.ts`, `api/errors.ts`, `api/dev.ts`, `api/server.ts` and `api/env.d.ts` in the source folder,
-plus the `_/api`, `_/api:factory` and `@api/` internals in `lib/`. Also exports `./lib` for its error-handler helpers.
+plus the `_/api`, `_/api:factory` and `@api/` internals in `var/lib/`. Also exports `./lib` for its error-handler helpers.
 
 ## Notes
 
@@ -34,7 +34,7 @@ src/
 
 Templates are Handlebars (`.hbs`) when they interpolate, plain source files otherwise.
 Files written into a source folder are seeded only when blank, so editing one is never undone by a rebuild;
-files under `lib/` are regenerated on every run.
+files under `var/lib/` are regenerated on every run.
 
 ## Documentation
 

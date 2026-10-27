@@ -15,7 +15,7 @@ frontend: { stack: "react", ssg: true }
 
 ## Generates
 
-`lib/ssg.ts` and the prerender route table.
+`var/lib/ssg.ts` and the prerender route table.
 
 ## Notes
 
@@ -32,7 +32,7 @@ src/
 
 Templates are Handlebars (`.hbs`) when they interpolate, plain source files otherwise.
 Files written into a source folder are seeded only when blank, so editing one is never undone by a rebuild;
-files under `lib/` are regenerated on every run.
+files under `var/lib/` are regenerated on every run.
 
 ## Documentation
 
