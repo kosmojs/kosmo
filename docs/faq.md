@@ -2266,7 +2266,8 @@ Mostly no. `var/lib/.gitignore` ignores everything except `cache.json` and `type
 so derived output is treated as a build artifact. What *is* committed is the per-route
 derivation cache (`cache.json`, keyed by content hashes of the route and its type dependencies)
 so a fresh clone or CI run skips a full rebuild.
-Don't add `var/lib/` to the root `.gitignore` - that would drop the cache and make every clone slow.
+The root `.gitignore` ignores the rest of `var/` with `/var/*` and `!/var/lib/`.
+Don't ignore `var/` or `var/lib/` as a whole - that would drop the cache and make every clone slow.
 [Details&nbsp;›](/essentials/project-structure#inside-var-lib)
 
 ### Rendering & SSR

@@ -114,7 +114,7 @@ while the `_/` names you import stay the same:
 ```txt
 var/lib/
 ├── tsconfig.json         -> shared base for the root tsconfig
-├── .gitignore            -> why var/lib/ is NOT in the root .gitignore
+├── .gitignore            -> keeps cache.json and types.ts, ignores the rest
 └── front/
     ├── tsconfig.json     -> this folder's jsxImportSource + path mappings
     ├── api.ts            -> _/api          defineRoute, use
@@ -131,9 +131,15 @@ var/lib/
         └── routes.ts     -> the RouteMap
 ```
 
-::: tip `var/lib/` has its own `.gitignore` - don't add it to the root one
-The root `.gitignore` deliberately leaves `var/lib/` alone,
-because `var/lib/.gitignore` handles it more precisely:
+::: details `var/lib/` has its own `.gitignore` - don't ignore it from the root
+The root `.gitignore` ignores everything in `var/` except `var/lib/`:
+
+```txt [.gitignore]
+/var/*
+!/var/lib/
+```
+
+`var/lib/` is left to `var/lib/.gitignore`, which handles it more precisely:
 it ignores **everything** except `cache.json` and `types.ts` at any depth.
 
 So derived code is *not* committed - it is a build artifact.
@@ -141,7 +147,10 @@ What is committed is the per-route derivation cache
 (`cache.json`, keyed by content hashes of the route file and its type dependencies),
 so a fresh clone or a CI run doesn't pay for a full rebuild.
 
-Adding `var/lib/` to the root ignore file would drop that cache and make every clone slow.
+Ignoring `var/` or `var/lib/` as a whole from the root would drop that cache,
+and make every clone slow.
+Git never reads a `.gitignore` inside an ignored directory,
+so the exceptions in `var/lib/.gitignore` would stop applying.
 :::
 
 Deleting `var/lib/` is safe but not free: it forces a full rebuild,
