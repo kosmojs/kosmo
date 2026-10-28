@@ -41,6 +41,7 @@ import { parseArgs, styleText } from "node:util";
 import {
   compileAliasPatterns,
   createDispatcher,
+  DEFAULT_HOST,
   type DispatchEntry,
   MIME_TYPES,
   type SourceFolderManifest,
@@ -302,7 +303,7 @@ export const startServer = async ({
 
   server.listen(
     {
-      ...(host ? { host } : {}),
+      host: host || DEFAULT_HOST,
       ...(port ? { port: Number(port) } : {}),
       ...(sock ? { path: sock } : {}),
     },
