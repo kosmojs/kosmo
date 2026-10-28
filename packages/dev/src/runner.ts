@@ -9,7 +9,7 @@ import {
   type SourceFolder,
   type SourceFolderManifest,
 } from "@kosmojs/core";
-import { createAliasPatterns, pathResolver, render } from "@kosmojs/lib";
+import { createAliasPatterns, pathResolver } from "@kosmojs/lib";
 
 import runTemplate from "#templates/run";
 
@@ -59,21 +59,16 @@ export const runnerPath = ({ root, distDir }: ProjectSettings) => {
   return resolve(root, distDir || DEFAULT_DIST, "run.js");
 };
 
-let runnerCode: string | undefined;
-
 /**
  * The template is authored as TypeScript so it typechecks with the package;
  * the deployed file is plain JS. Stripping runs through the oxc transform
  * that vite already ships, once per process - preview redeploys after every rebuild.
  * */
 const runnerCodeFactory = async (): Promise<string> => {
-  if (!runnerCode) {
-    const { code } = await transformWithOxc(runTemplate, "run.ts", {
-      sourcemap: false,
-    });
-    runnerCode = code;
-  }
-  return runnerCode;
+  const { code } = await transformWithOxc(runTemplate, "run.ts", {
+    sourcemap: false,
+  });
+  return code || runTemplate;
 };
 
 /**
@@ -83,10 +78,6 @@ const runnerCodeFactory = async (): Promise<string> => {
 export const deployRunner = async (projectSettings: ProjectSettings) => {
   const file = runnerPath(projectSettings);
   await mkdir(resolve(file, ".."), { recursive: true });
-  await writeFile(
-    file,
-    render(await runnerCodeFactory(), projectSettings),
-    "utf8",
-  );
+  await writeFile(file, await runnerCodeFactory(), "utf8");
   return file;
 };

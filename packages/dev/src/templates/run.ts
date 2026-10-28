@@ -36,7 +36,7 @@ import {
 import type { IncomingMessage, Server, ServerResponse } from "node:http";
 import { createServer } from "node:http";
 import { extname, join, posix, resolve } from "node:path";
-import { parseArgs } from "node:util";
+import { parseArgs, styleText } from "node:util";
 
 import {
   compileAliasPatterns,
@@ -292,15 +292,17 @@ export const startServer = async ({
     });
   }
 
-  console.log(
-    `\n  -> Starting server [ ${sock ? `sock: ${sock}` : `port: ${port}`} ]\n`,
-  );
+  const handles = Object.entries({ host, port, sock })
+    .flatMap(([k, v]) => (v ? [`${k}: ${styleText("blue", String(v))}`] : []))
+    .join("; ");
+
+  console.log(`\n  -> Starting server [ ${handles} ]\n`);
 
   const server = createServer(await createListener());
 
   server.listen(
     {
-      host: host || "{{ previewHost }}",
+      ...(host ? { host } : {}),
       ...(port ? { port: Number(port) } : {}),
       ...(sock ? { path: sock } : {}),
     },
