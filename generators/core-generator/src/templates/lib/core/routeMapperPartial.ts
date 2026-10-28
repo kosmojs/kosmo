@@ -63,19 +63,18 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     }
   };
 
-  const path = ((
-    params?: ParamsT,
-    query?: Record<string, unknown>,
-    opt?: { prefix?: boolean | string },
-  ) => {
-    const path = join(
+  const path = ((params, query, opt) => {
+    // parametrize() output always starts with base (toPath is compiled with it)
+    const abs = parametrize(params);
+    const rel = base === "/" ? abs : abs.slice(base.length) || "/";
+
+    const path =
       opt?.prefix === false
-        ? "/"
+        ? rel
         : typeof opt?.prefix === "string"
-          ? opt.prefix
-          : base,
-      parametrize(params as ParamsT),
-    );
+          ? join(opt.prefix, rel)
+          : abs;
+
     return query ? [path, stringifySearchParams(query)].join("?") : path;
   }) as RoutePathMethods<ParamsT>["path"];
 
@@ -119,17 +118,18 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
   };
 
   const path = ((params, query, opt) => {
-    const path = join(
+    // parametrize() output always starts with base (toPath is compiled with it)
+    const abs = parametrize(params);
+    const rel = base === "/" ? abs : abs.slice(base.length) || "/";
+
+    const path =
       opt?.prefix === false
-        ? "/"
+        ? rel
         : typeof opt?.prefix === "string"
-          ? opt.prefix
-          : base,
-      parametrize(params),
-    );
-    return query //
-      ? [path, stringifySearchParams(query)].join("?")
-      : path;
+          ? join(opt.prefix, rel)
+          : abs;
+
+    return query ? [path, stringifySearchParams(query)].join("?") : path;
   }) as RoutePathMethods<ParamsT>["path"];
 
   const href = ((host, params, query, opt) => {
