@@ -14,7 +14,6 @@ import {
 } from "vue-router";
 
 import type { RouterFactoryReturn } from "@kosmojs/core";
-import { join } from "@kosmojs/core/fetch";
 import { createRouterFactory } from "@kosmojs/core/generators";
 
 import { base } from "{{ createImport 'libCore' }}";
@@ -134,7 +133,7 @@ export const createRouters = (
         // strip the base from pushed paths
         if (pathname === base) {
           pathname = "/";
-        } else if (pathname.startsWith(join(base, "/"))) {
+        } else if (pathname.startsWith(`${base}/`)) {
           pathname = pathname.slice(base.length);
         }
       }
