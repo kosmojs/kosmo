@@ -61,7 +61,7 @@ watchEffect(() => {
       the accent variable, so it could not follow the color scheme.
     -->
     <template #nav-bar-title-before>
-      <KosmoMark />
+      <KosmoMark :size="28" />
     </template>
     <template #aside-outline-before>
       <!-- Render the date only if it exists in frontmatter -->
