@@ -1,3 +1,12 @@
+## [0.6.6](https://github.com/kosmojs/kosmo/compare/v0.6.5...v0.6.6) (2026-10-28)
+
+### Bug Fixes
+
+* dist/run.js without --host ([a8a4421](https://github.com/kosmojs/kosmo/commit/a8a4421f7c9c103d0de2c9dc4ee165c04840a281))
+* **fetch/join:** keep root and URL schemes intact ([55330ac](https://github.com/kosmojs/kosmo/commit/55330ace5ca8528eb800842648676d962ef700b5))
+* route path() no longer adds base twice ([6171060](https://github.com/kosmojs/kosmo/commit/6171060978bc3612cafb9286aa6ae2a4e5b59e83))
+* **vue-generator:** correctly detect paths starting with <base>/ ([470aaab](https://github.com/kosmojs/kosmo/commit/470aaaba686d5eeb23fcf6debf40a406d75eb566))
+
 ## [0.6.5](https://github.com/kosmojs/kosmo/compare/v0.6.4...v0.6.5) (2026-10-27)
 
 ### Bug Fixes
