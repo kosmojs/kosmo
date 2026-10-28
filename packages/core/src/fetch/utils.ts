@@ -7,10 +7,12 @@ export const join = (...args: Array<unknown>): string => {
     console.error(args);
     throw new Error("The path argument must be of type string or number");
   }
-  const [prefix = "", ...rest] = args;
-  const head = String(prefix).replace(/\/+$/, "");
-  const tail = rest.join("/").replace(/\/+/g, "/").replace(/^\//, "");
-  return tail ? `${head}/${tail}` : head;
+  // collapse repeated slashes, keeping a leading "scheme://" intact
+  // drop a trailing slash unless it is the whole path
+  return args
+    .join("/")
+    .replace(/(^[a-z][a-z\d+.-]*:\/\/)|\/{2,}/gi, (_, scheme) => scheme || "/")
+    .replace(/(?<=[^/])\/$/, "");
 };
 
 export const createHost = (host: HostOpt): string => {
