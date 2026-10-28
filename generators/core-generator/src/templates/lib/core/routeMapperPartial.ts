@@ -56,7 +56,9 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
   const parametrize: RoutePathMethods<ParamsT>["parametrize"] = (params) => {
     const paramsMap = paramsMapper(params as never);
     try {
-      return toPath(paramsMap as never);
+      // optional groups carry their own leading slash ("{/:id}"),
+      // so the compiled output can contain "//"; join() normalizes it
+      return join(toPath(paramsMap as never));
     } catch (error) {
       console.error(`❗ERROR: Failed building path for ${name}`);
       throw error;
@@ -110,7 +112,9 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
   const parametrize: RoutePathMethods<ParamsT>["parametrize"] = (params) => {
     const paramsMap = paramsMapper(params as never);
     try {
-      return toPath(paramsMap as never);
+      // optional groups carry their own leading slash ("{/:id}"),
+      // so the compiled output can contain "//"; join() normalizes it
+      return join(toPath(paramsMap as never));
     } catch (error) {
       console.error(`❗ERROR: Failed building path for ${route.name}`);
       throw error;
