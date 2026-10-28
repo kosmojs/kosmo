@@ -60,6 +60,8 @@ export const setupTestProject = async (
     mode?: ProvidedContext["MODE"];
     frontend?: keyof typeof FRONTENDS | "random";
     backend?: keyof typeof BACKENDS | "random";
+    // pins the folder base; picked at random from baseVariants when omitted
+    base?: string;
     skip?: boolean;
   },
   folderConfig?: {
@@ -70,9 +72,7 @@ export const setupTestProject = async (
   const projectName = "app";
   const tempDir = await mkdtemp(resolve(tmpdir(), ".kosmojs-"));
 
-  const mode = setup.mode || inject("MODE");
-
-  const { skip } = setup;
+  const { skip, mode = inject("MODE") } = setup;
 
   const backend =
     setup.backend === "random"
@@ -93,7 +93,9 @@ export const setupTestProject = async (
     ...(frontend ? [`/${frontend}`] : []),
   ];
 
-  const base = baseVariants[Math.floor(Math.random() * baseVariants.length)];
+  const {
+    base = baseVariants[Math.floor(Math.random() * baseVariants.length)],
+  } = setup;
 
   const sourceFolder: SourceFolder = {
     name: "test",

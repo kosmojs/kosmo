@@ -1,89 +1,49 @@
-import { load } from "cheerio";
-import { describe, expect, it } from "vitest";
+import { describe, test } from "vitest";
 
 import { defaults } from "@kosmojs/core";
 
-import { routes } from "../@fixtures/generic/routes";
-import { setupTestProject } from "../setup";
+import { createTestGroups } from "../link-factory";
 
-// Generate template from test cases.
-// `to` is an expression attribute, not a quoted string: route names contain
-// braces (`docs/{...path}`) and Svelte interpolates `{...}` inside quoted
-// attribute values, so a quoted form would be parsed as an expression.
-const navigationLinks = routes.map(({ id, name, params, label }) => {
-  const paramsStr = Object.values(params)
-    .map((val) => JSON.stringify(val))
-    .join(", ");
-  return `
-    <Link to={[${JSON.stringify(name)}, ${paramsStr}]} data-testid="${id}">
-      ${label}
-    </Link>
-  `;
+const testGroups = createTestGroups({
+  frontend: "svelte",
+  template({ links }) {
+    // `to` is an expression attribute, not a quoted string:
+    // route names contain braces (`docs/{...path}`) and Svelte interpolates `{...}`
+    // inside quoted attribute values, so a quoted form would be parsed as an expression
+    const anchors = links.map(({ id, to, query, label }) => {
+      const queryProp = query ? `query={${query}}` : "";
+      return `
+        <li>
+          <Link to={${to}} ${queryProp} data-testid="${id}">
+            ${label}
+          </Link>
+        </li>
+      `;
+    });
+
+    return `
+      <script lang="ts">
+        import Link from "${defaults.srcPrefix}/components/Link.svelte";
+      </script>
+
+      <div data-testid="navigation-page">
+        <h1>Navigation Links Test</h1>
+        <ol>
+          ${anchors.join("")}
+        </ol>
+      </div>
+    `;
+  },
 });
 
-const navigationTemplate = `
-<script lang="ts">
-  import Link from "${defaults.srcPrefix}/components/Link.svelte";
-</script>
+for (const { name, createHarness } of testGroups) {
+  describe(name, async ({ afterAll }) => {
+    const { tests, teardown } = await createHarness();
 
-<div data-testid="navigation-page">
-  <h1>Navigation Links Test</h1>
-  <ol>
-    ${navigationLinks.map((e) => `<li>${e}</li>`).join("")}
-  </ol>
-</div>
-`;
+    afterAll(teardown);
 
-describe("Link component", async ({ afterAll }) => {
-  const {
-    //
-    bootstrapProject,
-    withPageContent,
-    createPageRoutes,
-  } = await setupTestProject(
-    { frontend: "svelte" },
-    {
-      frontend: {
-        templates: {
-          navigation: navigationTemplate,
-        },
-      },
-    },
-  );
-
-  const teardown = await bootstrapProject(async () => {
-    await createPageRoutes([...routes]);
-  });
-
-  afterAll(teardown);
-
-  it("should render all links with correct hrefs", async () => {
-    const { content } = await withPageContent(["navigation"]);
-
-    // Verify page renders
-    expect(content).toMatch("Navigation Links Test");
-    expect(content).toMatch('data-testid="navigation-page"');
-
-    const $ = load(content);
-
-    // Use Cheerio's selector API to find and verify links
-    for (const link of routes) {
-      const element = $(`a[data-testid="${link.id}"]`);
-
-      // Verify link exists (Cheerio doesn't have visibility concept)
-      expect(element.length).toEqual(1);
-
-      // Verify href attribute
-      const href = element.attr("href");
-      expect(href).toContain(link.href);
-
-      // Verify text content
-      const text = element.text().trim(); // trim() removes whitespace
-      expect(text).toEqual(link.label);
+    for (const [name, runner] of tests) {
+      test(name, runner);
     }
-
-    // Verify total link count
-    const allLinks = $("a");
-    expect(allLinks.length).toEqual(routes.length);
   });
-});
+}
