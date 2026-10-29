@@ -33,8 +33,10 @@ export const createDispatch = (app: FetchApp | NodeApp) => {
       }
     }
 
-    // 204/304 responses must not carry a body
-    const body = [204, 304].includes(result.statusCode)
+    const body = [
+      // discard body for these status codes
+      101, 103, 204, 205, 304,
+    ].includes(result.statusCode)
       ? null
       : new Uint8Array(result.rawPayload);
 

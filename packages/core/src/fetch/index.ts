@@ -89,20 +89,15 @@ export default (opts?: Options): FetchMapper => {
         ? `?${stringifySearchParams(data.query as never)}`
         : "";
 
-      const parseResponse = async (
-        response: Response,
-      ): Promise<{
-        body: unknown;
-        response: Response;
-      }> => {
-        return {
-          body:
-            responseMode === "raw"
-              ? response // Return full response object
+      const parseResponse = async (response: Response) => ({
+        body:
+          responseMode === "raw"
+            ? response
+            : response.body === null // 204, 205, 304, HEAD...: nothing to parse
+              ? undefined
               : await response[responseMode]().catch((e) => e),
-          response,
-        };
-      };
+        response,
+      });
 
       const returnResponse = ({
         body,
