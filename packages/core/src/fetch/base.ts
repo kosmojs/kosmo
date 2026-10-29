@@ -1,6 +1,6 @@
-import { maybeNumber } from "../generic";
+import { isJSONContentType, maybeNumber } from "../generic";
 import type { ApiRouteSerialized, ValidationTarget } from "../types";
-import type { HostOpt } from "./types";
+import type { HostOpt, ResponseMode } from "./types";
 
 export const join = (...args: Array<unknown>): string => {
   if (args.some((a) => !["string", "number"].includes(typeof a))) {
@@ -72,4 +72,35 @@ export const payloadResolver = <T>(
   }
 
   return data;
+};
+
+export const guessResponseMode = (
+  response: Response,
+): Exclude<ResponseMode, "raw"> => {
+  const contentType = response.headers.get("content-type") ?? "";
+
+  const type = contentType.split(";")[0].trim().toLowerCase();
+
+  if (isJSONContentType(type)) {
+    return "json";
+  }
+
+  if (
+    type === "multipart/form-data" ||
+    type === "application/x-www-form-urlencoded"
+  ) {
+    return "formData";
+  }
+
+  if (
+    type.startsWith("text/") ||
+    type === "application/xml" ||
+    (type.endsWith("+xml") && type !== "image/svg+xml") ||
+    type === "application/x-ndjson" ||
+    type === "application/json-seq"
+  ) {
+    return "text";
+  }
+
+  return "blob";
 };

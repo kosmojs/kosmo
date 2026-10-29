@@ -1,4 +1,8 @@
-import { stringifySearchParams as defaultStringifySearchParams } from "../generic";
+import {
+  BODYLESS_STATUSES,
+  stringifySearchParams as defaultStringifySearchParams,
+} from "../generic";
+import { guessResponseMode, join } from "./base";
 import type {
   FetchMapper,
   FetchMethod,
@@ -6,13 +10,9 @@ import type {
   HTTPMethod,
   Options,
 } from "./types";
-import { join } from "./utils";
 
+export * from "./base";
 export * from "./types";
-export * from "./utils";
-
-// HTTP methods that typically don't include a request body
-const bodylessMethods = ["GET", "DELETE"];
 
 /**
  * Main factory function that creates a configured fetch client instance.
@@ -33,7 +33,7 @@ export default (opts?: Options): FetchMapper => {
       const {
         stringifySearchParams = defaultStringifySearchParams,
         transport,
-        responseMode = "json",
+        responseMode,
         ...fetchOpts // Remaining options passed directly to fetch
       } = {
         ...factoryOpts,
@@ -82,22 +82,38 @@ export default (opts?: Options): FetchMapper => {
         method,
         headers,
         // Only include body for non-bodyless methods
-        ...(bodylessMethods.includes(method) ? {} : { body }),
+        ...(["GET", "DELETE"].includes(method) ? {} : { body }),
       };
 
       const searchParams = data?.query
         ? `?${stringifySearchParams(data.query as never)}`
         : "";
 
-      const parseResponse = async (response: Response) => ({
-        body:
-          responseMode === "raw"
-            ? response
-            : response.body === null // 204, 205, 304, HEAD...: nothing to parse
-              ? undefined
-              : await response[responseMode]().catch((e) => e),
-        response,
-      });
+      const parseResponse = async (response: Response) => {
+        if (responseMode === "raw") {
+          return {
+            response,
+            body: response,
+          };
+        }
+
+        if (
+          response.body === null ||
+          BODYLESS_STATUSES.includes(response.status)
+        ) {
+          return {
+            response,
+            body: undefined,
+          };
+        }
+
+        const mode = responseMode ?? guessResponseMode(response);
+
+        return {
+          response,
+          body: await response[mode]().catch((e) => e),
+        };
+      };
 
       const returnResponse = ({
         body,
