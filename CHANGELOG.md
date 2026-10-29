@@ -1,3 +1,14 @@
+## [0.6.7](https://github.com/kosmojs/kosmo/compare/v0.6.6...v0.6.7) (2026-10-29)
+
+### Bug Fixes
+
+* **fetch:** skip body parsing if body is null ([983bd80](https://github.com/kosmojs/kosmo/commit/983bd80c3db0af10abd8005c56dd06123bd97c52))
+* **parametrize:** normalize double slashes ([41096fb](https://github.com/kosmojs/kosmo/commit/41096fb399f5d6102dd860848aa29832f7344e0a))
+
+### Improvements
+
+* **dist/run.js:** use default host when no host given ([3ab9942](https://github.com/kosmojs/kosmo/commit/3ab9942dd61ad99919ca511c92340523cacc3ac4))
+
 ## [0.6.6](https://github.com/kosmojs/kosmo/compare/v0.6.5...v0.6.6) (2026-10-28)
 
 ### Bug Fixes
