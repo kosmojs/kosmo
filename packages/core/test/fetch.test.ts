@@ -192,7 +192,7 @@ describe("fetch", () => {
       expect(await fetch.DELETE()).toBeUndefined();
     });
 
-    test('204 with responseMode: "raw" resolves to the Response', async () => {
+    test(`204 with responseMode: "raw" resolves to the Response`, async () => {
       server.use(
         http.delete("http://empty/", () => {
           return new HttpResponse(null, { status: 204 });
@@ -202,6 +202,20 @@ describe("fetch", () => {
       const res = await fetch.DELETE<Response>([], {}, { responseMode: "raw" });
       expect(res).toBeInstanceOf(Response);
       expect(res.status).toEqual(204);
+    });
+
+    test("204 with a non-null body (as Chromium exposes it) resolves to undefined", async () => {
+      // Node gives a 204 a null body; Chromium gives an empty stream.
+      // Fake the latter: a non-null body, with the status overridden to 204.
+      const response = new Response("", { status: 200 });
+      Object.defineProperty(response, "status", { value: 204 });
+
+      const fetch = fetchWrapper({
+        prefix: "http://empty",
+        transport: { requestHandler: async () => response },
+      });
+
+      expect(await fetch.DELETE()).toBeUndefined();
     });
   });
 
