@@ -47,12 +47,10 @@
     "cookie": "^2.0.1",
     "light-my-request": "^6.6.0",
     "path-to-regexp": "^8.4.2",
-    "picomatch": "^4.0.7",
     "picoquery": "^2.5.0",
     "string-width": "^8.3.0"
   },
   "devDependencies": {
-    "@types/picomatch": "^4.0.3",
     "hono": "^4.13.13",
     "msw": "^3.0.3",
     "tfusion": "^0.2.2",
