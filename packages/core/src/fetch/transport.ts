@@ -1,5 +1,6 @@
 import { inject } from "light-my-request";
 
+import { BODYLESS_STATUSES } from "../generic";
 import type { FetchApp, NodeApp } from "../types";
 
 export const createDispatch = (app: FetchApp | NodeApp) => {
@@ -33,10 +34,7 @@ export const createDispatch = (app: FetchApp | NodeApp) => {
       }
     }
 
-    const body = [
-      // discard body for these status codes
-      101, 103, 204, 205, 304,
-    ].includes(result.statusCode)
+    const body = BODYLESS_STATUSES.includes(result.statusCode)
       ? null
       : new Uint8Array(result.rawPayload);
 

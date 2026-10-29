@@ -1,4 +1,5 @@
 import { ValidationError } from "../errors";
+import { BODYLESS_STATUSES, isJSONContentType } from "../generic";
 import {
   RequestBodyTargets,
   type RequestValidationTarget,
@@ -183,11 +184,12 @@ export const createValidationMiddleware = <T>(
           return;
         }
 
-        // RFC 9110 §6.4.1 - content presence depends on method and status
+        // RFC 9110 §6.4.1 - content presence depends on method and status;
+        // also skip body validation if none of variants declared json contentType.
         const skipBodyValidation =
-          method === "HEAD" ||
-          [204, 205].includes(response.status) ||
-          variants.some((e) => e.contentType?.includes("json")) === false;
+          ["HEAD"].includes(method) ||
+          BODYLESS_STATUSES.includes(response.status) ||
+          variants.every((e) => !isJSONContentType(e.contentType));
 
         if (!skipBodyValidation) {
           response.body = await body();

@@ -5,6 +5,8 @@ import type { IncomingMessage } from "node:http";
 import { parseCookie } from "cookie";
 import { parse, stringify } from "picoquery";
 
+// discard body for these status codes
+export const BODYLESS_STATUSES = [101, 103, 204, 205, 304];
 
 export const searchParamsOptions: Partial<import("picoquery").Options> = {
   nestingSyntax: "index",
@@ -41,4 +43,8 @@ export const maybeBoolean = (val: unknown) => {
   return [true, false, "true", "false"].includes(val as never) //
     ? JSON.parse(val as never)
     : val;
+};
+
+export const isJSONContentType = (type: string | undefined) => {
+  return type === "application/json" || type?.endsWith("+json");
 };
