@@ -4,14 +4,10 @@ import vitePlugin from "@mdx-js/rollup";
 import frontmatterPlugin from "remark-frontmatter";
 import mdxFrontmatterPlugin from "remark-mdx-frontmatter";
 
-import {
-  createTemplateResolver,
-  defaults,
-  type PageRoute,
-  type ResolvedEntry,
-} from "@kosmojs/core";
+import { defaults, type PageRoute, type ResolvedEntry } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
+  createTemplateResolver,
   createWatchedPageRouteEntriesFilter,
   defineGeneratorFactory,
   pathResolver,

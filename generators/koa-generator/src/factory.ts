@@ -2,15 +2,11 @@ import { posix } from "node:path";
 
 import crc from "crc/crc32";
 
-import {
-  type ApiRoute,
-  createTemplateResolver,
-  type ResolvedEntry,
-  type RouteEntry,
-} from "@kosmojs/core";
+import type { ApiRoute, ResolvedEntry, RouteEntry } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   createPathPattern,
+  createTemplateResolver,
   createWatchedApiRouteEntriesFilter,
   defineGeneratorFactory,
   pathResolver,

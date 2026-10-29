@@ -2,13 +2,10 @@ import { posix } from "node:path";
 
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 
-import {
-  createTemplateResolver,
-  defaults,
-  type ResolvedEntry,
-} from "@kosmojs/core";
+import { defaults, type ResolvedEntry } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
+  createTemplateResolver,
   createWatchedPageRouteEntriesFilter,
   defineGeneratorFactory,
   pathResolver,

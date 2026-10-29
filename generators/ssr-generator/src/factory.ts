@@ -3,8 +3,9 @@ import { join, resolve } from "node:path";
 
 import { build } from "vite";
 
-import { createRouteResolver, type SSROptions } from "@kosmojs/core";
+import type { SSROptions } from "@kosmojs/core";
 import {
+  createRouteResolver,
   defineGeneratorFactory,
   mergeConfigs,
   pathExists,

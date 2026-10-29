@@ -2,13 +2,13 @@ import { dirname, resolve } from "node:path";
 
 import {
   type ApiRoute,
-  createRouteResolver,
   DEFAULT_TEST_FILE,
   defaults,
   type PageRoute,
   type ResolvedEntry,
 } from "@kosmojs/core";
 import {
+  createRouteResolver,
   defineGeneratorFactory,
   pathResolver,
   renderFactory,

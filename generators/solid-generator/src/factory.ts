@@ -1,12 +1,9 @@
 import vitePlugin from "vite-plugin-solid";
 
-import {
-  createTemplateResolver,
-  defaults,
-  type ResolvedEntry,
-} from "@kosmojs/core";
+import { defaults, type ResolvedEntry } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
+  createTemplateResolver,
   createWatchedPageRouteEntriesFilter,
   defineGeneratorFactory,
   nestedRoutesFactory,
