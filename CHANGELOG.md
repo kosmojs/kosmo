@@ -1,3 +1,13 @@
+## [0.6.8](https://github.com/kosmojs/kosmo/compare/v0.6.7...v0.6.8) (2026-10-30)
+
+### Bug Fixes
+
+* **fetch:** skip body parsing on bodyless statuses ([3fb144e](https://github.com/kosmojs/kosmo/commit/3fb144e11455264c4a53fb70a35f0cfdc2897e26))
+
+### Improvements
+
+* guess response mode from content type ([94a8526](https://github.com/kosmojs/kosmo/commit/94a8526505fac64f0113fb06484b90f0be91f249))
+
 ## [0.6.7](https://github.com/kosmojs/kosmo/compare/v0.6.6...v0.6.7) (2026-10-29)
 
 ### Bug Fixes
