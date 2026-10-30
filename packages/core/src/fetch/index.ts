@@ -109,6 +109,10 @@ export default (opts?: Options): FetchMapper => {
 
         const mode = responseMode ?? guessResponseMode(response);
 
+        if (typeof response[mode] !== "function") {
+          throw new Error(`Unknown responseMode: "${mode}"`);
+        }
+
         return {
           response,
           body: await response[mode]().catch((e) => e),
