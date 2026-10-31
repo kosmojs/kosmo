@@ -39,12 +39,10 @@ import {
 import { cacheFactory } from "./cache";
 import { previewFactory } from "./preview";
 import { deployRunner, writeFolderManifest } from "./runner";
+import type { DisposableServerHandles } from "./types";
 
 type ReturnSignature<C extends ChassisCommand> = C extends "serve" | "test"
-  ? {
-      restart: () => Promise<void>;
-      teardown: () => Promise<void>;
-    }
+  ? DisposableServerHandles
   : undefined;
 
 export default async <C extends ChassisCommand>(
@@ -92,6 +90,42 @@ export default async <C extends ChassisCommand>(
     }
 
     return undefined as ReturnSignature<C>;
+  }
+
+  if (command === "test") {
+    // test command always come with a single source folder - the tested one.
+    const [{ name, config }] = sourceFolders;
+
+    if (
+      config.frontend?.ssr &&
+      typeof config.frontend.test === "object" &&
+      config.frontend?.test?.ssr
+    ) {
+      // folder opted for SSR test harness
+
+      const settings: ProjectSettings = {
+        ...projectSettings,
+        distDir: join(defaults.varDir, command, name),
+        previewHost: devHost,
+      };
+
+      for (const sourceFolder of sourceFolders) {
+        await buildSourceFolder(settings, sourceFolder);
+        await writeFolderManifest(settings, sourceFolder);
+      }
+
+      await deployRunner(settings);
+
+      const { restart, teardown } = await previewFactory(
+        settings,
+        buildSourceFolder,
+        { standalone: false },
+      );
+
+      return { restart, teardown } as ReturnSignature<C>;
+    }
+
+    // use dev server for test harness
   }
 
   type RequestMatcher = (req: IncomingMessage) => boolean;

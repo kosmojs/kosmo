@@ -1,4 +1,5 @@
 import { type ChildProcess, spawn } from "node:child_process";
+import { connect } from "node:net";
 import { basename, posix, relative } from "node:path";
 import { styleText } from "node:util";
 
@@ -8,6 +9,7 @@ import type { ProjectSettings, SourceFolder } from "@kosmojs/core";
 import { pathResolver } from "@kosmojs/lib";
 
 import { deployRunner, runnerPath, writeFolderManifest } from "./runner";
+import type { DisposableServerHandles } from "./types";
 
 // coalesce the burst of events an editor save produces into one rebuild
 const DEBOUNCE_MS = 300;
@@ -15,10 +17,63 @@ const DEBOUNCE_MS = 300;
 // editor scratch files - a rebuild for these would only produce the same output
 const IGNORED_FILE = /(^\.|~$|\.swp$|\.tmp$)/;
 
+// a build plus the runner's own startup; generous so a cold build on CI fits
+const READY_TIMEOUT_MS = 30_000;
+
 type Build = (
   projectSettings: ProjectSettings,
   sourceFolder: SourceFolder,
 ) => Promise<void>;
+
+/**
+ * Resolves once the runner accepts TCP connections on host:port,
+ * rejects if it exits first or does not come up in time.
+ * `spawn` returns before the child has bound its port,
+ * and a request sent in that gap is refused.
+ * */
+const waitForRunner = (proc: ChildProcess, host: string, port: number) => {
+  return new Promise<void>((resolve, reject) => {
+    const deadline = Date.now() + READY_TIMEOUT_MS;
+
+    let settled = false;
+
+    const settle = (error?: Error) => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      proc.off("exit", onExit);
+      error ? reject(error) : resolve();
+    };
+
+    const onExit = (code: number | null, signal: string | null) => {
+      settle(new Error(`runner exited before listening (${signal ?? code})`));
+    };
+
+    proc.once("exit", onExit);
+
+    const attempt = () => {
+      const socket = connect({ host, port });
+      socket.once("connect", () => {
+        socket.destroy();
+        settle();
+      });
+      socket.once("error", () => {
+        socket.destroy();
+        if (settled) {
+          return;
+        }
+        if (Date.now() > deadline) {
+          settle(new Error(`runner not listening on ${host}:${port}`));
+          return;
+        }
+        setTimeout(attempt, 100);
+      });
+    };
+
+    attempt();
+  });
+};
 
 /**
  * Preview = production build + watcher + `dist/run.js`.
@@ -34,7 +89,17 @@ type Build = (
 export const previewFactory = async (
   projectSettings: ProjectSettings,
   build: Build,
-): Promise<void> => {
+  opts?: {
+    /**
+     * `kosmo preview` owns the process: it exits on SIGINT/SIGTERM,
+     * and a runner that fails to start is logged, not thrown, so a fixing save can recover.
+     * Off when embedded (the test harness): no signal handlers, startup failures throw.
+     * */
+    standalone?: boolean;
+  },
+): Promise<DisposableServerHandles> => {
+  const { standalone = true } = { ...opts };
+
   const { root, previewHost, sourceFolders } = projectSettings;
 
   const runner = runnerPath(projectSettings);
@@ -46,6 +111,7 @@ export const previewFactory = async (
 
   let child: ChildProcess | undefined;
 
+  // resolves once the new runner is listening
   const startRunner = () => {
     const [host, port] = previewHost.split(":");
 
@@ -64,6 +130,8 @@ export const previewFactory = async (
     });
 
     child = proc;
+
+    return waitForRunner(proc, host, Number(port));
   };
 
   const stopRunner = () => {
@@ -84,63 +152,65 @@ export const previewFactory = async (
 
   const restartRunner = async () => {
     await stopRunner();
-    startRunner();
+    await startRunner();
   };
 
   const dirty = new Set<SourceFolder>();
 
-  let building = false;
+  // the rebuild loop currently running, if any
+  let inflight: Promise<void> | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
 
-  const rebuild = async () => {
-    if (building) {
-      // picked up by the loop below once the current pass finishes
-      return;
-    }
+  const drain = async () => {
+    // a save landing mid-build re-enters the loop instead of being lost.
+    // This also covers the build seeding a just-created empty route file:
+    // the second pass finds it non-empty, writes nothing, and the loop ends.
+    while (dirty.size) {
+      const folders = [...dirty];
+      dirty.clear();
 
-    building = true;
+      let failed = false;
 
-    try {
-      // a save landing mid-build re-enters the loop instead of being lost.
-      // This also covers the build seeding a just-created empty route file:
-      // the second pass finds it non-empty, writes nothing, and the loop ends.
-      while (dirty.size) {
-        const folders = [...dirty];
-        dirty.clear();
-
-        let failed = false;
-
-        for (const sourceFolder of folders) {
-          log(`rebuilding ${styleText("blue", sourceFolder.name)}`);
-          try {
-            await build(projectSettings, sourceFolder);
-            await writeFolderManifest(projectSettings, sourceFolder);
-          } catch (error) {
-            failed = true;
-            console.error(
-              styleText("red", `${sourceFolder.name}: build failed`),
-            );
-            console.error(error);
-          }
-        }
-
-        await deployRunner(projectSettings);
-
-        if (failed) {
-          // the running process serves the previous build from memory; leave it be
-          log(styleText("yellow", "keeping previous build running"));
-        } else {
-          await restartRunner();
+      for (const sourceFolder of folders) {
+        log(`rebuilding ${styleText("blue", sourceFolder.name)}`);
+        try {
+          await build(projectSettings, sourceFolder);
+          await writeFolderManifest(projectSettings, sourceFolder);
+        } catch (error) {
+          failed = true;
+          console.error(styleText("red", `${sourceFolder.name}: build failed`));
+          console.error(error);
         }
       }
-    } finally {
-      building = false;
+
+      await deployRunner(projectSettings);
+
+      if (failed) {
+        // the running process serves the previous build from memory; leave it be
+        log(styleText("yellow", "keeping previous build running"));
+      } else {
+        await restartRunner().catch((error) => {
+          console.error(styleText("red", "runner failed to start"));
+          console.error(error);
+        });
+      }
     }
+  };
+
+  // one loop at a time; callers arriving mid-build share its promise
+  const rebuild = () => {
+    if (!inflight && dirty.size) {
+      // cleared in .finally(), which always runs after this assignment
+      inflight = drain().finally(() => {
+        inflight = undefined;
+      });
+    }
+    return inflight;
   };
 
   const schedule = (sourceFolder: SourceFolder, file: string) => {
     if (process.env.DEBUG) {
-      log(`event ${sourceFolder.name}: ${file} (building: ${building})`);
+      log(`event ${sourceFolder.name}: ${file} (building: ${!!inflight})`);
     }
     if (IGNORED_FILE.test(basename(file))) {
       return;
@@ -159,7 +229,10 @@ export const previewFactory = async (
   });
 
   if (!watchedFolders.length) {
-    return;
+    return {
+      restart: async () => {},
+      teardown: async () => {},
+    };
   }
 
   const watcher = watch(
@@ -186,20 +259,46 @@ export const previewFactory = async (
     log(`watching ${styleText("blue", relative(root, dir))}`);
   }
 
-  startRunner();
+  const restart = async () => {
+    if (timer) {
+      clearTimeout(timer);
+      timer = undefined;
+      if (dirty.size) {
+        await rebuild();
+      }
+    }
+    await inflight;
+  };
 
   const teardown = async () => {
     clearTimeout(timer);
     await watcher.close();
+    await inflight;
     await stopRunner();
   };
 
-  // the runner is a child of this process: take it down with us on a plain kill,
-  // not only on the Ctrl-C the terminal already forwards to the whole process group
-  for (const signal of ["SIGINT", "SIGTERM"] as const) {
-    process.once(signal, async () => {
+  try {
+    await startRunner();
+  } catch (error) {
+    if (!standalone) {
       await teardown();
-      process.exit(0);
-    });
+      throw error;
+    }
+    // the watcher stays up: a save that fixes the cause rebuilds and starts it again
+    console.error(styleText("red", "runner failed to start"));
+    console.error(error);
   }
+
+  if (standalone) {
+    // the runner is a child of this process: take it down with us on a plain kill,
+    // not only on the Ctrl-C the terminal already forwards to the whole process group
+    for (const signal of ["SIGINT", "SIGTERM"] as const) {
+      process.once(signal, async () => {
+        await teardown();
+        process.exit(0);
+      });
+    }
+  }
+
+  return { restart, teardown };
 };

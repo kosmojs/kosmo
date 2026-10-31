@@ -1,5 +1,5 @@
-import { describe, test } from "vitest";
-import { createVitest } from "vitest/node";
+import { describe, expect, test } from "vitest";
+import { createVitest, type TestRunResult } from "vitest/node";
 
 import { DEFAULT_TEST_FILE } from "@kosmojs/core";
 import { pathResolver } from "@kosmojs/lib";
@@ -7,23 +7,58 @@ import { pathResolver } from "@kosmojs/lib";
 import { setupTestProject } from "../setup";
 import { routes } from ".";
 
-describe("harness", async ({ afterAll }) => {
-  const {
-    project,
-    sourceFolder,
-    bootstrapProject,
-    createApiRoutes,
-    createPageRoutes,
-  } = await setupTestProject(
-    {
-      backend: "koa",
-      frontend: "solid",
-    },
-    {
-      backend: {
-        test: {
-          seed: {
-            "**": `
+// the dev server answers with the client shell, the SSR preview with the rendered page
+const pageAssertions = {
+  csr: `expect(html).toContain("<!--app-html-->");`,
+  ssr: `
+    expect(html).not.toContain("<!--app-html-->");
+    expect(html).toContain(">{{route.name}}<");
+  `,
+};
+
+// runTestFiles resolves whatever the inner tests do; their failures have to be read off the result
+const expectAllPassed = (
+  { testModules, unhandledErrors }: TestRunResult,
+  files: Array<string>,
+) => {
+  // the result lists every module the vitest instance has run so far
+  const requested = testModules.filter(({ moduleId }) => {
+    return files.includes(moduleId);
+  });
+  const failures = requested.flatMap((testModule) => {
+    return testModule.ok()
+      ? []
+      : [...testModule.children.allTests()].flatMap((testCase) => {
+          return (
+            testCase.result().errors?.map((error) => {
+              return `${testCase.fullName}: ${error.message}`;
+            }) ?? []
+          );
+        });
+  });
+  expect(failures, failures.join("\n")).toEqual([]);
+  expect(unhandledErrors).toEqual([]);
+  expect(requested.length).toEqual(files.length);
+};
+
+for (const ssr of [false, true]) {
+  describe(`harness: ${ssr ? "ssr" : "csr"}`, async ({ afterAll }) => {
+    const {
+      project,
+      sourceFolder,
+      bootstrapProject,
+      createApiRoutes,
+      createPageRoutes,
+    } = await setupTestProject(
+      {
+        backend: "koa",
+        frontend: "solid",
+      },
+      {
+        backend: {
+          test: {
+            seed: {
+              "**": `
               import { test, expect } from "vitest";
               import { prepareHarness } from "_/test/api";
               const { client, clients, route } = await prepareHarness("{{route.name}}");
@@ -34,13 +69,15 @@ describe("harness", async ({ afterAll }) => {
                 expect(body.route).toEqual(route);
               })
             `,
+            },
           },
         },
-      },
-      frontend: {
-        test: {
-          seed: {
-            "**": `
+        frontend: {
+          ssr,
+          test: {
+            ssr,
+            seed: {
+              "**": `
               import { test, expect } from "vitest";
               import { prepareHarness } from "_/test/pages";
               const { page, pages, route } = await prepareHarness("{{route.name}}");
@@ -48,64 +85,68 @@ describe("harness", async ({ afterAll }) => {
                 expect(route).toEqual("{{route.name}}");
                 const response = await fetch(page.href());
                 expect(response.status).toEqual(200);
-                expect(await response.text()).toMatch("<!--app-html-->");
+                const html = await response.text();
+                ${ssr ? pageAssertions.ssr : pageAssertions.csr}
               })
             `,
+            },
           },
         },
       },
-    },
-  );
+    );
 
-  const teardown = await bootstrapProject(async () => {
-    await createApiRoutes(
-      routes.map((name) => ({ name })),
-      async ({ name }) => {
-        return () => `
+    const teardown = await bootstrapProject(async () => {
+      await createApiRoutes(
+        routes.map((name) => ({ name })),
+        async ({ name }) => {
+          return () => `
           import { defineRoute } from "_/api";
           export default defineRoute<"${name}">(({ GET }) => [
             GET((ctx) => { ctx.body = { route: "${name}" }; }),
           ]);
         `;
-      },
-    );
+        },
+      );
 
-    await createPageRoutes(
-      routes.map((name) => ({ name })),
-      async ({ name }) => {
-        return () => `
+      await createPageRoutes(
+        routes.map((name) => ({ name })),
+        async ({ name }) => {
+          return () => `
           export default function Page() {
             return <div>{"${name}"}</div>;
           };
         `;
-      },
-    );
+        },
+      );
+    });
+
+    const { createPath } = pathResolver(project, sourceFolder);
+
+    const vitest = await createVitest({
+      root: project.root,
+      mode: "test",
+      watch: false,
+    });
+
+    await vitest.standalone();
+
+    afterAll(async () => {
+      await vitest.close();
+      await teardown();
+    });
+
+    test("backend", async () => {
+      const files = routes.map((route) => {
+        return createPath.api(route, DEFAULT_TEST_FILE);
+      });
+      expectAllPassed(await vitest.runTestFiles(files), files);
+    });
+
+    test("frontend", async () => {
+      const files = routes.map((route) => {
+        return createPath.pages(route, DEFAULT_TEST_FILE);
+      });
+      expectAllPassed(await vitest.runTestFiles(files), files);
+    });
   });
-
-  const { createPath } = pathResolver(project, sourceFolder);
-
-  const vitest = await createVitest({
-    root: project.root,
-    mode: "test",
-    watch: false,
-  });
-
-  await vitest.standalone();
-
-  afterAll(async () => {
-    await vitest.close();
-    await teardown();
-  });
-
-  test("backend", async () => {
-    await vitest.runTestFiles(
-      routes.map((route) => createPath.api(route, DEFAULT_TEST_FILE)),
-    );
-  });
-
-  test("frontend", async () => {
-    await vitest.runTestFiles(
-      routes.map((route) => createPath.pages(route, DEFAULT_TEST_FILE)),
-    );
-  });
-});
+}

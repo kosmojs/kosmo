@@ -12,7 +12,7 @@ import type { TypeboxSettings, TypeboxValidationMessages } from "./typebox";
 type FrontendStack = keyof typeof FRONTENDS;
 type BackendStack = keyof typeof BACKENDS;
 
-export type VitestOptions<T = ApiRoute | PageRoute> = {
+export type VitestOptions<T extends "backend" | "frontend"> = {
   /**
    * Seeding test files is enabled by default.
    *
@@ -43,7 +43,7 @@ export type VitestOptions<T = ApiRoute | PageRoute> = {
    *     "user/**": templates.users,
    *   }
    * */
-  seed:
+  seed?:
     | boolean
     | {
         /**
@@ -62,9 +62,14 @@ export type VitestOptions<T = ApiRoute | PageRoute> = {
          * */
         path?: string;
 
-        // Patterns to enable/disable testing per-route basis,
-        // or to use custom seeding templates for select routes.
-        [key: string]: boolean | string | ((r: T) => string);
+        /**
+         * Patterns to enable/disable testing per-route basis,
+         * or to use custom seeding templates for select routes.
+         * */
+        [key: string]:
+          | boolean
+          | string
+          | ((r: T extends "backend" ? ApiRoute : PageRoute) => string);
       };
 
   // Custom Vite settings to use specifically for testing
@@ -72,7 +77,19 @@ export type VitestOptions<T = ApiRoute | PageRoute> = {
 
   // Vitest generator to use instead of the default one.
   generator?: GeneratorSignature;
-};
+} & (T extends "frontend"
+  ? {
+      /**
+       * Whether the harness should serve an SSR-enabled folder with SSR.
+       * Defaults to false: the dev server starts much faster,
+       * and a browser renders the same page from either server.
+       * Set to true to assert on the server-rendered HTML itself,
+       * e.g. parsing responses with a lightweight tool like Cheerio
+       * instead of driving a full browser like Playwright.
+       * */
+      ssr?: boolean;
+    }
+  : {});
 
 export type FrontendOptions = {
   stack: FrontendStack | { name: FrontendStack; plugin: PluginOption };
@@ -80,7 +97,7 @@ export type FrontendOptions = {
   ssr?: boolean | SSROptions | { generator?: GeneratorSignature };
   ssg?: boolean | { generator?: GeneratorSignature };
   tanstack?: { query?: boolean };
-  test?: boolean | VitestOptions<PageRoute>;
+  test?: boolean | VitestOptions<"frontend">;
   templates?: GeneratorCustomTemplates<PageRoute>;
   generator?: GeneratorSignature;
   viteConfig?: ViteConfig;
@@ -90,7 +107,7 @@ export type BackendOptions = {
   stack: BackendStack | { name: BackendStack };
   base: string;
 
-  test?: boolean | VitestOptions<ApiRoute>;
+  test?: boolean | VitestOptions<"backend">;
 
   openapi?: OpenAPIOptions | { generator?: GeneratorSignature };
 

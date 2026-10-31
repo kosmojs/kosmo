@@ -29,7 +29,7 @@ functionTemplate.toJSON = () => "FUNCTION_TEMPLATE_PLACEHOLDER";
 const variants: Array<
   [
     name: string,
-    opts: boolean | VitestOptions,
+    opts: boolean | VitestOptions<"backend">,
     test: Array<keyof ReturnType<typeof runnersFactory>>,
   ]
 > = [
@@ -145,7 +145,7 @@ const variants: Array<
 
 const runnersFactory = (
   { root, api, apiCustomPath, pages, pagesCustomPath }: FileBucket,
-  options?: VitestOptions,
+  options?: VitestOptions<"backend">,
 ) => {
   const rootConfig = root["vitest.config.ts"];
 
@@ -379,7 +379,7 @@ for (const [name, options, runners] of variants) {
         frontend: "random",
       },
       {
-        frontend: { test: options },
+        frontend: { test: options as never },
         backend: { test: options },
       },
     );
