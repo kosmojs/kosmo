@@ -2,7 +2,7 @@ import { MDXProvider } from "@mdx-js/preact";
 import { match, pathToRegexp } from "path-to-regexp";
 import { type ComponentType, createContext, h, type VNode } from "preact";
 
-import { parseSearchParams } from "@kosmojs/core";
+import { join, parseSearchParams } from "@kosmojs/core";
 
 import { paramNames } from "{{ createImport 'lib' 'params' }}";
 import { base } from "{{ createImport 'libCore' }}";
@@ -171,11 +171,7 @@ export const createRoute = (
   loader: RawRoute["loader"],
   layouts: RawRoute["layouts"],
 ): RawRoute => {
-  // strip trailing slash (keeping a sole "/") so the base-joined index route
-  // matches both with and without it - "/docs/" as a pattern rejects "/docs"
-  const path = `${base}/${pathPattern}`
-    .replace(/\/+/g, "/")
-    .replace(/(.+)\/$/, "$1");
+  const path = join(base, pathPattern);
 
   const { regexp } = pathToRegexp(path, { sensitive: true });
   const matcher = match<Route["params"]>(path);

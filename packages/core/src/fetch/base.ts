@@ -2,19 +2,6 @@ import { isJSONContentType, maybeNumber } from "../generic";
 import type { ApiRouteSerialized, ValidationTarget } from "../types";
 import type { HostOpt, ResponseMode } from "./types";
 
-export const join = (...args: Array<unknown>): string => {
-  if (args.some((a) => !["string", "number"].includes(typeof a))) {
-    console.error(args);
-    throw new Error("The path argument must be of type string or number");
-  }
-  // collapse repeated slashes, keeping a leading "scheme://" intact
-  // drop a trailing slash unless it is the whole path
-  return args
-    .join("/")
-    .replace(/(^[a-z][a-z\d+.-]*:\/\/)|\/{2,}/gi, (_, scheme) => scheme || "/")
-    .replace(/(?<=[^/])\/$/, "");
-};
-
 export const createHost = (host: HostOpt): string => {
   if (typeof host === "string") {
     return host;

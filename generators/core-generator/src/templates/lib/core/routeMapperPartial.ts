@@ -2,11 +2,12 @@ import { compile } from "path-to-regexp";
 
 import {
   type ApiRouteSerialized,
+  join,
   maybeNumber,
   type PageRouteSerialized,
   stringifySearchParams,
 } from "@kosmojs/core";
-import { createHost, join } from "@kosmojs/core/fetch";
+import { createHost } from "@kosmojs/core/fetch";
 import type { RoutePathMethods } from "@kosmojs/core/generators";
 
 export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
@@ -57,8 +58,10 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     const paramsMap = paramsMapper(params as never);
     try {
       // optional groups carry their own leading slash ("{/:id}"),
-      // so the compiled output can contain "//"; join() normalizes it
-      return join(toPath(paramsMap as never));
+      // so the compiled output can contain "//",
+      // or be empty for a root optional route with no params;
+      // join() normalizes both, anchored at "/"
+      return join("/", toPath(paramsMap as never));
     } catch (error) {
       console.error(`❗ERROR: Failed building path for ${name}`);
       throw error;
@@ -113,8 +116,10 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
     const paramsMap = paramsMapper(params as never);
     try {
       // optional groups carry their own leading slash ("{/:id}"),
-      // so the compiled output can contain "//"; join() normalizes it
-      return join(toPath(paramsMap as never));
+      // so the compiled output can contain "//",
+      // or be empty for a root optional route with no params;
+      // join() normalizes both, anchored at "/"
+      return join("/", toPath(paramsMap as never));
     } catch (error) {
       console.error(`❗ERROR: Failed building path for ${route.name}`);
       throw error;

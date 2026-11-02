@@ -1,8 +1,9 @@
 import {
   BODYLESS_STATUSES,
   stringifySearchParams as defaultStringifySearchParams,
+  join,
 } from "../generic";
-import { guessResponseMode, join } from "./base";
+import { guessResponseMode } from "./base";
 import type {
   FetchMapper,
   FetchMethod,
