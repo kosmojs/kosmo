@@ -1,5 +1,8 @@
 {
   path: "{{path}}",
+  {{#if nonStrict}}
+  strict: false,
+  {{/if}}
   {{#if name}}
   name: "{{name}}",
   {{/if}}

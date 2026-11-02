@@ -13,6 +13,8 @@ export type TransformedEntry = {
   path: string;
   component?: string;
   children?: Array<TransformedEntry>;
+  // emitted as `strict: false` on the route record
+  nonStrict?: boolean;
 };
 
 export const pathFactory = (pathTokens: Array<PathToken>) => {
@@ -48,6 +50,28 @@ export const pathFactory = (pathTokens: Array<PathToken>) => {
 };
 
 export const traverseFactory = () => {
+  // A top-level route made of optional params only (e.g. pages/{filter} -> "/:filter?")
+  // compiles to an empty path when the params are absent,
+  // and with the router-wide `strict: true` vue-router no longer matches it against "/".
+  // Relax strictness for that route only (per-record option), so ranking of every other route stays strict.
+  // Nested ones (e.g. "/blog/:category?") keep a static prefix and match fine.
+  const isRootWithOptionalOnlyParams = (
+    parent: string | undefined,
+    pathTokens: Array<PathToken>,
+  ) => {
+    return parent // not root
+      ? false
+      : pathTokens.every((token) => {
+          return token.kind === "param"
+            ? token.parts.every((part) => {
+                return part.type === "param" //
+                  ? part.kind !== "required"
+                  : false;
+              })
+            : false;
+        });
+  };
+
   const hasSplatParam = (token: PathToken | undefined) => {
     if (token?.kind === "param") {
       const param = token.parts[0] as PathTokenParamPart;
@@ -68,6 +92,13 @@ export const traverseFactory = () => {
         return [];
       }
 
+      const createLeaf = (entry: TransformedEntry) => {
+        return {
+          ...entry,
+          nonStrict: isRootWithOptionalOnlyParams(parent, pathTokens),
+        };
+      };
+
       const layoutName = `${name}/layout`;
 
       const path = parent
@@ -79,39 +110,39 @@ export const traverseFactory = () => {
       if (hasSplatParam(lastToken)) {
         if (index && layout) {
           return [
-            {
+            createLeaf({
               name: layoutName,
               path,
               component: layout.id,
               children: [
                 // no recursion here - splat params always goes last
-                { name, path: "", component: index.id },
+                createLeaf({ name, path: "", component: index.id }),
               ],
-            },
+            }),
           ];
         }
 
         if (index) {
           return [
-            {
+            createLeaf({
               // prefix-only entry, no name no component
               path,
               children: [
-                { name, path: "", component: index.id },
+                createLeaf({ name, path: "", component: index.id }),
                 ...traverseEntries(children, name),
               ],
-            },
+            }),
           ];
         }
 
         if (layout) {
           return [
-            {
+            createLeaf({
               name: layoutName,
               path,
               component: layout.id,
               children: traverseEntries(children, name),
-            },
+            }),
           ];
         }
 
@@ -120,39 +151,39 @@ export const traverseFactory = () => {
 
       if (index && layout) {
         return [
-          {
+          createLeaf({
             name: layoutName,
             path,
             component: layout.id,
             children: [
-              { name, path: "", component: index.id },
+              createLeaf({ name, path: "", component: index.id }),
               ...traverseEntries(children, name),
             ],
-          },
+          }),
         ];
       }
 
       if (index) {
         return [
-          {
+          createLeaf({
             // prefix-only entry, no name no component
             path,
             children: [
-              { name, path: "", component: index.id },
+              createLeaf({ name, path: "", component: index.id }),
               ...traverseEntries(children, name),
             ],
-          },
+          }),
         ];
       }
 
       if (layout) {
         return [
-          {
+          createLeaf({
             name: layoutName,
             path,
             component: layout.id,
             children: traverseEntries(children, name),
-          },
+          }),
         ];
       }
 
