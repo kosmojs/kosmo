@@ -93,7 +93,11 @@ export const createRouters = (
 } => {
   return {
     async clientRouter() {
-      const component = createApp(app);
+      // a server-rendered page must be hydrated by an SSR app: createApp has no hydration,
+      // so mount(root, true) would discard the server markup and render from scratch
+      const component = window.__KOSMO_HYDRATION_BOOL__
+        ? createSSRApp(app)
+        : createApp(app);
 
       const router = createRouter({
         history: createWebHistory(base),
@@ -110,6 +114,10 @@ export const createRouters = (
           component.use(plugin, options);
         }
       }
+
+      // resolve the initial route (and run its loaders) before mounting,
+      // so the first client render matches the server-rendered markup
+      await router.isReady();
 
       return { component };
     },
