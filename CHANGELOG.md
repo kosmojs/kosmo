@@ -1,3 +1,28 @@
+## [0.6.9](https://github.com/kosmojs/kosmo/compare/v0.6.8...v0.6.9) (2026-11-02)
+
+### Features
+
+* **vitest:** add frontend.test.ssr option ([ebcfb5c](https://github.com/kosmojs/kosmo/commit/ebcfb5c31938059949cbc35272f7f1964cfc4ebe))
+
+  Serves an SSR-enabled folder with SSR in the frontend harness,
+  so tests can assert on server-rendered HTML without a browser.
+  Defaults to false.
+
+### Bug Fixes
+
+* **vue:** fix hydration ([36dcf17](https://github.com/kosmojs/kosmo/commit/36dcf170242304216bf8a4fd1ebb48f287fdeb9d))
+
+  On hydration, app should be created via createSSRApp. If created via
+  createApp, component.mount(root, true) silently drop the true flag and
+  renders from scratch.
+* **vue:** fix router to match root route with optional only params ([7acf124](https://github.com/kosmojs/kosmo/commit/7acf1243083eb0bf505e8fefff2fb80c70f4004f))
+
+  A top-level route made of optional params only compiles to an empty path
+  when the params are absent, and with the router-wide `strict: true`
+  vue-router no longer matches it against "/". Relax strictness for that
+  route only (per-record option), so ranking of every other route stays
+  strict.
+
 ## [0.6.8](https://github.com/kosmojs/kosmo/compare/v0.6.7...v0.6.8) (2026-10-30)
 
 ### Bug Fixes
@@ -19,13 +44,25 @@
 
 * **dist/run.js:** use default host when no host given ([3ab9942](https://github.com/kosmojs/kosmo/commit/3ab9942dd61ad99919ca511c92340523cacc3ac4))
 
+  with no host given, the server listens on all interfaces, which is not
+  desirable
+
 ## [0.6.6](https://github.com/kosmojs/kosmo/compare/v0.6.5...v0.6.6) (2026-10-28)
 
 ### Bug Fixes
 
 * dist/run.js without --host ([a8a4421](https://github.com/kosmojs/kosmo/commit/a8a4421f7c9c103d0de2c9dc4ee165c04840a281))
 * **fetch/join:** keep root and URL schemes intact ([55330ac](https://github.com/kosmojs/kosmo/commit/55330ace5ca8528eb800842648676d962ef700b5))
+
+  join now joins all args first and normalizes the result once: repeated
+  slashes collapse to one, except a leading scheme:// (so http:// and
+  file:/// survive), and a trailing slash is dropped unless it is the
+  whole path.
 * route path() no longer adds base twice ([6171060](https://github.com/kosmojs/kosmo/commit/6171060978bc3612cafb9286aa6ae2a4e5b59e83))
+
+  toPath is compiled with base, so parametrize() output already starts
+  with it; path() then joined a prefix on top. With a non-root base, e.g.
+  "/front", every Link resolved to /front/front/...:
 * **vue-generator:** correctly detect paths starting with <base>/ ([470aaab](https://github.com/kosmojs/kosmo/commit/470aaaba686d5eeb23fcf6debf40a406d75eb566))
 
 ## [0.6.5](https://github.com/kosmojs/kosmo/compare/v0.6.4...v0.6.5) (2026-10-27)
@@ -72,8 +109,14 @@
 ### Code Refactoring
 
 * **config:** replace devPort/previewPort with kosmo.devHost/PreviewHost in package.json ([f1148a3](https://github.com/kosmojs/kosmo/commit/f1148a3623a972fd5146c93df67a915f2ce6ba7c))
+
+  all kosmo-related keys goes under kosmo key now
 * **core:** resolve virtualModules based on command ([98c376a](https://github.com/kosmojs/kosmo/commit/98c376a24dc612b01ff385b9d40fbd014bea4af9))
 * **defineGeneratorFactory:** require both projectSettings and sourceFolder ([a7f62e4](https://github.com/kosmojs/kosmo/commit/a7f62e40dd751ef781c055bfd474bda027655c47))
+
+  - add resolveHostAddress helper
+  - revamp findFreePortRange
+  - introduce varDir
 * **dev:** a more robust way to find free ports range ([9c1dd7c](https://github.com/kosmojs/kosmo/commit/9c1dd7ccb79d47536f772444abe60346486342de))
 * enable testing by default ([a4eb696](https://github.com/kosmojs/kosmo/commit/a4eb6962e324893bc5678a0b18c1d86826c7f16d))
 * **fetch:** move virtual module to core generator; move createDispatch to core package ([25739ac](https://github.com/kosmojs/kosmo/commit/25739ac6e845b2fbd322fe311c5f0b814f4c05a2))
@@ -95,6 +138,9 @@
 ### Code Refactoring
 
 * **backend:** place UseSlots interface into _/api module ([8535c7b](https://github.com/kosmojs/kosmo/commit/8535c7b7bb9fc4bf5b32c32e41e521c47e8b51e7))
+
+  also fix a bug in routes template that disable validation
+  unconditionally
 * **cli/typecheck:** check project root; do not exit on first error ([878ffac](https://github.com/kosmojs/kosmo/commit/878ffac6d00664856d8cc295088f9252c5907bca))
 * **cli:** rename createSourceFolder to createHTTPFolder ([b86eb12](https://github.com/kosmojs/kosmo/commit/b86eb127a4e032068554fc04693c108e47ae43f4))
 * **config:** make fetch a top level option ([70b45f3](https://github.com/kosmojs/kosmo/commit/70b45f3012b17e340491210c553a0e9484cf3522))
@@ -128,6 +174,8 @@
 * pottential path matching issues due to loose prefix checking ([d74e5d4](https://github.com/kosmojs/kosmo/commit/d74e5d489b68974d2b0fe724fa54086573282496))
 * **vue-generator:** use isomorphic join() method in router ([f05a5b5](https://github.com/kosmojs/kosmo/commit/f05a5b5c5459838089a178573531aaf7b127e6c5))
 
+  to avoid node internals leaking in browser
+
 ### Code Refactoring
 
 * declarative syntax for kosmo.config.ts ([796cf76](https://github.com/kosmojs/kosmo/commit/796cf763ea229958d7a6cd4a72f5c0877d7ad743))
@@ -142,6 +190,18 @@
 ### Features
 
 * add preview command and a single-entry dist/run.js ([199ff9e](https://github.com/kosmojs/kosmo/commit/199ff9e6ad6cd755c705c0c10e3641d79f7ddc97))
+
+  dist/run.js dispatches across every source folder in one process,
+  routing by base + apiBase the way the dev server does: SSR folders
+  render on the server, CSR folders are served as built static assets,
+  API-only folders answer on their apiBase. It is built on node:http, so
+  the same file runs unchanged under Bun and Deno.
+
+  preview command builds the project, runs dist/run.js, and restarts it on
+  change - the production build with a development loop. No HMR: a change
+  triggers a full rebuild, so what preview serves is what production
+  serves. It listens on previewPort, separate from devPort, so it can run
+  alongside the dev server.
 * add SSG support to all frameworks ([15ebe82](https://github.com/kosmojs/kosmo/commit/15ebe82aacfd9568443ca07ef5f4127cc9f281a6))
 
 ### Bug Fixes
@@ -150,9 +210,18 @@
 * **dev:** skip handlebars rendering for cache files ([7a9db4e](https://github.com/kosmojs/kosmo/commit/7a9db4e78cf28137ab4ec04e822abb3761ffa015))
 * **routing:** resolve svelte/mdx routes by specificity, not segment count ([2cdc4bc](https://github.com/kosmojs/kosmo/commit/2cdc4bc298c3651bdc669e5ab07c84ab589af144))
 * **solid:** keep adjacent optional params optional ([ba22948](https://github.com/kosmojs/kosmo/commit/ba229483c4160d7243a58ef8273e11c1f01c2165))
+
+  The traverser demoted an optional param to required when the next token
+  was optional/splat, so search/{query}/{page} compiled to
+  search/:query/:page? and /search rendered the 404 page. solid-router
+  expands adjacent optionals natively (/:a?/:b? -> /, /:a, /:a/:b);
+  demotion remains only where it is needed - children carrying optional
+  params in nested expansion.
 * **ssr:** copy public/ dir into dist ([2d1e51b](https://github.com/kosmojs/kosmo/commit/2d1e51b9164ea895b64f4dec24a324073aced965))
 * **types:** core-generator was using too restrictive types for normalizeParams and alike ([ad1fa7b](https://github.com/kosmojs/kosmo/commit/ad1fa7bce27a091fd40a2160223d15e6585c1f56))
 * **types:** fetch-generator: adapted payloadTypes to new signature ([45b824c](https://github.com/kosmojs/kosmo/commit/45b824c28ca88a5ee62ace21a70b1b9d1275c501))
+
+  when payloadTypes was reshaped, template was not updated accordingly
 
 ### Code Refactoring
 
@@ -178,11 +247,23 @@
 
 * **backend:** return 405 if HTTP method is not implemented ([fa4358d](https://github.com/kosmojs/kosmo/commit/fa4358d50a8db7c3c25ab946671cf3a22a65ed03))
 * **backend:** serve HEAD via sibling GET handler with GET validation schemas ([7cdfcb1](https://github.com/kosmojs/kosmo/commit/7cdfcb10a873fc63710acbca375e07f65f938a5e))
+
+  backends now wire HEAD into the sibling GET handler and alias
+  HEAD to GET when selecting validation schemas, so HEAD mirrors GET's
+  status as RFC 9110 prescribes: 200 on valid requests, 400 on validation
+  failures, body discarded per protocol.
 * **backend:** validate only 2xx responses ([f61572d](https://github.com/kosmojs/kosmo/commit/f61572d4b3d1c23157c1c2e7826e46313cd2a391))
 * **core-generator:** import ValidationSchemas from correct path ([40edc73](https://github.com/kosmojs/kosmo/commit/40edc733dfb54539a2dcc60e524e76e91e7e2679))
 * **fetch-generator:** deploy only supported request methods ([e1d9106](https://github.com/kosmojs/kosmo/commit/e1d9106e84ef46bb21da1b08d15629d28ae7c73a))
 * **fetch-generator:** ignore non-2xx response types ([28ac480](https://github.com/kosmojs/kosmo/commit/28ac48036ce80d38c673897706494d1b04568b91))
+
+  providing non-2xx types to fetch clients is meaningless/confusing.
 * **h3-generator:** serve HEAD through the sibling GET handler ([9b58091](https://github.com/kosmojs/kosmo/commit/9b5809184bc13222bc4fc5de543be13187297aee))
+
+  HEAD requests on GET routes were answered by a synthetic handler
+  returning an empty 200 without ever invoking the route.
+  Register HEAD against the sibling GET handler instead, matching the
+  HEAD-via-GET dispatch hono and koa provide natively.
 * **hono-generator:** catch body parsing error on response validation ([2dbfe3f](https://github.com/kosmojs/kosmo/commit/2dbfe3f2887f17f5b70ca53dddb95441bc899459))
 * **types:** safely compare base against a string ([1d01d47](https://github.com/kosmojs/kosmo/commit/1d01d47ff8258eb9f0d3b18054784887df5ec551))
 
@@ -190,9 +271,14 @@
 
 * **cli:** do not deploy index.html; deploy a default favicon ([f0f7c86](https://github.com/kosmojs/kosmo/commit/f0f7c86baf63d8c95766d19949c36ccf9911a29c))
 * **cli:** use default folder name/base at project creation ([b12d10d](https://github.com/kosmojs/kosmo/commit/b12d10dab4eaadc207d10371a636280fef65a9ff))
+
+  also added --no-framework/--no-backend flags
 * **core-generator:** deploy default index.html file; generators may override as needed ([dc83d53](https://github.com/kosmojs/kosmo/commit/dc83d53ccd4656d3fefdd9028b34a96e94ff065f))
 * **dev:** skip client build/serve if no frontend generator ([6916583](https://github.com/kosmojs/kosmo/commit/6916583b55e2e88f0eb44eb17ebaa61802852d58))
 * **koa-generator:** use middleware for error handling ([6874449](https://github.com/kosmojs/kosmo/commit/6874449b40a97190ec214e57aa09e372f16190d5))
+
+  was a mistake to switch to app.on("error", handler); this is a pure
+  informative event handler for logging purposes, can not set status/body.
 * **ssr:** drop <!--app-head--> placeholder ([7cd11a3](https://github.com/kosmojs/kosmo/commit/7cd11a390129596d0be6e6dd060e163d918bb2f8))
 * **typebox-generator:** better handling for union errors ([1555bff](https://github.com/kosmojs/kosmo/commit/1555bff10fbf5bc9eaed57d6cf99776c80c3a938))
 
@@ -200,12 +286,22 @@
 
 * **create:** allow create projects without a source folder ([b998962](https://github.com/kosmojs/kosmo/commit/b998962c756d3f3a6b7ca96c91914cc066291a96))
 
+  also fix cli integration tests
+
 ## [0.4.2](https://github.com/kosmojs/kosmo/compare/v0.4.1...v0.4.2) (2026-08-24)
 
 ### Features
 
 * allow boolean in query validation target ([9cdd94a](https://github.com/kosmojs/kosmo/commit/9cdd94a991ca0c54e66dfa35b3536f2378999852))
+
+  Only literal "true"/"false" are recognized as valid values.
+  `GET<{ query: { enabled?: boolean } }>` validates requests like
+  `?enabled=true`
+  `?enabled=false`
+  Values like on/off/1/0 are rejected.
 * **cli:** add typecheck command ([f0bfcf6](https://github.com/kosmojs/kosmo/commit/f0bfcf646cad16d869f296271d5ad3d803c17dee))
+
+  One command to typecheck all folders or just specified one(s).
 
 ### Bug Fixes
 
@@ -226,14 +322,26 @@
 * **core-generator:** apiRouteMap should use base as prefix ([41488e8](https://github.com/kosmojs/kosmo/commit/41488e83ec694ba84885e7b48ef13435d547fb2c))
 * **dev:** prevent dev server from crash when a transiently-invalid module parsed ([70cc381](https://github.com/kosmojs/kosmo/commit/70cc381914d88e791735f922c0dab6005da40555))
 * **generators:** handle created files beside updated ones ([37fc582](https://github.com/kosmojs/kosmo/commit/37fc582549468f33d42b8d581550bf637330df37))
+
+  Watchers used to process updated files only. Fixed to also consider
+  newly created files (git checkout, cp).
 * **h3:** correctly resolve/validate response body and status ([c61d41a](https://github.com/kosmojs/kosmo/commit/c61d41a10fef8c25796ed0306106c67fb0f2bb53))
 * **mdx-generator:** prioritize static routes over dynamic routes ([30097af](https://github.com/kosmojs/kosmo/commit/30097aff986a0fa1a1f5d03714e744ac5f194abc))
+
+  Also match index route without a trailing slash.
 * **svelte-generator:** prioritize static routes over dynamic routes ([26d046c](https://github.com/kosmojs/kosmo/commit/26d046ca579e057c2ec8f1ed2e98257156ca69b6))
+
+  Also match index route without a trailing slash.
 * **vue-generator:** strip the base from pushed paths ([25c0caa](https://github.com/kosmojs/kosmo/commit/25c0caa540f80f3167d808a16dbcee1cdc9a1e19))
 
 ### Code Refactoring
 
 * **generators:** update route mapper's path method to take the prefix option ([d6a4f9c](https://github.com/kosmojs/kosmo/commit/d6a4f9cd0a304d9713bc20ed33b458f06710b454))
+
+  Useful when path/href should be rendered without the base prefix, e.g.
+  in Link compoenent, where router will add base prefix on its own.
+  Also prefix can be a string when a custom prefix needed.
+  Also ditch base method as redundant.
 
 ## [0.4.0](https://github.com/kosmojs/kosmo/compare/v0.3.0...v0.4.0) (2026-08-21)
 
@@ -249,6 +357,8 @@
 
 * **backend:** add H3 as a supported backend framework ([d9c87b1](https://github.com/kosmojs/kosmo/commit/d9c87b1042a3472c6db0321ee13e03a3b36d3139))
 
+  H3 joins Hono and Koa as a backend choice.
+
 ### Bug Fixes
 
 * **cli:** wire dependencies declared by coreGenerator ([231668a](https://github.com/kosmojs/kosmo/commit/231668a13f265dba9d5dedf521a1433cff4f5d30))
@@ -259,11 +369,26 @@
 
 * **hono-generator:** add debug option to app factory for routes inspection ([5fbf8c8](https://github.com/kosmojs/kosmo/commit/5fbf8c86bf66a241999feaa8f76889f78b4f5aa8))
 * **hono-generator:** revamp app factory ([526fea7](https://github.com/kosmojs/kosmo/commit/526fea7317ae592f4378838fe15359dcd9e310b6))
+
+  Updated app factory to take routes, optional app options, and a hook
+  that provides created app and router for further setup.
 * **hono-generator:** revamp server ([1a7f795](https://github.com/kosmojs/kosmo/commit/1a7f795f85d6a1467d358c165e9315ce28b7a7df))
+
+  No more server factory; instead a serve method provided, that takes the
+  app and optionally port/sock and onListen hook.
 * **koa-generator:** add debug option to app factory for routes inspection ([6d41470](https://github.com/kosmojs/kosmo/commit/6d414709fbc652febcca51d2c5316d77109caf2e))
 * **koa-generator:** register defaultErrorHandler via app.on("error") hook ([283e296](https://github.com/kosmojs/kosmo/commit/283e296447b1e269938acaf194bba718c7824ff1))
+
+  defaultErrorHandler no more wired as a middleware; instead, it is
+  registered via app.on("error") hook
 * **koa-generator:** revamp app factory ([e4ffd76](https://github.com/kosmojs/kosmo/commit/e4ffd7686c7b04819328ecd75ff84190c29f9f68))
+
+  Updated app factory to take routes, optional app options, and a hook
+  that provides created app and router for further setup.
 * **koa-generator:** revamp server ([060b268](https://github.com/kosmojs/kosmo/commit/060b2688c6d279bb16fb1ba3e5be7562542cc975))
+
+  No more server factory; instead a serve method provided, that takes the
+  app and optionally port/sock and onListen hook.
 * unify apiRouteMapper, used by fetch and backend generators ([daa4b4b](https://github.com/kosmojs/kosmo/commit/daa4b4b143b0f74351c104741173a97c702e62d0))
 
 ## [0.3.0](https://github.com/kosmojs/kosmo/compare/v0.2.10...v0.3.0) (2026-08-15)
@@ -280,13 +405,43 @@
 
 * **ssr:** recover from SSR render failures by falling back to CSR ([a836c8d](https://github.com/kosmojs/kosmo/commit/a836c8d95336c98440e74e20fc3a6fdbab8c43ac))
 
+  When SSR rendering throws (typically a rejected fetch), the server
+  serves the client shell verbatim with a marker script instead of the
+  failed output, letting CSR take over where error boundaries work
+  uniformly.
+  Streaming routes are excluded - a flushed shell can't be retracted.
+
 ### Bug Fixes
 
 * **fetch-generator:** filter payload types by target ([ca241f6](https://github.com/kosmojs/kosmo/commit/ca241f6a8aca29c34d2103970aaab0eb6f03f7af))
 * **fetch:** always throw on failure ([183e185](https://github.com/kosmojs/kosmo/commit/183e185bbd42cf0c35899c0af5424a7feb62bd7e))
+
+  The client now throws on any failure: non-2xx responses and network/
+  transport errors alike. Return type stays T (never T | undefined).
 * **openapi:** keep collection routes with param-child siblings ([094ea95](https://github.com/kosmojs/kosmo/commit/094ea95880d186b69f7b19e4c272b1a1b3561371))
+
+  The subsumption pruning in generateOpenAPISchema used a name-prefix
+  string check to drop routes already covered by a more specific one.
+
+  Replace the name check with a path-variation subset test: subsume a
+  route only if some other route's generated variations are a superset
+  of its own. This preserves the intended dedup (search/{type} is a true
+  subset of search/{type}/{page} via the optional {page}) while keeping
+  collection routes. Variations are precomputed once per route.
 * **ssr:** preserve query string in the router during SSR ([64856ae](https://github.com/kosmojs/kosmo/commit/64856ae0dd943fd6850e0b7feaac5f29e10264ed))
+
+  The per-framework SSR entries handed only url.pathname to the client
+  router. On the server pass the router had no query string at all - so
+  anything reading it (route matching, useSearchParams, loaders) saw it
+  empty, while the client was fine since it defaults to the full
+  location.href.
 * **vue:** ship the hydration script in head on streamed SSR routes ([844adca](https://github.com/kosmojs/kosmo/commit/844adca50125939891cffda68d5d1451a15a0e1c))
+
+  The Vue stream wrapper was appending the hydration script via a
+  TransformStream flush() that runs only after the source stream fully
+  flushes and closes.
+  When the render errored mid-body the flush never ran, so the hydration
+  script was lost and the client couldn't take over.
 
 ## [0.2.10](https://github.com/kosmojs/kosmo/compare/v0.2.9...v0.2.10) (2026-08-10)
 
@@ -352,16 +507,37 @@
 
 * a vite plugin to add node: prefix to un-prefixed node imports ([880f61d](https://github.com/kosmojs/kosmo/commit/880f61d4e594efec8078895d66ca76f1aaacf788))
 * add plugins and emitAssets options to api generators ([144c5af](https://github.com/kosmojs/kosmo/commit/144c5afdf7bf7b2ede7269e0458e94668979eae2))
+
+  Expose `plugins` and `emitAssets` as backend-build options so apps can
+  control Vite output without forking the generator.
+
+  - plugins: extra Vite plugins applied only to backend builds
+  - emitAssets: toggles build.ssrEmitAssets for ?url / asset-path imports;
+    off by default since content-inlining imports (?raw, ?arraybuffer,
+  etc.) need no emitted file
+
+  When enabled, resolve assets at the call site via
+  `new URL(asset, import.meta.url)` to keep paths relative to the emitting
+  module and ?url typed as `string` across frontend/backend builds.
 * add vue support ([cfb275a](https://github.com/kosmojs/kosmo/commit/cfb275a8969614edfc7133da1706515f9085a14f))
 * allow generators to declare dependencies ([a6a7b56](https://github.com/kosmojs/kosmo/commit/a6a7b56e2b1266ba46c5b433c137e5bab9208883))
+
+  cli and dev packages will inject declared dependencies accordingly
 * **api:** add customizable error handler ([f222ca5](https://github.com/kosmojs/kosmo/commit/f222ca562abf5061de1d9fee1241cd190ce5e360))
+
+  - refine route-level middleware implementation
+  - refine route debug/inspect
 * automatically inject middleware defined in use.ts files ([7a3a15f](https://github.com/kosmojs/kosmo/commit/7a3a15f86af2e3f7881289b0e432efa700e8ae0a))
 * **create:** add SSR toggle ([7b18937](https://github.com/kosmojs/kosmo/commit/7b18937b2ee425f8d41fc4b733ef7872b8446830))
 * **create:** create projects/folders in non-interactive mode ([d431f7f](https://github.com/kosmojs/kosmo/commit/d431f7f5dc37ae64fcb374abf2c154c5a973927d))
 * customizable backend framework ([459c3c5](https://github.com/kosmojs/kosmo/commit/459c3c59204c4cd77f3939f68c02a4b73bb28cc7))
+
+  or omit for client-only source folders
 * define esbuild PRODUCTION_BUILD var ([02095b9](https://github.com/kosmojs/kosmo/commit/02095b9fccb616a12d17047c6f2931b26d4da625))
 * **dev:** add cli cmd to run dev/build tasks easily ([9cb435e](https://github.com/kosmojs/kosmo/commit/9cb435e312ce1f1c40086bd25e03ad999f6eb686))
 * **esbuilder:** add --external-exclude option and plugin ([99ae8ef](https://github.com/kosmojs/kosmo/commit/99ae8efda31a760a41174d56a108732c66aae811))
+
+  allow to bundle given packages even though marked as external
 * **hono-generator:** allow throw a tuple: [status: number, message?: string] ([306e890](https://github.com/kosmojs/kosmo/commit/306e89014580bcf2d17a0a0cb54402d20292e5fa))
 * isomorphic fetch clients ([512a7de](https://github.com/kosmojs/kosmo/commit/512a7de9279f05f984c4d30a02ee9ca19e4d0d10))
 * **koa-generator:** allow throw a tuple: [status: number, message?: string] ([ac0a326](https://github.com/kosmojs/kosmo/commit/ac0a3260b6e6c2bcd00389e27dab36f969516586))
@@ -427,7 +603,11 @@
 
 * **api-generator:** build production server ([592a91b](https://github.com/kosmojs/kosmo/commit/592a91b726771da3c45f6898c725556e7a540d6b))
 * **api:** default export should not expose ValidationError ([a596c4c](https://github.com/kosmojs/kosmo/commit/a596c4cebd165d25b722ba5070957d6654213666))
+
+  rather exported by ./errors entrypoint
 * **api:** move framework-specific logic to generators ([059d7b9](https://github.com/kosmojs/kosmo/commit/059d7b9e0ed340f1a60fa8a3c821d50b40fe6d47))
+
+  api package should be framework agnostic
 * **api:** provide createApp and createRouter helpers ([f36df71](https://github.com/kosmojs/kosmo/commit/f36df716d0efae1a4a69091381460b14416410dd))
 * **api:** provide errors as a separate module ([5b83488](https://github.com/kosmojs/kosmo/commit/5b83488fc2239499428af45f79807a0c3310908e))
 * better path mapping ([6076cda](https://github.com/kosmojs/kosmo/commit/6076cda10ace55d44ea086c05a6241bbbe857c77))
@@ -448,14 +628,22 @@
 * **devlib:** add ssr defaults ([9f34aba](https://github.com/kosmojs/kosmo/commit/9f34abab73929f8a35281516374cab703cda51fe))
 * **devlib:** add ssr generator kind ([a2a46a8](https://github.com/kosmojs/kosmo/commit/a2a46a81d539a6643934ebbe1630e2fbf0fb87d0))
 * **devlib:** rename RouteResolverEntry to ResolvedEntry ([eb3d011](https://github.com/kosmojs/kosmo/commit/eb3d01198b3b24ae78e26df3c2639cfc49e4e4e0))
+
+  rename importPath to importFile.
+  add sortRoutes for packages to use same routes sorter
 * **dev:** move routes helpers to a separate file ([9a1b11b](https://github.com/kosmojs/kosmo/commit/9a1b11b4fd189922d206f6410780da27e71361c4))
 * **dev:** new pathResolver; refined generators api ([7c547ee](https://github.com/kosmojs/kosmo/commit/7c547eee984135dcef3181297a4acc0ab2e3aaa2))
+
+  - watchHandler renamed to watch
+  - added build handler
 * **dev:** rename generator kind to slot ([7ee3dce](https://github.com/kosmojs/kosmo/commit/7ee3dcef4056f47f6d5d7abfe0837107ee8cc79e))
 * **dev:** split into dev and lib packages ([416187e](https://github.com/kosmojs/kosmo/commit/416187ef64cf710c597b576ed0f98e9182918a87))
 * **dev:** split isPageFile into isPageIndex and isPageLayout ([c2c425a](https://github.com/kosmojs/kosmo/commit/c2c425aad637f1488e52e4ed5e957aec26f5beed))
 * **dev:** use cli from kosmojs package ([567c2d0](https://github.com/kosmojs/kosmo/commit/567c2d0904f141bd1392bd7e48c8f16bd9e0afb8))
 * drop formatters ([dd5f5c6](https://github.com/kosmojs/kosmo/commit/dd5f5c60f58c623a836cd5969cb105391a641a88))
 * drop multipart validation target ([0a2fbc7](https://github.com/kosmojs/kosmo/commit/0a2fbc72c396901a7d73699b88d40decb46837c8))
+
+  use form for both url-encoded and multipart
 * enhance generators ergonomics ([dd9b446](https://github.com/kosmojs/kosmo/commit/dd9b446fb219c38b8d0c2a86c5759ffb9920e3b7))
 * enhance generators factories consistency ([fb3adc9](https://github.com/kosmojs/kosmo/commit/fb3adc9363c3cbb467034d19041e553494b74977))
 * **esbuilder:** upgrade esbuild to 0.28 for imports with { type: "text" } ([5030226](https://github.com/kosmojs/kosmo/commit/5030226bd12daae08888e6353740e0b732e566ec))
@@ -476,11 +664,21 @@
 * merge devlib package into dev ([3918b15](https://github.com/kosmojs/kosmo/commit/3918b158bed0ef13abdc6a92fc798616f34f9408))
 * merge multiple configs by priority ([2ee2615](https://github.com/kosmojs/kosmo/commit/2ee26152382edf5a1df946f19fa9c94d87121aea))
 * move CLI entirely to dev package ([34a082e](https://github.com/kosmojs/kosmo/commit/34a082ee8affe6bea14e46b95b34749f17a04b4c))
+
+  The kosmojs package is now only responsible for creating projects.
+  Internal tasks like creating folders, running the dev server, and
+  building for production are now handled by the dev package.
 * move CLI functionality from dev package into cli ([d7556f4](https://github.com/kosmojs/kosmo/commit/d7556f416dc8f33c8004f78e4a3ef4422be84a4c))
 * move defaults to core ([2cb705d](https://github.com/kosmojs/kosmo/commit/2cb705da948807fba2b04af5f7f87453d33027db))
 * move SpinnerFactory to dev package ([5f6b21f](https://github.com/kosmojs/kosmo/commit/5f6b21f9ccdd340bcd36ea12f99bbafdca0f7286))
+
+  generators should not use spinners directly
 * move vite plugins to a separate package ([4e62508](https://github.com/kosmojs/kosmo/commit/4e625089f97e1f397cdbc5f8fe7d31b84a4ac6ed))
 * multiple validation targets, on demand body parsers ([0754617](https://github.com/kosmojs/kosmo/commit/0754617c6e46d29fa7a09d920f470c0d28783223))
+
+  instead of single payload target, allow specify json/form/multipart/raw
+  request body schemas as well as query/headers/cookies request metadata
+  schemas
 * **openapi-generator:** handle mixed path segments, use path-to-regexp for routing ([efaf420](https://github.com/kosmojs/kosmo/commit/efaf4208da370c75ccb71988f91e7aee6b0c2399))
 * **openapi-generator:** use new pathResolver ([f38ef0c](https://github.com/kosmojs/kosmo/commit/f38ef0cebfdd646d026afc86650f1b1e1bf8531a))
 * per-framework render signature ([19cb11b](https://github.com/kosmojs/kosmo/commit/19cb11bdf3a0dde006ba059e5384edde0468b18e))
@@ -489,6 +687,8 @@
 * **react-generator:** routerFactory should create and return both router and app ([5c9bde4](https://github.com/kosmojs/kosmo/commit/5c9bde46135b7697e5fef4d114732cdee71ede95))
 * **react-generator:** use new pathResolver ([bff8968](https://github.com/kosmojs/kosmo/commit/bff8968bb5b830f569d87e62daec0785399705b7))
 * **react:** generate separate routes for client and server ([2c2571a](https://github.com/kosmojs/kosmo/commit/2c2571a59233f26b330cd469b09b0f7d641c5d73))
+
+  use static imports for server routes and lazy dynamic imports for client
 * rename api-generator to koa-generator ([e0af45d](https://github.com/kosmojs/kosmo/commit/e0af45d69d16aafab2d9e9200045b0eefe76985e))
 * rename ExtendT to UseT ([6b44a11](https://github.com/kosmojs/kosmo/commit/6b44a117e242f31551ddab4fbeec88b029d131ce))
 * rename kosmojs to create-kosmo ([a808161](https://github.com/kosmojs/kosmo/commit/a80816123f06255551da91de19b70f9cd0668f50))
@@ -496,6 +696,8 @@
 * replace fs-extra with native functions ([8f03115](https://github.com/kosmojs/kosmo/commit/8f03115827d540221b4bc2000171f0d939a42827))
 * replace import.meta.env.SSR with __KOSMO_SSR__ ([f48a416](https://github.com/kosmojs/kosmo/commit/f48a416dfbefd685de733a5520a9981a626ac998))
 * revamp params definition syntax ([b7576fb](https://github.com/kosmojs/kosmo/commit/b7576fbf6704e3dd137f045adc918161f93946ae))
+
+  [required], {optional}, {...splat}, {:name} for path-to-regexp patterns
 * separate tsconfig for src and test ([c0bd724](https://github.com/kosmojs/kosmo/commit/c0bd7243056d32a70a7012081ddb91c664f17eb9))
 * simplify routerFactory ([6956f30](https://github.com/kosmojs/kosmo/commit/6956f30bdbbe2b28ec883d765026975711d468e0))
 * **solid-generator:** handle mixed path segments, use path-to-regexp for routing ([9a191bb](https://github.com/kosmojs/kosmo/commit/9a191bbcd7b72745de62eecda4cb12902bc69469))
@@ -503,8 +705,14 @@
 * **solid-generator:** routerFactory should create and return both router and app ([0e29b1a](https://github.com/kosmojs/kosmo/commit/0e29b1a57073a7debea9d4004fefe813e245b6f7))
 * **solid-generator:** use new pathResolver ([8d2afd4](https://github.com/kosmojs/kosmo/commit/8d2afd426a4336409fe35954ddc6e148070ec498))
 * **solid:** generate separate routes for client and server ([0fec8a8](https://github.com/kosmojs/kosmo/commit/0fec8a84fd591e6788915245feddce7aa0a6c1de))
+
+  use static imports for server routes and lazy dynamic imports for client
 * **ssr-generator:** add path-to-regexp as a generator dependency ([b484ac0](https://github.com/kosmojs/kosmo/commit/b484ac0aaaa6c82cbfca654a43d2c21abdede4a3))
+
+  rather than bundle into build
 * **ssr-generator:** critical css include css from layouts that wrap current route ([c95c89d](https://github.com/kosmojs/kosmo/commit/c95c89d14805801fee092aac168e4a6764f6287f))
+
+  also bundle path-to-regexp as critical dependency
 * **ssr-generator:** handle mixed path segments, use path-to-regexp for routing ([01bac9a](https://github.com/kosmojs/kosmo/commit/01bac9aba4707ed44d0fa6f85858db8148bf4833))
 * **ssr-generator:** use new pathResolver ([1095cac](https://github.com/kosmojs/kosmo/commit/1095cac0a51d6861b58ba0e963a5cbb06e73d638))
 * **test/integration:** use new pathResolver ([eb69856](https://github.com/kosmojs/kosmo/commit/eb698568d700c6888085cf03de8bc072ddbda184))
@@ -513,6 +721,10 @@
 * use Hono for SSR; add 404 page ([80f539f](https://github.com/kosmojs/kosmo/commit/80f539f6ccf1bd88582e814bc6a39d34024a136b))
 * use npx to create projects and npm task to create source folders ([2c3e78a](https://github.com/kosmojs/kosmo/commit/2c3e78ae601d54db9e55c5d39c3c5951ac5e4ef8))
 * use vite for internal build ([521a25f](https://github.com/kosmojs/kosmo/commit/521a25fe2593542d2c17be557dcd223fb7c06f0a))
+
+  - move generators to a separate folder
+  - make generators private and bundle into dev package
+  - set base in kosmo.config.ts, ditch config/index.ts
 * **validation:** switch to new typebox api ([6c561b9](https://github.com/kosmojs/kosmo/commit/6c561b920158b775db3fd16590211d34e91dc549))
 * **vue-generator:** handle mixed path segments, use path-to-regexp for routing ([09e0657](https://github.com/kosmojs/kosmo/commit/09e06579cdae0a0c5f70690c56fa72a1cc48666b))
 * **vue-generator:** move framework-specific implementation details to lib ([08442a0](https://github.com/kosmojs/kosmo/commit/08442a055064f05c06087f20634af9d657ffd4f4))
@@ -520,6 +732,8 @@
 * **vue-generator:** use new pathResolver ([f6ecf2e](https://github.com/kosmojs/kosmo/commit/f6ecf2e3481191806de7199ee2751712093ab026))
 * **vue-generator:** useLoaderData accept a key; used to get data for layouts ([dc972d3](https://github.com/kosmojs/kosmo/commit/dc972d3a4ed3108a7f66988642eeed6ee271a9f4))
 * **vue:** generate separate routes for client and server ([b7c0cb9](https://github.com/kosmojs/kosmo/commit/b7c0cb9428d73bcb2b428db7bedad4f153a14e34))
+
+  use static imports for server routes and lazy dynamic imports for client
 * **wsbuild:** handle bundled deps the explicit way ([d030b52](https://github.com/kosmojs/kosmo/commit/d030b527be0e53feb07ade876b1a283126203858))
 
 ### Improvements
@@ -561,6 +775,8 @@
 * **ssr-generator:** drop resolve.tsconfigPaths ([b02833e](https://github.com/kosmojs/kosmo/commit/b02833eb666a2f5a1b6311ec4fae0ba106165ffc))
 * **ssr-generator:** sortRoutes ([bf5bcb0](https://github.com/kosmojs/kosmo/commit/bf5bcb08dc8d170e37b495f880496d4d1e1ad353))
 * **ssr:** ditch serveStaticAssets option ([2cf9d7b](https://github.com/kosmojs/kosmo/commit/2cf9d7b5d785afd4f635d3ebed24ec7267dbab03))
+
+  Static files served by the SSR server out of the box
 * **ssr:** provide URL instance to render factory ([736e2d9](https://github.com/kosmojs/kosmo/commit/736e2d9fac86609bb208bf3ccad6987eb373d56d))
 * **tsconfig:** add deno/bun types ([a49e56d](https://github.com/kosmojs/kosmo/commit/a49e56d199717499771407d949d8868fbd889fba))
 * **tsconfig:** do not exclude lib ([3a0f16d](https://github.com/kosmojs/kosmo/commit/3a0f16d034dba7f16f5e9c119a4183b749619ced))
