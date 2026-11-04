@@ -1,6 +1,6 @@
 import { stat } from "node:fs/promises";
 import { builtinModules } from "node:module";
-import { isAbsolute, join, parse } from "node:path";
+import { isAbsolute, parse, posix } from "node:path";
 
 import type { Plugin } from "vite";
 
@@ -64,6 +64,10 @@ export const tsconfigPaths = (
   const table: Array<[prefix: string, baseDir: string]> = [
     [`${defaults.srcPrefix}/`, createPath.src()],
     [`${defaults.libPrefix}/`, createPath.lib()],
+    [
+      `${defaults.libRootPrefix}/`,
+      posix.join(projectSettings.root, defaults.varDir, defaults.libDir),
+    ],
     [`${defaults.appPrefix}/`, projectSettings.root],
   ];
 
@@ -71,7 +75,7 @@ export const tsconfigPaths = (
     baseDir: string,
     rest: string,
   ): Promise<string> => {
-    const target = join(baseDir, rest);
+    const target = posix.join(baseDir, rest);
     const { ext } = parse(rest);
 
     // Specifier already carries a known extension:
@@ -207,5 +211,5 @@ export const cacheDir = (
     | `backend:${ChassisCommand}`
     | "sidecar",
 ) => {
-  return join(root, defaults.varDir, ".vite", name, target);
+  return posix.join(root, defaults.varDir, ".vite", name, target);
 };
