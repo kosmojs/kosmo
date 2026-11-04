@@ -2,6 +2,7 @@ export const defaults = {
   appPrefix: "@",
   srcPrefix: "~",
   libPrefix: "_",
+  libRootPrefix: "$",
 
   coreDir: "core",
   srcDir: "src",
