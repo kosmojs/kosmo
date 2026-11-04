@@ -13,7 +13,8 @@ Every backend generator accepts a `templates` option.
 When you create a new route file whose name matches one of your patterns,
 **your** boilerplate is written into it instead of the built-in placeholder.
 
-Templates seed route `index` files - `api/**/index.ts` - and nothing else.
+Templates seed route `index` files - `api/**/index.ts` -
+and, through the [function form](#template-format), [use.ts](/backend/cascading-middleware) files too.
 Every other seeded file gets the built-in minimal boilerplate to start from.
 
 ## Configuration
@@ -115,24 +116,48 @@ The same applies to [renderMode](/frontend/server-side-render#selecting-the-rend
 
 ## Template Format
 
-A template is either a **string**, or a **function** of the resolved route returning a string -
-reach for the function form when the output depends on the route itself:
+A template is either a **string**, or a **function**.
+
+A string seeds the route `index` file of every matching route.
+
+A function receives the resolved entry, `{ kind, entry }`, and returns the template,
+or `undefined` to use the built-in boilerplate.
+
+It is called for routes (`kind: "apiRoute"`) and for `use.ts` files (`kind: "apiUse"`),
+so one pattern can seed a route and the middleware around it,
+and the output can depend on the route itself:
 
 ```ts
 templates: {
-  // plain string, rendered with Handlebars
+  // plain string, rendered with Handlebars, for the route index file
   "admin/**": crudTemplate,
 
-  // or computed from the route
-  "reports/**": (route) => `
+  // a function, for the route and the use.ts of every reports route
+  "reports/**": ({ kind, entry }) => {
+    if (kind === "apiUse") {
+      return reportsUseTemplate;
+    }
+    return `
 import { defineRoute } from "_/api";
 
-// endpoint: ${route.name}
-export default defineRoute<"${route.name}">(({ GET }) => [
+// endpoint: ${entry.name}
+export default defineRoute<"${entry.name}">(({ GET }) => [
   GET(async (ctx) => { /* ... */ }),
-]);`,
+]);`;
+  },
+
+  // a function returning undefined, to seed only the use.ts
+  "internal/**": ({ kind }) => {
+    return kind === "apiUse" ? internalUseTemplate : undefined;
+  },
 }
 ```
+
+The pattern is matched against the route an entry belongs to:
+`api/reports/sales/index.ts` and `api/reports/sales/use.ts` are both matched as `reports/sales`.
+
+A `use.ts` template should keep the `UseT` export, even when empty:
+every `use.ts` in an `api/` subfolder is expected to export it.
 
 String templates are rendered with Handlebars against a `{ route }` context,
 so a <code v-pre>{{route.name}}</code> placeholder interpolates the route name -

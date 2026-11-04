@@ -12,7 +12,8 @@ head:
 Every frontend framework supports template overrides for specific routes through <span style="white-space: nowrap">pattern-based</span> matching.
 Useful for standardizing structure across landing pages, admin tools, or any section requiring a consistent starting point.
 
-Templates seed page `index` files - `pages/**/index.*` - and nothing else.
+Templates seed page `index` files - `pages/**/index.*` -
+and, through the [function form](#template-format), `layout` files too.
 Every other seeded file gets the built-in minimal boilerplate to start from.
 
 ## Configuration
@@ -124,21 +125,41 @@ themselves rather than glob syntax:
 ## Template Format
 
 Templates are written to disk as the page component file.
-A template can be either a **plain string**, or a **function** receiving the resolved route and returning the string -
-useful when the output depends on the route itself:
+A template can be either a **plain string**, or a **function**.
+
+A string seeds the page `index` file of every matching route.
+
+A function receives the resolved entry, `{ kind, entry }`, and returns the template,
+or `undefined` to use the built-in boilerplate.
+
+It is called for page routes (`kind: "pageRoute"`) and for layouts (`kind: "pageLayout"`),
+so one pattern can seed both, and the output can depend on the route itself:
 
 ```ts
 templates: {
-  // a plain string
+  // a plain string, for the page index file
   "landing/*": landingTemplate,
 
-  // or a function of the route
-  "admin/**": (route) => `
+  // a function, for the page index file and the layout of every admin route
+  "admin/**": ({ kind, entry }) => {
+    if (kind === "pageLayout") {
+      return adminLayout;
+    }
+    return `
 export default function Page() {
-  return <h1>${route.name}</h1>;
-}`,
+  return <h1>${entry.name}</h1>;
+}`;
+  },
+
+  // a function returning undefined, to seed only the layout
+  "dashboard/**": ({ kind }) => {
+    return kind === "pageLayout" ? dashboardLayout : undefined;
+  },
 }
 ```
+
+The pattern is matched against the route an entry belongs to:
+`admin/settings/index.tsx` and `admin/settings/layout.tsx` are both matched as `admin/settings`.
 
 Each framework has its own component structure:
 

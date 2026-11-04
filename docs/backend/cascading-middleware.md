@@ -58,6 +58,9 @@ export default [
 
 > Some editors load the seeded content immediately, others require a brief unfocus/refocus.
 
+To seed your own `use.ts` for selected routes,
+see [custom templates](/backend/custom-templates#template-format).
+
 Beside the default exported middleware, every `use.ts` **in an `api/` subfolder** exports the `UseT` type - even if empty.
 This type extends the context for all routes underneath, giving you automatic type safety for anything the middleware adds.
 

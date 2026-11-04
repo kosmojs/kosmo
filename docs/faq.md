@@ -327,12 +327,13 @@ Pages typically read data through the fetch client (`fetchClients["products"].GE
 where `<folder>` is your source-folder name.
 [Details&nbsp;›](/essentials/project-structure#path-mappings)
 
-#### What do `@/*`, `~/*`, `_/*` mean?
+#### What do `@/*`, `~/*`, `_/*`, `$/*` mean?
 
 Reserved path mappings:
 - `@/*` root-level imports
 - `~/*` source-folder imports,
-- `_/*` derived-code imports.
+- `_/*` derived-code imports for the current folder,
+- `$/*` derived-code imports for any folder, by name - `$/admin/core`.
 
 Don't reuse these prefixes for your own aliases.
 [Details&nbsp;›](/tutorial)
@@ -441,8 +442,8 @@ Both blocks accept it:
 [Custom Route Templates&nbsp;›](/backend/custom-templates#configuration)
 
 #### Which seeded files can templates override?
-Route `index` files and nothing else - `pages/**/index.*` on the frontend,
-`api/**/index.ts` on the backend.
+Route `index` files - `pages/**/index.*` on the frontend, `api/**/index.ts` on the backend -
+and, with the function form, `layout` files on the frontend and `use.ts` files on the backend.
 Every other seeded file gets the built-in minimal boilerplate to start from.
 [Frontend&nbsp;›](/frontend/custom-templates) ·
 [Backend&nbsp;›](/backend/custom-templates)
