@@ -1,3 +1,22 @@
+## [0.6.10](https://github.com/kosmojs/kosmo/compare/v0.6.9...v0.6.10) (2026-11-04)
+
+### Features
+
+* add $/ prefix for importing stuff from var/lib without hardcoding the path ([728e637](https://github.com/kosmojs/kosmo/commit/728e637e04ee632f9ed78f705a17430ef46717fe))
+* templates for layouts and use.ts ([7ca5dc2](https://github.com/kosmojs/kosmo/commit/7ca5dc206b1fd5b399eb4b3f7df5f37d146f14fc))
+
+  the function now receives the resolved entry, { kind, entry }, and
+  returns the template, or undefined to keep the built-in one.
+
+### Bug Fixes
+
+* **seed:** set base/backendBase to a string rather than to undefined ([8deccbc](https://github.com/kosmojs/kosmo/commit/8deccbc7f771efebe208dc62b15be4f0ffa44539))
+
+  When no frontend opted (or no base provided), base was set to undefined
+  in _/core/config, breaking type checking. Same for backend.
+* **vitest:** fix globbing to include only relevant tests ([1a2c0bf](https://github.com/kosmojs/kosmo/commit/1a2c0bff3f2e42b8e7916947b9783e48bdc04ccc))
+* **vitest:** fix typing for pages harness ([3ca95f3](https://github.com/kosmojs/kosmo/commit/3ca95f3cf77a5e0f5f61590865adf09ec72686b1))
+
 ## [0.6.9](https://github.com/kosmojs/kosmo/compare/v0.6.8...v0.6.9) (2026-11-02)
 
 ### Features
