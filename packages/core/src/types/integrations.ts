@@ -98,7 +98,7 @@ export type FrontendOptions = {
   ssg?: boolean | { generator?: GeneratorSignature };
   tanstack?: { query?: boolean };
   test?: boolean | VitestOptions<"frontend">;
-  templates?: GeneratorCustomTemplates<PageRoute>;
+  templates?: GeneratorCustomTemplates;
   generator?: GeneratorSignature;
   viteConfig?: ViteConfig;
 };
@@ -133,7 +133,7 @@ export type BackendOptions = {
     string // Name of the route to handle the URL
   >;
 
-  templates?: GeneratorCustomTemplates<ApiRoute>;
+  templates?: GeneratorCustomTemplates;
   generator?: GeneratorSignature;
   viteConfig?: ViteConfig;
 };

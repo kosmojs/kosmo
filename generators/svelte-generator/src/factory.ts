@@ -38,19 +38,18 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
 
   const overwrite = (content: string) => !content?.trim().length;
 
-  const templateResolver = createTemplateResolver(
-    frontend?.templates,
-    templates.srcPageSamplesPage,
-  );
+  const templateResolver = createTemplateResolver(frontend?.templates);
 
   const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
-    for (const { kind, entry } of entries) {
+    for (const resolvedEntry of entries) {
+      const { kind, entry } = resolvedEntry;
+      const customTemplate = templateResolver(entry.name, resolvedEntry)[kind];
       if (kind === "pageRoute") {
         await deploySrcFile(
           createPath.pages(entry.file),
           entry.name === "index"
             ? templates.srcPageSamplesWelcome
-            : templateResolver(entry.name, entry),
+            : customTemplate || templates.srcPageSamplesPage,
           {
             route: entry,
             title: entry.name.replace(/\{([^}]+)\}/g, "$1"),
@@ -61,7 +60,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       } else if (kind === "pageLayout") {
         await deploySrcFile(
           createPath.pages(entry.file),
-          templates.srcPageSamplesLayout,
+          customTemplate || templates.srcPageSamplesLayout,
           { route: entry },
           { overwrite },
         );

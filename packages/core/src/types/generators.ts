@@ -51,9 +51,13 @@ export type GeneratorMeta = {
   types?: Array<string>;
 };
 
-export type GeneratorCustomTemplates<T> = Record<
+export type GeneratorCustomTemplateFunction = (
+  e: ResolvedEntry,
+) => string | undefined;
+
+export type GeneratorCustomTemplates = Record<
   string,
-  string | ((r: T) => string) | undefined
+  string | GeneratorCustomTemplateFunction | undefined
 >;
 
 export type GeneratorFactory = {
