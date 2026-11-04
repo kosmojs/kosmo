@@ -71,7 +71,7 @@ and a folder built an hour ago is still served by a runner started after a one-f
 
 ## Notes
 
-The Vite cache is keyed by command - `var/.vite/<folder>/build/` -
+The Vite cache is keyed by command - `var/vite/<folder>/build/` -
 so building never invalidates the dev server's cache,
 and `preview` shares the build's cache rather than warming a third one.
 

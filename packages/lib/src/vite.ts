@@ -211,5 +211,5 @@ export const cacheDir = (
     | `backend:${ChassisCommand}`
     | "sidecar",
 ) => {
-  return posix.join(root, defaults.varDir, ".vite", name, target);
+  return posix.join(root, defaults.varDir, "vite", name, target);
 };
