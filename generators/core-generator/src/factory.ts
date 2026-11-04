@@ -204,8 +204,8 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
     ]) {
       await renderToFile(createPath.libCore(file), template, {
         name: sourceFolder.name,
-        base: frontend?.base ? JSON.stringify(frontend.base) : "undefined",
-        backendBase: backend?.base ? JSON.stringify(backend.base) : "undefined",
+        base: JSON.stringify(frontend?.base ? frontend.base : "/"),
+        backendBase: JSON.stringify(backend?.base ? backend.base : "/"),
         backendAliasPatterns: JSON.stringify(
           createAliasPatterns(backend?.alias),
         ),
