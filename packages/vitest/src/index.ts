@@ -62,13 +62,17 @@ export const loadConfig = async (
     const includePattern = (scope: "backend" | "frontend") => {
       const cfg = config[scope];
 
-      const [
-        path = defaults[scope === "backend" ? "apiDir" : "pagesDir"],
-        file = DEFAULT_TEST_FILE,
-      ] =
+      const dir = defaults[scope === "backend" ? "apiDir" : "pagesDir"];
+
+      const [path = dir, file = DEFAULT_TEST_FILE] =
         typeof cfg?.test === "object" && typeof cfg?.test.seed === "object"
-          ? [cfg.test.seed.path, cfg.test.seed.name]
-          : [undefined, undefined];
+          ? [
+              cfg.test.seed.path
+                ? posix.join(cfg.test.seed.path, dir)
+                : undefined,
+              cfg.test.seed.name,
+            ]
+          : [dir, DEFAULT_TEST_FILE];
 
       return posix.join(defaults.srcDir, sourceFolder.name, path, "**", file);
     };
