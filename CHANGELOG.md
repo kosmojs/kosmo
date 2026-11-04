@@ -1,3 +1,13 @@
+## [0.6.11](https://github.com/kosmojs/kosmo/compare/v0.6.10...v0.6.11) (2026-11-04)
+
+### Bug Fixes
+
+* **vite:** resolve $/ imports in the tsconfigPaths plugin ([5e4b7ea](https://github.com/kosmojs/kosmo/commit/5e4b7ea295ec57cc7c1531bf0b669d6719ece728))
+
+  Seeded into tsconfig paths in v0.6.10 but missing from the plugin,
+  breaking the dev server and Vue builds. Also added relevant integration
+  tests.
+
 ## [0.6.10](https://github.com/kosmojs/kosmo/compare/v0.6.9...v0.6.10) (2026-11-04)
 
 ### Features
