@@ -4,37 +4,54 @@ Creates a KosmoJS project and its first source folder.
 
 ## Usage
 
+Run it without flags, and it asks for the project name,
+the frontend framework and the backend framework:
+
 ```sh
-npm create kosmo my-app
-npm create kosmo .           # in the current folder
+npm create kosmo
 ```
 
-Run without arguments for an interactive prompt, or pass flags to skip it:
+Or create the project in the current folder:
 
 ```sh
-npm create kosmo my-app -- --frontend react --backend hono --ssr
+npm create kosmo .
+```
+
+Pass flags to skip the prompts:
+
+```sh
+npm create kosmo -- --name my-app --frontend react --backend hono
 ```
 
 `pnpm` and `yarn` do not need the extra `--`:
 
 ```sh
-pnpm create kosmo my-app --frontend react --backend hono
+pnpm create kosmo --name my-app --frontend react --backend hono
 ```
 
 | Flag | Values |
 |---|---|
+| `--name` | project name, ignored when using `.` |
 | `--frontend` | `react`, `vue`, `solid`, `svelte`, `mdx`, or `--no-frontend` for an API-only folder |
 | `--backend` | `hono`, `h3`, `koa`, or `--no-backend` for a client-only folder |
-| `--ssr` | enable server-side rendering |
-| `--ssg` | enable static site generation (implies `--ssr`) |
-| `--tsq` | enable TanStack Query |
 | `--overwrite` | overwrite existing files |
-| `-q, --quiet` | suppress output, errors still shown |
+| `-h, --help` | print usage |
 
-This installs [`@kosmojs/core`](https://www.npmjs.com/package/@kosmojs/core), [`@kosmojs/cli`](https://www.npmjs.com/package/@kosmojs/cli) and
-[`@kosmojs/dev`](https://www.npmjs.com/package/@kosmojs/dev) into the new project, so you never add them by hand.
+## What you get
 
-To add further source folders to an existing project, use `kosmo folder` rather than running the scaffolder again.
+The first source folder is always `app`, with pages at `/` and the API at `/api`.
+
+Its frontend has SSR enabled, while SSG and TanStack Query are off.
+Change any of them in the folder's `kosmo.config.ts`.
+
+[`@kosmojs/core`](https://www.npmjs.com/package/@kosmojs/core) goes into `dependencies`,
+and [`@kosmojs/cli`](https://www.npmjs.com/package/@kosmojs/cli),
+[`@kosmojs/dev`](https://www.npmjs.com/package/@kosmojs/dev)
+and [`@kosmojs/vitest`](https://www.npmjs.com/package/@kosmojs/vitest) into `devDependencies`,
+so you never add them by hand.
+
+Add more source folders later with `kosmo folder`,
+or a standalone process with `kosmo sidecar`.
 
 ## Documentation
 
