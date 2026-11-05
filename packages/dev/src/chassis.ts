@@ -249,11 +249,16 @@ export default async <C extends ChassisCommand>(
         ),
       );
 
-      for (const [evt, handler] of Object.entries(
-        eventMap[sourceFolder.name],
-      )) {
-        viteServer.watcher.on(evt, handler);
-      }
+      // watchers replaced on every restart, re-add
+      const addWatchers = () => {
+        for (const [evt, handler] of Object.entries(
+          eventMap[sourceFolder.name],
+        )) {
+          viteServer.watcher.on(evt, handler);
+        }
+      };
+
+      addWatchers();
 
       requestHandlers.push([
         frontend.base,
@@ -261,7 +266,11 @@ export default async <C extends ChassisCommand>(
         () => viteServer.middlewares,
       ]);
 
-      restartHandlers.push(viteServer.restart);
+      restartHandlers.push(async () => {
+        await viteServer.restart();
+        addWatchers();
+      });
+
       teardownHandlers.push(viteServer.close);
     }
 
@@ -314,37 +323,49 @@ export default async <C extends ChassisCommand>(
         ),
       );
 
-      const env = viteServer.environments.backend as RunnableDevEnvironment;
+      // environments replaced on every restart, re-read
+      const environment = () => {
+        return viteServer.environments.backend as RunnableDevEnvironment;
+      };
 
       const loadDevSetup = async () => {
-        env.runner.clearCache();
-        return env.runner
+        const { runner } = environment();
+        runner.clearCache();
+        return runner
           .import<{ default: DevSetup }>(join(defaults.apiDir, "dev.ts"))
           .then((e) => e.default);
       };
 
       let devSetup = await loadDevSetup();
 
-      for (const [evt, handler] of Object.entries(
-        eventMap[sourceFolder.name],
-      )) {
-        viteServer.watcher.on(evt, async (file) => {
-          const mods = env.moduleGraph.getModulesByFile(file);
-          if (mods?.size) {
-            try {
-              await handler(file);
-              await devSetup?.teardownHandler?.();
-              devSetup = await loadDevSetup();
-            } catch (error) {
-              // keep the dev server alive; the next good save reloads
-              console.error(
-                styleText("red", `${sourceFolder.name}: backend reload failed`),
-              );
-              console.error(error);
+      // watchers replaced on every restart, re-add
+      const addWatchers = () => {
+        for (const [evt, handler] of Object.entries(
+          eventMap[sourceFolder.name],
+        )) {
+          viteServer.watcher.on(evt, async (file) => {
+            const mods = environment().moduleGraph.getModulesByFile(file);
+            if (mods?.size) {
+              try {
+                await handler(file);
+                await devSetup?.teardownHandler?.();
+                devSetup = await loadDevSetup();
+              } catch (error) {
+                // keep the dev server alive; the next good save reloads
+                console.error(
+                  styleText(
+                    "red",
+                    `${sourceFolder.name}: backend reload failed`,
+                  ),
+                );
+                console.error(error);
+              }
             }
-          }
-        });
-      }
+          });
+        }
+      };
+
+      addWatchers();
 
       requestHandlers.push([
         backend.base,
@@ -354,7 +375,13 @@ export default async <C extends ChassisCommand>(
         () => (devSetup.requestMatcher ? undefined : requestMatchers.alias),
       ]);
 
-      restartHandlers.push(viteServer.restart);
+      restartHandlers.push(async () => {
+        await devSetup?.teardownHandler?.();
+        await viteServer.restart();
+        addWatchers();
+        devSetup = await loadDevSetup();
+      });
+
       teardownHandlers.push(viteServer.close);
     }
 
@@ -411,11 +438,15 @@ export default async <C extends ChassisCommand>(
         ),
       );
 
-      const env = viteServer.environments.sidecar as RunnableDevEnvironment;
+      // environments replaced on every restart, re-read
+      const environment = () => {
+        return viteServer.environments.sidecar as RunnableDevEnvironment;
+      };
 
       const loadService = async () => {
-        env.runner.clearCache();
-        return env.runner
+        const { runner } = environment();
+        runner.clearCache();
+        return runner
           .import<{ default: SidecarService }>(sidecar.entry)
           .then((e) => e.default);
       };
@@ -451,6 +482,11 @@ export default async <C extends ChassisCommand>(
           console.error(error);
         }
       };
+
+      restartHandlers.push(async () => {
+        await viteServer.restart();
+        await reload();
+      });
 
       teardownHandlers.push(viteServer.close);
     }
