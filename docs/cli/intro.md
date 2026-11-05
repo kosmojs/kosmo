@@ -27,7 +27,7 @@ and `package.json` wires it to scripts so you rarely type the binary name:
 | `pnpm folder` | `kosmo folder` | Add a source folder to the project |
 | `pnpm sidecar` | `kosmo sidecar` | Add a sidecar folder - builds, serves no HTTP |
 
-All five run from the **project root** - the directory holding `package.json`.
+All run from the **project root** - the directory holding `package.json`.
 
 `-h` / `--help` prints the full usage for either binary.
 

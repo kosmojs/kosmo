@@ -205,7 +205,7 @@ You do not wire `dehydrate`/`hydrate` for that.
 `defineRoute` in `api/**/index.ts`, returning an array of method handlers -
 same idea, plus validation and a fetch client for free.
 
-You don't write `Response.json()`, and there is no`NextRequest`/`NextResponse`: it's the native Hono/H3/Koa context.
+You don't write `Response.json()`, and there is no `NextRequest`/`NextResponse`: it's the native Hono/H3/Koa context.
 [Details&nbsp;›](/backend/intro#defining-endpoints)
 
 ### `middleware.ts` - global edge middleware

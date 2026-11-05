@@ -147,7 +147,7 @@ no imports, no type arguments on `defineRoute`:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-// Hono: api/users/use.ts
+// Hono: api/admin/use.ts
 export default defineRoute<"admin/dashboard">(({ GET }) => [
   GET(async (ctx) => {
     const user = ctx.get("user");  // typed as { id: number; role: "admin" | "user" }
@@ -157,7 +157,7 @@ export default defineRoute<"admin/dashboard">(({ GET }) => [
 
 == H3
 ```ts
-// H3: api/users/use.ts
+// H3: api/admin/use.ts
 export default defineRoute<"admin/dashboard">(({ GET }) => [
   GET(async (event) => {
     const { user } = event.context;  // typed as { id: number; role: "admin" | "user" }
@@ -167,7 +167,7 @@ export default defineRoute<"admin/dashboard">(({ GET }) => [
 
 == Koa
 ```ts
-// Koa: api/users/use.ts
+// Koa: api/admin/use.ts
 export default defineRoute<"admin/dashboard">(({ GET }) => [
   GET(async (ctx) => {
     const { user } = ctx.state;  // typed as { id: number; role: "admin" | "user" }

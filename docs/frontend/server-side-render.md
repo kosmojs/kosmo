@@ -22,7 +22,7 @@ export default defineConfig({
   frontend: {
     stack: "react",
     base: "/",
-    ssr: true, // [!code ++]
+    ssr: true, // or false to disable [!code hl]
   },
 });
 ```

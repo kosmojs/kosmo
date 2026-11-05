@@ -71,7 +71,7 @@ export default defineConfig({
 
 The `api/` directory on disk never appears in the URL - it only separates server routes from `pages/`.
 `backend.base` is a **full path**, independent of `frontend.base`, so nothing forces the two to nest.
-[Details&nbsp;›](/backend/intro.md#where-routes-end-up-frontend-base-and-backend-base)
+[Details&nbsp;›](/backend/intro#where-routes-end-up-frontend-base-and-backend-base)
 
 When several source folders share one server, requests are dispatched by prefix - longest first,
 with a folder's `backend.base` ranked ahead of its `frontend.base`.
@@ -107,7 +107,7 @@ The route, not the handler, decides some responses:
   through the `GET` handler, validated against the same schemas, with the body dropped.
   Define `HEAD` explicitly only to override that.
   Hono is the exception: its router ignores a `HEAD` handler, so the `GET` fallback always wins there.
-* **No route matched -> your framework's 404.** Only [`api/app.ts`](/backend/middleware.md#app-middleware)
+* **No route matched -> your framework's 404.** Only [`api/app.ts`](/backend/middleware#app-middleware)
   sees these requests, along with preflights and `405`s. Route-level and global middleware never do,
   which is why CORS lives there.
 
@@ -118,7 +118,7 @@ The URL does not need it - TypeScript does, because it cannot see the file syste
 
 The name is the route's key into the derived `RouteMap`,
 and that lookup is what types `ctx.validated.params`
-and the merged context of every [use.ts](/backend/cascading-middleware.md#type-safe-context-extension) above the route.
+and the merged context of every [use.ts](/backend/cascading-middleware#type-safe-context-extension) above the route.
 
 The rule is mechanical: the path relative to `api/`, without the trailing `index.ts`.
 
@@ -133,7 +133,7 @@ You never type it by hand: the seeded boilerplate contains the correct name.
 It also cannot drift - a name that matches no real route is a compile error,
 so renaming `api/users/` to `api/people/` flags every stale `defineRoute<"users/...">` at once.
 
-[Details&nbsp;›](/backend/intro.md#the-route-name-type-argument)
+[Details&nbsp;›](/backend/intro#the-route-name-type-argument)
 
 ## Parameters
 
@@ -169,7 +169,7 @@ A request that fails the refinement is rejected before your handler runs.
 The `[]` of the params tuple must be written in the `defineRoute` type arguments.
 Aliases *inside* the brackets are fine; hiding the brackets behind a type alias makes the
 tuple unreadable and every request is rejected.
-[Details&nbsp;›](/validation/refine.md#keep-the-wrapping-brackets-literal)
+[Details&nbsp;›](/validation/refine#keep-the-wrapping-brackets-literal)
 :::
 
 The raw, untouched params still exist on the framework's own context:
@@ -221,7 +221,7 @@ When the two cases have different methods, payloads or middleware, prefer two ro
   then looks for a second `filters` segment and 404s. Add an explicit static sibling
   (`properties/filters/index.ts`) and static priority resolves it.
 
-[Details&nbsp;›](/routing/params.md#watch-out-for-ambiguous-paths)
+[Details&nbsp;›](/routing/params#watch-out-for-ambiguous-paths)
 
 ## Mixed segments and power syntax
 
@@ -234,7 +234,7 @@ profiles/[id]-[data].json   ->  /api/profiles/1-posts.json
 
 Any parameter name containing non-alphanumeric characters is passed through as a raw
 <span class="text-nowrap">`path-to-regexp v8` pattern</span> -
-the [power&nbsp;syntax](/routing/params.md#power-syntax):
+the [power&nbsp;syntax](/routing/params#power-syntax):
 
 ```txt
 api/{v:version}/users       ->  /api/users or /api/v2/users
@@ -250,7 +250,7 @@ Support differs per backend, and this is the one place the stack choice changes 
 
 :::info A practical rule
 Mixed segments are workable on all three backends; reach for power syntax only on Koa.
-If a route silently 404s, check the [support&nbsp;matrix](/essentials/frameworks.md#routing-syntax-support)
+If a route silently 404s, check the [support&nbsp;matrix](/essentials/frameworks#routing-syntax-support)
 before debugging the handler.
 :::
 
@@ -276,7 +276,7 @@ Moving a route folder moves the middleware it inherits with it - the structure i
 Because a cascading `use.ts` also runs for sibling routes, keep it generic:
 a param like `id` may be `undefined` there.
 
-[Details&nbsp;›](/backend/cascading-middleware.md#parameter-availability)
+[Details&nbsp;›](/backend/cascading-middleware#parameter-availability)
 
 ## Aliases
 
@@ -346,7 +346,7 @@ export default appFactory(
 );
 ```
 
-[Details&nbsp;›](/dev-build-run/development-workflow.md#inspecting-api-routes)
+[Details&nbsp;›](/dev-build-run/development-workflow#inspecting-api-routes)
 
 ## Quick reference
 

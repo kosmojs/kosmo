@@ -139,7 +139,7 @@ In React and SolidJS the import does not resolve at all - use the router's own h
 * **A sibling `index` makes `[id]` effectively optional.** With both `careers/index.tsx` and `careers/[jobId]/index.tsx`,
   there is already a fallback for `/careers`, so `{jobId}` and `[jobId]` behave the same.
 
-[Details&nbsp;›](/routing/params.md#watch-out-for-ambiguous-paths)
+[Details&nbsp;›](/routing/params#watch-out-for-ambiguous-paths)
 
 ### Keep frontend routes simple
 
@@ -152,7 +152,7 @@ Mixed segments (`files/[name].[ext]`) and power syntax are backend-friendly, but
 
 The practical rule: stay with plain syntaxes on pages, and use mixed segments on the API side.
 
-[Support matrix ›](/essentials/frameworks.md#routing-syntax-support)
+[Support matrix ›](/essentials/frameworks#routing-syntax-support)
 
 ## Layouts
 
@@ -210,7 +210,7 @@ It takes the route name, then params in path order, plus an optional `query`:
 
 TypeScript enforces the route name and param types, so renaming a route folder surfaces an error
 at every stale `Link` - the same refactor-as-a-checklist property the backend
-[route&nbsp;name](/backend/routing.md#the-route-name) gives you.
+[route&nbsp;name](/backend/routing#the-route-name) gives you.
 
 [Details&nbsp;›](/frontend/link-navigation)
 
@@ -227,7 +227,7 @@ Because the output is native, everything your router documents keeps working:
 lazy loading, nested layouts, navigation guards, `loader` and `preload`, error elements.
 `path-to-regexp` runs only at build time; at runtime the routes are registered with the framework's own router.
 
-[Details&nbsp;›](/routing/intro.md#native-routing-under-the-hood)
+[Details&nbsp;›](/routing/intro#native-routing-under-the-hood)
 
 ## Quick reference
 

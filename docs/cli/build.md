@@ -54,7 +54,7 @@ Each build writes `dist/<folder>/kosmo.json`, describing the folder in the terms
 
 ```json [dist/front/kosmo.json]
 {
-  "name": "app",
+  "name": "front",
   "frontend": { "base": "/", "ssr": true },
   "backend": { "base": "/api", "aliasPatterns": [] }
 }

@@ -19,7 +19,7 @@ Organize distinct concerns - public site, customer app, admin dashboard -
 as independent source folders within a single `Vite` project.
 Each gets its own set of frameworks, base URL, development workflow and build pipeline.
 
-[Details&nbsp;›](/tutorial#create-your-first-api-route)
+[Details&nbsp;›](/tutorial#add-more-source-folders)
 
 ## Directory-Based Routing
 

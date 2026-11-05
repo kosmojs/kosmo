@@ -232,7 +232,7 @@ It runs for every endpoint, so properties becomes available for all routes:
 :::tabs key:backend variant:code
 == Hono
 ```ts
-// Hono: api/env.d.ts
+// Hono: api/use.ts
 import { use } from "_/api";
 
 export default [
@@ -245,7 +245,7 @@ export default [
 
 == H3
 ```ts
-// H3: api/env.d.ts
+// H3: api/use.ts
 import { use } from "_/api";
 
 export default [
@@ -258,7 +258,7 @@ export default [
 
 == Koa
 ```ts
-// Koa: api/env.d.ts
+// Koa: api/use.ts
 import { use } from "_/api";
 
 export default [

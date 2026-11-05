@@ -501,7 +501,6 @@ export default defineConfig({
   frontend: {
     stack: "react",
     base: "/front",
-    fetch: true,
     ssr: true,
     ssg: false,
     tanstack: { query: false },
