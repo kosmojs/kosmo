@@ -28,7 +28,6 @@ import type { DevSetup } from "@kosmojs/core/api";
 import {
   cacheDir,
   createAliasPatterns,
-  findFreePortRange,
   mergeConfigs,
   pathResolver,
   routesFactory,
@@ -157,9 +156,6 @@ export default async <C extends ChassisCommand>(
 
   const [host, port] = devHost.split(":");
 
-  // 4 ports per folder, 2 per server (main and hmr)
-  let [floatingPort] = await findFreePortRange(host, sourceFolders.length * 4);
-
   const genericDefaults: UserConfig = {
     server: {
       watch: {
@@ -171,6 +167,27 @@ export default async <C extends ChassisCommand>(
       },
     },
   };
+
+  const server = http.createServer((req, res) => {
+    // an alias names an exact URL, so it is tried before any base,
+    // including a longer base that belongs to another folder
+    for (const [, , handlerFactory, aliasMatcherFactory] of handlers) {
+      if (aliasMatcherFactory?.()?.(req)) {
+        handlerFactory()(req, res);
+        return;
+      }
+    }
+    for (const [, matcherFactory, handlerFactory] of handlers) {
+      // should be called on every request
+      const [matcher, handler] = [matcherFactory(), handlerFactory()];
+      if (matcher(req)) {
+        handler(req, res);
+        return;
+      }
+    }
+    res.writeHead(404, { "Content-Type": "text/html" });
+    res.end("<h1>404: Not Found</h1>");
+  });
 
   for (const sourceFolder of sourceFolders) {
     const { createPath } = pathResolver(projectSettings, sourceFolder);
@@ -221,11 +238,11 @@ export default async <C extends ChassisCommand>(
             plugins,
             server: {
               host: devHost,
-              port: floatingPort++,
+              allowedHosts: [host],
               middlewareMode: true,
               ws: {
-                host,
-                port: floatingPort++,
+                server,
+                path: "@__kosmo_hmr__",
               },
             },
           },
@@ -279,12 +296,9 @@ export default async <C extends ChassisCommand>(
             plugins,
             server: {
               host: devHost,
-              port: floatingPort++,
+              allowedHosts: [host],
               middlewareMode: true,
-              ws: {
-                host,
-                port: floatingPort++,
-              },
+              ws: false,
             },
             resolve: {
               conditions: ["node"],
@@ -443,28 +457,8 @@ export default async <C extends ChassisCommand>(
   }
 
   // most specific base first, same order as dist/run.js
+  // WARN: keep this after folders loop
   const handlers = sortByBase(requestHandlers, ([path]) => path);
-
-  const server = http.createServer((req, res) => {
-    // an alias names an exact URL, so it is tried before any base,
-    // including a longer base that belongs to another folder
-    for (const [, , handlerFactory, aliasMatcherFactory] of handlers) {
-      if (aliasMatcherFactory?.()?.(req)) {
-        handlerFactory()(req, res);
-        return;
-      }
-    }
-    for (const [, matcherFactory, handlerFactory] of handlers) {
-      // should be called on every request
-      const [matcher, handler] = [matcherFactory(), handlerFactory()];
-      if (matcher(req)) {
-        handler(req, res);
-        return;
-      }
-    }
-    res.writeHead(404, { "Content-Type": "text/html" });
-    res.end("<h1>404: Not Found</h1>");
-  });
 
   server.on("error", (error) => {
     console.error(styleText("red", `Failed to start dev server on ${devHost}`));
