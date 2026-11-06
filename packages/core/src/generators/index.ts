@@ -61,8 +61,12 @@ export const routeRenderHelpers = () => {
       return route.params.schema
         .map((p, i) => {
           if (p.kind === "splat") {
-            // mark it as optional only if it is last param
-            const suffix = route.params.schema[i + 1] ? "" : "?";
+            // optional unless a required param follows,
+            // which a tuple cannot place after an optional element
+            const requiredAfter = route.params.schema
+              .slice(i + 1)
+              .some((e) => e.kind === "required");
+            const suffix = requiredAfter ? "" : "?";
             return `${p.const + suffix}: Array<string | number>`;
           }
           return p.kind === "optional"
@@ -133,6 +137,11 @@ export const clientRenderFactory: () => CSRFactory = () => {
   };
 };
 
+/**
+ * `path` and `href` take no params when an empty tuple fits ParamsT,
+ * that is when every param is optional: a route without params,
+ * or one whose params are all optional or splats with nothing required after them.
+ * */
 export type RoutePathMethods<ParamsT extends readonly unknown[]> = {
   paramsMapper: (
     params: ParamsT,
@@ -141,7 +150,7 @@ export type RoutePathMethods<ParamsT extends readonly unknown[]> = {
 
   parametrize: (params: ParamsT) => string;
 
-  path: ParamsT["length"] extends 0
+  path: [] extends ParamsT
     ? {
         (): string;
         (
@@ -156,7 +165,7 @@ export type RoutePathMethods<ParamsT extends readonly unknown[]> = {
         opt?: { prefix?: boolean | string },
       ) => string;
 
-  href: ParamsT["length"] extends 0
+  href: [] extends ParamsT
     ? {
         (host: HostOpt): string;
         (
