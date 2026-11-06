@@ -82,7 +82,7 @@ export function appFactory(
     ...(options ? { ...options } : {}),
   };
 
-  const app = new Koa(appOptions);
+  const app = new Koa<DefaultContext, DefaultState>(appOptions);
   const router = new Router();
 
   for (const route of registrationOrder(routes)) {
