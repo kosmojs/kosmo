@@ -23,6 +23,9 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
   const { frontend, backend } = sourceFolder.config;
 
   const seed = async () => {
+    // overwrite only if empty
+    const overwrite = (c: string) => !c?.trim();
+
     const { dependencies = {}, devDependencies = {} } = await import(
       resolve(projectSettings.root, "package.json"),
       { with: { type: "json" } }
@@ -42,7 +45,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
           2,
         ),
         {},
-        { overwrite: false },
+        { overwrite },
       );
 
       // deploy a tsconfig file for root tsconfig to extend from
@@ -67,7 +70,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
           2,
         ),
         {},
-        { overwrite: false },
+        { overwrite },
       );
 
       // deploy a tsconfig file for sourceFolder tsconfig to extend from
@@ -122,15 +125,12 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       await renderToFile(createPath.lib(`../${file}`), template, {});
     }
 
-    /**
-     * deploy a default gitignore file that ignore everything,
-     * except cache.json files; if file exists, do not override.
-     * */
+    // deploy a default gitignore file
     await renderToFile(
       createPath.lib("../.gitignore"),
       templates.libGitignore,
       {},
-      { overwrite: false },
+      { overwrite },
     );
 
     if (sourceFolder.config.frontend) {
@@ -139,7 +139,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
         createPath.src("index.html"),
         templates.srcIndex,
         { entryDir: defaults.entryDir },
-        { overwrite: (c) => !c?.trim() /** overwrite only if empty */ },
+        { overwrite },
       );
     }
 
@@ -157,12 +157,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       ]) {
         await renderFactory({
           helpers: createImportHelpers({ origin: "src" }),
-        }).renderToFile(
-          createPath.src(file),
-          template,
-          {},
-          { overwrite: false },
-        );
+        }).renderToFile(createPath.src(file), template, {}, { overwrite });
       }
     }
 
