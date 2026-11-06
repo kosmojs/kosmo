@@ -131,7 +131,8 @@ export const createTestGroups = (opt: {
                       route.replace(/[^\w]/g, "_"),
                       method,
                       ...params.flatMap((p) => (Array.isArray(p) ? p : [p])),
-                      crc(route + JSON.stringify(payload)),
+                      // params too: [] and [[]] flatten to the same segments
+                      crc(route + JSON.stringify([params, payload])),
                     ].join("/");
 
                     for (const file of ["index", "layout"] as const) {
@@ -231,10 +232,15 @@ const createTestRunner = ({
         JSON.stringify([origin, requestOrigin], undefined, 2),
       ).toEqual(requestOrigin);
 
+      // the server reports a splat with no segments as absent
+      const expectedParams = params.filter((param) => {
+        return !Array.isArray(param) || param.length > 0;
+      });
+
       expect(
         Object.values(response.params),
         JSON.stringify([origin, params, response.params], undefined, 2),
-      ).toEqual(params);
+      ).toEqual(expectedParams);
 
       if (headers) {
         expect(

@@ -190,9 +190,10 @@ export const payloadMap: PayloadMap = {
     params: [[], ["privacy"]],
     GET: [{}],
   },
-  // splat param: the splat segment is a nested array of path parts
+  // splat param: the splat segment is a nested array of path parts;
+  // an empty array means no segments, the same as leaving the splat out
   "splat/{...path}": {
-    params: [[], [["a"]], [["a", "b"]], [["a", "b", "c"]]],
+    params: [[], [[]], [["a"]], [["a", "b"]], [["a", "b", "c"]]],
     GET: [{}],
   },
   // required param followed by a splat
@@ -202,6 +203,7 @@ export const payloadMap: PayloadMap = {
       [2, ["x"]],
       [3, ["x", "y"]],
       [4, ["a", "b", "c"]],
+      [5, []],
     ],
     GET: [{}],
   },

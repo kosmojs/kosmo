@@ -51,6 +51,23 @@ export const routes: ReadonlyArray<LinkRoute> = [
     label: "Rest",
   },
 
+  // A splat given as an empty array leaves its group out,
+  // where path-to-regexp alone would throw "Expected ... to be a non-empty array"
+  {
+    name: "{...rest}",
+    params: { rest: [] },
+    id: "link-rest-empty",
+    href: "/",
+    label: "Rest Empty",
+  },
+  {
+    name: "docs/{...path}",
+    params: { path: [] },
+    id: "link-docs-empty-splat",
+    href: "/docs",
+    label: "Docs Empty Splat",
+  },
+
   // Query string appended by path();
   // on the index page the base must stay intact in front of it
   {
