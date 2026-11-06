@@ -1,8 +1,11 @@
-import { posix } from "node:path";
-
 import crc from "crc/crc32";
 
-import type { ApiRoute, ResolvedEntry, RouteEntry } from "@kosmojs/core";
+import {
+  type ApiRoute,
+  join,
+  type ResolvedEntry,
+  type RouteEntry,
+} from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
   createPathPattern,
@@ -104,7 +107,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
           .split("/")
           .reduce<Array<string>>((acc, segment) => {
             const prev = acc[acc.length - 1];
-            acc.push(prev ? posix.join(prev, segment) : segment);
+            acc.push(prev ? join(prev, segment) : segment);
             return acc;
           }, []);
 
@@ -127,7 +130,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
                     name: url,
                     basename: entry.name,
                     id: `${baseRoute.id}_${crc(url)}`,
-                    alias: posix.join("/", createPathPattern(pathTokens)),
+                    alias: join("/", createPathPattern(pathTokens)),
                     aliasPattern: createPathPattern(pathTokens),
                     pathTokens,
                   },
