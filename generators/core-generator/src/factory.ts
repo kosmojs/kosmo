@@ -39,7 +39,11 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
         JSON.stringify(
           {
             extends: `./${defaults.varDir}/${defaults.libDir}/tsconfig.json`,
-            include: [`./${defaults.varDir}/${defaults.libDir}/*.d.ts`],
+            exclude: [
+              `./${defaults.srcDir}/`,
+              `./${defaults.varDir}/`,
+              "./public/",
+            ],
           },
           undefined,
           2,
@@ -65,6 +69,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
         JSON.stringify(
           {
             extends: `../../${defaults.varDir}/${defaults.libDir}/${sourceFolder.name}/tsconfig.json`,
+            exclude: ["./public/"],
           },
           undefined,
           2,
@@ -74,7 +79,6 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       );
 
       // deploy a tsconfig file for sourceFolder tsconfig to extend from
-
       const tsconfig = generateTsconfig(
         { dependencies, devDependencies },
         sourceFolder.name,

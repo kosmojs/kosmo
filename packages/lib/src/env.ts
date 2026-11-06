@@ -70,7 +70,7 @@ export const loadEnvFiles = async ({
     );
 
     const envFiles = lookupDirs.flatMap((dir) => {
-      // files inside source folder takes precedence, regadless mode;
+      // files inside source folder takes precedence, regardless mode;
       // so src/<folder>/.env will override vars set in any project root file,
       // even .env.[mode]* files
       return ["", ".local", `.${mode}`, `.${mode}.local`].flatMap((suffix) => {

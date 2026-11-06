@@ -69,7 +69,6 @@ export const generateTsconfig = (
   }
 
   return {
-    exclude: [`${rootDir}/${defaults.srcDir}/`],
     compilerOptions: {
       ...compilerOptions,
       paths: {
