@@ -23,6 +23,7 @@
     "test:integration:ssg": "vitest run --project=integration:ssg",
     "test:integration:sidecar": "vitest run --project=integration:sidecar",
     "test:integration:vitest": "vitest run --project=integration:vitest",
+    "test:integration:env": "vitest run --project=integration:env",
     "test:integration:paths": "vitest run --project=integration:paths",
     "release:prepare": "bash ./scripts/release/prepare",
     "release:commit": "bash ./scripts/release/commit"

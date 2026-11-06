@@ -135,6 +135,11 @@ export default defineConfig({
       setupFactory("integration:paths", {
         include: ["integration/paths/*.test.ts"],
       }),
+
+      // picks its own modes per test file, so no MODE is provided
+      setupFactory("integration:env", {
+        include: ["integration/env/*.test.ts"],
+      }),
     ],
   },
 });

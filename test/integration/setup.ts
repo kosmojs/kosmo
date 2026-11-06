@@ -23,7 +23,7 @@ import {
   type SourceFolder,
 } from "@kosmojs/core";
 import chassis from "@kosmojs/dev/chassis";
-import { findFreePortRange, pathResolver } from "@kosmojs/lib";
+import { findFreePortRange, loadEnvFiles, pathResolver } from "@kosmojs/lib";
 
 import { dependencies } from "../package.json";
 import {
@@ -206,10 +206,17 @@ export const setupTestProject = async (
       Pick<SourceFolder, "config" | "generators">
     >(createPath.src("kosmo.config.ts"), { default: true });
 
-    await chassis("build", {
-      ...project,
-      sourceFolders: [{ ...sourceFolder, config, generators }],
+    // read env files as the cli does, with the project's mode
+    const envSources = await loadEnvFiles({
+      root: project.root,
+      name: sourceFolder.name,
+      mode: project.mode,
+      config,
     });
+
+    const sourceFolders = [{ ...sourceFolder, config, generators, envSources }];
+
+    await chassis("build", { ...project, sourceFolders });
 
     let teardown = async () => {};
 
@@ -230,7 +237,7 @@ export const setupTestProject = async (
     } else if (mode === "csr") {
       const { teardown: closeServers } = await chassis("serve", {
         ...project,
-        sourceFolders: [{ ...sourceFolder, config, generators }],
+        sourceFolders,
       });
       teardown = () => closeServers();
     } else if (mode) {
