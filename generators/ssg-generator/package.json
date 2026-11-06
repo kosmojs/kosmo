@@ -22,8 +22,5 @@
     "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^",
     "vite": "^8.3.4"
-  },
-  "devDependencies": {
-    "path-to-regexp": "^8.4.2"
   }
 }

@@ -26,7 +26,6 @@
   },
   "devDependencies": {
     "@tanstack/svelte-query": "^6.3.1",
-    "path-to-regexp": "^8.4.2",
     "svelte": "^5.57.2"
   }
 }

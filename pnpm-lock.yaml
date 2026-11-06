@@ -77,10 +77,6 @@ importers:
       '@kosmojs/lib':
         specifier: workspace:^
         version: link:../../packages/lib
-    devDependencies:
-      path-to-regexp:
-        specifier: ^8.4.2
-        version: 8.4.2
 
   generators/fetch-generator:
     dependencies:
@@ -196,9 +192,6 @@ importers:
       '@mdx-js/preact':
         specifier: ^3.1.1
         version: 3.1.1(preact@11.0.1)
-      path-to-regexp:
-        specifier: ^8.4.2
-        version: 8.4.2
       preact:
         specifier: ^11.0.1
         version: 11.0.1(preact-render-to-string@6.8.0)
@@ -313,10 +306,6 @@ importers:
       vite:
         specifier: ^8.3.4
         version: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1)
-    devDependencies:
-      path-to-regexp:
-        specifier: ^8.4.2
-        version: 8.4.2
 
   generators/ssr-generator:
     dependencies:
@@ -361,9 +350,6 @@ importers:
       '@tanstack/svelte-query':
         specifier: ^6.3.1
         version: 6.3.1(svelte@5.57.2)
-      path-to-regexp:
-        specifier: ^8.4.2
-        version: 8.4.2
       svelte:
         specifier: ^5.57.2
         version: 5.57.2

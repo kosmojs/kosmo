@@ -9,7 +9,7 @@
  * which is loaded from both browser and server.
  * */
 
-import { pathToRegexp } from "path-to-regexp";
+import { compile, match, pathToRegexp } from "path-to-regexp";
 
 /**
  * Whether a URL path falls under a base: the base itself, or anything below it.
@@ -99,4 +99,28 @@ export const createDispatcher = <T>(
     }
     return undefined;
   };
+};
+
+export const createPathBuilder = (path: string) => {
+  const toPath = compile(path);
+  return (params: Record<string, unknown>) => {
+    return toPath(
+      /**
+       * Drops splats given as empty arrays before compiling a path.
+       * A splat always sits in an optional group, so no segments means the group is left out,
+       * but path-to-regexp rejects an empty array instead of treating it as absent.
+       * */
+      Object.fromEntries(
+        Object.entries(params).filter(([, value]) => {
+          return !Array.isArray(value) || value.length > 0;
+        }),
+      ) as never,
+    );
+  };
+};
+
+export const createPathMatcher = <T extends {}>(path: string) => {
+  const { regexp, keys } = pathToRegexp(path, { sensitive: true });
+  const matcher = match<T>(path);
+  return { regexp, keys, matcher };
 };

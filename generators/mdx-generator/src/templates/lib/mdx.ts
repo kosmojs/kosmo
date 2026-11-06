@@ -1,8 +1,7 @@
 import { MDXProvider } from "@mdx-js/preact";
-import { match, pathToRegexp } from "path-to-regexp";
 import { type ComponentType, createContext, h, type VNode } from "preact";
 
-import { join, parseSearchParams } from "@kosmojs/core";
+import { createPathMatcher, join, parseSearchParams } from "@kosmojs/core";
 
 import { paramNames } from "{{ createImport 'lib' 'params' }}";
 import { base } from "{{ createImport 'libCore' }}";
@@ -173,8 +172,7 @@ export const createRoute = (
 ): RawRoute => {
   const path = join(base, pathPattern);
 
-  const { regexp } = pathToRegexp(path, { sensitive: true });
-  const matcher = match<Route["params"]>(path);
+  const { regexp, matcher } = createPathMatcher<Route["params"]>(path);
 
   return {
     name,

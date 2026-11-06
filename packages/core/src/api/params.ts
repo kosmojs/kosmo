@@ -1,16 +1,17 @@
-import { match } from "path-to-regexp";
-
+import { createPathMatcher } from "../dispatch";
 import { maybeBoolean, maybeNumber } from "../generic";
 import type { RouteSource } from "./types";
 
 export const createParamsNormalizers = <T>(routeSource: RouteSource<T>) => {
   const { name, numericProperties, booleanProperties } = routeSource;
 
-  const pathMatcher = match(routeSource.pathPattern);
+  const { matcher } = createPathMatcher<Record<string, unknown>>(
+    routeSource.pathPattern,
+  );
 
   const resolveParams = (path: string) => {
     try {
-      const match = pathMatcher(path);
+      const match = matcher(path);
       return match ? match.params : undefined;
       // biome-ignore lint: any
     } catch (error: any) {

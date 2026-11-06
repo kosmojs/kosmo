@@ -11,7 +11,6 @@ export default defineGenerator({
     jsxImportSource: "preact",
   },
   dependencies: {
-    "path-to-regexp": self.devDependencies["path-to-regexp"],
     preact: self.devDependencies.preact,
     "preact-render-to-string": self.devDependencies["preact-render-to-string"],
     "@mdx-js/preact": self.devDependencies["@mdx-js/preact"],

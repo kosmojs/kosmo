@@ -1,8 +1,6 @@
 import { join } from "node:path";
 
-import { compile } from "path-to-regexp";
-
-import type { PageRoute } from "@kosmojs/core";
+import { createPathBuilder, type PageRoute } from "@kosmojs/core";
 
 import routes from "{{ createImport 'lib' 'ssg:routes' }}";
 import { base } from "{{ createImport 'libCore' }}";
@@ -58,11 +56,11 @@ export default Object.entries(routes)
       return [];
     }
 
-    const toPath = compile(pathPattern);
+    const pathBuilder = createPathBuilder(pathPattern);
 
     return staticParams.flatMap((entry) => {
       try {
-        return [toPath(paramsMapper(params, entry) as never)];
+        return [pathBuilder(paramsMapper(params, entry))];
       } catch (error) {
         console.error(`❗SSG: Failed building path for ${name}`);
         console.error(error);

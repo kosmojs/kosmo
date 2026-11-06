@@ -1,7 +1,6 @@
-import { compile } from "path-to-regexp";
-
 import {
   type ApiRouteSerialized,
+  createPathBuilder,
   join,
   maybeNumber,
   type PageRouteSerialized,
@@ -16,7 +15,7 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
 ): ApiRouteSerialized & RoutePathMethods<ParamsT> => {
   const { name, pathPattern, numericProperties } = route;
 
-  const toPath = compile(join(base, pathPattern));
+  const pathBuilder = createPathBuilder(join(base, pathPattern));
 
   const paramsMapper: RoutePathMethods<ParamsT>["paramsMapper"] = (
     params,
@@ -61,7 +60,7 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
       // so the compiled output can contain "//",
       // or be empty for a root optional route with no params;
       // join() normalizes both, anchored at "/"
-      return join("/", toPath(paramsMap as never));
+      return join("/", pathBuilder(paramsMap));
     } catch (error) {
       console.error(`❗ERROR: Failed building path for ${name}`);
       throw error;
@@ -94,7 +93,7 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
   base: string,
   route: PageRouteSerialized,
 ): PageRouteSerialized & RoutePathMethods<ParamsT> => {
-  const toPath = compile(join(base, route.pathPattern));
+  const pathBuilder = createPathBuilder(join(base, route.pathPattern));
 
   const paramsMapper: RoutePathMethods<ParamsT>["paramsMapper"] = (params) => {
     return Array.isArray(params)
@@ -119,7 +118,7 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
       // so the compiled output can contain "//",
       // or be empty for a root optional route with no params;
       // join() normalizes both, anchored at "/"
-      return join("/", toPath(paramsMap as never));
+      return join("/", pathBuilder(paramsMap));
     } catch (error) {
       console.error(`❗ERROR: Failed building path for ${route.name}`);
       throw error;

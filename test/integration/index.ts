@@ -3,8 +3,7 @@ import { tmpdir } from "node:os";
 import { posix, resolve } from "node:path";
 import { promisify } from "node:util";
 
-import { compile } from "path-to-regexp";
-
+import { createPathBuilder } from "@kosmojs/core";
 import { createPathPattern, pathTokensFactory } from "@kosmojs/lib";
 
 export const pnpmDir = resolve(tmpdir(), ".kosmojs/pnpm-store");
@@ -58,8 +57,8 @@ export const compileRoutePath = (
 ) => {
   const pathTokens = pathTokensFactory(route);
   const pathPattern = createPathPattern(pathTokens);
-  const toPath = compile(pathPattern);
-  return toPath({ ...params } as never);
+  const pathBuilder = createPathBuilder(pathPattern);
+  return pathBuilder({ ...params });
 };
 
 export const createRoutePath = (base: string, pathSource: PathSource) => {

@@ -9,7 +9,6 @@ export default defineGenerator({
     slot: "frontend",
   },
   dependencies({ frontend }) {
-    // path-to-regexp added by core-generator, do not duplicate here
     return {
       svelte: self.devDependencies.svelte,
       ...(frontend?.tanstack?.query
