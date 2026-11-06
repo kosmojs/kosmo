@@ -1,5 +1,3 @@
-import { styleText } from "node:util";
-
 import Router, { type RouterMiddleware } from "@koa/router";
 import Koa from "koa";
 
@@ -12,6 +10,51 @@ export type App = Koa<DefaultState, DefaultContext>;
 export type AppOptions = ConstructorParameters<
   typeof Koa<DefaultState, DefaultContext>
 >[0] & { debug?: RouteDebugOption };
+
+/**
+ * @koa/router registers every GET for HEAD as well,
+ * and runs all layers matching a request in the order they were registered.
+ * A HEAD handler registered after the GET of its path would therefore never run:
+ * the GET layer answers first and does not call next.
+ *
+ * Each HEAD route is moved just ahead of the GET of its own path.
+ * Nothing else changes position, and HEAD routes never move past other paths,
+ * so routes still match in the order given - e.g. a static path ahead of a dynamic one
+ * that also matches it.
+ * */
+const registrationOrder = (routes: Array<Route<RouterMiddleware>>) => {
+  const headRoutes = new Map<string, Array<Route<RouterMiddleware>>>();
+
+  for (const route of routes) {
+    if (route.method === "HEAD") {
+      headRoutes.set(route.path, [
+        ...(headRoutes.get(route.path) ?? []),
+        route,
+      ]);
+    }
+  }
+
+  const ordered: Array<Route<RouterMiddleware>> = [];
+  const placed = new Set<Route<RouterMiddleware>>();
+
+  const place = (route: Route<RouterMiddleware>) => {
+    if (!placed.has(route)) {
+      placed.add(route);
+      ordered.push(route);
+    }
+  };
+
+  for (const route of routes) {
+    if (route.method === "GET") {
+      for (const headRoute of headRoutes.get(route.path) ?? []) {
+        place(headRoute);
+      }
+    }
+    place(route);
+  }
+
+  return ordered;
+};
 
 export function appFactory(
   routes: Array<Route<RouterMiddleware>>,
@@ -42,7 +85,7 @@ export function appFactory(
   const app = new Koa(appOptions);
   const router = new Router();
 
-  for (const route of routes) {
+  for (const route of registrationOrder(routes)) {
     if (typeof debug === "function") {
       (debug as Function)(route.debug, route);
     } else if (debug) {
@@ -63,17 +106,6 @@ export function appFactory(
 
   for (const [path, routes] of Object.entries(routesByPath)) {
     const methods = routes.map((e) => e.method);
-
-    if (
-      methods.includes("GET") &&
-      methods.indexOf("HEAD") > methods.indexOf("GET")
-    ) {
-      console.warn("----");
-      console.warn(
-        `${styleText("yellow", "WARN")}: HEAD handler for ${styleText("blue", routes[0].name)} route is unreachable - ${styleText("magenta", "define HEAD before GET")}`,
-      );
-      console.warn("----");
-    }
 
     router.all(path, (ctx) => {
       const allowedMethods = new Set([...methods, "OPTIONS"]);
