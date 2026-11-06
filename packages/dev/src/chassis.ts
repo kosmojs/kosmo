@@ -75,6 +75,11 @@ export default async <C extends ChassisCommand>(
   }
 
   if (command === "build" || command === "preview") {
+    // NOTE: resolve routes for every folder before build
+    for (const sourceFolder of sourceFolders) {
+      await resolveSourceFolderRoutes(projectSettings, sourceFolder);
+    }
+
     for (const sourceFolder of sourceFolders) {
       await buildSourceFolder(projectSettings, sourceFolder);
       if (sourceFolder.config.frontend || sourceFolder.config.backend) {
@@ -529,25 +534,13 @@ export default async <C extends ChassisCommand>(
   } as ReturnSignature<C>;
 };
 
-/**
- * Production build of one source folder - generators, client bundle, api bundle,
- * then the generators' post-build steps (ssr, ssg).
- * Shared by `build` and `preview`: preview is a production build that reruns on change,
- * so generators are told `command: "build"` and the build cache is the same.
- * */
-const buildSourceFolder = async (
+const resolveSourceFolderRoutes = async (
   projectSettings: ProjectSettings,
   sourceFolder: SourceFolder,
 ) => {
-  const { mode } = projectSettings;
-  const command = "build";
-
-  const { createPath } = pathResolver(projectSettings, sourceFolder);
-  const { frontend, backend, sidecar } = sourceFolder.config;
-
   const resolvedRoutes = [];
 
-  if (!sidecar) {
+  if (!sourceFolder.config.sidecar) {
     const { resolvers } = await routesFactory(
       projectSettings,
       sourceFolder,
@@ -565,6 +558,30 @@ const buildSourceFolder = async (
 
     spinner.succeed("ready ✨");
   }
+
+  return resolvedRoutes;
+};
+
+/**
+ * Production build of one source folder - generators, client bundle, api bundle,
+ * then the generators' post-build steps (ssr, ssg).
+ * Shared by `build` and `preview`: preview is a production build that reruns on change,
+ * so generators are told `command: "build"` and the build cache is the same.
+ * */
+const buildSourceFolder = async (
+  projectSettings: ProjectSettings,
+  sourceFolder: SourceFolder,
+) => {
+  const { mode } = projectSettings;
+  const command = "build";
+
+  const { createPath } = pathResolver(projectSettings, sourceFolder);
+  const { frontend, backend, sidecar } = sourceFolder.config;
+
+  const resolvedRoutes = await resolveSourceFolderRoutes(
+    projectSettings,
+    sourceFolder,
+  );
 
   const vitePlugins = vitePluginsFactory(projectSettings, sourceFolder);
 

@@ -165,6 +165,8 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
         );
       }
     }
+
+    await generateLibFiles([]);
   };
 
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
