@@ -106,12 +106,14 @@ export const setupTestProject = async (
         : {}),
     },
     generators: [],
+    envSources: [],
   };
 
   const host = DEFAULT_HOST;
   const [port, previewPort] = await findFreePortRange(DEFAULT_HOST, 2);
 
   const project: ProjectSettings = {
+    mode: "test",
     root: resolve(tempDir, projectName),
     sourceFolders: [sourceFolder],
     devHost: `${host}:${port}`,

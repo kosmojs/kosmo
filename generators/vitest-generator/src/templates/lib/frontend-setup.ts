@@ -8,37 +8,40 @@ import {
   type ProjectSettings,
 } from "@kosmojs/core";
 import chassis from "@kosmojs/dev/chassis";
-import { findFreePortRange, resolveHostAddress } from "@kosmojs/vitest";
+import {
+  findFreePortRange,
+  loadEnvFiles,
+  resolveHostAddress,
+} from "@kosmojs/vitest";
 
 import { name } from "{{ createImport 'libCore' }}";
-import kosmo from "{{ createImport 'src' 'kosmo.config' }}";
+import kosmoConfig from "{{ createImport 'src' 'kosmo.config' }}";
 
 export default async (project: TestProject) => {
-  const { frontend } = kosmo.config;
+  const { root } = project.config;
+  const { config, generators } = kosmoConfig;
 
-  if (!frontend) {
+  if (!config.frontend) {
     throw new Error(
       `No frontend configured in ${defaults.srcDir}/${name}/kosmo.config.ts`,
     );
   }
 
-  const packageJson = await import(
-    resolve(project.config.root, "package.json"),
-    { with: { type: "json" } }
-  ).then<{ kosmo: KosmoSettings }>((e) => e.default);
+  const { mode } = project.vite.config;
+
+  const packageJson = await import(resolve(root, "package.json"), {
+    with: { type: "json" },
+  }).then<{ kosmo: KosmoSettings }>((e) => e.default);
 
   const [host] = resolveHostAddress(packageJson.kosmo, "devHost").split(":");
   const [port] = await findFreePortRange(host, 1);
 
+  const envSources = await loadEnvFiles({ root, name, mode, config });
+
   const settings: ProjectSettings = {
+    mode,
     root: project.config.root,
-    sourceFolders: [
-      {
-        name,
-        config: kosmo.config,
-        generators: kosmo.generators,
-      },
-    ],
+    sourceFolders: [{ name, config, generators, envSources }],
     devHost: [host, port].join(":"),
     previewHost: "/dev/null",
     distDir: "/dev/null",

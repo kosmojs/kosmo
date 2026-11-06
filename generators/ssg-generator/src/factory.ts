@@ -14,12 +14,13 @@ import {
   renderFactory,
   sortRoutes,
   spinnerFactory,
-  vitePlugins,
+  vitePluginsFactory,
 } from "@kosmojs/lib";
 
 import * as templates from "./templates";
 
 export default defineGeneratorFactory((projectSettings, sourceFolder) => {
+  const { mode } = projectSettings;
   const { frontend } = sourceFolder.config;
 
   const { createPath, createImportHelpers } = pathResolver(
@@ -99,7 +100,8 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       spinner.append("preparing...");
 
       // The SSR server module, used without a server: createApp returns a hono app,
-      // and app.fetch runs the full request cycle in-process - no port, no listener, no loopback round-trip.
+      // and app.fetch runs the full request cycle in-process -
+      // no port, no listener, no loopback round-trip.
       // Loaders already take the in-process transport, so nothing in a render needs a socket.
       const { createApp } = (await import(ssrServerPath)) as {
         createApp: (
@@ -108,6 +110,8 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       };
 
       spinner.append("bundling routes...");
+
+      const vitePlugins = vitePluginsFactory(projectSettings, sourceFolder);
 
       await build(
         mergeConfigs(
@@ -122,16 +126,16 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
           }),
           // main config - highest priority
           {
+            mode,
             root: createPath.lib(),
             appType: "custom",
             plugins: [
-              vitePlugins.tsconfigPaths(projectSettings, sourceFolder),
               vitePlugins.nodePrefix(),
+              vitePlugins.tsconfigPaths(),
               // routes bundle, not the SSR graph - client variants apply
-              vitePlugins.virtualModules(projectSettings, sourceFolder, {
-                kind: "csr",
-                command: "build",
-              }),
+              vitePlugins.virtualModules({ kind: "csr", command: "build" }),
+              // it is loading frontend routes, thus frontend env
+              vitePlugins.envProvider("frontend"),
             ],
             resolve: {
               conditions: ["node"],

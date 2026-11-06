@@ -32,7 +32,7 @@ import {
   pathResolver,
   routesFactory,
   spinnerFactory,
-  vitePlugins,
+  vitePluginsFactory,
 } from "@kosmojs/lib";
 
 import { cacheFactory } from "./cache";
@@ -50,7 +50,7 @@ export default async <C extends ChassisCommand>(
 ): Promise<ReturnSignature<C>> => {
   const { sourceFolders } = projectSettings;
 
-  const { devHost } = projectSettings;
+  const { devHost, mode } = projectSettings;
 
   // NOTE: seed before anything else, regardless command
   for (const sourceFolder of sourceFolders) {
@@ -195,10 +195,12 @@ export default async <C extends ChassisCommand>(
 
     const requestMatchers = matchersFactory(sourceFolder);
 
+    const vitePlugins = vitePluginsFactory(projectSettings, sourceFolder);
+
     const plugins = [
-      vitePlugins.tsconfigPaths(projectSettings, sourceFolder),
       vitePlugins.nodePrefix(),
-      vitePlugins.virtualModules(projectSettings, sourceFolder, {
+      vitePlugins.tsconfigPaths(),
+      vitePlugins.virtualModules({
         // The dev server is always a CSR graph - SSR runs in production builds only -
         // so env-sensitive modules resolve to their client variants here,
         // whatever a concurrent build is doing.
@@ -228,6 +230,7 @@ export default async <C extends ChassisCommand>(
 
           // main config - will override everything
           {
+            mode, // set via --mode
             base: frontend.base,
             root: createPath.src(),
             cacheDir: cacheDir(
@@ -235,7 +238,7 @@ export default async <C extends ChassisCommand>(
               sourceFolder,
               `frontend:${command}`,
             ),
-            plugins,
+            plugins: [...plugins, vitePlugins.envProvider("frontend")],
             server: {
               host: devHost,
               allowedHosts: [host],
@@ -295,6 +298,7 @@ export default async <C extends ChassisCommand>(
 
           // main config - will override everything
           {
+            mode, // set via --mode
             root: createPath.src(),
             appType: "custom",
             cacheDir: cacheDir(
@@ -302,7 +306,7 @@ export default async <C extends ChassisCommand>(
               sourceFolder,
               `backend:${command}`,
             ),
-            plugins,
+            plugins: [...plugins, vitePlugins.envProvider("backend")],
             server: {
               host: devHost,
               allowedHosts: [host],
@@ -417,6 +421,7 @@ export default async <C extends ChassisCommand>(
           sidecar.viteConfig,
           // main config - highest priority
           {
+            mode, // set via --mode
             root: createPath.src(),
             appType: "custom",
             cacheDir: cacheDir(projectSettings, sourceFolder, "sidecar"),
@@ -534,6 +539,7 @@ const buildSourceFolder = async (
   projectSettings: ProjectSettings,
   sourceFolder: SourceFolder,
 ) => {
+  const { mode } = projectSettings;
   const command = "build";
 
   const { createPath } = pathResolver(projectSettings, sourceFolder);
@@ -560,10 +566,12 @@ const buildSourceFolder = async (
     spinner.succeed("ready ✨");
   }
 
+  const vitePlugins = vitePluginsFactory(projectSettings, sourceFolder);
+
   const plugins = [
-    vitePlugins.tsconfigPaths(projectSettings, sourceFolder),
     vitePlugins.nodePrefix(),
-    vitePlugins.virtualModules(projectSettings, sourceFolder, {
+    vitePlugins.tsconfigPaths(),
+    vitePlugins.virtualModules({
       // `kind: "csr"` everywhere except the SSR bundle,
       // which installs its own copy with `kind: "ssr"`
       kind: "csr",
@@ -596,6 +604,7 @@ const buildSourceFolder = async (
 
         // main config - highest priority
         {
+          mode, // set via --mode
           base: frontend.base,
           root: createPath.src(),
           cacheDir: cacheDir(
@@ -603,7 +612,7 @@ const buildSourceFolder = async (
             sourceFolder,
             `frontend:${command}`,
           ),
-          plugins,
+          plugins: [...plugins, vitePlugins.envProvider("frontend")],
           build: {
             outDir: createPath.distDir("client"),
             manifest: true,
@@ -633,10 +642,11 @@ const buildSourceFolder = async (
 
         // main config - highest priority
         {
+          mode, // set via --mode
           base: "./",
           root: createPath.src(),
           appType: "custom",
-          plugins,
+          plugins: [...plugins, vitePlugins.envProvider("backend")],
           resolve: {
             conditions: ["node"],
           },

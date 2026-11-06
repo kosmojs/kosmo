@@ -6,6 +6,7 @@ import type { Plugin } from "vite";
 
 import type {
   ChassisCommand,
+  EnvSource,
   ProjectSettings,
   SourceFolder,
 } from "@kosmojs/core";
@@ -13,188 +14,232 @@ import { defaults } from "@kosmojs/core";
 
 import { pathResolver } from "./paths";
 
-/**
- * Resolves Kosmo's generated import prefixes to absolute file paths.
- *
- * WHY THIS EXISTS
- * ---------------
- * Every source folder is scaffolded with three tsconfig `paths` prefixes
- * that let generated and user code import across the folder's layout without long relative chains:
- *
- *   appPrefix "@" -> the project root            (<root>/*)
- *   srcPrefix "~" -> the folder's src dir        (<root>/src/<name>/*)
- *   libPrefix "_" -> the folder's lib dir        (<root>/var/lib/<name>/*)
- *
- * These are the backbone of the generated code:
- * `defineRoute` and friends are emitted with `_/...` imports,
- * pages import layouts and components via `~/...`,
- * and `@/...` reaches shared app-level modules.
- * If a bundler cannot resolve them, nothing the framework generates can be loaded.
- *
- * A project with custom `paths` beyond these three prefixes should install `vite-tsconfig-paths`;
- * this plugin is internal and intentionally narrow.
- *
- * The prefix -> dir bases come from `pathResolver`, the same source of truth the tsconfig generator uses,
- * so alias resolution here can never drift from the paths that were written into the generated tsconfig.
- * */
-export const tsconfigPaths = (
+export const vitePluginsFactory = (
   projectSettings: ProjectSettings,
   sourceFolder: SourceFolder,
-): Plugin => {
+) => {
+  const nodePrefix = (): Plugin => {
+    return {
+      name: "kosmojs:node-prefix",
+      enforce: "pre",
+      resolveId(source) {
+        return builtinModules.includes(source)
+          ? { id: `node:${source}`, external: true }
+          : undefined;
+      },
+    };
+  };
+
   /**
-   * Candidate extensions for an extensionless specifier, in resolution priority order.
-   * Mirrors the renderable file types the generators emit;
-   * a new page type (e.g. `.svelte`) must be added here or its aliased imports won't resolve.
+   * Resolves Kosmo's generated import prefixes to absolute file paths.
+   *
+   * WHY THIS EXISTS
+   * ---------------
+   * Every source folder is scaffolded with three tsconfig `paths` prefixes
+   * that let generated and user code import across the folder's layout without long relative chains:
+   *
+   *   appPrefix "@" -> the project root            (<root>/*)
+   *   srcPrefix "~" -> the folder's src dir        (<root>/src/<name>/*)
+   *   libPrefix "_" -> the folder's lib dir        (<root>/var/lib/<name>/*)
+   *
+   * These are the backbone of the generated code:
+   * `defineRoute` and friends are emitted with `_/...` imports,
+   * pages import layouts and components via `~/...`,
+   * and `@/...` reaches shared app-level modules.
+   * If a bundler cannot resolve them, nothing the framework generates can be loaded.
+   *
+   * A project with custom `paths` beyond these three prefixes should install `vite-tsconfig-paths`;
+   * this plugin is internal and intentionally narrow.
+   *
+   * The prefix -> dir bases come from `pathResolver`, the same source of truth the tsconfig generator uses,
+   * so alias resolution here can never drift from the paths that were written into the generated tsconfig.
    * */
-  const EXTENSIONS = [
-    ".ts",
-    ".tsx",
-    ".js",
-    ".jsx",
-    ".mjs",
-    ".vue",
-    ".svelte",
-    ".md",
-    ".mdx",
-    ".json",
-  ];
+  const tsconfigPaths = (): Plugin => {
+    /**
+     * Candidate extensions for an extensionless specifier, in resolution priority order.
+     * Mirrors the renderable file types the generators emit;
+     * a new page type (e.g. `.svelte`) must be added here or its aliased imports won't resolve.
+     * */
+    const EXTENSIONS = [
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx",
+      ".mjs",
+      ".vue",
+      ".svelte",
+      ".md",
+      ".mdx",
+      ".json",
+    ];
 
-  const { createPath } = pathResolver(projectSettings, sourceFolder);
+    const { createPath } = pathResolver(projectSettings, sourceFolder);
 
-  const table: Array<[prefix: string, baseDir: string]> = [
-    [`${defaults.srcPrefix}/`, createPath.src()],
-    [`${defaults.libPrefix}/`, createPath.lib()],
-    [
-      `${defaults.libRootPrefix}/`,
-      posix.join(projectSettings.root, defaults.varDir, defaults.libDir),
-    ],
-    [`${defaults.appPrefix}/`, projectSettings.root],
-  ];
+    const table: Array<[prefix: string, baseDir: string]> = [
+      [`${defaults.srcPrefix}/`, createPath.src()],
+      [`${defaults.libPrefix}/`, createPath.lib()],
+      [
+        `${defaults.libRootPrefix}/`,
+        posix.join(projectSettings.root, defaults.varDir, defaults.libDir),
+      ],
+      [`${defaults.appPrefix}/`, projectSettings.root],
+    ];
 
-  const resolveWithin = async (
-    baseDir: string,
-    rest: string,
-  ): Promise<string> => {
-    const target = posix.join(baseDir, rest);
-    const { ext } = parse(rest);
+    const resolveWithin = async (
+      baseDir: string,
+      rest: string,
+    ): Promise<string> => {
+      const target = posix.join(baseDir, rest);
+      const { ext } = parse(rest);
 
-    // Specifier already carries a known extension:
-    // the target IS the candidate (an explicit `foo.js` must not be probed as `foo.js.js`).
-    // Only fall back to its `/index.<ext>` for a directory import
-    // that happens to end in a known extension (rare, but keeps behaviour total).
-    if (EXTENSIONS.includes(ext)) {
-      for (const candidate of [target, `${target}/index${ext}`]) {
-        if (await isFile(candidate)) {
-          return candidate;
+      // Specifier already carries a known extension:
+      // the target IS the candidate (an explicit `foo.js` must not be probed as `foo.js.js`).
+      // Only fall back to its `/index.<ext>` for a directory import
+      // that happens to end in a known extension (rare, but keeps behaviour total).
+      if (EXTENSIONS.includes(ext)) {
+        for (const candidate of [target, `${target}/index${ext}`]) {
+          if (await isFile(candidate)) {
+            return candidate;
+          }
+        }
+        return target;
+      }
+
+      // No known extension: probe each, plus its index form.
+      for (const e of EXTENSIONS) {
+        for (const candidate of [`${target}${e}`, `${target}/index${e}`]) {
+          if (await isFile(candidate)) {
+            return candidate;
+          }
         }
       }
+
       return target;
-    }
+    };
 
-    // No known extension: probe each, plus its index form.
-    for (const e of EXTENSIONS) {
-      for (const candidate of [`${target}${e}`, `${target}/index${e}`]) {
-        if (await isFile(candidate)) {
-          return candidate;
+    return {
+      name: "kosmo:tsconfigPaths",
+      enforce: "pre",
+      async resolveId(source) {
+        if (isAbsolute(source) || source.startsWith(".")) {
+          return;
         }
-      }
-    }
-
-    return target;
-  };
-
-  return {
-    name: "kosmo:tsconfigPaths",
-    enforce: "pre",
-    async resolveId(source) {
-      if (isAbsolute(source) || source.startsWith(".")) {
+        for (const [prefix, baseDir] of table) {
+          if (source.startsWith(prefix)) {
+            return resolveWithin(baseDir, source.replace(prefix, ""));
+          }
+        }
         return;
-      }
-      for (const [prefix, baseDir] of table) {
-        if (source.startsWith(prefix)) {
-          return resolveWithin(baseDir, source.replace(prefix, ""));
-        }
-      }
-      return;
-    },
+      },
+    };
   };
-};
 
-const nodePrefix = (): Plugin => {
-  return {
-    name: "kosmojs:node-prefix",
-    enforce: "pre",
-    resolveId(source) {
-      return builtinModules.includes(source)
-        ? { id: `node:${source}`, external: true }
-        : undefined;
-    },
-  };
-};
-
-/**
- * Resolves the CSR/SSR variant of env-sensitive modules.
- *
- * WHY THIS EXISTS
- * ---------------
- * A handful of generated modules must differ between the client graph and the SSR bundle -
- * the fetch transport (a no-op in the browser, an in-process dispatch on the server)
- * and the TanStack Query client (a singleton in the browser, per-request on the server).
- *
- * Every build installs this plugin; but only the SSR bundle installs it with `kind: "ssr"`.
- * Nothing is written, so concurrent processes cannot disturb each other.
- *
- * Generators declare their modules via `factory.virtualModules()`.
- * */
-export const virtualModules = (
-  projectSettings: ProjectSettings,
-  sourceFolder: SourceFolder,
-  { kind, command }: { kind: "csr" | "ssr"; command: ChassisCommand },
-): Plugin => {
   /**
-   * Rollup's / Rolldown's convention for ids owned by a plugin:
-   * the NUL prefix keeps other plugins and Node resolution from touching them.
+   * Resolves the CSR/SSR variant of env-sensitive modules.
+   *
+   * WHY THIS EXISTS
+   * ---------------
+   * A handful of generated modules must differ between the client graph and the SSR bundle -
+   * the fetch transport (a no-op in the browser, an in-process dispatch on the server)
+   * and the TanStack Query client (a singleton in the browser, per-request on the server).
+   *
+   * Every build installs this plugin; but only the SSR bundle installs it with `kind: "ssr"`.
+   * Nothing is written, so concurrent processes cannot disturb each other.
+   *
+   * Generators declare their modules via `factory.virtualModules()`.
    * */
-  const VIRTUAL_PREFIX = "\0";
+  const virtualModules = ({
+    kind,
+    command,
+  }: {
+    kind: "csr" | "ssr";
+    command: ChassisCommand;
+  }): Plugin => {
+    /**
+     * Rollup's / Rolldown's convention for ids owned by a plugin:
+     * the NUL prefix keeps other plugins and Node resolution from touching them.
+     * */
+    const VIRTUAL_PREFIX = "\0";
 
-  const modules = sourceFolder.generators.flatMap(({ factory }) => {
-    const { virtualModules } = factory(projectSettings, sourceFolder);
-    return virtualModules ? virtualModules(command) : [];
-  });
+    const modules = sourceFolder.generators.flatMap(({ factory }) => {
+      const { virtualModules } = factory(projectSettings, sourceFolder);
+      return virtualModules ? virtualModules(command) : [];
+    });
 
-  const virtualSources = new Map<string, { csr: string; ssr: string }>();
+    const virtualSources = new Map<string, { csr: string; ssr: string }>();
 
-  for (const { specifier, csr, ssr } of modules) {
-    virtualSources.set(specifier, { csr, ssr });
-  }
+    for (const { specifier, csr, ssr } of modules) {
+      virtualSources.set(specifier, { csr, ssr });
+    }
 
-  // Built-in build context, importable from any graph.
-  // Given modules should not override it.
-  {
-    const source = `export const command = "${command}";`;
-    virtualSources.set("virtual:kosmo/env", { csr: source, ssr: source });
-  }
+    // Built-in build context, importable from any graph.
+    // Given modules should not override it.
+    {
+      const source = `export const command = "${command}";`;
+      virtualSources.set("virtual:kosmo/env", { csr: source, ssr: source });
+    }
+
+    return {
+      name: "kosmo:virtualModules",
+      enforce: "pre",
+
+      resolveId(source) {
+        return virtualSources.has(source) ? VIRTUAL_PREFIX + source : undefined;
+      },
+
+      load(id) {
+        return id.startsWith(VIRTUAL_PREFIX)
+          ? virtualSources.get(id.slice(VIRTUAL_PREFIX.length))?.[kind]
+          : undefined;
+      },
+    };
+  };
+
+  const envProvider = (scope: EnvSource["scope"]): Plugin => {
+    return {
+      name: "kosmo:env",
+      enforce: "post",
+      config() {
+        if (scope === "backend") {
+          for (const source of sourceFolder.envSources) {
+            if (source.scope === scope) {
+              for (const [key, val] of Object.entries(source.env)) {
+                // loadEnvFiles already filtered existing keys
+                process.env[key] = val;
+              }
+            }
+          }
+        }
+
+        const define =
+          scope === "frontend"
+            ? Object.fromEntries(
+                sourceFolder.envSources.flatMap((source) => {
+                  // loadEnvFiles already filtered existing keys
+                  return source.scope === scope
+                    ? Object.entries(source.env).map(([key, val]) => [
+                        `import.meta.env.${key}`,
+                        JSON.stringify(val),
+                      ])
+                    : [];
+                }),
+              )
+            : {};
+
+        return {
+          envDir: false,
+          define,
+        };
+      },
+    };
+  };
 
   return {
-    name: "kosmo:virtualModules",
-    enforce: "pre",
-
-    resolveId(source) {
-      return virtualSources.has(source) ? VIRTUAL_PREFIX + source : undefined;
-    },
-
-    load(id) {
-      return id.startsWith(VIRTUAL_PREFIX)
-        ? virtualSources.get(id.slice(VIRTUAL_PREFIX.length))?.[kind]
-        : undefined;
-    },
+    tsconfigPaths,
+    nodePrefix,
+    virtualModules,
+    envProvider,
   };
-};
-
-export const vitePlugins = {
-  tsconfigPaths,
-  nodePrefix,
-  virtualModules,
 };
 
 const isFile = async (path: string) => {

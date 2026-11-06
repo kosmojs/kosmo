@@ -289,10 +289,12 @@ const seedFolder = async (
     name: options.name,
     config,
     generators,
+    envSources: [],
   };
 
   const projectSettings: ProjectSettings = {
     root,
+    mode: "development",
     sourceFolders: [sourceFolder],
     devHost: "",
     previewHost: "",

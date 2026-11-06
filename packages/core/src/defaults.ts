@@ -42,6 +42,8 @@ export const DEFAULT_DIST = "dist";
 
 export const DEFAULT_TEST_FILE = "index.test.ts";
 
+export const DEFAULT_ENV_PREFIX = "VITE_";
+
 export const MIME_TYPES: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
   ".js": "application/javascript",

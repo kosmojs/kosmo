@@ -12,7 +12,7 @@ import {
   pathResolver,
   renderFactory,
   sortRoutes,
-  vitePlugins,
+  vitePluginsFactory,
 } from "@kosmojs/lib";
 
 import * as templates from "./templates";
@@ -22,6 +22,7 @@ const DEFAULT_RENDER_MODE = RENDER_MODES[0];
 
 export default defineGeneratorFactory<SSROptions>(
   (projectSettings, sourceFolder, options) => {
+    const { mode } = projectSettings;
     const { frontend } = sourceFolder.config;
 
     const { createPath, createImportHelpers } = pathResolver(
@@ -77,10 +78,12 @@ export default defineGeneratorFactory<SSROptions>(
 
         const dir = createPath.distDir("ssr");
 
+        const vitePlugins = vitePluginsFactory(projectSettings, sourceFolder);
+
         const plugins = [
-          vitePlugins.tsconfigPaths(projectSettings, sourceFolder),
           vitePlugins.nodePrefix(),
-          vitePlugins.virtualModules(projectSettings, sourceFolder, {
+          vitePlugins.tsconfigPaths(),
+          vitePlugins.virtualModules({
             // The SSR graph is the only one that resolves the SSR side of every env-sensitive module -
             // the fetch transport, the query client.
             // The choice is made here, by the plugin, and never written to disk,
@@ -89,6 +92,8 @@ export default defineGeneratorFactory<SSROptions>(
             kind: "ssr",
             command: "build",
           }),
+          // it is loading frontend routes, thus frontend env
+          vitePlugins.envProvider("frontend"),
         ];
 
         // INFO: === Build the SSR client bundle using `entry/server` as the entry point ===
@@ -105,6 +110,7 @@ export default defineGeneratorFactory<SSROptions>(
             }),
             // main config - highest priority
             {
+              mode,
               root: createPath.src(),
               plugins,
               build: {
@@ -130,6 +136,7 @@ export default defineGeneratorFactory<SSROptions>(
         // INFO: === Build the SSR server using `lib/ssr.ts` ===
         // no config merge needed here
         await build({
+          mode,
           root: createPath.lib(),
           configFile: false,
           appType: "custom",

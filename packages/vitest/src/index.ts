@@ -1,4 +1,5 @@
-import { basename, dirname, posix } from "node:path";
+import { basename, dirname, join, posix } from "node:path";
+import { parseArgs } from "node:util";
 
 import { createJiti } from "jiti";
 import { glob } from "tinyglobby";
@@ -15,12 +16,17 @@ import {
 } from "@kosmojs/core";
 import {
   configFilePattern,
+  loadEnvFiles,
   mergeConfigs,
   pathResolver,
-  vitePlugins,
+  vitePluginsFactory,
 } from "@kosmojs/lib";
 
-export { findFreePortRange, resolveHostAddress } from "@kosmojs/lib";
+export {
+  findFreePortRange,
+  loadEnvFiles,
+  resolveHostAddress,
+} from "@kosmojs/lib";
 
 export const loadConfig = async (
   root: string,
@@ -36,18 +42,34 @@ export const loadConfig = async (
   const projects: Array<TestProjectConfiguration> = [];
   const command = "test";
 
+  const { values } = parseArgs({
+    options: {
+      mode: { type: "string", short: "m" },
+    },
+    strict: false,
+    allowPositionals: true,
+  });
+
+  const mode = typeof values.mode === "string" ? values.mode : "test";
+
   for (const file of configFiles) {
     const { config, generators } = await jiti.import<
       Pick<SourceFolder, "config" | "generators">
     >(file, { default: true });
 
+    const name = basename(dirname(file));
+
+    const envSources = await loadEnvFiles({ root, name, mode, config });
+
     const sourceFolder: SourceFolder = {
-      name: basename(dirname(file)),
+      name,
       config,
       generators,
+      envSources,
     };
 
     const projectSettings: ProjectSettings = {
+      mode,
       root,
       sourceFolders: [sourceFolder],
       devHost: "/dev/null",
@@ -77,13 +99,12 @@ export const loadConfig = async (
       return posix.join(defaults.srcDir, sourceFolder.name, path, "**", file);
     };
 
+    const vitePlugins = vitePluginsFactory(projectSettings, sourceFolder);
+
     const plugins = [
-      vitePlugins.tsconfigPaths(projectSettings, sourceFolder),
       vitePlugins.nodePrefix(),
-      vitePlugins.virtualModules(projectSettings, sourceFolder, {
-        kind: "ssr",
-        command,
-      }),
+      vitePlugins.tsconfigPaths(),
+      vitePlugins.virtualModules({ kind: "ssr", command }),
     ];
 
     if (config.backend?.test) {
@@ -104,7 +125,8 @@ export const loadConfig = async (
 
           // main config - highest priority
           {
-            plugins,
+            mode,
+            plugins: [...plugins, vitePlugins.envProvider("backend")],
             resolve: {
               conditions: ["node"],
             },
@@ -137,7 +159,8 @@ export const loadConfig = async (
 
           // main config - highest priority
           {
-            plugins,
+            mode,
+            plugins: [...plugins, vitePlugins.envProvider("frontend")],
             resolve: {
               conditions: ["node"],
             },
@@ -158,6 +181,7 @@ export const loadConfig = async (
     resolve: {
       alias: {
         [defaults.appPrefix]: root,
+        [defaults.libRootPrefix]: join(root, defaults.varDir, defaults.libDir),
       },
     },
     test: { projects },

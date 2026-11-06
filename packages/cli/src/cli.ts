@@ -22,6 +22,7 @@ import {
 import chassis from "@kosmojs/dev/chassis";
 import {
   configFilePattern,
+  loadEnvFiles,
   pathExists,
   resolveHostAddress,
   spinnerFactory,
@@ -99,6 +100,9 @@ export const printUsage = () => {
     `  ${styleText("blue", "kosmo serve")} ${styleText("magenta", "admin front")}`,
     `  Start dev server for multiple source folders`,
     "",
+    `  ${styleText("blue", "kosmo serve")} ${styleText("green", "--mode stage")}`,
+    `  Start dev server using a custom mode (development by default on serve)`,
+    "",
 
     styleText("bold", "PREVIEW COMMAND"),
     "",
@@ -107,6 +111,9 @@ export const printUsage = () => {
     "",
     `  ${styleText("blue", "kosmo preview")} ${styleText("magenta", "admin front")}`,
     `  Preview selected source folders only`,
+    "",
+    `  ${styleText("blue", "kosmo preview")} ${styleText("green", "--mode stage")}`,
+    `  Preview using a custom mode (production by default on preview)`,
     "",
 
     styleText("bold", "BUILD COMMAND"),
@@ -119,6 +126,9 @@ export const printUsage = () => {
     "",
     `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "admin front")}`,
     `  Build multiple source folders`,
+    "",
+    `  ${styleText("blue", "kosmo build")} ${styleText("green", "--mode stage")}`,
+    `  Build using a custom mode (production by default on build)`,
     "",
 
     styleText("bold", "TYPECHECK COMMAND"),
@@ -156,6 +166,7 @@ const run = async () => {
     options: {
       ...FOLDER_OPTIONS,
       overwrite: { type: "boolean" },
+      mode: { type: "string", short: "m" },
       help: { type: "boolean", short: "h" },
     },
     strict: true,
@@ -389,10 +400,17 @@ const run = async () => {
   ) => {
     const configFiles = await scanConfigFiles(folderNames);
 
+    const {
+      // build and preview both defaulted to production.
+      // test command not covered here.
+      mode = command === "serve" ? "development" : "production",
+    } = values;
+
     const projectGenerators: Array<GeneratorSignature> = [];
 
     const settings: ProjectSettings = {
       root,
+      mode,
       sourceFolders: [],
       devHost: resolveHostAddress(packageJson.kosmo, "devHost"),
       previewHost: resolveHostAddress(packageJson.kosmo, "previewHost"),
@@ -420,10 +438,15 @@ const run = async () => {
         throw new Error(error || "No config defined");
       }
 
+      const name = basename(dirname(file));
+
+      const envSources = await loadEnvFiles({ root, name, mode, config });
+
       settings.sourceFolders.push({
-        name: basename(dirname(file)),
+        name,
         config,
         generators,
+        envSources,
       });
 
       projectGenerators.push(...generators);

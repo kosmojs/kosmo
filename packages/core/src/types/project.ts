@@ -23,6 +23,12 @@ export type FolderConfig = {
   typecheck?: boolean;
 };
 
+export type EnvSource = {
+  scope: "frontend" | "backend";
+  file: string;
+  env: Record<string, string>;
+};
+
 export type SourceFolder = {
   // Source folder name, e.g. "front", "admin", "app"
   name: string;
@@ -30,6 +36,7 @@ export type SourceFolder = {
   config: FolderConfig;
   // Resolved folder generators
   generators: Array<GeneratorSignature>;
+  envSources: Array<EnvSource>;
 };
 
 /**
@@ -55,5 +62,6 @@ export type KosmoSettings = Partial<
 
 export type ProjectSettings = {
   root: string;
+  mode: string;
   sourceFolders: Array<SourceFolder>;
 } & Required<KosmoSettings>;

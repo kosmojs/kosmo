@@ -17,6 +17,7 @@ export const { version: VERSION } = JSON.parse(
 );
 
 export * from "./ast";
+export * from "./env";
 export * from "./format";
 export * from "./generators";
 export * from "./generic";
