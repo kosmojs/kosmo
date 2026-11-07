@@ -6,6 +6,7 @@ import {
   type CallExpression,
   type Identifier,
   ModuleResolutionKind,
+  type Node,
   Project,
   type ProjectOptions,
   type PropertySignature,
@@ -883,9 +884,12 @@ const objectMappers = ["Partial", "Required", "Readonly", "Pick", "Omit"];
  * down to the first property type. A VRefine is applied after the closing keyword,
  * so `VRefine<{ ... }, { additionalProperties: true }>` reopens an object
  * (`unevaluatedProperties: true` an intersection),
- * and reopening a constituent reopens the whole intersection, `additionalProperties` evaluating every property.
- * Records and mapped types are closed too. `Record<string, T>` still takes any key,
- * as its pattern matches every one; literal, numeric and template keys accept only their own.
+ * and reopening a constituent reopens the whole intersection,
+ * as `additionalProperties` then evaluates every property.
+ * Records, index signatures (rendered as records) and mapped types are closed too,
+ * their values included.
+ * `Record<string, T>` and `[k: string]: T` still take any key, as their pattern matches every one;
+ * literal, numeric and template keys accept only their own.
  *
  * @param typeNode the node to render
  * @param position where the node sits; `closed` for json, form and responses
@@ -907,6 +911,15 @@ const renderTypeboxSchema = (
     return position === "closed"
       ? `((${text}) with { ${keyword}: false })`
       : text;
+  };
+
+  // the text of `node` with `child` rendered in place,
+  // so modifiers, key syntax and `as` clauses stay exactly as written
+  const renderChild = (node: Node, child: Node, rendered: string) => {
+    const text = node.getText();
+    const start = child.getStart() - node.getStart();
+    const end = child.getEnd() - node.getStart();
+    return `${text.slice(0, start)}${rendered}${text.slice(end)}`;
   };
 
   const traverse = (typeNode: TypeNode, position: SchemaPosition): string => {
@@ -941,9 +954,15 @@ const renderTypeboxSchema = (
       return `${element}[]`;
     }
 
-    // 3) Object type literal -> recurse into each property's type node
+    // 3) Object type literal -> recurse into each property's type node.
+    // Index signatures become records: TypeBox Script leaves a `with` clause
+    // in an index signature value unevaluated, so neither a VRefine
+    // nor the closing keyword would apply there, while a record value is evaluated.
+    // A literal mixing properties and index signatures becomes their intersection,
+    // which validates the same - the record patterns check the properties too.
     if (typeNode.isKind(SyntaxKind.TypeLiteral)) {
-      const members: string[] = [];
+      const members: Array<string> = [];
+      const records: Array<string> = [];
       for (const member of typeNode.getMembers()) {
         if (member.isKind(SyntaxKind.PropertySignature)) {
           const name = member.getName();
@@ -951,16 +970,42 @@ const renderTypeboxSchema = (
           const t = member.getTypeNode();
           const rendered = t ? traverse(t, below(position)) : "unknown";
           members.push(`${name}${optional}: ${rendered}`);
+        } else if (member.isKind(SyntaxKind.IndexSignature)) {
+          const keyType = member.getKeyTypeNode().getText();
+          const valueType = member.getReturnTypeNode();
+          const rendered = valueType
+            ? traverse(valueType, below(position))
+            : "unknown";
+          records.push(`Record<${keyType}, ${rendered}>`);
         } else {
-          // index signatures, call signatures, etc: pass through raw
+          // call and construct signatures, methods: pass through raw
           members.push(member.getText());
         }
       }
-      return close(
-        `{ ${members.join(", ")} }`,
-        "additionalProperties",
-        position,
-      );
+
+      if (!records.length) {
+        return close(
+          `{ ${members.join(", ")} }`,
+          "additionalProperties",
+          position,
+        );
+      }
+
+      if (!members.length && records.length === 1) {
+        return close(records[0], "additionalProperties", position);
+      }
+
+      const constituents = [
+        ...(members.length ? [`{ ${members.join(", ")} }`] : []),
+        ...records,
+      ];
+
+      // an intersection, so the constituents stay open and the whole is closed;
+      // parenthesized either way, as it stands in for a single object
+      const intersection = constituents.map((c) => `(${c})`).join(" & ");
+      return position === "closed"
+        ? close(intersection, "unevaluatedProperties", position)
+        : `(${intersection})`;
     }
 
     // 4) Tuple -> recurse into each element
@@ -1037,9 +1082,14 @@ const renderTypeboxSchema = (
       return `${name}<${rendered.join(", ")}>`;
     }
 
-    // 8) Mapped type -> closed as a whole; its value type is kept as written
+    // 8) Mapped type -> closed as a whole; the key clause stays as written,
+    // the value type is closed like a property type
     if (typeNode.isKind(SyntaxKind.MappedType)) {
-      return close(typeNode.getText(), "additionalProperties", position);
+      const valueType = typeNode.getTypeNode();
+      const text = valueType
+        ? renderChild(typeNode, valueType, traverse(valueType, below(position)))
+        : typeNode.getText();
+      return close(text, "additionalProperties", position);
     }
 
     // 9) Anything else (primitive keyword, literal, etc): raw text is correct.

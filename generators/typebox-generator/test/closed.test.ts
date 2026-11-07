@@ -20,6 +20,10 @@ describe("closed objects", () => {
       keyed: { a: "a", b: "b" },
       numbered: { 1: "one" },
       mapped: { x: true },
+      mappedObject: { x: { on: true } },
+      indexed: { k: { v: "v" } },
+      indexedMixed: { id: 1, n: 2 },
+      indexedRefined: { k: "ab" },
       reopened: { a: "x", extra: true },
       reopenedMember: { id: 1, b: "b", extra: true },
       maybe: { c: true },
@@ -105,6 +109,16 @@ describe("closed objects", () => {
         { ...valid, meta: { k: { v: "v", w: "w" } } },
         MESSAGE_CODES.OBJECT_ADDITIONAL_PROPERTIES,
       ],
+      [
+        "an extra property in an index signature value",
+        { ...valid, indexed: { k: { v: "v", w: "w" } } },
+        MESSAGE_CODES.OBJECT_ADDITIONAL_PROPERTIES,
+      ],
+      [
+        "an extra property in a mapped type value",
+        { ...valid, mappedObject: { x: { on: true, w: "w" } } },
+        MESSAGE_CODES.OBJECT_ADDITIONAL_PROPERTIES,
+      ],
     ] as const) {
       test(`rejects ${name}`, () => {
         expect(schema?.check(data)).toBe(false);
@@ -117,6 +131,23 @@ describe("closed objects", () => {
       expect(schema?.check({ ...valid, maybe: { c: true, d: false } })).toBe(
         false,
       );
+    });
+
+    test("checks an index signature value against its VRefine", () => {
+      const data = { ...valid, indexedRefined: { k: "a" } };
+      expect(schema?.check(data)).toBe(false);
+    });
+
+    test("checks the properties mixed with an index signature", () => {
+      expect(schema?.check({ ...valid, indexedMixed: { n: 2 } })).toBe(false);
+      expect(schema?.check({ ...valid, indexedMixed: { id: 1, n: "x" } })).toBe(
+        false,
+      );
+    });
+
+    test("an index signature keeps any key", () => {
+      const data = { ...valid, indexed: { a: { v: "1" }, b: { v: "2" } } };
+      expect(schema?.check(data)).toBe(true);
     });
 
     test("a record keeps any key", () => {

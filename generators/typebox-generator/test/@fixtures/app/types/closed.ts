@@ -16,6 +16,10 @@ export type ClosedJson = {
   keyed?: Record<"a" | "b", string>;
   numbered?: Record<number, string>;
   mapped?: { [K in "x" | "y"]?: boolean };
+  mappedObject?: { [K in "x" | "y"]?: { on: boolean } };
+  indexed?: { [k: string]: { v: string } };
+  indexedMixed?: { id: number; [k: string]: number };
+  indexedRefined?: { [k: string]: VRefine<string, { minLength: 2 }> };
   reopened?: VRefine<{ a: string }, { additionalProperties: true }>;
   reopenedMember?: Base & VRefine<{ b?: string }, { additionalProperties: true }>;
   maybe?: { c: boolean } | null;

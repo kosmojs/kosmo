@@ -96,8 +96,9 @@ Where response validation runs decides where this protects you.
 In development and tests it always does, so the over-share fails the first time the handler runs.
 In production it runs only with `runtimeValidation: true`, which turns a would-be leak into an error.
 
-A response that relays a payload whose shape you don't own says so on the object:
-`VRefine<{ ... }, { additionalProperties: true }>`, or `Record<string, T>`.
+A response that relays a payload whose shape you don't own says so on the object,
+with `VRefine<{ ... }, { additionalProperties: true }>`.
+For keys not known in advance, use `Record<string, T>`.
 
 Defining a response schema also enables automatic `OpenAPI` derivation -
 type safety and documentation in one step.
