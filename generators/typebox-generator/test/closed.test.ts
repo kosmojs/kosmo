@@ -17,6 +17,9 @@ describe("closed objects", () => {
       partial: { city: "c" },
       omitted: { street: "s", city: "c" },
       meta: { k: { v: "v" } },
+      keyed: { a: "a", b: "b" },
+      numbered: { 1: "one" },
+      mapped: { x: true },
       reopened: { a: "x", extra: true },
       reopenedMember: { id: 1, b: "b", extra: true },
       maybe: { c: true },
@@ -80,6 +83,21 @@ describe("closed objects", () => {
       [
         "the omitted property of an Omit",
         { ...valid, omitted: { street: "s", city: "c", zip: "z" } },
+        MESSAGE_CODES.OBJECT_ADDITIONAL_PROPERTIES,
+      ],
+      [
+        "a key outside a record's literal keys",
+        { ...valid, keyed: { a: "a", b: "b", role: "admin" } },
+        MESSAGE_CODES.OBJECT_ADDITIONAL_PROPERTIES,
+      ],
+      [
+        "a non-numeric key in a numeric record",
+        { ...valid, numbered: { 1: "one", role: "admin" } },
+        MESSAGE_CODES.OBJECT_ADDITIONAL_PROPERTIES,
+      ],
+      [
+        "a key outside a mapped type",
+        { ...valid, mapped: { x: true, role: true } },
         MESSAGE_CODES.OBJECT_ADDITIONAL_PROPERTIES,
       ],
       [
