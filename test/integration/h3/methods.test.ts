@@ -66,19 +66,19 @@ for (const method of methods as Array<never>) {
           expect(response.statusCode).toEqual(200);
         });
         test(`400 on ${otherMethod} with wrong page`, async () => {
-          const error = await withApiResponse(method, {
+          const { response } = await withApiResponse(method, {
             method: otherMethod,
             searchParams: { page: "x" },
-          }).catch((e) => e);
-          expect(error.message).toMatch("400 (Bad Request)");
+          });
+          expect(response.statusCode).toEqual(400);
         });
       } else {
         test(`405 on ${otherMethod}`, async () => {
-          const error = await withApiResponse(method, {
+          const { response } = await withApiResponse(method, {
             method: otherMethod,
-          }).catch((e) => e);
-          expect(error.message).toMatch("405 (Method Not Allowed)");
-          expect(error.response.headers.allow).toContain(method);
+          });
+          expect(response.statusCode).toEqual(405);
+          expect(response.headers.allow).toContain(method);
         });
       }
     }
