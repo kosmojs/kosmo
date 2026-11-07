@@ -54,6 +54,7 @@ export const setupSidecarProject = async ({
     name,
     config: {},
     generators: [],
+    envSources: [],
   };
 
   const host = DEFAULT_HOST;
@@ -61,6 +62,7 @@ export const setupSidecarProject = async ({
   const devHost = `${host}:${port}`;
 
   const project: ProjectSettings = {
+    mode: "test",
     root: resolve(tempDir, "app"),
     sourceFolders: [sourceFolder],
     devHost,

@@ -487,7 +487,16 @@ export const setupTestProject = async (
     {
       method = "GET",
       searchParams,
-    }: { method?: Method; searchParams?: Record<string, string | number> } = {},
+      headers,
+      json,
+      form,
+    }: {
+      method?: Method;
+      searchParams?: Record<string, string | number>;
+      headers?: Record<string, string>;
+      json?: unknown;
+      form?: Record<string, string>;
+    } = {},
   ) => {
     const base = sourceFolder.config.backend?.base;
 
@@ -495,9 +504,17 @@ export const setupTestProject = async (
       throw new Error("backend not configured");
     }
 
+    // error responses are returned for the test to inspect, not thrown
     const response = await httpClient(
       `http://${project.devHost + createRoutePath(base, pathSource)}`,
-      { method, searchParams },
+      {
+        method,
+        searchParams,
+        headers: headers ?? {},
+        ...(json === undefined ? {} : { json }),
+        ...(form === undefined ? {} : { form }),
+        throwHttpErrors: false,
+      },
     );
 
     return { response };
