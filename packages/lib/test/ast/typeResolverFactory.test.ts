@@ -134,7 +134,7 @@ describe("typeResolverFactory", { timeout: 10_000 }, () => {
           "pair: [(({ a: string }) with { additionalProperties: false }), number]",
         );
         expect(schema).toContain(
-          "meta: Record<string, (({ v: string }) with { additionalProperties: false })>",
+          "meta: ((Record<string, (({ v: string }) with { additionalProperties: false })>) with { additionalProperties: false })",
         );
       });
 
@@ -183,6 +183,26 @@ describe("typeResolverFactory", { timeout: 10_000 }, () => {
           ),
         ).toBe(
           "((Partial<{ a: string, b: (({ c: string }) with { additionalProperties: false }) }>) with { additionalProperties: false })",
+        );
+      });
+
+      test("closes a record, keeping its key type as written", () => {
+        expect(
+          closedSchemaOf(
+            `export type json = Record<"a" | "b", { v: string }>;`,
+          ),
+        ).toBe(
+          '((Record<(("a") | ("b")), (({ v: string }) with { additionalProperties: false })>) with { additionalProperties: false })',
+        );
+      });
+
+      test("closes a mapped type", () => {
+        expect(
+          closedSchemaOf(
+            `type Keys = "a" | "b"; export type json = { [K in Keys]: string };`,
+          ),
+        ).toMatch(
+          /^\(\(\{ \[K in .*\]: string \}\) with \{ additionalProperties: false \}\)$/,
         );
       });
 

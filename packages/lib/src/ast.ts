@@ -884,7 +884,8 @@ const objectMappers = ["Partial", "Required", "Readonly", "Pick", "Omit"];
  * so `VRefine<{ ... }, { additionalProperties: true }>` reopens an object
  * (`unevaluatedProperties: true` an intersection),
  * and reopening a constituent reopens the whole intersection, `additionalProperties` evaluating every property.
- * Records are not closed: their property patterns already decide what is allowed.
+ * Records and mapped types are closed too. `Record<string, T>` still takes any key,
+ * as its pattern matches every one; literal, numeric and template keys accept only their own.
  *
  * @param typeNode the node to render
  * @param position where the node sits; `closed` for json, form and responses
@@ -1004,6 +1005,20 @@ const renderTypeboxSchema = (
         return typeNode.getText();
       }
       const name = typeNode.getTypeName().getText();
+      if (name === "Record") {
+        // the keys stay as written, the values are closed below;
+        // closing the record itself rejects keys its key type does not match
+        const [keys, ...values] = args;
+        const rendered = [
+          traverse(keys, "open"),
+          ...values.map((a) => traverse(a, below(position))),
+        ];
+        return close(
+          `Record<${rendered.join(", ")}>`,
+          "additionalProperties",
+          position,
+        );
+      }
       if (objectMappers.includes(name)) {
         // the mapped object is closed, not the one it is mapped from;
         // the remaining arguments are keys
@@ -1022,7 +1037,12 @@ const renderTypeboxSchema = (
       return `${name}<${rendered.join(", ")}>`;
     }
 
-    // 8) Anything else (primitive keyword, literal, etc): raw text is correct.
+    // 8) Mapped type -> closed as a whole; its value type is kept as written
+    if (typeNode.isKind(SyntaxKind.MappedType)) {
+      return close(typeNode.getText(), "additionalProperties", position);
+    }
+
+    // 9) Anything else (primitive keyword, literal, etc): raw text is correct.
     return typeNode.getText();
   };
 

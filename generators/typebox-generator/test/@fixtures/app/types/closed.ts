@@ -13,6 +13,9 @@ export type ClosedJson = {
   partial?: Partial<Address>;
   omitted?: Omit<Address & { zip: string }, "zip">;
   meta?: Record<string, { v: string }>;
+  keyed?: Record<"a" | "b", string>;
+  numbered?: Record<number, string>;
+  mapped?: { [K in "x" | "y"]?: boolean };
   reopened?: VRefine<{ a: string }, { additionalProperties: true }>;
   reopenedMember?: Base & VRefine<{ b?: string }, { additionalProperties: true }>;
   maybe?: { c: boolean } | null;
