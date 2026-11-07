@@ -584,7 +584,10 @@ export const astFactory = () => {
       },
     });
 
-    const withTypeboxSchema = (resolvedTypes: Array<ResolvedType>) => {
+    const withTypeboxSchema = (
+      resolvedTypes: Array<ResolvedType>,
+      closedTypes: ReadonlyArray<string> = [],
+    ) => {
       const materializedTypes = render(templates.resolvedTypes, {
         resolvedTypes,
       });
@@ -603,6 +606,10 @@ export const astFactory = () => {
           return type;
         }
 
+        // json and form payloads and responses reject properties the schema does not declare;
+        // query, headers and cookies stay open.
+        const position = closedTypes.includes(type.name) ? "closed" : "open";
+
         const properties = [];
         const numericProperties = [];
         const booleanProperties = [];
@@ -618,7 +625,7 @@ export const astFactory = () => {
 
           properties.push({
             ...prop,
-            typeboxSchema: renderTypeboxSchema(propNode),
+            typeboxSchema: renderTypeboxSchema(propNode, position),
           });
 
           if (isNumericTypeNode(propNode)) {
@@ -635,7 +642,7 @@ export const astFactory = () => {
           properties,
           numericProperties,
           booleanProperties,
-          typeboxSchema: renderTypeboxSchema(typeNode),
+          typeboxSchema: renderTypeboxSchema(typeNode, position),
         };
       });
 
@@ -645,9 +652,20 @@ export const astFactory = () => {
       return types;
     };
 
+    /**
+     * Flattens the given type declarations and renders a TypeBox schema for each.
+     *
+     * `closedTypes` names the types whose objects reject undeclared properties -
+     * the json and form payloads and the responses of a route; every other type stays open.
+     * */
     const literalTypesResolver = (
       literalTypes: string,
-      options: Parameters<typeof flattener>[2],
+      {
+        closedTypes,
+        ...options
+      }: Parameters<typeof flattener>[2] & {
+        closedTypes?: ReadonlyArray<string>;
+      },
     ): Array<ResolvedTypeSignature> => {
       // NOTE: file name should be unique as it will stay during project's life cycle.
       const sourceFile = project.createSourceFile(
@@ -664,7 +682,7 @@ export const astFactory = () => {
       // NOTE: do not removeSourceFile, that invalidates proejct's cache,
       // triggering cache rebuild on next call.
 
-      return withTypeboxSchema(resolvedTypes);
+      return withTypeboxSchema(resolvedTypes, closedTypes);
     };
 
     return {
@@ -819,6 +837,23 @@ const isBooleanTypeNode = (typeNode: TypeNode): boolean => {
 };
 
 /**
+ * Where a type node sits, for closing objects against undeclared properties.
+ *
+ *   open   - nothing is closed, here or below (query, headers, cookies, params)
+ *   closed - an object here rejects undeclared properties (json, form, responses)
+ *   member - a constituent of an intersection; the intersection closes as a whole,
+ *            so the constituent itself stays open, while its property types are closed
+ * */
+type SchemaPosition = "open" | "closed" | "member";
+
+/**
+ * Type references that map an object type into another one.
+ * TypeBox evaluates them into a fresh object and drops the options of their argument,
+ * so the result is what gets closed, never the argument.
+ * */
+const objectMappers = ["Partial", "Required", "Readonly", "Pick", "Omit"];
+
+/**
  * Render a ts-morph TypeNode to TypeBox Script text, replacing every VRefine
  * occurrence (at any depth) with the infix `with` form.
  *
@@ -831,15 +866,49 @@ const isBooleanTypeNode = (typeNode: TypeNode): boolean => {
  * The parentheses matter: for an array element the `with` clause must bind to the element,
  * not the array, so a VRefine that is the element of an array is wrapped.
  * So, wrapping unconditionally - harmless when not nested, required when it is.
+ * A chain of `with` clauses needs them too: unparenthesized,
+ * TypeBox Script parses `T with A with B` into a schema that rejects everything.
+ *
+ * In a `closed` position, objects reject properties they do not declare,
+ * at every depth - nested objects, array elements, tuple elements, record values:
+ *
+ *   { a: string }              ->  ({ a: string } with { additionalProperties: false })
+ *   A & B                      ->  ((A & B) with { unevaluatedProperties: false })
+ *   Partial<{ a: string }>     ->  (Partial<{ a: string }> with { additionalProperties: false })
+ *
+ * An intersection is closed as a whole with `unevaluatedProperties`,
+ * which sees the properties of every constituent;
+ * a constituent closed with `additionalProperties` would reject the properties of the others,
+ * so the constituents stay open - through unions, parentheses and VRefine,
+ * down to the first property type. A VRefine is applied after the closing keyword,
+ * so `VRefine<{ ... }, { additionalProperties: true }>` reopens an object
+ * (`unevaluatedProperties: true` an intersection),
+ * and reopening a constituent reopens the whole intersection, `additionalProperties` evaluating every property.
+ * Records are not closed: their property patterns already decide what is allowed.
  *
  * @param typeNode the node to render
+ * @param position where the node sits; `closed` for json, form and responses
  * @param refineTypeName the configured refine type name
  * */
 const renderTypeboxSchema = (
   typeNode: TypeNode,
+  position: SchemaPosition = "open",
   refineTypeName = defaults.refineTypeName,
 ) => {
-  const traverse = (typeNode: TypeNode): string => {
+  // property types, array and tuple elements, type arguments:
+  // a fresh object here is closed on its own, unless nothing is
+  const below = (position: SchemaPosition): SchemaPosition => {
+    return position === "open" ? "open" : "closed";
+  };
+
+  // `with` binds tighter than `&` and `|`, so the closed text is parenthesized
+  const close = (text: string, keyword: string, position: SchemaPosition) => {
+    return position === "closed"
+      ? `((${text}) with { ${keyword}: false })`
+      : text;
+  };
+
+  const traverse = (typeNode: TypeNode, position: SchemaPosition): string => {
     // 1) VRefine<T, Opts> -> `(<render T> with <opts text>)`
     if (
       typeNode.isKind(SyntaxKind.TypeReference) &&
@@ -850,15 +919,24 @@ const renderTypeboxSchema = (
         // Malformed VRefine, emit its raw text unchanged
         return typeNode.getText();
       }
-      const innerText = traverse(inner);
+      // the refinement applies to whatever the inner type renders to,
+      // so the inner type keeps this position, closing keyword included
+      const innerText = traverse(inner, position);
+      // `with` binds tighter than `&` and `|`: a union or an intersection is parenthesized,
+      // or the refinement would apply to its last member only
+      const operand =
+        inner.isKind(SyntaxKind.UnionType) ||
+        inner.isKind(SyntaxKind.IntersectionType)
+          ? `(${innerText})`
+          : innerText;
       // Options is a single TypeLiteral; its raw text is exactly what `with`
       // expects. getText() preserves nested braces and quoted `}>` verbatim.
-      return `(${innerText} with ${opts.getText()})`;
+      return `(${operand} with ${opts.getText()})`;
     }
 
     // 2) T[] -> `<render T>[]` (element may itself be a VRefine)
     if (typeNode.isKind(SyntaxKind.ArrayType)) {
-      const element = traverse(typeNode.getElementTypeNode());
+      const element = traverse(typeNode.getElementTypeNode(), below(position));
       return `${element}[]`;
     }
 
@@ -870,39 +948,48 @@ const renderTypeboxSchema = (
           const name = member.getName();
           const optional = member.hasQuestionToken() ? "?" : "";
           const t = member.getTypeNode();
-          const rendered = t ? traverse(t) : "unknown";
+          const rendered = t ? traverse(t, below(position)) : "unknown";
           members.push(`${name}${optional}: ${rendered}`);
         } else {
           // index signatures, call signatures, etc: pass through raw
           members.push(member.getText());
         }
       }
-      return `{ ${members.join(", ")} }`;
+      return close(
+        `{ ${members.join(", ")} }`,
+        "additionalProperties",
+        position,
+      );
     }
 
     // 4) Tuple -> recurse into each element
     if (typeNode.isKind(SyntaxKind.TupleType)) {
-      const elements = typeNode.getElements().map((el) => traverse(el));
+      const elements = typeNode
+        .getElements()
+        .map((el) => traverse(el, below(position)));
       return `[${elements.join(", ")}]`;
     }
 
     // 5) Parenthesized -> recurse, keep the parens
     if (typeNode.isKind(SyntaxKind.ParenthesizedType)) {
-      return `(${traverse(typeNode.getTypeNode())})`;
+      return `(${traverse(typeNode.getTypeNode(), position)})`;
     }
 
-    // 6) Union / Intersection -> recurse into each constituent
+    // 6) Union / Intersection -> recurse into each constituent.
+    // A union member is matched on its own, so it is closed on its own;
+    // an intersection is closed as a whole and its constituents stay open.
     if (typeNode.isKind(SyntaxKind.UnionType)) {
       return typeNode
         .getTypeNodes()
-        .map((t) => traverse(t))
+        .map((t) => traverse(t, position))
         .join(" | ");
     }
     if (typeNode.isKind(SyntaxKind.IntersectionType)) {
-      return typeNode
+      const rendered = typeNode
         .getTypeNodes()
-        .map((t) => traverse(t))
+        .map((t) => traverse(t, position === "open" ? "open" : "member"))
         .join(" & ");
+      return close(rendered, "unevaluatedProperties", position);
     }
 
     // 7) A non-VRefine type reference that carries type arguments -
@@ -917,7 +1004,21 @@ const renderTypeboxSchema = (
         return typeNode.getText();
       }
       const name = typeNode.getTypeName().getText();
-      const rendered = args.map((a) => traverse(a));
+      if (objectMappers.includes(name)) {
+        // the mapped object is closed, not the one it is mapped from;
+        // the remaining arguments are keys
+        const [source, ...keys] = args;
+        const rendered = [
+          traverse(source, position === "open" ? "open" : "member"),
+          ...keys.map((a) => traverse(a, "open")),
+        ];
+        return close(
+          `${name}<${rendered.join(", ")}>`,
+          "additionalProperties",
+          position,
+        );
+      }
+      const rendered = args.map((a) => traverse(a, below(position)));
       return `${name}<${rendered.join(", ")}>`;
     }
 
@@ -925,5 +1026,5 @@ const renderTypeboxSchema = (
     return typeNode.getText();
   };
 
-  return escapeTemplateLiterals(traverse(typeNode));
+  return escapeTemplateLiterals(traverse(typeNode, position));
 };

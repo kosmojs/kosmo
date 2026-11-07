@@ -229,6 +229,17 @@ export const resolverFactory = (
                   params.id,
                   ...validationTypes.map(({ id }) => id),
                 ],
+                // a payload that ends up in a database,
+                // and a response that may carry more than it declares,
+                // reject undeclared properties
+                closedTypes: validationDefinitions.flatMap((def) => {
+                  if (def.target === "response") {
+                    return def.variants.map(({ id }) => id);
+                  }
+                  return def.target === "json" || def.target === "form"
+                    ? [def.schema.id]
+                    : [];
+                }),
               })
             : undefined;
 

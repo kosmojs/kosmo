@@ -179,6 +179,45 @@ export default defineRoute<"checkout">(({ POST }) => [
 ]);
 ```
 
+## Undeclared Properties
+
+A `json` or `form` payload accepts the properties its type declares and nothing else.
+An extra field fails validation with a 400 before the handler runs,
+so a payload spread into a database update cannot write a column the type never mentioned:
+
+```ts
+// json: { name: string; email: string }
+{ "name": "Ann", "email": "ann@example.com", "role": "admin" }
+// -> 400 ValidationError, target "json": should not have additional property "role"
+```
+
+This holds at every depth - nested objects, array and tuple elements, record values,
+and the result of `Partial`, `Pick`, `Omit`, `Required` and `Readonly`.
+An intersection is checked as a whole: `Base & Extra` accepts the properties of both,
+and rejects anything neither declares.
+
+`query`, `headers` and `cookies` stay open -
+browsers, proxies and analytics add parameters and headers no route declares,
+and rejecting them would turn ordinary traffic into errors.
+`raw` is not an object.
+[Responses](/validation/response#undeclared-properties) are closed the same way as payloads.
+
+To accept extra properties in a `json` or `form` payload, say so on the object:
+
+```ts
+type Payload = {
+  name: string;
+  // anything else goes through
+  meta: VRefine<{ source: string }, { additionalProperties: true }>;
+};
+```
+
+`Record<string, T>` is the type for keys not known in advance; it accepts any key,
+while each value is still checked against `T`.
+
+For an intersection, `VRefine<A & B, { unevaluatedProperties: true }>` reopens it as a whole,
+and `additionalProperties: true` on one of its members reopens it as well.
+
 ## Combining Multiple Targets
 
 You can validate multiple parts of the request simultaneously by specifying multiple targets.

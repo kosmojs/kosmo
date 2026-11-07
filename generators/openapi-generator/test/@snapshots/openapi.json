@@ -2310,7 +2310,8 @@
           "rememberMe": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "auth_login_index_ts_1750344579_ResponseTPOST1842364566": {
         "type": "object",
@@ -2344,12 +2345,14 @@
               "role": {
                 "type": "string"
               }
-            }
+            },
+            "additionalProperties": false
           },
           "expiresIn": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "static_nested_index_ts_3607084481_JsonTGET3829860480": {
         "type": "object",
@@ -2369,7 +2372,8 @@
           "includeMetadata": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "static_nested_index_ts_3607084481_ResponseTGET2451562508": {
         "type": "object",
@@ -2401,9 +2405,11 @@
               "count": {
                 "type": "number"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "webhooks_stripe_index_ts_2600860173_JsonTPOST3039697861": {
         "type": "object",
@@ -2443,14 +2449,17 @@
                   "currency": {
                     "type": "string"
                   }
-                }
+                },
+                "additionalProperties": false
               }
-            }
+            },
+            "additionalProperties": false
           },
           "created": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "webhooks_stripe_index_ts_2600860173_ResponseTPOST395818918": {
         "type": "object",
@@ -2469,7 +2478,8 @@
           "timestamp": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "shop_storeId_products_productId_reviews_page_index_ts_3187720489_JsonTGET2492540032": {
         "type": "object",
@@ -2485,7 +2495,8 @@
           "includeReplies": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "shop_storeId_products_productId_reviews_page_index_ts_3187720489_ResponseTGET491028965": {
         "type": "object",
@@ -2549,13 +2560,15 @@
                     "name": {
                       "type": "string"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           },
           "averageRating": {
@@ -2574,9 +2587,11 @@
               "hasMore": {
                 "type": "boolean"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "categories_category_products_sort_index_ts_439274401_JsonTGET3014712335": {
         "type": "object",
@@ -2595,7 +2610,8 @@
           "inStock": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "categories_category_products_sort_index_ts_439274401_ResponseTGET1985963519": {
         "type": "object",
@@ -2639,13 +2655,15 @@
                 "rating": {
                   "type": "number"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           },
           "total": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "products_id_reviews_page_index_ts_2479344709_JsonTGET1149776162": {
         "type": "object",
@@ -2678,7 +2696,8 @@
           "verifiedOnly": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "products_id_reviews_page_index_ts_2479344709_ResponseTGET1222277698": {
         "type": "object",
@@ -2725,13 +2744,15 @@
                     "name": {
                       "type": "string"
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 },
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           },
           "averageRating": {
@@ -2758,9 +2779,11 @@
               "hasMore": {
                 "type": "boolean"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "products_id_reviews_page_index_ts_2479344709_JsonTPOST1149776162": {
         "type": "object",
@@ -2786,7 +2809,8 @@
           "isAnonymous": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "products_id_reviews_page_index_ts_2479344709_ResponseTPOST208658953": {
         "type": "object",
@@ -2823,13 +2847,15 @@
               "name": {
                 "type": "string"
               }
-            }
+            },
+            "additionalProperties": false
           },
           "createdAt": {
             "type": "string",
             "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "users_id_posts_page_index_ts_4088075965_JsonTGET4108423306": {
         "type": "object",
@@ -2865,7 +2891,8 @@
           "includeContent": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "users_id_posts_page_index_ts_4088075965_ResponseTGET2568250781": {
         "type": "object",
@@ -2905,13 +2932,15 @@
                   "type": "string",
                   "format": "date-time"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           },
           "total": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "coordinates_x_y_index_ts_3681158950_JsonTGET2579524225": {
         "type": "object",
@@ -2934,7 +2963,8 @@
           "includeElevation": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "coordinates_x_y_index_ts_3681158950_ResponseTGET1226070337": {
         "type": "object",
@@ -2959,7 +2989,8 @@
           "timezone": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "metrics_name_period_index_ts_2616094535_JsonTGET3786063042": {
         "type": "object",
@@ -2999,7 +3030,8 @@
               }
             ]
           }
-        }
+        },
+        "additionalProperties": false
       },
       "metrics_name_period_index_ts_2616094535_ResponseTGET1149039930": {
         "type": "object",
@@ -3035,7 +3067,8 @@
                 "unit": {
                   "type": "string"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           },
           "summary": {
@@ -3059,9 +3092,11 @@
               "count": {
                 "type": "number"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "metrics_name_period_index_ts_2616094535_JsonTPOST3786063042": {
         "type": "object",
@@ -3076,7 +3111,8 @@
           "timestamp": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "metrics_name_period_index_ts_2616094535_ResponseTPOST125837033": {
         "type": "object",
@@ -3095,7 +3131,8 @@
           "id": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "orders_status_date_index_ts_2070280196_JsonTGET1456554103": {
         "type": "object",
@@ -3111,7 +3148,8 @@
             "minimum": 1,
             "maximum": 100
           }
-        }
+        },
+        "additionalProperties": false
       },
       "orders_status_date_index_ts_2070280196_ResponseTGET1432524080": {
         "type": "object",
@@ -3162,7 +3200,8 @@
                       "price": {
                         "type": "number"
                       }
-                    }
+                    },
+                    "additionalProperties": false
                   }
                 },
                 "total": {
@@ -3171,10 +3210,12 @@
                 "customer": {
                   "type": "string"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "orders_status_date_index_ts_2070280196_JsonTPOST1456554103": {
         "type": "object",
@@ -3197,10 +3238,12 @@
                 "quantity": {
                   "type": "number"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "orders_status_date_index_ts_2070280196_ResponseTPOST594503875": {
         "type": "object",
@@ -3219,7 +3262,8 @@
           "total": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "articles_id_index_ts_1137349588_FormTGET989795582": {
         "type": "object",
@@ -3242,7 +3286,8 @@
               }
             ]
           }
-        }
+        },
+        "additionalProperties": false
       },
       "articles_id_index_ts_1137349588_ResponseTGET1293661373": {
         "type": "object",
@@ -3277,7 +3322,8 @@
               "type": "string"
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "codes_code_index_ts_2134676674_JsonTGET2696646777": {
         "type": "object",
@@ -3288,7 +3334,8 @@
           "includeUsage": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "codes_code_index_ts_2134676674_ResponseTGET2078876680": {
         "type": "object",
@@ -3338,9 +3385,11 @@
               "usageLimit": {
                 "type": "number"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "documents_uuid_index_ts_3120880389_JsonTGET198498908": {
         "type": "object",
@@ -3363,7 +3412,8 @@
               }
             ]
           }
-        }
+        },
+        "additionalProperties": false
       },
       "documents_uuid_index_ts_3120880389_ResponseTGET1568275703": {
         "type": "object",
@@ -3396,7 +3446,8 @@
             "type": "string",
             "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "documents_uuid_index_ts_3120880389_JsonTPUT198498908": {
         "type": "object",
@@ -3409,7 +3460,8 @@
           "content": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "documents_uuid_index_ts_3120880389_ResponseTPUT1568275703": {
         "type": "object",
@@ -3442,7 +3494,8 @@
             "type": "string",
             "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "documents_uuid_index_ts_3120880389_ResponseTDELETE781589100": {
         "type": "object",
@@ -3457,7 +3510,8 @@
           "message": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "emails_address_index_ts_840171668_JsonTGET337020419": {
         "type": "object",
@@ -3468,7 +3522,8 @@
           "includeStats": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "emails_address_index_ts_840171668_ResponseTGET55899805": {
         "type": "object",
@@ -3491,7 +3546,8 @@
           "userId": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "events_date_index_ts_558639515_JsonTGET276963179": {
         "type": "object",
@@ -3520,7 +3576,8 @@
             "minimum": 1,
             "maximum": 100
           }
-        }
+        },
+        "additionalProperties": false
       },
       "events_date_index_ts_558639515_ResponseTGET1447899011": {
         "type": "object",
@@ -3559,10 +3616,12 @@
                 "description": {
                   "type": "string"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "hex_color_index_ts_1952586627_JsonTGET4104925239": {
         "type": "object",
@@ -3590,7 +3649,8 @@
           "includeName": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "hex_color_index_ts_1952586627_ResponseTGET207105012": {
         "type": "object",
@@ -3620,7 +3680,8 @@
               "b": {
                 "type": "number"
               }
-            }
+            },
+            "additionalProperties": false
           },
           "hsl": {
             "type": "object",
@@ -3639,12 +3700,14 @@
               "l": {
                 "type": "number"
               }
-            }
+            },
+            "additionalProperties": false
           },
           "name": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "usernames_username_index_ts_3531210388_JsonTGET1556332463": {
         "type": "object",
@@ -3658,7 +3721,8 @@
           "includeBadges": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "usernames_username_index_ts_3531210388_ResponseTGET1698061595": {
         "type": "object",
@@ -3695,9 +3759,11 @@
               "following": {
                 "type": "number"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "users_id_index_ts_2390016005_JsonTGET253193823": {
         "type": "object",
@@ -3727,7 +3793,8 @@
           "expand": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "users_id_index_ts_2390016005_ResponseTGET1698717845": {
         "type": "object",
@@ -3771,7 +3838,8 @@
             "type": "string",
             "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "users_id_index_ts_2390016005_JsonTPUT253193823": {
         "type": "object",
@@ -3801,7 +3869,8 @@
               }
             ]
           }
-        }
+        },
+        "additionalProperties": false
       },
       "users_id_index_ts_2390016005_ResponseTPUT1698717845": {
         "type": "object",
@@ -3845,7 +3914,8 @@
             "type": "string",
             "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "users_id_index_ts_2390016005_ResponseTDELETE2606313607": {
         "type": "object",
@@ -3860,7 +3930,8 @@
           "message": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "data_page_limit_index_ts_2131952970_JsonTGET2919723961": {
         "type": "object",
@@ -3902,7 +3973,8 @@
               }
             ]
           }
-        }
+        },
+        "additionalProperties": false
       },
       "data_page_limit_index_ts_2131952970_ResponseTGET832712239": {
         "type": "object",
@@ -3934,7 +4006,8 @@
                 "category": {
                   "type": "string"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           },
           "pagination": {
@@ -3958,9 +4031,11 @@
               "hasMore": {
                 "type": "boolean"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "search_type_page_index_ts_3896833785_JsonTGET3424686887": {
         "type": "object",
@@ -3987,7 +4062,8 @@
           "boostRecent": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "search_type_page_index_ts_3896833785_ResponseTGET3920247526": {
         "type": "object",
@@ -4026,13 +4102,15 @@
                 "score": {
                   "type": "number"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           },
           "total": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "versions_version_format_index_ts_19591300_JsonTGET2311929547": {
         "type": "object",
@@ -4049,7 +4127,8 @@
               "type": "string"
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "versions_version_format_index_ts_19591300_ResponseTGET2824280633": {
         "type": "object",
@@ -4085,9 +4164,11 @@
               "documentation": {
                 "type": "string"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "analytics_period_index_ts_1426022462_JsonTPOST3981262259": {
         "type": "object",
@@ -4137,7 +4218,8 @@
           "compareToPrevious": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "analytics_period_index_ts_1426022462_ResponseTPOST227612430": {
         "type": "object",
@@ -4178,7 +4260,8 @@
                 "revenue": {
                   "type": "number"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           },
           "summary": {
@@ -4202,9 +4285,11 @@
               "totalRevenue": {
                 "type": "number"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "settings_section_index_ts_3033092160_JsonTGET1591092442": {
         "type": "object",
@@ -4224,7 +4309,8 @@
           "includeDefaults": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "settings_section_index_ts_3033092160_ResponseTGET380218358": {
         "type": "object",
@@ -4270,7 +4356,8 @@
                   }
                 ]
               }
-            }
+            },
+            "additionalProperties": false
           },
           "privacy": {
             "type": "object",
@@ -4302,7 +4389,8 @@
               "searchEngineIndexing": {
                 "type": "boolean"
               }
-            }
+            },
+            "additionalProperties": false
           },
           "language": {
             "type": "string"
@@ -4314,7 +4402,8 @@
             "type": "string",
             "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "settings_section_index_ts_3033092160_JsonTPATCH1591092442": {
         "type": "object",
@@ -4353,7 +4442,8 @@
                   }
                 ]
               }
-            }
+            },
+            "additionalProperties": false
           },
           "privacy": {
             "type": "object",
@@ -4385,7 +4475,8 @@
               "searchEngineIndexing": {
                 "type": "boolean"
               }
-            }
+            },
+            "additionalProperties": false
           },
           "language": {
             "type": "string"
@@ -4393,7 +4484,8 @@
           "timezone": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "settings_section_index_ts_3033092160_ResponseTPATCH380218358": {
         "type": "object",
@@ -4439,7 +4531,8 @@
                   }
                 ]
               }
-            }
+            },
+            "additionalProperties": false
           },
           "privacy": {
             "type": "object",
@@ -4471,7 +4564,8 @@
               "searchEngineIndexing": {
                 "type": "boolean"
               }
-            }
+            },
+            "additionalProperties": false
           },
           "language": {
             "type": "string"
@@ -4483,7 +4577,8 @@
             "type": "string",
             "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "health_index_ts_3040421798_ResponseTGET2600161721": {
         "type": "object",
@@ -4541,9 +4636,11 @@
               "arrayBuffers": {
                 "type": "number"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "mixed_index_ts_770061503_JsonTGET2675962266": {
         "type": "object",
@@ -4566,7 +4663,8 @@
               }
             ]
           }
-        }
+        },
+        "additionalProperties": false
       },
       "mixed_index_ts_770061503_ResponseTGET685275611": {
         "type": "object",
@@ -4591,9 +4689,11 @@
               "processed": {
                 "type": "boolean"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "mixed_index_ts_770061503_JsonTPOST2675962266": {
         "type": "object",
@@ -4613,7 +4713,8 @@
             "type": "string",
             "format": "email"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "mixed_index_ts_770061503_ResponseTPOST2565859270": {
         "type": "object",
@@ -4638,9 +4739,11 @@
               "timestamp": {
                 "type": "string"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "mixed_index_ts_770061503_JsonTPUT2675962266": {
         "type": "object",
@@ -4661,9 +4764,11 @@
               "value": {
                 "type": "string"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "mixed_index_ts_770061503_ResponseTPUT685275611": {
         "type": "object",
@@ -4688,9 +4793,11 @@
               "processed": {
                 "type": "boolean"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "posts_index_ts_2278785729_JsonTGET1728467143": {
         "type": "object",
@@ -4729,7 +4836,8 @@
           "authorId": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "posts_index_ts_2278785729_ResponseTGET2322209272": {
         "type": "object",
@@ -4781,7 +4889,8 @@
                   "type": "string",
                   "format": "date-time"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           },
           "pagination": {
@@ -4805,9 +4914,11 @@
               "hasMore": {
                 "type": "boolean"
               }
-            }
+            },
+            "additionalProperties": false
           }
-        }
+        },
+        "additionalProperties": false
       },
       "posts_index_ts_2278785729_JsonTPOST1728467143": {
         "type": "object",
@@ -4840,7 +4951,8 @@
             "type": "string",
             "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "posts_index_ts_2278785729_ResponseTPOST4000969321": {
         "type": "object",
@@ -4883,7 +4995,8 @@
             "type": "string",
             "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "upload_index_ts_443261549_RawTPOST2589871015": {
         "type": "string",
@@ -4902,7 +5015,8 @@
           "message": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "documentation_path_index_ts_2996280108_JsonTGET2615091618": {
         "type": "object",
@@ -4942,7 +5056,8 @@
           "includeExamples": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "documentation_path_index_ts_2996280108_ResponseTGET1699406969": {
         "type": "object",
@@ -4980,10 +5095,12 @@
                 "content": {
                   "type": "string"
                 }
-              }
+              },
+              "additionalProperties": false
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "index_index_ts_2109308135_JsonTGET953914569": {
         "type": "object",
@@ -5003,7 +5120,8 @@
           "includeEndpoints": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "index_index_ts_2109308135_ResponseTGET2109545860": {
         "type": "object",
@@ -5029,7 +5147,8 @@
           "documentation": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       }
     }
   }
