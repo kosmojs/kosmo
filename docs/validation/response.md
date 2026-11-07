@@ -65,6 +65,40 @@ Response validation is especially valuable for data sourced from databases or th
 where the shape can change without warning. If an endpoint serves such data and malformed output
 would be worse than a thrown error, that endpoint is a candidate for `runtimeValidation: true`.
 
+## Undeclared Properties
+
+A response accepts the properties its schema declares and nothing else, at every depth,
+the same rule as a [`json` or `form` payload](/validation/payload#undeclared-properties).
+
+The usual leak is a row returned as-is. TypeScript lets it through,
+because a value with extra properties still fits the narrower declared type:
+
+```ts [api/users/[id]/index.ts]
+type User = { id: number; name: string };
+
+export default defineRoute<"users/[id]">(({ GET }) => [
+  GET<{
+    response: [200, "json", User],
+  }>(async (ctx) => {
+    // the row also holds password_hash and stripe_customer_id,
+    // and responding with it as-is typechecks
+    const user = await db.users.find(ctx.validated.params.id);
+    // ...respond with `user`
+  }),
+]);
+```
+
+Response validation rejects it - with an error naming `password_hash`, not a response carrying it.
+It does not strip the extra fields: the handler is wrong, and the fix is selecting
+or mapping what the response declares.
+
+Where response validation runs decides where this protects you.
+In development and tests it always does, so the over-share fails the first time the handler runs.
+In production it runs only with `runtimeValidation: true`, which turns a would-be leak into an error.
+
+A response that relays a payload whose shape you don't own says so on the object:
+`VRefine<{ ... }, { additionalProperties: true }>`, or `Record<string, T>`.
+
 Defining a response schema also enables automatic `OpenAPI` derivation -
 type safety and documentation in one step.
 [Details&nbsp;›](/openapi/intro)

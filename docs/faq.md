@@ -1011,6 +1011,15 @@ turning a clear validation error into a confusing DB error.
 `format: "email"`, `format: "date-time"`, or a `pattern` regex via VRefine.
 [Details&nbsp;›](/validation/refine)
 
+#### Does a payload accept properties its type doesn't declare?
+Not in `json` or `form`: an extra field is a 400, at every depth,
+so a payload spread into a database update can't write a column the type never mentioned.
+A response with a field it doesn't declare fails validation too - the way a `SELECT *` row
+gets caught before it ships. `query`, `headers`, `cookies` stay open.
+`VRefine<{ ... }, { additionalProperties: true }>` reopens an object,
+and `Record<string, T>` takes keys not known in advance.
+[Details&nbsp;›](/validation/payload#undeclared-properties)
+
 #### What does a ValidationError expose?
 `target` (which request part failed: `params`/`query`/`headers`/`cookies`/`json`/`form`/`raw`/`response`),
 `errors` (array of `ValidationErrorEntry` with `keyword`/`path`/`message`/`params`/`code`),

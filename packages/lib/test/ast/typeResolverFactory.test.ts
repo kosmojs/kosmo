@@ -66,6 +66,20 @@ describe("typeResolverFactory", { timeout: 10_000 }, () => {
     return text?.replace(/\s+/g, " ").trim();
   };
 
+  // json and form payloads are resolved as closed types
+  const resolveClosed = (literalTypes: string) => {
+    return literalTypesResolver(literalTypes, {
+      overrides: { [refineTypeName]: refineTypeName },
+      withProperties: true,
+      closedTypes: ["json"],
+    });
+  };
+
+  const closedSchemaOf = (literalTypes: string) => {
+    const [resolved] = resolveClosed(literalTypes);
+    return compact(resolved?.typeboxSchema);
+  };
+
   describe("literalTypesResolver", () => {
     test("renders typebox schema, preserving VRefine as infix with", () => {
       const [resolved] = resolveLiterals(
@@ -83,6 +97,106 @@ describe("typeResolverFactory", { timeout: 10_000 }, () => {
       expect(
         resolved?.properties?.map((p) => compact(p.typeboxSchema)),
       ).toEqual(["number", `(string with { format: "email" })`]);
+    });
+
+    test("parenthesizes a refined union, so the refinement applies to all of it", () => {
+      const [resolved] = resolveLiterals(
+        `export type query = { a: VRefine<"x" | "y", { description: "d" }> };`,
+      );
+      expect(compact(resolved?.typeboxSchema)).toMatch(
+        /\(\(.*"x".*\|.*"y".*\) with \{ description: "d" \}\)/,
+      );
+    });
+
+    describe("closedTypes", () => {
+      test("leaves every other type open", () => {
+        const types = resolveClosed(
+          `export type json = { a: { b: string } }; export type query = { a: { b: string } };`,
+        );
+        const query = types.find((e) => e.name === "query");
+        expect(compact(query?.typeboxSchema)).toBe("{ a: { b: string } }");
+      });
+
+      test("closes an object and every nested object", () => {
+        expect(closedSchemaOf(`export type json = { a: { b: string } };`)).toBe(
+          "(({ a: (({ b: string }) with { additionalProperties: false }) }) with { additionalProperties: false })",
+        );
+      });
+
+      test("closes array and tuple elements, and record values", () => {
+        const schema = closedSchemaOf(
+          `export type json = { list: Array<{ id: number }>; pair: [{ a: string }, number]; meta: Record<string, { v: string }> };`,
+        );
+        expect(schema).toContain(
+          "list: Array<(({ id: number }) with { additionalProperties: false })>",
+        );
+        expect(schema).toContain(
+          "pair: [(({ a: string }) with { additionalProperties: false }), number]",
+        );
+        expect(schema).toContain(
+          "meta: Record<string, (({ v: string }) with { additionalProperties: false })>",
+        );
+      });
+
+      test("closes an intersection as a whole, leaving its constituents open", () => {
+        expect(
+          closedSchemaOf(
+            `export type json = { a: string } & ({ b: number } | { c: number });`,
+          ),
+        ).toBe(
+          "(((({ a: string }) & ((({ b: number }) | ({ c: number })))) with { unevaluatedProperties: false }))",
+        );
+      });
+
+      test("still closes the property types of an intersection constituent", () => {
+        expect(
+          closedSchemaOf(
+            `export type json = { a: { x: string } } & { b: number };`,
+          ),
+        ).toContain(
+          "a: (({ x: string }) with { additionalProperties: false })",
+        );
+      });
+
+      test("closes each union member on its own", () => {
+        expect(
+          closedSchemaOf(`export type json = { a: string } | { b: number };`),
+        ).toBe(
+          "(((({ a: string }) with { additionalProperties: false })) | ((({ b: number }) with { additionalProperties: false })))",
+        );
+      });
+
+      test("applies a refinement after the closing keyword, so it can reopen", () => {
+        expect(
+          closedSchemaOf(
+            `export type json = VRefine<{ a: string }, { additionalProperties: true }>;`,
+          ),
+        ).toBe(
+          "((({ a: string }) with { additionalProperties: false }) with { additionalProperties: true })",
+        );
+      });
+
+      test("closes the result of an object mapper, not its argument", () => {
+        expect(
+          closedSchemaOf(
+            `export type json = Partial<{ a: string; b: { c: string } }>;`,
+          ),
+        ).toBe(
+          "((Partial<{ a: string, b: (({ c: string }) with { additionalProperties: false }) }>) with { additionalProperties: false })",
+        );
+      });
+
+      test("closes per-property schemas too", () => {
+        const [resolved] = resolveClosed(
+          `export type json = { a: { b: string }; c: string };`,
+        );
+        expect(
+          resolved?.properties?.map((p) => compact(p.typeboxSchema)),
+        ).toEqual([
+          "(({ b: string }) with { additionalProperties: false })",
+          "string",
+        ]);
+      });
     });
 
     describe("numericProperties", () => {

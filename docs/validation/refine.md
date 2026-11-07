@@ -87,10 +87,15 @@ VRefine<string[], {
 | `maxProperties` | Maximum property count |
 | `required` | Array of mandatory property names - normally implied by TypeScript optionality (`?`), reach for it only on open shapes like `Record` |
 | `dependentRequired` | Properties required when another property is present |
+| `additionalProperties` | `true` lets an object in a `json` or `form` payload or a response accept properties it does not declare - they are rejected by default |
+| `unevaluatedProperties` | The same for an intersection, which is checked as a whole |
 
 ```ts
 VRefine<Record<string, string>, { maxProperties: 20 }>
+VRefine<{ source: string }, { additionalProperties: true }>
 ```
+
+[Undeclared properties&nbsp;›](/validation/payload#undeclared-properties)
 
 ### Any instance type
 
