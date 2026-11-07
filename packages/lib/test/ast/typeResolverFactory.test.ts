@@ -196,13 +196,56 @@ describe("typeResolverFactory", { timeout: 10_000 }, () => {
         );
       });
 
-      test("closes a mapped type", () => {
+      test("closes a mapped type and its value type", () => {
         expect(
           closedSchemaOf(
-            `type Keys = "a" | "b"; export type json = { [K in Keys]: string };`,
+            `type Keys = "a" | "b"; export type json = { [K in Keys]: { v: string } };`,
           ),
         ).toMatch(
-          /^\(\(\{ \[K in .*\]: string \}\) with \{ additionalProperties: false \}\)$/,
+          /^\(\(\{ \[K in .*\]: \(\(\{ v: string \}\) with \{ additionalProperties: false \}\) \}\) with \{ additionalProperties: false \}\)$/,
+        );
+      });
+
+      test("renders an index signature as a closed record", () => {
+        expect(
+          closedSchemaOf(`export type json = { [k: string]: { x: number } };`),
+        ).toBe(
+          "((Record<string, (({ x: number }) with { additionalProperties: false })>) with { additionalProperties: false })",
+        );
+      });
+
+      test("renders properties mixed with an index signature as a closed intersection", () => {
+        const schema = closedSchemaOf(
+          `export type json = { a: string; [k: \`x_\${string}\`]: { x: number } };`,
+        );
+        expect(schema).toContain("({ a: string }) & (Record<");
+        expect(schema).toContain(
+          "(({ x: number }) with { additionalProperties: false })>)",
+        );
+        expect(schema).toMatch(/with \{ unevaluatedProperties: false \}\)$/);
+      });
+
+      test("keeps a mixed index signature literal grouped as an array element", () => {
+        const [resolved] = resolveLiterals(
+          `export type json = { list: Array<{ a: string; [k: string]: string }> };`,
+        );
+        expect(compact(resolved?.typeboxSchema)).toBe(
+          "{ list: Array<(({ a: string }) & (Record<string, string>))> }",
+        );
+        const [inline] = resolveLiterals(
+          `export type json = { list: { a: string; [k: string]: string }[] };`,
+        );
+        expect(compact(inline?.typeboxSchema)).toContain(
+          "(({ a: string }) & (Record<string, string>))",
+        );
+      });
+
+      test("renders an index signature as an open record in an open position", () => {
+        const [resolved] = resolveLiterals(
+          `export type json = { [k: string]: VRefine<string, { minLength: 2 }> };`,
+        );
+        expect(compact(resolved?.typeboxSchema)).toBe(
+          "Record<string, (string with { minLength: 2 })>",
         );
       });
 

@@ -191,7 +191,8 @@ so a payload spread into a database update cannot write a column the type never 
 // -> 400 ValidationError, target "json": should not have additional property "role"
 ```
 
-This holds at every depth - nested objects, array and tuple elements, record values,
+This holds at every depth: nested objects, array and tuple elements,
+the values of records, index signatures and mapped types,
 and the result of `Partial`, `Pick`, `Omit`, `Required` and `Readonly`.
 An intersection is checked as a whole: `Base & Extra` accepts the properties of both,
 and rejects anything neither declares.
@@ -212,11 +213,29 @@ type Payload = {
 };
 ```
 
-`Record<string, T>` is the type for keys not known in advance; it accepts any key,
-while each value is still checked against `T`.
+For keys not known in advance, use `Record<string, T>` or `{ [key: string]: T }`.
+Either one accepts any key, while each value is still checked against `T`.
 
 For an intersection, `VRefine<A & B, { unevaluatedProperties: true }>` reopens it as a whole,
 and `additionalProperties: true` on one of its members reopens it as well.
+
+The opposite holds too: `additionalProperties: false` on a member closes it on its own,
+and then it rejects the properties of every other member - leave members unrefined
+and let the intersection be closed as a whole.
+
+### HTML forms
+
+A plain HTML form often posts fields the route never declares:
+the `name` of the clicked submit button, a CSRF token added by middleware,
+a `_method` override. A closed `form` payload rejects each of them with a 400.
+
+Declare the fields you expect, or reopen the payload when the form is not yours to shape:
+
+```ts
+POST<{
+  form: VRefine<{ title: string; body: string }, { additionalProperties: true }>;
+}>
+```
 
 ## Combining Multiple Targets
 
