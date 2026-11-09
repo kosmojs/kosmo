@@ -13,6 +13,10 @@ import {
 
 import { expandEnv } from "./dotenv-expand";
 
+export const envFilesFor = (mode: string) => {
+  return [".env", ".env.local", `.env.${mode}`, `.env.${mode}.local`];
+};
+
 /**
  * Read the env files of a source folder, per scope.
  *
@@ -81,8 +85,8 @@ export const loadEnvFiles = async ({
       // files inside source folder takes precedence, regardless mode;
       // so src/<folder>/.env will override vars set in any project root file,
       // even .env.[mode]* files
-      return ["", ".local", `.${mode}`, `.${mode}.local`].flatMap((suffix) => {
-        const file = join(dir, `.env${suffix}`);
+      return envFilesFor(mode).flatMap((name) => {
+        const file = join(dir, name);
         return matches.includes(file) ? [file] : [];
       });
     });

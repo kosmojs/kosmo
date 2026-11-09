@@ -4,12 +4,12 @@ import * as prompts from "@clack/prompts";
 import { detect, resolveCommand } from "package-manager-detector";
 import semver from "semver";
 
-import type {
+import {
   BACKENDS,
-  FolderConfig,
+  type FolderConfig,
   FRONTENDS,
-  GeneratorSignature,
-  KosmoSettings,
+  type GeneratorSignature,
+  type KosmoSettings,
 } from "@kosmojs/core";
 import {
   coreGenerator,
@@ -303,5 +303,111 @@ export const checkDependencies = async (
     );
     console.error(outdated.map(([name]) => name).join(" "));
     console.error();
+  }
+};
+
+export const printUsage = () => {
+  const usage = [
+    "",
+    `🚀 ${styleText(["bold", "underline", "cyan"], "KosmoJS CLI")}`,
+    "",
+
+    styleText("bold", "FOLDER COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo folder")}`,
+    `  Create a Source Folder in interactive mode, prompting for each step`,
+    "",
+    styleText(
+      "bold",
+      "  Provide flags up front to create a Source Folder without prompts:",
+    ),
+    `  ${styleText("cyan", `--name`)} ${styleText("yellow", "folder name")} ${styleText("dim", "(required)")}`,
+    `  ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))} ${styleText("dim", "(or --no-frontend for API-only folders)")}`,
+    `  ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(or --no-backend for client-only folders)")}`,
+    `  ${styleText("cyan", "--overwrite")} ${styleText("yellow", "overwrite existing files")} ${styleText("dim", "(use with caution)")}`,
+    "",
+
+    styleText("bold", "SIDECAR COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo sidecar")}`,
+    `  Create a Sidecar Folder in interactive mode, prompting for each step`,
+    "",
+    styleText(
+      "bold",
+      "  Provide flags up front to create a Sidecar Folder without prompts:",
+    ),
+    `  ${styleText("cyan", `--name`)} ${styleText("yellow", "folder name")} ${styleText("dim", "(required)")}`,
+    `  ${styleText("cyan", "--overwrite")} ${styleText("yellow", "overwrite existing files")} ${styleText("dim", "(use with caution)")}`,
+    "",
+
+    styleText("bold", "SERVE COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo serve")}`,
+    `  Start dev server for all source folders`,
+    "",
+    `  ${styleText("blue", "kosmo serve")} ${styleText("magenta", "admin")}`,
+    `  Start dev server for single source folder`,
+    "",
+    `  ${styleText("blue", "kosmo serve")} ${styleText("magenta", "admin front")}`,
+    `  Start dev server for multiple source folders`,
+    "",
+    `  ${styleText("blue", "kosmo serve")} ${styleText("green", "--mode stage")}`,
+    `  Start dev server using a custom mode (development by default on serve)`,
+    "",
+
+    styleText("bold", "PREVIEW COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo preview")}`,
+    `  Build all source folders and serve the build output, rebuilding on change`,
+    "",
+    `  ${styleText("blue", "kosmo preview")} ${styleText("magenta", "admin front")}`,
+    `  Preview selected source folders only`,
+    "",
+    `  ${styleText("blue", "kosmo preview")} ${styleText("green", "--mode stage")}`,
+    `  Preview using a custom mode (production by default on preview)`,
+    "",
+
+    styleText("bold", "BUILD COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo build")}`,
+    `  Build all source folders`,
+    "",
+    `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "admin")}`,
+    `  Build single source folder`,
+    "",
+    `  ${styleText("blue", "kosmo build")} ${styleText("magenta", "admin front")}`,
+    `  Build multiple source folders`,
+    "",
+    `  ${styleText("blue", "kosmo build")} ${styleText("green", "--mode stage")}`,
+    `  Build using a custom mode (production by default on build)`,
+    "",
+
+    styleText("bold", "TYPECHECK COMMAND"),
+    "",
+    `  ${styleText("blue", "kosmo typecheck")}`,
+    `  Typecheck all source folders`,
+    "",
+    `  ${styleText("blue", "kosmo typecheck")} ${styleText("magenta", "admin")}`,
+    `  Typecheck single source folder`,
+    "",
+    `  ${styleText("blue", "kosmo typecheck")} ${styleText("magenta", "admin front")}`,
+    `  Typecheck multiple source folders`,
+    "",
+    `  ${styleText("blue", "kosmo typecheck")} ${styleText("magenta", ".")}`,
+    `  Typecheck the project root only`,
+    "",
+    `  ${styleText("blue", "kosmo typecheck")} ${styleText("magenta", ". admin")}`,
+    `  Typecheck the project root along with given folders`,
+    "",
+
+    styleText("bold", "COMMON OPTIONS"),
+    "",
+    `  ${styleText("cyan", "-h, --help")}`,
+    `  Display this help message and exit`,
+    "",
+  ];
+
+  for (const line of usage) {
+    console.log(line);
   }
 };

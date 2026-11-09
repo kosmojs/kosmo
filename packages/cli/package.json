@@ -23,7 +23,7 @@
     }
   },
   "scripts": {
-    "build": "wsbuild src/cli.ts src/index.ts",
+    "build": "wsbuild src/cli.ts src/worker.ts src/index.ts",
     "postbuild": "chmod +x pkg/cli.js"
   },
   "dependencies": {
