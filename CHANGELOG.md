@@ -1,3 +1,47 @@
+## [0.7.0](https://github.com/kosmojs/kosmo/compare/v0.6.11...v0.7.0) (2026-11-09)
+
+### Features
+
+* **cli:** restart dev server on config / env files change ([d545cbf](https://github.com/kosmojs/kosmo/commit/d545cbf30f4630e765380b0a6addb5832872cb6c))
+* load env files, the Vite way ([66a7438](https://github.com/kosmojs/kosmo/commit/66a743883724a90ae6fe6503c9ca940fdddd7122))
+
+  Loads env files the way Vite does. The same files, .env, .env.local,
+  .env.[mode] and .env.[mode].local, in the same order, with envDir and
+  envPrefix working as expected.
+
+### Bug Fixes
+
+* **chassis:** fully seed every folder before build ([2bbb6e9](https://github.com/kosmojs/kosmo/commit/2bbb6e91198dd0e6e19193178c3cc50ce80b3cff))
+* **chassis:** improve restarts handling ([cbcbfb5](https://github.com/kosmojs/kosmo/commit/cbcbfb5e071c74367684d5d3e5c28f4edbb8fda7))
+
+  File watchers replaced on every Vite restart, leaving handlers bound to
+  old watchers. The fix re-adds watchers after every restart.
+* **koa:** fix HEAD handler to execute wherever it is placed ([f0fb077](https://github.com/kosmojs/kosmo/commit/f0fb077ce4809b409cc9b4f8a68b227e15d908c7))
+
+  @koa/router registers every GET route for HEAD as well, and tries routes
+  in the order they were registered. Handlers were registered in the order
+  they were defined, so the GET above answered every HEAD request, and the
+  HEAD handler never ran.
+* **sidecars:** add env plugin; call teardown ([97c4d86](https://github.com/kosmojs/kosmo/commit/97c4d86290e4fd0c036c832c1988cca89f3d1fac))
+* **types:** fix typing for routes where a splat followed by a required param or static segment ([fa40c57](https://github.com/kosmojs/kosmo/commit/fa40c57b29a672b445d25f814f92521478351892))
+
+### Improvements
+
+* **chassis:** HMR no more listen on a random port ([0e312c5](https://github.com/kosmojs/kosmo/commit/0e312c516bc51daf433a15552f24168d53926b59))
+
+  It now listen on the dev port, reachable behind a reverse proxy.
+* **routing:** support splat/optional params as first segment ([bb758eb](https://github.com/kosmojs/kosmo/commit/bb758eb40f156b3e460c1ddbeb835d7b3ed3bf32))
+
+  An API route that starts with a splat or an optional param, say
+  {...path}/index.ts or {id}/index.ts, only ever matched the base itself.
+  With the API at /api, /api/users was a 404.
+* **validation:** reject extra fields ([003e14f](https://github.com/kosmojs/kosmo/commit/003e14f264cc0f7c3c6f6ac240763f66aa0b31de))
+
+  Object schemas accepted fields the type does not declare, and passed
+  them through to the handler. A handler handing the payload on to the
+  database would write those too, e.g. a `role` the client added.
+  Undeclared fields now fail validation, like missing or mistyped ones do.
+
 ## [0.6.11](https://github.com/kosmojs/kosmo/compare/v0.6.10...v0.6.11) (2026-11-04)
 
 ### Bug Fixes
