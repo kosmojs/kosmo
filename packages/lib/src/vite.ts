@@ -200,7 +200,7 @@ export const vitePluginsFactory = (
       name: "kosmo:env",
       enforce: "post",
       config() {
-        if (scope === "backend") {
+        if (scope === "backend" || scope === "sidecar") {
           for (const source of sourceFolder.envSources) {
             if (source.scope === scope) {
               for (const [key, val] of Object.entries(source.env)) {

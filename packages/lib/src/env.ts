@@ -26,6 +26,7 @@ import { expandEnv } from "./dotenv-expand";
  * - frontend: only keys matching `envPrefix` (`VITE_` by default) are kept,
  * since these get inlined into the bundle;
  * - backend: every key is kept, unless a prefix given.
+ * - sidecar: same as backend.
  *
  * Nothing is written to `process.env`.
  * */
@@ -44,20 +45,27 @@ export const loadEnvFiles = async ({
 
   const envSources: Array<EnvSource> = [];
 
-  for (const scope of ["frontend", "backend"] satisfies Array<
+  for (const scope of ["frontend", "backend", "sidecar"] satisfies Array<
     EnvSource["scope"]
   >) {
+    if (!config[scope]) {
+      continue;
+    }
+
     const {
       envDir,
-      envPrefix = scope === "backend"
-        ? "" // by default, no prefix restriction on backend
+      envPrefix = scope === "backend" || scope === "sidecar"
+        ? "" // no prefix restriction by default, but user can add one
         : DEFAULT_ENV_PREFIX,
-    } = { ...config[scope]?.viteConfig };
+    } = { ...config[scope].viteConfig };
 
     if (envDir === false) {
       continue;
     }
 
+    // not checking for empty prefixes here, Vite itself throws if one found,
+    // even with `envDir: false`;
+    // on backend/sidecar envPrefix already defaulted to "", no need to set it explicitly.
     const prefixes = [envPrefix].flat().filter((e) => typeof e === "string");
 
     const lookupDirs = envDir

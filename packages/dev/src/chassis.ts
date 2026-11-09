@@ -425,10 +425,17 @@ export default async <C extends ChassisCommand>(
             root: createPath.src(),
             appType: "custom",
             cacheDir: cacheDir(projectSettings, sourceFolder, "sidecar"),
-            plugins: [...plugins, reloadPlugin],
+            plugins: [
+              ...plugins,
+              reloadPlugin,
+              vitePlugins.envProvider("sidecar"),
+            ],
             // `hotUpdate` is part of the HMR pipeline, so it runs only with `hmr` on -
             // but this server is never listened on, so no socket is ever bound and no port is taken.
-            server: { hmr: true },
+            // `middlewareMode` keeps vite from installing its own SIGTERM handler,
+            // which would close the server and exit before the service is torn down;
+            // `ws: false` then keeps it from binding a standalone HMR socket instead.
+            server: { hmr: true, middlewareMode: true, ws: false },
             resolve: {
               conditions: ["node"],
             },
@@ -493,7 +500,22 @@ export default async <C extends ChassisCommand>(
         await reload();
       });
 
-      teardownHandlers.push(viteServer.close);
+      // the service goes first, while the runner its code was loaded with is still up
+      teardownHandlers.push(async () => {
+        // a save landing mid-teardown must not start the service again
+        reload = async () => {};
+        try {
+          await service.teardown?.();
+          await close();
+        } catch (error) {
+          // still close the vite server below
+          console.error(
+            styleText("red", `${sourceFolder.name}: sidecar teardown failed`),
+          );
+          console.error(error);
+        }
+        await viteServer.close();
+      });
     }
   }
 
@@ -689,7 +711,7 @@ const buildSourceFolder = async (
           base: "./",
           root: createPath.src(),
           appType: "custom",
-          plugins,
+          plugins: [...plugins, vitePlugins.envProvider("sidecar")],
           resolve: {
             conditions: ["node"],
           },

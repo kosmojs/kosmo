@@ -24,7 +24,7 @@ export type FolderConfig = {
 };
 
 export type EnvSource = {
-  scope: "frontend" | "backend";
+  scope: "frontend" | "backend" | "sidecar";
   file: string;
   env: Record<string, string>;
 };
