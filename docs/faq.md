@@ -230,6 +230,14 @@ Keys are absolute URLs, not prefixed by the router's base; if a key has dynamic 
 their names must match the target route's parameters exactly or the request 404s.
 [Details&nbsp;›](/backend/aliases)
 
+#### How do I use env files?
+As in Vite: `.env`, `.env.local`, `.env.[mode]` and `.env.[mode].local`,
+read from the project root and then from the source folder, the folder's winning.
+The frontend reads `VITE_` keys from `import.meta.env`;
+the backend and sidecars read every key from `process.env`.
+`--mode` picks the `.env.[mode]` files. A production `dist/run.js` loads none.
+[Details&nbsp;›](/essentials/env-files)
+
 ### Directory-Based Routing
 
 #### How does routing map files to URLs?
@@ -1147,9 +1155,9 @@ Every selected tsconfig is checked even if an earlier one fails,
 so a single run reports all of them rather than stopping at the first.
 The command exits `1` if any of them reported errors, which makes it usable as a CI gate directly.
 
-A full run also checks the project root, so code outside `src/` can be covered.
-What it covers is up to you: the root `tsconfig.json` starts with only `./var/lib/*.d.ts` in its `include`,
-so the run happens but has nothing of yours in scope until you add paths to that list.
+A full run also checks the project root, so code outside `src/` is covered.
+The root `tsconfig.json` takes every file except what `src/`, `var/`, `dist/` and `public/` hold,
+so a script or a standalone config is checked without listing it anywhere.
 The folders are checked separately rather than in one pass because each has its own path mappings -
 one `tsc` over everything would resolve `_/` against the wrong folder.
 [Details&nbsp;›](/cli/typecheck)
@@ -1163,10 +1171,9 @@ and alongside folder names it adds the root to them - `pnpm typecheck . admin` c
 
 Useful after touching a script or a shared package while `src/` is untouched.
 
-The root's `tsconfig.json` decides what "the root" covers,
-and out of the box that is nothing of yours - its `include` holds only `./var/lib/*.d.ts`.
-Add the paths you want checked, keeping that entry: `include` replaces rather than merges with the config it extends,
-so dropping it takes the ambient declarations in `var/lib/` out of scope.
+The root's `tsconfig.json` decides what "the root" covers:
+every file except what `src/`, `var/`, `dist/` and `public/` hold.
+Add to its `exclude` what you want left out, and keep those four entries.
 [Details&nbsp;›](/cli/typecheck#selective-typechecking)
 
 #### Can I exclude a folder from typechecking?
@@ -1832,6 +1839,12 @@ Point Swagger UI, Redoc, or Stoplight Elements at the derived file.
 Vite compiles `api/app.ts`; the dev server serves both client pages and your API routes;
 requests are routed between Vite and your API; a file watcher monitors API files for changes.
 [Details&nbsp;›](/dev-build-run/development-workflow#what-happens-on-start)
+
+#### Do I need to restart the dev server after editing `kosmo.config.ts`?
+No. Saving `kosmo.config.ts`, the root `package.json` or an env file restarts it in a fresh process.
+A source folder added while it runs still needs a manual restart,
+and so does a change to a file `kosmo.config.ts` imports.
+[Details&nbsp;›](/cli/serve#restarts-on-config-change)
 
 #### What are the api/dev.ts hooks?
 `requestHandler` (returns the API request handler) and `teardownHandler`

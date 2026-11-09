@@ -34,6 +34,16 @@ If you set a custom `path`, make sure to include it in the pattern.
 E.g.: setting `path: "test"` means the patterns should look like: `<folder>/test/api` and `<folder>/test/pages`.
 :::
 
+### Mode
+
+Tests run in `test` mode, so the `.env.test` files are loaded. `--mode` picks another:
+
+~~~sh
+pnpm test --mode stage
+~~~
+
+[Env files&nbsp;›](/essentials/env-files#modes)
+
 ### Vitest config
 
 Source folders with testing enabled are loaded as projects into `vitest.config.ts`.

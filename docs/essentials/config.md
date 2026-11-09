@@ -345,6 +345,9 @@ backend: {
 
 The two sides are built separately, so `frontend.viteConfig` and `backend.viteConfig` are independent.
 
+That goes for env files too: `envDir` and `envPrefix` set in one side's `viteConfig`
+decide which [env files](/essentials/env-files) that side reads.
+
 ## sidecar
 
 Makes this folder a **sidecar**: a process to build, and nothing KosmoJS routes to -
@@ -615,48 +618,55 @@ All goes under `kosmo` key and are optional; if any omitted, default values are 
 
 ### Root tsconfig.json
 
-The project root has a `tsconfig.json` covering anything you keep outside `src/`.
-
-It starts with only the ambient declarations in scope, so add the paths you want [typechecked](/cli/typecheck):
+The project root has a `tsconfig.json` covering anything you keep outside `src/`:
 
 ```json [tsconfig.json]
 {
   "extends": "./var/lib/tsconfig.json",
-  "include": ["./var/lib/*.d.ts"]
+  "exclude": ["./dist/", "./src/", "./var/", "./public/"]
 }
 ```
 
-The root `include` is for code nothing imports - a migration script, a worker,
-a standalone config, a helper you only ever run by hand.
-Those have no importer to pull them in, so they are checked only if you list them here.
+With no `include`, TypeScript takes every file under the root, minus that list,
+and minus `node_modules`, which it always leaves out.
 
-Shared code is the other way round. Anything a source folder imports is checked along with that folder,
-so it does not need listing - adding it here only means it is checked on a root run too,
-rather than only when its importer is.
+That covers code nothing imports - a migration script, a worker,
+a standalone config, a helper you only ever run by hand - without listing anything.
+Those have no importer to pull them in, so a [root run](/cli/typecheck) is what checks them.
 
-When you add such a path, add to the list rather than replacing it.
-This is **essential**: `include` replaces rather than merges with the config it extends,
-so `./var/lib/*.d.ts` has to stay in it.
+Each excluded directory has its reason:
 
-> Merging extended arrays has been [requested since 2017](https://github.com/microsoft/TypeScript/issues/20110)
-and is still open, so carrying the entries over by hand is the only option.
+- `src/` - every source folder is checked on its own, against its own path mappings
+- `var/` - derived code, already checked by the folder it belongs to
+- `dist/` - build output, wherever [distDir](#project-settings-package-json) points
+- `public/` - static assets, served as they are
+
+Add your own entries to `exclude` as needed, but keep these four.
 
 ---
 
-::: warning Never add `var/lib/` itself
-`./var/lib/*.d.ts` matches only the ambient declarations at the top of `var/lib/` - that entry is meant to be there.
-The rest is derived code, generated against each folder's own path mappings and already checked by that folder's run.
+::: warning Keep `var/` excluded
+The derived code in `var/lib/` is generated against each folder's own path mappings.
 In the root program `_/` resolves against the wrong folder, so you get errors in files you cannot fix -
 they are rewritten on the next run.
 :::
+
+> A project created before v0.7.0 has `"include": ["./var/lib/*.d.ts"]` in place of the `exclude`,
+and checks only the paths added to that list.
+Replace it with the `exclude` above to have the root cover everything outside those four.
 
 ### Per-folder tsconfig.json
 
 Each source folder has its own `tsconfig.json` extending a derived base in var/lib dir:
 
 ```json [src/front/tsconfig.json]
-{ "extends": "../../var/lib/front/tsconfig.json" }
+{
+  "extends": "../../var/lib/front/tsconfig.json",
+  "exclude": ["./public/"]
+}
 ```
+
+`public/` holds static assets, served as they are, so it stays out of the check.
 
 The base `tsconfig.json` supplies the framework's `jsxImportSource`, the reserved path mappings,
 and strict compiler settings. Anything you add in your own `compilerOptions` wins, and applies to that folder only:
@@ -664,6 +674,7 @@ and strict compiler settings. Anything you add in your own `compilerOptions` win
 ```json [src/front/tsconfig.json]
 {
   "extends": "../../var/lib/front/tsconfig.json",
+  "exclude": ["./public/"],
   "compilerOptions": {
     "exactOptionalPropertyTypes": false
   }

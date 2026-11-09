@@ -83,6 +83,7 @@ Restart it.
 
 ::: tip Changing the folder later
 `kosmo folder` writes `kosmo.config.ts` once; editing it afterwards is expected and supported.
-The config is read at startup, so restart the dev server after turning `ssr` on, adding a `backend`, or changing a `base`.
+A running dev server restarts on its own when `kosmo.config.ts` is saved,
+so turning `ssr` on, adding a `backend` or changing a `base` takes effect right away.
 [Configuration&nbsp;›](/essentials/config#the-shape)
 :::

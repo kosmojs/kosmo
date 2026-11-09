@@ -1,11 +1,11 @@
 ---
 title: kosmo typecheck
 description: Typechecking each source folder against its own tsconfig,
-    plus the project root run and what its include list decides.
+    plus the project root run and what its exclude list leaves out.
 head:
   - - meta
     - name: keywords
-      content: kosmo typecheck, pnpm typecheck, tsc --noEmit, root tsconfig, include,
+      content: kosmo typecheck, pnpm typecheck, tsc --noEmit, root tsconfig, exclude,
         path mappings, separate tsc runs
 ---
 
@@ -38,7 +38,8 @@ Add a `prebuild` script in `package.json`:
 ```
 :::
 
-> By default the project root checks nothing of yours - [include](/essentials/config#typescript-config) code you want typechecked.
+> By default the project root checks every file outside `src/`, `var/`, `dist/` and `public/` -
+[exclude](/essentials/config#root-tsconfig-json) what you want left out.
 
 ## Under the hood
 
@@ -109,4 +110,5 @@ Provide `.` with folder name(s) and you get the root checked along with the prov
 pnpm typecheck . admin
 ```
 
-> By default the project root checks nothing of yours - [include](/essentials/config#typescript-config) code you want typechecked.
+> By default the project root checks every file outside `src/`, `var/`, `dist/` and `public/` -
+[exclude](/essentials/config#root-tsconfig-json) what you want left out.

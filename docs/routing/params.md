@@ -92,6 +92,17 @@ or anything with arbitrarily nested paths.
 A request to `/docs/guides/deployment/production` gives you
 `params.path` as `["guides", "deployment", "production"]`.
 
+A splat can also come first, to catch everything under the folder's base:
+
+```
+{...path}/index.ts   -> /
+                     -> /checkout
+                     -> /checkout/step/2
+```
+
+With a base of `/api`, the same route answers `/api`, `/api/checkout` and so on.
+Static routes still take priority, so it gets only what nothing else matched.
+
 ## Mixed Segments
 
 Segments can combine static text with parameters:

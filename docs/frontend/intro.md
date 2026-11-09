@@ -114,7 +114,10 @@ Solved by deriving a `tsconfig.json` specific to each source folder,
 placed in the `var/lib/` directory for the source folder to extend:
 
 ```json [src/front/tsconfig.json]
-{ "extends": "../../var/lib/front/tsconfig.json" }
+{
+  "extends": "../../var/lib/front/tsconfig.json",
+  "exclude": ["./public/"]
+}
 ```
 
 Each config supplies the correct `jsxImportSource`, path mappings, and core settings.

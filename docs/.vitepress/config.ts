@@ -228,6 +228,11 @@ export default defineConfig({
               link: "/essentials/config",
             },
             {
+              text: "Env Files",
+              docFooterText: "Env Files",
+              link: "/essentials/env-files",
+            },
+            {
               text: "Framework Support",
               docFooterText: "Framework Support Matrix",
               link: "/essentials/frameworks",

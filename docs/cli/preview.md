@@ -51,4 +51,18 @@ so a typo mid-edit prints an error to the terminal without taking the page down.
 
 Iterate on the dev server; reach for `preview` to verify.
 
+## Mode and restarts
+
+`preview` runs in `production` mode, so it loads the `.env.production` files
+before it starts `dist/run.js`. `--mode` picks another:
+
+```sh
+pnpm preview --mode stage
+```
+
+Like the dev server, it runs in a child process,
+and [restarts](/cli/serve#restarts-on-config-change) when `package.json`,
+a `kosmo.config.ts` or an env file of its mode changes,
+building again under the fresh config.
+
 [Production&nbsp;preview&nbsp;›](/dev-build-run/production-preview)

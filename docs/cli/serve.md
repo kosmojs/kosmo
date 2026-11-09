@@ -6,7 +6,7 @@ head:
   - - meta
     - name: keywords
       content: kosmo serve, pnpm dev, dev server, devHost, HMR, hot reload,
-        client-side rendering, port range
+        client-side rendering, --mode, config restart, reverse proxy
 ---
 
 `serve` is the command you leave running while you work.
@@ -46,3 +46,51 @@ and a project with no folders at all reports `No source folders detected`.
 
 Narrowing changes what the one process serves: folders you left out are not mounted,
 so their paths 404 rather than falling through.
+
+## Mode
+
+`serve` runs in `development` mode, which loads the `.env.development` files.
+`--mode` picks another:
+
+```sh
+pnpm dev --mode stage
+```
+
+[Env files&nbsp;›](/essentials/env-files#modes)
+
+## Restarts on config change
+
+The server runs in a child process, and a fresh one replaces it when one of these changes:
+
+- `package.json` at the project root
+- `kosmo.config.ts` in any source folder
+- env files of the current mode, at the project root and in any source folder
+
+A fresh process reads every config and env file from scratch.
+
+Files imported by `kosmo.config.ts` are not watched.
+Save `kosmo.config.ts` after changing one of them, or restart by hand.
+A source folder added while the server runs needs a manual restart too.
+
+A server that crashes or fails to start stays down until a watched file changes,
+so the save that fixes it also brings it back.
+
+## One port
+
+Everything goes through the `devHost` port, HMR included.
+Each folder's HMR socket sits under its base, at `<base>/@__kosmo_hmr__`.
+
+So a reverse proxy, or a forwarded port on a remote box, carries HMR as well,
+as long as it forwards WebSocket upgrades.
+
+If the proxy passes its own `Host` header, Vite turns those requests away until the host is allowed:
+
+```ts [kosmo.config.ts]
+frontend: {
+  viteConfig: {
+    server: {
+      allowedHosts: ["dev.example.com"],
+    },
+  },
+},
+```

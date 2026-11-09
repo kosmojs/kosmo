@@ -25,8 +25,10 @@ When the entry changes - or any file it imports - it:
 The import comes first so that a save that cannot compile changes nothing:
 it throws at step 1, and the service keeps running.
 
-It is one process, so there is no signal to catch and nothing to wait for on exit -
-but that also means the close function is the only thing that frees a port.
+It is one process, so there is no signal to catch.
+The dev server calls `teardown()` and the close function itself,
+on every reload and again when it stops or restarts.
+That also means the close function is the only thing that frees a port.
 
 Return one that actually closes the server,
 or the next reload hits `EADDRINUSE` and keeps hitting it until you restart the dev server.
@@ -37,6 +39,14 @@ A reload that throws is reported, the dev server stays up, and the next good sav
 `kosmo preview` and `dist/run.js` build sidecars but never start them.
 [Details&nbsp;›](/sidecar/production)
 :::
+
+---
+
+### Env files
+
+A sidecar gets its env files the way the backend does:
+every key, in `process.env`, unless you give it an `envPrefix`.
+[Env files&nbsp;›](/essentials/env-files#frontend-backend-and-sidecar)
 
 ---
 

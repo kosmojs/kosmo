@@ -37,3 +37,11 @@ Multiple parameters follow path order:
 useFetch.path([456, 789]);
 // -> "/api/posts/456/comments/789"
 ```
+
+When every parameter is optional, the tuple can be left out:
+
+```ts
+// route: users/{id}
+useFetch.path();
+// -> "/api/users"
+```

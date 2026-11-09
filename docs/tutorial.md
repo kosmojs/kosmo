@@ -638,7 +638,7 @@ Your project starts with a minimal `tsconfig.json`:
 ```json [tsconfig.json]
 {
   "extends": "./var/lib/tsconfig.json",
-  "include": ["./var/lib/*.d.ts"]
+  "exclude": ["./dist/", "./src/", "./var/", "./public/"]
 }
 ```
 

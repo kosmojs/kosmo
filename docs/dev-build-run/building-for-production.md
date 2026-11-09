@@ -27,6 +27,10 @@ Start it and the whole application is up:
 node dist/run.js -p 4556
 ```
 
+It loads no env files. It reads `process.env` as the host sets it,
+or as Node hands it a file with `node --env-file .env.production dist/run.js -p 4556`.
+[Env files&nbsp;›](/essentials/env-files#production)
+
 It routes incoming requests by path the same way the dev server does:
 [route aliases](/backend/aliases) first,
 then each folder's `frontend.base` and `backend.base` decide what it owns, longest prefix first.

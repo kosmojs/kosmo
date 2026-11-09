@@ -15,7 +15,8 @@ Once that clicks, the rest of the docs read much faster.
 ```txt
 my-app/
 ├── package.json
-├── tsconfig.json         -> minimal config, add paths to `include` to have them typechecked
+├── .env                  -> env files shared by every folder
+├── tsconfig.json         -> covers everything outside src/, var/, dist/ and public/
 │
 ├── src/                  ✍️  YOU WRITE THIS
 │   ├── front/            ->   one source folder
@@ -45,7 +46,8 @@ with SSR enabled - the fullest shape:
 ```txt
 src/front/
 ├── kosmo.config.ts       -> what this folder is
-├── tsconfig.json         -> { "extends": "../../var/lib/front/tsconfig.json" }
+├── .env                  -> env files for this folder only
+├── tsconfig.json         -> extends ../../var/lib/front/tsconfig.json
 ├── index.html            -> Vite's HTML entry
 ├── app.tsx               -> global wrapper, wraps EVERY route
 ├── router.ts             -> routerFactory: routes -> native router

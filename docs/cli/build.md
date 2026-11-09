@@ -16,6 +16,16 @@ pnpm build front   # just this one
 The same build `preview` runs, minus the server and the watcher.
 Output goes into [kosmo.distDir](/essentials/config#project-settings-package-json) - `dist/` by default.
 
+`build` runs in `production` mode. `--mode` picks the `.env.[mode]` files to build with:
+
+```sh
+pnpm build --mode stage
+```
+
+Only the frontend keeps those values, inlined into the bundle.
+The built backend reads `process.env` when it runs.
+[Env files&nbsp;›](/essentials/env-files#production)
+
 With no arguments, every source folder is built. Name one or more to narrow the scope -
 the names are directory names under `src/`.
 

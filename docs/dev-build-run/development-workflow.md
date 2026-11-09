@@ -69,6 +69,13 @@ the dev reload cycle is simply an early rehearsal of what production restarts do
 What *does* need care across reloads is resources: open connections leak when
 the program restarts around them. Close them in the [teardownHandler](#teardownhandler) hook.
 
+## Config and Env Changes
+
+Config and [env files](/essentials/env-files) are read once, at startup.
+So saving `kosmo.config.ts`, the root `package.json` or an env file
+restarts the dev server as a whole, in a fresh process.
+[Details&nbsp;›](/cli/serve#restarts-on-config-change)
+
 ## api/dev.ts
 
 `api/dev.ts` is where the API side of the dev server is wired up.
