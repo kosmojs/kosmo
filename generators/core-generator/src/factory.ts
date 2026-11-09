@@ -40,6 +40,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
           {
             extends: `./${defaults.varDir}/${defaults.libDir}/tsconfig.json`,
             exclude: [
+              `./${projectSettings.distDir}/`,
               `./${defaults.srcDir}/`,
               `./${defaults.varDir}/`,
               "./public/",
