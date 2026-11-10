@@ -14,6 +14,7 @@ import {
   resolveMode,
   runChassis,
 } from "./project";
+import { exitWith } from "./supervisor";
 
 const run = async () => {
   const { values, command, folderNames } = parseCLIArgs(process.argv.slice(2));
@@ -36,23 +37,9 @@ const run = async () => {
     mode: resolveMode(command, values.mode),
   });
 
-  // preview registers its own signal handlers, serve leaves that to the caller
+  // preview registers its own handlers, serve leaves that to the caller
   if (handles) {
-    let stopping = false;
-
-    // a single teardown even when both SIGINT (from the terminal)
-    // and SIGTERM (from the supervisor) arrive
-    const shutdown = () => {
-      if (stopping) {
-        return;
-      }
-      stopping = true;
-      handles.teardown().finally(() => process.exit(0));
-    };
-
-    for (const signal of ["SIGINT", "SIGTERM"] as const) {
-      process.on(signal, shutdown);
-    }
+    exitWith(handles.teardown);
   }
 };
 

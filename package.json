@@ -24,6 +24,7 @@
     "test:integration:sidecar": "vitest run --project=integration:sidecar",
     "test:integration:vitest": "vitest run --project=integration:vitest",
     "test:integration:env": "vitest run --project=integration:env",
+    "test:integration:dev": "vitest run --project=integration:dev",
     "test:integration:paths": "vitest run --project=integration:paths",
     "release:prepare": "bash ./scripts/release/prepare",
     "release:commit": "bash ./scripts/release/commit"

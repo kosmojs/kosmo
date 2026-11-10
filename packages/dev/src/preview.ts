@@ -1,5 +1,4 @@
 import { type ChildProcess, spawn } from "node:child_process";
-import { connect } from "node:net";
 import { basename, posix, relative } from "node:path";
 import { styleText } from "node:util";
 
@@ -8,7 +7,12 @@ import { watch } from "chokidar";
 import type { ProjectSettings, SourceFolder } from "@kosmojs/core";
 import { pathResolver } from "@kosmojs/lib";
 
-import { deployRunner, runnerPath, writeFolderManifest } from "./runner";
+import {
+  deployRunner,
+  RUNNER_LISTENING,
+  runnerPath,
+  writeFolderManifest,
+} from "./runner";
 import type { DisposableServerHandles } from "./types";
 
 // coalesce the burst of events an editor save produces into one rebuild
@@ -20,29 +24,31 @@ const IGNORED_FILE = /(^\.|~$|\.swp$|\.tmp$)/;
 // a build plus the runner's own startup; generous so a cold build on CI fits
 const READY_TIMEOUT_MS = 30_000;
 
+// a runner still alive this long after SIGTERM gets SIGKILL
+const KILL_TIMEOUT_MS = 2_000;
+
 type Build = (
   projectSettings: ProjectSettings,
   sourceFolder: SourceFolder,
 ) => Promise<void>;
 
 /**
- * Resolves once the runner accepts TCP connections on host:port,
- * rejects if it exits first or does not come up in time.
+ * Resolves once the runner says it is listening,
+ * rejects if it exits first or does not get there in time.
  * `spawn` returns before the child has bound its port,
  * and a request sent in that gap is refused.
+ *
+ * The runner reports it itself, over the IPC channel it is spawned with.
+ * Probing the port cannot tell whose listener answers: with the port held by another process
+ * the new runner dies on EADDRINUSE while the probe connects just fine,
+ * and preview goes on serving whatever that other process serves.
  * */
 const waitForRunner = (proc: ChildProcess, host: string, port: number) => {
   return new Promise<void>((resolve, reject) => {
-    const deadline = Date.now() + READY_TIMEOUT_MS;
-
-    let settled = false;
-
     const settle = (error?: Error) => {
-      if (settled) {
-        return;
-      }
-      settled = true;
+      clearTimeout(timer);
       proc.off("exit", onExit);
+      proc.off("message", onMessage);
       error ? reject(error) : resolve();
     };
 
@@ -50,28 +56,19 @@ const waitForRunner = (proc: ChildProcess, host: string, port: number) => {
       settle(new Error(`runner exited before listening (${signal ?? code})`));
     };
 
-    proc.once("exit", onExit);
-
-    const attempt = () => {
-      const socket = connect({ host, port });
-      socket.once("connect", () => {
-        socket.destroy();
+    // app code may talk over the same channel, e.g. to a process manager
+    const onMessage = (message: unknown) => {
+      if (message === RUNNER_LISTENING) {
         settle();
-      });
-      socket.once("error", () => {
-        socket.destroy();
-        if (settled) {
-          return;
-        }
-        if (Date.now() > deadline) {
-          settle(new Error(`runner not listening on ${host}:${port}`));
-          return;
-        }
-        setTimeout(attempt, 100);
-      });
+      }
     };
 
-    attempt();
+    const timer = setTimeout(() => {
+      settle(new Error(`runner not listening on ${host}:${port}`));
+    }, READY_TIMEOUT_MS);
+
+    proc.once("exit", onExit);
+    proc.on("message", onMessage);
   });
 };
 
@@ -111,14 +108,22 @@ export const previewFactory = async (
 
   let child: ChildProcess | undefined;
 
-  // resolves once the new runner is listening
-  const startRunner = () => {
+  // set once preview is shutting down: from then on the runner is stopped, never started
+  let closing: Promise<void> | undefined;
+
+  // resolves once the new runner is listening; starts nothing once preview is shutting down
+  const startRunner = async () => {
+    if (closing) {
+      return;
+    }
+
     const [host, port] = previewHost.split(":");
 
     const proc = spawn(
       process.execPath,
       ["--enable-source-maps", runner, "--host", host, "--port", port],
-      { cwd: root, stdio: "inherit" },
+      // the IPC channel is how the runner reports it is listening
+      { cwd: root, stdio: ["inherit", "inherit", "inherit", "ipc"] },
     );
 
     proc.on("exit", (code, signal) => {
@@ -134,6 +139,7 @@ export const previewFactory = async (
     return waitForRunner(proc, host, Number(port));
   };
 
+  // resolves once the runner is gone, so its port is free for the next one
   const stopRunner = () => {
     return new Promise<void>((resolve) => {
       const proc = child;
@@ -145,7 +151,15 @@ export const previewFactory = async (
       }
 
       child = undefined;
-      proc.once("exit", () => resolve());
+
+      // app code may handle SIGTERM itself and never exit
+      const timer = setTimeout(() => proc.kill("SIGKILL"), KILL_TIMEOUT_MS);
+
+      proc.once("exit", () => {
+        clearTimeout(timer);
+        resolve();
+      });
+
       proc.kill("SIGTERM");
     });
   };
@@ -190,8 +204,11 @@ export const previewFactory = async (
         log(styleText("yellow", "keeping previous build running"));
       } else {
         await restartRunner().catch((error) => {
-          console.error(styleText("red", "runner failed to start"));
-          console.error(error);
+          // a runner stopped mid-start by a shutdown is not a failure
+          if (!closing) {
+            console.error(styleText("red", "runner failed to start"));
+            console.error(error);
+          }
         });
       }
     }
@@ -270,12 +287,56 @@ export const previewFactory = async (
     await inflight;
   };
 
-  const teardown = async () => {
-    clearTimeout(timer);
-    await watcher.close();
-    await inflight;
-    await stopRunner();
+  /**
+   * Stops watching and stops the runner, for good.
+   * One promise for every caller: SIGINT from the terminal and SIGTERM from the supervisor
+   * arrive together, and the second one must wait for the runner to exit like the first.
+   * */
+  const close = () => {
+    closing ??= (async () => {
+      clearTimeout(timer);
+      await Promise.all([watcher.close(), stopRunner()]);
+    })();
+    return closing;
   };
+
+  // the runner goes first; a build in flight is still waited for, and starts no runner
+  const teardown = async () => {
+    await close();
+    await inflight;
+  };
+
+  // registered before the first runner starts, so there is no runner these do not cover
+  if (standalone) {
+    /**
+     * The runner is a child of this process: take it down with us on a plain kill,
+     * not only on the Ctrl-C the terminal already forwards to the whole process group.
+     *
+     * A build in flight is not waited for, it ends with the process.
+     * Waiting could outlast the patience of whoever asked us to stop;
+     * killed mid-wait, this process would leave the runner behind, holding the port.
+     * */
+    const shutdown = async () => {
+      await close();
+      process.exit(0);
+    };
+
+    for (const signal of ["SIGINT", "SIGTERM"] as const) {
+      process.on(signal, shutdown);
+    }
+
+    // under `kosmo preview` the cli supervisor holds an IPC channel to this process;
+    // it closing means the supervisor is gone, and nothing else would stop us
+    process.on("disconnect", shutdown);
+
+    // whatever way this process exits, short of being killed, the runner does not outlive it
+    process.on("exit", () => child?.kill("SIGKILL"));
+
+    // the supervisor may have gone while the build was still running
+    if (process.send && !process.connected) {
+      void shutdown();
+    }
+  }
 
   try {
     await startRunner();
@@ -287,17 +348,6 @@ export const previewFactory = async (
     // the watcher stays up: a save that fixes the cause rebuilds and starts it again
     console.error(styleText("red", "runner failed to start"));
     console.error(error);
-  }
-
-  if (standalone) {
-    // the runner is a child of this process: take it down with us on a plain kill,
-    // not only on the Ctrl-C the terminal already forwards to the whole process group
-    for (const signal of ["SIGINT", "SIGTERM"] as const) {
-      process.once(signal, async () => {
-        await teardown();
-        process.exit(0);
-      });
-    }
   }
 
   return { restart, teardown };

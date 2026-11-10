@@ -16,6 +16,7 @@
     "test:integration:sidecar": "pnpm -C .. run test:integration:sidecar",
     "test:integration:vitest": "pnpm -C .. run test:integration:vitest",
     "test:integration:env": "pnpm -C .. run test:integration:env",
+    "test:integration:dev": "pnpm -C .. run test:integration:dev",
     "test:integration:paths": "pnpm -C .. run test:integration:paths"
   },
   "dependencies": {

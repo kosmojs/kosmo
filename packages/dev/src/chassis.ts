@@ -5,8 +5,11 @@ import { styleText } from "node:util";
 
 import {
   build,
+  createRunnableDevEnvironment,
   createServer,
+  type HotUpdateOptions,
   type Plugin,
+  type ResolvedConfig,
   type RunnableDevEnvironment,
   type UserConfig,
 } from "vite";
@@ -37,8 +40,38 @@ import {
 
 import { cacheFactory } from "./cache";
 import { previewFactory } from "./preview";
+import { linkProgram, serialQueue, withDeadline } from "./reload";
 import { deployRunner, writeFolderManifest } from "./runner";
 import type { DisposableServerHandles } from "./types";
+
+/**
+ * A teardownHandler still pending this long is no longer waited for.
+ * Shorter than the time the cli supervisor gives a worker to stop,
+ * so a teardown that hangs still leaves room to close the servers.
+ * */
+const TEARDOWN_TIMEOUT_MS = 3_000;
+
+/**
+ * A default runner listens on Vite's hot channel and, told to full-reload,
+ * evaluates its entry again by itself, next to what is already running:
+ * one more API program with its own db pool and sockets, one more copy of a service's modules,
+ * and nothing left to tear either down.
+ *
+ * Replacing what runs is done by the reloads below and nowhere else,
+ * so the runner of such an environment gets no HMR client.
+ * */
+const createEnvironment = (name: string, config: ResolvedConfig) => {
+  return createRunnableDevEnvironment(name, config, {
+    runnerOptions: { hmr: false },
+  });
+};
+
+// what a `hotUpdate` hook calls an event, to what the watch handlers are keyed by
+const watcherEvents = {
+  create: "add",
+  update: "change",
+  delete: "unlink",
+} as const satisfies Record<HotUpdateOptions["type"], string>;
 
 type ReturnSignature<C extends ChassisCommand> = C extends "serve" | "test"
   ? DisposableServerHandles
@@ -284,6 +317,49 @@ export default async <C extends ChassisCommand>(
         (e) => e.meta.slot === "backend",
       );
 
+      /**
+       * Assigned once the first program is up.
+       * The reload plugin below is installed during `createServer`,
+       * before there is anything to reload, so its hook reaches the reload through this binding.
+       * */
+      let reload = async () => {};
+
+      /**
+       * Generators first: the files they rewrite for this event belong to the program loaded next.
+       * Whether or not they succeed, a module of the running program changed, so it is reloaded.
+       * */
+      const onFileEvent = async ({ type, file }: HotUpdateOptions) => {
+        try {
+          await eventMap[sourceFolder.name][watcherEvents[type]](file);
+        } catch (error) {
+          console.error(
+            styleText("red", `${sourceFolder.name}: watch handler failed`),
+          );
+          console.error(error);
+        }
+        await reload();
+      };
+
+      /**
+       * A raw `watcher.on("change")` runs before Vite has invalidated the changed modules,
+       * so a program reloaded from there can come back up running the source from before the save.
+       *
+       * `hotUpdate` is called after that invalidation, once per environment;
+       * only `backend` resolves a module on this server.
+       * Returning `[]` says the update is handled and leaves Vite nothing to propagate.
+       *
+       * A plugin survives `viteServer.restart()`, so there is nothing to re-add after one.
+       * */
+      const reloadPlugin: Plugin = {
+        name: "kosmo:backend-reload",
+        hotUpdate(options) {
+          if (this.environment.name === "backend" && options.modules.length) {
+            void onFileEvent(options);
+          }
+          return [];
+        },
+      };
+
       const viteServer = await createServer(
         mergeConfigs(
           genericDefaults,
@@ -306,11 +382,18 @@ export default async <C extends ChassisCommand>(
               sourceFolder,
               `backend:${command}`,
             ),
-            plugins: [...plugins, vitePlugins.envProvider("backend")],
+            plugins: [
+              ...plugins,
+              reloadPlugin,
+              vitePlugins.envProvider("backend"),
+            ],
             server: {
               host: devHost,
               allowedHosts: [host],
               middlewareMode: true,
+              // `hotUpdate` is part of the HMR pipeline, so it runs only with `hmr` on;
+              // `ws: false` keeps Vite from binding a socket for it.
+              hmr: true,
               ws: false,
             },
             resolve: {
@@ -321,6 +404,7 @@ export default async <C extends ChassisCommand>(
                 resolve: {
                   conditions: ["node"],
                 },
+                dev: { createEnvironment },
               },
             },
           },
@@ -332,73 +416,123 @@ export default async <C extends ChassisCommand>(
         return viteServer.environments.backend as RunnableDevEnvironment;
       };
 
+      const entry = join(defaults.apiDir, "dev.ts");
+
       const loadDevSetup = async () => {
         const { runner } = environment();
         runner.clearCache();
         return runner
-          .import<{ default: DevSetup }>(join(defaults.apiDir, "dev.ts"))
+          .import<{ default: DevSetup }>(entry)
           .then((e) => e.default);
       };
 
-      let devSetup = await loadDevSetup();
+      /**
+       * The running API program: api/dev.ts as evaluated, with whatever it opened along the way -
+       * db pools, sockets, timers. None of that is visible from here;
+       * only the program's own `teardownHandler` can close it.
+       *
+       * So a program is torn down exactly once, and the next one is evaluated only after that.
+       * There is never more than one alive, and a port the old one held is free for the new one.
+       *
+       * Undefined from a teardown until the next load succeeds.
+       * */
+      let devSetup: DevSetup | undefined = await loadDevSetup();
 
-      // watchers replaced on every restart, re-add
-      const addWatchers = () => {
-        for (const [evt, handler] of Object.entries(
-          eventMap[sourceFolder.name],
-        )) {
-          viteServer.watcher.on(evt, async (file) => {
-            const mods = environment().moduleGraph.getModulesByFile(file);
-            if (mods?.size) {
-              try {
-                await handler(file);
-                await devSetup?.teardownHandler?.();
-                devSetup = await loadDevSetup();
-              } catch (error) {
-                // keep the dev server alive; the next good save reloads
-                console.error(
-                  styleText(
-                    "red",
-                    `${sourceFolder.name}: backend reload failed`,
-                  ),
-                );
-                console.error(error);
-              }
-            }
-          });
+      // reloads, restarts and the final teardown all replace the program, one at a time
+      const queue = serialQueue();
+
+      const closeProgram = async () => {
+        const setup = devSetup;
+        // dropped before its teardown runs, so nothing tears it down a second time
+        devSetup = undefined;
+        try {
+          await withDeadline(
+            async () => setup?.teardownHandler?.(),
+            TEARDOWN_TIMEOUT_MS,
+            `teardownHandler still pending after ${TEARDOWN_TIMEOUT_MS}ms`,
+          );
+        } catch (error) {
+          // whatever it left open stays open; the next program is loaded regardless
+          console.error(
+            styleText("red", `${sourceFolder.name}: backend teardown failed`),
+          );
+          console.error(error);
         }
       };
 
-      addWatchers();
+      reload = queue.coalesce(async () => {
+        try {
+          await linkProgram(environment(), entry);
+        } catch (error) {
+          // the running program stays up; the save that fixes the file reloads
+          console.error(
+            styleText("red", `${sourceFolder.name}: backend reload skipped`),
+          );
+          console.error(error);
+          return;
+        }
+        await closeProgram();
+        try {
+          devSetup = await loadDevSetup();
+        } catch (error) {
+          // keep the dev server alive; the next good save reloads
+          console.error(
+            styleText("red", `${sourceFolder.name}: backend reload failed`),
+          );
+          console.error(error);
+        }
+      });
+
+      // answers while there is no program: mid-reload, or after a load that failed
+      const unavailable: RequestHandler = (_req, res) => {
+        res.writeHead(503, {
+          "Content-Type": "text/plain",
+          "Retry-After": "1",
+        });
+        res.end(
+          `${sourceFolder.name}: API is reloading or failed to load, see the dev server output`,
+        );
+      };
 
       requestHandlers.push([
         backend.base,
-        () => devSetup.requestMatcher || requestMatchers.backend,
-        () => devSetup.requestHandler(),
+        () => devSetup?.requestMatcher || requestMatchers.backend,
+        () => devSetup?.requestHandler() || unavailable,
         // a custom requestMatcher owns matching entirely, aliases included
-        () => (devSetup.requestMatcher ? undefined : requestMatchers.alias),
+        () => (devSetup?.requestMatcher ? undefined : requestMatchers.alias),
       ]);
 
-      restartHandlers.push(async () => {
-        await devSetup?.teardownHandler?.();
-        await viteServer.restart();
-        addWatchers();
-        devSetup = await loadDevSetup();
+      restartHandlers.push(() => {
+        return queue.run(async () => {
+          await closeProgram();
+          await viteServer.restart();
+          devSetup = await loadDevSetup();
+        });
       });
 
-      teardownHandlers.push(viteServer.close);
+      // the program goes first, while the runner its code was loaded with is still up
+      teardownHandlers.push(() => {
+        // a save landing mid-teardown must not bring the program back
+        reload = async () => {};
+        return queue.run(async () => {
+          await closeProgram();
+          await viteServer.close();
+        });
+      });
     }
 
     if (sidecar?.serve) {
       /**
        * Assigned once the service is up; the reload plugin below is installed during `createServer`,
-       * so the hook has to reach it through a binding rather than a closure over something that does not exist yet.
+       * so the hook has to reach it through a binding rather than a closure
+       * over something that does not exist yet.
        * */
       let reload = async () => {};
 
       /**
-       * Restarting on a raw `watcher.on("change")` reads the module graph before Vite has invalidated it,
-       * and the service comes back up running the source as it was before the save.
+       * Restarting on a raw `watcher.on("change")` reads the module graph
+       * before Vite has invalidated it, and the service comes back up running the source
+       * as it was before the save.
        *
        * `hotUpdate` is called after that invalidation.
        * Returning `[]` says the update is handled and leaves Vite nothing to propagate.
@@ -444,6 +578,7 @@ export default async <C extends ChassisCommand>(
                 resolve: {
                   conditions: ["node"],
                 },
+                dev: { createEnvironment },
               },
             },
           },
@@ -466,24 +601,38 @@ export default async <C extends ChassisCommand>(
       let service = await loadService();
       let close = await service.start();
 
-      reload = async () => {
+      // reloads, restarts and the final teardown all replace the service, one at a time
+      const queue = serialQueue();
+
+      /**
+       * The closer is dropped right before it is called, so it is called once,
+       * whether it resolves, throws or never settles.
+       * A real one throws when called again, and the sidecar would never come back.
+       * */
+      const stopService = async () => {
+        await withDeadline(
+          async () => {
+            await service.teardown?.();
+            const closer = close;
+            close = async () => {};
+            await closer();
+          },
+          TEARDOWN_TIMEOUT_MS,
+          `service still closing after ${TEARDOWN_TIMEOUT_MS}ms`,
+        );
+      };
+
+      const reloadService = async () => {
         try {
           /**
-           * Load before tearing anything down: a save that cannot compile throws here,
-           * and the running service is left untouched rather than closed with nothing to replace it -
-           * which is unrecoverable for a service whose close function cannot run twice.
+           * Load before stopping anything: a save that cannot compile throws here,
+           * and the running service is left untouched, not closed with nothing to replace it.
            *
-           * Starting still happens after closing, so a service holding a port frees it before the new one binds.
+           * Starting still happens after closing,
+           * so a service holding a port frees it before the new one binds.
            * */
           const next = await loadService();
-          await service.teardown?.();
-          await close();
-          /**
-           * Nothing is running between here and `start()`, so drop the closer:
-           * a `start()` that throws would otherwise leave the next reload calling it a second time,
-           * which for a real one throws too - and the sidecar never comes back.
-           * */
-          close = async () => {};
+          await stopService();
           service = next;
           close = await service.start();
         } catch (error) {
@@ -495,26 +644,31 @@ export default async <C extends ChassisCommand>(
         }
       };
 
-      restartHandlers.push(async () => {
-        await viteServer.restart();
-        await reload();
+      reload = queue.coalesce(reloadService);
+
+      restartHandlers.push(() => {
+        return queue.run(async () => {
+          await viteServer.restart();
+          await reloadService();
+        });
       });
 
       // the service goes first, while the runner its code was loaded with is still up
-      teardownHandlers.push(async () => {
+      teardownHandlers.push(() => {
         // a save landing mid-teardown must not start the service again
         reload = async () => {};
-        try {
-          await service.teardown?.();
-          await close();
-        } catch (error) {
-          // still close the vite server below
-          console.error(
-            styleText("red", `${sourceFolder.name}: sidecar teardown failed`),
-          );
-          console.error(error);
-        }
-        await viteServer.close();
+        return queue.run(async () => {
+          try {
+            await stopService();
+          } catch (error) {
+            // still close the vite server below
+            console.error(
+              styleText("red", `${sourceFolder.name}: sidecar teardown failed`),
+            );
+            console.error(error);
+          }
+          await viteServer.close();
+        });
       });
     }
   }

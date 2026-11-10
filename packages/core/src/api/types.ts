@@ -121,7 +121,11 @@ export type DevSetup = {
   requestMatcher?: (req: IncomingMessage) => boolean;
 
   /**
-   * In dev mode, perform cleanup operations before reloading the API handler.
+   * In dev mode, release whatever the API program holds: db connections, sockets, timers.
+   *
+   * Called once for every program that was loaded -
+   * before each reload, and when the dev server stops.
+   * The next program is evaluated only after the returned promise settles.
    * */
   teardownHandler?: () => void | Promise<void>;
 };

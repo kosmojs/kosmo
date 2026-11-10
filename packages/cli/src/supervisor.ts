@@ -11,6 +11,13 @@ const DEBOUNCE_MS = 300;
 // a worker still alive this long after SIGTERM gets SIGKILL
 const KILL_TIMEOUT_MS = 5_000;
 
+/**
+ * A worker gives its own teardown this long, then exits anyway.
+ * Shorter than KILL_TIMEOUT_MS: a worker that leaves by itself still runs its exit hooks,
+ * one that is killed does not.
+ * */
+const TEARDOWN_TIMEOUT_MS = 4_000;
+
 const label = (root: string, dir: string) => relative(root, dir) || ".";
 
 const log = (...args: Array<unknown>) => {
@@ -28,6 +35,10 @@ const log = (...args: Array<unknown>) => {
  *
  * A worker that exits on its own (failed startup, crash) is not respawned
  * until a watched file changes, so a fixing save brings it back.
+ *
+ * The worker is spawned with an IPC channel that carries no messages.
+ * It is there to close: that is how a worker learns the supervisor is gone,
+ * whichever way it went, and stops instead of running on as an orphan. See `exitWith`.
  * */
 export const supervise = ({
   root,
@@ -49,7 +60,7 @@ export const supervise = ({
     const proc = spawn(
       process.execPath,
       [...process.execArgv, worker, ...args],
-      { cwd: root, stdio: "inherit" },
+      { cwd: root, stdio: ["inherit", "inherit", "inherit", "ipc"] },
     );
 
     proc.on("error", (error) => {
@@ -189,4 +200,37 @@ export const supervise = ({
   }
 
   start();
+};
+
+/**
+ * The worker's side of `supervise`: run `teardown` once, then exit, when
+ * - SIGINT arrives - a terminal sends Ctrl-C to the whole process group, the worker included;
+ * - SIGTERM arrives - the supervisor stopping or restarting it;
+ * - the channel to the supervisor closes - it is gone and nothing else would stop this process.
+ *
+ * The teardown runs against a deadline of its own, as the supervisor's SIGKILL may never come:
+ * a second Ctrl-C ends the supervisor at once, a `kill -9` ends it without a word.
+ * */
+export const exitWith = (teardown: () => Promise<unknown>) => {
+  let stopping = false;
+
+  const shutdown = () => {
+    if (stopping) {
+      return;
+    }
+    stopping = true;
+    setTimeout(() => process.exit(1), TEARDOWN_TIMEOUT_MS);
+    teardown().finally(() => process.exit(0));
+  };
+
+  for (const signal of ["SIGINT", "SIGTERM"] as const) {
+    process.on(signal, shutdown);
+  }
+
+  process.on("disconnect", shutdown);
+
+  // the supervisor may have gone while the worker was still starting up
+  if (process.send && !process.connected) {
+    shutdown();
+  }
 };

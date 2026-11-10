@@ -83,6 +83,20 @@ restarts the dev server as a whole, in a fresh process.
 It is re-evaluated on every relevant change: the previous setup is torn down, the file re-imported,
 and the fresh handler serves the next request.
 
+Reloads run one at a time, and always in the same order:
+
+1. The saved program is checked: every module transformed, none evaluated.
+A save that cannot compile, or that imports a file that does not exist,
+is reported and the running API is left as it is.
+2. The running program is torn down, its `teardownHandler` awaited.
+3. Only then is `api/dev.ts` evaluated anew.
+
+So there is never more than one API program alive.
+A port or a connection pool held by the old one is released before the new one asks for it.
+
+Saves landing while a reload runs are folded into a single reload after it.
+Between steps 2 and 3 there is no program to answer, so the dev server responds with `503`.
+
 The three hooks below sit on that cycle.
 
 ### requestHandler
@@ -160,8 +174,8 @@ export default devSetup({
 
 ### teardownHandler
 
-Runs before each API reload. Use it to close connections and release resources
-that would otherwise leak across rebuilds:
+Runs once for every program that was loaded: before each API reload, and when the dev server stops.
+Use it to close connections and release resources that would otherwise leak across rebuilds:
 
 ```ts
 let dbConnection;
@@ -181,6 +195,16 @@ export default devSetup({
 ```
 
 Without cleanup, frequent rebuilds during active development can exhaust database connections.
+
+The next program is evaluated only after the hook settles, so await whatever you close.
+A hook still pending after 3 seconds is reported and no longer waited for.
+
+::: warning
+The hook belongs to a program that loaded completely.
+If a module throws while it is being evaluated, the modules evaluated before it
+have already opened whatever they open at the top level, and there is no hook to close that with.
+Each such save leaves those connections behind until the dev server restarts.
+:::
 
 ::: tip
 This hook is dev-only. In production the process exits and the OS reclaims everything;

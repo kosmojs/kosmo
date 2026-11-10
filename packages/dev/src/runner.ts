@@ -9,9 +9,12 @@ import {
   type SourceFolder,
   type SourceFolderManifest,
 } from "@kosmojs/core";
-import { createAliasPatterns, pathResolver } from "@kosmojs/lib";
+import { createAliasPatterns, pathResolver, renderToFile } from "@kosmojs/lib";
 
 import runTemplate from "#templates/run";
+
+// what dist/run.js sends its parent once its port is bound; see templates/run.ts
+export const RUNNER_LISTENING = "kosmo:listening";
 
 export const folderManifestFactory = (
   sourceFolder: SourceFolder,
@@ -77,7 +80,6 @@ const runnerCodeFactory = async (): Promise<string> => {
  * */
 export const deployRunner = async (projectSettings: ProjectSettings) => {
   const file = runnerPath(projectSettings);
-  await mkdir(resolve(file, ".."), { recursive: true });
-  await writeFile(file, await runnerCodeFactory(), "utf8");
+  await renderToFile(file, await runnerCodeFactory(), { RUNNER_LISTENING });
   return file;
 };

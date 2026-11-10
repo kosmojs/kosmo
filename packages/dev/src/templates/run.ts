@@ -335,7 +335,26 @@ if (import.meta.url === self) {
   });
 
   try {
-    await startServer({ host, port, sock });
+    const server = await startServer({ host, port, sock });
+
+    // `kosmo preview` spawns this file with an IPC channel and waits to be told it is listening;
+    // under a plain `node dist/run.js` there is no channel and nothing here applies
+    if (process.send) {
+      /**
+       * The channel closing means preview is gone, however it went:
+       * a `kill -9` runs none of its handlers, and nothing else would stop this process,
+       * left holding the port the next preview binds.
+       * */
+      process.once("disconnect", () => process.exit(0));
+
+      // preview may have gone while this process was still starting up
+      if (!process.connected) {
+        process.exit(0);
+      }
+
+      const report = () => process.send?.("{{ RUNNER_LISTENING }}");
+      server.listening ? report() : server.once("listening", report);
+    }
   } catch (error) {
     console.error("Failed starting server");
     console.error(error);

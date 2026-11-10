@@ -140,6 +140,10 @@ export default defineConfig({
       setupFactory("integration:env", {
         include: ["integration/env/*.test.ts"],
       }),
+
+      setupFactory("integration:dev", {
+        include: ["integration/dev/*.test.ts"],
+      }),
     ],
   },
 });
