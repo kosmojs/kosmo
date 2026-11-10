@@ -1,3 +1,18 @@
+## [0.7.1](https://github.com/kosmojs/kosmo/compare/v0.7.0...v0.7.1) (2026-11-10)
+
+### Bug Fixes
+
+* address process leaking on restart ([d0d2704](https://github.com/kosmojs/kosmo/commit/d0d2704eb76738706e7d7ac01a9de92348730e45))
+
+  Three ways a process could outlive its run:
+
+  - dev: a reload could leave the previous API program running;
+  reloads now run one at a time, check the saved code first, and await
+  teardownHandler, which also runs on stop.
+  - preview: dist/run.js reports readiness over IPC, and a runner ignoring
+  SIGTERM is killed.
+  - cli: the worker stops when the supervisor goes, on Ctrl-C or kill -9
+
 ## [0.7.0](https://github.com/kosmojs/kosmo/compare/v0.6.11...v0.7.0) (2026-11-09)
 
 ### Features
