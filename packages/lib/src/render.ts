@@ -25,13 +25,61 @@ export type FactoryOptions = RenderOptions & {
   overwrite?: boolean | ((fileContent: string) => boolean);
 };
 
+type Renderer = typeof handlebars;
+
+// Precompiled template specs, shared by every Handlebars instance.
+// Precompiling (parse + codegen) is the bulk of render() time,
+// and the same few templates are rendered once per route.
+// Keyed by template text, so the cache is bounded by the templates shipped,
+// not by the number of routes.
+const specCache = new Map<string, TemplateSpecification>();
+
+// specs bound to a given instance, so its own helpers and partials apply
+const boundCache = new WeakMap<
+  Renderer,
+  Map<string, HandlebarsTemplateDelegate>
+>();
+
+const compileTemplate = (
+  renderer: Renderer,
+  template: string,
+  noEscape: boolean,
+): HandlebarsTemplateDelegate => {
+  const key = `${noEscape ? 1 : 0}:${template}`;
+
+  let bound = boundCache.get(renderer);
+
+  if (!bound) {
+    bound = new Map();
+    boundCache.set(renderer, bound);
+  }
+
+  let compiled = bound.get(key);
+
+  if (!compiled) {
+    let spec = specCache.get(key);
+    if (!spec) {
+      // precompile returns the spec as JS source, despite its typing
+      const source = handlebars.precompile(template, {
+        noEscape,
+      }) as unknown as string;
+      spec = new Function(`return ${source}`)() as TemplateSpecification;
+      specCache.set(key, spec);
+    }
+    compiled = renderer.template(spec);
+    bound.set(key, compiled);
+  }
+
+  return compiled;
+};
+
 export const render = <Context = object>(
   template: string,
   context: Context,
   options?: RenderOptions,
 ): string => {
   const { noEscape = true, renderer = handlebars } = { ...options };
-  return renderer.compile(template, { noEscape })(context);
+  return compileTemplate(renderer, template, noEscape)(context);
 };
 
 export const renderToFile = async <Context = object>(
@@ -86,6 +134,19 @@ export const renderFactory = (options?: FactoryOptions) => {
     return renderer;
   };
 
+  // one instance for the factory, so its partials compile once
+  // and its templates stay bound; calls bringing their own partials
+  // or helpers get an instance of their own
+  let factoryRenderer: Renderer | undefined;
+
+  const resolveRenderer = (selfOoptions?: FactoryOptions) => {
+    if (selfOoptions?.partials || selfOoptions?.helpers) {
+      return createRenderer(selfOoptions);
+    }
+    factoryRenderer ??= createRenderer();
+    return factoryRenderer;
+  };
+
   return {
     render<Context = object>(
       template: string,
@@ -95,7 +156,7 @@ export const renderFactory = (options?: FactoryOptions) => {
       return render(template, context, {
         ...options,
         ...selfOoptions,
-        renderer: createRenderer(selfOoptions),
+        renderer: resolveRenderer(selfOoptions),
       });
     },
     async renderToFile<Context = object>(
@@ -111,7 +172,7 @@ export const renderFactory = (options?: FactoryOptions) => {
         {
           ...options,
           ...selfOoptions,
-          renderer: createRenderer(selfOoptions),
+          renderer: resolveRenderer(selfOoptions),
         },
       );
     },
