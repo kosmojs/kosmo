@@ -1,0 +1,22 @@
+{
+  "id": "discovery_index_ts_1974003329",
+  "name": "discovery",
+  "folder": "api",
+  "file": "discovery/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "discovery",
+      "pattern": "discovery",
+      "parts": [
+        {
+          "type": "static",
+          "value": "discovery"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "discovery",
+  "honoPattern": "discovery",
+  "h3Pattern": "discovery"
+}

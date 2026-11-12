@@ -2,12 +2,12 @@ import { join } from "node:path";
 
 import crc from "crc/crc32";
 import { parse, type Token } from "path-to-regexp";
-import Type from "typebox";
 
 import {
   type ApiRoute,
   type RequestBodyTarget,
   RequestBodyTargets,
+  type JsonSchema as ResolvedSchema,
   type ResponseValidationDefinition,
 } from "@kosmojs/core";
 import { sortRoutes } from "@kosmojs/lib";
@@ -27,14 +27,19 @@ const requestBodyMap: Record<RequestBodyTarget, unknown> = {
 };
 
 export default () => {
-  const jsonSchemaBuilder = (typeboxSchema: string): JsonSchema => {
-    if (["Buffer", "ArrayBuffer", "Blob"].includes(typeboxSchema)) {
+  // the resolved types are JSON Schema already;
+  // a binary body - a custom type of the runtime - is a binary string
+  const jsonSchemaBuilder = (schema: ResolvedSchema): JsonSchema => {
+    if (
+      typeof schema.$ref === "string" &&
+      ["Buffer", "ArrayBuffer", "Blob"].includes(schema.$ref)
+    ) {
       return {
         type: "string",
         format: "binary",
       };
     }
-    return Type.Script(typeboxSchema) as unknown as JsonSchema;
+    return schema as JsonSchema;
   };
 
   // Generate unique component ID
@@ -364,26 +369,26 @@ export default () => {
     for (const def of route.validationDefinitions) {
       if (def.target === "response") {
         for (const { id, resolvedType } of def.variants) {
-          if (resolvedType?.typeboxSchema) {
+          if (resolvedType?.jsonSchema) {
             schemas[generateComponentId(route, id)] = jsonSchemaBuilder(
-              resolvedType.typeboxSchema,
+              resolvedType.jsonSchema,
             );
           }
         }
       } else if (def.target === "query") {
         const { id, resolvedType } = def.schema;
         for (const prop of resolvedType?.properties || []) {
-          if (prop?.typeboxSchema) {
+          if (prop?.jsonSchema) {
             // generating a schema for every property
             const key = generateComponentId(route, id, prop.name);
-            schemas[key] = jsonSchemaBuilder(prop.typeboxSchema);
+            schemas[key] = jsonSchemaBuilder(prop.jsonSchema);
           }
         }
       } else {
         const { id, resolvedType } = def.schema;
-        if (resolvedType?.typeboxSchema) {
+        if (resolvedType?.jsonSchema) {
           schemas[generateComponentId(route, id)] = jsonSchemaBuilder(
-            resolvedType.typeboxSchema,
+            resolvedType.jsonSchema,
           );
         }
       }
@@ -391,12 +396,12 @@ export default () => {
 
     if (route.params.resolvedType) {
       for (const prop of route.params.resolvedType.properties || []) {
-        if (prop?.typeboxSchema) {
+        if (prop?.jsonSchema) {
           parameters[generateComponentId(route, route.params.id, prop.name)] = {
             name: prop.name,
             in: "path",
             required: true,
-            schema: jsonSchemaBuilder(prop.typeboxSchema),
+            schema: jsonSchemaBuilder(prop.jsonSchema),
           };
         }
       }

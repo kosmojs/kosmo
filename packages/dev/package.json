@@ -3,7 +3,7 @@
   "name": "@kosmojs/dev",
   "version": "0.7.1",
   "description": "Vite integration for KosmoJS projects",
-  "cacheVersion": "001",
+  "cacheVersion": "002",
   "author": "Slee Woo",
   "license": "MIT",
   "repository": {

@@ -1,20 +1,17 @@
 import { describe, expect, test } from "vitest";
 
-import { astFactory } from "@kosmojs/lib";
+import { astFactory, parseSource } from "@kosmojs/lib";
 
 describe("extractParamsRefinements", () => {
   const {
     //
-    createProject,
     extractDefaultExport,
     extractParamsRefinements,
   } = astFactory();
 
-  const project = createProject();
-
   test("no refinements", ({ task }) => {
     const defaultExport = extractDefaultExport(
-      project.createSourceFile(`${task.id}.ts`, "export default defineRoute()"),
+      parseSource(`${task.id}.ts`, "export default defineRoute()"),
     );
     const refinements = defaultExport
       ? extractParamsRefinements(defaultExport)
@@ -24,7 +21,7 @@ describe("extractParamsRefinements", () => {
 
   test("single refinement", ({ task }) => {
     const defaultExport = extractDefaultExport(
-      project.createSourceFile(
+      parseSource(
         `${task.id}.ts`,
         `export default defineRoute<"", [number]>()`,
       ),
@@ -42,7 +39,7 @@ describe("extractParamsRefinements", () => {
 
   test("multiple refinements", ({ task }) => {
     const defaultExport = extractDefaultExport(
-      project.createSourceFile(
+      parseSource(
         `${task.id}.ts`,
         `export default defineRoute<"", [number, "a" | "b"]>()`,
       ),
@@ -64,7 +61,7 @@ describe("extractParamsRefinements", () => {
 
   test("with referenced elements", ({ task }) => {
     const defaultExport = extractDefaultExport(
-      project.createSourceFile(
+      parseSource(
         `${task.id}.ts`,
         `type T = string; export default defineRoute<"", [T]>()`,
       ),
@@ -82,7 +79,7 @@ describe("extractParamsRefinements", () => {
 
   test("should return undefined for referenced types", ({ task }) => {
     const defaultExport = extractDefaultExport(
-      project.createSourceFile(
+      parseSource(
         `${task.id}.ts`,
         `type T = [string]; export default defineRoute<"", T>()`,
       ),

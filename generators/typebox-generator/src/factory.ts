@@ -157,7 +157,9 @@ export default defineGeneratorFactory<TypeboxOptions>(
           templates.schemas,
           {
             route: entry,
-            resolvedTypes,
+            resolvedTypes: resolvedTypes.map(({ name, jsonSchema }) => {
+              return { name, jsonSchema: JSON.stringify(jsonSchema) };
+            }),
             requestSchemas,
             responseSchemas,
           },

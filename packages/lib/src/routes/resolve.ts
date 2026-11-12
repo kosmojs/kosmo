@@ -1,4 +1,4 @@
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { styleText } from "node:util";
 
 import crc from "crc/crc32";
@@ -45,12 +45,11 @@ export const resolverFactory = (
 
   const resolveTypes = generators.some(({ meta }) => meta.resolveTypes);
 
-  const {
-    //
-    literalTypesResolver,
-    getSourceFile,
-    refreshSourceFile,
-  } = typeResolverFactory(projectSettings, sourceFolder);
+  const { resolveTypes: typesResolver } = typeResolverFactory(
+    projectSettings,
+    sourceFolder,
+    { refineTypeName },
+  );
 
   return {
     pageLayoutResolver(entry) {
@@ -132,7 +131,7 @@ export const resolverFactory = (
         h3Pattern,
       } = entry;
 
-      const handler: ResolverSignature["handler"] = async (updatedFile) => {
+      const handler: ResolverSignature["handler"] = async () => {
         const paramsSchema: Array<PathTokenParamPart> = pathTokens.flatMap(
           (e) => {
             return e.parts.flatMap((p) => {
@@ -159,31 +158,51 @@ export const resolverFactory = (
           : undefined;
 
         if (!cache) {
-          if (updatedFile === fileFullpath) {
-            await refreshSourceFile(fileFullpath);
-          }
+          const signature = (() => {
+            try {
+              return resolveRouteSignature(
+                { id, name, fileFullpath },
+                {
+                  importSpecifierResolver(path) {
+                    if (/^\.\.?\/?/.test(path)) {
+                      return join(
+                        defaults.appPrefix,
+                        defaults.srcDir,
+                        sourceFolder.name,
+                        defaults.apiDir,
+                        dirname(file),
+                        path,
+                      );
+                    }
+                    if (path.startsWith(`${defaults.srcPrefix}/`)) {
+                      return join(
+                        defaults.appPrefix,
+                        defaults.srcDir,
+                        sourceFolder.name,
+                        path.replace(defaults.srcPrefix, ""),
+                      );
+                    }
+                    return path;
+                  },
+                },
+              );
+            } catch (error) {
+              // a file mid-edit; it resolves again once it parses
+              console.warn(
+                styleText(["bold", "red"], "✗ Failed parsing API route"),
+              );
+              console.warn(`  ${(error as Error).message}`);
+              console.warn();
+              return undefined;
+            }
+          })();
 
           const {
-            typeDeclarations,
+            typeDeclarations = [],
             paramsRefinements,
-            methods,
-            validationDefinitions,
-            referencedFiles = [],
-          } = await resolveRouteSignature(
-            { id, name, fileFullpath, optionalParams },
-            {
-              withReferencedFiles: true,
-              sourceFile: getSourceFile(fileFullpath),
-              relpathResolver(path) {
-                return join(
-                  defaults.srcPrefix,
-                  defaults.apiDir,
-                  dirname(file),
-                  path,
-                );
-              },
-            },
-          );
+            methods = [],
+            validationDefinitions = [],
+          } = { ...signature };
 
           const validationTypes = validationDefinitions.flatMap<{
             id: string;
@@ -221,48 +240,44 @@ export const resolverFactory = (
             validationTypes,
           });
 
-          const resolvedTypes = resolveTypes
-            ? literalTypesResolver(typesFileContent, {
-                stripComments: true,
-                overrides: { [refineTypeName]: refineTypeName },
-                withProperties: [
-                  params.id,
-                  ...validationTypes.map(({ id }) => id),
-                ],
-                // a payload that ends up in a database,
-                // and a response that may carry more than it declares,
-                // reject undeclared properties
-                closedTypes: validationDefinitions.flatMap((def) => {
-                  if (def.target === "response") {
-                    return def.variants.map(({ id }) => id);
-                  }
-                  return def.target === "json" || def.target === "form"
-                    ? [def.schema.id]
-                    : [];
-                }),
-              })
-            : undefined;
-
-          /**
-           * Deploy types.ts file; required by core generators (like fetch).
-           * If types resolved, write resolved types;
-           * otherwise write original types extracted from API route.
-           * */
-          await renderToFile(
-            typesFile,
-            resolvedTypes ? templates.resolvedTypes : typesFileContent,
-            { resolvedTypes },
+          // every file the validation types reach and the JSON Schema each type evaluates to
+          const { resolvedTypes, referencedFiles } = typesResolver(
+            { file: typesFile, source: typesFileContent, route: name },
+            {
+              names: [params.id, ...validationTypes.map(({ id }) => id)],
+              evaluate: resolveTypes,
+              // a payload that ends up in a database,
+              // and a response that may carry more than it declares,
+              // reject undeclared properties
+              closedTypes: validationDefinitions.flatMap((def) => {
+                if (def.target === "response") {
+                  return def.variants.map(({ id }) => id);
+                }
+                return def.target === "json" || def.target === "form"
+                  ? [def.schema.id]
+                  : [];
+              }),
+            },
           );
+
+          // types.ts holds the route's own declarations, imports pointing to the source;
+          // required by core generators (like fetch)
+          await renderToFile(typesFile, typesFileContent, {});
 
           params.resolvedType = resolvedTypes?.find(
             (e) => e.name === params.id,
           );
 
           cache = {
-            // placeholder values, if cacheFactory given,
-            // they will be replaced by persistCache
+            // placeholder hashes; if cacheFactory given,
+            // they are replaced by persistCache
             hash: 0,
-            referencedFiles: {},
+            referencedFiles: Object.fromEntries(
+              referencedFiles.map((file) => [
+                relative(projectSettings.root, file),
+                0,
+              ]),
+            ),
             // real values
             params,
             methods,

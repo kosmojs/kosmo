@@ -1,6 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
-import type { ResolvedType } from "tfusion";
 import type { UserConfig } from "vite";
 
 export type DeepPartial<T> = {
@@ -31,15 +30,26 @@ export type ViteConfig = Omit<
   };
 };
 
-export type ResolvedTypeSignature = Omit<ResolvedType, "properties"> & {
-  // needed for validation
-  typeboxSchema?: string;
-  properties?: Array<
-    NonNullable<ResolvedType["properties"]>[number] & {
-      // needed for openapi
-      typeboxSchema?: string;
-    }
-  >;
+/**
+ * A JSON Schema object, as TypeBox produces and consumes it.
+ * */
+export type JsonSchema = Record<string, unknown>;
+
+/**
+ * A validation type of a route, evaluated to JSON Schema at build time.
+ * */
+export type ResolvedTypeSignature = {
+  // the type's name in the route's types.ts, e.g. JsonTPOST123
+  name: string;
+  // what the type evaluates to; a custom type of the runtime
+  // (Date, File, Blob, Buffer, ArrayBuffer) stays a `{ $ref: "<name>" }`
+  jsonSchema: JsonSchema;
+  // the top-level properties of an object type; needed for openapi
+  properties?: Array<{
+    name: string;
+    optional: boolean;
+    jsonSchema: JsonSchema;
+  }>;
   // needed to coerce numeric params and numeric props in query validation target
   numericProperties?: Array<string>;
   // needed to coerce boolean props in query validation target

@@ -1,13 +1,9 @@
-import { resolve } from "node:path";
-
 import { describe, expect, test } from "vitest";
 
-import { astFactory } from "@kosmojs/lib";
+import { astFactory, parseSource } from "@kosmojs/lib";
 
 describe("resolveRouteSignature", () => {
-  const { createProject, resolveRouteSignature } = astFactory();
-
-  const project = createProject();
+  const { resolveRouteSignature } = astFactory();
 
   // resolveRouteSignature reads route.fileFullpath by default; tests inject an
   // in-memory sourceFile via opts so no file system access is needed.
@@ -21,18 +17,15 @@ describe("resolveRouteSignature", () => {
   ) => {
     const { routeId = id, ...signatureOpts } = { ...opts };
     const fileFullpath = `${id}.ts`;
-    const sourceFile = project.createSourceFile(fileFullpath, text);
+    const sourceFile = parseSource(fileFullpath, text);
     return resolveRouteSignature(
       { id: routeId, name: routeId, fileFullpath, optionalParams: false },
-      { sourceFile, ...signatureOpts },
+      { sourceFile, importSpecifierResolver: (p) => p, ...signatureOpts },
     );
   };
 
   test("empty route", async ({ task }) => {
-    const signature = await resolveSignature(
-      task.id,
-      "export default defineRoute()",
-    );
+    const signature = resolveSignature(task.id, "export default defineRoute()");
     expect(signature).toEqual({
       typeDeclarations: [],
       paramsRefinements: undefined,
@@ -43,7 +36,7 @@ describe("resolveRouteSignature", () => {
   });
 
   test("no default export", async ({ task }) => {
-    const signature = await resolveSignature(task.id, "export const x = 1");
+    const signature = resolveSignature(task.id, "export const x = 1");
     expect(signature).toEqual({
       typeDeclarations: [],
       paramsRefinements: undefined,
@@ -54,7 +47,7 @@ describe("resolveRouteSignature", () => {
   });
 
   test("detects methods", async ({ task }) => {
-    const signature = await resolveSignature(
+    const signature = resolveSignature(
       task.id,
       `
         export default defineRoute(({ GET, POST, DELETE }) => [
@@ -68,7 +61,7 @@ describe("resolveRouteSignature", () => {
   });
 
   test("extracts params refinements", async ({ task }) => {
-    const signature = await resolveSignature(
+    const signature = resolveSignature(
       task.id,
       `export default defineRoute<"users/[id]", [number]>(({ GET }) => [ GET() ])`,
     );
@@ -76,7 +69,7 @@ describe("resolveRouteSignature", () => {
   });
 
   test("flattens validation definitions across methods", async ({ task }) => {
-    const signature = await resolveSignature(
+    const signature = resolveSignature(
       task.id,
       `
         export default defineRoute(({ GET, POST }) => [
@@ -93,7 +86,7 @@ describe("resolveRouteSignature", () => {
   });
 
   test("collects type declarations", async ({ task }) => {
-    const signature = await resolveSignature(
+    const signature = resolveSignature(
       task.id,
       `
         type Payload = { id: number };
@@ -113,10 +106,10 @@ describe("resolveRouteSignature", () => {
   test("passes relpathResolver through to type declarations", async ({
     task,
   }) => {
-    const signature = await resolveSignature(
+    const signature = resolveSignature(
       task.id,
       `import type { A } from "./a"; export default defineRoute()`,
-      { relpathResolver: (path) => `/app/${path}` },
+      { importSpecifierResolver: (path) => `/app/${path}` },
     );
     expect(signature.typeDeclarations).toEqual([
       {
@@ -126,38 +119,8 @@ describe("resolveRouteSignature", () => {
     ]);
   });
 
-  test("resolves referenced files when requested", async () => {
-    // Referenced-file resolution needs node lib types and a real file on disk,
-    // mirroring the extractTypeDeclarations fixture setup.
-    const nodeProject = createProject({
-      compilerOptions: { types: ["@types/node"] },
-    });
-    const fileFullpath = resolve(
-      import.meta.dirname,
-      "../@fixtures/ast/extractTypeDeclarations/imports/with-referenced-files.ts",
-    );
-    const sourceFile = nodeProject.addSourceFileAtPath(fileFullpath);
-
-    const signature = await resolveRouteSignature(
-      { id: "ref", name: "ref", fileFullpath, optionalParams: false },
-      { sourceFile, withReferencedFiles: true },
-    );
-
-    expect(signature.typeDeclarations).toEqual([
-      {
-        importDeclaration: {
-          alias: undefined,
-          name: "ParsedPath",
-          path: "node:path",
-        },
-        text: `import type { ParsedPath } from "node:path";`,
-      },
-    ]);
-    expect(signature.referencedFiles?.[0]).toMatch(/node\/path.d.ts$/);
-  });
-
   test("full signature snapshot", async ({ task }) => {
-    const signature = await resolveSignature(
+    const signature = resolveSignature(
       task.id,
       `
         type Payload = { id: number };
@@ -171,7 +134,7 @@ describe("resolveRouteSignature", () => {
           >(),
         ])
       `,
-      { routeId: "snapshot" },
+      { routeId: "snapshot", importSpecifierResolver: (p) => p },
     );
     await expect(JSON.stringify(signature, null, 2)).toMatchFileSnapshot(
       "@snapshots/resolveRouteSignature/full-signature.json",

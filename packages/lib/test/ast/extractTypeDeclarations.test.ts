@@ -1,25 +1,30 @@
-import { resolve } from "node:path";
-
 import { describe, expect, test } from "vitest";
 
-import { astFactory } from "@kosmojs/lib";
+import { astFactory, parseSource } from "@kosmojs/lib";
+
+import type { ParsedSource, PathResolver } from "#/ast";
 
 describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
-  const { createProject, extractTypeDeclarations } = astFactory();
+  const { extractTypeDeclarations } = astFactory();
 
-  const project = createProject({
-    compilerOptions: {
-      types: ["@types/node"],
+  const extractDeclarations = (
+    f: ParsedSource,
+    o?: {
+      importSpecifierResolver?: PathResolver;
     },
-  });
+  ) => {
+    return extractTypeDeclarations(f, {
+      importSpecifierResolver: o?.importSpecifierResolver || ((p) => p),
+    });
+  };
 
   describe("imports", () => {
     test("typeOnly imports", ({ task }) => {
-      const sourceFile = project.createSourceFile(
+      const sourceFile = parseSource(
         `${task.id}.ts`,
         `import type { A } from "./a"`,
       );
-      const [typeDeclarations] = extractTypeDeclarations(sourceFile);
+      const typeDeclarations = extractDeclarations(sourceFile);
       expect(typeDeclarations).toEqual([
         {
           importDeclaration: {
@@ -33,11 +38,11 @@ describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
     });
 
     test("typeOnly aliased imports", ({ task }) => {
-      const sourceFile = project.createSourceFile(
+      const sourceFile = parseSource(
         `${task.id}.ts`,
         `import type { A as B } from "./a"`,
       );
-      const [typeDeclarations] = extractTypeDeclarations(sourceFile);
+      const typeDeclarations = extractDeclarations(sourceFile);
       expect(typeDeclarations).toEqual([
         {
           importDeclaration: {
@@ -51,56 +56,52 @@ describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
     });
 
     test("typeOnly combined imports", ({ task }) => {
-      const sourceFile = project.createSourceFile(
+      const sourceFile = parseSource(
         `${task.id}.ts`,
         `import type { A, B as C } from "./x"`,
       );
-      expect(extractTypeDeclarations(sourceFile)).toEqual([
-        [
-          {
-            importDeclaration: {
-              alias: undefined,
-              name: "A",
-              path: "./x",
-            },
-            text: `import type { A } from "./x";`,
+      expect(extractDeclarations(sourceFile)).toEqual([
+        {
+          importDeclaration: {
+            alias: undefined,
+            name: "A",
+            path: "./x",
           },
-          {
-            importDeclaration: {
-              alias: "C",
-              name: "B",
-              path: "./x",
-            },
-            text: `import type { B as C } from "./x";`,
+          text: `import type { A } from "./x";`,
+        },
+        {
+          importDeclaration: {
+            alias: "C",
+            name: "B",
+            path: "./x",
           },
-        ],
+          text: `import type { B as C } from "./x";`,
+        },
       ]);
     });
 
     test("default imports", ({ task }) => {
-      const sourceFile = project.createSourceFile(
+      const sourceFile = parseSource(
         `${task.id}.ts`,
         `import type A from "./a"`,
       );
-      expect(extractTypeDeclarations(sourceFile)).toEqual([
-        [
-          {
-            importDeclaration: {
-              name: "A",
-              path: "./a",
-            },
-            text: `import type A from "./a";`,
+      expect(extractDeclarations(sourceFile)).toEqual([
+        {
+          importDeclaration: {
+            name: "A",
+            path: "./a",
           },
-        ],
+          text: `import type A from "./a";`,
+        },
       ]);
     });
 
     test("mixed imports", ({ task }) => {
-      const sourceFile = project.createSourceFile(
+      const sourceFile = parseSource(
         `${task.id}.ts`,
         `import { type A, type B as C, x } from "./a"`,
       );
-      const [typeDeclarations] = extractTypeDeclarations(sourceFile);
+      const typeDeclarations = extractDeclarations(sourceFile);
       expect(typeDeclarations).toEqual([
         {
           importDeclaration: {
@@ -122,63 +123,34 @@ describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
     });
 
     test("with path resolver", ({ task }) => {
-      const sourceFile = project.createSourceFile(
+      const sourceFile = parseSource(
         `${task.id}.ts`,
         `import type { A } from "./a"`,
       );
       expect(
-        extractTypeDeclarations(sourceFile, {
-          relpathResolver: (path) => `/app/${path}`,
+        extractDeclarations(sourceFile, {
+          importSpecifierResolver: (path) => `/app/${path}`,
         }),
       ).toEqual([
-        [
-          {
-            importDeclaration: {
-              alias: undefined,
-              name: "A",
-              path: "/app/./a",
-            },
-            text: `import type { A } from "/app/./a";`,
-          },
-        ],
-      ]);
-    });
-
-    test("with referenced files", () => {
-      const sourceFile = project.addSourceFileAtPath(
-        resolve(
-          import.meta.dirname,
-          "../@fixtures/ast/extractTypeDeclarations/imports/with-referenced-files.ts",
-        ),
-      );
-
-      const [typeDeclarations, referencedFiles] = extractTypeDeclarations(
-        sourceFile,
-        { withReferencedFiles: true },
-      );
-
-      expect(typeDeclarations).toEqual([
         {
           importDeclaration: {
             alias: undefined,
-            name: "ParsedPath",
-            path: "node:path",
+            name: "A",
+            path: "/app/./a",
           },
-          text: `import type { ParsedPath } from "node:path";`,
+          text: `import type { A } from "/app/./a";`,
         },
       ]);
-
-      expect(referencedFiles?.[0]).toMatch(/node\/path.d.ts$/);
     });
   });
 
   describe("exports", () => {
     test("typeOnly exports", ({ task }) => {
-      const sourceFile = project.createSourceFile(
+      const sourceFile = parseSource(
         `${task.id}.ts`,
         `export type A = "a"; type B = "b"; export type { B }`,
       );
-      const [typeDeclarations] = extractTypeDeclarations(sourceFile);
+      const typeDeclarations = extractDeclarations(sourceFile);
       expect(typeDeclarations).toEqual([
         {
           text: `export type A = "a";`,
@@ -203,11 +175,11 @@ describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
     });
 
     test("typeOnly aliased exports", ({ task }) => {
-      const sourceFile = project.createSourceFile(
+      const sourceFile = parseSource(
         `${task.id}.ts`,
         `export type A = "a"; export type { A  as  B }`,
       );
-      const [typeDeclarations] = extractTypeDeclarations(sourceFile);
+      const typeDeclarations = extractDeclarations(sourceFile);
       expect(typeDeclarations).toEqual([
         {
           text: `export type A = "a";`,
@@ -226,11 +198,11 @@ describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
     });
 
     test("mixed exports", ({ task }) => {
-      const sourceFile = project.createSourceFile(
+      const sourceFile = parseSource(
         `${task.id}.ts`,
         `export { type A as B, type C, x }`,
       );
-      const [typeDeclarations] = extractTypeDeclarations(sourceFile);
+      const typeDeclarations = extractDeclarations(sourceFile);
       expect(typeDeclarations).toEqual([
         {
           exportDeclaration: {
@@ -252,11 +224,11 @@ describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
     });
 
     test("typeOnly export from path", ({ task }) => {
-      const sourceFile = project.createSourceFile(
+      const sourceFile = parseSource(
         `${task.id}.ts`,
         `export type {  A  } from "./a"`,
       );
-      const [typeDeclarations] = extractTypeDeclarations(sourceFile);
+      const typeDeclarations = extractDeclarations(sourceFile);
       expect(typeDeclarations).toEqual([
         {
           exportDeclaration: {
@@ -270,11 +242,11 @@ describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
     });
 
     test("mixed export from path", ({ task }) => {
-      const sourceFile = project.createSourceFile(
+      const sourceFile = parseSource(
         `${task.id}.ts`,
         `export { type A, type B as C, x } from "./a"`,
       );
-      const [typeDeclarations] = extractTypeDeclarations(sourceFile);
+      const typeDeclarations = extractDeclarations(sourceFile);
       expect(typeDeclarations).toEqual([
         {
           exportDeclaration: {
@@ -296,12 +268,12 @@ describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
     });
 
     test("export from path with pathResolver", ({ task }) => {
-      const sourceFile = project.createSourceFile(
+      const sourceFile = parseSource(
         `${task.id}.ts`,
         `export type { A } from "./a"`,
       );
-      const [typeDeclarations] = extractTypeDeclarations(sourceFile, {
-        relpathResolver: (path) => path.replace(".", ""),
+      const typeDeclarations = extractDeclarations(sourceFile, {
+        importSpecifierResolver: (path) => path.replace(".", ""),
       });
       expect(typeDeclarations).toEqual([
         {
@@ -314,38 +286,14 @@ describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
         },
       ]);
     });
-
-    test("export from path with referencedFiles", () => {
-      const sourceFile = project.addSourceFileAtPath(
-        resolve(
-          import.meta.dirname,
-          "../@fixtures/ast/extractTypeDeclarations/exports/with-referenced-files.ts",
-        ),
-      );
-      const [typeDeclarations, referencedFiles] = extractTypeDeclarations(
-        sourceFile,
-        { withReferencedFiles: true },
-      );
-      expect(typeDeclarations).toEqual([
-        {
-          exportDeclaration: {
-            alias: "ParsedPath",
-            name: "ParsedPath",
-            path: "node:path",
-          },
-          text: `export type { ParsedPath } from "node:path";`,
-        },
-      ]);
-      expect(referencedFiles?.[0]).toMatch(/node\/path.d.ts$/);
-    });
   });
 
   test("types", ({ task }) => {
-    const sourceFile = project.createSourceFile(
+    const sourceFile = parseSource(
       `${task.id}.ts`,
       `type A = "A"; export type B = A & { C: "C" }`,
     );
-    const [typeDeclarations] = extractTypeDeclarations(sourceFile);
+    const typeDeclarations = extractDeclarations(sourceFile);
     expect(typeDeclarations).toEqual([
       {
         text: `type A = "A";`,
@@ -363,11 +311,11 @@ describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
   });
 
   test("interfaces", ({ task }) => {
-    const sourceFile = project.createSourceFile(
+    const sourceFile = parseSource(
       `${task.id}.ts`,
       `interface A {}; export interface B extends A {}`,
     );
-    const [typeDeclarations] = extractTypeDeclarations(sourceFile);
+    const typeDeclarations = extractDeclarations(sourceFile);
     expect(typeDeclarations).toEqual([
       {
         interfaceDeclaration: {
@@ -385,11 +333,11 @@ describe("extractTypeDeclarations", { timeout: 10_000 }, () => {
   });
 
   test("enums", ({ task }) => {
-    const sourceFile = project.createSourceFile(
+    const sourceFile = parseSource(
       `${task.id}.ts`,
       `enum A {}; export enum B {}`,
     );
-    const [typeDeclarations] = extractTypeDeclarations(sourceFile);
+    const typeDeclarations = extractDeclarations(sourceFile);
     expect(typeDeclarations).toEqual([
       {
         enumDeclaration: {

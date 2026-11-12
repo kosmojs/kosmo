@@ -1,17 +1,14 @@
 import { describe, test } from "vitest";
 
 import type { RequestBodyTarget } from "@kosmojs/core";
-import { astFactory } from "@kosmojs/lib";
+import { astFactory, parseSource } from "@kosmojs/lib";
 
 describe("extractRouteMethods", () => {
   const {
     //
-    createProject,
     extractDefaultExport,
     extractRouteMethods,
   } = astFactory();
-
-  const project = createProject();
 
   const validationTargetMap: Array<[RequestBodyTarget, string]> = [
     ["json", "{ id?: number }"],
@@ -23,7 +20,7 @@ describe("extractRouteMethods", () => {
 
   test("detect methods", async ({ task, expect }) => {
     const defaultExport = extractDefaultExport(
-      project.createSourceFile(
+      parseSource(
         `${task.id}.ts`,
         `
           export default defineRoute(({ GET, POST, PUT, PATCH, DELETE }) => [
@@ -49,7 +46,7 @@ describe("extractRouteMethods", () => {
   for (const [target, schema] of validationTargetMap) {
     test(`with ${target} validation target`, async ({ task, expect }) => {
       const defaultExport = extractDefaultExport(
-        project.createSourceFile(
+        parseSource(
           `${task.id}.ts`,
           `
             export default defineRoute(({ POST }) => [
@@ -75,7 +72,7 @@ describe("extractRouteMethods", () => {
       expect,
     }) => {
       const defaultExport = extractDefaultExport(
-        project.createSourceFile(
+        parseSource(
           `${task.id}.ts`,
           `
             export default defineRoute(({ POST }) => [
@@ -105,7 +102,7 @@ describe("extractRouteMethods", () => {
       for (const [i, val] of ["json", "txt"].entries()) {
         test(val, async ({ task, expect }) => {
           const defaultExport = extractDefaultExport(
-            project.createSourceFile(
+            parseSource(
               `${task.id}.ts`,
               `
                 export default defineRoute(({ POST }) => [
@@ -138,7 +135,7 @@ describe("extractRouteMethods", () => {
       for (const [i, val] of ["true", "false"].entries()) {
         test(val, async ({ task, expect }) => {
           const defaultExport = extractDefaultExport(
-            project.createSourceFile(
+            parseSource(
               `${task.id}.ts`,
               `
                 export default defineRoute(({ POST }) => [
@@ -173,7 +170,7 @@ describe("extractRouteMethods", () => {
       ].entries()) {
         test(val, async ({ task, expect }) => {
           const defaultExport = extractDefaultExport(
-            project.createSourceFile(
+            parseSource(
               `${task.id}.ts`,
               `
                 export default defineRoute(({ POST }) => [
