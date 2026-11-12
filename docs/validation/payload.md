@@ -411,6 +411,23 @@ export default defineRoute<"posts">(({ POST }) => [
 ]);
 ```
 
+### What Resolves
+
+Types are read from the source, the way your editor reads them, and followed across files:
+
+- named, default and namespace imports (`import type * as T`, then `T.User`), aliased imports,
+re-exports and `export *`, and the `~/`, `@/` and `_/` path aliases;
+- interfaces and `extends`, generics, `Partial`, `Pick`, `Omit` and the other utility types,
+mapped, conditional, indexed and template literal types;
+- recursive types, such as a tree whose nodes hold their children - validated at any depth;
+- enums, as the union of their values; `Role.Admin` names a single member.
+
+What needs the type checker does not resolve: a type built from a value with `typeof`,
+or one a library computes, like an ORM's row type derived from a table.
+Write those shapes out, or describe them with a type of your own.
+A type that does not resolve is reported when the route is built.
+[Details&nbsp;›](/validation/gotchas#a-type-that-does-not-resolve)
+
 ## Overriding the Default
 
 Every target has its own slot: `validate:json`, `validate:form`, `validate:raw`.

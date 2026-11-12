@@ -1,22 +1,24 @@
 ---
 title: About Performance
-description: Understand KosmoJS validation performance with TypeScript compiler analysis,
-    intelligent caching, and background processing that doesn't impact development workflow.
+description: Understand KosmoJS validation performance - syntactic type discovery with oxc,
+    build-time evaluation with TypeBox, per-route caching keyed by every file a route's types reach.
 head:
   - - meta
     - name: keywords
       content: validation performance, type analysis, caching, derivation time,
-        typescript compiler, background processing, ts-morph, tfusion
+        oxc, typebox, dependency graph, background processing
 ---
 
-Schema derivation uses TypeScript's compiler API to trace your types - including all referenced files -
-and build a complete dependency graph. This is what makes pure-TypeScript validation possible,
-with a brief derivation step as the tradeoff.
+Schema derivation reads your types from the source: [oxc](https://oxc.rs) parses the route,
+follows its imports - through re-exports and aliases, to every file the validation types reach -
+and [TypeBox](https://github.com/sinclairzx81/typebox) evaluates the collected types to JSON Schema.
+Nothing is type checked, which keeps derivation fast and runs it in the background,
+alongside the Vite dev server.
 
-Derivation time scales with type complexity. Simple routes are near-instant;
-routes with deep hierarchies and many dependencies may take a few seconds.
-In practice this rarely affects you - derivation runs in parallel with the Vite dev server,
-and results are cached per file. Schemas are only recomputed when the route file or one of its type dependencies changes.
+Only the declarations the validation types need are read; the rest of a file is never looked at.
+The files they reach form the route's dependency graph, cached with the route:
+a schema is recomputed when the route file, or any file in that graph, changes -
+an edit two imports away rebuilds the route as reliably as an edit to the route itself.
 
 By the time you've saved a file and switched to the browser, the schema is ready.
 
@@ -27,18 +29,14 @@ Full rebuilds happen in a few specific situations:
 - Deleting the `var/lib/` folder manually
 - KosmoJS releasing an update that bumps the cache version
 
-For large projects with many routes, a full rebuild can take several minutes.
-This is the same category of thing as clearing `node_modules` or regenerating a Prisma client -
-infrequent and expected, not part of the normal edit-test cycle.
+A full rebuild re-derives every route, so it takes noticeably longer than an incremental one
+on a large project. It is the same category of thing as clearing `node_modules`
+or regenerating a Prisma client - infrequent and expected, not part of the normal edit-test cycle.
 
 ## Machine Time vs Human Time
 
 Zod, Yup etc. have zero derivation overhead - because you write the schemas yourself.
 That eliminates derivation time but adds an ongoing maintenance cost.
 
-KosmoJS trades a few seconds of machine time for eliminating that manual work entirely.
+KosmoJS trades a little machine time for eliminating that manual work entirely.
 For most workflows, that's a good deal.
-
-As the `TypeScript` ecosystem evolves - particularly native implementations that
-[ts-morph](https://ts-morph.com/) and [TFusion](https://github.com/sleewoo/tfusion) may leverage -
-derivation performance will likely improve further.

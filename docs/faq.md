@@ -879,8 +879,9 @@ closing the gap TypeScript can't cover at runtime.
 [Details&nbsp;›](/validation/intro#understanding-runtype-validation)
 
 #### How are validators derived?
-AST parsing (via ts-morph / TFusion) extracts types and traces referenced files;
-AOT compilation produces high-performance validators in `var/lib` via TypeBox -
+oxc parses the route and follows its imports to every file the validation types reach;
+TypeBox evaluates those types to JSON Schema at build time,
+and compiles high-performance validators from it in `var/lib` -
 direct property checks, not a generic JSON Schema interpreter.
 [Details&nbsp;›](/validation/intro#how-derivation-works)
 
@@ -1048,13 +1049,12 @@ e.g. `"error.order.shipping.address.postalCode"`).
 KosmoJS picks the most specific message; it appears in each entry's `message`.
 [Details&nbsp;›](/validation/error-handling#custom-error-messages)
 
-#### Why must I avoid built-in type names?
-Names like `Event`, `Response`, `Request`, `Error`, `Date`, `Partial`, `Record`, `Buffer`
-are referenced as-is during type flattening, so the validator sees the built-in,
-not your custom type - a silent runtime failure with no compile error.
-Use a consistent `T` suffix/prefix (`EventT`, `TResponse`).
-The full list is in the TFusion builtins reference.
-[Details&nbsp;›](/validation/naming-conventions#why-this-matters)
+#### Can I name a type after a built-in?
+Yes - `Event`, `Response`, `Error`, `Record` all work.
+A type declared in the route or imported into it is the one the schema is built from,
+whatever built-in shares its name.
+`Date`, `File`, `Blob`, `Buffer` and `ArrayBuffer` are runtime types when nothing of yours is in scope.
+[Details&nbsp;›](/validation/type-names)
 
 #### How do I skip runtime validation but keep types?
 Per-target `runtimeValidation: false` in the second type argument (works for payload and response).
@@ -2380,7 +2380,7 @@ Serve it with Swagger UI, Redoc, or Stoplight Elements.
 #### Is there guidance for LLM agents writing KosmoJS code?
 Yes - [Notes for LLM Agents](/agents) collects what an agent must check before emitting code:
 how to tell which frameworks a folder runs, why boilerplate should never be hand-written,
-the four validation mistakes that typecheck but fail at runtime, middleware placement,
+the three validation mistakes that typecheck but fail at runtime, middleware placement,
 and why the dev server never shows the SSR path.
 
 Agents should also prefer `https://kosmojs.dev/llms-full.txt` over recall for exact config options,

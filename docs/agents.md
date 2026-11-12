@@ -1,7 +1,7 @@
 ---
 title: Notes for LLM Agents
 description: What an LLM agent must check before emitting KosmoJS code - which framework the folder runs,
-    who writes the boilerplate, the four validation mistakes that typecheck but fail at runtime,
+    who writes the boilerplate, the three validation mistakes that typecheck but fail at runtime,
     middleware placement, and why the dev server never shows the SSR path.
 head:
   - - meta
@@ -53,7 +53,7 @@ File watching inside containers is prone to inotify trouble (limits, wedged inst
 which shows up as files that are silently never filled. Create the empty files and run the **build** command instead:
 it resolves routes with exactly the same code, deterministically, with no watcher involved.
 
-## The four silent validation failures
+## The three silent validation failures
 
 These typecheck cleanly and misbehave at runtime. Check them before debugging anything else.
 [Full list&nbsp;›](/validation/gotchas)
@@ -70,17 +70,11 @@ defineRoute<"users/[id]", Params>        // ❌ brackets hidden
 Aliases *inside* the brackets are fine - it is the brackets themselves that are read from source.
 Hide them and a params tuple rejects **every** request, while a response tuple produces **no schema at all**.
 
-**2. A type named after a built-in.** `Event`, `Response`, `Request`, `Error`, `Date`, `Partial`,
-`Record`, `Buffer` and friends are referenced as-is during type flattening,
-so the validator sees the built-in instead of your type - no compile error, wrong behaviour at runtime.
-Rename with a consistent suffix or prefix (`EventT`, `TResponse`).
-[Details&nbsp;›](/validation/naming-conventions)
-
-**3. Plain `number` where an integer is required.** `number` admits floats.
+**2. Plain `number` where an integer is required.** `number` admits floats.
 Use `VRefine<number, { minimum: 1, multipleOf: 1 }>` for an ID -
 otherwise `1000.5` passes validation and fails later at the database, turning a clear validation error into a confusing query error.
 
-**4. A non-string type on a target that doesn't coerce.** Only `query` coerces **numbers and booleans**;
+**3. A non-string type on a target that doesn't coerce.** Only `query` coerces **numbers and booleans**;
 route `params` coerce **numbers only**; `headers`, `cookies`, `form` and `raw` never coerce;
 `json` carries real types natively.
 [Details&nbsp;›](/validation/payload#validation-targets)

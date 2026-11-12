@@ -12,6 +12,8 @@ export const redirects = [
   ["/essentials/cli.html", "/cli/intro.html"],
   // OpenAPI moved
   ["/openapi.html", "/openapi/intro.html"],
+  // renamed
+  ["/validation/naming-conventions.html", "/validation/type-names.html"],
 ];
 
 // the URL a page is published at, to match a redirect key against
@@ -446,7 +448,7 @@ export default defineConfig({
           ],
         },
         {
-          text: "Runtype Validation",
+          text: "Validation",
           collapsed: false,
           items: [
             {
@@ -479,8 +481,8 @@ export default defineConfig({
               link: "/validation/error-handling",
             },
             {
-              text: "Naming Conventions",
-              link: "/validation/naming-conventions",
+              text: "Type Names",
+              link: "/validation/type-names",
             },
             {
               text: "Silent Failure Checklist",
