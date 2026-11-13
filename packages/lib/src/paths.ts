@@ -11,7 +11,17 @@ import {
 type Options = { origin: "src" | "lib" };
 
 type CreateImport = Record<
-  "src" | "api" | "entry" | "pages" | "lib" | "libCore" | "libApi" | "libEntry",
+  | "app"
+  | "appSrc"
+  | "appLib"
+  | "src"
+  | "api"
+  | "entry"
+  | "pages"
+  | "lib"
+  | "libCore"
+  | "libApi"
+  | "libEntry",
   (a: Array<string>, o: Options) => string
 >;
 
@@ -20,6 +30,9 @@ export const pathResolver = (
   { name }: SourceFolder,
 ): {
   createPath: Record<
+    | "app"
+    | "appSrc"
+    | "appLib"
     | "src"
     | "api"
     | "pages"
@@ -42,10 +55,19 @@ export const pathResolver = (
   };
 
   const createImport: CreateImport = {
-    src(a, { origin }) {
-      return origin === "src"
+    app(a) {
+      return join(defaults.appPrefix, ...a);
+    },
+    appSrc(a) {
+      return join(defaults.appSrcPrefix, name, ...a);
+    },
+    appLib(a) {
+      return join(defaults.appLibPrefix, name, ...a);
+    },
+    src(a, o) {
+      return o.origin === "src"
         ? join(defaults.srcPrefix, ...a)
-        : join(defaults.appPrefix, defaults.srcDir, name, ...a);
+        : this.appSrc(a, o);
     },
     api(a, o) {
       return this.src([defaults.apiDir, ...a], o);
@@ -56,16 +78,10 @@ export const pathResolver = (
     pages(a, o) {
       return this.src([defaults.pagesDir, ...a], o);
     },
-    lib(a, { origin }) {
-      return origin === "src"
+    lib(a, o) {
+      return o.origin === "src"
         ? join(defaults.libPrefix, ...a)
-        : join(
-            defaults.appPrefix,
-            defaults.varDir,
-            defaults.libDir,
-            name,
-            ...a,
-          );
+        : this.appLib(a, o);
     },
     libCore(a, o) {
       return this.lib(["core", ...a], o);
@@ -80,8 +96,17 @@ export const pathResolver = (
 
   return {
     createPath: {
+      app(...a) {
+        return createPath(...a);
+      },
+      appSrc(...a) {
+        return createPath(defaults.srcDir, ...a);
+      },
+      appLib(...a) {
+        return createPath(defaults.varDir, defaults.libDir, ...a);
+      },
       src(...a) {
-        return createPath(defaults.srcDir, name, ...a);
+        return this.appSrc(name, ...a);
       },
       api(...a) {
         return this.src(defaults.apiDir, ...a);
@@ -93,7 +118,7 @@ export const pathResolver = (
         return this.src(defaults.entryDir, ...a);
       },
       lib(...a) {
-        return createPath(defaults.varDir, defaults.libDir, name, ...a);
+        return this.appLib(name, ...a);
       },
       libCore(...a) {
         return this.lib("core", ...a);

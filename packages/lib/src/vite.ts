@@ -1,6 +1,6 @@
 import { stat } from "node:fs/promises";
 import { builtinModules } from "node:module";
-import { isAbsolute, parse, posix } from "node:path";
+import { isAbsolute, join, parse } from "node:path";
 
 import type { Plugin } from "vite";
 
@@ -76,20 +76,18 @@ export const vitePluginsFactory = (
     const { createPath } = pathResolver(projectSettings, sourceFolder);
 
     const table: Array<[prefix: string, baseDir: string]> = [
+      [`${defaults.appPrefix}/`, projectSettings.root],
       [`${defaults.srcPrefix}/`, createPath.src()],
       [`${defaults.libPrefix}/`, createPath.lib()],
-      [
-        `${defaults.libRootPrefix}/`,
-        posix.join(projectSettings.root, defaults.varDir, defaults.libDir),
-      ],
-      [`${defaults.appPrefix}/`, projectSettings.root],
+      [`${defaults.appSrcPrefix}/`, createPath.appSrc()],
+      [`${defaults.appLibPrefix}/`, createPath.appLib()],
     ];
 
     const resolveWithin = async (
       baseDir: string,
       rest: string,
     ): Promise<string> => {
-      const target = posix.join(baseDir, rest);
+      const target = [baseDir, rest].join("/");
       const { ext } = parse(rest);
 
       // Specifier already carries a known extension:
@@ -256,5 +254,5 @@ export const cacheDir = (
     | `backend:${ChassisCommand}`
     | "sidecar",
 ) => {
-  return posix.join(root, defaults.varDir, "vite", name, target);
+  return join(root, defaults.varDir, "vite", name, target);
 };

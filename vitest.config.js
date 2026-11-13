@@ -48,11 +48,6 @@ export default defineConfig({
       setupFactory("packages/lib"),
 
       setupFactory("generators/fetch-generator", {
-        alias: {
-          [defaults.appPrefix]: "test/@fixtures/app",
-          [defaults.srcPrefix]: "test/@fixtures/app/src",
-          [defaults.libPrefix]: "test/@fixtures/app/lib/src",
-        },
         globalSetup: ["test/setup.global.ts"],
         setupFiles: ["test/setup.ts"],
         globals: true,
@@ -79,8 +74,8 @@ export default defineConfig({
         globalSetup: ["test/setup.global.ts"],
         alias: {
           [defaults.appPrefix]: "test/@fixtures/app",
-          [defaults.srcPrefix]: "test/@fixtures/app/src",
-          [defaults.libPrefix]: "test/@fixtures/app/lib/src",
+          [defaults.appSrcPrefix]: "test/@fixtures/app/src",
+          [defaults.appLibPrefix]: "test/@fixtures/app/var/lib",
         },
       }),
 

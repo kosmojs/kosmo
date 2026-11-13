@@ -648,7 +648,8 @@ You can add your own paths, but these prefixes are reserved:
 - `@/*` - Root-level imports
 - `~/*` - Source folder imports
 - `_/*` - Derived code imports
-- `$/*` derived-code imports for any folder, by name
+- `#src/*` - Source folder imports for any folder, by name
+- `#lib/*` - Derived code imports for any folder, by name
 
 [Project Structure ›](/essentials/project-structure#path-mappings) walks the whole layout - what
 lives in `src/` versus `var/lib/`, and what each alias resolves to.

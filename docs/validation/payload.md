@@ -416,7 +416,7 @@ export default defineRoute<"posts">(({ POST }) => [
 Types are read from the source, the way your editor reads them, and followed across files:
 
 - named, default and namespace imports (`import type * as T`, then `T.User`), aliased imports,
-re-exports and `export *`, and the `~/`, `@/` and `_/` path aliases;
+re-exports and `export *`, and the `~/`, `@/`, `_/`, `#src/` and `#lib/` path aliases;
 - interfaces and `extends`, generics, `Partial`, `Pick`, `Omit` and the other utility types,
 mapped, conditional, indexed and template literal types;
 - recursive types, such as a tree whose nodes hold their children - validated at any depth;

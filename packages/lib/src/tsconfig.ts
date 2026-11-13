@@ -60,7 +60,10 @@ export const generateTsconfig = (
           [`${defaults.libPrefix}/*`]: [
             `${rootDir}/../../${defaults.varDir}/${defaults.libDir}/${sourceFolder}/*`,
           ],
-          [`${defaults.libRootPrefix}/*`]: [
+          [`${defaults.appSrcPrefix}/*`]: [
+            `${rootDir}/../../${defaults.srcDir}/*`,
+          ],
+          [`${defaults.appLibPrefix}/*`]: [
             `${rootDir}/../../${defaults.varDir}/${defaults.libDir}/*`,
           ],
         },
@@ -73,7 +76,8 @@ export const generateTsconfig = (
       ...compilerOptions,
       paths: {
         [`${defaults.appPrefix}/*`]: [`${rootDir}/*`],
-        [`${defaults.libRootPrefix}/*`]: [
+        [`${defaults.appSrcPrefix}/*`]: [`${rootDir}/${defaults.srcDir}/*`],
+        [`${defaults.appLibPrefix}/*`]: [
           `${rootDir}/${defaults.varDir}/${defaults.libDir}/*`,
         ],
       },

@@ -160,14 +160,15 @@ which on a large project takes minutes. [Details&nbsp;›](/validation/performan
 
 ## Path Mappings
 
-Four prefixes are reserved. Don't reuse them for your own aliases.
+Five prefixes are reserved. Don't reuse them for your own aliases.
 
 | Prefix | Resolves to | Use it for |
 |---|---|---|
 | `@/*` | project root | anything shared across source folders - db layer, domain types |
 | `~/*` | **this** source folder | your own modules inside the folder |
 | `_/*` | `var/lib/<this folder>/` | derived code - generated, never edited |
-| `$/*` | `var/lib/` | derived code of **any** folder, by name |
+| `#src/*` | `src/` | modules of **any** source folder, by name |
+| `#lib/*` | `var/lib/` | derived code of **any** folder, by name |
 
 ```ts
 import { db } from "@/db";                    // my-app/db.ts
@@ -179,20 +180,25 @@ import fetchClients from "_/fetch";           // var/lib/front/fetch/
 `~/` and `_/` are **folder-relative**: the same `_/api` in `src/admin` resolves to `var/lib/admin/api.ts`.
 That is what keeps folders isolated - `admin`'s route names and navigation types never leak into `front`.
 
-`$/` reaches the same derived code by folder name, from anywhere -
-a source folder, or a file at the project root that belongs to no folder:
+`#src/` and `#lib/` reach any folder by name, from anywhere -
+a source folder, or a file at the project root that belongs to no folder.
+`#src/` gets a folder's own modules, `#lib/` its derived code:
 
 ```ts
 // a helper at the project root, building links into the admin folder
-import { base } from "$/admin/core";          // var/lib/admin/core
+import { base } from "#lib/admin/core";             // var/lib/admin/core
 
 // the admin folder, using the docs folder's route map
-import { apiRouteMap } from "$/docs/core";    // var/lib/docs/core
+import { apiRouteMap } from "#lib/docs/core";       // var/lib/docs/core
+
+// the admin folder, reusing a type the front folder keeps
+import type { User } from "#src/front/types/user";  // src/front/types/user.ts
 ```
 
-Inside a folder, `_/core` and `$/<this folder>/core` are the same file.
-Reach for `_/` for your own folder, so it keeps working if the folder is renamed,
-and for `$/` when the code you need belongs to another folder.
+Inside a folder, `~/types/user` and `#src/<this folder>/types/user` are the same file,
+and so are `_/core` and `#lib/<this folder>/core`.
+Reach for `~/` and `_/` for your own folder, so it keeps working if the folder is renamed,
+and for `#src/` and `#lib/` when what you need belongs to another folder.
 
 `@/` is how folders share without packages. Put a type in `db/models.ts`,
 import it as `@/db/models` from every folder, change it once, and every folder sees it -

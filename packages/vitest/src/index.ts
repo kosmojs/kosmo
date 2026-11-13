@@ -181,7 +181,8 @@ export const loadConfig = async (
     resolve: {
       alias: {
         [defaults.appPrefix]: root,
-        [defaults.libRootPrefix]: join(root, defaults.varDir, defaults.libDir),
+        [defaults.appSrcPrefix]: join(root, defaults.srcDir),
+        [defaults.appLibPrefix]: join(root, defaults.varDir, defaults.libDir),
       },
     },
     test: { projects },

@@ -17,27 +17,30 @@ export const ROUTE = "mappings";
  * each binding a value echoed back in `mappings`:
  *
  *   app      @/ -> project root
+ *   appSrc   @src/ -> access any folder by name; @src/admin for ex.
+ *   appLib   @lib/ -> derived code of a folder by name; @lib/admin
  *   src      ~/ -> the folder's src dir
  *   lib      _/ -> the folder's derived code, the generated core module
- *   libRoot  $/ -> derived code of a folder by name, the same core module
  *   dir      a prefixed directory import, resolved to its index.ts
  *   explicit a prefixed import that already carries its .js extension
  * */
 export const importsFor = (folder: string) => `
   import { value as app } from "${defaults.appPrefix}/shared/app";
   import { value as src } from "${defaults.srcPrefix}/shared/src";
+  import { value as appSrc } from "${defaults.appSrcPrefix}/${folder}/shared/src";
   import { name as lib } from "${defaults.libPrefix}/${defaults.coreDir}";
-  import { name as libRoot } from "${defaults.libRootPrefix}/${folder}/${defaults.coreDir}";
+  import { name as appLib } from "${defaults.appLibPrefix}/${folder}/${defaults.coreDir}";
   import { value as dir } from "${defaults.srcPrefix}/shared/dir";
   import { value as explicit } from "${defaults.srcPrefix}/shared/explicit.js";
-  const mappings = { app, src, lib, libRoot, dir, explicit };
+  const mappings = { app, src, appSrc, lib, appLib, dir, explicit };
 `;
 
 export const expectedFor = (folder: string) => ({
   app: "app-prefix",
   src: "src-prefix",
   lib: folder,
-  libRoot: folder,
+  appSrc: "src-prefix",
+  appLib: folder,
   dir: "dir-index",
   explicit: "explicit-extension",
 });

@@ -25,9 +25,11 @@ export const sourceFolder: SourceFolder = {
   name: "test",
   config: {},
   generators: [coreGenerator(), typeboxGenerator()],
+  envSources: [],
 };
 
 export const project: ProjectSettings = {
+  mode: "test",
   root: appRoot,
   sourceFolders: [sourceFolder],
   devHost: "",

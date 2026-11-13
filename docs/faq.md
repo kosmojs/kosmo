@@ -335,13 +335,14 @@ Pages typically read data through the fetch client (`fetchClients["products"].GE
 where `<folder>` is your source-folder name.
 [Details&nbsp;›](/essentials/project-structure#path-mappings)
 
-#### What do `@/*`, `~/*`, `_/*`, `$/*` mean?
+#### What do `@/*`, `~/*`, `_/*`, `#src/*`, `#lib/*` mean?
 
 Reserved path mappings:
 - `@/*` root-level imports
 - `~/*` source-folder imports,
 - `_/*` derived-code imports for the current folder,
-- `$/*` derived-code imports for any folder, by name - `$/admin/core`.
+- `#src/*` source-folder imports for any folder, by name - `#src/admin/types`,
+- `#lib/*` derived-code imports for any folder, by name - `#lib/admin/core`.
 
 Don't reuse these prefixes for your own aliases.
 [Details&nbsp;›](/tutorial)
