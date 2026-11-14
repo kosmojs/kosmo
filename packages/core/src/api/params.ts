@@ -1,8 +1,10 @@
 import { createPathMatcher } from "../dispatch";
 import { maybeBoolean, maybeNumber } from "../generic";
-import type { RouteSource } from "./types";
+import type { LoadedRouteSource } from "./types";
 
-export const createParamsNormalizers = <T>(routeSource: RouteSource<T>) => {
+export const createParamsNormalizers = <T>(
+  routeSource: LoadedRouteSource<T>,
+) => {
   const { name, numericProperties, booleanProperties } = routeSource;
 
   const { matcher } = createPathMatcher<Record<string, unknown>>(

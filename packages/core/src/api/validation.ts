@@ -6,13 +6,13 @@ import {
   type ValidationErrorEntry,
   type ValidationSchema,
 } from "../types";
-import type { HTTPMethod, ResponseResolver, RouteSource } from "./types";
+import type { HTTPMethod, LoadedRouteSource, ResponseResolver } from "./types";
 import { use } from "./use";
 
 export const StateKey = Symbol("kosmo.state");
 
 export const createValidationMiddleware = <T>(
-  routeSource: RouteSource<T>,
+  routeSource: LoadedRouteSource<T>,
   {
     productionBuild,
     responseResolver,

@@ -18,16 +18,20 @@ const colorizeMethod = (method: string): string => {
   return color ? styleText(color, method) : method;
 };
 
+/**
+ * `middleware` and `handler` are absent for a route that is not imported yet:
+ * what it runs is known only once its first request loads it.
+ * */
 export const debugRouteEntry = <MiddlewareT>(entry: {
   name: string;
   path: string;
   file: string;
   method: string;
-  middleware: Array<{
+  middleware?: Array<{
     middleware: Array<MiddlewareT>;
     options?: UseOptions | undefined;
   }>;
-  handler: {
+  handler?: {
     kind: "handler";
     middleware: Array<MiddlewareT>;
     method: HTTPMethod;
@@ -42,8 +46,10 @@ export const debugRouteEntry = <MiddlewareT>(entry: {
       : [coloredMethod];
   });
 
+  const pending = styleText("dim", "loaded on first request");
+
   const middlewareLines = entry.middleware
-    .map(({ options, middleware }) => {
+    ?.map(({ options, middleware }) => {
       const lines: Array<string> = [];
 
       if (options?.slot) {
@@ -60,14 +66,15 @@ export const debugRouteEntry = <MiddlewareT>(entry: {
     })
     .join(`\n${Array(12).fill(" ").join("")}`);
 
-  const handlerLines = entry.handler.middleware.map((fn) => {
+  const handlerLines = entry.handler?.middleware.map((fn) => {
     return styleText("yellow", funcName(fn as Function));
   });
 
   const headline = `${styleText("bgBlue", styleText("black", ` ${path} `))} ${styleText("gray", `[ ${file} ]`)}`;
   const methods = `${styleText("dim", "   methods:")} ${methodLines.join(" ")}`;
-  const middleware = `${styleText("dim", "middleware:")} ${middlewareLines}`;
-  const handler = `${styleText("dim", "   handler:")} ${handlerLines.join(Array(7).fill(" ").join(""))}`;
+  const middleware = `${styleText("dim", "middleware:")} ${middlewareLines ?? pending}`;
+  const handlerText = handlerLines?.join(Array(7).fill(" ").join(""));
+  const handler = `${styleText("dim", "   handler:")} ${handlerText ?? pending}`;
 
   const maxColumns = process.stdout.isTTY
     ? Number(process.stdout.columns || 80)

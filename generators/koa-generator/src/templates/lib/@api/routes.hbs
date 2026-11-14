@@ -5,18 +5,14 @@ import type { RouteSource } from "@kosmojs/core/api";
 import {
   backendBase,
   apiRouteMap,
+  // nneded for aliases
   apiRouteMapper,
   // needed for cascadingMiddleware
   type Override,
 } from "{{ createImport 'libCore' }}";
 
-{{#each routes}}
-import {{id}} from "{{ createImport 'api' file }}";
-import { validationSchemas as {{id}}_schemas } from "{{ createImport 'libApi' basename 'schemas' }}";
-{{/each}}
-
 {{#each cascadingMiddleware}}
-import {{id}}, { type UseT as UseT{{id}} } from "{{ createImport 'api' file }}";
+import type { UseT as UseT{{id}} } from "{{ createImport 'api' file }}";
 {{/each}}
 
 export type RouteMap = {
@@ -46,11 +42,31 @@ export const routeSources: Array<RouteSource<never>> = [
     {{/if}}
     name: "{{name}}",
     file: "{{file}}",
-    cascadingMiddleware: [ {{#each cascadingMiddleware}}{{id}}, {{/each}}].flat() as Array<never>,
-    definitionItems: {{id}} as never,
-    {{#if ../validationEnabled}}
-    validationSchemas: {{id}}_schemas,
-    {{/if}}
+    methods: [{{#each methods}}"{{.}}", {{/each}}],
+    load: async () => {
+      const [
+        route,
+        cascading,
+        {{#if ../validationEnabled}}schemas,{{/if}}
+      ] = await Promise.all([
+        import("{{ createImport 'api' file }}"),
+        Promise.all([
+          {{#each cascadingMiddleware}}
+          import("{{ createImport 'api' file }}"),
+          {{/each}}
+        ]),
+        {{#if ../validationEnabled}}
+        import("{{ createImport 'libApi' basename 'schemas' }}"),
+        {{/if}}
+      ]);
+      return {
+        definitionItems: route.default as never,
+        cascadingMiddleware: cascading.flatMap((e) => e.default) as Array<never>,
+        {{#if ../validationEnabled}}
+        validationSchemas: schemas.validationSchemas,
+        {{/if}}
+      }
+    },
   },
   {{/each}}
 ];

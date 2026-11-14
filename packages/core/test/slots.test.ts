@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest";
 
-import { createRoutes } from "#/api/routes";
+import { resolveRoutes } from "#/api/routes";
 import type {
   HandlerDefinition,
+  LoadedRouteSource,
   MiddlewareDefinition,
-  RouteSource,
 } from "#/api/types";
 import { use } from "#/api/use";
 
@@ -42,7 +42,7 @@ const chainOf = ({
     MiddlewareDefinition<Middleware> | HandlerDefinition<Middleware>
   >;
 }): Array<string> => {
-  const routeSource: RouteSource<Middleware> = {
+  const routeSource: LoadedRouteSource<Middleware> = {
     name: "demo",
     path: "/demo",
     pathPattern: "/demo",
@@ -55,7 +55,7 @@ const chainOf = ({
     validationSchemas: {},
   };
 
-  const [entry] = createRoutes<Middleware, Middleware>([routeSource], {
+  const [entry] = resolveRoutes<Middleware, Middleware>([routeSource], {
     productionBuild: false,
     createMetaparsers: () => ({}) as never,
     createBodyparsers: () => ({}) as never,

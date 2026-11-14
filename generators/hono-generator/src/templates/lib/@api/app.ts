@@ -7,6 +7,7 @@ import { TrieRouter } from "hono/router/trie-router";
 import type { Route, RouteDebugOption } from "@kosmojs/core/api";
 
 import type { DefaultBindings, DefaultVariables } from "../api";
+import { routes } from "./router";
 
 export type AppEnv = {
   Variables: DefaultVariables;
@@ -19,28 +20,17 @@ export type AppOptions = ConstructorParameters<typeof Hono<AppEnv>>[0] & {
   debug?: RouteDebugOption;
 };
 
-export function appFactory(
-  routes: Array<Route<MiddlewareHandler>>,
-  options: AppOptions,
-): App;
+export type AppCallback = (a: { app: App; router: Router<never> }) => void;
 
-export function appFactory(
-  routes: Array<Route<MiddlewareHandler>>,
-  fn: (a: { app: App; router: Router<never> }) => void,
-): App;
-
-export function appFactory(
-  routes: Array<Route<MiddlewareHandler>>,
-  options: AppOptions,
-  fn: (a: { app: App; router: Router<never> }) => void,
-): App;
-
-export function appFactory(
-  routes: Array<Route<MiddlewareHandler>>,
-  ...rest: Array<unknown>
-): App {
-  const [options, fn] = typeof rest[0] === "function" ? [{}, rest[0]] : rest;
-
+/**
+ * Builds the app with every route registered and none imported:
+ * a route file is imported by the first request to that route.
+ *
+ * `fn` runs before the routes are registered.
+ * Middleware and error handlers set there wrap every route,
+ * and a route registered there takes the place of the route file with the same method and path.
+ * */
+export function appFactory(fn?: AppCallback, options?: AppOptions): App {
   const router = new SmartRouter({
     routers: [new RegExpRouter(), new TrieRouter()],
   }) as Router<never>;

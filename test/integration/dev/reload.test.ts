@@ -13,10 +13,11 @@ import { setupTestProject } from "../setup";
 /**
  * The API program under `kosmo serve`, reloaded by saving files.
  *
- * api/dev.ts here holds a listening socket on a fixed port and logs its own lifecycle,
- * so the two things a reload must never do both show up:
- * a program evaluated while the previous one is still up cannot bind the port,
- * and a program torn down twice, or not at all, is in the log.
+ * api/dev.ts here logs when it is evaluated, and its factory builds an app
+ * holding a listening socket on a fixed port, logging that too.
+ * So the two things a reload must never do both show up:
+ * an app built while the previous one is still up cannot bind the port,
+ * and an app torn down twice, or not at all, is in the log.
  *
  * The log is a file rather than a variable: every reload evaluates a fresh module instance,
  * and a file is the one channel the test and every instance agree on.
@@ -54,31 +55,40 @@ const devSource = `
     appendFileSync(${JSON.stringify(logFile)}, event + ":" + tick + "\\n");
   };
 
-  const socket = createServer();
-
-  await new Promise<void>((resolve, reject) => {
-    socket.once("error", reject);
-    socket.listen(${port}, "127.0.0.1", () => resolve());
-  });
-
   log("load");
 
-  export default devSetup({
-    requestHandler() {
-      return getRequestListener(app.fetch);
-    },
-    async teardownHandler() {
-      await new Promise<void>((resolve) => socket.close(() => resolve()));
-      // slower than an import, so a load that does not wait for it gets ahead in the log
-      await new Promise((resolve) => setTimeout(resolve, 200));
-      log("teardown");
-    },
+  export default devSetup(async () => {
+    if (tick === "fail") {
+      throw new Error("no app for this tick");
+    }
+
+    const socket = createServer();
+
+    await new Promise<void>((resolve, reject) => {
+      socket.once("error", reject);
+      socket.listen(${port}, "127.0.0.1", () => resolve());
+    });
+
+    log("build");
+
+    return {
+      requestHandler: getRequestListener(app.fetch),
+      async teardownHandler() {
+        await new Promise<void>((resolve) => socket.close(() => resolve()));
+        // slower than an import, so a load that does not wait for it gets ahead in the log
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        log("teardown");
+      },
+    };
   });
 `;
 
+// logs when it is evaluated, which is on the first request to it
 const routeSource = `
+  import { appendFileSync } from "node:fs";
   import { defineRoute } from "${defaults.libPrefix}/api";
   import { tick } from "../tick";
+  appendFileSync(${JSON.stringify(logFile)}, "route:" + tick + "\\n");
   export default defineRoute<"${ROUTE}">(({ GET }) => [
     GET((ctx) => ctx.json({ tick })),
   ]);
@@ -124,7 +134,7 @@ const servedTick = async () => {
 };
 
 /**
- * Chassis reports a skipped or failed reload on `console.error`.
+ * Chassis reports a skipped reload or a failed build on `console.error`.
  * Captured rather than left to print: the report is behaviour worth asserting,
  * and a suite that logs expected stack traces buries the unexpected ones.
  * */
@@ -155,36 +165,69 @@ afterAll(async () => {
 });
 
 describe("backend under kosmo serve", () => {
-  test("loads the program once, on boot", async () => {
+  test("loads the program on boot, and builds the app with the first request", async () => {
     expect(await waitForLog(1)).toEqual(["load:1"]);
+    await settle();
+    expect(await readLog()).toEqual(["load:1"]);
+
     expect(await servedTick()).toEqual([200, JSON.stringify({ tick: "1" })]);
+    expect(await readLog()).toEqual(["load:1", "build:1", "route:1"]);
   });
 
-  test("a save tears the program down, then loads the next one", async () => {
+  test("a save tears the app down, then loads the next program", async () => {
+    const before = await readLog();
+
     await writeTick(tickSource("2"));
 
-    expect(await waitForLog(3)).toEqual(["load:1", "teardown:1", "load:2"]);
+    const log = await waitForLog(before.length + 2);
+    expect(log.slice(before.length)).toEqual(["teardown:1", "load:2"]);
+
     expect(await servedTick()).toEqual([200, JSON.stringify({ tick: "2" })]);
+    expect((await readLog()).slice(before.length)).toEqual([
+      "teardown:1",
+      "load:2",
+      "build:2",
+      "route:2",
+    ]);
   });
 
-  test("saves landing together never put two programs side by side", async () => {
+  test("a program no request reached is replaced with nothing to tear down", async () => {
+    const before = await readLog();
+
+    await writeTick(tickSource("3"));
+    await waitForLog(before.length + 2);
+
+    await writeTick(tickSource("4"));
+    await waitForLog(before.length + 3);
+
+    expect((await readLog()).slice(before.length)).toEqual([
+      "teardown:2",
+      "load:3",
+      "load:4",
+    ]);
+    expect(await servedTick()).toEqual([200, JSON.stringify({ tick: "4" })]);
+  });
+
+  test("saves landing together never put two apps side by side", async () => {
     // two modules of the program, saved at once: two events, however many reloads
     await Promise.all([
-      writeTick(tickSource("3")),
+      writeTick(tickSource("5")),
       writeFile(createPath.api("dev.ts"), `${devSource}\n// touched\n`, "utf8"),
     ]);
     await settle();
 
-    const log = await readLog();
+    expect(await servedTick()).toEqual([200, JSON.stringify({ tick: "5" })]);
 
-    // each program is torn down once, and before the next one is evaluated;
-    // side by side, the second one fails to bind the port and never logs a load
-    expect(log.length % 2).toEqual(1);
-    for (const [i, line] of log.entries()) {
-      expect(line.split(":")[0]).toEqual(i % 2 ? "teardown" : "load");
+    // each app is torn down once, and before the next one is built;
+    // side by side, the second one fails to bind the port and never logs a build
+    const apps = (await readLog()).filter((line) => {
+      return /^(build|teardown):/.test(line);
+    });
+    for (const [i, line] of apps.entries()) {
+      expect(line.split(":")[0]).toEqual(i % 2 ? "teardown" : "build");
     }
 
-    expect(log.at(-1)).toEqual("load:3");
+    expect(apps.at(-1)).toEqual("build:5");
     expect(takeReported()).toEqual("");
   });
 
@@ -196,7 +239,7 @@ describe("backend under kosmo serve", () => {
 
     // checked before anything is torn down
     expect(await readLog()).toEqual(before);
-    expect(await servedTick()).toEqual([200, JSON.stringify({ tick: "3" })]);
+    expect(await servedTick()).toEqual([200, JSON.stringify({ tick: "5" })]);
 
     const errors = takeReported();
     expect(errors).toMatch(/backend reload skipped/);
@@ -206,21 +249,68 @@ describe("backend under kosmo serve", () => {
   test("the next good save reloads it", async () => {
     const before = await readLog();
 
-    await writeTick(tickSource("4"));
+    await writeTick(tickSource("6"));
 
     const log = await waitForLog(before.length + 2);
 
-    expect(log.slice(before.length)).toEqual(["teardown:3", "load:4"]);
-    expect(await servedTick()).toEqual([200, JSON.stringify({ tick: "4" })]);
+    expect(log.slice(before.length)).toEqual(["teardown:5", "load:6"]);
+    expect(await servedTick()).toEqual([200, JSON.stringify({ tick: "6" })]);
     expect(takeReported()).toEqual("");
   });
 
-  test("stopping the dev server tears the program down", async () => {
+  test("an app that fails to build answers 503, reported once", async () => {
+    await writeTick(tickSource("fail"));
+    await settle();
+
+    expect((await servedTick())[0]).toEqual(503);
+    expect((await servedTick())[0]).toEqual(503);
+
+    const failures = takeReported().match(/backend app failed to build/g);
+    expect(failures).toHaveLength(1);
+  });
+
+  test("and is built again after the save that fixes it", async () => {
+    await writeTick(tickSource("6"));
+    await settle();
+
+    expect(await servedTick()).toEqual([200, JSON.stringify({ tick: "6" })]);
+    takeReported();
+  });
+
+  test("requests arriving during a reload are answered by the next program", async () => {
+    const before = await readLog();
+    const answers = new Set<string>();
+
+    let asking = true;
+
+    // teardown takes 200ms here: plenty of requests land while there is no program
+    const requests = (async () => {
+      while (asking) {
+        answers.add((await servedTick()).join(" "));
+        await new Promise((resolve) => setTimeout(resolve, 20));
+      }
+    })();
+
+    await writeTick(tickSource("7"));
+    await waitForLog(before.length + 2);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    asking = false;
+    await requests;
+
+    // none was refused, and none reached a program that was on its way out
+    expect([...answers].sort()).toEqual([
+      `200 ${JSON.stringify({ tick: "6" })}`,
+      `200 ${JSON.stringify({ tick: "7" })}`,
+    ]);
+  });
+
+  test("stopping the dev server tears the app down", async () => {
     const before = await readLog();
 
     await teardown();
     teardown = async () => {};
 
-    expect((await readLog()).slice(before.length)).toEqual(["teardown:4"]);
+    expect((await readLog()).slice(before.length)).toEqual(["teardown:7"]);
   });
 });

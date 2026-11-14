@@ -14,11 +14,24 @@ import type { DevEnvironment } from "vite";
 export const serialQueue = () => {
   let tail: Promise<unknown> = Promise.resolve();
 
+  // tasks asked for and not finished yet
+  let pending = 0;
+
   // settles as the task does; a task that fails does not hold up the ones behind it
   const run = <T>(task: () => Promise<T> | T): Promise<T> => {
+    pending += 1;
     const result = tail.then(task);
-    tail = result.catch(() => {});
+    tail = result
+      .catch(() => {})
+      .then(() => {
+        pending -= 1;
+      });
     return result;
+  };
+
+  // settles once everything asked for so far has run; undefined with nothing to wait for
+  const idle = (): Promise<unknown> | undefined => {
+    return pending ? tail : undefined;
   };
 
   /**
@@ -41,7 +54,7 @@ export const serialQueue = () => {
     };
   };
 
-  return { run, coalesce };
+  return { run, coalesce, idle };
 };
 
 /**

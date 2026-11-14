@@ -57,7 +57,17 @@ export type UseOptions<S extends string = `${string}`> = {
   debug?: string | undefined;
 };
 
-export type RouteSource<MiddlewareT> = {
+// what a route file and the use.ts files above it provide, once imported
+export type RouteModules<MiddlewareT> = {
+  // same as inline middleware inside route definition,
+  // just automatically imported from use.ts files
+  cascadingMiddleware: [...a: Array<MiddlewareDefinition<MiddlewareT>>];
+  definitionItems: Array<RouteDefinitionItem<MiddlewareT>>;
+  // no schemas provided when validation disabled
+  validationSchemas?: ValidationSchemas;
+};
+
+export type RouteMeta = {
   name: string;
   path: string;
   // path-to-regexp pattern
@@ -66,14 +76,25 @@ export type RouteSource<MiddlewareT> = {
   params: ApiRouteSerialized["params"];
   numericProperties: ApiRouteSerialized["numericProperties"];
   booleanProperties: ApiRouteSerialized["booleanProperties"];
-  // same as inline middleware inside route definition,
-  // just automatically imported from use.ts files
-  cascadingMiddleware: [...a: Array<MiddlewareDefinition<MiddlewareT>>];
-  definitionItems: Array<RouteDefinitionItem<MiddlewareT>>;
-  // no schemas provided when validation disabled
-  validationSchemas?: ValidationSchemas;
   meta?: Record<string, unknown>;
 };
+
+/**
+ * A route as the generator describes it: everything known without importing its file.
+ * */
+export type RouteSource<MiddlewareT> = RouteMeta & {
+  /**
+   * The methods of the array `defineRoute` returns, read from the file by the generator.
+   * A route is registered for these, before its file is imported.
+   * */
+  methods: Array<HTTPMethod>;
+  // imports the route file, its use.ts files and its validation schemas
+  load: () => Promise<RouteModules<MiddlewareT>>;
+};
+
+// a route source with its modules imported
+export type LoadedRouteSource<MiddlewareT> = RouteMeta &
+  RouteModules<MiddlewareT>;
 
 export type RouteDebugLevel =
   | "headline"
@@ -96,38 +117,55 @@ export type Route<MiddlewareT> = {
   debug: Record<RouteDebugLevel, string>;
 };
 
-export type DevSetup = {
+/**
+ * The API as the dev server runs it, built by the factory given to `devSetup`.
+ * */
+export type DevApp = {
   /**
-   * API request handler for development mode.
+   * Answers the requests routed to the API.
    *
    * In dev mode, incoming requests are routed based on URL:
    * - Requests matching apiurl routed to this handler (your API)
    * - All other requests routed to Vite dev server (pages/assets)
-   *
-   * Returns a function that processes API requests.
    * */
-  requestHandler: () => (
+  requestHandler: (
     req: IncomingMessage,
     res: ServerResponse,
   ) => Promise<unknown> | unknown;
 
+  /**
+   * Release whatever the factory opened: db connections, sockets, timers.
+   *
+   * Called once for every app that was built -
+   * before each reload, and when the dev server stops.
+   * The next program is evaluated only after the returned promise settles.
+   * */
+  teardownHandler?: () => void | Promise<void>;
+};
+
+/**
+ * Hands the app to the dev server, with whatever it needs to run it.
+ *
+ * Called once per program, on the first API request after the program loaded.
+ * Connections opened here are closed by the `teardownHandler` it returns.
+ * */
+export type DevAppFactory = () => DevApp | Promise<DevApp>;
+
+export type DevSetupOptions = {
   /**
    * Determine if a request should be handled by the API.
    *
    * By default, requests are routed to the API handler if their URL starts with `backend.base`
    * or match any `backend.alias`.
    * Use this to implement custom heuristics for detecting API requests.
+   *
+   * Asked before the app is built, so it is an option rather than part of the app.
    * */
   requestMatcher?: (req: IncomingMessage) => boolean;
+};
 
-  /**
-   * In dev mode, release whatever the API program holds: db connections, sockets, timers.
-   *
-   * Called once for every program that was loaded -
-   * before each reload, and when the dev server stops.
-   * The next program is evaluated only after the returned promise settles.
-   * */
-  teardownHandler?: () => void | Promise<void>;
+export type DevSetup = DevSetupOptions & {
+  factory: DevAppFactory;
 };
 
 export type ExtendContext<

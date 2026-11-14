@@ -4,6 +4,7 @@ import Koa from "koa";
 import type { Route, RouteDebugOption } from "@kosmojs/core/api";
 
 import type { DefaultContext, DefaultState } from "../api";
+import { routes } from "./router";
 
 export type App = Koa<DefaultState, DefaultContext>;
 
@@ -56,34 +57,30 @@ const registrationOrder = (routes: Array<Route<RouterMiddleware>>) => {
   return ordered;
 };
 
-export function appFactory(
-  routes: Array<Route<RouterMiddleware>>,
-  options: AppOptions,
-): App;
+export type AppCallback = (a: {
+  app: App;
+  router: Router<DefaultState, DefaultContext>;
+}) => void;
 
-export function appFactory(
-  routes: Array<Route<RouterMiddleware>>,
-  fn: (a: { app: App; router: Router<never> }) => void,
-): App;
-
-export function appFactory(
-  routes: Array<Route<RouterMiddleware>>,
-  options: AppOptions,
-  fn: (a: { app: App; router: Router<never> }) => void,
-): App;
-
-export function appFactory(
-  routes: Array<Route<RouterMiddleware>>,
-  ...rest: Array<unknown>
-): App {
-  const [options, fn] = typeof rest[0] === "function" ? [{}, rest[0]] : rest;
-
+/**
+ * Builds the app with every route registered and none imported:
+ * a route file is imported by the first request to that route.
+ *
+ * `fn` runs before the routes are registered.
+ * Middleware and error handlers set there wrap every route,
+ * and a route registered there takes the place of the route file with the same method and path.
+ * */
+export function appFactory(fn?: AppCallback, options?: AppOptions): App {
   const { debug = undefined, ...appOptions } = {
     ...(options ? { ...options } : {}),
   };
 
   const app = new Koa<DefaultState, DefaultContext>(appOptions);
   const router = new Router();
+
+  if (typeof fn === "function") {
+    fn({ app, router });
+  }
 
   for (const route of registrationOrder(routes)) {
     if (typeof debug === "function") {
@@ -118,10 +115,6 @@ export function appFactory(
 
       ctx.set("Allow", [...allowedMethods].join(", "));
     });
-  }
-
-  if (typeof fn === "function") {
-    fn({ app, router });
   }
 
   // NOTE: Routes should be added last, after any middleware

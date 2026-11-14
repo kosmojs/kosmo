@@ -9,7 +9,10 @@ import {
   type RequestBodyTarget,
   type RequestMetadataParser,
 } from "@kosmojs/core";
-import { createParamsNormalizers, type RouteSource } from "@kosmojs/core/api";
+import {
+  createParamsNormalizers,
+  type LoadedRouteSource,
+} from "@kosmojs/core/api";
 
 import type {
   DefaultContext,
@@ -26,7 +29,7 @@ type Ctx = ParameterizedContext<
 >;
 
 export const createMetaparsers: (
-  routeSource: RouteSource<ParameterizedMiddleware>,
+  routeSource: LoadedRouteSource<ParameterizedMiddleware>,
   ctx: Ctx,
 ) => Record<RequestMetadataParser, () => unknown> = (routeSource, ctx) => {
   const {
@@ -191,7 +194,7 @@ const unwrap = (
 };
 
 export const createBodyparsers: (
-  routeSource: RouteSource<ParameterizedMiddleware>,
+  routeSource: LoadedRouteSource<ParameterizedMiddleware>,
   ctx: Ctx,
 ) => {
   [T in RequestBodyTarget]: (opt?: BodyparserOptions[T]) => Promise<unknown>;

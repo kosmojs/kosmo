@@ -30,7 +30,8 @@ Listens on [kosmo.devHost](/essentials/config#project-settings-package-json).
 ## What Happens on Start
 
 1. Blank route and page files are seeded.
-2. `Vite` compiles `api/app.ts`
+2. `Vite` compiles `api/dev.ts` and what it imports - each route comes later,
+with its [first request](#routes-load-on-first-request)
 3. Dev server starts, serving both client pages and your API routes
 4. Requests are routed between Vite and your API by the folder's `backend.base`
 5. File watchers monitor client modules and API files for changes
@@ -79,29 +80,8 @@ restarts the dev server as a whole, in a fresh process.
 ## api/dev.ts
 
 `api/dev.ts` is where the API side of the dev server is wired up.
-
-It is re-evaluated on every relevant change: the previous setup is torn down, the file re-imported,
-and the fresh handler serves the next request.
-
-Reloads run one at a time, and always in the same order:
-
-1. The saved program is checked: every module transformed, none evaluated.
-A save that cannot compile, or that imports a file that does not exist,
-is reported and the running API is left as it is.
-2. The running program is torn down, its `teardownHandler` awaited.
-3. Only then is `api/dev.ts` evaluated anew.
-
-So there is never more than one API program alive.
-A port or a connection pool held by the old one is released before the new one asks for it.
-
-Saves landing while a reload runs are folded into a single reload after it.
-Between steps 2 and 3 there is no program to answer, so the dev server responds with `503`.
-
-The three hooks below sit on that cycle.
-
-### requestHandler
-
-Returns the API request handler. Seeded default:
+It default-exports `devSetup(factory)`, and the factory builds the app the dev server runs.
+Seeded default:
 
 :::tabs key:backend variant:code
 == Hono
@@ -112,10 +92,13 @@ import { getRequestListener } from "@hono/node-server";
 import { devSetup } from "_/api:factory";
 import app from "./app";
 
-export default devSetup({
-  requestHandler() {
-    return getRequestListener(app.fetch);
-  },
+export default devSetup(() => {
+  return {
+    requestHandler: getRequestListener(app.fetch),
+    teardownHandler() {
+      // close db connections, server sockets etc.
+    },
+  };
 });
 ```
 
@@ -127,10 +110,13 @@ import { toNodeHandler } from "h3/node";
 import { devSetup } from "_/api:factory";
 import app from "./app";
 
-export default devSetup({
-  requestHandler() {
-    return toNodeHandler(app);
-  },
+export default devSetup(() => {
+  return {
+    requestHandler: toNodeHandler(app),
+    teardownHandler() {
+      // close db connections, server sockets etc.
+    },
+  };
 });
 ```
 
@@ -140,15 +126,74 @@ export default devSetup({
 import { devSetup } from "_/api:factory";
 import app from "./app";
 
-export default devSetup({
-  requestHandler() {
-    return app.callback();
-  },
+export default devSetup(() => {
+  return {
+    requestHandler: app.callback(),
+    teardownHandler() {
+      // close db connections, server sockets etc.
+    },
+  };
 });
 ```
 :::
 
-Override this for custom routing logic - WebSocket handling, multi-handler dispatch, etc.
+## The Factory Runs on First Request
+
+The dev server evaluates `api/dev.ts` - and with it `api/app.ts` - when it starts,
+and runs the factory on the first API request after that, once per program.
+Every request after it is answered by the handler the factory returned.
+
+Requests arriving while the factory runs wait for it.
+A factory that throws is reported once, and the API answers `503` until the next save.
+
+## Routes Load on First Request
+
+`appFactory` registers every route and imports none of them,
+in development and in production alike.
+A route file - with the `use.ts` files above it and its validation schemas -
+is imported by the first request to that route, which builds its middleware chain once.
+Every request after it runs the same chain.
+
+So the server starts in the same time however many routes there are,
+and each route pays for its import once, on its first request.
+
+What to keep in mind:
+
+- **Top-level code in a route file runs on its first request**, not when the server starts.
+Whatever has to happen at start belongs in `api/app.ts` or `api/dev.ts`.
+- **A route is registered for the methods of the array `defineRoute` returns**,
+read from the file when routes are generated:
+`defineRoute(({ GET, POST }) => [GET(...), POST(...)])`.
+A route written any other way has no methods to register: it is reported, and answers `404`.
+- **A route that fails to load fails its own requests** - a file that does not compile,
+an import that does not resolve, a top-level throw. The rest of the API keeps working,
+and the route's next request tries again.
+
+## Reloads
+
+`api/dev.ts` is re-evaluated on every relevant change.
+Reloads run one at a time, and always in the same order:
+
+1. The saved program is checked: every module transformed, none evaluated.
+A save that cannot compile, or that imports a file that does not exist,
+is reported and the running API is left as it is.
+2. The running program is torn down - its `teardownHandler` awaited, if its factory ran.
+3. Only then is `api/dev.ts` evaluated anew, and its factory runs with the next API request.
+
+So there is never more than one program alive.
+A port or a connection pool held by the old one is released before the new one asks for it.
+
+Saves landing while a reload runs are folded into a single reload after it.
+A request arriving during a reload waits for it, and is answered by the new program.
+
+Routes are imported by their first request, not by loading `api/dev.ts`,
+so step 1 does not check them: a route that cannot compile fails its own requests instead.
+
+### requestHandler
+
+The handler the dev server dispatches API requests to.
+
+Replace it for custom routing logic - WebSocket handling, multi-handler dispatch, etc.
 
 ### requestMatcher
 
@@ -157,40 +202,37 @@ Controls which requests go to your API vs Vite.
 By default, requests are routed to the API handler if their URL starts with `backend.base`
 or match any `backend.alias`.
 
-Use this to implement custom heuristics for detecting API requests:
+The dev server asks it before the factory runs, so it is an option of `devSetup`
+rather than part of what the factory returns:
 
 ```ts
-export default devSetup({
-  requestHandler() {
+export default devSetup(
+  async () => {
     // ...
   },
-
-  requestMatcher(req) {
-    return req.url?.startsWith("/api") ||
-           req.headers["x-api-request"] === "true";
+  {
+    requestMatcher(req) {
+      return req.url?.startsWith("/api") ||
+             req.headers["x-api-request"] === "true";
+    },
   },
-});
+);
 ```
 
 ### teardownHandler
 
-Runs once for every program that was loaded: before each API reload, and when the dev server stops.
-Use it to close connections and release resources that would otherwise leak across rebuilds:
+Runs once for every factory run: before each API reload, and when the dev server stops.
+Open connections in the factory and close them here, or they leak across rebuilds:
 
 ```ts
-let dbConnection;
-
-export default devSetup({
-  requestHandler() {
-    // ...
-  },
-
-  async teardownHandler() {
-    if (dbConnection) {
-      await dbConnection.close();
-      dbConnection = undefined;
-    }
-  },
+export default devSetup(async () => {
+  const db = await createPool();
+  return {
+    requestHandler: app.callback(),
+    async teardownHandler() {
+      await db.close();
+    },
+  };
 });
 ```
 
@@ -200,10 +242,10 @@ The next program is evaluated only after the hook settles, so await whatever you
 A hook still pending after 3 seconds is reported and no longer waited for.
 
 ::: warning
-The hook belongs to a program that loaded completely.
-If a module throws while it is being evaluated, the modules evaluated before it
-have already opened whatever they open at the top level, and there is no hook to close that with.
-Each such save leaves those connections behind until the dev server restarts.
+The hook belongs to a factory run.
+A factory that throws returns no hook, so whatever it opened before throwing stays open.
+The same goes for the top level of `api/dev.ts`:
+what it opens is closed only if a request ran the factory, so open it in the factory instead.
 :::
 
 ::: tip
@@ -217,16 +259,20 @@ Routes can be inspected by providing `debug` option to `appFactory` in `api/app.
 (omitted by default, feel free to add it as needed):
 
 ```ts [api/app.ts]
-import appFactory, { routes } from "_/api:factory";
+import appFactory from "_/api:factory";
 import defaultErrorHandler from "./errors";
 
 export default appFactory(
-  routes,
-  { debug: true }, // [!code ++]
   ({ app }) => {
-  // ...
-})
+    // ...
+  },
+  { debug: true }, // [!code ++]
+);
 ```
+
+The routes are printed as the app is built, before any of them is imported,
+so `middleware` and `handler` read `loaded on first request`.
+See [Routes Load on First Request](#routes-load-on-first-request).
 
 Example output:
 
@@ -247,9 +293,12 @@ Individual `debug` properties are also available for targeted output:
 Use this to display only headline:
 
 ```ts
-export default appFactory(routes, { debug: "headline" }, ({ app }) => {
-  // ...
-})
+export default appFactory(
+  ({ app }) => {
+    // ...
+  },
+  { debug: "headline" },
+);
 ```
 
 If you rather need a custom logger, provide a function instead;
@@ -257,14 +306,13 @@ it will be provided with full debug object and the route itself.
 
 ```ts [api/app.ts]
 export default appFactory(
-  routes,
+  ({ app }) => {
+    // ...
+  },
   {
     debug(log, route) {
       console.log(log.full);
     },
-  },
-  ({ app }) => {
-    // ...
   },
 );
 ```

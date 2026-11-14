@@ -6,12 +6,15 @@ import {
   type RequestBodyTarget,
   type RequestMetadataParser,
 } from "@kosmojs/core";
-import { createParamsNormalizers, type RouteSource } from "@kosmojs/core/api";
+import {
+  createParamsNormalizers,
+  type LoadedRouteSource,
+} from "@kosmojs/core/api";
 
 import type { ParameterizedMiddleware } from "../api";
 
 export const createMetaparsers: (
-  r: RouteSource<ParameterizedMiddleware>,
+  r: LoadedRouteSource<ParameterizedMiddleware>,
   event: H3Event,
 ) => Record<RequestMetadataParser, () => unknown> = (routeSource, event) => {
   const {
@@ -51,7 +54,7 @@ export const createMetaparsers: (
 };
 
 export const createBodyparsers: (
-  r: RouteSource<ParameterizedMiddleware>,
+  r: LoadedRouteSource<ParameterizedMiddleware>,
   event: H3Event,
 ) => Record<RequestBodyTarget, () => Promise<unknown>> = (
   _routeSource,

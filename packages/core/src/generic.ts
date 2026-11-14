@@ -54,11 +54,15 @@ export const join = (...args: Array<unknown>): string => {
     console.error(args);
     throw new Error("The path argument must be of type string or number");
   }
-  // collapse repeated slashes, keeping a leading "scheme://" intact;
-  // drop the separator before optional/splat route groups, they carry their own leading slash: "/{/:id}" -> "{/:id}";
-  // drop a trailing slash unless it is the whole path;
-  return args
-    .join("/")
+  return normalizePath(args.join("/"));
+};
+
+// collapse repeated slashes, keeping a leading "scheme://" intact;
+// drop the separator before optional/splat route groups,
+// they carry their own leading slash: "/{/:id}" -> "{/:id}";
+// drop a trailing slash unless it is the whole path;
+export const normalizePath = (path: string) => {
+  return path
     .replace(/(^[a-z][a-z\d+.-]*:\/\/)|\/{2,}/gi, (_, scheme) => scheme || "/")
     .replace(/\/(?=\{\/)/g, "")
     .replace(/(?<=[^/])\/$/, "");

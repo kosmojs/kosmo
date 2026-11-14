@@ -338,11 +338,10 @@ To list the registered API routes, pass `debug` to `appFactory` in `api/app.ts`:
 
 ```ts [api/app.ts]
 export default appFactory(
-  routes,
-  { debug: true },
   ({ app }) => {
     // ...
   },
+  { debug: true },
 );
 ```
 

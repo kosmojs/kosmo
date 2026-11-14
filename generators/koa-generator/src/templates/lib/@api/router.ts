@@ -4,6 +4,7 @@ import type { RouterMiddleware } from "@koa/router";
 import { createRoutes } from "@kosmojs/core/api";
 
 import type { ParameterizedMiddleware } from "../api";
+import { compose } from "./compose";
 import { createBodyparsers, createMetaparsers } from "./parsers";
 import { routeSources } from "./routes";
 
@@ -25,5 +26,6 @@ export const routes = createRoutes<ParameterizedMiddleware, RouterMiddleware>(
     createBodyparsers,
     createMetaparsers,
     globalMiddleware: globalMiddleware as never,
+    composeMiddleware: compose,
   },
 );

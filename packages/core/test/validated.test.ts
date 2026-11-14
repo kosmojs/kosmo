@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
-import { createRoutes } from "#/api/routes";
-import type { HandlerDefinition, RouteSource } from "#/api/types";
+import { resolveRoutes } from "#/api/routes";
+import type { HandlerDefinition, LoadedRouteSource } from "#/api/types";
 import type { ValidationSchemas } from "#/types";
 
 type Middleware = (ctx: never, next: Function) => unknown;
@@ -23,7 +23,7 @@ const routeSource = (
   name: string,
   validationSchemas: ValidationSchemas | undefined,
   onHandled: (validated: Seen) => void,
-): RouteSource<Middleware> => {
+): LoadedRouteSource<Middleware> => {
   const handler: HandlerDefinition<Middleware> = {
     kind: "handler",
     method: "GET",
@@ -47,8 +47,8 @@ const routeSource = (
   };
 };
 
-const build = (sources: Array<RouteSource<Middleware>>) => {
-  return createRoutes<Middleware, Middleware>(sources, {
+const build = (sources: Array<LoadedRouteSource<Middleware>>) => {
+  return resolveRoutes<Middleware, Middleware>(sources, {
     productionBuild: false,
     createMetaparsers: () =>
       ({

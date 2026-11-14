@@ -1,4 +1,5 @@
 export { default as libApiApp } from "#templates/lib/@api/app";
+export { default as libApiCompose } from "#templates/lib/@api/compose";
 export { default as libApiDev } from "#templates/lib/@api/dev";
 export { default as libApiErrors } from "#templates/lib/@api/errors";
 export { default as libApiListener } from "#templates/lib/@api/listener";

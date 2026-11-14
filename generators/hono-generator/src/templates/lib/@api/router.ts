@@ -1,5 +1,6 @@
 import { command } from "virtual:kosmo/env";
 import type { MiddlewareHandler } from "hono";
+import { every } from "hono/combine";
 
 import { createRoutes } from "@kosmojs/core/api";
 
@@ -28,5 +29,8 @@ export const routes = createRoutes<ParameterizedMiddleware, MiddlewareHandler>(
       };
     },
     globalMiddleware: globalMiddleware as never,
+    composeMiddleware(chain) {
+      return every(...chain);
+    },
   },
 );

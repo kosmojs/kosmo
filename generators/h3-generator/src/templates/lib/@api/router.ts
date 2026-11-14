@@ -1,5 +1,5 @@
 import { command } from "virtual:kosmo/env";
-import type { Middleware } from "h3";
+import { callMiddleware, type Middleware } from "h3";
 
 import { createRoutes } from "@kosmojs/core/api";
 
@@ -46,5 +46,11 @@ export const routes = createRoutes<ParameterizedMiddleware, Middleware>(
     createBodyparsers,
     createMetaparsers,
     globalMiddleware: globalMiddleware as never,
+    // the last item of a chain is the handler
+    composeMiddleware(chain) {
+      return (event) => {
+        return callMiddleware(event, chain.slice(0, -1), chain.at(-1) as never);
+      };
+    },
   },
 );

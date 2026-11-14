@@ -2,6 +2,8 @@ import { H3, type Middleware } from "h3";
 
 import type { Route, RouteDebugOption } from "@kosmojs/core/api";
 
+import { routes } from "./router";
+
 /**
  * The interface is a nameable symbol of this module, emit stops here and never chases through to the class.
  * */
@@ -11,28 +13,17 @@ export type AppOptions = ConstructorParameters<typeof H3>[0] & {
   debug?: RouteDebugOption;
 };
 
-export function appFactory(
-  routes: Array<Route<Middleware>>,
-  options: AppOptions,
-): App;
+export type AppCallback = (a: { app: App }) => void;
 
-export function appFactory(
-  routes: Array<Route<Middleware>>,
-  fn: (a: { app: App }) => void,
-): App;
-
-export function appFactory(
-  routes: Array<Route<Middleware>>,
-  options: AppOptions,
-  fn: (a: { app: App }) => void,
-): App;
-
-export function appFactory(
-  routes: Array<Route<Middleware>>,
-  ...rest: Array<unknown>
-): App {
-  const [options, fn] = typeof rest[0] === "function" ? [{}, rest[0]] : rest;
-
+/**
+ * Builds the app with every route registered and none imported:
+ * a route file is imported by the first request to that route.
+ *
+ * `fn` runs before the routes are registered.
+ * Middleware and error handlers set there wrap every route,
+ * and a route registered there takes the place of the route file with the same method and path.
+ * */
+export function appFactory(fn?: AppCallback, options?: AppOptions): App {
   const { debug = undefined, ...appOptions } = {
     ...(options ? { ...options } : {}),
   };

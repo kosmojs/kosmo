@@ -161,6 +161,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
         ["api.ts", templates.libApi],
         ["api:factory.ts", templates.libApiFactory],
         ["@api/app.ts", templates.libApiApp],
+        ["@api/compose.ts", templates.libApiCompose],
         ["@api/dev.ts", templates.libApiDev],
         ["@api/errors.ts", templates.libApiErrors],
         ["@api/listener.ts", templates.libApiListener],

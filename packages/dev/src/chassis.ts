@@ -1,4 +1,4 @@
-import { readdir, rm, rmdir } from "node:fs/promises";
+import { readdir, rm, rmdir, stat } from "node:fs/promises";
 import http, { type IncomingMessage, type ServerResponse } from "node:http";
 import { dirname, join, resolve, sep } from "node:path";
 import { styleText } from "node:util";
@@ -27,12 +27,13 @@ import {
   sortByBase,
   type WatcherEvent,
 } from "@kosmojs/core";
-import type { DevSetup } from "@kosmojs/core/api";
+import type { DevApp, DevSetup } from "@kosmojs/core/api";
 import {
   cacheDir,
   createAliasPatterns,
   mergeConfigs,
   pathResolver,
+  type ResolverSignature,
   routesFactory,
   spinnerFactory,
   vitePluginsFactory,
@@ -324,11 +325,31 @@ export default async <C extends ChassisCommand>(
        * */
       let reload = async () => {};
 
+      // file events, reloads, app builds, restarts and the final teardown, one at a time
+      const queue = serialQueue();
+
       /**
-       * Generators first: the files they rewrite for this event belong to the program loaded next.
-       * Whether or not they succeed, a module of the running program changed, so it is reloaded.
+       * The running API program: api/dev.ts as evaluated,
+       * and the app its factory built, once a request asked for it.
+       * Together they hold whatever was opened along the way - db pools, sockets, timers.
+       * None of that is visible from here; only the app's own `teardownHandler` can close it.
+       *
+       * So a program is torn down exactly once, and the next one is evaluated only after that.
+       * There is never more than one alive, and a port the old one held is free for the new one.
+       *
+       * Undefined from a teardown until the next load succeeds.
        * */
-      const onFileEvent = async ({ type, file }: HotUpdateOptions) => {
+      type Program = {
+        setup: DevSetup;
+        app?: Promise<DevApp | undefined>;
+        // the factory threw; the program answers 503 until a file event reloads it
+        failed?: boolean;
+      };
+
+      let program: Program | undefined;
+
+      // whatever generators rewrite for a file event belongs to the program loaded next
+      const generate = async ({ type, file }: HotUpdateOptions) => {
         try {
           await eventMap[sourceFolder.name][watcherEvents[type]](file);
         } catch (error) {
@@ -337,7 +358,6 @@ export default async <C extends ChassisCommand>(
           );
           console.error(error);
         }
-        await reload();
       };
 
       /**
@@ -353,8 +373,20 @@ export default async <C extends ChassisCommand>(
       const reloadPlugin: Plugin = {
         name: "kosmo:backend-reload",
         hotUpdate(options) {
-          if (this.environment.name === "backend" && options.modules.length) {
-            void onFileEvent(options);
+          if (this.environment.name === "backend") {
+            const loaded = options.modules.length > 0;
+            /**
+             * A file the program has not imported is still for generators to see -
+             * a new route, or any route before the app is built.
+             * With a frontend its watcher hands them every event; without one, this does.
+             * */
+            if (loaded || !frontend) {
+              void queue.run(() => generate(options));
+            }
+            // behind the generators: a module of the program changed, or its app failed to build
+            if (loaded || program?.failed) {
+              void reload();
+            }
           }
           return [];
         },
@@ -404,7 +436,17 @@ export default async <C extends ChassisCommand>(
                 resolve: {
                   conditions: ["node"],
                 },
-                dev: { createEnvironment },
+                dev: {
+                  createEnvironment,
+                  /**
+                   * On by default for the client environment only.
+                   * Without it, the module runner gets a program one module at a time,
+                   * each fetched in turn; with it, the static imports of a module
+                   * are transformed side by side, ahead of the runner asking for them.
+                   * Dynamic imports are still transformed on demand.
+                   * */
+                  preTransformRequests: true,
+                },
               },
             },
           },
@@ -421,33 +463,31 @@ export default async <C extends ChassisCommand>(
       const loadDevSetup = async () => {
         const { runner } = environment();
         runner.clearCache();
-        return runner
+
+        const setup = await runner
           .import<{ default: DevSetup }>(entry)
           .then((e) => e.default);
+
+        if (typeof setup?.factory !== "function") {
+          throw new Error(
+            `${entry}: the default export should be devSetup(factory)`,
+          );
+        }
+
+        return setup;
       };
 
-      /**
-       * The running API program: api/dev.ts as evaluated, with whatever it opened along the way -
-       * db pools, sockets, timers. None of that is visible from here;
-       * only the program's own `teardownHandler` can close it.
-       *
-       * So a program is torn down exactly once, and the next one is evaluated only after that.
-       * There is never more than one alive, and a port the old one held is free for the new one.
-       *
-       * Undefined from a teardown until the next load succeeds.
-       * */
-      let devSetup: DevSetup | undefined = await loadDevSetup();
-
-      // reloads, restarts and the final teardown all replace the program, one at a time
-      const queue = serialQueue();
+      program = { setup: await loadDevSetup() };
 
       const closeProgram = async () => {
-        const setup = devSetup;
+        const closing = program;
         // dropped before its teardown runs, so nothing tears it down a second time
-        devSetup = undefined;
+        program = undefined;
+        // settled by now: apps are built through the same queue
+        const app = await closing?.app;
         try {
           await withDeadline(
-            async () => setup?.teardownHandler?.(),
+            async () => app?.teardownHandler?.(),
             TEARDOWN_TIMEOUT_MS,
             `teardownHandler still pending after ${TEARDOWN_TIMEOUT_MS}ms`,
           );
@@ -473,7 +513,7 @@ export default async <C extends ChassisCommand>(
         }
         await closeProgram();
         try {
-          devSetup = await loadDevSetup();
+          program = { setup: await loadDevSetup() };
         } catch (error) {
           // keep the dev server alive; the next good save reloads
           console.error(
@@ -483,7 +523,7 @@ export default async <C extends ChassisCommand>(
         }
       });
 
-      // answers while there is no program: mid-reload, or after a load that failed
+      // answers while there is no program, or no app: after a load or a build that failed
       const unavailable: RequestHandler = (_req, res) => {
         res.writeHead(503, {
           "Content-Type": "text/plain",
@@ -494,19 +534,85 @@ export default async <C extends ChassisCommand>(
         );
       };
 
+      /**
+       * The app of a program, built by its factory for the first request that needs it.
+       *
+       * Built through the queue, so a reload asked for meanwhile waits for it and tears it down.
+       * A factory that throws is reported once, not on every request after.
+       * */
+      const appOf = (current: Program) => {
+        current.app ??= queue.run(async () => {
+          // replaced while waiting for its turn: nothing to build for
+          if (program !== current) {
+            return undefined;
+          }
+          try {
+            return await current.setup.factory();
+          } catch (error) {
+            current.failed = true;
+            console.error(
+              styleText(
+                "red",
+                `${sourceFolder.name}: backend app failed to build`,
+              ),
+            );
+            console.error(error);
+            return undefined;
+          }
+        });
+        return current.app;
+      };
+
+      const dispatch = async (req: IncomingMessage, res: ServerResponse) => {
+        const current = program;
+        const app = current ? await appOf(current) : undefined;
+        if (app) {
+          const answer = await app.requestHandler(req, res);
+          // a handler factory where the handler belongs: the request would wait forever
+          if (typeof answer === "function") {
+            throw new Error(
+              "requestHandler returned a function: return the handler itself, not a factory of it",
+            );
+          }
+        } else if (current && current !== program) {
+          // replaced while its app was waiting to be built: the replacement answers
+          await dispatch(req, res);
+        } else {
+          unavailable(req, res);
+        }
+      };
+
       requestHandlers.push([
         backend.base,
-        () => devSetup?.requestMatcher || requestMatchers.backend,
-        () => devSetup?.requestHandler() || unavailable,
+        () => program?.setup.requestMatcher || requestMatchers.backend,
+        // a request arriving while the program is replaced, or its app built, waits for that
+        () => (req, res) => {
+          void Promise.resolve(queue.idle())
+            .then(() => dispatch(req, res))
+            .catch((error) => {
+              console.error(
+                styleText(
+                  "red",
+                  `${sourceFolder.name}: backend request failed`,
+                ),
+              );
+              console.error(error);
+              if (!res.headersSent) {
+                res.writeHead(500, { "Content-Type": "text/plain" });
+              }
+              res.end();
+            });
+        },
         // a custom requestMatcher owns matching entirely, aliases included
-        () => (devSetup?.requestMatcher ? undefined : requestMatchers.alias),
+        () =>
+          program?.setup.requestMatcher ? undefined : requestMatchers.alias,
       ]);
 
       restartHandlers.push(() => {
         return queue.run(async () => {
           await closeProgram();
           await viteServer.restart();
-          devSetup = await loadDevSetup();
+          program = { setup: await loadDevSetup() };
         });
       });
 
@@ -578,7 +684,17 @@ export default async <C extends ChassisCommand>(
                 resolve: {
                   conditions: ["node"],
                 },
-                dev: { createEnvironment },
+                dev: {
+                  createEnvironment,
+                  /**
+                   * On by default for the client environment only.
+                   * Without it, the module runner gets a program one module at a time,
+                   * each fetched in turn; with it, the static imports of a module
+                   * are transformed side by side, ahead of the runner asking for them.
+                   * Dynamic imports are still transformed on demand.
+                   * */
+                  preTransformRequests: true,
+                },
               },
             },
           },
@@ -705,6 +821,28 @@ export default async <C extends ChassisCommand>(
   } as ReturnSignature<C>;
 };
 
+const resolveRoutes = async (
+  sourceFolder: SourceFolder,
+  resolvers: Map<string, ResolverSignature>,
+) => {
+  const resolved: Array<ResolvedEntry> = [];
+
+  if (!resolvers.size) {
+    return resolved;
+  }
+
+  const spinner = spinnerFactory(`${sourceFolder.name}: resolving routes`);
+
+  for (const { name, handler } of resolvers.values()) {
+    spinner.append(`[ ${resolved.length + 1} of ${resolvers.size} ] ${name}`);
+    resolved.push(await handler());
+  }
+
+  spinner.succeed(styleText(["green"], `${resolved.length} routes resolved`));
+
+  return resolved;
+};
+
 /**
  * Production build of one source folder - generators, client bundle, api bundle,
  * then the generators' post-build steps (ssr, ssg).
@@ -721,25 +859,19 @@ const buildSourceFolder = async (
   const { createPath } = pathResolver(projectSettings, sourceFolder);
   const { frontend, backend, sidecar } = sourceFolder.config;
 
-  const resolvedRoutes = [];
+  const { resolvers } = sourceFolder.config.sidecar
+    ? { resolvers: new Map<string, ResolverSignature>() }
+    : await routesFactory(projectSettings, sourceFolder, cacheFactory);
 
-  if (!sourceFolder.config.sidecar) {
-    const { resolvers } = await routesFactory(
-      projectSettings,
-      sourceFolder,
-      cacheFactory,
-    );
+  let resolvedRoutes = await resolveRoutes(sourceFolder, resolvers);
 
-    const spinner = spinnerFactory(`${sourceFolder.name}: resolving routes`);
+  // route files still empty when resolved; generators seed them
+  const seededFiles: Array<string> = [];
 
-    for (const { name, handler } of resolvers.values()) {
-      spinner.append(
-        `[ ${resolvedRoutes.length + 1} of ${resolvers.size} ] ${name}`,
-      );
-      resolvedRoutes.push(await handler());
+  for (const file of resolvers?.keys() ?? []) {
+    if ((await stat(file)).size === 0) {
+      seededFiles.push(file);
     }
-
-    spinner.succeed("ready ✨");
   }
 
   const vitePlugins = vitePluginsFactory(projectSettings, sourceFolder);
@@ -755,10 +887,24 @@ const buildSourceFolder = async (
     }),
   ];
 
-  for (const generator of sourceFolder.generators) {
-    await generator
-      .factory(projectSettings, sourceFolder)
-      .build?.(resolvedRoutes);
+  const runGenerators = async () => {
+    for (const generator of sourceFolder.generators) {
+      await generator
+        .factory(projectSettings, sourceFolder)
+        .build?.(resolvedRoutes);
+    }
+  };
+
+  await runGenerators();
+
+  /**
+   * A seeded file was resolved empty: no methods, no validation definitions.
+   * Resolve again with what was seeded, and generated from that,
+   * as the dev server does when it sees the seeded file change.
+   * */
+  if (seededFiles.length) {
+    resolvedRoutes = await resolveRoutes(sourceFolder, resolvers);
+    await runGenerators();
   }
 
   if (frontend) {
@@ -973,16 +1119,8 @@ const eventFactory = async (
     }
   };
 
-  {
-    const spinner = spinnerFactory(`${sourceFolder.name}: resolving routes`);
-    for (const { name, handler } of resolvers.values()) {
-      spinner.append(
-        `[ ${resolvedRoutes.size + 1} of ${resolvers.size} ] ${name}`,
-      );
-      const route = await handler();
-      resolvedRoutes.set(route.entry.fileFullpath, route);
-    }
-    spinner.succeed("ready ✨");
+  for (const route of await resolveRoutes(sourceFolder, resolvers)) {
+    resolvedRoutes.set(route.entry.fileFullpath, route);
   }
 
   // NOTE: call only after routes resolved

@@ -1837,7 +1837,8 @@ Point Swagger UI, Redoc, or Stoplight Elements at the derived file.
 ### Dev Workflow & Internals
 
 #### What happens when the dev server starts?
-Vite compiles `api/app.ts`; the dev server serves both client pages and your API routes;
+Vite compiles `api/dev.ts`, leaving each route to its first request;
+the dev server serves both client pages and your API routes;
 requests are routed between Vite and your API; a file watcher monitors API files for changes.
 [Details&nbsp;›](/dev-build-run/development-workflow#what-happens-on-start)
 
@@ -1848,18 +1849,19 @@ and so does a change to a file `kosmo.config.ts` imports.
 [Details&nbsp;›](/cli/serve#restarts-on-config-change)
 
 #### What are the api/dev.ts hooks?
-`requestHandler` (returns the API request handler) and `teardownHandler`
+`api/dev.ts` exports `devSetup(factory)`. The factory builds the app on the first API request
+and returns `requestHandler` (the API request handler) and `teardownHandler`
 (runs before each API reload).
 [Details&nbsp;›](/dev-build-run/development-workflow#api-dev-ts)
 
 #### How do I add custom request routing (e.g. WebSockets)?
-Override `requestHandler` in `api/dev.ts` for custom dispatch, WebSocket handling,
+Replace `requestHandler` in `api/dev.ts` for custom dispatch, WebSocket handling,
 multi-handler setups, etc.
 [Details&nbsp;›](/dev-build-run/development-workflow#api-dev-ts)
 
 #### Why are my DB connections leaking during development?
-Frequent rebuilds can exhaust connections. Close connections and release resources
-in `teardownHandler`, which runs before each reload.
+Frequent rebuilds can exhaust connections. Open them in the `api/dev.ts` factory
+and close them in `teardownHandler`, which runs before each reload.
 [Details&nbsp;›](/dev-build-run/development-workflow#api-dev-ts)
 
 #### How do I inspect registered routes and their middleware?

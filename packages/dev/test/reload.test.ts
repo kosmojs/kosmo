@@ -66,6 +66,58 @@ describe("serialQueue", () => {
   });
 });
 
+describe("serialQueue: idle", () => {
+  test("is undefined with nothing to wait for", async () => {
+    const { run, idle } = serialQueue();
+
+    expect(idle()).toBeUndefined();
+
+    await run(async () => "done");
+    await sleep(0);
+
+    expect(idle()).toBeUndefined();
+  });
+
+  test("settles once everything asked for so far has run", async () => {
+    const { run, idle } = serialQueue();
+    const busy = gate();
+    const log: Array<string> = [];
+
+    void run(() => busy.promise);
+    void run(async () => {
+      log.push("second");
+    });
+
+    const waiting = idle();
+    expect(waiting).toBeInstanceOf(Promise);
+
+    let settled = false;
+    void waiting?.then(() => {
+      settled = true;
+    });
+
+    await sleep(10);
+    expect(settled).toEqual(false);
+
+    busy.open();
+    await waiting;
+
+    expect(log).toEqual(["second"]);
+    expect(idle()).toBeUndefined();
+  });
+
+  test("a task that fails leaves the queue idle all the same", async () => {
+    const { run, idle } = serialQueue();
+
+    await run(async () => {
+      throw new Error("boom");
+    }).catch(() => {});
+    await sleep(0);
+
+    expect(idle()).toBeUndefined();
+  });
+});
+
 describe("serialQueue: coalesce", () => {
   test("requests made while a run is waiting are covered by that run", async () => {
     const { run, coalesce } = serialQueue();

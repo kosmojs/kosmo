@@ -185,10 +185,10 @@ no `use()`, no slot, nothing imported from `_/api`:
 == Hono
 ```ts
 // Hono: api/app.ts
-import appFactory, { routes } from "_/api:factory";
+import appFactory from "_/api:factory";
 import defaultErrorHandler from "./errors";
 
-export default appFactory(routes, ({ app }) => {
+export default appFactory(({ app }) => {
   app.onError(defaultErrorHandler);
 
   app.use(async (ctx, next) => {
@@ -204,10 +204,10 @@ export default appFactory(routes, ({ app }) => {
 // H3: api/app.ts
 import { onError } from "h3";
 
-import appFactory, { routes } from "_/api:factory";
+import appFactory from "_/api:factory";
 import defaultErrorHandler from "./errors";
 
-export default appFactory(routes, ({ app }) => {
+export default appFactory(({ app }) => {
   app.use(onError(defaultErrorHandler));
 
   app.use(async (event, next) => {
@@ -221,10 +221,10 @@ export default appFactory(routes, ({ app }) => {
 == Koa
 ```ts
 // Koa: api/app.ts
-import appFactory, { routes } from "_/api:factory";
+import appFactory from "_/api:factory";
 import defaultErrorHandler from "./errors";
 
-export default appFactory(routes, ({ app }) => {
+export default appFactory(({ app }) => {
   app.use(defaultErrorHandler);
 
   app.use(async (ctx, next) => {

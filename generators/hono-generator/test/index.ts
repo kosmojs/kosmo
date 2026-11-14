@@ -1,10 +1,10 @@
 import { Hono, type Next } from "hono";
 
 import {
-  createRoutes,
   HTTPMethods,
+  type LoadedRouteSource,
   type MiddlewareDefinition,
-  type RouteSource,
+  resolveRoutes,
 } from "@kosmojs/core/api";
 
 import {
@@ -22,12 +22,12 @@ export { defineRoute, type ParameterizedMiddleware, use };
 export const defaultMethods = Object.keys(HTTPMethods);
 
 export const middlewareStackBuilder = (
-  a: Array<Partial<RouteSource<ParameterizedMiddleware>>>,
+  a: Array<Partial<LoadedRouteSource<ParameterizedMiddleware>>>,
   b?: {
     globalMiddleware?: Array<MiddlewareDefinition<ParameterizedMiddleware>>;
   },
 ) => {
-  return createRoutes<ParameterizedMiddleware, ParameterizedMiddleware>(
+  return resolveRoutes<ParameterizedMiddleware, ParameterizedMiddleware>(
     a.map((e) => {
       return {
         name: "",
@@ -50,7 +50,7 @@ export const middlewareStackBuilder = (
             errorSummary: () => "",
           },
         },
-        ...(e as Partial<RouteSource<ParameterizedMiddleware>>),
+        ...(e as Partial<LoadedRouteSource<ParameterizedMiddleware>>),
       };
     }),
     {

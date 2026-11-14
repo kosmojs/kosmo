@@ -1,3 +1,4 @@
+import { normalizePath } from "../generic";
 import {
   type RequestBodyTarget,
   type RequestMetadataParser,
@@ -6,6 +7,7 @@ import {
 import { debugRouteEntry } from "./debug";
 import type {
   HandlerDefinition,
+  LoadedRouteSource,
   MiddlewareDefinition,
   ResponseResolver,
   Route,
@@ -14,34 +16,135 @@ import type {
 import { use } from "./use";
 import { createValidationMiddleware, StateKey } from "./validation";
 
+type ResolveRoutesOptions<MiddlewareT> = {
+  productionBuild: boolean;
+  createMetaparsers: (
+    r: LoadedRouteSource<MiddlewareT>,
+    // biome-ignore lint: any
+    ctx: any,
+  ) => Record<RequestMetadataParser, () => unknown>;
+  createBodyparsers: (
+    r: LoadedRouteSource<MiddlewareT>,
+    // biome-ignore lint: any
+    ctx: any,
+  ) => Record<
+    RequestBodyTarget,
+    // biome-ignore lint: any
+    (opt?: any) => Promise<unknown>
+  >;
+  responseResolver: ResponseResolver;
+  // Global middleware applied to every route (e.g., logging)
+  globalMiddleware: Array<MiddlewareDefinition<MiddlewareT>>;
+};
+
+/**
+ * Registers every route for the methods the generator read from its file,
+ * with a single middleware standing in for its chain.
+ *
+ * Nothing is imported here: the first request to a route imports its file,
+ * the use.ts files above it and its validation schemas,
+ * then builds its chain once and runs it, as every request after it does.
+ * So creating the routes takes the same time however many there are.
+ * */
 export const createRoutes = <MiddlewareT, MiddlewareR>(
   routeSources: Array<RouteSource<MiddlewareT>>,
+  {
+    composeMiddleware,
+    ...options
+  }: ResolveRoutesOptions<MiddlewareT> & {
+    // runs a route's chain as one middleware, the way the framework runs a chain
+    composeMiddleware: (chain: Array<MiddlewareR>) => MiddlewareR;
+  },
+): Array<Route<MiddlewareR>> => {
+  return routeSources.flatMap(({ load, methods, ...routeMeta }) => {
+    const { name, file } = routeMeta;
+    const path = normalizePath(routeMeta.path);
+
+    if (!methods.length) {
+      console.warn(
+        `${file}: not registered, no methods found in the array defineRoute returns`,
+      );
+    }
+
+    // one load for all methods; a load that fails is not kept, the next request tries again
+    let loading: Promise<Array<Route<MiddlewareR>>> | undefined;
+
+    const loadRoutes = () => {
+      loading ??= load()
+        .then((modules) => {
+          const routes = resolveRoutes<MiddlewareT, MiddlewareR>(
+            [{ ...routeMeta, ...modules }],
+            options,
+          );
+          const unregistered = routes
+            .map((e) => e.method)
+            .filter((e) => !methods.includes(e));
+          if (unregistered.length) {
+            console.warn(
+              `${file}: ${unregistered.join(", ")} not registered - ` +
+                "only handlers listed directly in the array defineRoute returns are",
+            );
+          }
+          return routes;
+        })
+        .catch((error) => {
+          loading = undefined;
+          throw error;
+        });
+      return loading;
+    };
+
+    return methods.map((method) => {
+      let composing: Promise<MiddlewareR> | undefined;
+
+      const chain = () => {
+        composing ??= loadRoutes()
+          .then((routes) => {
+            const route = routes.find((e) => e.method === method);
+            if (!route) {
+              throw new Error(
+                `${file}: no ${method} handler found once loaded`,
+              );
+            }
+            return composeMiddleware(route.middleware);
+          })
+          .catch((error) => {
+            composing = undefined;
+            throw error;
+          });
+        return composing;
+      };
+
+      // takes whatever the framework passes a middleware, and hands it to the chain
+      const middleware = async (...args: Array<unknown>) => {
+        const run = (await chain()) as (...a: Array<unknown>) => unknown;
+        return run(...args);
+      };
+
+      return {
+        name,
+        path,
+        file,
+        method,
+        middleware: [middleware as MiddlewareR],
+        debug: debugRouteEntry({ name, path, file, method }),
+      };
+    });
+  });
+};
+
+/**
+ * Builds the chain of every method of routes already imported: one route per handler.
+ * */
+export const resolveRoutes = <MiddlewareT, MiddlewareR>(
+  routeSources: Array<LoadedRouteSource<MiddlewareT>>,
   {
     productionBuild,
     createMetaparsers,
     createBodyparsers,
     responseResolver,
     globalMiddleware,
-  }: {
-    productionBuild: boolean;
-    createMetaparsers: (
-      r: RouteSource<MiddlewareT>,
-      // biome-ignore lint: any
-      ctx: any,
-    ) => Record<RequestMetadataParser, () => unknown>;
-    createBodyparsers: (
-      r: RouteSource<MiddlewareT>,
-      // biome-ignore lint: any
-      ctx: any,
-    ) => Record<
-      RequestBodyTarget,
-      // biome-ignore lint: any
-      (opt?: any) => Promise<unknown>
-    >;
-    responseResolver: ResponseResolver;
-    // Global middleware applied to every route (e.g., logging)
-    globalMiddleware: Array<MiddlewareDefinition<MiddlewareT>>;
-  },
+  }: ResolveRoutesOptions<MiddlewareT>,
 ): Array<Route<MiddlewareR>> => {
   // NOTE:: prioritized middleware must run in this exact order!
   const prioritizedSlots = [
@@ -165,8 +268,7 @@ export const createRoutes = <MiddlewareT, MiddlewareR>(
       ),
     ];
 
-    // normalize route path
-    const path = routeSource.path.replace(/\/+/g, "/").replace(/(.+)\/$/, "$1");
+    const path = normalizePath(routeSource.path);
 
     // Include both middleware and HTTP method handlers
     const definitionItems = [
