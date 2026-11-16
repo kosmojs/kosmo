@@ -7,8 +7,18 @@ export const generateTsconfig = (
   }: Record<"dependencies" | "devDependencies", Record<string, string>>,
   sourceFolder?: string,
 ) => {
-  // biome-ignore lint: noTemplateCurlyInString
-  const rootDir = "${configDir}";
+  const { varDir, libDir, srcDir } = defaults;
+
+  /**
+   * Paths are relative to the generated file itself, not built on `${configDir}`.
+   * An editor opens a file under the nearest tsconfig.json,
+   * and for a file in var/lib that is this generated one, used as a project on its own.
+   * `${configDir}` would then point at var/lib, not at the folder of the extending config.
+   * Relative paths resolve against the file declaring them, so they hold either way.
+   * */
+  const rootDir = [varDir, libDir, ...(sourceFolder?.split("/") || [])]
+    .map(() => "..")
+    .join("/");
 
   const deps = Object.keys({ ...dependencies, ...devDependencies });
 
@@ -47,25 +57,21 @@ export const generateTsconfig = (
   if (sourceFolder) {
     return {
       include: [
-        `${rootDir}/`,
-        `${rootDir}/../../${defaults.varDir}/${defaults.libDir}/${sourceFolder}/`,
-        `${rootDir}/../../${defaults.varDir}/${defaults.libDir}/*.d.ts`,
+        "./",
+        `${rootDir}/${srcDir}/${sourceFolder}/`,
+        `${rootDir}/${varDir}/${libDir}/*.d.ts`,
       ],
       compilerOptions: {
         ...compilerOptions,
         types: [...compilerOptions.types],
         paths: {
-          [`${defaults.appPrefix}/*`]: [`${rootDir}/../../*`],
-          [`${defaults.srcPrefix}/*`]: [`${rootDir}/*`],
-          [`${defaults.libPrefix}/*`]: [
-            `${rootDir}/../../${defaults.varDir}/${defaults.libDir}/${sourceFolder}/*`,
+          [`${defaults.appPrefix}/*`]: [`${rootDir}/*`],
+          [`${defaults.srcPrefix}/*`]: [
+            `${rootDir}/${srcDir}/${sourceFolder}/*`,
           ],
-          [`${defaults.appSrcPrefix}/*`]: [
-            `${rootDir}/../../${defaults.srcDir}/*`,
-          ],
-          [`${defaults.appLibPrefix}/*`]: [
-            `${rootDir}/../../${defaults.varDir}/${defaults.libDir}/*`,
-          ],
+          [`${defaults.libPrefix}/*`]: ["./*"],
+          [`${defaults.appSrcPrefix}/*`]: [`${rootDir}/${srcDir}/*`],
+          [`${defaults.appLibPrefix}/*`]: [`${rootDir}/${varDir}/${libDir}/*`],
         },
       },
     };
@@ -76,10 +82,8 @@ export const generateTsconfig = (
       ...compilerOptions,
       paths: {
         [`${defaults.appPrefix}/*`]: [`${rootDir}/*`],
-        [`${defaults.appSrcPrefix}/*`]: [`${rootDir}/${defaults.srcDir}/*`],
-        [`${defaults.appLibPrefix}/*`]: [
-          `${rootDir}/${defaults.varDir}/${defaults.libDir}/*`,
-        ],
+        [`${defaults.appSrcPrefix}/*`]: [`${rootDir}/${srcDir}/*`],
+        [`${defaults.appLibPrefix}/*`]: [`${rootDir}/${varDir}/${libDir}/*`],
       },
     },
   };
