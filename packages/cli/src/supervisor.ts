@@ -56,6 +56,9 @@ export const supervise = ({
   let child: ChildProcess | undefined;
   let exiting = false;
 
+  // every worker not seen exiting yet, a replaced one still stopping included
+  const workers = new Set<ChildProcess>();
+
   const start = () => {
     const proc = spawn(
       process.execPath,
@@ -71,7 +74,10 @@ export const supervise = ({
       console.error(error);
     });
 
+    workers.add(proc);
+
     proc.on("exit", (code, signal) => {
+      workers.delete(proc);
       // a worker replaced by stop() is no longer the child, nothing to report
       if (child !== proc) {
         return;
@@ -194,10 +200,44 @@ export const supervise = ({
     process.exit(0);
   };
 
-  // once: a second Ctrl-C hits the default handler and quits at once
+  /**
+   * A second Ctrl-C does not wait for the worker's teardown, it kills the worker and exits.
+   *
+   * The worker is killed rather than left to exit on its own, and before the supervisor exits.
+   * Node restores the terminal mode it found at startup when it exits;
+   * a worker exiting after the shell got its prompt back would do that under the shell,
+   * leaving its line editing broken - arrow keys printing as ^[[A.
+   * */
+  const kill = async () => {
+    await Promise.all(
+      [...workers].map((proc) => {
+        return new Promise((resolve) => {
+          proc.once("exit", resolve);
+          proc.kill("SIGKILL");
+        });
+      }),
+    );
+    process.exit(0);
+  };
+
   for (const signal of ["SIGINT", "SIGTERM"] as const) {
-    process.once(signal, shutdown);
+    process.on(signal, () => {
+      void (exiting ? kill() : shutdown());
+    });
   }
+
+  // handle Ctrl-D
+  if (process.stdin.isTTY) {
+    process.stdin.on("end", () => void shutdown());
+    process.stdin.resume();
+  }
+
+  // a worker killed while a spinner ran leaves the cursor hidden
+  process.on("exit", () => {
+    if (process.stdout.isTTY) {
+      process.stdout.write("\x1b[?25h");
+    }
+  });
 
   start();
 };
@@ -209,7 +249,7 @@ export const supervise = ({
  * - the channel to the supervisor closes - it is gone and nothing else would stop this process.
  *
  * The teardown runs against a deadline of its own, as the supervisor's SIGKILL may never come:
- * a second Ctrl-C ends the supervisor at once, a `kill -9` ends it without a word.
+ * a `kill -9` ends the supervisor without a word.
  * */
 export const exitWith = (teardown: () => Promise<unknown>) => {
   let stopping = false;

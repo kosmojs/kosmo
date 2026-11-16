@@ -18,7 +18,12 @@ export const spinnerFactory = (startText: string): SpinnerFactory => {
     };
   }
 
-  const spinner = new Spinner().start(startText);
+  /**
+   * Input is not discarded: that puts the terminal in raw mode while the spinner runs,
+   * where Ctrl-C reaches this process alone rather than the whole process group.
+   * Under the cli supervisor, that stops the worker and leaves the supervisor running.
+   * */
+  const spinner = new Spinner({ discardStdin: false }).start(startText);
 
   let _text = startText;
 
