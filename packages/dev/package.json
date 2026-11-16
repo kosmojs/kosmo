@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@kosmojs/dev",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Vite integration for KosmoJS projects",
   "cacheVersion": "002",
   "author": "Slee Woo",

@@ -1,3 +1,36 @@
+## [0.7.2](https://github.com/kosmojs/kosmo/compare/v0.7.1...v0.7.2) (2026-11-16)
+
+### ⚠ BREAKING CHANGES
+
+* appFactory takes just a callback, no routes;
+  devSetup takes a function returning the hooks, sync or async.
+
+### Bug Fixes
+
+* **cli:** fix exit handler; add Ctrl-D handler ([480e7ef](https://github.com/kosmojs/kosmo/commit/480e7ef2b85c7cc91063acc852ba96d6a319cbb1))
+
+### Code Refactoring
+
+* add [#src](https://github.com/kosmojs/kosmo/issues/src)/ and [#lib](https://github.com/kosmojs/kosmo/issues/lib)/ prefixes ([7599ef7](https://github.com/kosmojs/kosmo/commit/7599ef7d2e5b9fe3d40a39dce7829d7210e06962))
+
+  also remove $/ prefix added in 0.6.10
+* lazy-load backend routes ([92d1ff4](https://github.com/kosmojs/kosmo/commit/92d1ff44e4b21ae4df0261cefadf2fd2b7a64362))
+
+  Each route is registered at start with its path and methods,
+  and loaded by a middleware on its own first request, in dev and prod,
+  so server start no longer grows with the number of routes.
+* use oxc to resolve and parse types ([feea223](https://github.com/kosmojs/kosmo/commit/feea223686f636271532f4c3d25b88d5831cea08))
+
+  Validation types are now read with oxc-parser and followed with
+  oxc-resolver, replacing tfusion, ts-morph and the TypeScript type
+  checker.
+
+  - a full rebuild of 500+ routes takes about 3s, heavy routes no longer
+  lag the dev server
+  - type names resolve the way the editor does, built-in names included
+  - schemas are stored as JSON Schema, which the OpenAPI generator imports
+  as is
+
 ## [0.7.1](https://github.com/kosmojs/kosmo/compare/v0.7.0...v0.7.1) (2026-11-10)
 
 ### Bug Fixes
