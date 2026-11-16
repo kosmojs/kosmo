@@ -69,7 +69,8 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
 
   const path = ((params, query, opt) => {
     // parametrize() output always starts with base (toPath is compiled with it)
-    const abs = parametrize(params);
+    // omitted params map to none, see paramsMapper
+    const abs = parametrize(params as ParamsT);
     const rel = base === "/" ? abs : abs.slice(base.length) || "/";
 
     const path =
@@ -82,8 +83,8 @@ export const apiRouteMapper = <ParamsT extends readonly unknown[]>(
     return query ? [path, stringifySearchParams(query)].join("?") : path;
   }) as RoutePathMethods<ParamsT>["path"];
 
-  const href = ((host, params, query, opt) => {
-    return createHost(host) + path(params, query, opt);
+  const href = ((host, ...args) => {
+    return createHost(host) + path(...args);
   }) as RoutePathMethods<ParamsT>["href"];
 
   return { ...route, paramsMapper, parametrize, path, href };
@@ -127,7 +128,8 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
 
   const path = ((params, query, opt) => {
     // parametrize() output always starts with base (toPath is compiled with it)
-    const abs = parametrize(params);
+    // omitted params map to none, see paramsMapper
+    const abs = parametrize(params as ParamsT);
     const rel = base === "/" ? abs : abs.slice(base.length) || "/";
 
     const path =
@@ -140,8 +142,8 @@ export const pageRouteMapper = <ParamsT extends readonly unknown[]>(
     return query ? [path, stringifySearchParams(query)].join("?") : path;
   }) as RoutePathMethods<ParamsT>["path"];
 
-  const href = ((host, params, query, opt) => {
-    return createHost(host) + path(params, query, opt);
+  const href = ((host, ...args) => {
+    return createHost(host) + path(...args);
   }) as RoutePathMethods<ParamsT>["href"];
 
   return { ...route, paramsMapper, parametrize, path, href };

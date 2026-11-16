@@ -54,7 +54,7 @@ export const routeSources: Array<RouteSource<never>> = [
           {{#each cascadingMiddleware}}
           import("{{ createImport 'api' file }}"),
           {{/each}}
-        ]),
+        ] as unknown as Array<{ default: never }>),
         {{#if ../validationEnabled}}
         import("{{ createImport 'libApi' basename 'schemas' }}"),
         {{/if}}

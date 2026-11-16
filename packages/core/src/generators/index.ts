@@ -138,10 +138,28 @@ export const clientRenderFactory: () => CSRFactory = () => {
 };
 
 /**
- * `path` and `href` take no params when an empty tuple fits ParamsT,
+ * Arguments of `path`, and of `href` after the host.
+ * Params may be omitted when an empty tuple fits ParamsT,
  * that is when every param is optional: a route without params,
  * or one whose params are all optional or splats with nothing required after them.
+ *
+ * One signature rather than overloads: a route map indexed by a union of keys
+ * yields a union of these functions, and TypeScript cannot call a union
+ * whose members carry overloads that differ.
  * */
+export type RoutePathArgs<ParamsT extends readonly unknown[]> =
+  [] extends ParamsT
+    ? [
+        params?: ParamsT,
+        query?: Record<string, unknown>,
+        opt?: { prefix?: boolean | string },
+      ]
+    : [
+        params: ParamsT,
+        query?: Record<string, unknown>,
+        opt?: { prefix?: boolean | string },
+      ];
+
 export type RoutePathMethods<ParamsT extends readonly unknown[]> = {
   paramsMapper: (
     params: ParamsT,
@@ -150,35 +168,7 @@ export type RoutePathMethods<ParamsT extends readonly unknown[]> = {
 
   parametrize: (params: ParamsT) => string;
 
-  path: [] extends ParamsT
-    ? {
-        (): string;
-        (
-          params: ParamsT,
-          query?: Record<string, unknown>,
-          opt?: { prefix?: boolean | string },
-        ): string;
-      }
-    : (
-        params: ParamsT,
-        query?: Record<string, unknown>,
-        opt?: { prefix?: boolean | string },
-      ) => string;
+  path: (...args: RoutePathArgs<ParamsT>) => string;
 
-  href: [] extends ParamsT
-    ? {
-        (host: HostOpt): string;
-        (
-          host: HostOpt,
-          params: ParamsT,
-          query?: Record<string, unknown>,
-          opt?: { prefix?: boolean | string },
-        ): string;
-      }
-    : (
-        host: HostOpt,
-        params: ParamsT,
-        query?: Record<string, unknown>,
-        opt?: { prefix?: boolean | string },
-      ) => string;
+  href: (host: HostOpt, ...args: RoutePathArgs<ParamsT>) => string;
 };
