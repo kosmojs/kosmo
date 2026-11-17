@@ -257,10 +257,12 @@ describe("linkProgram", () => {
    * The two things linkProgram asks of an environment, over a program given as
    * `{ url: [deps] }`. A dep that is not a key is external; `broken` urls fail to fetch,
    * the way a module that cannot compile or cannot be found does.
+   * `dynamic` lists the dynamic imports of a module, the same way.
    * */
   const fakeEnvironment = (
     graph: Record<string, Array<string>>,
     broken: Array<string> = [],
+    dynamic: Record<string, Array<string>> = {},
   ) => {
     const fetched: Array<string> = [];
 
@@ -276,7 +278,14 @@ describe("linkProgram", () => {
       },
       moduleGraph: {
         getModuleById(id: string) {
-          return { transformResult: { code: "", map: null, deps: graph[id] } };
+          return {
+            transformResult: {
+              code: "",
+              map: null,
+              deps: graph[id],
+              dynamicDeps: dynamic[id],
+            },
+          };
         },
       },
     };
@@ -301,6 +310,28 @@ describe("linkProgram", () => {
       "/app.ts -> pg",
       // already walked through /app.ts, so its deps are not requested again
       "/dev.ts -> /db.ts",
+    ]);
+  });
+
+  test("follows the dynamic imports of the entry, and no others", async () => {
+    const { environment, fetched } = fakeEnvironment(
+      {
+        "/dev.ts": [],
+        "/app.ts": ["/routes.ts"],
+        "/routes.ts": [],
+        "/users.ts": [],
+      },
+      [],
+      // the factory imports the app; the routes table imports each route
+      { "/dev.ts": ["/app.ts"], "/routes.ts": ["/users.ts"] },
+    );
+
+    await linkProgram(environment, "/dev.ts");
+
+    expect(fetched).toEqual([
+      "/dev.ts",
+      "/dev.ts -> /app.ts",
+      "/app.ts -> /routes.ts",
     ]);
   });
 

@@ -160,9 +160,9 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       for (const [file, template] of [
         ["api.ts", templates.libApi],
         ["api:factory.ts", templates.libApiFactory],
+        ["api:dev.ts", templates.libApiDev],
         ["@api/app.ts", templates.libApiApp],
         ["@api/compose.ts", templates.libApiCompose],
-        ["@api/dev.ts", templates.libApiDev],
         ["@api/errors.ts", templates.libApiErrors],
         ["@api/listener.ts", templates.libApiListener],
         ["@api/parsers.ts", templates.libApiParsers],

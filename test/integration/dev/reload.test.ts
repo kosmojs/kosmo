@@ -47,8 +47,7 @@ const devSource = `
 
   import { getRequestListener } from "@hono/node-server";
 
-  import { devSetup } from "${defaults.libPrefix}/api:factory";
-  import app from "./app";
+  import { devSetup } from "${defaults.libPrefix}/api:dev";
   import { tick } from "./tick";
 
   const log = (event: string) => {
@@ -61,6 +60,8 @@ const devSource = `
     if (tick === "fail") {
       throw new Error("no app for this tick");
     }
+
+    const { default: app } = await import("./app");
 
     const socket = createServer();
 
@@ -143,6 +144,9 @@ const reported: Array<string> = [];
 const takeReported = () => reported.splice(0).join("\n");
 
 let teardown = async () => {};
+
+// the seeded app.ts, put back after a test breaks it
+let appSource = "";
 
 beforeAll(async () => {
   vi.spyOn(console, "error").mockImplementation((...args: Array<unknown>) => {
@@ -254,6 +258,35 @@ describe("backend under kosmo serve", () => {
     const log = await waitForLog(before.length + 2);
 
     expect(log.slice(before.length)).toEqual(["teardown:5", "load:6"]);
+    expect(await servedTick()).toEqual([200, JSON.stringify({ tick: "6" })]);
+    expect(takeReported()).toEqual("");
+  });
+
+  test("a save that breaks the app leaves the running program up", async () => {
+    appSource = await readFile(createPath.api("app.ts"), "utf8");
+
+    const before = await readLog();
+
+    // imported by the factory, checked all the same
+    await writeFile(createPath.api("app.ts"), "export default ;\n", "utf8");
+    await settle();
+
+    expect(await readLog()).toEqual(before);
+    expect(await servedTick()).toEqual([200, JSON.stringify({ tick: "6" })]);
+
+    const errors = takeReported();
+    expect(errors).toMatch(/backend reload skipped/);
+    expect(errors).toMatch(/app\.ts/);
+  });
+
+  test("and the save that fixes the app reloads it", async () => {
+    const before = await readLog();
+
+    await writeFile(createPath.api("app.ts"), appSource, "utf8");
+
+    const log = await waitForLog(before.length + 2);
+
+    expect(log.slice(before.length)).toEqual(["teardown:6", "load:6"]);
     expect(await servedTick()).toEqual([200, JSON.stringify({ tick: "6" })]);
     expect(takeReported()).toEqual("");
   });

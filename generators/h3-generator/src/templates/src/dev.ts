@@ -1,10 +1,10 @@
 import { toNodeHandler } from "h3/node";
 
-import app from "./app";
+import { devSetup } from "{{ createImport 'lib' 'api:dev' }}";
 
-import { devSetup } from "{{ createImport 'lib' 'api:factory' }}";
-
-export default devSetup(() => {
+export default devSetup(async () => {
+  // imported here, so the app loads with the first API request rather than at start
+  const { default: app } = await import("./app");
   return {
     requestHandler: toNodeHandler(app),
     teardownHandler() {

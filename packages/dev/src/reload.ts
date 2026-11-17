@@ -91,7 +91,10 @@ export const withDeadline = async <T>(
  *
  * It makes the requests the module runner makes while loading,
  * so whatever is transformed here is cached for the load that follows.
- * Dynamic imports are left out, those are requested when the code around them runs.
+ *
+ * Dynamic imports of the entry are part of the program,
+ * as api/dev.ts imports the app inside its factory.
+ * Further down they are left out - route files are imported by the first request to them.
  * */
 export const linkProgram = async (
   environment: DevEnvironment,
@@ -108,11 +111,11 @@ export const linkProgram = async (
 
   seen.add(fetched.id);
 
-  const { deps = [] } = {
+  const { deps = [], dynamicDeps = [] } = {
     ...environment.moduleGraph.getModuleById(fetched.id)?.transformResult,
   };
 
-  for (const dep of deps) {
+  for (const dep of importer ? deps : [...deps, ...dynamicDeps]) {
     await linkProgram(environment, dep, fetched.file || fetched.id, seen);
   }
 };

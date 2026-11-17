@@ -89,10 +89,11 @@ Seeded default:
 // Hono: api/dev.ts
 import { getRequestListener } from "@hono/node-server";
 
-import { devSetup } from "_/api:factory";
-import app from "./app";
+import { devSetup } from "_/api:dev";
 
-export default devSetup(() => {
+export default devSetup(async () => {
+  // imported here, so the app loads with the first API request rather than at start
+  const { default: app } = await import("./app");
   return {
     requestHandler: getRequestListener(app.fetch),
     teardownHandler() {
@@ -107,10 +108,11 @@ export default devSetup(() => {
 // H3: api/dev.ts
 import { toNodeHandler } from "h3/node";
 
-import { devSetup } from "_/api:factory";
-import app from "./app";
+import { devSetup } from "_/api:dev";
 
-export default devSetup(() => {
+export default devSetup(async () => {
+  // imported here, so the app loads with the first API request rather than at start
+  const { default: app } = await import("./app");
   return {
     requestHandler: toNodeHandler(app),
     teardownHandler() {
@@ -123,10 +125,11 @@ export default devSetup(() => {
 == Koa
 ```ts
 // Koa: api/dev.ts
-import { devSetup } from "_/api:factory";
-import app from "./app";
+import { devSetup } from "_/api:dev";
 
-export default devSetup(() => {
+export default devSetup(async () => {
+  // imported here, so the app loads with the first API request rather than at start
+  const { default: app } = await import("./app");
   return {
     requestHandler: app.callback(),
     teardownHandler() {
@@ -139,9 +142,18 @@ export default devSetup(() => {
 
 ## The Factory Runs on First Request
 
-The dev server evaluates `api/dev.ts` - and with it `api/app.ts` - when it starts,
+The dev server evaluates `api/dev.ts` when it starts,
 and runs the factory on the first API request after that, once per program.
 Every request after it is answered by the handler the factory returned.
+
+The seeded factory imports `api/app.ts` itself, rather than `api/dev.ts` importing it on top.
+So `api/app.ts` and the modules it imports are loaded by the first API request.
+
+A module failing at its top level, a database that is not up yet,
+fails that run rather than the dev server's start.
+
+`devSetup` comes from `_/api:dev`, which loads nothing of the app:
+the router and the routes table load with the app, on the first API request.
 
 Requests arriving while the factory runs wait for it.
 A factory that throws is reported once, and the API answers `503` until the next save.
@@ -174,7 +186,8 @@ and the route's next request tries again.
 `api/dev.ts` is re-evaluated on every relevant change.
 Reloads run one at a time, and always in the same order:
 
-1. The saved program is checked: every module transformed, none evaluated.
+1. The saved program is checked: every module transformed, none evaluated -
+including `api/app.ts` and what it imports, as imported by the factory.
 A save that cannot compile, or that imports a file that does not exist,
 is reported and the running API is left as it is.
 2. The running program is torn down - its `teardownHandler` awaited, if its factory ran.
@@ -221,31 +234,55 @@ export default devSetup(
 
 ### teardownHandler
 
-Runs once for every factory run: before each API reload, and when the dev server stops.
-Open connections in the factory and close them here, or they leak across rebuilds:
+Runs once for every factory run that returned: before each API reload,
+and when the dev server stops.
 
-```ts
-export default devSetup(async () => {
-  const db = await createPool();
-  return {
-    requestHandler: app.callback(),
-    async teardownHandler() {
-      await db.close();
-    },
-  };
-});
-```
+Whatever the program keeps open - db pools, Redis clients, server sockets -
+is closed here, or it leaks across rebuilds.
 
 Without cleanup, frequent rebuilds during active development can exhaust database connections.
+
+The factory is the one place for it. Import what holds the connections there,
+close it all in one function, and use that function on both ends -
+as the `teardownHandler` of an app that was built,
+and right away when the app fails to build, as a factory that throws returns no hook:
+
+```ts
+// api/dev.ts
+import { devSetup } from "_/api:dev";
+
+export default devSetup(async () => {
+  const [{ disconnect }, { sharedConnection }] = await Promise.all([
+    import("@/db"),
+    import("@/redis"),
+  ]);
+
+  // settles every close, whichever of them fails
+  const close = async () => {
+    await Promise.allSettled([disconnect(), sharedConnection.quit()]);
+  };
+
+  try {
+    const { default: app } = await import("./app");
+    return {
+      // requestHandler is framework-specific; this is Koa example
+      requestHandler: app.callback(),
+      teardownHandler: close,
+    };
+  } catch (error) {
+    await close();
+    throw error;
+  }
+});
+```
 
 The next program is evaluated only after the hook settles, so await whatever you close.
 A hook still pending after 3 seconds is reported and no longer waited for.
 
 ::: warning
-The hook belongs to a factory run.
-A factory that throws returns no hook, so whatever it opened before throwing stays open.
-The same goes for the top level of `api/dev.ts`:
-what it opens is closed only if a request ran the factory, so open it in the factory instead.
+Connections opened at the top level of `api/dev.ts`, outside the factory,
+belong to no factory run: nothing closes them if no request ran the factory.
+Import them inside the factory, as above.
 :::
 
 ::: tip

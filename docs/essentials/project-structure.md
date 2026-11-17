@@ -120,7 +120,8 @@ var/lib/
 └── front/
     ├── tsconfig.json     -> this folder's jsxImportSource + path mappings
     ├── api.ts            -> _/api          defineRoute, use
-    ├── api:factory.ts    -> _/api:factory  appFactory, devSetup, errorHandlerFactory
+    ├── api:factory.ts    -> _/api:factory  appFactory, errorHandlerFactory
+    ├── api:dev.ts        -> _/api:dev      devSetup
     ├── app.tsx           -> _/app          the AppProvider seam
     ├── router.tsx        -> _/router       routerFactory, createRouters
     ├── query.ts          -> _/query        TanStack client (when enabled)
