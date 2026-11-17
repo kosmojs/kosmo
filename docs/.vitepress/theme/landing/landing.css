@@ -2,29 +2,30 @@
   KosmoJS landing - shared surface.
 
   Everything the landing sections have in common: the measure, the section
-  rhythm, the buttons, the code panels and the reveal gate. Section-specific
-  rules live in the component that owns them.
+  rhythm, the type scale, the buttons, the card recipe, the road backdrop
+  and the reveal gate. Section-specific rules live in the component that
+  owns them.
 
   Every selector is scoped under `.landing`, the pageClass index.md sets, so
-  generic names like .section or .badge cannot reach a docs page after a
+  generic names like .section or .card cannot reach a docs page after a
   client-side navigation.
 */
 
 /*
   The landing shares its palette, type and code recipe with the docs - see
-  theme/tokens.css and theme/code.css. Nothing is redefined here; this file
-  only lays the page out.
+  theme/tokens.css. Nothing is redefined here; this file only lays the page
+  out and adds the few surfaces only the landing has.
 */
 .landing {
-  --maxw: 1120px;
+  --maxw: 1180px;
   --radius: var(--kx-radius);
   --border: 1px solid var(--kx-line);
   --ease: var(--kx-ease);
 }
 
 /*
-  Typography stops at the content well. Putting it on .Layout would reach the
-  nav and the footer, which the default theme already sizes for itself.
+  Typography stops at the content well. Putting it on .Layout would reach
+  the nav and the footer, which the default theme already sizes for itself.
 */
 .landing .VPPage {
   color: var(--kx-text-2);
@@ -33,9 +34,15 @@
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
 }
 
-.landing .VPPage a {
+/*
+  Links take their color from wherever they sit. Wrapped in :where() so the
+  rule weighs no more than a bare `a`, and any class on a link - a button,
+  a footer column - wins without a specificity fight.
+*/
+:where(.landing .VPPage) a {
   color: inherit;
   text-decoration: none;
 }
@@ -48,20 +55,47 @@
   padding: 0 28px;
 }
 
+@media (max-width: 560px) {
+  .landing .wrap {
+    padding: 0 20px;
+  }
+}
+
+/* the nav floats over the hero instead of sitting on its own band */
+.landing .VPNavBar:not(.has-sidebar) .divider-line {
+  background-color: transparent;
+}
+
 /* ---------- shared type ---------- */
 
+/* eyebrow: a short teal stroke, then the label in spaced mono caps */
 .landing .eyebrow {
-  margin: 0 0 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 22px;
   font-family: var(--kx-font-mono);
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--kx-accent);
 }
 
+@media (max-width: 560px) {
+  .landing .eyebrow {
+    gap: 10px;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+  }
+}
+
 .landing .eyebrow::before {
-  content: "// ";
-  color: var(--kx-text-4);
+  content: "";
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background-color: currentColor;
 }
 
 .landing h1,
@@ -70,35 +104,52 @@
   margin: 0;
   font-family: var(--kx-font-display);
   font-weight: 600;
-  line-height: 1.08;
-  letter-spacing: -0.025em;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
   color: var(--kx-text);
+  text-wrap: balance;
+}
+
+.landing h2 {
+  font-size: clamp(32px, 4.8vw, 54px);
+}
+
+.landing h3 {
+  letter-spacing: -0.015em;
+  line-height: 1.25;
 }
 
 .landing .mono {
   font-family: var(--kx-font-mono);
-  font-size: 0.9em;
+  font-size: 0.88em;
   color: var(--kx-accent);
   white-space: nowrap;
+}
+
+/* the dimmed tail of a two-tone headline */
+.landing .dim {
+  color: var(--kx-text-4);
 }
 
 /* ---------- buttons ---------- */
 
 .landing .btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 13px 20px;
+  border-radius: 12px;
+  padding: 14px 22px;
   font-family: var(--kx-font-mono);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition:
-    transform 0.15s var(--ease),
-    background 0.15s,
+    transform 0.2s var(--ease),
+    background-color 0.15s,
     border-color 0.15s,
+    box-shadow 0.25s var(--ease),
     color 0.15s;
 }
 
@@ -107,127 +158,320 @@
 }
 
 .landing .btn-primary {
-  background: var(--kx-accent);
-  color: var(--kx-bg-inset);
+  background-color: var(--kx-brand);
+  color: var(--kx-brand-ink);
   font-weight: 600;
   box-shadow:
-    0 0 0 1px var(--kx-accent-line),
-    0 14px 34px -16px var(--kx-accent-line);
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 0 0 1px color-mix(in srgb, var(--kx-brand) 60%, transparent),
+    0 18px 40px -18px var(--kx-brand-glow);
 }
 
 .landing .btn-primary:hover {
-  background: var(--kx-accent-hi);
+  background-color: var(--kx-brand-hi);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 0 0 1px color-mix(in srgb, var(--kx-brand) 60%, transparent),
+    0 20px 50px -14px var(--kx-brand-glow);
 }
 
 .landing .btn-ghost {
-  color: var(--kx-text-2);
   border-color: var(--kx-line-strong);
+  background-color: color-mix(in srgb, var(--kx-bg-lift) 60%, transparent);
+  color: var(--kx-text-2);
+  backdrop-filter: blur(8px);
 }
 
 .landing .btn-ghost:hover {
-  color: var(--kx-text);
   border-color: var(--kx-accent-line);
-  background: var(--kx-bg-lift);
+  background-color: var(--kx-bg-lift);
+  color: var(--kx-text);
 }
 
 .landing .btn .arr {
-  transition: transform 0.2s var(--ease);
+  width: 15px;
+  height: 15px;
+  flex: none;
+  transition: transform 0.25s var(--ease);
 }
 
 .landing .btn:hover .arr {
   transform: translateX(3px);
 }
 
-/*
-  .landing The scoped `a { color: inherit }` rule outranks .btn-* on specificity,
-  so pin the label colors with an equally-specific, later rule.
-*/
-.landing .VPPage a.btn-primary {
-  color: var(--kx-bg-inset);
-}
-
-.landing .VPPage a.btn-ghost {
-  color: var(--kx-text-2);
-}
-
-.landing .VPPage a.btn-ghost:hover {
-  color: var(--kx-text);
-}
-
 /* ---------- sections ---------- */
 
 .landing .section {
-  padding: 96px 0;
+  position: relative;
+  padding: 128px 0;
 }
 
-.landing .section.alt {
-  background: var(--kx-bg-sunk);
-  border-block: 1px solid var(--kx-line-soft);
+@media (max-width: 760px) {
+  .landing .section {
+    padding: 88px 0;
+  }
+}
+
+/*
+  A slab is a section laid on the deeper chrome tone, closed top and
+  bottom by a hairline that brightens to teal at the center and fades out
+  at both ends. It breaks the page into chapters without switching to a
+  contrasting band.
+*/
+.landing .section.slab {
+  background-color: var(--kx-bg-sunk);
+}
+
+.landing .section.slab::before,
+.landing .section.slab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--kx-line-strong) 22%,
+    var(--kx-accent-line) 50%,
+    var(--kx-line-strong) 78%,
+    transparent
+  );
+}
+
+.landing .section.slab::before {
+  top: 0;
+}
+
+.landing .section.slab::after {
+  bottom: 0;
 }
 
 .landing .section-head {
-  max-width: 680px;
-  margin-bottom: 48px;
+  max-width: 720px;
+  margin-bottom: 56px;
 }
 
-.landing .section-head h2 {
-  font-size: clamp(28px, 4vw, 40px);
+.landing .section-head.center {
+  margin-inline: auto;
+  text-align: center;
 }
 
 .landing .section-head p:not(.eyebrow) {
-  margin: 18px 0 0;
-  font-size: 17.5px;
+  margin: 22px 0 0;
+  font-size: 18px;
+  line-height: 1.65;
   color: var(--kx-text-3);
+}
+
+/* ---------- cards ---------- */
+
+/*
+  The landing's one card recipe. A spotlight follows the pointer across
+  the border and the face of the card - spotlight.ts writes the position
+  into --mx and --my. With no pointer (touch, keyboard) the card simply
+  shows its resting state.
+*/
+.landing .card {
+  --mx: 50%;
+  --my: -20%;
+
+  position: relative;
+  border: 1px solid var(--kx-line);
+  border-radius: var(--radius);
+  background-color: var(--kx-bg-lift);
+  isolation: isolate;
+  transition:
+    border-color 0.2s,
+    transform 0.3s var(--ease),
+    box-shadow 0.3s var(--ease);
+}
+
+.landing .card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    420px circle at var(--mx) var(--my),
+    color-mix(in srgb, var(--kx-brand) 9%, transparent),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.landing .card::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    300px circle at var(--mx) var(--my),
+    color-mix(in srgb, var(--kx-brand) 55%, transparent),
+    transparent 70%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.landing .card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--kx-shadow-pop);
+}
+
+.landing .card:hover::before,
+.landing .card:hover::after {
+  opacity: 1;
+}
+
+/* an icon tile: a small sunk square with the glyph drawn in teal */
+.landing .glyph {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--kx-line);
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--kx-brand) 10%, transparent),
+      transparent 60%
+    ),
+    var(--kx-bg-sunk);
+  color: var(--kx-accent);
+}
+
+.landing .glyph svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* ---------- the horizon ---------- */
+
+/*
+  A perspective grid laid flat and receding to a horizon, with a band of
+  teal light where it meets the sky. The closing call to action uses the
+  whole scene; the hero uses the grid alone. The class names stay
+  structural: .road is the stage, .plane the grid, .horizon the light.
+*/
+.landing .road {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 50%,
+    #000 100%
+  );
+  mask-image: linear-gradient(180deg, transparent 0%, #000 50%, #000 100%);
+}
+
+.landing .road .plane {
+  position: absolute;
+  left: -50%;
+  right: -50%;
+  bottom: -10%;
+  height: 120%;
+  background-image:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--kx-accent) 16%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--kx-accent) 16%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 72px 72px;
+  background-position: center bottom;
+  transform: perspective(520px) rotateX(64deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: radial-gradient(
+    ellipse 60% 70% at 50% 100%,
+    #000 30%,
+    transparent 75%
+  );
+  mask-image: radial-gradient(
+    ellipse 60% 70% at 50% 100%,
+    #000 30%,
+    transparent 75%
+  );
+}
+
+/*
+  The light on the horizon: a wide teal bloom with a faint warm edge - the
+  Horizon theme's sunset - and one bright continuous line across it.
+*/
+.landing .road .horizon {
+  position: absolute;
+  left: 50%;
+  bottom: 34%;
+  width: min(1200px, 130%);
+  height: 360px;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(
+      ellipse 46% 38% at 50% 50%,
+      color-mix(in srgb, var(--kx-brand) 20%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 62% 46% at 50% 50%,
+      color-mix(in srgb, var(--kx-coral) 7%, transparent),
+      transparent 72%
+    );
+}
+
+.landing .road .horizon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--kx-brand) 70%, transparent) 50%,
+    transparent
+  );
+  filter: blur(0.5px);
 }
 
 /* ---------- code surfaces ---------- */
 
 /*
-  The two core-loop snippets are markdown files imported by CoreLoop.vue, so
-  Shiki highlights them and the default theme paints them - title bar, file
-  icon and copy button included. Nothing about them is maintained here.
+  The core-loop snippets are markdown fences passed in through slots, so
+  Shiki highlights them and the default theme paints them - title bar,
+  file icon and copy button included. Nothing about them is maintained
+  here beyond the frame.
 
-  The hero tree is the exception: its colors are semantic (teal for the URL a
-  folder serves, blue for the folder itself), which no highlighter can infer
-  from a text fence. It stays hand-marked-up, and the classes below are for it
-  and for the inline path tokens in the caption underneath.
-*/
-
-/*
   A grid or flex item is min-width:auto by default, so a long line of code
-  would stretch its column rather than scroll inside the block. The stock
-  block already scrolls - it just needs permission to be narrower than its
-  content. Without this the whole page grows a horizontal scrollbar.
+  would stretch its column rather than scroll inside the block. Without
+  this the whole page grows a horizontal scrollbar.
 */
-.landing .hero-grid > *,
 .landing .loop-cols > * {
   min-width: 0;
 }
 
-/* the hues below are the catppuccin ones Shiki emits, read from tokens.css */
+/* the hues below are the ones the Shiki themes emit, read from tokens.css */
 .landing .t-kw {
-  color: var(--kx-mauve);
-}
-
-.landing .td {
-  color: var(--kx-blue);
-}
-
-.landing .tp {
-  color: var(--kx-teal);
-}
-
-.landing .tb,
-.landing .ts {
-  color: var(--kx-text-4);
-}
-
-/* the caption rides inside the block, on the code's own gutter */
-.landing .tree-cap {
-  padding: 0 24px 18px;
-  font-family: var(--vp-font-family-mono);
-  font-size: 12px;
-  color: var(--vp-code-tab-text-color);
+  color: var(--kx-accent);
 }
 
 /* ---------- scroll reveal (JS-gated; no-JS shows everything) ---------- */
@@ -239,10 +483,11 @@
 
 .landing .is-ready .rise {
   opacity: 0;
-  transform: translateY(18px);
+  transform: translateY(22px);
   transition:
-    opacity 0.6s var(--ease),
-    transform 0.6s var(--ease);
+    opacity 0.7s var(--ease),
+    transform 0.7s var(--ease);
+  transition-delay: calc(var(--d, 0) * 80ms);
 }
 
 .landing .is-ready .rise.in {
@@ -254,7 +499,7 @@
 .landing .VPPage :focus-visible {
   outline: 2px solid var(--kx-accent);
   outline-offset: 3px;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -262,5 +507,14 @@
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
+  }
+
+  .landing .card,
+  .landing .btn {
+    transition: none;
+  }
+
+  .landing .card:hover {
+    transform: none;
   }
 }

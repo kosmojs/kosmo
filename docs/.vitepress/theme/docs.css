@@ -1,19 +1,22 @@
 /*
   KosmoJS docs - VitePress chrome and prose.
 
-  Goal: an internal page should look like the landing page kept reading. Same
-  background wash, same type pairing, same frames, same accents.
+  Goal: an internal page should look like the landing page kept reading.
+  Same Horizon ground, same type pairing, same teal accents.
 
-  The one deliberate flourish is the sidebar: it is drawn as a source tree,
-  with a guide rail, connector ticks and path-prefixed section labels. The
-  framework's whole premise is that the directory tree is the route map, so
-  the navigation says the same thing the docs do.
+  Two motifs run through every page. The sidebar is drawn as a source tree,
+  with a guide rail, connector ticks and path-prefixed section labels -
+  the framework's premise is that the directory tree is the route map,
+  so the navigation says what the docs say.
+  And every section break is the same continuous hairline,
+  starting in teal and fading out (`--kx-rule`).
 */
 
 /* ---------- page shell ---------- */
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--vp-nav-height) + 24px);
 }
 
 body {
@@ -23,8 +26,8 @@ body {
 }
 
 /*
-  Ambient wash, same one the landing page carries. Negative z-index keeps it
-  above the body background and behind every piece of content.
+  Ambient wash. Negative z-index keeps it above the body background and
+  behind every piece of content.
 */
 body::before {
   content: "";
@@ -36,14 +39,21 @@ body::before {
 }
 
 ::selection {
-  background-color: var(--kx-accent-soft);
+  background-color: color-mix(in srgb, var(--kx-brand) 30%, transparent);
+  color: var(--kx-text);
+}
+
+/* thin scrollbars that match the chrome instead of the OS default */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--kx-line-strong) transparent;
 }
 
 /* ---------- nav bar ---------- */
 
 .VPNavBar .title,
 .VPNavBar .content-body {
-  backdrop-filter: blur(12px);
+  backdrop-filter: saturate(140%) blur(14px);
 }
 
 .VPNavBar:not(.home) .divider-line {
@@ -64,12 +74,13 @@ body::before {
 
 /* the mark comes from the nav-bar-title-before slot in Layout.vue */
 
-/* landing nav links are 15px / 400 - match them here */
 .VPNavBarMenu .VPNavBarMenuLink {
+  position: relative;
   padding: 0 12px;
-  font-size: 15px;
-  font-weight: 400;
-  color: var(--kx-text-2);
+  font-size: 14.5px;
+  font-weight: 450;
+  color: var(--kx-text-3);
+  transition: color 0.15s;
 }
 
 .VPNavBarMenu .VPNavBarMenuLink:hover,
@@ -77,46 +88,71 @@ body::before {
   color: var(--kx-text);
 }
 
-.VPNavBarMenu .VPNavBarMenuLink.active {
-  position: relative;
+/* the active link gets a short teal stroke under it */
+.VPNavBarMenu .VPNavBarMenuLink::after {
+  content: "";
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  width: 16px;
+  height: 2px;
+  border-radius: 2px;
+  background-color: var(--kx-accent);
+  transform: translateX(-50%) scaleX(0);
+  transition: transform 0.25s var(--kx-ease);
 }
 
 .VPNavBarMenu .VPNavBarMenuLink.active::after {
-  content: "";
-  position: absolute;
-  right: 12px;
-  bottom: 16px;
-  left: 12px;
-  height: 1px;
-  background-color: var(--kx-accent-line);
+  transform: translateX(-50%) scaleX(1);
 }
 
-.VPNavBarSearch .VPNavBarSearchButton,
-.VPNavBarSearch .DocSearch-Button {
-  border: 1px solid var(--kx-line);
-  border-radius: 9px;
-  background-color: var(--kx-bg-lift);
-  font-family: var(--kx-font-mono);
-  font-size: 12.5px;
-  transition:
-    border-color 0.15s,
-    color 0.15s;
-}
+/* the boxed search field only exists once the bar is wide enough for it */
+@media (min-width: 768px) {
+  .VPNavBarSearch .VPNavBarSearchButton,
+  .VPNavBarSearch .DocSearch-Button {
+    border: 1px solid var(--kx-line);
+    border-radius: var(--kx-radius-sm);
+    background-color: color-mix(in srgb, var(--kx-bg-lift) 70%, transparent);
+    font-family: var(--kx-font-mono);
+    font-size: 12.5px;
+    transition:
+      border-color 0.15s,
+      background-color 0.15s,
+      color 0.15s;
+  }
 
-.VPNavBarSearch .VPNavBarSearchButton:hover {
-  border-color: var(--kx-line-strong);
-}
+  .VPNavBarSearch .VPNavBarSearchButton:hover {
+    border-color: var(--kx-accent-line);
+    background-color: var(--kx-bg-lift);
+  }
 
-.VPNavBarSearch .VPNavBarSearchButton .keys kbd,
-.VPNavBarSearch .VPNavBarSearchButton .keys .key-cmd {
-  border-radius: 5px;
-  background-color: var(--kx-bg-sunk);
-  box-shadow: none;
-  font-family: var(--kx-font-mono);
+  .VPNavBarSearch .VPNavBarSearchButton .keys kbd,
+  .VPNavBarSearch .VPNavBarSearchButton .keys .key-cmd {
+    border: 1px solid var(--kx-line);
+    border-radius: 5px;
+    background-color: var(--kx-bg-sunk);
+    box-shadow: none;
+    font-family: var(--kx-font-mono);
+  }
 }
 
 .VPSocialLink {
   color: var(--kx-text-3);
+  transition: color 0.15s;
+}
+
+.VPSocialLink:hover {
+  color: var(--kx-accent);
+}
+
+.VPSwitchAppearance {
+  border-color: var(--kx-line);
+  background-color: var(--kx-bg-sunk);
+}
+
+.VPSwitchAppearance .check {
+  background-color: var(--kx-bg-lift);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* ---------- sidebar: the source tree ---------- */
@@ -126,31 +162,36 @@ body::before {
 }
 
 .VPSidebar .group + .group {
-  border-top: 1px solid var(--kx-line-soft);
-  padding-top: 16px;
-  margin-top: 4px;
+  border-top: 0;
+  padding-top: 10px;
+  margin-top: 6px;
 }
 
-/* section label reads as a path segment: "/ Routing" */
+/* section label reads as a path segment: "/ routing" */
 .VPSidebarItem.level-0 > .item .text {
   font-family: var(--kx-font-mono);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.02em;
-  color: var(--kx-text-3);
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: var(--kx-text-4);
   transition: color 0.15s;
 }
 
 .VPSidebarItem.level-0 > .item .text::before {
   content: "/";
   margin-right: 7px;
-  color: var(--kx-accent-2);
-  opacity: 0.85;
+  color: var(--kx-accent);
+  opacity: 0.7;
 }
 
 .VPSidebarItem.level-0.has-active > .item .text,
 .VPSidebarItem.level-0 > .item:hover .text {
   color: var(--kx-text);
+}
+
+.VPSidebarItem.level-0.has-active > .item .text::before {
+  opacity: 1;
 }
 
 .VPSidebarItem.level-0 > .item > .indicator {
@@ -164,7 +205,7 @@ body::before {
 /* the guide rail every child hangs off */
 .VPSidebarItem.level-0 > .items {
   position: relative;
-  margin-left: 5px;
+  margin-left: 4px;
   padding-left: 18px;
   border-left: 1px solid var(--kx-line);
 }
@@ -178,7 +219,7 @@ body::before {
 }
 
 .VPSidebarItem.level-1 > .item:hover {
-  background-color: var(--kx-line-soft);
+  background-color: color-mix(in srgb, var(--kx-text) 4%, transparent);
 }
 
 .VPSidebarItem.level-1.is-active > .item {
@@ -197,8 +238,24 @@ body::before {
   transition: background-color 0.15s;
 }
 
+/* the active branch lights its tick and puts a node on the rail */
 .VPSidebarItem.level-1.is-active > .item > .indicator {
-  background-color: var(--kx-accent-2);
+  background-color: var(--kx-accent);
+}
+
+.VPSidebarItem.level-1.is-active > .item::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -11px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--kx-accent);
+  box-shadow:
+    0 0 0 3px var(--kx-bg-sunk),
+    0 0 12px var(--kx-brand-glow);
+  transform: translate(-50%, -50%);
 }
 
 .VPSidebarItem.level-1 .link .text {
@@ -217,7 +274,7 @@ body::before {
   color: var(--kx-accent);
 }
 
-/* a top-level entry with no children (OpenAPI) - keep it on the same grid */
+/* a top-level entry with no children - keep it on the same grid */
 .VPSidebarItem.level-0.is-link > .item .link .text {
   color: var(--kx-text-2);
 }
@@ -226,13 +283,44 @@ body::before {
 
 .VPLocalNav {
   border-bottom: 1px solid var(--kx-line-soft);
-  backdrop-filter: blur(12px);
+  backdrop-filter: saturate(140%) blur(14px);
   background-color: color-mix(in srgb, var(--kx-bg-sunk) 84%, transparent);
 }
 
+.VPLocalNav .menu,
 .VPLocalNavOutlineDropdown button {
   font-family: var(--kx-font-mono);
   font-size: 12.5px;
+}
+
+.VPLocalNavOutlineDropdown .items {
+  border: 1px solid var(--kx-line);
+  border-radius: var(--kx-radius-sm);
+  background-color: var(--kx-bg-lift);
+  box-shadow: var(--kx-shadow-pop);
+}
+
+/* ---------- reading progress ---------- */
+
+/* drawn by Layout.vue along the bottom edge of the nav bar */
+.kx-progress {
+  position: fixed;
+  top: var(--vp-nav-height);
+  left: 0;
+  z-index: 40;
+  width: 100%;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--kx-brand), var(--kx-brand-hi));
+  box-shadow: 0 0 10px var(--kx-brand-glow);
+  transform: scaleX(var(--kx-read, 0));
+  transform-origin: 0 50%;
+}
+
+@media (max-width: 959px) {
+  .kx-progress {
+    top: calc(var(--vp-nav-height) + 47px);
+  }
 }
 
 /* ---------- document width ---------- */
@@ -246,8 +334,8 @@ body::before {
 }
 
 /*
-  Wider measure than the stock 688px: these pages carry a lot of code, and a
-  snippet that has to scroll horizontally is a snippet nobody reads.
+  Wider measure than the stock 688px: these pages carry a lot of code, and
+  a snippet that has to scroll horizontally is a snippet nobody reads.
 */
 .VPContent .VPDoc.has-aside .content-container {
   max-width: 768px;
@@ -255,6 +343,12 @@ body::before {
 
 .VPContent .VPDoc:not(.has-aside) .content-container {
   max-width: 900px;
+}
+
+@media (min-width: 960px) {
+  .VPDoc {
+    padding-top: 40px;
+  }
 }
 
 /* ---------- prose ---------- */
@@ -277,52 +371,57 @@ body::before {
 
 .vp-doc h1 {
   margin: 6px 0 22px;
-  font-size: clamp(32px, 4.4vw, 42px);
+  font-size: clamp(32px, 4.4vw, 44px);
   font-weight: 600;
-  line-height: 1.12;
-  letter-spacing: -0.03em;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
 }
 
-/*
-  Section rule: a hairline that starts at the accent and fades out, replacing
-  the flat full-width divider the default theme draws above every h2.
-*/
+/* the section rule above every h2, replacing the flat stock divider */
 .vp-doc h2 {
-  margin: 60px 0 20px;
+  margin: 64px 0 20px;
   border-top: 0;
-  padding-top: 26px;
-  font-size: 25px;
+  padding-top: 30px;
+  font-size: 26px;
   font-weight: 600;
   line-height: 1.25;
-  letter-spacing: -0.02em;
-  background-image: linear-gradient(
-    90deg,
-    var(--kx-accent-line),
-    var(--kx-line) 34%,
-    transparent 78%
-  );
-  background-repeat: no-repeat;
-  background-size: 100% 1px;
-  background-position: 0 0;
+  letter-spacing: -0.025em;
+  background: var(--kx-rule) 0 0 / 100% 1px no-repeat;
 }
 
 .vp-doc h3 {
-  margin: 38px 0 12px;
-  font-size: 19px;
+  margin: 40px 0 12px;
+  font-size: 19.5px;
   font-weight: 600;
   line-height: 1.35;
   letter-spacing: -0.015em;
 }
 
 .vp-doc h4 {
-  margin: 28px 0 10px;
+  margin: 30px 0 10px;
   font-size: 16.5px;
   font-weight: 600;
 }
 
 .vp-doc .header-anchor {
-  color: var(--kx-text-4);
+  top: 0;
+  color: var(--kx-accent);
+  font-family: var(--kx-font-mono);
   font-weight: 400;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.vp-doc h2 .header-anchor {
+  top: 30px;
+}
+
+.vp-doc h1:hover .header-anchor,
+.vp-doc h2:hover .header-anchor,
+.vp-doc h3:hover .header-anchor,
+.vp-doc h4:hover .header-anchor,
+.vp-doc .header-anchor:focus {
+  opacity: 0.7;
 }
 
 .vp-doc p,
@@ -342,9 +441,10 @@ body::before {
 
 .vp-doc a {
   color: var(--kx-accent);
-  font-weight: 400;
+  font-weight: 450;
   text-decoration: underline;
   text-decoration-color: var(--kx-accent-line);
+  text-decoration-thickness: 1px;
   text-underline-offset: 3px;
   transition:
     color 0.15s,
@@ -366,20 +466,24 @@ body::before {
 }
 
 .vp-doc ul > li::marker {
-  color: var(--kx-accent-2);
+  color: var(--kx-accent);
 }
 
 .vp-doc ol > li::marker {
   color: var(--kx-text-4);
   font-family: var(--kx-font-mono);
-  font-size: 0.9em;
+  font-size: 0.88em;
 }
 
 .vp-doc blockquote {
-  margin: 22px 0;
-  border-left: 2px solid var(--kx-accent-line);
-  padding-left: 18px;
+  margin: 24px 0;
+  border-left: 0;
+  border-radius: 0 var(--kx-radius-sm) var(--kx-radius-sm) 0;
+  padding: 4px 20px;
   color: var(--kx-text-3);
+  background:
+    linear-gradient(var(--kx-accent), var(--kx-accent)) 0 0 / 2px 100% no-repeat,
+    linear-gradient(90deg, var(--kx-accent-soft), transparent 70%);
 }
 
 .vp-doc blockquote > p {
@@ -387,25 +491,376 @@ body::before {
 }
 
 .vp-doc hr {
-  margin: 44px 0;
+  margin: 48px 0;
   border: 0;
   height: 1px;
-  background-image: linear-gradient(
-    90deg,
-    var(--kx-line),
-    var(--kx-line) 40%,
-    transparent
-  );
+  background: var(--kx-rule);
 }
 
 .vp-doc img {
   border-radius: var(--kx-radius-sm);
 }
 
+.vp-doc kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  border: 1px solid var(--kx-line-strong);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  padding: 1px 6px;
+  background-color: var(--kx-bg-lift);
+  font-family: var(--kx-font-mono);
+  font-size: 0.8em;
+  text-align: center;
+  color: var(--kx-text);
+}
+
+/* ---------- inline code ---------- */
+
+.vp-doc :not(pre) > code {
+  border: 1px solid color-mix(in srgb, var(--kx-accent) 14%, transparent);
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 0.86em;
+  font-weight: 450;
+}
+
+.vp-doc a > code {
+  color: var(--kx-accent);
+}
+
+.vp-doc h1 > code,
+.vp-doc h2 > code,
+.vp-doc h3 > code,
+.vp-doc h4 > code {
+  font-size: 0.82em;
+}
+
+/* ---------- code blocks ---------- */
+
+.vp-doc div[class*="language-"] {
+  border: 1px solid var(--kx-line);
+  box-shadow: var(--kx-shadow-code);
+}
+
+@media (max-width: 639px) {
+  .vp-doc div[class*="language-"] {
+    border-inline: 0;
+    box-shadow: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .vp-doc div[class*="language-"] {
+    border-radius: var(--kx-radius-sm);
+  }
+}
+
+.vp-doc div[class*="language-"] code {
+  font-size: 13.5px;
+}
+
+.vp-doc div[class*="language-"] > span.lang {
+  top: 8px;
+  right: 12px;
+  font-family: var(--kx-font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.vp-doc div[class*="language-"] > button.copy {
+  border-radius: 8px;
+}
+
+/* a highlighted line is marked from the gutter with a teal rail */
+.vp-doc div[class*="language-"] .highlighted {
+  box-shadow: inset 2px 0 0 var(--kx-accent);
+}
+
+.vp-doc div[class*="language-"] .diff.add {
+  box-shadow: inset 2px 0 0 var(--kx-accent);
+}
+
+.vp-doc div[class*="language-"] .diff.remove {
+  box-shadow: inset 2px 0 0 var(--kx-coral);
+}
+
+/* code group: the tab strip reads as an editor's file tabs */
+.vp-doc .vp-code-group {
+  margin-top: 20px;
+}
+
+.vp-doc .vp-code-group .tabs {
+  border: 1px solid var(--kx-line);
+  border-bottom: 0;
+  box-shadow: inset 0 -1px var(--kx-line-soft);
+}
+
+@media (min-width: 640px) {
+  .vp-doc .vp-code-group .tabs {
+    border-radius: var(--kx-radius-sm) var(--kx-radius-sm) 0 0;
+  }
+
+  .vp-doc .vp-code-group div[class*="language-"] {
+    border-radius: 0 0 var(--kx-radius-sm) var(--kx-radius-sm);
+  }
+}
+
+@media (max-width: 639px) {
+  .vp-doc .vp-code-group .tabs {
+    border-inline: 0;
+  }
+}
+
+.vp-doc .vp-code-group .blocks div[class*="language-"] {
+  border-top: 0;
+}
+
+/* the tab already names the file and carries its icon */
+.vp-doc .vp-code-group div[class*="language-"] > span.lang {
+  display: none;
+}
+
+.vp-doc .vp-code-group .tabs label {
+  font-family: var(--kx-font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.vp-doc .vp-code-group .tabs label::after {
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+}
+
+/* ---------- :::tabs (vitepress-plugin-tabs) ---------- */
+
+.vp-doc .plugin-tabs {
+  border: 1px solid var(--kx-line);
+  border-radius: var(--kx-radius-sm);
+  background-color: color-mix(in srgb, var(--kx-bg-lift) 60%, transparent);
+}
+
+.vp-doc .plugin-tabs--tab-list::after {
+  height: 1px;
+}
+
+.vp-doc .plugin-tabs--tab {
+  font-family: var(--kx-font-mono);
+  font-size: 12.5px;
+  line-height: 44px;
+}
+
+.vp-doc .plugin-tabs--tab::after {
+  bottom: -1px;
+  border-radius: 2px 2px 0 0;
+}
+
+.vp-doc .plugin-tabs[data-variant="code"] {
+  border: 0;
+  background-color: transparent;
+}
+
+.vp-doc .plugin-tabs[data-variant="code"] .plugin-tabs--tab-list {
+  border: 1px solid var(--kx-line);
+  border-bottom: 0;
+  box-shadow: inset 0 -1px var(--kx-line-soft);
+}
+
+@media (min-width: 640px) {
+  .vp-doc .plugin-tabs[data-variant="code"] .plugin-tabs--tab-list {
+    border-radius: var(--kx-radius-sm) var(--kx-radius-sm) 0 0;
+  }
+
+  .vp-doc
+    .plugin-tabs[data-variant="code"]
+    .plugin-tabs--content
+    > div[class*="language-"] {
+    border-radius: 0 0 var(--kx-radius-sm) var(--kx-radius-sm) !important;
+  }
+}
+
+@media (max-width: 639px) {
+  .vp-doc .plugin-tabs[data-variant="code"] .plugin-tabs--tab-list {
+    border-inline: 0;
+  }
+}
+
+.vp-doc
+  .plugin-tabs[data-variant="code"]
+  .plugin-tabs--content
+  > div[class*="language-"] {
+  border-top: 0;
+}
+
+/* ---------- custom blocks ---------- */
+
+/*
+  Each block is a lifted card with a colored rail on its left edge and an
+  icon in its title. The hue comes from one variable per kind, so the four
+  kinds share every other rule.
+*/
+.vp-doc .custom-block {
+  --kx-block: var(--kx-text-3);
+  --kx-block-icon: none;
+
+  position: relative;
+  margin: 24px 0;
+  border: 1px solid var(--kx-line);
+  border-radius: var(--kx-radius-sm);
+  padding: 14px 18px 4px 20px;
+  background:
+    linear-gradient(var(--kx-block), var(--kx-block)) 0 0 / 3px 100% no-repeat,
+    linear-gradient(
+      100deg,
+      color-mix(in srgb, var(--kx-block) 9%, transparent),
+      transparent 60%
+    ),
+    var(--kx-bg-lift);
+  color: var(--kx-text-2);
+  overflow: hidden;
+}
+
+.vp-doc .custom-block.tip {
+  --kx-block: var(--kx-accent);
+  --kx-block-icon: url("./assets/icons/tip.svg");
+}
+
+.vp-doc .custom-block.info,
+.vp-doc .custom-block.note {
+  --kx-block: var(--kx-sky);
+  --kx-block-icon: url("./assets/icons/info.svg");
+}
+
+.vp-doc .custom-block.warning {
+  --kx-block: var(--kx-amber);
+  --kx-block-icon: url("./assets/icons/warning.svg");
+}
+
+.vp-doc .custom-block.danger,
+.vp-doc .custom-block.caution {
+  --kx-block: var(--kx-coral);
+  --kx-block-icon: url("./assets/icons/danger.svg");
+}
+
+.vp-doc .custom-block.important {
+  --kx-block: var(--kx-lilac);
+  --kx-block-icon: url("./assets/icons/important.svg");
+}
+
+.vp-doc .custom-block .custom-block-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 4px;
+  font-family: var(--kx-font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--kx-text);
+}
+
+.vp-doc .custom-block .custom-block-title::before {
+  content: "";
+  flex: none;
+  width: 17px;
+  height: 17px;
+  background-color: var(--kx-block);
+  -webkit-mask: var(--kx-block-icon) center / contain no-repeat;
+  mask: var(--kx-block-icon) center / contain no-repeat;
+}
+
+.vp-doc .custom-block p,
+.vp-doc .custom-block li {
+  color: var(--kx-text-2);
+  line-height: 1.7;
+}
+
+.vp-doc .custom-block p {
+  margin: 8px 0 10px;
+}
+
+.vp-doc .custom-block a {
+  color: var(--kx-accent);
+}
+
+.vp-doc .custom-block :not(pre) > code {
+  background-color: color-mix(in srgb, var(--kx-text) 6%, transparent);
+  border-color: transparent;
+  color: var(--kx-text);
+}
+
+.vp-doc .custom-block div[class*="language-"] {
+  box-shadow: none;
+}
+
+/* details: a disclosure row, not a callout */
+.vp-doc .custom-block.details {
+  padding: 0 18px;
+  background: var(--kx-bg-lift);
+}
+
+.vp-doc .custom-block.details > summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 -18px;
+  padding: 14px 18px;
+  font-family: var(--kx-font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--kx-text);
+  list-style: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.vp-doc .custom-block.details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.vp-doc .custom-block.details > summary::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin: 0 3px;
+  border-right: 2px solid var(--kx-accent);
+  border-bottom: 2px solid var(--kx-accent);
+  transform: rotate(-45deg);
+  transition: transform 0.2s var(--kx-ease);
+}
+
+.vp-doc .custom-block.details[open] > summary::before {
+  transform: rotate(45deg);
+}
+
+.vp-doc .custom-block.details > summary:hover {
+  background-color: var(--kx-bg-raise);
+}
+
+.vp-doc .custom-block.details[open] > summary {
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--kx-line-soft);
+}
+
+.vp-doc .custom-block.details[open] {
+  padding-bottom: 6px;
+}
+
 /* ---------- tables ---------- */
 
+/*
+  A bare table stays display:block (the default theme's way of letting a
+  wide table scroll) and draws its own frame. That covers tables written
+  as raw HTML.
+*/
 .vp-doc table {
-  margin: 26px 0;
+  margin: 28px 0;
+  border: 1px solid var(--kx-line);
+  border-radius: var(--kx-radius-sm);
+  background-color: var(--kx-bg-lift);
   font-size: 14.5px;
 }
 
@@ -419,13 +874,14 @@ body::before {
 .vp-doc td {
   border: 0;
   border-bottom: 1px solid var(--kx-line-soft);
-  padding: 11px 18px 11px 0;
+  padding: 11px 18px;
   vertical-align: top;
 }
 
 .vp-doc th {
+  background-color: var(--kx-bg-sunk);
   font-family: var(--kx-font-mono);
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -437,7 +893,192 @@ body::before {
   border-bottom: 0;
 }
 
+/*
+  Markdown tables arrive wrapped and reshaped (see tables.ts) and are set
+  as spec matrices rather than prose tables:
+
+  - the wrapper takes the frame and the scrolling, the table fills it;
+  - rows are told apart by quiet stripes instead of rules;
+  - the first column is the row's label - brighter and set apart;
+  - code inside a cell is plain mono, not a chip: a matrix is mostly
+    code, and a grid of bordered pills is all the eye would see;
+  - every cell reads from the left edge.
+*/
+.vp-doc .kx-table {
+  margin: 28px 0;
+  border: 1px solid var(--kx-line);
+  border-radius: var(--kx-radius-sm);
+  background-color: var(--kx-bg-lift);
+  overflow-x: auto;
+}
+
+.vp-doc .kx-table > table {
+  display: table;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.vp-doc .kx-table th,
+.vp-doc .kx-table td {
+  border-bottom: 0;
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.vp-doc .kx-table th {
+  padding-block: 13px;
+  border-bottom: 1px solid var(--kx-line);
+  font-family: var(--kx-font-display);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--kx-text);
+  white-space: nowrap;
+}
+
+.vp-doc .kx-table tbody tr:nth-child(even) {
+  background-color: color-mix(in srgb, var(--kx-text) 2.5%, transparent);
+}
+
+.vp-doc .kx-table tbody tr {
+  transition: background-color 0.15s;
+}
+
+.vp-doc .kx-table tbody tr:hover {
+  background-color: color-mix(in srgb, var(--kx-accent) 6%, transparent);
+}
+
+.vp-doc .kx-table td {
+  color: var(--kx-text-2);
+}
+
+/* the row label: brighter, never cramped, divided from the values */
+.vp-doc .kx-table td:first-child {
+  min-width: 132px;
+  border-right: 1px solid var(--kx-line-soft);
+  font-weight: 500;
+  color: var(--kx-text);
+}
+
+.vp-doc .kx-table th:first-child {
+  border-right: 1px solid var(--kx-line-soft);
+}
+
+.vp-doc .kx-table :not(pre) > code {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background-color: transparent;
+  font-size: 0.92em;
+  color: var(--kx-text);
+  white-space: normal;
+}
+
+.vp-doc .kx-table td:first-child :not(pre) > code,
+.vp-doc .kx-table a > code {
+  color: inherit;
+}
+
+.vp-doc .kx-table em {
+  color: var(--kx-text-4);
+}
+
+/*
+  Wide matrices (five columns or more) get tighter cells, and the page
+  that holds one hands the content column the gutter it keeps before the
+  outline, so they fit without scrolling on a desktop screen. Where they
+  still overflow - a narrow window, a phone - the first column pins to the
+  left edge and the values scroll under it.
+*/
+@media (min-width: 1280px) {
+  .VPDoc.has-aside .content:has(.kx-table--wide) {
+    padding-right: 8px;
+  }
+
+  .VPContent .VPDoc.has-aside .content-container:has(.kx-table--wide) {
+    max-width: 808px;
+  }
+}
+
+.vp-doc .kx-table--wide th,
+.vp-doc .kx-table--wide td {
+  padding-inline: 11px;
+}
+
+.vp-doc .kx-table--wide td:first-child,
+.vp-doc .kx-table--wide th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: var(--kx-bg-lift);
+}
+
+.vp-doc .kx-table--wide th:first-child {
+  background-color: var(--kx-bg-sunk);
+}
+
+.vp-doc .kx-table--wide tbody tr:nth-child(even) td:first-child {
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--kx-text) 2.5%, transparent),
+    color-mix(in srgb, var(--kx-text) 2.5%, transparent)
+  );
+}
+
+/* ---------- status badges ---------- */
+
+/*
+  Drawn in place of the status emoji in table cells (see tables.ts): a
+  small tinted square with the glyph masked in, one hue per state.
+*/
+.vp-doc .kx-st {
+  --kx-st: var(--kx-text-4);
+  --kx-st-icon: none;
+
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  border-radius: 6px;
+  background-color: color-mix(in srgb, var(--kx-st) 16%, transparent);
+  vertical-align: -5px;
+}
+
+.vp-doc .kx-st::before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  background-color: var(--kx-st);
+  -webkit-mask: var(--kx-st-icon) center / contain no-repeat;
+  mask: var(--kx-st-icon) center / contain no-repeat;
+}
+
+.vp-doc .kx-st--yes {
+  --kx-st: var(--kx-accent);
+  --kx-st-icon: url("./assets/icons/yes.svg");
+}
+
+.vp-doc .kx-st--partial {
+  --kx-st: var(--kx-amber);
+  --kx-st-icon: url("./assets/icons/partial.svg");
+}
+
+.vp-doc .kx-st--no {
+  --kx-st: var(--kx-coral);
+  --kx-st-icon: url("./assets/icons/no.svg");
+}
+
 /* ---------- aside / on this page ---------- */
+
+.VPDocAside {
+  padding-top: 6px;
+}
 
 .VPDocAsideOutline .content {
   border-left: 1px solid var(--kx-line);
@@ -446,9 +1087,9 @@ body::before {
 
 .VPDocAsideOutline .outline-title {
   font-family: var(--kx-font-mono);
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--kx-text-4);
 }
@@ -467,49 +1108,31 @@ body::before {
 }
 
 .VPDocAsideOutline .outline-marker {
-  background-color: var(--kx-accent-2);
+  left: -1px;
+  width: 2px;
+  background-color: var(--kx-accent);
+  box-shadow: 0 0 10px var(--kx-brand-glow);
 }
 
-/* ---------- page footer: pager and timestamp ---------- */
+/* ---------- page footer: edit link, timestamp, pager ---------- */
 
 .VPDocFooter {
-  margin-top: 56px;
+  margin-top: 64px;
 }
 
-.VPDocFooter .prev-next {
-  border-top: 1px solid var(--kx-line-soft);
-  padding-top: 28px;
-  gap: 16px;
+.VPDocFooter .edit-info {
+  padding-bottom: 20px;
 }
 
-.VPDocFooter .pager-link {
-  border: 1px solid var(--kx-line);
-  border-radius: var(--kx-radius-sm);
-  background-color: var(--kx-bg-lift);
-  padding: 14px 18px;
-  transition:
-    border-color 0.18s,
-    transform 0.18s var(--kx-ease);
-}
-
-.VPDocFooter .pager-link:hover {
-  border-color: var(--kx-accent-line);
-  transform: translateY(-2px);
-}
-
-.VPDocFooter .pager-link .desc {
+.VPDocFooter .edit-link-button {
   font-family: var(--kx-font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--kx-text-4);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--kx-accent);
 }
 
-.VPDocFooter .pager-link .title {
-  font-family: var(--kx-font-display);
-  font-size: 15.5px;
-  font-weight: 600;
-  color: var(--kx-accent);
+.VPDocFooter .edit-link-button:hover {
+  color: var(--kx-accent-hi);
 }
 
 .VPLastUpdated,
@@ -517,6 +1140,63 @@ body::before {
   font-family: var(--kx-font-mono);
   font-size: 12px;
   color: var(--kx-text-4);
+}
+
+.VPDocFooter .prev-next {
+  border-top: 0;
+  padding-top: 28px;
+  gap: 16px;
+  background: var(--kx-rule) 0 0 / 100% 1px no-repeat;
+}
+
+.VPDocFooter .pager-link {
+  position: relative;
+  border: 1px solid var(--kx-line);
+  border-radius: var(--kx-radius-sm);
+  background-color: var(--kx-bg-lift);
+  padding: 16px 20px;
+  transition:
+    border-color 0.18s,
+    background-color 0.18s,
+    transform 0.25s var(--kx-ease),
+    box-shadow 0.25s var(--kx-ease);
+}
+
+.VPDocFooter .pager-link:hover {
+  border-color: var(--kx-accent-line);
+  background-color: var(--kx-bg-raise);
+  box-shadow: var(--kx-shadow-card);
+  transform: translateY(-2px);
+}
+
+.VPDocFooter .pager-link .desc {
+  font-family: var(--kx-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kx-text-4);
+}
+
+.VPDocFooter .pager-link .title {
+  font-family: var(--kx-font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--kx-text);
+  transition: color 0.15s;
+}
+
+.VPDocFooter .pager-link:hover .title {
+  color: var(--kx-accent);
+}
+
+.VPDocFooter .pager-link.prev .desc::before {
+  content: "<- ";
+  color: var(--kx-accent);
+}
+
+.VPDocFooter .pager-link.next .desc::after {
+  content: " ->";
+  color: var(--kx-accent);
 }
 
 /* ---------- site footer ---------- */
@@ -531,17 +1211,29 @@ body::before {
 .VPFooter .message,
 .VPFooter .copyright {
   font-family: var(--kx-font-mono);
-  font-size: 12.5px;
+  font-size: 12px;
   line-height: 1.9;
   color: var(--kx-text-4);
 }
 
 /* ---------- search modal ---------- */
 
+.VPLocalSearchBox .shell {
+  border: 1px solid var(--kx-line);
+  border-radius: var(--kx-radius);
+  background-color: var(--kx-bg-lift);
+  box-shadow: var(--kx-shadow-pop);
+}
+
 .VPLocalSearchBox .search-bar {
   border: 1px solid var(--kx-line);
   border-radius: var(--kx-radius-sm);
-  background-color: var(--kx-bg-lift);
+  background-color: var(--kx-bg);
+  transition: border-color 0.15s;
+}
+
+.VPLocalSearchBox .search-bar:focus-within {
+  border-color: var(--kx-accent-line);
 }
 
 .VPLocalSearchBox .search-input {
@@ -551,19 +1243,81 @@ body::before {
 .VPLocalSearchBox .result {
   border: 1px solid var(--kx-line-soft);
   border-radius: var(--kx-radius-sm);
+  background-color: var(--kx-bg);
+}
+
+.VPLocalSearchBox .result.selected {
+  border-color: var(--kx-accent-line);
+  background-color: var(--kx-accent-soft);
 }
 
 .VPLocalSearchBox .titles .title.main {
   font-weight: 600;
 }
 
+.VPLocalSearchBox mark {
+  border-radius: 3px;
+  background-color: color-mix(in srgb, var(--kx-brand) 26%, transparent);
+  color: var(--kx-text);
+}
+
 /* ---------- badges ---------- */
 
 .VPBadge {
+  border: 1px solid transparent;
   border-radius: 6px;
   font-family: var(--kx-font-mono);
   font-size: 11px;
   font-weight: 500;
+}
+
+.VPBadge.tip {
+  border-color: var(--kx-accent-line);
+}
+
+/* ---------- not found ---------- */
+
+.NotFound .code {
+  font-family: var(--kx-font-display);
+  font-size: clamp(72px, 12vw, 128px);
+  letter-spacing: -0.05em;
+  background: linear-gradient(
+    180deg,
+    var(--kx-brand-type-from),
+    var(--kx-brand-type-to)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.NotFound .title {
+  font-family: var(--kx-font-mono);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--kx-text-3);
+}
+
+.NotFound .divider {
+  width: 26px;
+  height: 2px;
+  border-top: 0;
+  background-color: var(--kx-accent);
+}
+
+.NotFound .link {
+  border-color: transparent;
+  border-radius: 12px;
+  background-color: var(--kx-brand);
+  font-family: var(--kx-font-mono);
+  font-weight: 600;
+  color: var(--kx-brand-ink);
+}
+
+.NotFound .link:hover {
+  border-color: transparent;
+  background-color: var(--kx-brand-hi);
+  color: var(--kx-brand-ink);
 }
 
 /* ---------- focus and motion ---------- */
@@ -583,5 +1337,9 @@ body::before {
 
   .VPDocFooter .pager-link:hover {
     transform: none;
+  }
+
+  .kx-progress {
+    display: none;
   }
 }

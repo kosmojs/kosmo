@@ -1,43 +1,21 @@
 <script setup lang="ts">
-import { useData } from "vitepress";
+import { useData, useRoute } from "vitepress";
 import DefaultTheme from "vitepress/theme";
-import { computed, watchEffect } from "vue";
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+  watchEffect,
+} from "vue";
 
+import DocHeader from "./components/DocHeader.vue";
 import KosmoMark from "./components/KosmoMark.vue";
 
 const { Layout: DefaultLayout } = DefaultTheme;
-const { frontmatter, lang } = useData();
-
-const formattedDate = computed(() => {
-  const raw = frontmatter.value.date;
-
-  if (!raw) {
-    return "";
-  }
-
-  const d = new Date(raw);
-
-  if (Number.isNaN(d.getTime())) {
-    return "";
-  }
-
-  return d.toLocaleDateString(lang.value || "en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-});
-
-const isoDate = computed(() => {
-  const raw = frontmatter.value.date;
-
-  if (!raw) {
-    return "";
-  }
-
-  const d = new Date(raw);
-  return Number.isNaN(d.getTime()) ? "" : d.toISOString();
-});
+const { frontmatter } = useData();
+const route = useRoute();
 
 watchEffect(() => {
   if (typeof document === "undefined") {
@@ -46,11 +24,67 @@ watchEffect(() => {
   const title = frontmatter.value.title;
   const root = document.documentElement;
   if (title) {
-    root.style.setProperty("--vp-page-title", JSON.stringify(`${title} · `));
+    root.style.setProperty(
+      "--vp-page-title",
+      JSON.stringify(`${title} \u00b7 `),
+    );
   } else {
     root.style.removeProperty("--vp-page-title");
   }
 });
+
+/*
+  Reading progress, for doc pages only. The bar is a single fixed element
+  scaled along X, so a scroll costs one style write and no layout.
+*/
+const isDoc = computed(() => {
+  const layout = frontmatter.value.layout;
+  return layout === undefined || layout === "doc";
+});
+
+const progress = ref<HTMLElement | null>(null);
+let frame = 0;
+
+const measure = () => {
+  frame = 0;
+  const el = progress.value;
+  if (!el) {
+    return;
+  }
+  const span = document.documentElement.scrollHeight - window.innerHeight;
+  const read = span > 0 ? Math.min(1, Math.max(0, window.scrollY / span)) : 0;
+  el.style.setProperty("--kx-read", read.toFixed(4));
+};
+
+const schedule = () => {
+  if (!frame) {
+    frame = requestAnimationFrame(measure);
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("scroll", schedule, { passive: true });
+  window.addEventListener("resize", schedule, { passive: true });
+  schedule();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", schedule);
+  window.removeEventListener("resize", schedule);
+  if (frame) {
+    cancelAnimationFrame(frame);
+  }
+});
+
+// a client-side navigation swaps the content without a scroll event
+watch(
+  () => route.path,
+  () => {
+    if (typeof window !== "undefined") {
+      setTimeout(schedule, 60);
+    }
+  },
+);
 </script>
 
 <template>
@@ -61,28 +95,13 @@ watchEffect(() => {
       the accent variable, so it could not follow the color scheme.
     -->
     <template #nav-bar-title-before>
-      <KosmoMark :size="28" />
+      <KosmoMark :size="26" />
     </template>
-    <template #aside-outline-before>
-      <!-- Render the date only if it exists in frontmatter -->
-      <time v-if="formattedDate" :datetime="isoDate" class="text-muted">
-        {{ formattedDate }}
-      </time>
-      <!-- Render the title only if it exists in frontmatter -->
-      <div v-if="frontmatter.title" class="page-title-aside">
-        <div>
-          {{ frontmatter.title }}
-        </div>
-      </div>
+    <template #doc-before>
+      <DocHeader />
+    </template>
+    <template #layout-bottom>
+      <div v-if="isDoc" ref="progress" class="kx-progress" aria-hidden="true" />
     </template>
   </DefaultLayout>
 </template>
-
-<style scoped>
-.page-title-aside {
-  font-weight: 600;
-  font-size: 0.9em;
-  margin-bottom: 8px;
-  color: var(--vp-c-text-1);
-}
-</style>

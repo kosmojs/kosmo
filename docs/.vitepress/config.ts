@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { defineConfig } from "vitepress";
 import {
   groupIconMdPlugin,
@@ -7,6 +10,8 @@ import llmstxtPlugin from "vitepress-plugin-llms";
 import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 import { generateSidebar } from "vitepress-sidebar";
 
+import { tablesPlugin } from "./tables";
+
 export const redirects = [
   // CLI moved
   ["/essentials/cli.html", "/cli/intro.html"],
@@ -15,6 +20,57 @@ export const redirects = [
   // renamed
   ["/validation/naming-conventions.html", "/validation/type-names.html"],
 ];
+
+/*
+  Facts about a page's source the theme needs before render:
+  whether the markdown carries its own h1, and a reading-time estimate.
+  Fenced code is skipped for both - a `# comment` in a shell block is not a heading,
+  and code reads at a different pace than prose.
+* */
+const sourceFacts = (file: string) => {
+  let source = "";
+
+  try {
+    source = readFileSync(file, "utf8");
+  } catch {
+    return { hasH1: false, minutes: 0 };
+  }
+
+  const body = source.replace(/^---\n[\s\S]*?\n---\n/, "");
+  const prose: string[] = [];
+  let fence = "";
+
+  for (const line of body.split("\n")) {
+    const marker = line.match(/^\s*(`{3,}|~{3,})/);
+
+    if (marker) {
+      if (!fence) {
+        fence = marker[1];
+      } else if (
+        marker[1].startsWith(fence[0]) &&
+        marker[1].length >= fence.length
+      ) {
+        fence = "";
+      }
+      continue;
+    }
+
+    if (!fence) {
+      prose.push(line);
+    }
+  }
+
+  const text = prose.join("\n");
+  const words = text
+    .replace(/<[^>]+>/g, " ")
+    .split(/\s+/)
+    .filter(Boolean).length;
+
+  return {
+    hasH1: /^#\s+\S/m.test(text),
+    minutes: Math.max(1, Math.round(words / 220)),
+  };
+};
 
 // the URL a page is published at, to match a redirect key against
 const pageUrl = (relativePath: string) => {
@@ -73,8 +129,13 @@ export default defineConfig({
     return [];
   },
 
-  transformPageData(pageData) {
+  transformPageData(pageData, { siteConfig }) {
     pageData.frontmatter.head ??= [];
+
+    const facts = sourceFacts(join(siteConfig.srcDir, pageData.relativePath));
+
+    pageData.frontmatter.kxHasH1 = facts.hasH1;
+    pageData.frontmatter.kxMinutes = facts.minutes;
 
     const url = pageUrl(pageData.relativePath);
     const redirect = redirects.find(([old]) => old === url);
@@ -126,7 +187,7 @@ export default defineConfig({
       },
     ],
     ["link", { rel: "manifest", href: "/site.webmanifest" }],
-    ["meta", { name: "theme-color", content: "#1e1e2e" }],
+    ["meta", { name: "theme-color", content: "#1c1e26" }],
     [
       "script",
       {
@@ -170,6 +231,7 @@ export default defineConfig({
     config(md) {
       md.use(groupIconMdPlugin);
       md.use(tabsMarkdownPlugin);
+      md.use(tablesPlugin);
     },
     theme: {
       light: "catppuccin-latte",
@@ -180,6 +242,10 @@ export default defineConfig({
   themeConfig: {
     search: {
       provider: "local",
+    },
+    editLink: {
+      pattern: "https://github.com/kosmojs/kosmo/edit/main/docs/:path",
+      text: "Edit this page on GitHub",
     },
     nav: [
       {

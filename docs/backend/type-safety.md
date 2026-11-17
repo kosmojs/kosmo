@@ -55,7 +55,9 @@ so an alias leaves nothing to destructure.
 It fails silently: the schema does not build and **every** request is rejected.
 
 The same rule covers the `response` tuple and the `VRefine` constraint object.
-[The bracket rule&nbsp;›](/validation/refine#keep-the-wrapping-brackets-literal)
+<span class="text-nowrap">
+[The bracket rule ›](/validation/refine#keep-the-wrapping-brackets-literal)
+</span>
 
 Refinements also drive runtime validation - invalid params are rejected before your handler runs.
 [Details&nbsp;›](/validation/params)

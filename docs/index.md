@@ -18,6 +18,10 @@ head:
   - - meta
     - property: og:description
       content: A full-stack meta-framework for building several apps in one codebase. Built on Vite.
+  # without JS the typed headline stays empty, so the hero's noscript copy replaces it
+  - - noscript
+    - {}
+    - "<style>.landing .hero .tw-line { display: none; }</style>"
 ---
 
 <script setup>

@@ -5,82 +5,127 @@
   VitePress default theme both read the `--kx-*` tokens defined here, so the
   two never drift apart.
 
-  Light values live on `:root`, dark values on `.dark`, which is the VitePress
-  convention. "Dark first" is a runtime default (`appearance: "dark"` in
-  config.ts), not a cascade trick - so the light scheme stays a first-class
-  citizen and every surface, code blocks included, flips with it.
+  Palette: Horizon. The dark scheme is built on the Horizon editor theme -
+  its blue-violet charcoal for every surface and its teal as the one brand
+  hue - and the light scheme on its sibling, Horizon Bright, with the warm
+  blush ground and a deeper cut of the same teal.
+
+  Code keeps the ground but not the hues: blocks are highlighted by the
+  Catppuccin Shiki themes (`catppuccin-mocha` / `catppuccin-latte`), laid
+  on a cut of the page background one small step darker, so a block reads
+  as set into the page rather than pasted onto it.
+
+  Teal goes to anything the eye should land on - links, the primary action,
+  the active state, the brand mark. The rest of the Horizon hues (pink,
+  peach, purple) are kept for the callout kinds and small accents, so teal
+  keeps its weight.
+
+  Light values live on `:root`, dark values on `.dark`, which is the
+  VitePress convention. Dark is the runtime default (`appearance: "dark"`
+  in config.ts), and the light scheme is a first-class citizen: every
+  surface, code blocks included, flips with it.
 
   Role mapping, both schemes:
 
-    sunk  -> app chrome (nav, sidebar, footer)  - recedes
-    bg    -> the page itself
-    lift  -> cards, panels, elevated blocks     - comes forward
-    code  -> every code surface                 - the deepest / brightest one
-* */
+    sunk   -> app chrome (nav, sidebar, footer)  - recedes
+    bg     -> the page itself, the Horizon editor ground
+    lift   -> cards, panels, elevated blocks     - comes forward
+    raise  -> hover state of a lifted surface
+    inset  -> small code-like surfaces: chips, install box, diagrams
+    code   -> code blocks, a step darker than the page
+
+  Teal has two jobs, so it has two token families. `--kx-accent` is teal as
+  text and line, tuned per scheme for contrast against the page.
+  `--kx-brand` is teal as a fill - buttons, chips, the mark - and always
+  carries `--kx-brand-ink` on top of it.
+*/
 
 :root {
-  /* ---------- Catppuccin Latte (light scheme) ---------- */
+  /* ---------- Horizon Bright (light scheme) ---------- */
 
-  --kx-bg: #eff1f5;
-  --kx-bg-sunk: #e6e9ef;
-  --kx-bg-lift: #f7f8fb;
-  --kx-bg-inset: #e3e6ee;
+  --kx-bg: #fdf0ed;
+  --kx-bg-sunk: #f9e6e1;
+  --kx-bg-lift: #fff8f6;
+  --kx-bg-raise: #fffbfa;
+  --kx-bg-inset: #fff6f3;
+  --kx-bg-code: #f9e8e3;
 
-  --kx-line: #dcdfe9;
-  --kx-line-soft: #e5e8ef;
-  --kx-line-strong: #c4c8d6;
+  --kx-line: #f1d3ca;
+  --kx-line-soft: #f6e0d9;
+  --kx-line-strong: #e4bcb0;
 
-  --kx-text: #4c4f69;
-  --kx-text-2: #5c5f77;
-  --kx-text-3: #7c7f93;
-  --kx-text-4: #9ca0b0;
+  --kx-text: #1c1e26;
+  --kx-text-2: #3a3c4a;
+  --kx-text-3: #4e5168;
+  --kx-text-4: #5e6185;
 
-  --kx-accent: #8839ef;
-  --kx-accent-hi: #7287fd;
-  --kx-accent-2: #179299;
-  --kx-accent-soft: rgba(136, 57, 239, 0.09);
-  --kx-accent-line: rgba(136, 57, 239, 0.28);
+  --kx-accent: #13707a;
+  --kx-accent-hi: #0d5960;
+  --kx-accent-soft: rgba(29, 137, 145, 0.09);
+  --kx-accent-line: rgba(29, 137, 145, 0.32);
 
-  --kx-blue: #1e66f5;
-  --kx-green: #40a02b;
-  --kx-yellow: #df8e1d;
-  --kx-peach: #fe640b;
-  --kx-red: #d20f39;
-  --kx-teal: #179299;
-  --kx-mauve: #8839ef;
+  --kx-brand: #25b0bc;
+  --kx-brand-hi: #3fc4de;
+  --kx-brand-ink: #06060c;
+  --kx-brand-glow: rgba(37, 176, 188, 0.35);
 
-  /* ambient wash painted behind the page, keyed off the accents */
+  /* teal for display type: deep enough on the blush ground to hold 3:1 */
+  --kx-brand-type-from: #1d8991;
+  --kx-brand-type-to: #13707a;
+
+  /* Horizon Bright's own hues, for callouts and small accents */
+  --kx-sky: #1d6fa5;
+  --kx-amber: #b4500f;
+  --kx-coral: #da103f;
+  --kx-peach: #dc3318;
+  --kx-lilac: #8a31b9;
+
+  /* ambient wash painted behind the page */
   --kx-glow:
     radial-gradient(
-      720px 460px at 82% -10%,
-      rgba(136, 57, 239, 0.07),
+      760px 480px at 84% -12%,
+      rgba(37, 176, 188, 0.14),
       transparent 70%
     ),
     radial-gradient(
-      560px 400px at 4% 12%,
-      rgba(30, 102, 245, 0.06),
+      620px 420px at 0% 8%,
+      rgba(233, 86, 120, 0.06),
       transparent 70%
     );
 
+  /*
+    The section rule: one continuous hairline that starts in teal and fades
+    out across the measure. Drawn as a background so it can fade.
+  */
+  --kx-rule: linear-gradient(
+    90deg,
+    var(--kx-accent-line),
+    var(--kx-line) 34%,
+    transparent 85%
+  );
+
   --kx-shadow-card:
-    0 1px 5px rgba(76, 79, 105, 0.05), 0 18px 40px -32px rgba(76, 79, 105, 0.4);
+    0 1px 2px rgba(28, 30, 38, 0.05), 0 18px 40px -30px rgba(28, 30, 38, 0.3);
   --kx-shadow-code:
-    0 1px 5px rgba(76, 79, 105, 0.05), 0 16px 32px -28px rgba(76, 79, 105, 0.28);
+    0 1px 2px rgba(28, 30, 38, 0.04), 0 16px 32px -28px rgba(28, 30, 38, 0.22);
+  --kx-shadow-pop:
+    0 1px 2px rgba(28, 30, 38, 0.06), 0 28px 60px -30px rgba(28, 30, 38, 0.35);
+
+  /* ---------- brand mark ---------- */
 
   /*
-    ---------- brand mark (Latte cut) ----------
-
-    The mark is inlined rather than served through an <img>, so it reads these directly and flips with the scheme.
-    Two stops, one ramp, running down the artwork - the frame and the rocket each get their own span of it.
+    The mark is inlined rather than served through an <img>, so it reads
+    these directly and flips with the scheme. Two stops running down the
+    artwork.
   */
-
-  --kosmo-mark-from: #305da7;
-  --kosmo-mark-to: #4d7cc9;
+  --kosmo-mark-from: #25b0bc;
+  --kosmo-mark-to: #1d8991;
 
   /* ---------- shape and motion ---------- */
 
-  --kx-radius: 14px;
-  --kx-radius-sm: 9px;
+  --kx-radius: 16px;
+  --kx-radius-sm: 10px;
+  --kx-radius-xs: 6px;
   --kx-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* ---------- type ---------- */
@@ -94,63 +139,70 @@
 }
 
 .dark {
-  /* ---------- Catppuccin Mocha (dark scheme, the default) ---------- */
+  /* ---------- Horizon (dark scheme, the default) ---------- */
 
-  --kx-bg: #181825;
-  --kx-bg-sunk: #13131f;
-  --kx-bg-lift: #1e1e2e;
-  --kx-bg-inset: #11111b;
+  --kx-bg: #1c1e26;
+  --kx-bg-sunk: #1a1c23;
+  --kx-bg-lift: #232530;
+  --kx-bg-raise: #2a2c39;
+  --kx-bg-inset: #16161c;
+  --kx-bg-code: #191b22;
 
-  --kx-line: #272739;
-  --kx-line-soft: #202030;
-  --kx-line-strong: #3a3a4f;
+  --kx-line: #2e303e;
+  --kx-line-soft: #262833;
+  --kx-line-strong: #3d4052;
 
-  --kx-text: #cdd6f4;
-  --kx-text-2: #bac2de;
-  --kx-text-3: #a6adc8;
-  --kx-text-4: #7f849c;
+  --kx-text: #d5d8da;
+  --kx-text-2: #bfc2cb;
+  --kx-text-3: #a6a9bb;
+  --kx-text-4: #8b8fae;
 
-  --kx-accent: #cba6f7;
-  --kx-accent-hi: #b4befe;
-  --kx-accent-2: #94e2d5;
-  --kx-accent-soft: rgba(203, 166, 247, 0.11);
-  --kx-accent-line: rgba(203, 166, 247, 0.35);
+  --kx-accent: #25b0bc;
+  --kx-accent-hi: #59e1e3;
+  --kx-accent-soft: rgba(37, 176, 188, 0.1);
+  --kx-accent-line: rgba(37, 176, 188, 0.38);
 
-  --kx-blue: #89b4fa;
-  --kx-green: #a6e3a1;
-  --kx-yellow: #f9e2af;
-  --kx-peach: #fab387;
-  --kx-red: #f38ba8;
-  --kx-teal: #94e2d5;
-  --kx-mauve: #cba6f7;
+  --kx-brand: #25b0bc;
+  --kx-brand-hi: #3fc4de;
+  --kx-brand-ink: #06060c;
+  --kx-brand-glow: rgba(37, 176, 188, 0.34);
+
+  --kx-brand-type-from: #59e1e3;
+  --kx-brand-type-to: #25b0bc;
+
+  /* Horizon's own hues, for callouts and small accents */
+  --kx-sky: #26bbd9;
+  --kx-amber: #fab795;
+  --kx-coral: #e95678;
+  --kx-peach: #f09483;
+  --kx-lilac: #b877db;
 
   --kx-glow:
     radial-gradient(
-      720px 460px at 82% -10%,
-      rgba(203, 166, 247, 0.13),
+      760px 480px at 84% -12%,
+      rgba(37, 176, 188, 0.12),
       transparent 70%
     ),
     radial-gradient(
-      560px 400px at 4% 12%,
-      rgba(137, 180, 250, 0.09),
+      620px 420px at 0% 8%,
+      rgba(233, 86, 120, 0.05),
       transparent 70%
     );
 
   --kx-shadow-card:
-    0 1px 5px rgba(0, 0, 0, 0.4), 0 24px 48px -34px rgba(0, 0, 0, 0.8);
+    0 1px 2px rgba(6, 6, 12, 0.4), 0 24px 48px -34px rgba(6, 6, 12, 0.85);
   --kx-shadow-code:
-    0 1px 5px rgba(0, 0, 0, 0.32), 0 18px 36px -28px rgba(0, 0, 0, 0.68);
+    0 1px 2px rgba(6, 6, 12, 0.32), 0 18px 36px -28px rgba(6, 6, 12, 0.7);
+  --kx-shadow-pop:
+    0 1px 2px rgba(6, 6, 12, 0.5), 0 34px 70px -34px rgba(6, 6, 12, 0.95);
 
   /*
-    ---------- brand mark (Mocha cut) ----------
-
-    Same hue, lifted to what a dark page needs and held under the wordmark beside it:
-    the mark is solid shapes where the wordmark is text strokes, so equal contrast reads as the mark shouting.
-    Roughly 6.7:1 against the sidebar against the wordmark's 12:1.
+    Horizon's bright cyan running down into its teal. The mark is solid
+    shapes where the wordmark is strokes, so the lower stop carries most
+    of the area and keeps it a step under the wordmark.
   */
-
-  --kosmo-mark-from: #7b9dd4;
-  --kosmo-mark-to: #6484ba;
+  --kosmo-mark-from: #59e1e3;
+  --kosmo-mark-to: #25b0bc;
 }
 
 /*
@@ -187,33 +239,35 @@
   --vp-c-default-3: var(--kx-line-strong);
   --vp-c-default-soft: var(--kx-bg-lift);
 
-  --vp-c-tip-1: var(--kx-teal);
-  --vp-c-tip-2: var(--kx-teal);
-  --vp-c-tip-3: var(--kx-teal);
-  --vp-c-tip-soft: color-mix(in srgb, var(--kx-teal) 12%, transparent);
+  --vp-c-tip-1: var(--kx-accent);
+  --vp-c-tip-2: var(--kx-accent);
+  --vp-c-tip-3: var(--kx-accent);
+  --vp-c-tip-soft: var(--kx-accent-soft);
 
-  --vp-c-note-1: var(--kx-blue);
-  --vp-c-note-soft: color-mix(in srgb, var(--kx-blue) 12%, transparent);
+  --vp-c-note-1: var(--kx-sky);
+  --vp-c-note-2: var(--kx-sky);
+  --vp-c-note-3: var(--kx-sky);
+  --vp-c-note-soft: color-mix(in srgb, var(--kx-sky) 9%, transparent);
 
-  --vp-c-warning-1: var(--kx-yellow);
-  --vp-c-warning-2: var(--kx-yellow);
-  --vp-c-warning-3: var(--kx-yellow);
-  --vp-c-warning-soft: color-mix(in srgb, var(--kx-yellow) 13%, transparent);
+  --vp-c-warning-1: var(--kx-amber);
+  --vp-c-warning-2: var(--kx-amber);
+  --vp-c-warning-3: var(--kx-amber);
+  --vp-c-warning-soft: color-mix(in srgb, var(--kx-amber) 10%, transparent);
 
-  --vp-c-danger-1: var(--kx-red);
-  --vp-c-danger-2: var(--kx-red);
-  --vp-c-danger-3: var(--kx-red);
-  --vp-c-danger-soft: color-mix(in srgb, var(--kx-red) 12%, transparent);
+  --vp-c-danger-1: var(--kx-coral);
+  --vp-c-danger-2: var(--kx-coral);
+  --vp-c-danger-3: var(--kx-coral);
+  --vp-c-danger-soft: color-mix(in srgb, var(--kx-coral) 9%, transparent);
 
   --vp-c-caution-1: var(--kx-peach);
-  --vp-c-caution-soft: color-mix(in srgb, var(--kx-peach) 12%, transparent);
+  --vp-c-caution-soft: color-mix(in srgb, var(--kx-peach) 9%, transparent);
 
-  --vp-c-important-1: var(--kx-mauve);
-  --vp-c-important-soft: var(--kx-accent-soft);
+  --vp-c-important-1: var(--kx-lilac);
+  --vp-c-important-soft: color-mix(in srgb, var(--kx-lilac) 9%, transparent);
 
-  --vp-c-sponsor: var(--kx-red);
+  --vp-c-sponsor: var(--kx-coral);
 
-  --vp-nav-bg-color: color-mix(in srgb, var(--kx-bg) 78%, transparent);
+  --vp-nav-bg-color: color-mix(in srgb, var(--kx-bg) 80%, transparent);
   --vp-sidebar-bg-color: var(--kx-bg-sunk);
   --vp-local-nav-bg-color: var(--kx-bg-sunk);
   --vp-backdrop-bg-color: color-mix(
@@ -225,16 +279,40 @@
   --vp-shadow-1: var(--kx-shadow-card);
   --vp-shadow-2: var(--kx-shadow-card);
   --vp-shadow-3: var(--kx-shadow-code);
-  --vp-shadow-4: var(--kx-shadow-code);
-  --vp-shadow-5: var(--kx-shadow-code);
+  --vp-shadow-4: var(--kx-shadow-pop);
+  --vp-shadow-5: var(--kx-shadow-pop);
 
-  --vp-button-brand-bg: var(--kx-accent);
-  --vp-button-brand-hover-bg: var(--kx-accent-hi);
-  --vp-button-brand-active-bg: var(--kx-accent);
+  --vp-button-brand-bg: var(--kx-brand);
+  --vp-button-brand-hover-bg: var(--kx-brand-hi);
+  --vp-button-brand-active-bg: var(--kx-brand);
   --vp-button-brand-border: transparent;
   --vp-button-brand-hover-border: transparent;
-  --vp-button-brand-text: var(--kx-bg-inset);
-  --vp-button-brand-hover-text: var(--kx-bg-inset);
+  --vp-button-brand-text: var(--kx-brand-ink);
+  --vp-button-brand-hover-text: var(--kx-brand-ink);
+
+  --vp-code-block-bg: var(--kx-bg-code);
+  --vp-code-tab-bg: var(--kx-bg-code);
+  --vp-code-tab-divider: var(--kx-line-soft);
+  --vp-code-tab-text-color: var(--kx-text-4);
+  --vp-code-tab-hover-text-color: var(--kx-text-2);
+  --vp-code-tab-active-text-color: var(--kx-text);
+  --vp-code-tab-active-bar-color: var(--kx-accent);
+  --vp-code-copy-code-bg: var(--kx-bg-lift);
+  --vp-code-copy-code-hover-bg: var(--kx-bg-raise);
+  --vp-code-copy-code-border-color: var(--kx-line);
+  --vp-code-copy-code-hover-border-color: var(--kx-line-strong);
+  --vp-code-copy-code-active-text: var(--kx-accent);
+  --vp-code-lang-color: var(--kx-text-4);
+  --vp-code-line-highlight-color: var(--kx-accent-soft);
+  --vp-code-line-number-color: var(--kx-text-4);
+
+  --vp-code-color: var(--kx-text);
+  --vp-code-bg: color-mix(in srgb, var(--kx-accent) 8%, var(--kx-bg-lift));
 
   --vp-custom-block-font-size: 15px;
+  --vp-custom-block-code-font-size: 13.5px;
+
+  --vp-plugin-tabs-tab-bg: transparent;
+  --vp-plugin-tabs-tab-divider: var(--kx-line);
+  --vp-plugin-tabs-tab-active-bar-color: var(--kx-accent);
 }

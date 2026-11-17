@@ -37,21 +37,30 @@ import { data as posts } from './posts.data'
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 20px;
+  padding: 22px 22px 24px;
   border: 1px solid var(--vp-c-divider);
-  border-radius: 10px;
+  border-radius: var(--kx-radius);
   background: var(--vp-c-bg-soft);
   text-decoration: none;
-  transition: border-color 0.2s, transform 0.15s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.25s var(--kx-ease),
+    transform 0.25s var(--kx-ease);
 }
 
 .post-card:hover {
-  border-color: var(--vp-c-brand-1);
+  border-color: var(--kx-accent-line);
+  box-shadow: var(--kx-shadow-pop);
   transform: translateY(-2px);
 }
 
+.post-card:hover h3 {
+  color: var(--kx-accent);
+}
+
 .post-card time {
-  font-size: 12px;
+  font-family: var(--kx-font-mono);
+  font-size: 11.5px;
   color: var(--vp-c-text-2);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -61,6 +70,7 @@ import { data as posts } from './posts.data'
   margin: 0;
   font-size: 18px;
   color: var(--vp-c-text-1);
+  transition: color 0.15s;
 }
 
 .post-card p {
@@ -74,6 +84,8 @@ import { data as posts } from './posts.data'
 }
 
 .reading-time {
-    font-size: small;
+  font-family: var(--kx-font-mono);
+  font-size: 11.5px;
+  color: var(--kx-accent);
 }
 </style>

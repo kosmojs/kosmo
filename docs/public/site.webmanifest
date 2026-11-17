@@ -4,8 +4,8 @@
   "description": "The composable meta-framework",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#181825",
-  "theme_color": "#1e1e2e",
+  "background_color": "#1c1e26",
+  "theme_color": "#1c1e26",
   "icons": [
     {
       "src": "/favicon.svg",

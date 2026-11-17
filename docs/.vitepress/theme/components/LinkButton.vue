@@ -27,20 +27,24 @@ defineProps<{
   border: 1px solid transparent;
   border-radius: 10px;
   padding: 13px 20px;
-  background: var(--kx-accent);
-  color: var(--kx-bg-inset);
+  background: var(--kx-brand);
+  color: var(--kx-brand-ink);
   font-family: var(--kx-font-mono);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  box-shadow: 0 0 0 1px var(--kx-accent-line), 0 14px 34px -16px var(--kx-accent-line);
-  transition: background 0.15s, transform 0.15s var(--kx-ease);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 14px 34px -16px var(--kx-brand-glow);
+  transition:
+    background 0.15s,
+    transform 0.15s var(--kx-ease);
 }
 
 .kx-button:hover {
-  background: var(--kx-accent-hi);
-  color: var(--kx-bg-inset);
+  background: var(--kx-brand-hi);
+  color: var(--kx-brand-ink);
 }
 
 .kx-button:active {

@@ -19,10 +19,10 @@ const box = computed(() => ({
 }));
 
 /*
-  The artwork names its gradients "g-frame" and "g-rocket". Two marks on one
-  page - header and footer - would collide, and every reference would resolve
-  to whichever landed in the DOM first, so each instance rewrites them to its
-  own id.
+  The artwork names its gradient "g-mark".
+  Two marks on one page - header and footer - would collide,
+  and every reference would resolve to whichever landed in the DOM first,
+  so each instance rewrites it to its own id.
 */
 const uid = useId();
 
