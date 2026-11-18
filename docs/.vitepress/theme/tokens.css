@@ -116,10 +116,12 @@
   /*
     The mark is inlined rather than served through an <img>, so it reads
     these directly and flips with the scheme. Two stops running down the
-    artwork.
+    artwork, both a step deeper than the brand teal: the mark is solid
+    shapes next to a stroked wordmark, so at the brand's own brightness it
+    would outweigh the name it stands beside.
   */
-  --kosmo-mark-from: #25b0bc;
-  --kosmo-mark-to: #1d8991;
+  --kosmo-mark-from: #17777f;
+  --kosmo-mark-to: #0f5c63;
 
   /* ---------- shape and motion ---------- */
 
@@ -197,12 +199,12 @@
     0 1px 2px rgba(6, 6, 12, 0.5), 0 34px 70px -34px rgba(6, 6, 12, 0.95);
 
   /*
-    Horizon's bright cyan running down into its teal. The mark is solid
-    shapes where the wordmark is strokes, so the lower stop carries most
-    of the area and keeps it a step under the wordmark.
+    A step under the brand teal for the same reason as on the light
+    ground: solid shapes carry more weight than the wordmark's strokes,
+    so the mark is held darker to sit level with the name, not over it.
   */
-  --kosmo-mark-from: #59e1e3;
-  --kosmo-mark-to: #25b0bc;
+  --kosmo-mark-from: #2a9ea8;
+  --kosmo-mark-to: #1a7880;
 }
 
 /*
