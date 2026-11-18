@@ -1,12 +1,12 @@
 ---
 title: The _/use Hooks
 description: Reference for the derived _/use module - useLoaderData, useParams, useRoute,
-    useParamsEntries, useSearchParams and useFrontmatter - and which frameworks provide it.
+    useParamsEntries, useSearchParams, useFrontmatter and navigate - and which frameworks provide it.
 head:
   - - meta
     - name: keywords
       content: _/use, useLoaderData, useParams, useRoute, useSearchParams, useFrontmatter,
-        useParamsEntries, vue hooks, svelte hooks, mdx hooks, kosmojs hooks
+        useParamsEntries, navigate, vue hooks, svelte hooks, mdx hooks, kosmojs hooks
 ---
 
 `_/use` is a small derived module holding the hooks a page needs that its router doesn't already provide.
@@ -29,6 +29,7 @@ An `import { ... } from "_/use"` in a React or SolidJS folder will not resolve.
 | `useParamsEntries` | – | – | – | ✅ | ✅ |
 | `useSearchParams` | – | – | – | ✅ | ✅ |
 | `useFrontmatter` | – | – | – | – | ✅ |
+| `navigate` | – | – | – | ✅ | ✅ |
 
 Where a cell is empty, use the framework's own equivalent:
 
@@ -166,6 +167,37 @@ Validating and typing query parameters is a separate concern handled on the API 
 through the `query` validation target and the fetch clients.
 [Details&nbsp;›](/validation/payload#validation-targets)
 
+## Hooks in a Layout
+
+A client-side navigation mounts the page anew but keeps shared layouts mounted,
+so a layout must read the route in a way that follows it.
+[Details&nbsp;›](/frontend/link-navigation#client-side-navigation)
+
+**MDX** - nothing to do. A navigation re-renders the layouts it keeps,
+and a hook returns the current route on every render.
+
+**Svelte** - `useRoute`, `useParams` and `useSearchParams` return live views:
+read in markup or in `$derived`, they update when the route changes.
+Destructuring takes a snapshot at init - fine in a page, stale in a layout:
+
+```svelte
+<script lang="ts">
+import { useRoute } from "_/use";
+
+const route = useRoute();
+const { name } = useRoute();   // a snapshot - stale after a navigation
+
+const title = $derived(route.name === "index" ? "Home" : route.name);
+const data = $derived(route.loaderData["dashboard/layout"]);
+</script>
+
+<h1>{title}</h1>
+```
+
+`useLoaderData` and `useParamsEntries` return snapshots.
+In a layout, read loader data through `useRoute().loaderData` as above -
+layout loaders run again on every navigation.
+
 ## `useFrontmatter`
 
 MDX only. Reads the current page's YAML frontmatter,
@@ -181,6 +213,21 @@ export const Header = () => {
 ```
 
 [Details&nbsp;›](/frontend/mdx#frontmatter-head-injection)
+
+## `navigate`
+
+Svelte and MDX only. Navigates to a route by the same tuple `Link` takes,
+and resolves once the destination is rendered:
+
+```ts
+navigate(
+  to: LinkProps,
+  opt?: { query?: Record<string, unknown>; replace?: boolean },
+): Promise<void>
+```
+
+Not a hook - call it from an event handler, an effect, or after an await.
+[Details&nbsp;›](/frontend/link-navigation#navigating-from-code)
 
 ## Two Rules That Bite
 

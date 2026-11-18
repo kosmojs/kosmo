@@ -13,6 +13,7 @@ export { default as libQuery } from "#templates/lib/query";
 export { default as libQueryCSR } from "#templates/lib/query-csr.js";
 export { default as libQuerySSR } from "#templates/lib/query-ssr.js";
 export { default as libRouter } from "#templates/lib/router";
+export { default as libStateSvelte } from "#templates/lib/state.svelte.ts";
 export { default as libSvelte } from "#templates/lib/svelte";
 export { default as libUse } from "#templates/lib/use";
 export { default as srcApp } from "#templates/src/app.svelte";

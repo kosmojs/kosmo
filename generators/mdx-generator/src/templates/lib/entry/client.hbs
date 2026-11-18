@@ -1,6 +1,10 @@
 import { render, hydrate as hydrateOrig } from "preact";
 import type { RouterFactoryReturn } from "@kosmojs/core";
-import { clientRenderFactory } from "@kosmojs/core/generators";
+import {
+  clientRenderFactory,
+  createNavigationListener,
+  withNavigationScope,
+} from "@kosmojs/core/generators";
 
 import { createRoute, type RouteComponent } from "../mdx";
 
@@ -21,21 +25,45 @@ export const createRoutes = () => {
   ];
 };
 
-export const hydrate = async (
-  resolver: () => RouterFactoryReturn<Promise<RouteComponent>>,
-  root: HTMLElement,
-) => {
+type Resolver = () => RouterFactoryReturn<Promise<RouteComponent>>;
+
+/**
+ * Re-render on client-side navigation: resolve the destination
+ * with the same resolver the first render used,
+ * then render the new tree over the mounted one.
+ *
+ * Only this folder's own routes are matched, the catch-all excluded:
+ * other source folders and missing pages load from the server.
+ * */
+const listen = (resolver: Resolver, root: HTMLElement) => {
+  const routes = createRoutes();
+  return createNavigationListener({
+    match(url) {
+      return routes.some(({ regexp }) => regexp.test(url.pathname));
+    },
+    async render(url, signal) {
+      const { component } = await withNavigationScope(
+        { url, signal },
+        resolver,
+      );
+      signal.throwIfAborted();
+      // synchronous - the DOM shows the new page once it returns
+      render(component, root);
+    },
+  });
+};
+
+export const hydrate = async (resolver: Resolver, root: HTMLElement) => {
   const { component } = await resolver();
   hydrateOrig(component, root);
   window.__KOSMO_HYDRATION_DATA__ = undefined;
+  listen(resolver, root);
 }
 
-export const mount = async (
-  resolver: () => RouterFactoryReturn<Promise<RouteComponent>>,
-  root: HTMLElement,
-) => {
+export const mount = async (resolver: Resolver, root: HTMLElement) => {
   const { component } = await resolver();
   render(component, root);
+  listen(resolver, root);
 }
 
 export default clientRenderFactory();

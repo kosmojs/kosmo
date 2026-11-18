@@ -114,10 +114,14 @@ TypeScript enforces the param types, so renaming a route folder surfaces an erro
 `_/use` exists **only in Vue, Svelte and MDX folders**.
 In React and SolidJS it does not resolve at all - use `react-router` / `@solidjs/router` instead.
 Vue exports `useLoaderData` only;
-Svelte and MDX add `useRoute`, `useParams`, `useParamsEntries` and `useSearchParams`,
+Svelte and MDX add `useRoute`, `useParams`, `useParamsEntries`, `useSearchParams` and `navigate`,
 and MDX adds `useFrontmatter`. `useLoaderData` returns `T | undefined`,
 and a **layout** must pass its path-qualified name (`useLoaderData("dashboard/layout")`) where a page passes nothing.
 [Details&nbsp;›](/frontend/hooks)
+
+In a Svelte layout, never destructure `useRoute()`, `useParams()` or `useSearchParams()` -
+read them in markup or `$derived`, and read layout data through `useRoute().loaderData[key]`.
+[Details&nbsp;›](/frontend/hooks#hooks-in-a-layout)
 
 ## The dev server never shows the SSR path
 

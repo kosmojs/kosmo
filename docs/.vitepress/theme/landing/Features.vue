@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import Icon from "./Icon.vue";
 import { useReveal } from "./reveal";
-import { useSpotlight } from "./spotlight";
 
 const { rootEl, ready } = useReveal();
-useSpotlight(rootEl);
 
 const tools = [
   "Vite",

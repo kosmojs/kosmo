@@ -267,15 +267,13 @@
 /* ---------- cards ---------- */
 
 /*
-  The landing's one card recipe. A spotlight follows the pointer across
-  the border and the face of the card - spotlight.ts writes the position
-  into --mx and --my. With no pointer (touch, keyboard) the card simply
-  shows its resting state.
+  The landing's one card recipe. On hover, or while something inside it
+  has keyboard focus, the card lifts and its top edge lights up: a teal
+  glow along the top of the border, with a faint wash spilling onto the
+  face below it. The light stays put - it does not follow the pointer -
+  so the card behaves the same with a mouse, a keyboard and a finger.
 */
 .landing .card {
-  --mx: 50%;
-  --my: -20%;
-
   position: relative;
   border: 1px solid var(--kx-line);
   border-radius: var(--radius);
@@ -294,9 +292,9 @@
   z-index: -1;
   border-radius: inherit;
   background: radial-gradient(
-    420px circle at var(--mx) var(--my),
+    ellipse 70% 180px at 50% 0,
     color-mix(in srgb, var(--kx-brand) 9%, transparent),
-    transparent 60%
+    transparent 70%
   );
   opacity: 0;
   transition: opacity 0.3s;
@@ -309,8 +307,8 @@
   border-radius: inherit;
   padding: 1px;
   background: radial-gradient(
-    300px circle at var(--mx) var(--my),
-    color-mix(in srgb, var(--kx-brand) 55%, transparent),
+    ellipse 60% 140px at 50% 0,
+    color-mix(in srgb, var(--kx-brand) 60%, transparent),
     transparent 70%
   );
   -webkit-mask:
@@ -325,13 +323,16 @@
   transition: opacity 0.3s;
 }
 
-.landing .card:hover {
+.landing .card:hover,
+.landing .card:focus-within {
   transform: translateY(-3px);
   box-shadow: var(--kx-shadow-pop);
 }
 
 .landing .card:hover::before,
-.landing .card:hover::after {
+.landing .card:hover::after,
+.landing .card:focus-within::before,
+.landing .card:focus-within::after {
   opacity: 1;
 }
 
@@ -514,7 +515,8 @@
     transition: none;
   }
 
-  .landing .card:hover {
+  .landing .card:hover,
+  .landing .card:focus-within {
     transform: none;
   }
 }

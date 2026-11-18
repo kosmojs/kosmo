@@ -7,7 +7,7 @@ import crc from "crc/crc32";
 import { createProject } from "create-kosmo";
 import got, { type Method } from "got";
 import { createJiti } from "jiti";
-import { chromium } from "playwright";
+import { chromium, type Page } from "playwright";
 import { inject, type ProvidedContext } from "vitest";
 
 import { createHTTPFolder } from "@kosmojs/cli";
@@ -453,6 +453,51 @@ export const setupTestProject = async (
     };
   };
 
+  /**
+   * A browser page for interaction tests, in any mode - SSR pages hydrate in it.
+   * `url` builds a frontend URL from a path relative to the folder base.
+   * Page errors are collected, the page is closed once `run` settles.
+   * */
+  const withBrowserPage = async (
+    run: (helpers: {
+      page: Page;
+      url: (path: string) => string;
+      errors: Array<string>;
+    }) => Promise<void>,
+  ) => {
+    const base = sourceFolder.config.frontend?.base;
+
+    if (!base) {
+      throw new Error("frontend not configured");
+    }
+
+    const browser = await getBrowser();
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    const errors: Array<string> = [];
+
+    page.on("pageerror", (error) => {
+      errors.push(`[pageerror] ${error.message}`);
+    });
+
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
+        errors.push(`[console.error] ${msg.text()}`);
+      }
+    });
+
+    const url = (path: string) => {
+      return `http://${project.devHost}${posix.join(base, path)}`;
+    };
+
+    try {
+      await run({ page, url, errors });
+    } finally {
+      await context.close();
+    }
+  };
+
   const withPageResponse = async <
     T extends
       | string
@@ -529,6 +574,7 @@ export const setupTestProject = async (
     withPageContent,
     withPageResponse,
     withApiResponse,
+    withBrowserPage,
   };
 };
 

@@ -9,6 +9,12 @@
    * Layouts receive nothing but their `children` snippet - same as MDX, where
    * a layout gets only `props.children`. Route data is read from context via
    * useRoute()/useParams()/useLoaderData().
+   *
+   * On client-side navigation this component stays mounted and its props change.
+   * A layout at the same depth in both routes is the same component,
+   * so it stays mounted with its state; the page is keyed by the route object,
+   * new on every navigation, so it mounts anew even when only the query changed -
+   * a page reads its route once, at init.
    * */
   import { setRouteContext, type LayoutsProps } from "./svelte";
 
@@ -27,7 +33,9 @@
     </Layout>
   {:else}
     {@const Page = page}
-    <Page />
+    {#key route}
+      <Page />
+    {/key}
   {/if}
 {/snippet}
 

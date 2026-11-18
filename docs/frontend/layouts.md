@@ -186,6 +186,11 @@ but how a layout's data stays distinct from its child page's differs:
   passes its path-qualified name to `useLoaderData` (a page passes nothing) -
   the hook can't tell which layout it runs in.
 
+A layout stays mounted across navigations within it, and its loader runs again on each.
+On Svelte, `useLoaderData` returns a snapshot taken at init;
+a layout that should follow the route reads `useRoute().loaderData[key]` in markup or `$derived`.
+[Details&nbsp;›](/frontend/hooks#hooks-in-a-layout)
+
 :::tabs key:frontend variant:code
 == React
 ```tsx

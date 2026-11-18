@@ -1,6 +1,7 @@
 import { type Component, createContext } from "svelte";
 
 import { createPathMatcher, join, parseSearchParams } from "@kosmojs/core";
+import { getNavigationScope } from "@kosmojs/core/generators";
 
 import { paramNames } from "{{ createImport 'lib' 'params' }}";
 import { base } from "{{ createImport 'libCore' }}";
@@ -24,7 +25,13 @@ export type RawRoute = {
 };
 
 type Loader = (
-  route: Pick<Route, "name" | "params" | "paramsEntries" | "searchParams">,
+  route: Pick<Route, "name" | "params" | "paramsEntries" | "searchParams"> & {
+    /**
+     * Aborts once a newer navigation starts - pass it on to the fetch client.
+     * Undefined on the server and on the initial client render.
+     * */
+    signal?: AbortSignal | undefined;
+  },
 ) => Promise<unknown> | undefined;
 
 /**
@@ -75,11 +82,12 @@ export type Route = {
  *
  * Holds a getter rather than the value: <Layouts> receives `route` as a prop,
  * and reading a prop into a non-reactive position at init is exactly what
- * Svelte's `state_referenced_locally` check flags. The getter also keeps reads
- * current if the wrapper is ever reused instead of remounted.
+ * Svelte's `state_referenced_locally` check flags.
+ * The getter also keeps reads current across client-side navigations,
+ * which reuse the mounted <Layouts> and only swap its props.
  *
- * `createContext` returns a typed [get, set] pair and `get` throws when no
- * parent called `set`, so a page rendered outside <Layouts> fails loudly.
+ * `createContext` returns a typed [get, set] pair and `get` throws when no parent called `set`,
+ * so a page rendered outside <Layouts> fails loudly.
  * */
 export const [getRouteContext, setRouteContext] = createContext<() => Route>();
 
@@ -105,7 +113,22 @@ export const createRouter = (
   };
 
   return {
-    async resolve(url: URL = new URL(window.location.href)) {
+    async resolve(urlArg?: URL) {
+      const scope = getNavigationScope();
+
+      const url = urlArg || scope?.url || new URL(window.location.href);
+
+      // only a client-side navigation carries a signal
+      const signal = urlArg ? undefined : scope?.signal;
+
+      // a superseded navigation stops at the next await instead of rendering;
+      // the listener ignores the rejection once its signal is aborted
+      const withCurrentNavigation = async <T>(fn: () => T | PromiseLike<T>) => {
+        const result = await fn();
+        signal?.throwIfAborted();
+        return result;
+      };
+
       const searchParams = parseSearchParams(url);
 
       // The routes array is generated pre-sorted by specificity
@@ -126,7 +149,9 @@ export const createRouter = (
 
       const { name } = matchedRoute;
 
-      const routeModule = await matchedRoute.loader();
+      const routeModule = await withCurrentNavigation(() => {
+        return matchedRoute.loader();
+      });
 
       const paramsEntries = (
         Array.isArray(paramNames[name as never])
@@ -143,27 +168,41 @@ export const createRouter = (
 
       const loaderData: Record<string, unknown> = {};
 
-      loaderData[name] = await runLoader(name, () => {
-        return routeModule.loader
-          ? routeModule.loader({ name, params, paramsEntries, searchParams })
-          : undefined; // should not survive serialization if no loader defined
+      loaderData[name] = await withCurrentNavigation(() => {
+        return runLoader(name, () => {
+          return routeModule.loader
+            ? routeModule.loader({
+                name,
+                params,
+                paramsEntries,
+                searchParams,
+                signal,
+              })
+            : undefined; // should not survive serialization if no loader defined
+        });
       });
 
       const layouts: Array<AnyComponent> = [];
 
       for (const [layoutName, source] of matchedRoute.layouts || []) {
-        const layoutModule = await source();
+        const layoutModule = await withCurrentNavigation(() => source());
+
         layouts.push(layoutModule.default);
+
         const key = `${layoutName}/layout`;
-        loaderData[key] = await runLoader(key, () => {
-          return layoutModule.loader
-            ? layoutModule.loader({
-                name: layoutName,
-                params,
-                paramsEntries,
-                searchParams,
-              })
-            : undefined; // should not survive serialization if no loader defined
+
+        loaderData[key] = await withCurrentNavigation(() => {
+          return runLoader(key, () => {
+            return layoutModule.loader
+              ? layoutModule.loader({
+                  name: layoutName,
+                  params,
+                  paramsEntries,
+                  searchParams,
+                  signal,
+                })
+              : undefined; // should not survive serialization if no loader defined
+          });
         });
       }
 

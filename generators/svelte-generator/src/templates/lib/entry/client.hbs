@@ -1,8 +1,17 @@
-import { hydrate as hydrateOrig, mount as mountOrig } from "svelte";
+import { hydrate as hydrateOrig, mount as mountOrig, tick } from "svelte";
 import type { RouterFactoryReturn } from "@kosmojs/core";
-import { clientRenderFactory } from "@kosmojs/core/generators";
+import {
+  clientRenderFactory,
+  createNavigationListener,
+  withNavigationScope,
+} from "@kosmojs/core/generators";
 
-import { createRoute, type RouteComponent } from "../svelte";
+import { createLayoutsProps } from "../state.svelte";
+import {
+  createRoute,
+  type LayoutsProps,
+  type RouteComponent,
+} from "../svelte";
 
 {{#each pageRoutes}}
 const {{id}} = () => import("{{ createImport 'pages' file }}");
@@ -21,21 +30,51 @@ export const createRoutes = () => {
   ];
 };
 
-export const hydrate = async (
-  resolver: () => RouterFactoryReturn<Promise<RouteComponent>>,
-  root: HTMLElement,
+type Resolver = () => RouterFactoryReturn<Promise<RouteComponent>>;
+
+/**
+ * Re-render on client-side navigation: resolve the destination
+ * with the same resolver the first render used, then swap the props
+ * of the mounted <Layouts> - layouts shared by both routes stay mounted,
+ * the page is mounted anew.
+ *
+ * Only this folder's own routes are matched, the catch-all excluded:
+ * other source folders and missing pages load from the server.
+ * */
+const listen = (
+  resolver: Resolver,
+  update: (props: LayoutsProps) => void,
 ) => {
+  const routes = createRoutes();
+  return createNavigationListener({
+    match(url) {
+      return routes.some(({ regexp }) => regexp.test(url.pathname));
+    },
+    async render(url, signal) {
+      const { component } = await withNavigationScope(
+        { url, signal },
+        resolver,
+      );
+      signal.throwIfAborted();
+      update(component.props);
+      await tick();
+    },
+  });
+};
+
+export const hydrate = async (resolver: Resolver, root: HTMLElement) => {
   const { component } = await resolver();
-  hydrateOrig(component.Component, { target: root, props: component.props });
+  const { props, update } = createLayoutsProps(component.props);
+  hydrateOrig(component.Component, { target: root, props });
   window.__KOSMO_HYDRATION_DATA__ = undefined;
+  listen(resolver, update);
 }
 
-export const mount = async (
-  resolver: () => RouterFactoryReturn<Promise<RouteComponent>>,
-  root: HTMLElement,
-) => {
+export const mount = async (resolver: Resolver, root: HTMLElement) => {
   const { component } = await resolver();
-  mountOrig(component.Component, { target: root, props: component.props });
+  const { props, update } = createLayoutsProps(component.props);
+  mountOrig(component.Component, { target: root, props });
+  listen(resolver, update);
 }
 
 export default clientRenderFactory();

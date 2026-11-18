@@ -383,6 +383,11 @@ Wrap navigation in a `.tsx` component where that matters.
 > **Tip:** When `Link` is enabled in `components/mdx.ts` (the default),
 > it can be used in pages without import - it is a global component provided via `MDXProvider`.
 
+`Link` renders a plain `<a>`, and KosmoJS navigates it client-side:
+layouts stay mounted, and only the page renders anew.
+Markdown links like `[about](/about)` compile to the same `<a>`, so they navigate client-side too.
+[Details&nbsp;›](/frontend/link-navigation#client-side-navigation)
+
 ## Frontmatter & Head Injection
 
 Frontmatter drives `<head>` content automatically. The SSR server reads

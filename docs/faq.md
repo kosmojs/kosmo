@@ -1381,6 +1381,13 @@ The `to` prop takes a typed tuple `[routeName, ...params]` (e.g. `["users/[id]",
 Typing the route name triggers IntelliSense; parameterized routes require their params.
 [Details&nbsp;›](/frontend/link-navigation#usage)
 
+#### Do Svelte and MDX navigate client-side?
+Yes. With no third-party router there, KosmoJS intercepts navigations itself,
+through the browser's Navigation API.
+Links, back and forward, and GET forms render in place, with shared layouts kept mounted.
+`navigate()` from `_/use` moves from code, and `data-reload` forces a full page load.
+[Details&nbsp;›](/frontend/link-navigation#client-side-navigation)
+
 #### What's the refactor-safety benefit?
 Renaming a route directory produces TypeScript errors at every `Link` referencing the old name -
 turning refactors into an automated checklist.
@@ -2027,7 +2034,8 @@ Yes, in the normal case. When you navigate between sibling routes under the same
 only the child swaps in - the layout component stays mounted,
 so it doesn't re-render and its state is preserved.
 This is the standard behavior of the underlying routers (React Router, Vue Router, Solid Router)
-that KosmoJS registers routes with. A layout only remounts when navigation moves outside its subtree.
+that KosmoJS registers routes with, and of its own client-side navigation on Svelte and MDX.
+A layout only remounts when navigation moves outside its subtree.
 [Details&nbsp;›](/frontend/layouts)
 
 #### `loading.tsx` / `error.tsx` / `not-found.tsx`?

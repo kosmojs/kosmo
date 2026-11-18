@@ -132,6 +132,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       for (const [file, template] of [
         ["env.d.ts", templates.libEnvD],
         ["svelte.ts", templates.libSvelte],
+        ["state.svelte.ts", templates.libStateSvelte],
         ["Layouts.svelte", templates.libLayouts],
         ["use.ts", templates.libUse],
         ["pageSamples/styles.module.css", templates.libPageSamplesStyles],

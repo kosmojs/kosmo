@@ -2,6 +2,7 @@ import { MDXProvider } from "@mdx-js/preact";
 import { type ComponentType, createContext, h, type VNode } from "preact";
 
 import { createPathMatcher, join, parseSearchParams } from "@kosmojs/core";
+import { getNavigationScope } from "@kosmojs/core/generators";
 
 import { paramNames } from "{{ createImport 'lib' 'params' }}";
 import { base } from "{{ createImport 'libCore' }}";
@@ -15,7 +16,13 @@ export type RawRoute = {
 };
 
 type Loader = (
-  route: Pick<Route, "name" | "params" | "paramsEntries" | "searchParams">,
+  route: Pick<Route, "name" | "params" | "paramsEntries" | "searchParams"> & {
+    /**
+     * Aborts once a newer navigation starts - pass it on to the fetch client.
+     * Undefined on the server and on the initial client render.
+     * */
+    signal?: AbortSignal | undefined;
+  },
 ) => Promise<unknown> | undefined;
 
 type LayoutModule = {
@@ -72,8 +79,26 @@ export const createRouter = (
       : fetcher();
   };
 
+  // keys the page, so every navigation mounts it anew - see below
+  let renderCount = 0;
+
   return {
-    async resolve(url: URL = new URL(window.location.href)) {
+    async resolve(urlArg?: URL) {
+      const scope = getNavigationScope();
+
+      const url = urlArg || scope?.url || new URL(window.location.href);
+
+      // only a client-side navigation carries a signal
+      const signal = urlArg ? undefined : scope?.signal;
+
+      // a superseded navigation stops at the next await instead of rendering;
+      // the listener ignores the rejection once its signal is aborted
+      const withCurrentNavigation = async <T>(fn: () => T | PromiseLike<T>) => {
+        const result = await fn();
+        signal?.throwIfAborted();
+        return result;
+      };
+
       const searchParams = parseSearchParams(url);
 
       // The routes array is generated pre-sorted by specificity
@@ -95,7 +120,9 @@ export const createRouter = (
 
       const { name } = matchedRoute;
 
-      const routeModule = await matchedRoute.loader();
+      const routeModule = await withCurrentNavigation(() => {
+        return matchedRoute.loader();
+      });
 
       const paramsEntries = (
         Array.isArray(paramNames[name as never])
@@ -114,10 +141,18 @@ export const createRouter = (
 
       const loaderData: Record<string, unknown> = {};
 
-      loaderData[name] = await runLoader(name, () => {
-        return routeModule.loader
-          ? routeModule.loader({ name, params, paramsEntries, searchParams })
-          : undefined; // should not survive serialization if no loader defined
+      loaderData[name] = await withCurrentNavigation(() => {
+        return runLoader(name, () => {
+          return routeModule.loader
+            ? routeModule.loader({
+                name,
+                params,
+                paramsEntries,
+                searchParams,
+                signal,
+              })
+            : undefined; // should not survive serialization if no loader defined
+        });
       });
 
       const layouts: Array<{
@@ -126,13 +161,24 @@ export const createRouter = (
       }> = [];
 
       for (const [name, source] of matchedRoute.layouts || []) {
-        const layoutModule = await source();
+        const layoutModule = await withCurrentNavigation(() => source());
+
         layouts.push({ name, component: layoutModule.default });
+
         const key = `${name}/layout`;
-        loaderData[key] = await runLoader(key, () => {
-          return layoutModule.loader
-            ? layoutModule.loader({ name, params, paramsEntries, searchParams })
-            : undefined; // should not survive serialization if no loader defined
+
+        loaderData[key] = await withCurrentNavigation(() => {
+          return runLoader(key, () => {
+            return layoutModule.loader
+              ? layoutModule.loader({
+                  name,
+                  params,
+                  paramsEntries,
+                  searchParams,
+                  signal,
+                })
+              : undefined; // should not survive serialization if no loader defined
+          });
         });
       }
 
@@ -145,11 +191,18 @@ export const createRouter = (
         loaderData,
       };
 
+      // On client-side navigation the new tree is rendered over the mounted one.
+      // A layout at the same depth in both routes is the same component,
+      // so Preact keeps it mounted, with its state;
+      // the page gets a new key every time, so it mounts anew
+      // even when only the query changed, as on Svelte.
+      renderCount += 1;
+
       const component = [{ name: "", component: app }, ...layouts].reduce(
         (children, { component }) => {
           return h(component, { children } as never);
         },
-        h(routeModule.default, {}),
+        h(routeModule.default, { key: renderCount }),
       );
 
       return {

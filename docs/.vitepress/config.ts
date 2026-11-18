@@ -10,7 +10,7 @@ import llmstxtPlugin from "vitepress-plugin-llms";
 import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 import { generateSidebar } from "vitepress-sidebar";
 
-import { tablesPlugin } from "./tables";
+import { tablesPlugin } from "./tables.ts";
 
 export const redirects = [
   // CLI moved

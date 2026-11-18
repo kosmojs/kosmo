@@ -136,6 +136,18 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
 
       return {
         oxc: { jsx: { runtime: "automatic", importSource: "preact" } },
+        // MDX compiles to imports of these, invisible to the dependency scan
+        // until a page using them is requested; discovered that late,
+        // they get optimized a second time and the page runs two Preact copies
+        // until Vite reloads it - hooks then fail with no current component
+        optimizeDeps: {
+          include: [
+            "preact",
+            "preact/hooks",
+            "preact/jsx-runtime",
+            "@mdx-js/preact",
+          ],
+        },
         plugins: [plugin, ...builtinPlugins(sourceFolder, command)],
       };
     },

@@ -45,6 +45,7 @@ Koa for a mature Node ecosystem - and it is the only backend with complete mixed
 | Data loading export | `loader` | `preload` | `loader` | `loader` | `loader` |
 | Reading loaded data | `useLoaderData` *(react-router)* | `createAsync` | `useLoaderData` *(`_/use`)* | `useLoaderData` *(`_/use`)* | `useLoaderData` *(`_/use`)* |
 | Needs `<Suspense>` | ❌ | ✅ | ❌ | ❌ | ❌ |
+| [Client-side navigation](/frontend/link-navigation#client-side-navigation) | react-router | @solidjs/router | vue-router | Navigation API | Navigation API |
 | [_/use module](/frontend/hooks) | ❌ | ❌ | ⚠️ `useLoaderData` only | ✅ | ✅ |
 | [Streaming SSR](/frontend/server-side-render#stream-rendering) | ✅ | ✅ | ✅ | ❌ | ❌ |
 | [SSG](/frontend/static-site-generation) | ✅ | ✅ | ✅ | ✅ | ✅ |

@@ -234,6 +234,30 @@ hook; `props` stays entirely yours. It runs before the page renders, on both
 server and client, through the same fetch client used elsewhere - so a request
 made during SSR is replayed on hydration rather than firing twice.
 
+## Cancelled Navigations
+
+On Svelte and MDX, a loader also receives a `signal`,
+aborted once a newer navigation starts before this one rendered -
+a second click while the first page is still loading.
+Pass it on to the fetch client, so the superseded request is cancelled too:
+
+```ts
+import fetchClients from "_/fetch";
+
+const { GET } = fetchClients["users/[id]"];
+
+export const loader = ({ paramsEntries: [, values], signal }) => {
+  return GET(values, {}, { signal });
+};
+```
+
+Nothing breaks without it: a superseded navigation never renders,
+whatever its loaders return - the signal only saves the request.
+It is undefined on the server and on the first client render,
+where there is nothing to supersede.
+
+React, SolidJS and Vue handle a superseded navigation through their own routers.
+
 ## Suspense Is Your Responsibility
 
 Async data reads need a `<Suspense>` boundary above them, and KosmoJS does
