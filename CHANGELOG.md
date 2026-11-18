@@ -1,3 +1,33 @@
+## [0.7.3](https://github.com/kosmojs/kosmo/compare/v0.7.2...v0.7.3) (2026-11-18)
+
+### ⚠ BREAKING CHANGES
+
+* **backend:** devSetup now imported from _/api:dev;
+  import { devSetup } from "_/api:dev";
+
+### Features
+
+* **svelte,mdx:** client-side navigation via the Navigation API ([c71bc3a](https://github.com/kosmojs/kosmo/commit/c71bc3ad42d8880b0f2ced5d3824d699d262583e))
+
+  One navigate listener intercepts links, back and forward and GET forms:
+  shared layouts stay mounted, the page mounts anew,
+  and a newer navigation aborts the older one through a loader signal.
+  Adds navigate() to _/use and data-reload to opt a link out.
+
+### Bug Fixes
+
+* **solid:** fix preload on hover ([0ec5356](https://github.com/kosmojs/kosmo/commit/0ec53561678618282ec2a7fbead7455a8bc8f8e5))
+
+### Code Refactoring
+
+* **backend:** import app dynamically inside devSetup ([5b4eb09](https://github.com/kosmojs/kosmo/commit/5b4eb0971cf2ab9e6c922e3e378c10fac034968a))
+
+  devSetup now imported from _/api:dev, and with app imported dynamically,
+  dev.ts loads nothing app-related at top level.
+* use relative paths in base tsconfig files ([9727087](https://github.com/kosmojs/kosmo/commit/9727087f40c49d6fedb270d74e5b6d68ff07595e))
+
+  Fixes typings when var/lib files opened in an editor
+
 ## [0.7.2](https://github.com/kosmojs/kosmo/compare/v0.7.1...v0.7.2) (2026-11-16)
 
 ### ⚠ BREAKING CHANGES

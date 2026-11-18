@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@kosmojs/vitest",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Vitest integration for KosmoJS projects",
   "author": "Slee Woo",
   "license": "MIT",
