@@ -36,6 +36,13 @@ watchEffect(() => {
 /*
   Reading progress, for doc pages only. The bar is a single fixed element
   scaled along X, so a scroll costs one style write and no layout.
+
+  It rides the bottom edge of whichever bar is on screen. On a desktop that
+  is the fixed nav. Below 960px the nav scrolls away and the local nav
+  (menu and outline toggles) sticks to the top in its place, so the edge
+  moves as the page scrolls - and the local nav's height changes with its
+  title. Measuring both on every frame keeps the line glued to whichever
+  edge is lowest.
 */
 const isDoc = computed(() => {
   const layout = frontmatter.value.layout;
@@ -45,12 +52,19 @@ const isDoc = computed(() => {
 const progress = ref<HTMLElement | null>(null);
 let frame = 0;
 
+const edgeOf = (selector: string) => {
+  const bar = document.querySelector(selector);
+  return bar ? bar.getBoundingClientRect().bottom : 0;
+};
+
 const measure = () => {
   frame = 0;
   const el = progress.value;
   if (!el) {
     return;
   }
+  const edge = Math.max(0, edgeOf(".VPNav"), edgeOf(".VPLocalNav"));
+  el.style.top = `${Math.round(edge)}px`;
   const span = document.documentElement.scrollHeight - window.innerHeight;
   const read = span > 0 ? Math.min(1, Math.max(0, window.scrollY / span)) : 0;
   el.style.setProperty("--kx-read", read.toFixed(4));

@@ -302,7 +302,10 @@ body::before {
 
 /* ---------- reading progress ---------- */
 
-/* drawn by Layout.vue along the bottom edge of the nav bar */
+/*
+  Drawn by Layout.vue, which sets `top` to the bottom edge of the bar on
+  screen. The value here is only the start position before that runs.
+*/
 .kx-progress {
   position: fixed;
   top: var(--vp-nav-height);
@@ -315,12 +318,6 @@ body::before {
   box-shadow: 0 0 10px var(--kx-brand-glow);
   transform: scaleX(var(--kx-read, 0));
   transform-origin: 0 50%;
-}
-
-@media (max-width: 959px) {
-  .kx-progress {
-    top: calc(var(--vp-nav-height) + 47px);
-  }
 }
 
 /* ---------- document width ---------- */
