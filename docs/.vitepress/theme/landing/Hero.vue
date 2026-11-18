@@ -104,12 +104,13 @@ onMounted(() => {
         <div class="lede-stack">
           <p class="lede">
             Most projects outgrow a single app.
-            Most teams have a solution: monorepos, microservices, DIY glue.
+            Most teams have a solution: monorepos, microservices,
+            <span class="text-nowrap">DIY glue</span>.
           </p>
           <p class="lede">
             <b>
-              KosmoJS composes several apps in a scalable codebase,
-              offering both consistency and flexibility.
+              KosmoJS composes several apps in a <span class="text-nowrap">scalable codebase</span>,
+              offering both <span class="text-nowrap">consistency and flexibility</span>.
             </b>
           </p>
           <p class="lede">
@@ -255,6 +256,7 @@ onMounted(() => {
 
 .hero h1 {
   margin: 0 0 30px;
+  font-family: var(--kx-font-hero);
   font-size: clamp(46px, 8.4vw, 104px);
   font-weight: 700;
   line-height: 0.98;
