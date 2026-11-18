@@ -23,13 +23,16 @@ watchEffect(() => {
   }
   const title = frontmatter.value.title;
   const root = document.documentElement;
+  /*
+    The title and its separator are separate values, so the local nav can cut
+    a long title with an ellipsis and still show the separator after it.
+  */
   if (title) {
-    root.style.setProperty(
-      "--vp-page-title",
-      JSON.stringify(`${title} \u00b7 `),
-    );
+    root.style.setProperty("--vp-page-title", JSON.stringify(title));
+    root.style.setProperty("--vp-page-title-sep", JSON.stringify(" \u00b7 "));
   } else {
     root.style.removeProperty("--vp-page-title");
+    root.style.removeProperty("--vp-page-title-sep");
   }
 });
 
@@ -40,9 +43,8 @@ watchEffect(() => {
   It rides the bottom edge of whichever bar is on screen. On a desktop that
   is the fixed nav. Below 960px the nav scrolls away and the local nav
   (menu and outline toggles) sticks to the top in its place, so the edge
-  moves as the page scrolls - and the local nav's height changes with its
-  title. Measuring both on every frame keeps the line glued to whichever
-  edge is lowest.
+  moves as the page scrolls. Measuring both on every frame keeps the line
+  glued to whichever edge is lowest.
 */
 const isDoc = computed(() => {
   const layout = frontmatter.value.layout;

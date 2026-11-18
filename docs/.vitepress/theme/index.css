@@ -55,10 +55,52 @@
   overflow-wrap: break-word;
 }
 
+/*
+  The local nav leads its outline toggle with the page title, kept to one line:
+  a long title ends in an ellipsis, while the separator, "On this page" and
+  the chevron always stay whole.
+*/
 @media (max-width: 1280px) {
+  .VPLocalNav .menu {
+    flex-shrink: 0;
+  }
+
+  .VPLocalNavOutlineDropdown {
+    min-width: 0;
+  }
+
+  /* outranks the default theme's scoped `display: block` on the toggle */
+  .VPLocalNav .container .VPLocalNavOutlineDropdown > button {
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+  }
+
+  .VPLocalNavOutlineDropdown .menu-text {
+    display: flex;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  /* the title, the one part allowed to shrink */
   .VPLocalNavOutlineDropdown .menu-text::before {
-    content: var(--vp-page-title, "");
+    order: -2;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    content: var(--vp-page-title, none);
     font-weight: 600;
     color: var(--vp-c-text-1);
+  }
+
+  /* the separator, moved between the title and the label by `order` */
+  .VPLocalNavOutlineDropdown .menu-text::after {
+    order: -1;
+    white-space: pre;
+    content: var(--vp-page-title-sep, none);
+  }
+
+  .VPLocalNavOutlineDropdown > button .icon {
+    flex-shrink: 0;
   }
 }

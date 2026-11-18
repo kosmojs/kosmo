@@ -41,7 +41,10 @@ Use `.` to bootstrap in the current directory: `pnpm create kosmo .`
 
 #### How do I create a project non-interactively?
 Provide the name, frontend and backend up front - when flags are present no prompts appear:
-`npm create kosmo -- --name demo --frontend react --backend hono`
+~~~sh
+npm create kosmo -- --name demo --frontend react --backend hono
+~~~
+
 (pnpm and yarn forward flags without the extra `--`: `pnpm create kosmo --name demo ...`).
 
 Required: `--frontend <name>` or `--no-frontend`, and `--backend <name>` or `--no-backend` -
@@ -225,7 +228,10 @@ It stays globally available and import-free under whatever name you choose.
 [Details&nbsp;›](/essentials/config#validation)
 
 #### How do I map an extra URL onto an existing route?
-The `alias` option in the `backend` block: `backend: { alias: { "/feed.xml": "rss" } }`.
+The `alias` option in the `backend` block:
+~~~ts
+backend: { alias: { "/feed.xml": "rss" } }
+~~~
 Keys are absolute URLs, not prefixed by the router's base; if a key has dynamic segments,
 their names must match the target route's parameters exactly or the request 404s.
 [Details&nbsp;›](/backend/aliases)
@@ -990,14 +996,19 @@ and rebuilds the schema when a shared type changes.
 [Details&nbsp;›](/validation/payload#referenced-types)
 
 #### Inline object type vs `Payload<T>` for the `json` target - are they equivalent?
-Yes. An inline literal (`json: { email: VRefine<string,{format:"email"}> }`)
-and a named wrapper (`json: Payload<CreateUser>`) express the same thing -
+Yes. An inline literal and a named wrapper (`json: Payload<CreateUser>`) express the same thing -
 the validated body schema. Use inline for one-off shapes and a named type to reuse a domain model.
+~~~ts
+json: { email: VRefine<string,{format:"email"}> }
+~~~
 [Details&nbsp;›](/validation/payload#referenced-types)
 
 #### What is VRefine?
 It adds JSON Schema constraints to the target type - globally available, no import.
-`VRefine<number, { minimum: 1, multipleOf: 1 }>`. The first argument is the base type,
+~~~ts
+VRefine<number, { minimum: 1, multipleOf: 1 }>
+~~~
+The first argument is the base type,
 the second is any valid JSON Schema validation keyword.
 [Details&nbsp;›](/validation/refine)
 
@@ -1026,8 +1037,10 @@ Not in `json` or `form`: an extra field is a 400, at every depth,
 so a payload spread into a database update can't write a column the type never mentioned.
 A response with a field it doesn't declare fails validation too - the way a `SELECT *` row
 gets caught before it ships. `query`, `headers`, `cookies` stay open.
-`VRefine<{ ... }, { additionalProperties: true }>` reopens an object,
-and `Record<string, T>` takes keys not known in advance.
+`additionalProperties` reopens an object, and `Record<string, T>` takes keys not known in advance.
+~~~ts
+VRefine<{ ... }, { additionalProperties: true }>
+~~~
 [Details&nbsp;›](/validation/payload#undeclared-properties)
 
 #### What does a ValidationError expose?
@@ -1046,7 +1059,7 @@ match them with word-boundary regex to avoid false positives.
 #### How do I set custom per-field error messages?
 The second type argument to the handler accepts a per-target message set:
 an `error` fallback plus `"error.fieldName"` overrides (dot notation for nested fields,
-e.g. `"error.order.shipping.address.postalCode"`).
+e.g. `"error.order.shipping.address"`).
 KosmoJS picks the most specific message; it appears in each entry's `message`.
 [Details&nbsp;›](/validation/error-handling#custom-error-messages)
 
@@ -1234,13 +1247,16 @@ it matters for complex forms validating in real time.
 [Details&nbsp;›](/fetch/validation#per-field-validation-performance)
 
 #### How do I build URLs without making a request?
-`path([123])` -> `/api/users/123`; `path([123], { query: { include: "posts" } })` adds a query string;
+`path([123])` -> `/api/users/123`; `path([123], { query: { page: 1 } })` adds a query string;
 `href("https://api.example.com", [123])` builds an absolute URL.
 Multiple params follow path order.
 [Details&nbsp;›](/fetch/utilities)
 
 #### How do I distinguish ValidationError from network errors on the client?
-`import fetchClients, { ValidationError } from "_/fetch"`;
+~~~ts
+import fetchClients, { ValidationError } from "_/fetch"
+~~~
+
 `error instanceof ValidationError` means data failed validation and no request was made
 (it carries `target`/`errors`/`errorMessage`/`errorSummary`);
 anything else is a network or server error.
@@ -1255,8 +1271,12 @@ on the client.
 [Details&nbsp;›](/fetch/integration)
 
 #### How do I get a route's response type on the client?
-You usually don't need to - awaiting a method already gives a typed result
-(`const user = await fetchClients["users"].GET([123])` types `user` from the route's response).
+You usually don't need to - awaiting a method already gives a typed result:
+~~~ts
+const user = await fetchClients["users"].GET([123])
+// `user` typed from the route's response
+~~~
+
 For out-of-band typing - a `createAsync` accessor, a `useLoaderData()` result,
 a prop, a shared helper - import `ResponseT` from `_/fetch`, keyed by route name then method:
 `ResponseT["users"]["GET"]`.
