@@ -228,6 +228,41 @@ export default routerFactory((routes) => {
 The derived `routes` are always wrapped inside your `app` component,
 establishing the layout hierarchy.
 
+### clientRouter() before any await
+
+On Svelte and MDX, a client-side navigation calls your `clientRouter()` to resolve the new page.
+It takes no arguments, so the navigation hands over its URL and abort signal another way:
+they are set just before the call, and cleared as soon as it returns its promise.
+The derived router reads them first thing, before its own first await.
+
+So the seeded `clientRouter()` returns the derived one straight away:
+
+```ts
+clientRouter() {
+  return clientRouter();
+},
+```
+
+Await anything before that call, and the URL and signal are gone by the time it runs:
+
+```ts
+async clientRouter() {
+  await loadTranslations();
+  // too late - the navigation's URL and signal are already cleared
+  return clientRouter();
+},
+```
+
+Nothing breaks visibly.
+The URL comes from `window.location`, which already shows the destination by then,
+and a superseded navigation still never renders over a newer one.
+
+What is lost is the [signal](/frontend/data-preload#cancelled-navigations): loaders get none,
+so a superseded navigation's requests run to the end instead of being cancelled.
+
+To await something first, do it in `entry/client.ts` before mounting, or in a loader,
+and leave `clientRouter()` to call the derived router straight away.
+
 ## Application Entry
 
 The `entry/client.ts` file is your application's DOM rendering entry point,

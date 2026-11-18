@@ -211,12 +211,11 @@ client's `GET` is typed from your API definition, and `useLoaderData` is
 parameterized with the matching response type.
 
 **SolidJS** - the `preload` export tells SolidJS Router to call the function
-on link hover and navigation intent. Dedup comes from `query()`: it caches by
-the arguments passed to the wrapped function, so `preload` and `createAsync`
-calling the same `getData()` hit one cache key and the fetch runs once. The
-raw client `GET` is not itself cached, so wrapping it in `query()` is what makes
-the preloaded result reusable - `createAsync(() => GET())` on the bare client
-would fetch again.
+on link hover and navigation intent.
+Dedup comes from `query()`: it caches by the arguments passed to the wrapped function,
+so `preload` and `createAsync`calling the same `getData()` hit one cache key and the fetch runs once.
+The raw client `GET` is not itself cached, so wrapping it in `query()` is what makes the preloaded result reusable -
+`createAsync(() => GET())` on the bare client would fetch again.
 
 **Vue** - a page exports a `loader` (in a plain `<script>` block, since
 `<script setup>` cannot hold ES exports), and the router runs it before the
@@ -255,6 +254,10 @@ Nothing breaks without it: a superseded navigation never renders,
 whatever its loaders return - the signal only saves the request.
 It is undefined on the server and on the first client render,
 where there is nothing to supersede.
+
+The signal reaches loaders only when `clientRouter()` calls the derived router before any await,
+as the seeded `router.ts` does.
+[Details&nbsp;›](/frontend/application#clientrouter-before-any-await)
 
 React, SolidJS and Vue handle a superseded navigation through their own routers.
 
