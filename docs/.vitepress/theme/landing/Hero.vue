@@ -124,7 +124,7 @@ onMounted(() => {
           <a class="btn btn-primary" href="/start">
             Get started <Icon name="arrow" class="arr" />
           </a>
-          <a class="btn btn-ghost" href="#loop" @click.prevent="scrollToLoop">
+          <a class="btn btn-ghost" href="/features">
             Take the 60-second tour
           </a>
         </div>
@@ -259,8 +259,6 @@ onMounted(() => {
   font-family: var(--kx-font-hero);
   font-size: clamp(46px, 8.4vw, 104px);
   font-weight: 700;
-  line-height: 0.98;
-  letter-spacing: -0.05em;
 }
 
 .tw-line {

@@ -132,16 +132,12 @@
 
   /* ---------- type ---------- */
 
-  /*
-    display face: headings and brand. The same Inter as the text, so
-    nothing extra loads; the variable font's optical-size axis switches it
-    to its Display cut at heading sizes on its own.
-  */
-  --kx-font-display: Inter, ui-sans-serif, system-ui, sans-serif;
+  /* display face: headings and brand */
+  --kx-font-display: "Baloo 2 Variable", ui-sans-serif, system-ui, sans-serif;
   /* hero face: the landing headline alone - carries the personality */
-  --kx-font-hero: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --kx-font-hero: "Baloo 2 Variable", ui-sans-serif, system-ui, sans-serif;
   /* text face: prose and UI - variable Inter ships with VitePress */
-  --kx-font-text: Inter, ui-sans-serif, system-ui, sans-serif;
+  --kx-font-text: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
   /* utility face: code, labels, eyebrows, tabs, paths */
   --kx-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }

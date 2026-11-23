@@ -9,6 +9,9 @@
     "preview": "vitepress preview"
   },
   "dependencies": {
+    "@fontsource-variable/baloo-2": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
     "gray-matter": "^4.0.3",
     "vite": "^8.3.4",
     "vitepress": "2.0.0-alpha.17",
