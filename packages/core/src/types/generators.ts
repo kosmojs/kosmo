@@ -63,7 +63,7 @@ export type GeneratorCustomTemplates = Record<
 export type GeneratorFactory = {
   // Vite config provided by generator itself
   viteConfig?: (o: {
-    kind: "frontend" | "backend";
+    kind: "frontend" | "backend" | "sidecar";
     command: ChassisCommand;
   }) => UserConfig;
 

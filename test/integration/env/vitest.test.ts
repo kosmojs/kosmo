@@ -3,7 +3,6 @@ import { writeFile } from "node:fs/promises";
 import { describe, expect, test } from "vitest";
 import { createVitest, type TestRunResult } from "vitest/node";
 
-import { DEFAULT_TEST_FILE } from "@kosmojs/core";
 import { pathResolver } from "@kosmojs/lib";
 
 import { setupTestProject } from "../setup";
@@ -33,8 +32,8 @@ describe("vitest harness: react + hono", async ({ afterAll }) => {
   const { createPath } = pathResolver(project.project, project.sourceFolder);
 
   const testFiles = {
-    api: createPath.api(ROUTE, DEFAULT_TEST_FILE),
-    pages: createPath.pages(ROUTE, DEFAULT_TEST_FILE),
+    api: createPath.api(ROUTE, "index.test.ts"),
+    pages: createPath.pages(ROUTE, "index.test.ts"),
   };
 
   const env = setupEnv(project);

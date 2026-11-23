@@ -369,6 +369,7 @@ defineConfig({
 | `entry` | **required** - the service; default-exports [defineService](/sidecar/entry#the-entry) |
 | `run` | the [runner](/sidecar/entry#the-runner) that starts it in production |
 | `serve` | import and run it under `kosmo serve` - development only |
+| `test` | load its [tests](/sidecar/testing) into Vitest - off by default |
 | `viteConfig` | Vite's `UserConfig` for this build, same exclusions as above |
 
 Both paths are relative to the source folder, and `kosmo sidecar` seeds both files.

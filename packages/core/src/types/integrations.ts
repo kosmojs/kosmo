@@ -12,7 +12,7 @@ import type { TypeboxSettings, TypeboxValidationMessages } from "./typebox";
 type FrontendStack = keyof typeof FRONTENDS;
 type BackendStack = keyof typeof BACKENDS;
 
-export type VitestOptions<T extends "backend" | "frontend"> = {
+export type VitestOptions<T extends "backend" | "frontend" | "sidecar"> = {
   /**
    * Seeding test files is enabled by default.
    *
@@ -135,6 +135,21 @@ export type BackendOptions = {
 
   templates?: GeneratorCustomTemplates;
   generator?: GeneratorSignature;
+  viteConfig?: ViteConfig;
+};
+
+export type SidecarOptions = {
+  entry: string;
+  run?: string;
+  serve?: boolean | undefined;
+  test?:
+    | boolean
+    | {
+        // Custom Vite settings to use specifically for testing
+        viteConfig?: ViteConfig;
+        // Vitest generator to use instead of the default one.
+        generator?: GeneratorSignature;
+      };
   viteConfig?: ViteConfig;
 };
 

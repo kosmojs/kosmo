@@ -1,20 +1,15 @@
 import type { GeneratorSignature } from "./generators";
-import type { ViteConfig } from "./generic";
 import type {
   BackendOptions,
   FrontendOptions,
+  SidecarOptions,
   TypeboxOptions,
 } from "./integrations";
 
 export type FolderConfig = {
   frontend?: FrontendOptions;
   backend?: BackendOptions;
-  sidecar?: {
-    entry: string;
-    run?: string;
-    serve?: boolean | undefined;
-    viteConfig?: ViteConfig;
-  };
+  sidecar?: SidecarOptions;
   fetch?: boolean | { generator?: GeneratorSignature };
   validation?:
     | boolean

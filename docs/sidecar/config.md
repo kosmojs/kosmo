@@ -1,11 +1,11 @@
 ---
 title: Sidecar config
-description: The sidecar block - entry, run, serve and viteConfig - and opting a sidecar out of
-    typechecking.
+description: The sidecar block - entry, run, serve, test and viteConfig -
+    and opting a sidecar out of typechecking.
 head:
   - - meta
     - name: keywords
-      content: sidecar config, sidecar entry, sidecar run, sidecar serve, viteConfig,
+      content: sidecar config, sidecar entry, sidecar run, sidecar serve, sidecar test, viteConfig,
         typecheck opt-out, kosmo.config.ts
 ---
 
@@ -31,6 +31,7 @@ export default defineConfig({
 | `entry` | **required** - the service, relative to the source folder |
 | `run` | the runner that starts it, relative to the source folder |
 | `serve` | run it under the dev server - see [In development](/sidecar/development) |
+| `test` | load its tests into Vitest, off by default - see [Testing](/sidecar/testing) |
 | `viteConfig` | Vite's `UserConfig` for this build |
 
 Both `entry` and `run` files are built into `dist/<folder>/sidecar/`,

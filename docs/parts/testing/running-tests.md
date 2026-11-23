@@ -50,6 +50,8 @@ Source folders with testing enabled are loaded as projects into `vitest.config.t
 
 Test files are matched by the `seed.name` and `seed.path` each source folder declares in its [own&nbsp;config](#name-and-path) -
 `index.test.ts` beside each route, under `api/` or `pages/`, unless you say otherwise.
+A [sidecar](/sidecar/testing) with `test` enabled is loaded too,
+with every `*.test.ts` file in its folder.
 
 ~~~ts [vitest.config.ts]
 import { defineConfig, mergeConfig } from "vitest/config";

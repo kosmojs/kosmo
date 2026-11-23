@@ -1,5 +1,5 @@
 import { basename, dirname, join, posix } from "node:path";
-import { parseArgs } from "node:util";
+import { format, parseArgs } from "node:util";
 
 import { createJiti } from "jiti";
 import { glob } from "tinyglobby";
@@ -9,7 +9,7 @@ import type {
 } from "vitest/config";
 
 import {
-  DEFAULT_TEST_FILE,
+  DEFAULT_TEST_FILE_PATTERN,
   defaults,
   type ProjectSettings,
   type SourceFolder,
@@ -86,7 +86,9 @@ export const loadConfig = async (
 
       const dir = defaults[scope === "backend" ? "apiDir" : "pagesDir"];
 
-      const [path = dir, file = DEFAULT_TEST_FILE] =
+      const defaultFile = format(DEFAULT_TEST_FILE_PATTERN, "index");
+
+      const [path = dir, file = defaultFile] =
         typeof cfg?.test === "object" && typeof cfg?.test.seed === "object"
           ? [
               cfg.test.seed.path
@@ -94,7 +96,7 @@ export const loadConfig = async (
                 : undefined,
               cfg.test.seed.name,
             ]
-          : [dir, DEFAULT_TEST_FILE];
+          : [dir, defaultFile];
 
       return posix.join(defaults.srcDir, sourceFolder.name, path, "**", file);
     };
@@ -170,6 +172,47 @@ export const loadConfig = async (
               root,
               include: [includePattern("frontend")],
               globalSetup: [createPath.lib("test/frontend-setup.ts")],
+            },
+          },
+        ),
+      );
+    }
+
+    if (config.sidecar?.test) {
+      projects.push(
+        mergeConfigs(
+          // user-provided sidecar config - lowest priority
+          config.sidecar?.viteConfig,
+
+          // user-provided test config
+          typeof config.sidecar?.test === "object"
+            ? config.sidecar.test.viteConfig
+            : undefined,
+
+          // generator config - higher priority
+          generator
+            ?.factory(projectSettings, sourceFolder)
+            .viteConfig?.({ kind: "sidecar", command }),
+
+          // main config - highest priority
+          {
+            mode,
+            plugins: [...plugins, vitePlugins.envProvider("sidecar")],
+            resolve: {
+              conditions: ["node"],
+            },
+            test: {
+              environment: "node",
+              name: `${sourceFolder.name}:sidecar`,
+              root,
+              include: [
+                posix.join(
+                  defaults.srcDir,
+                  sourceFolder.name,
+                  "**",
+                  format(DEFAULT_TEST_FILE_PATTERN, "*"),
+                ),
+              ],
             },
           },
         ),

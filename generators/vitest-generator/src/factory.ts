@@ -1,8 +1,9 @@
 import { dirname, resolve } from "node:path";
+import { format } from "node:util";
 
 import {
   type ApiRoute,
-  DEFAULT_TEST_FILE,
+  DEFAULT_TEST_FILE_PATTERN,
   defaults,
   type PageRoute,
   type ResolvedEntry,
@@ -91,7 +92,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
           path || "",
           scope === "backend" ? defaults.apiDir : defaults.pagesDir,
           dirname(entry.file),
-          filename || DEFAULT_TEST_FILE,
+          filename || format(DEFAULT_TEST_FILE_PATTERN, "index"),
         ),
       };
     };

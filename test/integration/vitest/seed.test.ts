@@ -3,7 +3,7 @@ import { basename, join, posix } from "node:path";
 
 import { describe, expect, test } from "vitest";
 
-import { DEFAULT_TEST_FILE, type VitestOptions } from "@kosmojs/core";
+import type { VitestOptions } from "@kosmojs/core";
 import { pathResolver } from "@kosmojs/lib";
 
 import { setupTestProject } from "../setup";
@@ -149,7 +149,7 @@ const runnersFactory = (
 ) => {
   const rootConfig = root["vitest.config.ts"];
 
-  const testFile = DEFAULT_TEST_FILE;
+  const testFile = "index.test.ts";
 
   const customFile =
     typeof options?.seed === "object" //

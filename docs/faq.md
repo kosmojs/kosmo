@@ -291,6 +291,12 @@ A sidecar is built like any other folder, but `preview` and `dist/run.js` never 
 Start it yourself: `node dist/mailer/sidecar/run.js` - your own `run.ts`, built.
 [Details&nbsp;›](/sidecar/intro)
 
+#### How do I test a sidecar?
+Set `test: true` in its `sidecar` block; it is off by default.
+Every `*.test.ts` file in the folder then runs in Node, as a Vitest project named `<folder>:sidecar`.
+No seeding and no harness: import the entry, `start()` it, and stop it in `afterAll`.
+[Details&nbsp;›](/sidecar/testing)
+
 #### Where does code shared by several source folders go?
 Outside `src/`, at the project root, imported through `@/` - `@/db/models`, `@/shared/user`, etc.
 Nothing there is scanned, so the layout is yours; the docs use `db/` and `shared/` in examples without enforcing either.

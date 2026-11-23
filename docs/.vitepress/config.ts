@@ -628,6 +628,11 @@ export default defineConfig({
               link: "/sidecar/development",
             },
             {
+              text: "Testing",
+              docFooterText: "Sidecar Testing",
+              link: "/sidecar/testing",
+            },
+            {
               text: "Preview and production",
               docFooterText: "Sidecar folders in production",
               link: "/sidecar/production",

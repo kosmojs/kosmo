@@ -6,7 +6,6 @@ import { dirname, relative, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 import { createVitest, type TestRunResult } from "vitest/node";
 
-import { DEFAULT_TEST_FILE } from "@kosmojs/core";
 import { pathResolver } from "@kosmojs/lib";
 
 import { setupTestProject } from "../setup";
@@ -148,8 +147,8 @@ describe("vitest harness: splat routes", async ({ afterAll }) => {
   const { createPath } = pathResolver(project.project, project.sourceFolder);
 
   const testFiles = [
-    createPath.api(routes[0], DEFAULT_TEST_FILE),
-    createPath.pages(routes[0], DEFAULT_TEST_FILE),
+    createPath.api(routes[0], "index.test.ts"),
+    createPath.pages(routes[0], "index.test.ts"),
   ];
 
   const teardown = await project.bootstrapProject(async () => {
