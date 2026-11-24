@@ -70,6 +70,10 @@ They control the shape and location of every seeded file.
 `seed.name` is the seeded file name. By default it is `index.test.ts`, written beside the route it belongs to.
 Set `seed.name` to change it - `name: "route.spec.ts"`, for instance, seeds every test file under that name.
 
+It decides which files load, too.
+By default, both `index.test.ts` and `index.spec.ts` are loaded, whichever you name your files.
+Once `seed.name` is set, only files under that name are.
+
 `seed.path` is where seeded files land. The default is `api/` on backend and `pages/` on frontend,
 which keeps each test file beside its route.
 

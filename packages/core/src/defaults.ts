@@ -42,7 +42,8 @@ export const DEFAULT_PREVIEW_PORT = 4558;
 
 export const DEFAULT_DIST = "dist";
 
-export const DEFAULT_TEST_FILE_PATTERN = "%s.test.ts";
+export const DEFAULT_TEST_FILE = "%s.test.ts";
+export const DEFAULT_TEST_PATTERN = "%s.{test,spec}.ts";
 
 export const DEFAULT_ENV_PREFIX = "VITE_";
 

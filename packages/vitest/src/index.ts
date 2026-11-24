@@ -9,7 +9,7 @@ import type {
 } from "vitest/config";
 
 import {
-  DEFAULT_TEST_FILE_PATTERN,
+  DEFAULT_TEST_PATTERN,
   defaults,
   type ProjectSettings,
   type SourceFolder,
@@ -86,7 +86,7 @@ export const loadConfig = async (
 
       const dir = defaults[scope === "backend" ? "apiDir" : "pagesDir"];
 
-      const defaultFile = format(DEFAULT_TEST_FILE_PATTERN, "index");
+      const defaultFile = format(DEFAULT_TEST_PATTERN, "index");
 
       const [path = dir, file = defaultFile] =
         typeof cfg?.test === "object" && typeof cfg?.test.seed === "object"
@@ -210,7 +210,7 @@ export const loadConfig = async (
                   defaults.srcDir,
                   sourceFolder.name,
                   "**",
-                  format(DEFAULT_TEST_FILE_PATTERN, "*"),
+                  format(DEFAULT_TEST_PATTERN, "*"),
                 ),
               ],
             },

@@ -74,7 +74,7 @@ const sidecarTests: Record<string, string> = {
       expect(__TEST_FLAG__).toEqual("test");
     });
   `,
-  "lib/nested.test.ts": `
+  "lib/nested.spec.ts": `
     import { test, expect } from "vitest";
     import { greet } from "./greet";
     test("worker: nested", () => {
@@ -88,7 +88,7 @@ const sidecarTests: Record<string, string> = {
 };
 
 // the worker test files expected to load, relative to the worker folder
-const sidecarTestFiles = ["root.test.ts", "lib/nested.test.ts"];
+const sidecarTestFiles = ["root.test.ts", "lib/nested.spec.ts"];
 
 const idleSidecarTest = `
   import { test } from "vitest";

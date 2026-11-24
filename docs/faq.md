@@ -293,7 +293,8 @@ Start it yourself: `node dist/mailer/sidecar/run.js` - your own `run.ts`, built.
 
 #### How do I test a sidecar?
 Set `test: true` in its `sidecar` block; it is off by default.
-Every `*.test.ts` file in the folder then runs in Node, as a Vitest project named `<folder>:sidecar`.
+Every `*.test.ts` and `*.spec.ts` file in the folder then runs in Node,
+as a Vitest project named `<folder>:sidecar`.
 No seeding and no harness: import the entry, `start()` it, and stop it in `afterAll`.
 [Details&nbsp;›](/sidecar/testing)
 

@@ -3,7 +3,7 @@ import { format } from "node:util";
 
 import {
   type ApiRoute,
-  DEFAULT_TEST_FILE_PATTERN,
+  DEFAULT_TEST_FILE,
   defaults,
   type PageRoute,
   type ResolvedEntry,
@@ -92,7 +92,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
           path || "",
           scope === "backend" ? defaults.apiDir : defaults.pagesDir,
           dirname(entry.file),
-          filename || format(DEFAULT_TEST_FILE_PATTERN, "index"),
+          filename || format(DEFAULT_TEST_FILE, "index"),
         ),
       };
     };

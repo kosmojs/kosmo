@@ -5,7 +5,7 @@ description: Testing a sidecar with Vitest - enabling sidecar.test, where test f
 head:
   - - meta
     - name: keywords
-      content: sidecar testing, vitest, sidecar.test, *.test.ts, defineService,
+      content: sidecar testing, vitest, sidecar.test, *.test.ts, *.spec.ts, defineService,
         test project, kosmo.config.ts
 ---
 
@@ -26,7 +26,7 @@ It is off by default, as on `frontend` and `backend`.
 
 ## Where tests go
 
-Every `*.test.ts` file in the folder is loaded, at any depth:
+Every `*.test.ts` and `*.spec.ts` file in the folder is loaded, at any depth:
 
 ```txt
 src/mailer/
@@ -35,11 +35,11 @@ src/mailer/
 ├── service.test.ts       -> tests the service
 └── smtp/
     ├── parser.ts
-    └── parser.test.ts    -> tests the parser
+    └── parser.spec.ts    -> tests the parser
 ```
 
 That differs from frontend and backend,
-where tests are named `index.test.ts` and sit beside each route.
+where tests are named `index.test.ts` or `index.spec.ts` and sit beside each route.
 A sidecar has no routes to follow, so any name works.
 
 Nothing is seeded.
