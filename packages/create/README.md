@@ -41,7 +41,7 @@ pnpm create kosmo --name my-app --frontend react --backend hono
 
 The first source folder is always `app`, with pages at `/` and the API at `/api`.
 
-Its frontend has SSR enabled, while SSG and TanStack Query are off.
+Its frontend has SSR enabled, while SSG, TanStack Query and testing are off.
 Change any of them in the folder's `kosmo.config.ts`.
 
 [`@kosmojs/core`](https://www.npmjs.com/package/@kosmojs/core) goes into `dependencies`,

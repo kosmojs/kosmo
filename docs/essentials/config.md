@@ -172,7 +172,7 @@ and gives each SSR request its own client. [Details&nbsp;›](/frontend/tanstack
 
 Setup [frontend testing](/frontend/testing).
 
-Enabled by default, set to `false` to disable.
+Off by default; set to `true`, or to an [object](/frontend/testing#the-test-option), to enable.
 
 ### frontend.templates
 
@@ -313,7 +313,7 @@ If it carries dynamic segments, their names must match the target route's parame
 
 Setup [backend testing](/backend/testing).
 
-Enabled by default, set to `false` to disable.
+Off by default; set to `true`, or to an [object](/backend/testing#the-test-option), to enable.
 
 ### backend.templates
 

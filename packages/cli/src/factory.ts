@@ -160,14 +160,14 @@ export const httpFolderConfig = (
       "tanstack" in frontendPartial
         ? frontendPartial.tanstack
         : { query: false },
-    test: "test" in frontendPartial ? frontendPartial.test : true,
+    test: "test" in frontendPartial ? frontendPartial.test : false,
   };
 
   // backend options with default values
   const backend = {
     stack: options.backend as never,
     base: backendPartial.base || `/${options.name}/api`,
-    test: "test" in backendPartial ? backendPartial.test : true,
+    test: "test" in backendPartial ? backendPartial.test : false,
   };
 
   return {
@@ -264,6 +264,7 @@ export const createSidecarFolder = async (
       entry: "./entry.ts",
       run: "./run.ts",
       serve: false,
+      test: false,
     },
   };
 

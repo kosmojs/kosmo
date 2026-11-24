@@ -31,8 +31,8 @@ export default defineConfig({
 });
 ~~~
 
-Enabled by default; set `test: false` to disable testing entirely.
-Or set `test: { seed: false }` to keep the harness and write the files yourself.
+Off by default, since it seeds files into your folder; set `test: true` to enable it.
+Or set `test: { seed: false }` to get the harness and write the files yourself.
 
 ## The test option
 

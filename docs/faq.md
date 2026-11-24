@@ -828,8 +828,8 @@ Let errors propagate to the central error handler instead of swallowing them per
 
 #### How to setup backend testing?
 Edit `backend.test` option in folder's `kosmo.config.ts`.
-Enabled by default; set `test: false` to disable testing entirely.
-Or set `test: { seed: false }` to keep the harness and write the files yourself.
+Off by default; set `test: true` to enable it.
+Or set `test: { seed: false }` to get the harness and write the files yourself.
 [Details&nbsp;›](/backend/testing#the-test-option)
 
 #### How do I test an API route without a running server?
@@ -1461,8 +1461,8 @@ Wrapping the whole app works if you accept the tradeoff - your call, not a defau
 
 #### How to setup frontend testing?
 Edit `frontend.test` option in folder's `kosmo.config.ts`.
-Enabled by default; set `test: false` to disable testing entirely.
-Or set `test: { seed: false }` to keep the harness and write the files yourself.
+Off by default; set `test: true` to enable it.
+Or set `test: { seed: false }` to get the harness and write the files yourself.
 [Details&nbsp;›](/frontend/testing#the-test-option)
 
 #### How do I test a page at all, with no dev server running?
