@@ -20,7 +20,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
     sourceFolder,
   );
 
-  const { frontend, backend } = sourceFolder.config;
+  const { frontend, backend, sidecar } = sourceFolder.config;
 
   const seed = async () => {
     // overwrite only if empty
@@ -138,7 +138,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       { overwrite },
     );
 
-    if (sourceFolder.config.frontend) {
+    if (frontend) {
       // deploy default index.html file; generators may override as needed
       await renderToFile(
         createPath.src("index.html"),
@@ -148,7 +148,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       );
     }
 
-    if (sourceFolder.config.sidecar) {
+    if (sidecar) {
       // seed sidecar files
       await renderToFile(
         createPath.lib("sidecar.ts"),
@@ -162,7 +162,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       ]) {
         await renderFactory({
           helpers: createImportHelpers({ origin: "src" }),
-        }).renderToFile(createPath.src(file), template, {}, { overwrite });
+        }).renderToFile(createPath.sidecar(file), template, {}, { overwrite });
       }
     }
 
@@ -241,7 +241,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
         {
           specifier: "virtual:kosmo/backend-app",
           csr: "export default undefined;",
-          ssr: sourceFolder.config.backend
+          ssr: backend
             ? `export { default } from "${createImport.api(["app"], { origin: "lib" })}";`
             : "export default undefined;",
         },

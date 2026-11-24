@@ -34,12 +34,4 @@ jobs:
       - run: pnpm -C test exec playwright install --with-deps chromium
       - run: pnpm -r build
 
-      - run: pnpm test:unit
-      - run: pnpm test:integration:cli
-      - run: pnpm test:integration:backend
-      - run: pnpm test:integration:sidecar
-      - run: pnpm test:integration react
-      - run: pnpm test:integration solid
-      - run: pnpm test:integration vue
-      - run: pnpm test:integration svelte
-      - run: pnpm test:integration mdx
+      - run: pnpm test

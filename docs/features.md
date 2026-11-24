@@ -201,13 +201,14 @@ the rest: advanced SSR warmup uses TanStack's own `dehydrate` and
 ## Sidecars
 
 Some work has no request behind it.
-A **sidecar** is a source folder that builds a standalone process instead of serving routes -
+A **sidecar** is a standalone process built from a source folder -
 a queue consumer, a mail sender, a cron runner, a listener speaking another protocol.
+It is a block of the folder, like `frontend` and `backend`, with its files in `sidecar/`:
 
 ```
 src/
-  front/        React + Hono, base "/"
-  mailer/       sidecar - entry.ts + run.ts, no pages/ no api/
+  front/        React + Hono, base "/", and a sidecar in front/sidecar/
+  mailer/       a sidecar alone - sidecar/entry.ts + sidecar/run.ts
 ```
 
 It is still a source folder, so `~/` and `@/` work as usual,

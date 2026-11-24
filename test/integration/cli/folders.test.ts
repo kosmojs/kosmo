@@ -1,9 +1,9 @@
 import { mkdir, readdir, rm } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
-import { describe, expect, test } from "vitest";
+import { describe, expect, it, test } from "vitest";
 
-import { defaults } from "@kosmojs/core";
+import { defaults, FRONTENDS } from "@kosmojs/core";
 
 import { createBin, createTempDir, kosmoBin, run } from ".";
 
@@ -26,7 +26,7 @@ describe("http folder: flag matrix", async ({ afterEach }) => {
     // create host project
     await run(
       createBin,
-      ["--name", projectName, "--no-frontend", "--no-backend"],
+      ["--name", projectName, "--frontend", Object.keys(FRONTENDS)[0]],
       tempDir,
     );
 
@@ -40,52 +40,89 @@ describe("http folder: flag matrix", async ({ afterEach }) => {
     };
   };
 
-  test("frontend + backend", async () => {
-    const { code, entries } = await createFolder([
-      ...folderNameArgs,
-      "--frontend",
-      "solid",
-      "--backend",
-      "h3",
-    ]);
-    expect(code).toEqual(0);
-    expect(entries).toContain("api");
-    expect(entries).toContain("pages");
-  });
-
-  test("--no-frontend creates a backend-only folder", async () => {
+  test("no --frontend no --sidecar creates a backend-only folder", async () => {
     const { code, entries } = await createFolder([
       ...folderNameArgs,
       "--backend",
       "hono",
-      "--no-frontend",
     ]);
     expect(code).toEqual(0);
-    expect(entries).toContain("api");
-    expect(entries).not.toContain("pages");
+    expect(entries).toContain(defaults.apiDir);
+    expect(entries).not.toContain(defaults.pagesDir);
+    expect(entries).not.toContain(defaults.sidecarDir);
   });
 
-  test("--no-backend creates a frontend-only folder", async () => {
+  test("no --backend no --sidecar creates a frontend-only folder", async () => {
     const { code, entries } = await createFolder([
       ...folderNameArgs,
       "--frontend",
       "svelte",
-      "--no-backend",
     ]);
     expect(code).toEqual(0);
-    expect(entries).toContain("pages");
-    expect(entries).not.toContain("api");
+    expect(entries).toContain(defaults.pagesDir);
+    expect(entries).not.toContain(defaults.apiDir);
+    expect(entries).not.toContain(defaults.sidecarDir);
   });
 
-  test("both negations create a bare folder", async () => {
+  it("creates a frontend with a sidecar", async () => {
     const { code, entries } = await createFolder([
       ...folderNameArgs,
-      "--no-frontend",
-      "--no-backend",
+      "--frontend",
+      "svelte",
+      "--sidecar",
     ]);
     expect(code).toEqual(0);
-    expect(entries).not.toContain("api");
-    expect(entries).not.toContain("pages");
+    expect(entries).toContain(defaults.pagesDir);
+    expect(entries).not.toContain(defaults.apiDir);
+    expect(entries).toContain(defaults.sidecarDir);
+  });
+
+  it("creates a backend with a sidecar", async () => {
+    const { code, entries } = await createFolder([
+      ...folderNameArgs,
+      "--backend",
+      "h3",
+      "--sidecar",
+    ]);
+    expect(code).toEqual(0);
+    expect(entries).not.toContain(defaults.pagesDir);
+    expect(entries).toContain(defaults.apiDir);
+    expect(entries).toContain(defaults.sidecarDir);
+  });
+
+  it("creates a frontend + backend", async () => {
+    const { code, entries } = await createFolder([
+      ...folderNameArgs,
+      "--frontend",
+      "vue",
+      "--backend",
+      "h3",
+    ]);
+    expect(code).toEqual(0);
+    expect(entries).toContain(defaults.pagesDir);
+    expect(entries).toContain(defaults.apiDir);
+    expect(entries).not.toContain(defaults.sidecarDir);
+  });
+
+  it("creates a frontend + backend + sidecar", async () => {
+    const { code, entries } = await createFolder([
+      ...folderNameArgs,
+      "--frontend",
+      "vue",
+      "--backend",
+      "h3",
+      "--sidecar",
+    ]);
+    expect(code).toEqual(0);
+    expect(entries).toContain(defaults.pagesDir);
+    expect(entries).toContain(defaults.apiDir);
+    expect(entries).toContain(defaults.sidecarDir);
+  });
+
+  it("fails when none of frontend/backend/sidecar provided", async () => {
+    const { code, stderr } = await createFolder([...folderNameArgs]);
+    expect(code).not.toEqual(0);
+    expect(stderr).toMatch(/at least one/i);
   });
 
   test("missing name fails", async () => {
@@ -99,34 +136,11 @@ describe("http folder: flag matrix", async ({ afterEach }) => {
     expect(stderr).toMatch(/No folder name provided/);
   });
 
-  test("missing frontend fails", async () => {
-    const { code, stderr } = await createFolder([
-      ...folderNameArgs,
-      "test",
-      "--backend",
-      "h3",
-    ]);
-    expect(code).not.toEqual(0);
-    expect(stderr).toMatch(/frontend is required/);
-  });
-
-  test("missing backend fails", async () => {
-    const { code, stderr } = await createFolder([
-      ...folderNameArgs,
-      "--frontend",
-      "solid",
-    ]);
-    expect(code).not.toEqual(0);
-    expect(stderr).toMatch(/backend is required/);
-  });
-
   test("invalid frontend value fails, listing options", async () => {
     const { code, stderr } = await createFolder([
       ...folderNameArgs,
       "--frontend",
       "x",
-      "--no-backend",
-      "h3",
     ]);
     expect(code).not.toEqual(0);
     expect(stderr).toMatch(/invalid frontend/i);
@@ -136,39 +150,12 @@ describe("http folder: flag matrix", async ({ afterEach }) => {
   test("invalid backend value fails, listing options", async () => {
     const { code, stderr } = await createFolder([
       ...folderNameArgs,
-      "--no-frontend",
       "--backend",
       "x",
     ]);
     expect(code).not.toEqual(0);
     expect(stderr).toMatch(/invalid backend/i);
     expect(stderr).toMatch(/hono/);
-  });
-
-  test("frontend value + negation is a conflict", async () => {
-    const { code, stderr } = await createFolder([
-      ...folderNameArgs,
-      "--frontend",
-      "solid",
-      "--no-frontend",
-      "--backend",
-      "h3",
-    ]);
-    expect(code).not.toEqual(0);
-    expect(stderr).toMatch(/mutually exclusive/i);
-  });
-
-  test("backend value + negation is a conflict", async () => {
-    const { code, stderr } = await createFolder([
-      ...folderNameArgs,
-      "--frontend",
-      "solid",
-      "--backend",
-      "h3",
-      "--no-backend",
-    ]);
-    expect(code).not.toEqual(0);
-    expect(stderr).toMatch(/mutually exclusive/i);
   });
 
   test("unknown option fails with a clean error, not a stack trace", async ({
@@ -188,19 +175,14 @@ describe("http folder: flag matrix", async ({ afterEach }) => {
   });
 
   test("existing dir fails", async () => {
-    const { code } = await createFolder([
-      ...folderNameArgs,
-      "--no-frontend",
-      "--no-backend",
-    ]);
+    const { code } = await createFolder([...folderNameArgs, "--sidecar"]);
 
     expect(code).toEqual(0);
 
     {
       const { code, stderr } = await createFolder([
         ...folderNameArgs,
-        "--no-frontend",
-        "--no-backend",
+        "--sidecar",
       ]);
       expect(code).not.toEqual(0);
       expect(stderr).toMatch(/already exists/);
@@ -208,19 +190,14 @@ describe("http folder: flag matrix", async ({ afterEach }) => {
   });
 
   test("existing dir succeeds with --overwrite", async () => {
-    const { code } = await createFolder([
-      ...folderNameArgs,
-      "--no-frontend",
-      "--no-backend",
-    ]);
+    const { code } = await createFolder([...folderNameArgs, "--sidecar"]);
 
     expect(code).toEqual(0);
 
     {
       const { code } = await createFolder([
         ...folderNameArgs,
-        "--no-frontend",
-        "--no-backend",
+        "--sidecar",
         "--overwrite",
       ]);
       expect(code).toEqual(0);

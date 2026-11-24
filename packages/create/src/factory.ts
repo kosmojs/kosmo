@@ -44,7 +44,6 @@ export const createProject = async (
       build: "kosmo build",
       typecheck: "kosmo typecheck",
       folder: "kosmo folder",
-      sidecar: "kosmo sidecar",
       test: "vitest",
     },
     dependencies: {

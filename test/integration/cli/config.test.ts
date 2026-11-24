@@ -24,12 +24,32 @@ describe("should create the project and folders", async () => {
   const projectName = "app";
   const projectRoot = resolve(tempDir, projectName);
 
-  test("create the project", async ({ expect }) => {
-    await mkdir(tempDir, { recursive: true });
+  await mkdir(tempDir, { recursive: true });
 
+  const folders = [...Object.keys(FRONTENDS), undefined].flatMap((frontend) => {
+    return [...Object.keys(BACKENDS), undefined].flatMap((backend) => {
+      return [true, false].flatMap((sidecar) => [
+        {
+          name:
+            [
+              frontend,
+              backend,
+              sidecar ? (frontend || backend ? "with-sidecar" : "sidecar") : "",
+            ]
+              .filter(Boolean)
+              .join("-") || "empty",
+          frontend,
+          backend,
+          sidecar,
+        },
+      ]);
+    });
+  });
+
+  test("create the project", async ({ expect }) => {
     await run(
       createBin,
-      ["--name", projectName, "--no-frontend", "--no-backend"],
+      ["--name", projectName, "--frontend", Object.keys(FRONTENDS)[0]],
       tempDir,
     );
 
@@ -41,19 +61,7 @@ describe("should create the project and folders", async () => {
     expect(kosmo.distDir).toEqual(DEFAULT_DIST);
   });
 
-  const folders = [...Object.keys(FRONTENDS), undefined].flatMap((frontend) => {
-    return [...Object.keys(BACKENDS), undefined].flatMap((backend) => {
-      return [
-        {
-          name: [frontend, backend].filter(Boolean).join("-") || "bare",
-          frontend,
-          backend,
-        },
-      ];
-    });
-  });
-
-  for (const { name, frontend, backend } of folders) {
+  for (const { name, frontend, backend, sidecar } of folders) {
     test(`create ${name} folder`, async ({ expect }) => {
       // the bin directly rather than the project's folder script:
       // the scaffolded project has no node_modules installed
@@ -63,19 +71,22 @@ describe("should create the project and folders", async () => {
           "folder",
           "--name",
           name,
-          ...(frontend ? ["--frontend", frontend] : ["--no-frontend"]),
-          ...(backend ? ["--backend", backend] : ["--no-backend"]),
+          ...(frontend ? ["--frontend", frontend] : []),
+          ...(backend ? ["--backend", backend] : []),
+          ...(sidecar ? ["--sidecar"] : []),
         ],
         projectRoot,
       );
 
-      expect(code, stderr).toEqual(0);
-
-      {
+      if ([frontend, backend, sidecar].some(Boolean)) {
+        expect(code, stderr).toEqual(0);
         const file = `src/${name}/kosmo.config.ts`;
         const fileContent = await readFile(resolve(projectRoot, file), "utf8");
-        const { code } = await format(file, fileContent);
-        await expect(code).toMatchFileSnapshot(`./@snapshots/${file}.txt`);
+        const f = await format(file, fileContent);
+        await expect(f.code).toMatchFileSnapshot(`./@snapshots/${file}.txt`);
+      } else {
+        expect(code, stderr).toEqual(1);
+        expect(stderr).toMatch(/at least one/i);
       }
     });
   }

@@ -1,0 +1,24 @@
+import { defineConfig } from "@kosmojs/dev";
+
+export default defineConfig({
+  frontend: {
+    stack: "solid",
+    base: "/solid-hono-with-sidecar",
+    ssr: true,
+    ssg: false,
+    tanstack: { query: false },
+    test: false,
+  },
+  backend: {
+    stack: "hono",
+    base: "/solid-hono-with-sidecar/api",
+    test: false,
+  },
+  sidecar: {
+    serve: false,
+    test: false,
+  },
+  fetch: true,
+  validation: true,
+  typecheck: true,
+});

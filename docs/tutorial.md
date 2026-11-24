@@ -1,6 +1,7 @@
 ---
 title: Tutorial
-description: Build a full KosmoJS application step by step - routing, validation,
+description: >-
+    Build a full KosmoJS application step by step - routing, validation,
     middleware, fetch clients, pages, SSR, and multi-folder architecture.
 head:
   - - meta
@@ -31,7 +32,7 @@ yarn create kosmo
 :::
 
 A short interactive setup creates the project together with your first source folder,
-prompting for the name, frontend and backend.
+prompting for the name, frontend, backend, and whether to add a [sidecar](/sidecar/intro).
 
 Use `.` to bootstrap in the current directory:
 
@@ -45,8 +46,7 @@ Both `frontend` and `backend` can be further configured in folder's [kosmo.confi
 <details class="details custom-block">
 <summary>Prefer a scripted setup?</summary>
 
-Provide up front the `--name` and `--frontend`/`--backend` (or `--no-frontend`/`--no-backend` counterparts)
-and no prompts appear:
+Provide flags up front and their prompts are skipped:
 
 :::tabs key:pm variant:code
 == npm
@@ -66,9 +66,13 @@ yarn create kosmo --name demo --frontend solid --backend hono
 ```
 :::
 
-Need no backend? Provide `--no-backend` flag: `--name demo --frontend solid --no-backend`
+Need no backend? Leave out `--backend` and choose None when asked for it -
+in a script, with no terminal to ask in, leaving it out is enough.
+Same for the frontend, to get a backend-only setup.
 
-Same for the frontend, provide the `--no-frontend` flag to get a backend-only setup.
+`--sidecar` adds a [sidecar](/sidecar/intro), and is asked about the same way when left out.
+
+At least one of the three is required.
 
 > **Worth Noting:** `--name` ignored when using `.` to bootstrap in current directory.
 </details>
@@ -532,16 +536,21 @@ yarn folder
 ```
 :::
 
-You'll be prompted for the folder name, frontend and backend.
+You'll be prompted for the folder name, frontend, backend,
+and whether to add a [sidecar](/sidecar/intro).
 The name gives the folder its prefixes: pages at `/<name>`, API at `/<name>/api`,
 configurable later in folder's [kosmo.config.ts](/essentials/config).
 
-Non-interactive mode is also supported; pass flags up front and no prompts appear:
+Non-interactive mode is also supported; pass flags up front and their prompts are skipped:
 
 - `--name` folder name, required
-- `--frontend solid|react|vue|svelte|mdx` or `--no-frontend` (one required)
-- `--backend hono|h3|koa` or `--no-backend` (one required)
+- `--frontend solid|react|vue|svelte|mdx`
+- `--backend hono|h3|koa`
+- `--sidecar` to add a [sidecar](/sidecar/intro)
 - `--overwrite` to proceed into a non-empty directory
+
+Frontend, backend and sidecar are each optional, but at least one is required.
+In a terminal, the ones you leave out are asked for.
 
 Everything else - SSR, SSG, TanStack Query - is a key in the folder's [kosmo.config.ts](/essentials/config),
 not a flag at creation.
@@ -563,29 +572,30 @@ yarn folder --name <name> --frontend solid --backend hono
 ```
 :::
 
-Need no backend? Provide the `--no-backend` flag for a frontend-only folder (a static docs or marketing site).
+Need no backend? Leave out `--backend` for a frontend-only folder (a static docs or marketing site).
 
-Need no client? Provide the `--no-frontend` flag for a backend-only folder (an API service with no UI).
+Need no client? Leave out `--frontend` for a backend-only folder (an API service with no UI).
 
-The choice is always explicit - a forgotten flag is an error, never a silent default:
+In a terminal, you are asked for the side you left out - choose None there.
+From a script, leaving it out is enough:
 
 :::tabs key:pm variant:code
 == npm
 ```sh
-npm run folder -- --name api  --backend hono --no-frontend   # API only, no UI
-npm run folder -- --name docs --frontend mdx --no-backend    # UI only, no backend
+npm run folder -- --name api  --backend hono   # API only (no UI, no sidecar)
+npm run folder -- --name docs --frontend mdx   # UI only (no backend, no sidecar)
 ```
 
 == pnpm
 ```sh
-pnpm folder --name api  --backend hono --no-frontend   # API only, no UI
-pnpm folder --name docs --frontend mdx  --no-backend   # UI only, no backend
+pnpm folder --name api  --backend hono   # API only (no UI, no sidecar)
+pnpm folder --name docs --frontend mdx   # UI only (no backend, no sidecar)
 ```
 
 == yarn
 ```sh
-yarn folder --name api  --backend hono --no-frontend   # API only, no UI
-yarn folder --name docs --frontend mdx  --no-backend   # UI only, no backend
+yarn folder --name api  --backend hono   # API only (no UI, no sidecar)
+yarn folder --name docs --frontend mdx   # UI only (no backend, no sidecar)
 ```
 :::
 

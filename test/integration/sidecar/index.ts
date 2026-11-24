@@ -6,11 +6,12 @@ import { dirname, resolve } from "node:path";
 import { createProject } from "create-kosmo";
 import { createJiti } from "jiti";
 
-import { createHTTPFolder, createSidecarFolder } from "@kosmojs/cli";
+import { createSourceFolder } from "@kosmojs/cli";
 import {
   DEFAULT_DIST,
   DEFAULT_HOST,
   type ProjectSettings,
+  type SidecarOptions,
   type SourceFolder,
 } from "@kosmojs/core";
 import chassis from "@kosmojs/dev/chassis";
@@ -24,13 +25,6 @@ import {
 import { env, execFile, installDependencies, pkgsDir } from "..";
 import * as templates from "../@fixtures/sidecar";
 
-type SidecarConfig = {
-  entry?: string;
-  run?: string;
-  serve?: boolean;
-  typecheck?: boolean;
-};
-
 /**
  * A sidecar project driven the way a user drives one - scaffolded by the CLI,
  * installed, then either built (`pnpm build`) or served (chassis in-process).
@@ -40,12 +34,11 @@ type SidecarConfig = {
  * */
 export const setupSidecarProject = async ({
   name = "worker",
-  sidecarFolder = {},
+  sidecarFolder = { serve: false },
   httpFolder,
 }: {
   name?: string;
-  sidecarFolder?: SidecarConfig;
-  // a second, HTTP-serving folder - the layout the docs recommend
+  sidecarFolder?: SidecarOptions;
   httpFolder?: { name: string; base: string };
 } = {}) => {
   const tempDir = await mkdtemp(resolve(tmpdir(), ".kosmojs-sidecar-"));
@@ -89,18 +82,9 @@ export const setupSidecarProject = async ({
   // the templates place it as a literal, so it survives any path
   const logFileLiteral = JSON.stringify(logFile);
 
-  /** Rewrite the folder's kosmo.config.ts - `run: undefined` drops the key. */
-  const writeConfig = async ({
-    entry = "./entry.ts",
-    run,
-    serve,
-    typecheck,
-  }: SidecarConfig) => {
+  const writeConfig = async ({ serve }: SidecarOptions) => {
     await renderToFile(createPath.src("kosmo.config.ts"), templates.config, {
-      entry,
-      run,
       serve: JSON.stringify(serve === undefined ? false : serve),
-      typecheck: JSON.stringify(typecheck === undefined ? true : typecheck),
     });
   };
 
@@ -151,14 +135,14 @@ export const setupSidecarProject = async ({
       });
 
       if (httpFolder) {
-        await createHTTPFolder(
+        await createSourceFolder(
           project.root,
           { name: httpFolder.name, backend: "hono" },
           { backend: { base: httpFolder.base } },
         );
       }
 
-      await createSidecarFolder(project.root, { name, sidecar: true });
+      await createSourceFolder(project.root, { name, sidecar: true });
 
       // the seeded config is the default one; tests state what they need
       await writeConfig(sidecarFolder);
@@ -168,7 +152,7 @@ export const setupSidecarProject = async ({
 
     /** Write any file inside the source folder, e.g. "entry.ts", "lib/tick.ts". */
     async writeSource(file: string, content: string) {
-      const path = createPath.src(file);
+      const path = createPath.sidecar(file);
       await mkdir(dirname(path), { recursive: true });
       await writeFile(path, content, "utf8");
     },
@@ -199,21 +183,6 @@ export const setupSidecarProject = async ({
           ? {}
           : { failStartOn: JSON.stringify(failStartOn) }),
       });
-    },
-
-    /**
-     * The same service as plain ESM - no `defineService`, no types,
-     * relative imports carrying their extension.
-     * What a sidecar wrapping third-party JavaScript looks like,
-     * and what `typecheck: false` is for.
-     * */
-    mjsEntry() {
-      return render(templates.mjsEntry, { logFile: logFileLiteral });
-    },
-
-    /** Its runner, the same shape `kosmo sidecar` seeds. */
-    mjsRunner() {
-      return templates.mjsRunner;
     },
 
     tickModule(value: string) {

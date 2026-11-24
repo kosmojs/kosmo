@@ -12,7 +12,7 @@ import { setupSidecarProject } from ".";
  * */
 const project = await setupSidecarProject({
   name: "worker",
-  sidecarFolder: { entry: "./entry.ts", run: "./run.ts", serve: true },
+  sidecarFolder: { serve: true },
 });
 
 /**

@@ -4,7 +4,7 @@ import { dirname, relative, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 import { createVitest, type TestRunResult } from "vitest/node";
 
-import { createSidecarFolder } from "@kosmojs/cli";
+import { createSourceFolder } from "@kosmojs/cli";
 import { pathResolver } from "@kosmojs/lib";
 
 import { setupTestProject } from "../setup";
@@ -31,8 +31,6 @@ const sidecarConfig = `
   import { defineConfig } from "@kosmojs/dev";
   export default defineConfig({
     sidecar: {
-      entry: "./entry.ts",
-      run: "./run.ts",
       serve: false,
       viteConfig: {
         define: { __SIDECAR_FLAG__: JSON.stringify("sidecar") },
@@ -49,7 +47,7 @@ const sidecarConfig = `
 const idleSidecarConfig = `
   import { defineConfig } from "@kosmojs/dev";
   export default defineConfig({
-    sidecar: { entry: "./entry.ts", run: "./run.ts", serve: false },
+    sidecar: { serve: false },
   });
 `;
 
@@ -59,10 +57,12 @@ const SIDECAR_ENV = { WORKER_GREETING: "hello from worker env" };
 const greeting = JSON.stringify(SIDECAR_ENV.WORKER_GREETING);
 
 /**
- * Test files of the worker folder, relative to it.
+ * Files of the worker folder, relative to it.
+ * Sidecar tests live under its sidecar/ directory, any name, at any depth;
+ * a test file elsewhere in the folder is not a sidecar test.
  * */
 const sidecarTests: Record<string, string> = {
-  "root.test.ts": `
+  "sidecar/root.test.ts": `
     import { test, expect } from "vitest";
     import { greet } from "./lib/greet";
     declare const __SIDECAR_FLAG__: string;
@@ -74,7 +74,7 @@ const sidecarTests: Record<string, string> = {
       expect(__TEST_FLAG__).toEqual("test");
     });
   `,
-  "lib/nested.spec.ts": `
+  "sidecar/lib/nested.spec.ts": `
     import { test, expect } from "vitest";
     import { greet } from "./greet";
     test("worker: nested", () => {
@@ -82,13 +82,19 @@ const sidecarTests: Record<string, string> = {
       expect(process.env.WORKER_GREETING).toEqual(${greeting});
     });
   `,
-  "lib/greet.ts": `
+  "sidecar/lib/greet.ts": `
     export const greet = (name: string) => "hello " + name;
+  `,
+  "outside.test.ts": `
+    import { test } from "vitest";
+    test("worker: outside sidecar/", () => {
+      throw new Error("loaded a test file outside the sidecar directory");
+    });
   `,
 };
 
 // the worker test files expected to load, relative to the worker folder
-const sidecarTestFiles = ["root.test.ts", "lib/nested.spec.ts"];
+const sidecarTestFiles = ["sidecar/root.test.ts", "sidecar/lib/nested.spec.ts"];
 
 const idleSidecarTest = `
   import { test } from "vitest";
@@ -195,7 +201,7 @@ for (const ssr of [false, true]) {
 
     const createSidecarFolders = async () => {
       for (const name of [SIDECAR, IDLE_SIDECAR]) {
-        await createSidecarFolder(project.root, { name, sidecar: true });
+        await createSourceFolder(project.root, { name, sidecar: true });
       }
 
       await writeFolderFile(SIDECAR, "kosmo.config.ts", sidecarConfig);
@@ -211,7 +217,12 @@ for (const ssr of [false, true]) {
       }
 
       await writeFolderFile(IDLE_SIDECAR, "kosmo.config.ts", idleSidecarConfig);
-      await writeFolderFile(IDLE_SIDECAR, "sidecar.test.ts", idleSidecarTest);
+
+      await writeFolderFile(
+        IDLE_SIDECAR,
+        "sidecar/idle.test.ts",
+        idleSidecarTest,
+      );
     };
 
     const teardown = await bootstrapProject(async () => {

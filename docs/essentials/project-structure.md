@@ -1,6 +1,7 @@
 ---
 title: Project Structure
-description: The anatomy of a KosmoJS project - source folders, the derived var/lib directory,
+description: >-
+    The anatomy of a KosmoJS project - source folders, the derived var/lib directory,
     build output, and the reserved @/ ~/ _/ path mappings.
 head:
   - - meta
@@ -40,8 +41,8 @@ Every `_/` import you write points into `var/lib/`.
 
 ## Inside a Source Folder
 
-A source folder is a self-contained app. This is one with a Hono backend and a React frontend,
-with SSR enabled - the fullest shape:
+A source folder is a self-contained app. This is one with a Hono backend, a React frontend
+with SSR enabled, and a sidecar - the fullest shape:
 
 ```txt
 src/front/
@@ -79,9 +80,13 @@ src/front/
 ├── types/                -> yours - nothing outside the names above is scanned
 │   └── user.ts           -> reached as `~/types/user`
 │
-└── entry/
-    ├── client.ts         -> mount / hydrate in the browser
-    └── server.ts         -> renderToString / renderToStream  (SSR only)
+├── entry/
+│   ├── client.ts         -> mount / hydrate in the browser
+│   └── server.ts         -> renderToString / renderToStream  (SSR only)
+│
+└── sidecar/              ── standalone process ────────────────────
+    ├── entry.ts          -> the service: defineService({ start, teardown })
+    └── run.ts            -> the runner: starts it, stops it on a signal
 ```
 
 Things worth noticing:
@@ -96,16 +101,20 @@ Neither directory name appears in a URL.
 [Details&nbsp;›](/frontend/layouts#global-layout-via-app-file)
 - **`use.ts` is not a route either.** Drop one in any `api/` folder and it wraps that subtree.
 [Details&nbsp;›](/backend/cascading-middleware)
+- **`sidecar/` is a process, not part of the app.** It builds and runs on its own,
+and `entry/` beside it belongs to the frontend.
+[Details&nbsp;›](/sidecar/intro)
 - **Everything else is yours.** `index.*` and `use.ts` are the only names the scanner looks for,
 so any other file or directory - `types/`, `server/`, `domain/` - is ignored by it and reachable through `~/`.
 Where to put it is a judgement call, not a convention KosmoJS imposes.
 [Suggestions&nbsp;›](/routing/rationale#helpers-shared-by-several-routes)
 
-A folder created with `--no-backend` simply has no `api/`;
-one created with `--no-frontend` has no `pages/`, `app.*`, `router.ts`, `index.html` or `entry/`.
+A folder with no backend simply has no `api/`;
+one with no frontend has no `pages/`, `app.*`, `router.ts`, `index.html` or `entry/`.
 
-A [sidecar](/sidecar/intro) folder has neither - just a `kosmo.config.ts`,
-a `tsconfig.json` and the entry points it builds.
+A folder with a [sidecar](/sidecar/intro) has a `sidecar/` directory beside the rest,
+holding `entry.ts`, `run.ts` and its tests.
+A folder with only a sidecar has just that, a `kosmo.config.ts` and a `tsconfig.json`.
 
 ## Inside `var/lib/`
 
@@ -221,7 +230,8 @@ dist/front/
 │   ├── app.js            -> the app instance, for custom mounting
 │   └── server.js         -> ready-to-run backend server
 ├── sidecar/              -> only when the folder declares one
-│   └── entry.js
+│   ├── entry.js
+│   └── run.js            -> the runner, started with node
 ├── client/
 │   ├── assets/           -> hashed JS, CSS, images
 │   └── index.html

@@ -1,0 +1,24 @@
+import { defineConfig } from "@kosmojs/dev";
+
+export default defineConfig({
+  frontend: {
+    stack: "mdx",
+    base: "/mdx-h3-with-sidecar",
+    ssr: true,
+    ssg: false,
+    tanstack: { query: false },
+    test: false,
+  },
+  backend: {
+    stack: "h3",
+    base: "/mdx-h3-with-sidecar/api",
+    test: false,
+  },
+  sidecar: {
+    serve: false,
+    test: false,
+  },
+  fetch: true,
+  validation: true,
+  typecheck: true,
+});

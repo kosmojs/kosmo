@@ -710,7 +710,7 @@ export default async <C extends ChassisCommand>(
         const { runner } = environment();
         runner.clearCache();
         return runner
-          .import<{ default: SidecarService }>(sidecar.entry)
+          .import<{ default: SidecarService }>(createPath.sidecar("entry.ts"))
           .then((e) => e.default);
       };
 
@@ -859,9 +859,11 @@ const buildSourceFolder = async (
   const { createPath } = pathResolver(projectSettings, sourceFolder);
   const { frontend, backend, sidecar } = sourceFolder.config;
 
-  const { resolvers } = sourceFolder.config.sidecar
-    ? { resolvers: new Map<string, ResolverSignature>() }
-    : await routesFactory(projectSettings, sourceFolder, cacheFactory);
+  // routes are pages and API; a folder with neither, a sidecar alone, has none to resolve
+  const { resolvers } =
+    frontend || backend
+      ? await routesFactory(projectSettings, sourceFolder, cacheFactory)
+      : { resolvers: new Map<string, ResolverSignature>() };
 
   let resolvedRoutes = await resolveRoutes(sourceFolder, resolvers);
 
@@ -995,6 +997,7 @@ const buildSourceFolder = async (
             sourceFolder,
             `backend:${command}`,
           ),
+          publicDir: false,
         },
       ),
     );
@@ -1008,6 +1011,7 @@ const buildSourceFolder = async (
         sidecar.viteConfig,
         // main config - highest priority
         {
+          mode, // set via --mode
           base: "./",
           root: createPath.src(),
           appType: "custom",
@@ -1022,16 +1026,17 @@ const buildSourceFolder = async (
             emptyOutDir: true,
             rolldownOptions: {
               input: {
-                entry: createPath.src(sidecar.entry),
-                ...(sidecar.run ? { run: sidecar.run } : {}),
+                entry: createPath.sidecar("entry.ts"),
+                run: createPath.sidecar("run.ts"),
               },
               output: {
-                dir: createPath.distDir("sidecar"),
+                dir: createPath.distDir(defaults.sidecarDir),
                 format: "esm",
               },
             },
           },
           cacheDir: cacheDir(projectSettings, sourceFolder, "sidecar"),
+          publicDir: false,
         },
       ),
     );

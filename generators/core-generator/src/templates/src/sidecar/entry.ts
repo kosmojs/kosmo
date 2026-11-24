@@ -2,8 +2,8 @@ import { defineService } from "{{ createImport 'lib' 'sidecar' }}";
 
 export default defineService({
   async start() {
-    /* start the service;
-     * relevant only if sidecar.serve is true in kosmo.config.ts
+    /* start the service and return a function that stops it;
+     * called by sidecar/run.ts, and by the dev server when sidecar.serve is true
      * */
     return async () => {
       /* close the server;

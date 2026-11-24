@@ -37,6 +37,7 @@ export const pathResolver = (
     | "api"
     | "pages"
     | "entry"
+    | "sidecar"
     | "lib"
     | "libCore"
     | "libApi"
@@ -116,6 +117,9 @@ export const pathResolver = (
       },
       entry(...a) {
         return this.src(defaults.entryDir, ...a);
+      },
+      sidecar(...a) {
+        return this.src(defaults.sidecarDir, ...a);
       },
       lib(...a) {
         return this.appLib(name, ...a);

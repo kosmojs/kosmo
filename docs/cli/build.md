@@ -44,7 +44,7 @@ with `base` set to the folder's `frontend.base` and a Vite manifest alongside it
 4. **Bundle the backend**, if the folder has a `backend` - into `dist/<folder>/api`, as ESM with sourcemaps.
 Two entry points: `api/app.ts` and `api/server.ts`.
 5. **Run each generator's post-build step.** This is where the SSR/SSG bundles produced, if either enabled,
-and where [sidecar](/sidecar/intro) entries are bundled.
+and where a [sidecar](/sidecar/intro) is bundled, into `dist/<folder>/sidecar/`.
 
 Then the folder's manifest is written, and once every folder is done, `dist/run.js` is deployed.
 

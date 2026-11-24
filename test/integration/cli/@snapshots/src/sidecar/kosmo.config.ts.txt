@@ -1,6 +1,10 @@
 import { defineConfig } from "@kosmojs/dev";
 
 export default defineConfig({
+  sidecar: {
+    serve: false,
+    test: false,
+  },
   fetch: false,
   validation: false,
   typecheck: true,

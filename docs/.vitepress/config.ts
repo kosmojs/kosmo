@@ -19,6 +19,8 @@ export const redirects = [
   ["/openapi.html", "/openapi/intro.html"],
   // renamed
   ["/validation/naming-conventions.html", "/validation/type-names.html"],
+  // sidecars are added with kosmo folder
+  ["/cli/sidecar.html", "/cli/folder.html"],
 ];
 
 /*
@@ -342,11 +344,6 @@ export default defineConfig({
               link: "/cli/folder",
             },
             {
-              text: "kosmo sidecar",
-              docFooterText: "kosmo sidecar",
-              link: "/cli/sidecar",
-            },
-            {
               text: "kosmo serve",
               docFooterText: "kosmo serve",
               link: "/cli/serve",
@@ -604,7 +601,7 @@ export default defineConfig({
           ],
         },
         {
-          text: "Sidecar Folders",
+          text: "Sidecars",
           collapsed: false,
           items: [
             {
@@ -634,7 +631,7 @@ export default defineConfig({
             },
             {
               text: "Preview and production",
-              docFooterText: "Sidecar folders in production",
+              docFooterText: "Sidecars in production",
               link: "/sidecar/production",
             },
           ],

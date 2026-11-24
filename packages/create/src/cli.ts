@@ -5,8 +5,8 @@ import { resolve } from "node:path";
 import { parseArgs, styleText } from "node:util";
 
 import {
-  assertNoError,
-  createHTTPFolder,
+  createSourceFolder,
+  exitOnError,
   FOLDER_OPTIONS,
   isTTY,
   packageManager,
@@ -24,32 +24,36 @@ const usage = [
   "",
   `🚀 ${styleText(["bold", "underline", "cyan"], "KosmoJS CLI")}`,
   "",
-  styleText("bold", "BASIC USAGE"),
+  `Create a project interactively, asking for name and frontend/backend/sidecar:`,
+  `${styleText("blue", "npm create kosmo")}`,
   "",
-  ` Create a project interactively, asking for name and frontend/backend:`,
-  ` ${styleText("blue", "npm create kosmo")}`,
+  "Create a project in current directory:",
+  `${styleText("blue", "npm create kosmo .")}`,
   "",
-  " Create a project in current directory:",
-  ` ${styleText("blue", "npm create kosmo .")}`,
+  "Provide flags up front to skip interactive prompts:",
+  `${styleText("blue", "npm create kosmo -- --name <name> ...")}`,
   "",
-  " Provide flags up front to skip interactive prompts:",
-  ` ${styleText("blue", "npm create kosmo -- --name <name> ...")}`,
+  "pnpm/yarn works without extra --",
+  `${styleText("blue", "pnpm create kosmo --name <name> ...")}`,
+  `${styleText("blue", "yarn create kosmo --name <name> ...")}`,
   "",
-  " pnpm/yarn works without extra --",
-  ` ${styleText("blue", "pnpm create kosmo --name <name> ...")}`,
-  ` ${styleText("blue", "yarn create kosmo --name <name> ...")}`,
+  "FLAGS:",
+  `  ${styleText("cyan", `--name`)} ${styleText("yellow", "project name")} ${styleText("dim", "(ignored when using . to bootstrap in current directory)")}`,
+  `  ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))}`,
+  `  ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))}`,
+  `  ${styleText("cyan", `--sidecar`)} ${styleText("yellow", "add a sidecar")}`,
+  `  ${styleText("cyan", "--overwrite")} ${styleText("yellow", "overwrite existing files")} ${styleText("dim", "(use with caution)")}`,
   "",
-  " FLAGS:",
-  `   ${styleText("cyan", `--name`)} ${styleText("yellow", "project name")} ${styleText("dim", "(ignored when using . to bootstrap in current directory)")}`,
-  `   ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))} ${styleText("dim", "(or --no-frontend for API-only folders)")}`,
-  `   ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(or --no-backend for client-only folders use)")}`,
-  `   ${styleText("cyan", "--overwrite")} ${styleText("yellow", "overwrite existing files")} ${styleText("dim", "(use with caution)")}`,
+  `  ${styleText(["magenta"], "at least one of --frontend / --backend / --sidecar required")}`,
   "",
-  ` ${styleText("blue", "-h, --help")}`,
-  " Display this help message and exit",
+  `${styleText("blue", "-h, --help")}`,
+  "Display this help message and exit",
   "",
-  " The first Source Folder is always `app`, with pages at / and backend at /api",
-  " Add more folders later with `kosmo folder`, or a standalone process with `kosmo sidecar`.",
+  styleText(
+    ["dim"],
+    "The first Source Folder is always `app`, with pages at / and backend at /api;",
+  ),
+  styleText(["dim"], "Add more folders later with `kosmo folder`"),
   "",
 ];
 
@@ -89,10 +93,10 @@ const run = async () => {
       );
       name = answer as string;
     } else {
-      assertNoError(() => "No project name provided");
+      exitOnError(() => "No project name provided");
     }
   } else if (name !== ".") {
-    assertNoError(() => validateName(name, "No project name provided"));
+    exitOnError(() => validateName(name, "No project name provided"));
   }
 
   const folderOptions = await readFolderOptions("app", values);
@@ -136,7 +140,7 @@ const run = async () => {
         process.exit(0);
       }
     } else {
-      assertNoError(() => {
+      exitOnError(() => {
         return `${message}. Either remove dir contents or provide --overwrite flag`;
       });
     }
@@ -144,7 +148,7 @@ const run = async () => {
 
   await createProject(root);
 
-  await createHTTPFolder(root, folderOptions, {
+  await createSourceFolder(root, folderOptions, {
     frontend: { base: "/" },
     backend: { base: "/api" },
   });

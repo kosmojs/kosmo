@@ -25,11 +25,15 @@ That is your `run.ts`, built - not something KosmoJS wraps around it.
 So whatever you already use for long-running processes -
 systemd, a container command, a platform worker - applies unchanged.
 
-Note the two `run.js` are unrelated: `dist/run.js` is the dispatcher for the HTTP folders,
+Note the two `run.js` are unrelated: `dist/run.js` is the dispatcher for pages and APIs,
 while `dist/<folder>/sidecar/run.js` is one sidecar's runner.
 
+That holds for a sidecar sharing a folder with a web app, too.
+`dist/run.js` serves the folder's pages and API, and leaves its sidecar to you.
+
 ::: info Do not fold sidecars into the main process
-Nothing stops you from writing a runner that imports every HTTP folder and every sidecar and runs them in one process.
+Nothing stops you from writing a runner that imports every web app and every sidecar,
+and runs them in one process.
 It will appear to work. It also makes the HTTP side as fragile as the job:
 
 - an unhandled rejection in a consumer takes the process down, and every route  with it

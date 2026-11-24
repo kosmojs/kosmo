@@ -12,15 +12,13 @@ import { spinnerFactory } from "@kosmojs/lib";
 import {
   assertFolderName,
   compareDependencies,
-  type FolderOptions,
   type PackageJSON,
   packageManager,
   printMessage,
 } from "./base";
 import {
-  createHTTPFolder,
-  createSidecarFolder,
-  prepareFolder,
+  createSourceFolder,
+  prepareSourceFolder,
   readFolderOptions,
 } from "./factory";
 import {
@@ -49,18 +47,15 @@ export const runCommand = async ({
   const input = Object.keys(values).length ? values : undefined;
 
   const createFolder = async () => {
-    printMessage(
-      styleText(["blue", "bold"], "› Preparing a new source folder"),
-      "intro",
-    );
+    printMessage(styleText("blue", "› Preparing a new source folder"), "intro");
 
     const name = await assertFolderName(values.name);
 
     const options = await readFolderOptions(name, input);
 
-    await prepareFolder(root, name, input);
+    await prepareSourceFolder(root, name, input);
 
-    await createHTTPFolder(root, options);
+    await createSourceFolder(root, options);
 
     // Using readFile cause import() returns cached content
     const { dependencies, devDependencies } = JSON.parse(
@@ -94,30 +89,6 @@ export const runCommand = async ({
       ].join(" "),
       "outro",
     );
-  };
-
-  const createSidecar = async () => {
-    printMessage(
-      styleText(["blue", "bold"], "› Preparing a new sidecar"),
-      "intro",
-    );
-
-    const name = await assertFolderName(values.name);
-
-    await prepareFolder(root, name, input);
-
-    const options: FolderOptions = { name };
-
-    printMessage(
-      [
-        styleText(["green"], `✨ Well done!`),
-        styleText(["blue", "bold"], `./${defaults.srcDir}/${options.name}`),
-        "sidecar is ready to perform",
-      ].join(" "),
-      "outro",
-    );
-
-    await createSidecarFolder(root, { ...options, sidecar: true });
   };
 
   const runTypecheck = async () => {
@@ -203,10 +174,6 @@ export const runCommand = async ({
 
   if (command === "folder") {
     return createFolder();
-  }
-
-  if (command === "sidecar") {
-    return createSidecar();
   }
 
   if (command === "typecheck") {

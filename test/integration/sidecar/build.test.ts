@@ -8,7 +8,7 @@ import { setupSidecarProject } from ".";
  * */
 const project = await setupSidecarProject({
   name: "worker",
-  sidecarFolder: { entry: "./entry.ts", run: "./run.ts" },
+  sidecarFolder: { serve: false },
   httpFolder: { name: "web", base: "/api" },
 });
 
@@ -64,27 +64,5 @@ describe("sidecar build", () => {
       "teardown:1",
       "close:1",
     ]);
-  });
-
-  test("the dispatcher ignores a sidecar folder and serves the web one", async () => {
-    // dist/<sidecar>/ carries no kosmo.json, so dist/run.js must skip it
-    // rather than fail to boot the folders that do serve HTTP
-    const { createListener } = await import(
-      project.createPath.distDir("../run.js")
-    );
-
-    const listener = await createListener();
-
-    expect(listener).toBeTypeOf("function");
-  });
-
-  test("without `run` only the entry is emitted", async () => {
-    await project.writeConfig({ entry: "./entry.ts" });
-    await project.build();
-
-    const entries = await project.distEntries("sidecar");
-
-    expect(entries).toContain("entry.js");
-    expect(entries).not.toContain("run.js");
   });
 });

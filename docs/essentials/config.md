@@ -1,7 +1,8 @@
 ---
 title: Configuration
-description: Complete reference for kosmo.config.ts - the frontend, backend and validation
-    blocks, base URLs, stack plugins and vite options, and the project-level settings in package.json.
+description: >-
+    Complete reference for kosmo.config.ts - the frontend, backend and validation blocks,
+    base URLs, stack plugins and vite options, and the project-level settings in package.json.
 head:
   - - meta
     - name: keywords
@@ -52,8 +53,9 @@ export default defineConfig({
 });
 ```
 
-A folder can have both web sides, or just one, or neither -
-a folder with only [sidecar](/sidecar/intro) builds an entry point and KosmoJS routes nothing to it.
+A folder can have both web sides, or just one, or neither,
+and a [sidecar](/sidecar/intro) next to them or on its own.
+A folder with only a `sidecar` builds a process, and KosmoJS routes nothing to it.
 
 Every feature key follows the same pattern: a plain value turns it on with defaults.
 
@@ -350,31 +352,33 @@ decide which [env files](/essentials/env-files) that side reads.
 
 ## sidecar
 
-Makes this folder a **sidecar**: a process to build, and nothing KosmoJS routes to -
+Adds a **sidecar** to this folder: a process to build, and nothing KosmoJS routes to -
 a queue consumer, a mail sender, a listener speaking another protocol.
+It sits next to `frontend` and `backend`, or alone.
 
 ```ts [kosmo.config.ts]
 defineConfig({
   // ...
   sidecar: {
-    entry: "./entry.ts",
-    run: "./run.ts",
-    serve: false,
+    serve: true,
   },
 });
 ```
 
 | Option | |
 |---|---|
-| `entry` | **required** - the service; default-exports [defineService](/sidecar/entry#the-entry) |
-| `run` | the [runner](/sidecar/entry#the-runner) that starts it in production |
 | `serve` | import and run it under `kosmo serve` - development only |
 | `test` | load its [tests](/sidecar/testing) into Vitest - off by default |
 | `viteConfig` | Vite's `UserConfig` for this build, same exclusions as above |
 
-Both paths are relative to the source folder, and `kosmo sidecar` seeds both files.
+`serve` is required, the rest are optional.
+[Details&nbsp;›](/sidecar/config#options)
+
+The block names no files. By convention, a sidecar is `sidecar/entry.ts` and `sidecar/run.ts`,
+seeded when missing, the way a backend is `api/app.ts` and the rest.
 The entry says what the service is; the runner says how it is supervised -
 which is why the dev server needs only the entry, and replaces the runner with itself.
+[Details&nbsp;›](/sidecar/config#the-files)
 
 One sidecar per folder; a second process is a second folder.
 
@@ -387,7 +391,6 @@ so `viteConfig` here carries the same shape and the same exclusions as [backend.
 defineConfig({
   // ...
   sidecar: {
-    entry: "./entry.ts",
     serve: false,
     viteConfig: {
       define: { __WORKER_BUILD__: true },
@@ -420,6 +423,7 @@ defineConfig({
 
 Set it to `false` for a folder you do not want checked - a sidecar wrapping third-party JavaScript,
 a folder mid-migration, anything where a red `tsc` is noise rather than signal.
+It covers the whole folder: a sidecar is checked, or not, along with the pages and API beside it.
 
 The folder still builds and still runs; it is only left out of typecheck runs.
 

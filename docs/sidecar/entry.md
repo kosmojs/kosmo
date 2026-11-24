@@ -9,7 +9,8 @@ head:
         SIGINT, SIGTERM, graceful shutdown
 ---
 
-A sidecar is two files, both seeded via [sidecar](/cli/sidecar) command and both yours to edit.
+A sidecar is two files in the folder's `sidecar/` directory,
+both seeded when missing and both yours to edit.
 
 The **entry** is the service itself - what to start, and how to stop it.
 The **runner** is the process around it - which signals to catch, whether to drain before exit.
@@ -19,7 +20,7 @@ Only the entry is used in development; `kosmo serve` supervises it in place of t
 
 The entry default-exports a service built with `defineService`:
 
-```ts [src/mailer/entry.ts]
+```ts [src/mailer/sidecar/entry.ts]
 import { defineService } from "_/sidecar";
 
 export default defineService({
@@ -45,7 +46,7 @@ export default defineService({
 The runner imports the entry and decides what happens around it.
 The seeded one does the least that is still correct - start, and stop on a signal:
 
-```ts [src/mailer/run.ts]
+```ts [src/mailer/sidecar/run.ts]
 import service from "./entry";
 
 const close = await service.start();
@@ -62,6 +63,8 @@ for (const signal of ["SIGINT", "SIGTERM"]) {
 Replace it with whatever your deployment wants - restart on failure, a health port,
 draining in-flight work before exit. It is an ordinary module in your source folder,
 so it typechecks with the rest and reaches `~/` and `@/` as usual.
+
+Delete either file and it is seeded again on the next start, so keep them and edit them in place.
 
 > The runner is not used in development.
 `kosmo serve` imports the entry itself, so anything you put here runs only from `dist/`.

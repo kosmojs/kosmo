@@ -10,7 +10,7 @@ import { createJiti } from "jiti";
 import { chromium, type Page } from "playwright";
 import { inject, type ProvidedContext } from "vitest";
 
-import { createHTTPFolder } from "@kosmojs/cli";
+import { createSourceFolder } from "@kosmojs/cli";
 import {
   BACKENDS,
   DEFAULT_DIST,
@@ -149,7 +149,7 @@ export const setupTestProject = async (
       },
     });
 
-    await createHTTPFolder(
+    await createSourceFolder(
       project.root,
       { name: sourceFolder.name, frontend, backend },
       {

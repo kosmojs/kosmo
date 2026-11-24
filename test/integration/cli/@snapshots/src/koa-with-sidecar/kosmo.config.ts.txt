@@ -1,0 +1,16 @@
+import { defineConfig } from "@kosmojs/dev";
+
+export default defineConfig({
+  backend: {
+    stack: "koa",
+    base: "/koa-with-sidecar/api",
+    test: false,
+  },
+  sidecar: {
+    serve: false,
+    test: false,
+  },
+  fetch: false,
+  validation: true,
+  typecheck: true,
+});

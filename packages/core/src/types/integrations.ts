@@ -13,65 +13,6 @@ type FrontendStack = keyof typeof FRONTENDS;
 type BackendStack = keyof typeof BACKENDS;
 
 export type VitestOptions<T extends "backend" | "frontend" | "sidecar"> = {
-  /**
-   * Seeding test files is enabled by default.
-   *
-   * Set `seed: false` to disable seeding and write test files by hand.
-   * Or provide a map of patterns to seed only specific routes.
-   *
-   * NOTE: `name` and `path` are reserved keys;
-   * if you need to use either one as a pattern, add a suffix:
-   *  - "name/*"
-   *  - "name/**"
-   *
-   * do not seed user routes:
-   *   seed: {
-   *     "user/**": false,
-   *   }
-   *
-   * seed only user routes:
-   *   seed: {
-   *     "user/**": true,
-   *     "**": false,
-   *   }
-   *
-   * use custom template for user routes:
-   *
-   *   import * as templates from "./test/templates";
-   *
-   *   seed: {
-   *     "user/**": templates.users,
-   *   }
-   * */
-  seed?:
-    | boolean
-    | {
-        /**
-         * By default seededtest files are named `index.test.ts`.
-         * Use `name` option to name seeded files differently,
-         * e.g. `name: "route.test.ts"` or `name: "route.spec.ts"`.
-         * */
-        name?: string;
-
-        /**
-         * By default test files are seeded and loaded from a path sibling to route file,
-         * e.g.: `api/<route>/index.test.ts`.
-         * Use path to seed into a different dir,
-         * e.g. set `path: "test"` to seed into `test/api/<route>/index.test.ts`.
-         * Relative to the source folder's root.
-         * */
-        path?: string;
-
-        /**
-         * Patterns to enable/disable testing per-route basis,
-         * or to use custom seeding templates for select routes.
-         * */
-        [key: string]:
-          | boolean
-          | string
-          | ((r: T extends "backend" ? ApiRoute : PageRoute) => string);
-      };
-
   // Custom Vite settings to use specifically for testing
   viteConfig?: ViteConfig;
 
@@ -89,7 +30,69 @@ export type VitestOptions<T extends "backend" | "frontend" | "sidecar"> = {
        * */
       ssr?: boolean;
     }
-  : {});
+  : {}) &
+  (T extends "sidecar"
+    ? {}
+    : {
+        /**
+         * Seeding test files is enabled by default.
+         *
+         * Set `seed: false` to disable seeding and write test files by hand.
+         * Or provide a map of patterns to seed only specific routes.
+         *
+         * NOTE: `name` and `path` are reserved keys;
+         * if you need to use either one as a pattern, add a suffix:
+         *  - "name/*"
+         *  - "name/**"
+         *
+         * do not seed user routes:
+         *   seed: {
+         *     "user/**": false,
+         *   }
+         *
+         * seed only user routes:
+         *   seed: {
+         *     "user/**": true,
+         *     "**": false,
+         *   }
+         *
+         * use custom template for user routes:
+         *
+         *   import * as templates from "./test/templates";
+         *
+         *   seed: {
+         *     "user/**": templates.users,
+         *   }
+         * */
+        seed?:
+          | boolean
+          | {
+              /**
+               * By default seededtest files are named `index.test.ts`.
+               * Use `name` option to name seeded files differently,
+               * e.g. `name: "route.test.ts"` or `name: "route.spec.ts"`.
+               * */
+              name?: string;
+
+              /**
+               * By default test files are seeded and loaded from a path sibling to route file,
+               * e.g.: `api/<route>/index.test.ts`.
+               * Use path to seed into a different dir,
+               * e.g. set `path: "test"` to seed into `test/api/<route>/index.test.ts`.
+               * Relative to the source folder's root.
+               * */
+              path?: string;
+
+              /**
+               * Patterns to enable/disable testing per-route basis,
+               * or to use custom seeding templates for select routes.
+               * */
+              [key: string]:
+                | boolean
+                | string
+                | ((r: T extends "backend" ? ApiRoute : PageRoute) => string);
+            };
+      });
 
 export type FrontendOptions = {
   stack: FrontendStack | { name: FrontendStack; plugin: PluginOption };
@@ -139,17 +142,8 @@ export type BackendOptions = {
 };
 
 export type SidecarOptions = {
-  entry: string;
-  run?: string;
-  serve?: boolean | undefined;
-  test?:
-    | boolean
-    | {
-        // Custom Vite settings to use specifically for testing
-        viteConfig?: ViteConfig;
-        // Vitest generator to use instead of the default one.
-        generator?: GeneratorSignature;
-      };
+  serve: boolean;
+  test?: boolean | VitestOptions<"sidecar">;
   viteConfig?: ViteConfig;
 };
 

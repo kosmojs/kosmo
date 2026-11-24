@@ -1,6 +1,7 @@
 ---
 title: KosmoJS FAQ
-description: Frequently asked questions about KosmoJS for developers and LLM agents
+description: >-
+    Frequently asked questions about KosmoJS for developers and LLM agents
 outline: [2, 3]
 ---
 
@@ -33,22 +34,23 @@ is a tool you can use, debug, and replace independently.
 #### How do I create a new KosmoJS project?
 Run `npm create kosmo` (or `pnpm create kosmo` / `yarn create kosmo`).
 An interactive setup creates the project together with your first source folder,
-asking for the name, frontend and backend.
+asking for the name, frontend, backend, and whether to add a [sidecar](/sidecar/intro).
 
 Use `.` to bootstrap in the current directory: `pnpm create kosmo .`
 
 [Details&nbsp;›](/start)
 
 #### How do I create a project non-interactively?
-Provide the name, frontend and backend up front - when flags are present no prompts appear:
+Provide the name, frontend and backend up front, and `--sidecar` for a sidecar:
 ~~~sh
 npm create kosmo -- --name demo --frontend react --backend hono
 ~~~
 
 (pnpm and yarn forward flags without the extra `--`: `pnpm create kosmo --name demo ...`).
 
-Required: `--frontend <name>` or `--no-frontend`, and `--backend <name>` or `--no-backend` -
-the choice is always explicit; a missing flag is an error, never a silent default.
+`--frontend <name>`, `--backend <name>` and `--sidecar` are each optional,
+but at least one is required.
+Leave one out and you are asked for it in a terminal; with no terminal, the folder goes without it.
 
 Use `.` to bootstrap in the current directory: `pnpm create kosmo .`
 
@@ -61,25 +63,23 @@ Run `npm run folder` (or `pnpm folder` / `yarn folder`) - interactively, or with
 [Details&nbsp;›](/cli/folder)
 
 #### What am I prompted for when adding a source folder?
-Frontend, backend, SSR, SSG (only if SSR is on) and TanStack Query.
-Non-interactive: the name is a positional, plus
-`--frontend solid|react|vue|svelte|mdx` or `--no-frontend`,
-`--backend hono|h3|koa` or `--no-backend`, `--overwrite`.
-Frontend and backend each require a value or its negation flag,
+The folder name, frontend, backend, and whether to add a [sidecar](/sidecar/intro).
+Non-interactive: `--name`, plus
+`--frontend solid|react|vue|svelte|mdx`, `--backend hono|h3|koa`, `--sidecar`, `--overwrite`.
+Frontend, backend and sidecar are each optional, but at least one is required,
 and the name is required here - unlike at project creation, it has no default.
 The folder gets pages at `/<name>` and its API at `/<name>/api`.
 [Details&nbsp;›](/cli/folder)
 
 #### How do I create a backend-only (API) folder, or a frontend-only folder?
-A source folder doesn't have to ship both sides - framework and backend are independent, and each is optional.
-In interactive mode, choose `None (API-only folder)` in the framework select,
-or `None (client-only folder)` in the backend select.
+A source folder doesn't have to ship both sides - frontend and backend are independent, and each is optional.
+In interactive mode, choose `None` in the frontend select, or `None` in the backend select.
 
-In non-interactive mode, pass the matching negation flag for the side you skip:
+From a script, leave out the flag for the side you skip (in a terminal, you would be asked for it):
 
 ```sh
-pnpm folder --name api  --backend hono --no-frontend  # backend-only, no UI
-pnpm folder --name docs --frontend mdx --no-backend   # frontend-only, no backend
+pnpm folder --name api  --backend hono   # API only (no UI, no sidecar)
+pnpm folder --name docs --frontend mdx   # UI only (no backend, no sidecar)
 ```
 
 The seeded `kosmo.config.ts` contains only the block that side needs.
@@ -271,20 +271,22 @@ goes at the folder root and is reached through `~/`, as these docs do with `~/ty
 [Details&nbsp;›](/routing/rationale#helpers-shared-by-several-routes)
 
 #### How do I run a background worker or a non-HTTP process?
-Give it a [sidecar](/sidecar/intro) folder - a source folder with a `sidecar` block instead of `frontend`/`backend`.
-It declares entry points to build and serves no HTTP:
+Give it a [sidecar](/sidecar/intro) - a `sidecar` block in a folder's `kosmo.config.ts`,
+next to `frontend` and `backend` or on its own. It builds a process and serves no HTTP:
 
 ```ts [kosmo.config.ts]
 defineConfig({
   // ...
   sidecar: {
-    entry: "./entry.ts",
-    serve: false,
+    serve: true,
   },
 });
 ```
 
-`pnpm sidecar <name>` scaffolds one. It builds / typechecks like any other folder, and reaches `~/` and `@/` like any other code.
+Its files are `sidecar/entry.ts` and `sidecar/run.ts`, seeded when missing.
+`pnpm folder` adds one when given `--sidecar`, or asks about it, so for a sidecar alone:
+`pnpm folder --name mailer --sidecar`.
+It builds / typechecks like any other folder, and reaches `~/` and `@/` like any other code.
 With `serve`, `pnpm dev` watches and restarts it. One per folder - a second worker is a second folder.
 
 A sidecar is built like any other folder, but `preview` and `dist/run.js` never start them - those are HTTP, and a sidecar is not.
@@ -293,7 +295,7 @@ Start it yourself: `node dist/mailer/sidecar/run.js` - your own `run.ts`, built.
 
 #### How do I test a sidecar?
 Set `test: true` in its `sidecar` block; it is off by default.
-Every `*.test.ts` and `*.spec.ts` file in the folder then runs in Node,
+Every `*.test.ts` and `*.spec.ts` file under the folder's `sidecar/` then runs in Node,
 as a Vitest project named `<folder>:sidecar`.
 No seeding and no harness: import the entry, `start()` it, and stop it in `afterAll`.
 [Details&nbsp;›](/sidecar/testing)
@@ -1205,6 +1207,7 @@ Naming it does not override the setting: `pnpm typecheck mailer` reports that th
 
 Useful for a [sidecar](/sidecar/intro) wrapping third-party JavaScript,
 or a folder mid-migration where a red `tsc` is noise rather than signal.
+It covers the whole folder, so a sidecar opts out along with any pages and API beside it.
 [Details&nbsp;›](/cli/typecheck#opting-a-folder-out)
 
 ### Fetch Clients

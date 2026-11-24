@@ -209,6 +209,7 @@ export const loadConfig = async (
                 posix.join(
                   defaults.srcDir,
                   sourceFolder.name,
+                  defaults.sidecarDir,
                   "**",
                   format(DEFAULT_TEST_PATTERN, "*"),
                 ),

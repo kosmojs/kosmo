@@ -14,7 +14,7 @@ import {
 import { formatCode, pathResolver, render, renderToFile } from "@kosmojs/lib";
 
 import {
-  assertNoError,
+  exitOnError,
   type FolderOptions,
   isTTY,
   printAnswer,
@@ -24,7 +24,7 @@ import {
 } from "./base";
 import * as templates from "./templates";
 
-export const prepareFolder = async (
+export const prepareSourceFolder = async (
   root: string,
   name: string,
   input: Partial<{ overwrite: boolean }> | undefined,
@@ -63,7 +63,7 @@ export const prepareFolder = async (
     return;
   }
 
-  assertNoError(() => {
+  exitOnError(() => {
     return `${message}. Either remove it or provide --overwrite flag.`;
   });
 };
@@ -73,9 +73,8 @@ export const readFolderOptions = async (
   input:
     | Partial<{
         frontend: string;
-        "no-frontend": boolean;
         backend: string;
-        "no-backend": boolean;
+        sidecar: boolean;
         overwrite: boolean;
       }>
     | undefined,
@@ -88,18 +87,11 @@ export const readFolderOptions = async (
     ["frontend", FRONTENDS],
     ["backend", BACKENDS],
   ] as const) {
-    if (input?.[key] && input?.[`no-${key}`]) {
-      // both value and negation given, fail
-      assertNoError(() => {
-        return `--${key} and --no-${key} are mutually exclusive; use only one`;
-      });
-    }
-
     const message = key.replace(/^./, (e) => e.toUpperCase());
 
     if (input?.[key]) {
       // value given, validate it
-      assertNoError(() => {
+      exitOnError(() => {
         return !Object.keys(values).includes(input[key] as never)
           ? `Invalid ${key}, use one of: ${Object.keys(values).join(", ")}`
           : undefined;
@@ -109,46 +101,56 @@ export const readFolderOptions = async (
       if (tty) {
         printAnswer(message, options[key]);
       }
-    } else if (input?.[`no-${key}`]) {
-      if (tty) {
-        printAnswer(message, "none");
-      }
-    } else {
-      if (tty) {
-        // no value nor negation given, ask for the value
+    } else if (tty) {
+      // no value given, ask for the value in the terminal
 
-        const answer = await readAnswer(
-          prompts.select({
-            message,
-            options: [
-              ...Object.entries(values).map(([value, label]) => {
-                return { value, label };
-              }),
-              { value: undefined, label: "none" },
-            ],
-          }),
-        );
+      const answer = await readAnswer(
+        prompts.select({
+          message,
+          options: [
+            ...Object.entries(values).map(([value, label]) => {
+              return { value, label };
+            }),
+            { value: undefined, label: "None" },
+          ],
+        }),
+      );
 
-        options[key] = answer as never;
-      } else {
-        // no value nor negation given, and no tty to ask, fail
-        assertNoError(() => {
-          return `${key} is required: either provide --${key} <name> or --no-${key} flag`;
-        });
-      }
+      options[key] = answer as never;
     }
   }
+
+  {
+    const message = "Add a Sidecar?";
+    if ("sidecar" in { ...input }) {
+      options.sidecar = input?.sidecar;
+      if (tty) {
+        printAnswer(message, options.sidecar ? "Yes" : "No");
+      }
+    } else if (tty) {
+      const answer = await readAnswer(prompts.confirm({ message }));
+      options.sidecar = answer as never;
+    }
+  }
+
+  exitOnError(() => {
+    const keys = ["frontend", "backend", "sidecar"] as const;
+    return keys.some((e) => options[e])
+      ? undefined
+      : `Nothing to create: provide at least one of --${keys.join(", --")}`;
+  });
 
   return options;
 };
 
-export const httpFolderConfig = (
+export const createSourceFolderConfig = (
   options: FolderOptions,
   {
     frontend: frontendPartial = {},
     backend: backendPartial = {},
+    sidecar: sidecarPartial = {},
     ...configPartial
-  }: DeepPartial<Omit<FolderConfig, "sidecar">> = {},
+  }: DeepPartial<FolderConfig> = {},
 ): FolderConfig => {
   // frontend options with default values
   const frontend = {
@@ -195,6 +197,14 @@ export const httpFolderConfig = (
           },
         }
       : {}),
+    ...(options.sidecar
+      ? {
+          sidecar: {
+            serve: "serve" in sidecarPartial ? sidecarPartial.serve : false,
+            test: "test" in sidecarPartial ? sidecarPartial.test : false,
+          },
+        }
+      : {}),
     fetch: !options.backend || !options.frontend ? false : true,
     validation: !options.backend ? false : true,
     typecheck: true,
@@ -202,7 +212,7 @@ export const httpFolderConfig = (
   };
 };
 
-export const createHTTPFolder = async (
+export const createSourceFolder = async (
   root: string,
   options: FolderOptions,
   partialConfig?: DeepPartial<FolderConfig>,
@@ -216,7 +226,7 @@ export const createHTTPFolder = async (
   // Using readFile cause import() returns cached content
   const packageJson = JSON.parse(await readFile(packageFile, "utf8"));
 
-  const config = httpFolderConfig(options, partialConfig);
+  const config = createSourceFolderConfig(options, partialConfig);
 
   const kosmoConfig = createKosmoConfig(options, config);
 
@@ -241,45 +251,19 @@ export const createHTTPFolder = async (
 
   await writeFile(packageFile, JSON.stringify(packageJson, undefined, 2));
 
-  await renderToFile(
-    resolve(folderPath, "public/favicon.svg"),
-    templates.favicon,
-    {},
-    { overwrite: false },
-  );
+  if (config.frontend) {
+    await renderToFile(
+      resolve(folderPath, "public/favicon.svg"),
+      templates.favicon,
+      {},
+      { overwrite: false },
+    );
+  }
 
-  await seedFolder(root, options, config as never);
+  await seedSourceFolder(root, options, config as never);
 };
 
-export const createSidecarFolder = async (
-  root: string,
-  options: FolderOptions,
-) => {
-  const path = resolve(root, defaults.srcDir, options.name);
-
-  await mkdir(path, { recursive: true });
-
-  const config = {
-    sidecar: {
-      entry: "./entry.ts",
-      run: "./run.ts",
-      serve: false,
-      test: false,
-    },
-  };
-
-  const kosmoConfig = createKosmoConfig(options, config);
-
-  await writeFile(
-    resolve(path, "kosmo.config.ts"),
-    await formatCode(kosmoConfig, "kosmo.config.ts"),
-    "utf8",
-  );
-
-  await seedFolder(root, options, config);
-};
-
-const seedFolder = async (
+const seedSourceFolder = async (
   root: string,
   options: FolderOptions,
   config: FolderConfig,
@@ -324,7 +308,7 @@ const seedFolder = async (
 
   if (config.backend) {
     // create an empty index route, backend generator will seed it accordingly
-    await renderToFile(createPath.api(`index/index.ts`), "", {});
+    await renderToFile(createPath.api("index/index.ts"), "", {});
   }
 
   for (const generator of generators) {

@@ -10,6 +10,3 @@ export { default as config } from "./kosmo.config.hbs?raw";
 export { default as entry } from "./entry.hbs?raw";
 export { default as servingEntry } from "./serving-entry.hbs?raw";
 export { default as tick } from "./tick.hbs?raw";
-
-export { default as mjsEntry } from "./mjs/entry.hbs?raw";
-export { default as mjsRunner } from "./mjs/run.hbs?raw";

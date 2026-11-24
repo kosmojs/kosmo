@@ -5,7 +5,7 @@ Creates a KosmoJS project and its first source folder.
 ## Usage
 
 Run it without flags, and it asks for the project name,
-the frontend framework and the backend framework:
+the frontend framework, the backend framework, and whether to add a sidecar:
 
 ```sh
 npm create kosmo
@@ -32,10 +32,14 @@ pnpm create kosmo --name my-app --frontend react --backend hono
 | Flag | Values |
 |---|---|
 | `--name` | project name, ignored when using `.` |
-| `--frontend` | `react`, `vue`, `solid`, `svelte`, `mdx`, or `--no-frontend` for an API-only folder |
-| `--backend` | `hono`, `h3`, `koa`, or `--no-backend` for a client-only folder |
+| `--frontend` | `react`, `vue`, `solid`, `svelte`, `mdx` |
+| `--backend` | `hono`, `h3`, `koa` |
+| `--sidecar` | add a sidecar, a process of its own beside the web app |
 | `--overwrite` | overwrite existing files |
 | `-h, --help` | print usage |
+
+`--frontend`, `--backend` and `--sidecar` are each optional, but at least one is required.
+Leave one out and you are asked for it, or, with no terminal, the folder goes without it.
 
 ## What you get
 
@@ -51,7 +55,7 @@ and [`@kosmojs/vitest`](https://www.npmjs.com/package/@kosmojs/vitest) into `dev
 so you never add them by hand.
 
 Add more source folders later with `kosmo folder`,
-or a standalone process with `kosmo sidecar`.
+and a sidecar to an existing folder by adding a `sidecar` block to its `kosmo.config.ts`.
 
 ## Documentation
 

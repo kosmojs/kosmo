@@ -1,7 +1,8 @@
 ---
 title: Sidecars in development
-description: Running a sidecar under kosmo serve - how the reload works, why the close
-    function is what frees the port, and when not to set serve at all.
+description: >-
+    Running a sidecar under kosmo serve - how the reload works,
+    why the close function is what frees the port, and when to leave serve off.
 head:
   - - meta
     - name: keywords
@@ -12,7 +13,9 @@ head:
 In dev mode, `kosmo serve` can run a sidecar alongside your app, so a worker is up while you work on the routes that feed it.
 Whether it does is the `serve` key.
 
-Without `serve`, a sidecar is built and left alone - it is a build artifact like any other, and starting it is yours.
+With `serve: false`, a sidecar is built and left alone -
+it is a build artifact like any other, and starting it is yours.
+
 With `serve: true`, `kosmo serve` imports the entry into its own Vite environment and calls `start()`.
 
 When the entry changes - or any file it imports - it:
@@ -61,14 +64,12 @@ There is no socket to rebind, nothing for the reload to free,
 and no state that being up between saves preserves -
 the dev server is only re-running a function that returns.
 
-Leave `serve` off and let it be a build artifact:
+Set `serve: false` and let it be a build artifact:
 
 ```ts [src/mailer/kosmo.config.ts]
 export default defineConfig({
   sidecar: {
-    entry: "./entry.ts",
-    run: "./run.ts",
-    // nothing to keep alive between edits - build it, start it yourself
+    // nothing to keep alive between edits, start it yourself
     serve: false,
   },
 });
@@ -76,22 +77,3 @@ export default defineConfig({
 
 An empty close function is the tell.
 If there is nothing to put in it, there is nothing `serve: true` is keeping alive for you.
-
----
-
-### Typechecking
-
-Nothing to configure. A sidecar lives inside a source folder,
-and a folder's `tsconfig.json` already covers everything under it,
-so `pnpm typecheck mailer` checks it like any other file in the folder.
-
-A sidecar that wraps third-party JavaScript, or one you simply do not want checked,
-opts out with the folder-level `typecheck` key:
-
-```ts [kosmo.config.ts]
-defineConfig({
-  // ...
-  sidecar: { entry: "./entry.mjs" },
-  typecheck: false,
-});
-```

@@ -1,6 +1,7 @@
 ---
 title: Quick Start
-description: Get a KosmoJS project running in under five minutes.
+description: >-
+    Get a KosmoJS project running in under five minutes.
 head:
   - - meta
     - name: keywords
@@ -31,7 +32,7 @@ yarn create kosmo
 :::
 
 A short interactive setup walks you through the choices that matter:
-the name, the frontend and the backend you want to build with.
+the name, the frontend and the backend you want to build with, and whether to add a sidecar.
 Everything else starts with sensible defaults.
 
 Pick whatever feels familiar - nothing here is set in stone,

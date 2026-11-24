@@ -1,0 +1,19 @@
+import { defineConfig } from "@kosmojs/dev";
+
+export default defineConfig({
+  frontend: {
+    stack: "react",
+    base: "/react-with-sidecar",
+    ssr: true,
+    ssg: false,
+    tanstack: { query: false },
+    test: false,
+  },
+  sidecar: {
+    serve: false,
+    test: false,
+  },
+  fetch: false,
+  validation: false,
+  typecheck: true,
+});

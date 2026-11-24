@@ -20,15 +20,14 @@ import {
 } from "@kosmojs/lib";
 
 import {
-  assertNoError,
   checkDependencies,
+  exitOnError,
   FOLDER_OPTIONS,
   type PackageJSON,
 } from "./base";
 
 export const COMMANDS = [
   "folder",
-  "sidecar",
   "serve",
   "build",
   "preview",
@@ -64,7 +63,7 @@ export const parseCLIArgs = (args: Array<string>) => {
 export type CliArgs = ReturnType<typeof parseCLIArgs>;
 
 export const assertCommand = (command: string) => {
-  assertNoError(() => {
+  exitOnError(() => {
     return !COMMANDS.includes(command as Command)
       ? `Unknown command; use one of ${styleText("blue", COMMANDS.join(", "))}`
       : undefined;
@@ -85,7 +84,7 @@ export const loadPackageJson = async (jiti: Jiti, root: string) => {
         .catch(() => undefined)
     : undefined;
 
-  assertNoError(() => {
+  exitOnError(() => {
     return packageJson?.kosmo
       ? undefined
       : `package.json does not exist, or it is missing the "kosmo" key`;
@@ -105,7 +104,7 @@ export const scanConfigFiles = async (
     { cwd: root, absolute: true, deep: 2 },
   );
 
-  assertNoError(() => {
+  exitOnError(() => {
     if (folderNames.length) {
       return folderNames.length !== configFiles.length
         ? "Some of the given names do not contain a valid KosmoJS source folder"

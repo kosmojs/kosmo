@@ -1,10 +1,12 @@
 ---
 title: create kosmo
-description: Bootstrapping a KosmoJS project with npm create kosmo - the interactive flow, the flags, and what the new project contains.
+description: >-
+    Bootstrapping a KosmoJS project with npm create kosmo - the interactive flow, the flags,
+    and what the new project contains.
 head:
   - - meta
     - name: keywords
-      content: create kosmo, npm create kosmo, scaffolding, --frontend, --backend, --overwrite
+      content: create kosmo, npm create kosmo, scaffolding, --frontend, --backend, --sidecar, --overwrite
 ---
 
 A KosmoJS project starts with the `create kosmo` command:
@@ -35,8 +37,11 @@ npm create kosmo .
 You'll be asked for:
 
 * **Name** - the project name (unless `.` used to bootstrap in current directory)
-* **Frontend** - React, Vue, Solid, Svelte, MDX, or *None (API-only folder)*
-* **Backend** - Hono, H3, Koa, or *None (client-only folder)*
+* **Frontend** - React, Vue, Solid, Svelte, MDX, or *None*
+* **Backend** - Hono, H3, Koa, or *None*
+* **Sidecar** - whether to add a [sidecar](/sidecar/intro)
+
+At least one of the three is required - choosing none of them is an error.
 
 The first source folder is always **`app`**, with its pages at `/` and its API at `/api`.
 <span class="text-nowrap">Add differently-shaped folders</span> at any time with [kosmo folder](/cli/folder).
@@ -50,8 +55,7 @@ If the target directory has anything in it other than `.git*`, `README*` or `LIC
 
 ## CLI mode
 
-Provide up front the `--name` and `--frontend`/`--backend` (or `--no-frontend`/`--no-backend` counterparts)
-and no prompts appear:
+Provide flags up front and their prompts are skipped:
 
 :::tabs key:pm variant:code
 == npm
@@ -76,15 +80,16 @@ yarn create kosmo --name demo --frontend solid --backend hono
 |---|---|
 | `--name <name>` | Project name. Ignored when using `.` to bootstrap in current directory |
 | `--frontend <stack>` | `react`, `solid`, `vue`, `svelte`, `mdx`. |
-| `--no-frontend` | API-only folder - no `pages/`, no client entries. |
 | `--backend <stack>` | `hono`, `h3`, `koa`. |
-| `--no-backend` | Client-only folder - no `api/` directory. |
+| `--sidecar` | Add a [sidecar](/sidecar/intro) to the folder. |
 | `--overwrite` | Proceed even though the target directory is not empty. |
 | `-h, --help` | Print usage and exit. |
 
-:::info The frontend and backend choices are never implied
-Either `--frontend <stack>` **or** `--no-frontend` is required -
-omitting both is an error, and passing them both is an error too (same for backend).
+:::info At least one of the three
+`--frontend`, `--backend` and `--sidecar` are each optional.
+In a terminal, you are prompted for the ones you leave out;
+with no terminal to ask in, the folder goes without them.
+Giving or choosing none of them is an error.
 :::
 
 ## What you get
@@ -96,7 +101,7 @@ demo/
 ├── tsconfig.json
 ├── var/lib/                   # generated support code, reached through `_/`
 └── src/app/
-    ├── kosmo.config.ts        # the frontend / backend blocks your answers imply
+    ├── kosmo.config.ts        # the frontend / backend / sidecar blocks your answers imply
     ├── tsconfig.json
     ├── index.html
     ├── app.tsx                # root component, extension per framework
@@ -107,14 +112,17 @@ demo/
     ├── entry/client.ts        # the client entry
     ├── entry/server.ts        # the server entry, used by SSR builds
     ├── public/favicon.svg
-    └── api/                   # if a backend was chosen
-        ├── app.ts             # app middleware, the native instance
-        ├── use.ts             # global middleware
-        ├── errors.ts          # the default error handler
-        ├── dev.ts             # dev-only hooks
-        ├── server.ts
-        ├── index/index.ts     # the default index route
-        └── env.d.ts           # global context types
+    ├── api/                   # if a backend was chosen
+    │   ├── app.ts             # app middleware, the native instance
+    │   ├── use.ts             # global middleware
+    │   ├── errors.ts          # the default error handler
+    │   ├── dev.ts             # dev-only hooks
+    │   ├── server.ts
+    │   ├── index/index.ts     # the default index route
+    │   └── env.d.ts           # global context types
+    └── sidecar/               # if a sidecar was chosen
+        ├── entry.ts           # the service
+        └── run.ts             # the runner
 ```
 
 Every one of those files comes filled in, including a default index page and,

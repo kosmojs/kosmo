@@ -68,9 +68,8 @@ export type FolderOptions = {
 export const FOLDER_OPTIONS = {
   name: { type: "string" },
   frontend: { type: "string" },
-  "no-frontend": { type: "boolean" },
   backend: { type: "string" },
-  "no-backend": { type: "boolean" },
+  sidecar: { type: "boolean" },
 } as const;
 
 type DependencyEntry = ["dependencies" | "devDependencies", string, string];
@@ -108,11 +107,12 @@ export const assertFolderName = async (
       );
       return name as string;
     } else {
-      assertNoError(() => "No folder name provided");
-      throw new Error("Failed reading folder name");
+      exitOnError(() => "No folder name provided");
+      // decorative line, never throws
+      throw new Error("No folder name provided");
     }
   } else {
-    assertNoError(() => validateName(name, "No folder name provided"));
+    exitOnError(() => validateName(name, "No folder name provided"));
     return name;
   }
 };
@@ -136,10 +136,11 @@ export const validateName = (
   return undefined;
 };
 
-export const assertNoError = (validator: () => string | undefined) => {
+export const exitOnError = (validator: () => string | undefined) => {
   const error = validator();
   if (error) {
-    throw new Error(`✗ ${styleText(["red", "underline"], "ERROR")}: ${error}`);
+    console.error(styleText(["red"], `✗ ${error}`));
+    process.exit(1);
   }
 };
 
@@ -322,22 +323,12 @@ export const printUsage = () => {
       "  Provide flags up front to create a Source Folder without prompts:",
     ),
     `  ${styleText("cyan", `--name`)} ${styleText("yellow", "folder name")} ${styleText("dim", "(required)")}`,
-    `  ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))} ${styleText("dim", "(or --no-frontend for API-only folders)")}`,
-    `  ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))} ${styleText("dim", "(or --no-backend for client-only folders)")}`,
+    `  ${styleText("cyan", `--frontend`)} ${styleText("yellow", Object.keys(FRONTENDS).join("|"))}`,
+    `  ${styleText("cyan", `--backend`)} ${styleText("yellow", Object.keys(BACKENDS).join("|"))}`,
+    `  ${styleText("cyan", "--sidecar")} ${styleText("yellow", "add a sidecar")}`,
     `  ${styleText("cyan", "--overwrite")} ${styleText("yellow", "overwrite existing files")} ${styleText("dim", "(use with caution)")}`,
     "",
-
-    styleText("bold", "SIDECAR COMMAND"),
-    "",
-    `  ${styleText("blue", "kosmo sidecar")}`,
-    `  Create a Sidecar Folder in interactive mode, prompting for each step`,
-    "",
-    styleText(
-      "bold",
-      "  Provide flags up front to create a Sidecar Folder without prompts:",
-    ),
-    `  ${styleText("cyan", `--name`)} ${styleText("yellow", "folder name")} ${styleText("dim", "(required)")}`,
-    `  ${styleText("cyan", "--overwrite")} ${styleText("yellow", "overwrite existing files")} ${styleText("dim", "(use with caution)")}`,
+    `  ${styleText(["magenta"], "at least one of --frontend / --backend / --sidecar required")}`,
     "",
 
     styleText("bold", "SERVE COMMAND"),
