@@ -21,11 +21,11 @@
   "dependencies": {
     "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^",
-    "vite": "^8.3.4"
+    "vite": "^8.3.8"
   },
   "devDependencies": {
-    "@hono/node-server": "^2.1.4",
-    "hono": "^4.13.13",
+    "@hono/node-server": "^2.1.11",
+    "hono": "^4.13.21",
     "path-to-regexp": "^8.4.2",
     "tinyglobby": "^0.2.17"
   }

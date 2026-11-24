@@ -44,15 +44,15 @@
     "test": "vitest --root ../.. --project packages/core"
   },
   "dependencies": {
-    "cookie": "^2.0.1",
-    "light-my-request": "^6.6.0",
+    "cookie": "^2.0.2",
+    "light-my-request": "^6.8.1",
     "path-to-regexp": "^8.4.2",
     "picoquery": "^2.5.0",
     "string-width": "^8.3.0"
   },
   "devDependencies": {
-    "hono": "^4.13.13",
-    "msw": "^3.0.3",
-    "vite": "^8.3.4"
+    "hono": "^4.13.21",
+    "msw": "^3.0.7",
+    "vite": "^8.3.8"
   }
 }

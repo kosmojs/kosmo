@@ -22,11 +22,11 @@
   "dependencies": {
     "@kosmojs/core": "workspace:^",
     "@kosmojs/lib": "workspace:^",
-    "vite-plugin-solid": "^2.11.14"
+    "vite-plugin-solid": "^2.11.17"
   },
   "devDependencies": {
-    "@solidjs/router": "^1.0.0",
-    "@tanstack/solid-query": "^5.104.1",
-    "solid-js": "^1.9.17"
+    "@solidjs/router": "^1.0.3",
+    "@tanstack/solid-query": "^5.108.4",
+    "solid-js": "^1.9.20"
   }
 }

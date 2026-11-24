@@ -40,7 +40,7 @@ export function appFactory(fn?: AppCallback, options?: AppOptions): App {
   };
 
   const app = new Hono({
-    strict: false,
+    strict: true,
     router,
     ...appOptions,
   });

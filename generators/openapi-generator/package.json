@@ -24,13 +24,13 @@
     "@kosmojs/lib": "workspace:^",
     "crc": "^4.3.2",
     "path-to-regexp": "^8.4.2",
-    "semver": "^7.8.5",
+    "semver": "^7.8.6",
     "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@kosmojs/core-generator": "workspace:^",
     "@kosmojs/koa-generator": "workspace:^",
-    "@stoplight/spectral-core": "^1.24.0",
-    "@stoplight/spectral-rulesets": "^1.23.0"
+    "@stoplight/spectral-core": "^1.24.1",
+    "@stoplight/spectral-rulesets": "^1.23.1"
   }
 }
