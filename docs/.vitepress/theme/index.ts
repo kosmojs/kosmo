@@ -3,7 +3,7 @@ import { enhanceAppWithTabs } from "vitepress-plugin-tabs/client";
 
 import "@fontsource-variable/baloo-2";
 import "@fontsource-variable/jetbrains-mono";
-import "@fontsource-variable/space-grotesk";
+import "@fontsource-variable/inter";
 
 import "virtual:group-icons.css";
 import "./index.css";

@@ -41,6 +41,10 @@
   white-space: nowrap !important;
 }
 
+.vp-doc {
+  font-size: 16.5px;
+}
+
 .text-muted {
   color: var(--vp-c-text-3);
 }

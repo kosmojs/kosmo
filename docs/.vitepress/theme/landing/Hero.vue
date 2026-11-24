@@ -209,7 +209,7 @@ onMounted(() => {
   padding: 5px 14px 5px 5px;
   background-color: color-mix(in srgb, var(--kx-bg-lift) 75%, transparent);
   backdrop-filter: blur(8px);
-  font-size: 13.5px;
+  font-size: 14px;
   color: var(--kx-text-2);
   transition:
     border-color 0.15s,

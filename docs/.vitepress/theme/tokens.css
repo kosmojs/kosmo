@@ -137,7 +137,7 @@
   /* hero face: the landing headline alone - carries the personality */
   --kx-font-hero: "Baloo 2 Variable", ui-sans-serif, system-ui, sans-serif;
   /* text face: prose and UI - variable Inter ships with VitePress */
-  --kx-font-text: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --kx-font-text: "Inter", ui-sans-serif, system-ui, sans-serif;
   /* utility face: code, labels, eyebrows, tabs, paths */
   --kx-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
@@ -313,8 +313,8 @@
   --vp-code-color: var(--kx-text);
   --vp-code-bg: color-mix(in srgb, var(--kx-accent) 8%, var(--kx-bg-lift));
 
-  --vp-custom-block-font-size: 15px;
-  --vp-custom-block-code-font-size: 13.5px;
+  --vp-custom-block-font-size: 16px;
+  --vp-custom-block-code-font-size: 14px;
 
   --vp-plugin-tabs-tab-bg: transparent;
   --vp-plugin-tabs-tab-divider: var(--kx-line);
