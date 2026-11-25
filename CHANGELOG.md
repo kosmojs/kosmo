@@ -1,3 +1,22 @@
+## [0.7.4](https://github.com/kosmojs/kosmo/compare/v0.7.3...v0.7.4) (2026-11-25)
+
+### Code Refactoring
+
+* **sidecar:** a sidecar is a folder block ([d52f267](https://github.com/kosmojs/kosmo/commit/d52f26703cbd63890d197a2bb5bd2773ceb30009))
+
+  - sidecar/entry.ts and sidecar/run.ts, seeded when missing
+  - config: { serve, test, viteConfig }
+  - kosmo sidecar removed, kosmo folder gets --sidecar
+  - tests under sidecar/, testing opt-in, *.{test,spec}.ts
+
+### Improvements
+
+* source folders starts with tests disabled by default ([54d77ec](https://github.com/kosmojs/kosmo/commit/54d77ec088cbf5c6b420d113f5dd30742773724d))
+* **vitest:** load index.{test,spec}.ts files for http ([5841c1d](https://github.com/kosmojs/kosmo/commit/5841c1d2fe4be54b452fdb7931f2926b25277689))
+
+  and *.{test,spec}.ts files for sidecars
+* **vitest:** load tests defined in sidecar folders ([2b717d2](https://github.com/kosmojs/kosmo/commit/2b717d290ce93c9a9f4c4c111d5142c4fa795aae))
+
 ## [0.7.3](https://github.com/kosmojs/kosmo/compare/v0.7.2...v0.7.3) (2026-11-18)
 
 ### ⚠ BREAKING CHANGES
