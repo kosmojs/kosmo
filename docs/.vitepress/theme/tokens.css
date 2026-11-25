@@ -116,12 +116,12 @@
   /*
     The mark is inlined rather than served through an <img>, so it reads
     these directly and flips with the scheme. Two stops running down the
-    artwork, both a step deeper than the brand teal: the mark is solid
-    shapes next to a stroked wordmark, so at the brand's own brightness it
-    would outweigh the name it stands beside.
+    artwork, in the muted blue-slate of the page's ambient wash rather than
+    the brand teal: the mark is solid shapes next to a stroked wordmark, so
+    at the brand's own brightness it would outweigh the name beside it.
   */
-  --kosmo-mark-from: #17777f;
-  --kosmo-mark-to: #0f5c63;
+  --kosmo-mark-from: #2c5b6d;
+  --kosmo-mark-to: #223849;
 
   /* ---------- shape and motion ---------- */
 
@@ -200,12 +200,12 @@
     0 1px 2px rgba(6, 6, 12, 0.5), 0 34px 70px -34px rgba(6, 6, 12, 0.95);
 
   /*
-    A step under the brand teal for the same reason as on the light
-    ground: solid shapes carry more weight than the wordmark's strokes,
-    so the mark is held darker to sit level with the name, not over it.
+    The same blue-slate as on the light ground, lifted just enough to read
+    on the dark one: solid shapes carry more weight than the wordmark's
+    strokes, so the mark stays muted to sit level with the name, not over it.
   */
-  --kosmo-mark-from: #2a9ea8;
-  --kosmo-mark-to: #1a7880;
+  --kosmo-mark-from: #549bb6;
+  --kosmo-mark-to: #3e6079;
 }
 
 /*

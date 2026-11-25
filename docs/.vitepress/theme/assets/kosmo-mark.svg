@@ -8,8 +8,8 @@
       x2="0"
       y2="342.5"
     >
-      <stop offset="0" style="stop-color: var(--kosmo-mark-from, #17777f)"/>
-      <stop offset="1" style="stop-color: var(--kosmo-mark-to, #0f5c63)"/>
+      <stop offset="0" style="stop-color: var(--kosmo-mark-from, #2c5b6d)"/>
+      <stop offset="1" style="stop-color: var(--kosmo-mark-to, #223849)"/>
     </linearGradient>
   </defs>
   <path
