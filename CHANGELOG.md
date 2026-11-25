@@ -1,3 +1,21 @@
+## [0.7.5](https://github.com/kosmojs/kosmo/compare/v0.7.4...v0.7.5) (2026-11-25)
+
+### ⚠ BREAKING CHANGES
+
+* @/ prefix replaced by #/
+
+### Bug Fixes
+
+* **ssr:** fix SSR redirects ([0233048](https://github.com/kosmojs/kosmo/commit/0233048e6d8532efb364dd769c6fbe1bd3045122))
+
+### Code Refactoring
+
+* #/ is the new root prefix ([89ca02d](https://github.com/kosmojs/kosmo/commit/89ca02ddd7d6baf2a7da5bd2e537884d81df37cd))
+
+  #/    -> project root
+  #src/ -> access any folder by name; #src/admin for ex.
+  #lib/ -> derived code of a folder by name; #lib/admin
+
 ## [0.7.4](https://github.com/kosmojs/kosmo/compare/v0.7.3...v0.7.4) (2026-11-25)
 
 ### Code Refactoring
