@@ -11,7 +11,7 @@ import { parseArgs, styleText } from "node:util";
 import { getRequestListener } from "@hono/node-server";
 import { type Context, Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { stream } from "hono/streaming";
+import { StreamingApi } from "hono/utils/stream";
 import { glob } from "tinyglobby";
 
 import {
@@ -131,6 +131,22 @@ export const createApp = async (
     errorHandler?.(error as never);
   };
 
+  /**
+   * A redirect reaches the server as a thrown Response:
+   * React Router throws one for `redirect()`, the solid and vue integrations throw one
+   * for a redirect their router made, and a loader may throw one itself.
+   * Turned into the redirect here, as long as it carries one;
+   * any other Response thrown is a bug in the app, not a page to render.
+   * */
+  const respondWithRedirect = (ctx: Context, response: Response) => {
+    const location = response.headers.get("Location");
+    if (!location || !redirectCodes.includes(response.status)) {
+      ctx.status(500);
+      return ctx.html("<h1>500: Malformed redirect</h1>");
+    }
+    return ctx.redirect(location, response.status as never);
+  };
+
   const injectHead = (html: string, head: string) => {
     const error = "WARN: missing </head> - required for SSR head injection";
     if (HEAD_CLOSE_PATTERN.test(html)) {
@@ -140,6 +156,26 @@ export const createApp = async (
     }
     console.error(error);
     return `${html}\n<script>console.error("${error}")</script>`;
+  };
+
+  /**
+   * The client shell, served verbatim when the server render failed:
+   * the client renders the page itself, and its error boundaries handle the error uniformly.
+   * */
+  const csrFallback = (ctx: Context, error: unknown) => {
+    const errorMessage = "WARN: SSR failed, fallback to CSR";
+    handleError(ctx.req.url, error as never, () => {
+      console.error(errorMessage);
+      console.error(error);
+      console.error();
+    });
+    return [
+      injectHead(
+        htmlStart,
+        `<script>console.error("${errorMessage}")</script>`,
+      ),
+      htmlEnd,
+    ].join("");
   };
 
   const renderPage = async (url: URL, ctx: Context) => {
@@ -166,25 +202,17 @@ export const createApp = async (
           const { head = "", html } = await renderToString(url, ssrOptions());
           return { head, html, error: errorProvider() };
         } catch (error) {
+          // a redirect is not a render failure: there is nothing to fall back from
+          if (error instanceof Response) {
+            throw error;
+          }
           return { error };
         }
       },
     );
 
     if (error) {
-      const errorMessage = "WARN: SSR failed, fallback to CSR";
-      handleError(ctx.req.url, error as never, () => {
-        console.error(errorMessage);
-        console.error(error);
-        console.error();
-      });
-      return [
-        injectHead(
-          htmlStart,
-          `<script>console.error("${errorMessage}")</script>`,
-        ),
-        htmlEnd,
-      ].join("");
+      return csrFallback(ctx, error);
     }
 
     return [injectHead(htmlStart, head), html ?? "", htmlEnd].join("");
@@ -228,56 +256,89 @@ export const createApp = async (
         }
 
         if (renderMode === "stream" && typeof renderToStream === "function") {
-          ctx.header("Content-Type", "text/html");
-          return stream(ctx, async (stream) => {
-            let error: Error | undefined;
+          const { readable, writable } = new TransformStream();
+          const stream = new StreamingApi(writable, readable);
 
-            /**
-             * Stream failures surface here, not in a catch upstream:
-             * on solid and vue pipe rejects; react shell errors reject the render promise itself.
-             * The shell may already be on the wire -
-             * reporting is all that is left to do, the response cannot be replaced.
-             * */
+          /**
+           * The request store: a fetch failing during the render records its error here.
+           * Read from the object itself, the stream outlives the store's async context.
+           * */
+          const context: {
+            headers: Record<string, string>;
+            url: string;
+            error?: unknown;
+          } = {
+            headers: Object.fromEntries(ctx.req.raw.headers),
+            url: ctx.req.url,
+          };
+
+          /**
+           * Rendered up to the shell before the response starts, while its status can still change:
+           * - a redirect thrown while the route resolves reaches the catch below as a redirect;
+           * - a failure before the shell (a render error, a loader's fetch error)
+           * gets the CSR fallback, the same as string mode.
+           * */
+          let rendered: { head?: string; html: ReadableStream };
+
+          try {
+            rendered = await withSsrContext(context, () => {
+              return renderToStream(url, ssrOptions(), stream as never);
+            });
+          } catch (error) {
+            if (error instanceof Response) {
+              throw error;
+            }
+            return ctx.html(csrFallback(ctx, error));
+          }
+
+          if (context.error) {
+            // nothing written yet, so the render is dropped rather than streamed
+            await rendered.html.cancel().catch(() => {});
+            return ctx.html(csrFallback(ctx, context.error));
+          }
+
+          ctx.header("Content-Type", "text/html");
+
+          /**
+           * From here on the response has started:
+           * a failure while streaming (a pipe that rejects, a fetch failing past the shell)
+           * can only be reported, the response cannot be replaced.
+           * Error handling past the shell is the route's own.
+           * */
+          void (async () => {
+            let error: unknown;
+
             try {
-              const { head = "", html } = await withSsrContext(
-                {
-                  headers: Object.fromEntries(ctx.req.raw.headers),
-                  url: ctx.req.url,
-                },
-                () => renderToStream(url, ssrOptions(), stream as never),
-              );
+              const { head = "", html } = rendered;
               await stream.write(injectHead(htmlStart, head));
               await stream.pipe(html);
-              error = errorProvider();
               await stream.write(htmlEnd);
-            } catch (e: any) {
+            } catch (e) {
               error = e;
+            } finally {
+              await stream.close();
             }
 
+            error ??= context.error;
+
             if (error) {
-              handleError(ctx.req.url, error, () => {
+              handleError(ctx.req.url, error as never, () => {
                 console.error("ERROR: SSR stream render failed");
                 console.error(error);
                 console.error();
               });
             }
-          });
+          })();
+
+          return ctx.newResponse(stream.responseReadable);
         }
 
         ctx.status(501);
         return ctx.html("<h1>501: Not Implemented</h1>");
       } catch (error: any) {
-        // Handle thrown Response instances as redirects.
-        // Re-throw other errors for upstream handling.
+        // a thrown Response is a redirect; other errors go upstream
         if (error instanceof Response) {
-          const Location = error.headers.get("Location");
-
-          if (!Location || !redirectCodes.includes(error.status)) {
-            ctx.status(500);
-            return ctx.html("<h1>500: Malformed redirect</h1>");
-          }
-
-          return ctx.redirect(Location, error.status as never);
+          return respondWithRedirect(ctx, error);
         }
         throw new HTTPException(500, { message: error.message, cause: error });
       }
@@ -288,9 +349,16 @@ export const createApp = async (
     // render 404 page
     if (typeof renderToString === "function") {
       const url = new URL(ctx.req.url);
-      const page = await renderPage(url, ctx);
-      ctx.status(404);
-      return ctx.html(page);
+      try {
+        const page = await renderPage(url, ctx);
+        ctx.status(404);
+        return ctx.html(page);
+      } catch (error) {
+        if (error instanceof Response) {
+          return respondWithRedirect(ctx, error);
+        }
+        throw error;
+      }
     }
 
     return ctx.notFound();

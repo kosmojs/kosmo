@@ -22,10 +22,12 @@ export type TestGroup = {
 
 const mode = inject("MODE");
 
-// If SSR fails (due to loader/fetch error or render failure),
-// the server returns the CSR fallback (index.html) without data,
-// allowing client-side rendering to take over.
-// This is a server-render concern, so the suite only runs under SSR.
+/**
+ * If SSR fails (due to loader/fetch error or render failure),
+ * the server returns the CSR fallback (index.html) without data,
+ * allowing client-side rendering to take over.
+ * This is a server-render concern, so the suite only runs under SSR.
+ * */
 export const skip = mode !== "ssr";
 
 const OK_MESSAGE = "recovery-ok-payload";
@@ -40,6 +42,17 @@ const apiRoutes = [
   { name: "fail", file: "index" },
 ];
 
+/**
+ * Stream mode falls back the same way, for a failure before the shell.
+ * Solid renders lazily, its loaders run as the page streams, past the shell,
+ * where a failure can only be reported; mdx and svelte have no stream renderer.
+ * */
+const renderModesFor = (frontend: keyof typeof FRONTENDS) => {
+  return ["react", "vue"].includes(frontend)
+    ? (["string", "stream"] as const)
+    : (["string"] as const);
+};
+
 export const createTestGroups = ({
   frontend,
   tsqModes = frontend === "mdx" // no tanstack query on mdx
@@ -51,87 +64,93 @@ export const createTestGroups = ({
 }) => {
   const testGroups: Array<TestGroup> = [];
 
-  for (const tsq of tsqModes) {
-    const createHarness = async () => {
-      const {
-        project,
-        sourceFolder,
-        bootstrapProject,
-        createApiRoutes,
-        createPageRoutes,
-      } = await setupTestProject(
-        {
-          frontend,
-          backend: "hono",
-          skip,
-        },
-        {
-          frontend: {
-            ssr: { renderMode: "string" },
-            tanstack: { query: tsq ? true : false },
+  for (const renderMode of renderModesFor(frontend)) {
+    for (const tsq of tsqModes) {
+      const createHarness = async () => {
+        const {
+          project,
+          sourceFolder,
+          bootstrapProject,
+          createApiRoutes,
+          createPageRoutes,
+        } = await setupTestProject(
+          {
+            frontend,
+            backend: "hono",
+            skip,
           },
-        },
-      );
+          {
+            frontend: {
+              ssr: { renderMode },
+              tanstack: { query: tsq ? true : false },
+            },
+          },
+        );
 
-      const tests: Array<TestEntry> = [];
+        const tests: Array<TestEntry> = [];
 
-      const teardown = await bootstrapProject(async () => {
-        await createApiRoutes(apiRoutes, async ({ name }) => {
-          return () =>
-            render(name === "fail" ? templates.honoFail : templates.honoOk, {
-              OK_MESSAGE,
-            });
+        const teardown = await bootstrapProject(async () => {
+          await createApiRoutes(apiRoutes, async ({ name }) => {
+            return () =>
+              render(name === "fail" ? templates.honoFail : templates.honoOk, {
+                OK_MESSAGE,
+              });
+          });
+
+          const variant = tsq ? "Tsq" : "";
+
+          await createPageRoutes(routes, async ({ name }) => {
+            const endpoint = name === "recover/fail" ? "fail" : "ok";
+            return () =>
+              render(templates[`${frontend}Page${variant}` as never], {
+                OK_MESSAGE,
+                endpoint,
+              });
+          });
         });
 
-        const variant = tsq ? "Tsq" : "";
+        tests.push([
+          "ok route renders loader data into #app server-side",
+          async ({ expect }) => {
+            const content = await serverHtml(
+              project,
+              sourceFolder,
+              "recover/ok",
+            );
+            const $ = load(content);
+            expect($("#app").text()).toContain(OK_MESSAGE);
+          },
+        ]);
 
-        await createPageRoutes(routes, async ({ name }) => {
-          const endpoint = name === "recover/fail" ? "fail" : "ok";
-          return () =>
-            render(templates[`${frontend}Page${variant}` as never], {
-              OK_MESSAGE,
-              endpoint,
-            });
-        });
+        tests.push([
+          "failed SSR fetch recovers to a CSR shell carrying the failure marker",
+          async ({ expect }) => {
+            const content = await serverHtml(
+              project,
+              sourceFolder,
+              "recover/fail",
+            );
+            const $ = load(content);
+            // On a failed SSR fetch the server serves the client template verbatim for CSR takeover,
+            // writing a marker script the client reads to know the server punted.
+            // The recovered shell does not carry the loader data.
+            const scripts = $("script")
+              .map((_, el) => $(el).html() ?? "")
+              .get()
+              .join("\n");
+            expect(scripts).toMatch(/ssr failed/i);
+            expect($("#app").text()).not.toContain(OK_MESSAGE);
+          },
+        ]);
+
+        return { tests, teardown };
+      };
+
+      testGroups.push({
+        name: [frontend, renderMode, tsq ? "tsq" : "plain"].join(":"),
+        createHarness,
       });
-
-      tests.push([
-        "ok route renders loader data into #app server-side",
-        async ({ expect }) => {
-          const content = await serverHtml(project, sourceFolder, "recover/ok");
-          const $ = load(content);
-          expect($("#app").text()).toContain(OK_MESSAGE);
-        },
-      ]);
-
-      tests.push([
-        "failed SSR fetch recovers to a CSR shell carrying the failure marker",
-        async ({ expect }) => {
-          const content = await serverHtml(
-            project,
-            sourceFolder,
-            "recover/fail",
-          );
-          const $ = load(content);
-          // On a failed SSR fetch the server serves the client template verbatim for CSR takeover,
-          // writing a marker script the client reads to know the server punted.
-          // The recovered shell does not carry the loader data.
-          const scripts = $("script")
-            .map((_, el) => $(el).html() ?? "")
-            .get()
-            .join("\n");
-          expect(scripts).toMatch(/ssr failed/i);
-          expect($("#app").text()).not.toContain(OK_MESSAGE);
-        },
-      ]);
-
-      return { tests, teardown };
-    };
-
-    testGroups.push({
-      name: [frontend, tsq ? "tsq" : "plain"].join(":"),
-      createHarness,
-    });
+    }
   }
 
   return testGroups;

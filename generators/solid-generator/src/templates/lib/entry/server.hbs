@@ -40,14 +40,43 @@ export const createRoutes = (opt?: { withPreload?: boolean }) => {
   ];
 }
 
+/**
+ * Solid Router redirects on the server by writing to the request event, not by throwing:
+ * `<Navigate>`, `navigate()` and a `query` returning `redirect()`
+ * set `event.response` to a 3xx with a Location.
+ * Once rendered, such a response is thrown as a Response,
+ * the way the SSR server takes a redirect from every framework.
+ * */
+const throwRedirect = (response: { status: number; headers: Headers }) => {
+  const location = response.headers.get("Location");
+  if (location && response.status >= 300 && response.status < 400) {
+    throw new Response(null, {
+      status: response.status,
+      headers: { Location: location },
+    });
+  }
+};
+
 export const renderWrapper: SSRRenderWrapper = (context, render) => {
   const event = {
     request: new Request(context.url ?? "http://ssr.local", {
       headers: new Headers(context.headers),
     }),
     locals: {},
+    response: { status: 200, headers: new Headers() },
   };
-  return provideRequestEvent(event as never, render);
+
+  const result = provideRequestEvent(event as never, render);
+
+  // read after the render settles: the router may replace event.response while rendering
+  return (
+    result instanceof Promise
+      ? result.then((value) => {
+          throwRedirect(event.response);
+          return value;
+        })
+      : (throwRedirect(event.response), result)
+  ) as typeof result;
 };
 
 export const renderToString: RenderToStringWrapper<

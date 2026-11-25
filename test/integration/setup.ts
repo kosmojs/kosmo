@@ -158,9 +158,12 @@ export const setupTestProject = async (
               frontend: {
                 ...(folderConfig?.frontend as {}),
                 base,
+                // ssr mode keeps given ssr options, renderMode say; true would drop them
                 ssr:
                   mode === "ssr"
-                    ? true
+                    ? typeof folderConfig?.frontend?.ssr === "object"
+                      ? folderConfig.frontend.ssr
+                      : true
                     : "ssr" in { ...folderConfig?.frontend }
                       ? (folderConfig?.frontend?.ssr as boolean)
                       : false,

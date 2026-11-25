@@ -150,6 +150,21 @@ export const createRouters = (
 
       await router.isReady();
 
+      /**
+       * A navigation guard that sent the navigation elsewhere, `beforeRouteEnter` say,
+       * leaves the router on another route than the one requested.
+       * Rendered as is, that page would be served at the requested URL,
+       * so it is thrown as a redirect instead, the way the SSR server takes one.
+       * */
+      const { redirectedFrom, fullPath } = router.currentRoute.value;
+
+      if (redirectedFrom) {
+        throw new Response(null, {
+          status: 302,
+          headers: { Location: router.resolve(fullPath).href },
+        });
+      }
+
       component.use(router);
 
       if (Array.isArray(use)) {
