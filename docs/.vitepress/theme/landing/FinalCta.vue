@@ -195,7 +195,6 @@ function copyCmd() {
 
 .cmd {
   flex: 1;
-  font-family: var(--kx-font-mono);
   font-size: 15px;
   color: var(--kx-text);
   white-space: nowrap;
@@ -216,7 +215,6 @@ function copyCmd() {
   font-family: var(--kx-font-mono);
   font-size: 12px;
   color: var(--kx-text-3);
-  cursor: pointer;
   transition:
     color 0.15s,
     border-color 0.15s;

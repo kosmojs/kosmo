@@ -71,13 +71,11 @@ const yours = ["frontend", "state", "styling", "database", "deploy target"];
   margin: 24px auto 0;
   max-width: 720px;
   font-size: 17.5px;
-  line-height: 1.7;
   color: var(--kx-text-3);
 }
 
 .diff-head p b {
   color: var(--kx-text);
-  font-weight: 600;
 }
 
 /* ---------- the split ---------- */
@@ -156,7 +154,6 @@ const yours = ["frontend", "state", "styling", "database", "deploy target"];
 
 .yours .chip {
   border: 1px solid var(--kx-line-strong);
-  color: var(--kx-text-2);
 }
 
 /* a vertical hairline between the halves, brightest at its center */

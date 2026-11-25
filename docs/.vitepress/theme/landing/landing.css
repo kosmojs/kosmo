@@ -19,7 +19,6 @@
 .landing {
   --maxw: 1180px;
   --radius: var(--kx-radius);
-  --border: 1px solid var(--kx-line);
   --ease: var(--kx-ease);
 }
 
@@ -29,22 +28,9 @@
 */
 .landing .VPPage {
   color: var(--kx-text-2);
-  font-family: var(--kx-font-text);
   font-size: 16.5px;
   line-height: 1.7;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
   overflow-x: clip;
-}
-
-/*
-  Links take their color from wherever they sit. Wrapped in :where() so the
-  rule weighs no more than a bare `a`, and any class on a link - a button,
-  a footer column - wins without a specificity fight.
-*/
-:where(.landing .VPPage) a {
-  color: inherit;
-  text-decoration: none;
 }
 
 .landing .wrap {
@@ -101,7 +87,6 @@
 .landing h1,
 .landing h2,
 .landing h3 {
-  margin: 0;
   font-family: var(--kx-font-display);
   font-weight: 600;
   line-height: 1.05;
@@ -144,7 +129,6 @@
   font-family: var(--kx-font-mono);
   font-size: 14px;
   font-weight: 500;
-  cursor: pointer;
   transition:
     transform 0.2s var(--ease),
     background-color 0.15s,
@@ -178,7 +162,6 @@
 .landing .btn-ghost {
   border-color: var(--kx-line-strong);
   background-color: color-mix(in srgb, var(--kx-bg-lift) 60%, transparent);
-  color: var(--kx-text-2);
   backdrop-filter: blur(8px);
 }
 
@@ -250,11 +233,6 @@
 .landing .section-head {
   max-width: 720px;
   margin-bottom: 56px;
-}
-
-.landing .section-head.center {
-  margin-inline: auto;
-  text-align: center;
 }
 
 .landing .section-head p:not(.eyebrow) {
@@ -478,7 +456,6 @@
 /* ---------- scroll reveal (JS-gated; no-JS shows everything) ---------- */
 
 .landing .rise {
-  opacity: 1;
   transform: none;
 }
 

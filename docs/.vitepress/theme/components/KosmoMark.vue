@@ -44,14 +44,7 @@ const svg = computed(() =>
 
 <style scoped>
 .kosmo-mark {
-  display: inline-block;
   flex: none;
   line-height: 0;
-}
-
-.kosmo-mark :deep(svg) {
-  display: block;
-  width: 100%;
-  height: 100%;
 }
 </style>

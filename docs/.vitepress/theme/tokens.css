@@ -127,7 +127,6 @@
 
   --kx-radius: 16px;
   --kx-radius-sm: 10px;
-  --kx-radius-xs: 6px;
   --kx-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* ---------- type ---------- */
@@ -245,22 +244,14 @@
 
   --vp-c-tip-1: var(--kx-accent);
   --vp-c-tip-2: var(--kx-accent);
-  --vp-c-tip-3: var(--kx-accent);
   --vp-c-tip-soft: var(--kx-accent-soft);
-
-  --vp-c-note-1: var(--kx-sky);
-  --vp-c-note-2: var(--kx-sky);
-  --vp-c-note-3: var(--kx-sky);
-  --vp-c-note-soft: color-mix(in srgb, var(--kx-sky) 9%, transparent);
 
   --vp-c-warning-1: var(--kx-amber);
   --vp-c-warning-2: var(--kx-amber);
-  --vp-c-warning-3: var(--kx-amber);
   --vp-c-warning-soft: color-mix(in srgb, var(--kx-amber) 10%, transparent);
 
   --vp-c-danger-1: var(--kx-coral);
   --vp-c-danger-2: var(--kx-coral);
-  --vp-c-danger-3: var(--kx-coral);
   --vp-c-danger-soft: color-mix(in srgb, var(--kx-coral) 9%, transparent);
 
   --vp-c-caution-1: var(--kx-peach);
@@ -283,8 +274,6 @@
   --vp-shadow-1: var(--kx-shadow-card);
   --vp-shadow-2: var(--kx-shadow-card);
   --vp-shadow-3: var(--kx-shadow-code);
-  --vp-shadow-4: var(--kx-shadow-pop);
-  --vp-shadow-5: var(--kx-shadow-pop);
 
   --vp-button-brand-bg: var(--kx-brand);
   --vp-button-brand-hover-bg: var(--kx-brand-hi);

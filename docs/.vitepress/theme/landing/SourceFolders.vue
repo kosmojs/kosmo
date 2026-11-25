@@ -79,13 +79,11 @@ const { rootEl, ready } = useReveal();
 .sol-lead {
   margin: 22px 0 0;
   font-size: 17.5px;
-  line-height: 1.7;
   color: var(--kx-text-3);
 }
 
 .sol-lead b {
   color: var(--kx-text);
-  font-weight: 600;
 }
 
 /*
@@ -93,13 +91,11 @@ const { rootEl, ready } = useReveal();
   so they read as one checklist rather than four floating lines.
 */
 .sol-points {
-  margin: 0;
   border: 1px solid var(--kx-line);
   border-radius: var(--kx-radius);
   padding: 8px 28px;
   background-color: var(--kx-bg-lift);
   box-shadow: var(--kx-shadow-card);
-  list-style: none;
 }
 
 .sol-points li {
@@ -109,7 +105,6 @@ const { rootEl, ready } = useReveal();
   padding: 20px 0;
   font-size: 15.5px;
   line-height: 1.6;
-  color: var(--kx-text-2);
 }
 
 .sol-points li + li {
@@ -137,6 +132,5 @@ const { rootEl, ready } = useReveal();
 
 .sol-points b {
   color: var(--kx-text);
-  font-weight: 600;
 }
 </style>

@@ -119,7 +119,6 @@ onBeforeUnmount(() => {
 <style scoped>
 .map {
   position: relative;
-  margin: 0;
   border: 1px solid var(--kx-line);
   border-radius: 22px;
   padding: 0 28px 26px;
@@ -217,9 +216,6 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 14px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .lane-card {
@@ -256,7 +252,6 @@ onBeforeUnmount(() => {
 .dir {
   font-family: var(--kx-font-mono);
   font-size: 13px;
-  color: var(--kx-text-2);
 }
 
 .base {
@@ -287,7 +282,6 @@ onBeforeUnmount(() => {
   gap: 8px;
   font-family: var(--kx-font-mono);
   font-size: 12px;
-  color: var(--kx-text-2);
 }
 
 .chip .k {
@@ -305,7 +299,6 @@ onBeforeUnmount(() => {
 /* ---------- merge wires ---------- */
 
 .merge {
-  display: block;
   width: 100%;
   height: 72px;
   overflow: visible;

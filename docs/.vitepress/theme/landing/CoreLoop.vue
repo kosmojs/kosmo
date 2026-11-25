@@ -110,10 +110,6 @@ const { rootEl, ready } = useReveal();
   color: var(--kx-text-4);
 }
 
-.codecard :deep(.vp-code-group) {
-  margin-top: 0;
-}
-
 .codecard :deep(div[class*="language-"]) {
   margin: 0;
 }
@@ -191,8 +187,6 @@ const { rootEl, ready } = useReveal();
   grid-template-columns: repeat(4, 1fr);
   gap: 32px;
   margin: 72px 0 56px;
-  padding: 0;
-  list-style: none;
   counter-reset: lfeat;
 }
 
@@ -214,7 +208,6 @@ const { rootEl, ready } = useReveal();
   padding-top: 52px;
   font-size: 15px;
   line-height: 1.65;
-  color: var(--kx-text-2);
   counter-increment: lfeat;
 }
 
@@ -222,7 +215,6 @@ const { rootEl, ready } = useReveal();
   content: counter(lfeat, decimal-leading-zero);
   position: absolute;
   top: 18px;
-  left: 0;
   font-family: var(--kx-font-mono);
   font-size: 12px;
   color: var(--kx-accent);

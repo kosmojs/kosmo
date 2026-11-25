@@ -191,7 +191,6 @@ const tools = [
 }
 
 .fcard p {
-  margin: 0;
   max-width: 460px;
   font-size: 14.5px;
   line-height: 1.6;
@@ -225,7 +224,6 @@ const tools = [
 }
 
 .route .file {
-  color: var(--kx-text-2);
   white-space: nowrap;
 }
 
@@ -315,7 +313,6 @@ const tools = [
   background-color: var(--kx-bg-inset);
   font-family: var(--kx-font-mono);
   font-size: 12px;
-  color: var(--kx-text-2);
   white-space: nowrap;
 }
 
@@ -380,7 +377,6 @@ const tools = [
   background-color: var(--kx-bg-inset);
   font-family: var(--kx-font-mono);
   font-size: 12px;
-  color: var(--kx-text-2);
   transition:
     border-color 0.2s,
     color 0.2s;

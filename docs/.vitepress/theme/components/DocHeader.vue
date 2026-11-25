@@ -146,13 +146,11 @@ const visible = computed(() => {
 }
 
 .title {
-  margin: 0;
   font-family: var(--kx-font-display);
   font-size: clamp(32px, 4.6vw, 46px);
   font-weight: 600;
   line-height: 1.08;
   letter-spacing: -0.035em;
-  color: var(--kx-text);
   text-wrap: balance;
 }
 

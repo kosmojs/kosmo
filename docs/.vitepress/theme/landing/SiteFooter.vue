@@ -133,7 +133,6 @@ const columns = [
 .greek {
   max-width: 260px;
   margin: 16px 0 20px;
-  font-size: 14px;
   line-height: 1.6;
   color: var(--kx-text-3);
 }
@@ -178,12 +177,10 @@ const columns = [
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--kx-text-4);
 }
 
 .foot-col a {
   width: fit-content;
-  font-size: 14px;
   color: var(--kx-text-3);
   transition: color 0.15s;
 }
@@ -208,6 +205,5 @@ const columns = [
     0 0 / 100% 1px no-repeat;
   font-family: var(--kx-font-mono);
   font-size: 12px;
-  color: var(--kx-text-4);
 }
 </style>

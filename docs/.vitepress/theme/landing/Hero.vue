@@ -4,7 +4,6 @@ import { computed, onMounted, ref } from "vue";
 import { data as posts } from "../../../blog/posts.data";
 import Icon from "./Icon.vue";
 import ProjectMap from "./ProjectMap.vue";
-import "./landing.css";
 
 const lines = ["Many apps.", "One project.", "Zero glue."];
 
@@ -210,7 +209,6 @@ onMounted(() => {
   background-color: color-mix(in srgb, var(--kx-bg-lift) 75%, transparent);
   backdrop-filter: blur(8px);
   font-size: 14px;
-  color: var(--kx-text-2);
   transition:
     border-color 0.15s,
     background-color 0.15s;
@@ -357,7 +355,6 @@ onMounted(() => {
 
 .lede b {
   color: var(--kx-text);
-  font-weight: 600;
 }
 
 .hero-cta {
@@ -375,8 +372,6 @@ onMounted(() => {
   flex-wrap: wrap;
   gap: 10px 26px;
   margin: 40px 0 0;
-  padding: 0;
-  list-style: none;
   font-family: var(--kx-font-mono);
   font-size: 12.5px;
   color: var(--kx-text-3);

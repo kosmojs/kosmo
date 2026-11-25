@@ -33,7 +33,6 @@ defineProps<{
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
-  cursor: pointer;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.35),
     0 14px 34px -16px var(--kx-brand-glow);
