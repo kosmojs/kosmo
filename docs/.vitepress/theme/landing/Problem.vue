@@ -104,7 +104,7 @@ const { rootEl, ready } = useReveal();
   color: var(--kx-text-3);
 }
 
-/* the cost of each workaround reads in a warm hue, not the brand teal */
+/* the cost of each workaround reads in a warm hue, not the brand blue */
 .pcard .glyph {
   color: var(--kx-amber);
   background:

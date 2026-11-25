@@ -134,7 +134,7 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(10px);
 }
 
-/* a soft teal rim along the top edge */
+/* a soft blue rim along the top edge */
 .map::before {
   content: "";
   position: absolute;

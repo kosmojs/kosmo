@@ -5,20 +5,20 @@
   VitePress default theme both read the `--kx-*` tokens defined here, so the
   two never drift apart.
 
-  Palette: Horizon. The dark scheme is built on the Horizon editor theme -
-  its blue-violet charcoal for every surface and its teal as the one brand
-  hue - and the light scheme on its sibling, Horizon Bright, with the warm
-  blush ground and a deeper cut of the same teal.
+  Palette: Horizon grounds with a Catppuccin blue. The dark scheme is built
+  on the Horizon editor theme - its blue-violet charcoal for every surface -
+  and the light scheme on its sibling, Horizon Bright, with the warm blush
+  ground. The one brand hue is Catppuccin's blue: Mocha blue on the dark
+  ground, and a deeper cut of Latte blue on the light one.
 
   Code keeps the ground but not the hues: blocks are highlighted by the
   Catppuccin Shiki themes (`catppuccin-mocha` / `catppuccin-latte`), laid
   on a cut of the page background one small step darker, so a block reads
   as set into the page rather than pasted onto it.
 
-  Teal goes to anything the eye should land on - links, the primary action,
-  the active state, the brand mark. The rest of the Horizon hues (pink,
-  peach, purple) are kept for the callout kinds and small accents, so teal
-  keeps its weight.
+  Blue goes to anything the eye should land on - links, the primary action,
+  the active state. The rest of the Horizon hues (pink, peach, purple) are
+  kept for the callout kinds and small accents, so blue keeps its weight.
 
   Light values live on `:root`, dark values on `.dark`, which is the
   VitePress convention. Dark is the runtime default (`appearance: "dark"`
@@ -34,10 +34,10 @@
     inset  -> small code-like surfaces: chips, install box, diagrams
     code   -> code blocks, a step darker than the page
 
-  Teal has two jobs, so it has two token families. `--kx-accent` is teal as
+  Blue has two jobs, so it has two token families. `--kx-accent` is blue as
   text and line, tuned per scheme for contrast against the page.
-  `--kx-brand` is teal as a fill - buttons, chips, the mark - and always
-  carries `--kx-brand-ink` on top of it.
+  `--kx-brand` is blue as a fill - buttons, chips, bars - and always carries
+  `--kx-brand-ink` on top of it.
 */
 
 :root {
@@ -58,23 +58,33 @@
   --kx-text-2: #3a3c4a;
   --kx-text-3: #4e5168;
   --kx-text-4: #5e6185;
+  /* landing headlines: a softer ink than the text, so big type is not stark */
+  --kx-text-display: #3b3e54;
 
-  --kx-accent: #13707a;
-  --kx-accent-hi: #0d5960;
-  --kx-accent-soft: rgba(29, 137, 145, 0.09);
-  --kx-accent-line: rgba(29, 137, 145, 0.32);
+  /* Latte blue, cut a step deeper so link text holds 4.5:1 on the blush */
+  --kx-accent: #1a5ad8;
+  --kx-accent-hi: #1850c4;
+  --kx-accent-soft: rgba(26, 90, 216, 0.08);
+  --kx-accent-line: rgba(26, 90, 216, 0.3);
 
-  --kx-brand: #25b0bc;
-  --kx-brand-hi: #3fc4de;
+  /* the fill is Mocha blue in both schemes, always under the dark ink */
+  --kx-brand: #89b4fa;
+  --kx-brand-hi: #b4befe;
   --kx-brand-ink: #06060c;
-  --kx-brand-glow: rgba(37, 176, 188, 0.35);
+  --kx-brand-glow: rgba(137, 180, 250, 0.35);
 
-  /* teal for display type: deep enough on the blush ground to hold 3:1 */
-  --kx-brand-type-from: #1d8991;
-  --kx-brand-type-to: #13707a;
+  /*
+    blue for display type: muted below Latte's full saturation, and still
+    deep enough on the blush ground to hold 3:1
+  */
+  --kx-brand-type-from: #4d75c7;
+  --kx-brand-type-to: #3e5ea8;
 
-  /* Horizon Bright's own hues, for callouts and small accents */
-  --kx-sky: #1d6fa5;
+  /*
+    Horizon Bright's own hues, for callouts and small accents; info takes a
+    deepened Latte lavender, so it stays apart from the blue of the tips
+  */
+  --kx-sky: #4a5ad9;
   --kx-amber: #b4500f;
   --kx-coral: #da103f;
   --kx-peach: #dc3318;
@@ -84,7 +94,7 @@
   --kx-glow:
     radial-gradient(
       760px 480px at 84% -12%,
-      rgba(37, 176, 188, 0.14),
+      rgba(137, 180, 250, 0.16),
       transparent 70%
     ),
     radial-gradient(
@@ -94,7 +104,7 @@
     );
 
   /*
-    The section rule: one continuous hairline that starts in teal and fades
+    The section rule: one continuous hairline that starts in blue and fades
     out across the measure. Drawn as a background so it can fade.
   */
   --kx-rule: linear-gradient(
@@ -116,12 +126,12 @@
   /*
     The mark is inlined rather than served through an <img>, so it reads
     these directly and flips with the scheme. Two stops running down the
-    artwork, in the muted blue-slate of the page's ambient wash rather than
-    the brand teal: the mark is solid shapes next to a stroked wordmark, so
-    at the brand's own brightness it would outweigh the name beside it.
+    artwork, in the brand's Catppuccin hue but muted and deeper: the mark is
+    solid shapes next to a stroked wordmark, so at the brand's own
+    brightness it would outweigh the name beside it.
   */
-  --kosmo-mark-from: #2c5b6d;
-  --kosmo-mark-to: #223849;
+  --kosmo-mark-from: #355382;
+  --kosmo-mark-to: #2c3b5e;
 
   /* ---------- shape and motion ---------- */
 
@@ -159,22 +169,27 @@
   --kx-text-2: #bfc2cb;
   --kx-text-3: #a6a9bb;
   --kx-text-4: #8b8fae;
+  --kx-text-display: var(--kx-text);
 
-  --kx-accent: #25b0bc;
-  --kx-accent-hi: #59e1e3;
-  --kx-accent-soft: rgba(37, 176, 188, 0.1);
-  --kx-accent-line: rgba(37, 176, 188, 0.38);
+  /* Mocha blue, with Mocha lavender as its lighter step */
+  --kx-accent: #89b4fa;
+  --kx-accent-hi: #b4befe;
+  --kx-accent-soft: rgba(137, 180, 250, 0.1);
+  --kx-accent-line: rgba(137, 180, 250, 0.38);
 
-  --kx-brand: #25b0bc;
-  --kx-brand-hi: #3fc4de;
+  --kx-brand: #89b4fa;
+  --kx-brand-hi: #b4befe;
   --kx-brand-ink: #06060c;
-  --kx-brand-glow: rgba(37, 176, 188, 0.34);
+  --kx-brand-glow: rgba(137, 180, 250, 0.34);
 
-  --kx-brand-type-from: #59e1e3;
-  --kx-brand-type-to: #25b0bc;
+  --kx-brand-type-from: #b4befe;
+  --kx-brand-type-to: #89b4fa;
 
-  /* Horizon's own hues, for callouts and small accents */
-  --kx-sky: #26bbd9;
+  /*
+    Horizon's own hues, for callouts and small accents; info takes Mocha
+    lavender, so it stays apart from the blue of the tips
+  */
+  --kx-sky: #b4befe;
   --kx-amber: #fab795;
   --kx-coral: #e95678;
   --kx-peach: #f09483;
@@ -183,7 +198,7 @@
   --kx-glow:
     radial-gradient(
       760px 480px at 84% -12%,
-      rgba(37, 176, 188, 0.12),
+      rgba(137, 180, 250, 0.1),
       transparent 70%
     ),
     radial-gradient(
@@ -200,12 +215,12 @@
     0 1px 2px rgba(6, 6, 12, 0.5), 0 34px 70px -34px rgba(6, 6, 12, 0.95);
 
   /*
-    The same blue-slate as on the light ground, lifted just enough to read
+    The same muted blue as on the light ground, lifted just enough to read
     on the dark one: solid shapes carry more weight than the wordmark's
     strokes, so the mark stays muted to sit level with the name, not over it.
   */
-  --kosmo-mark-from: #549bb6;
-  --kosmo-mark-to: #3e6079;
+  --kosmo-mark-from: #698abf;
+  --kosmo-mark-to: #495d8d;
 }
 
 /*

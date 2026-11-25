@@ -54,7 +54,7 @@
 
 /* ---------- shared type ---------- */
 
-/* eyebrow: a short teal stroke, then the label in spaced mono caps */
+/* eyebrow: a short blue stroke, then the label in spaced mono caps */
 .landing .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -91,7 +91,7 @@
   font-weight: 600;
   line-height: 1.05;
   letter-spacing: -0.035em;
-  color: var(--kx-text);
+  color: var(--kx-text-display);
   text-wrap: balance;
 }
 
@@ -197,7 +197,7 @@
 
 /*
   A slab is a section laid on the deeper chrome tone, closed top and
-  bottom by a hairline that brightens to teal at the center and fades out
+  bottom by a hairline that brightens to blue at the center and fades out
   at both ends. It breaks the page into chapters without switching to a
   contrasting band.
 */
@@ -246,7 +246,7 @@
 
 /*
   The landing's one card recipe. On hover, or while something inside it
-  has keyboard focus, the card lifts and its top edge lights up: a teal
+  has keyboard focus, the card lifts and its top edge lights up: a blue
   glow along the top of the border, with a faint wash spilling onto the
   face below it. The light stays put - it does not follow the pointer -
   so the card behaves the same with a mouse, a keyboard and a finger.
@@ -314,7 +314,7 @@
   opacity: 1;
 }
 
-/* an icon tile: a small sunk square with the glyph drawn in teal */
+/* an icon tile: a small sunk square with the glyph drawn in blue */
 .landing .glyph {
   display: grid;
   place-items: center;
@@ -341,7 +341,7 @@
 
 /*
   A perspective grid laid flat and receding to a horizon, with a band of
-  teal light where it meets the sky. The closing call to action uses the
+  blue light where it meets the sky. The closing call to action uses the
   whole scene; the hero uses the grid alone. The class names stay
   structural: .road is the stage, .plane the grid, .horizon the light.
 */
@@ -393,7 +393,7 @@
 }
 
 /*
-  The light on the horizon: a wide teal bloom with a faint warm edge - the
+  The light on the horizon: a wide blue bloom with a faint warm edge - the
   Horizon theme's sunset - and one bright continuous line across it.
 */
 .landing .road .horizon {

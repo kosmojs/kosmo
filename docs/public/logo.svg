@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-1.45 -1.45 345.4 345.4">
   <style>
-    .from { stop-color: #2c5b6d; }
-    .to { stop-color: #223849; }
+    .from { stop-color: #355382; }
+    .to { stop-color: #2c3b5e; }
     @media (prefers-color-scheme: dark) {
-      .from { stop-color: #549bb6; }
-      .to { stop-color: #3e6079; }
+      .from { stop-color: #698abf; }
+      .to { stop-color: #495d8d; }
     }
   </style>
   <defs>
@@ -16,8 +16,8 @@
       x2="0"
       y2="342.5"
     >
-      <stop class="from" offset="0" stop-color="#2c5b6d"/>
-      <stop class="to" offset="1" stop-color="#223849"/>
+      <stop class="from" offset="0" stop-color="#355382"/>
+      <stop class="to" offset="1" stop-color="#2c3b5e"/>
     </linearGradient>
   </defs>
   <path

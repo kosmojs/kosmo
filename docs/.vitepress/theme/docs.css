@@ -2,14 +2,14 @@
   KosmoJS docs - VitePress chrome and prose.
 
   Goal: an internal page should look like the landing page kept reading.
-  Same Horizon ground, same type pairing, same teal accents.
+  Same Horizon ground, same type pairing, same blue accents.
 
   Two motifs run through every page. The sidebar is drawn as a source tree,
   with a guide rail, connector ticks and path-prefixed section labels -
   the framework's premise is that the directory tree is the route map,
   so the navigation says what the docs say.
   And every section break is the same continuous hairline,
-  starting in teal and fading out (`--kx-rule`).
+  starting in blue and fading out (`--kx-rule`).
 */
 
 /* ---------- page shell ---------- */
@@ -74,7 +74,7 @@ body::before {
   color: var(--kx-text);
 }
 
-/* the active link gets a short teal stroke under it */
+/* the active link gets a short blue stroke under it */
 .VPNavBarMenu .VPNavBarMenuLink::after {
   content: "";
   position: absolute;
@@ -514,7 +514,7 @@ body::before {
   border-radius: 8px;
 }
 
-/* a highlighted line is marked from the gutter with a teal rail */
+/* a highlighted line is marked from the gutter with a blue rail */
 .vp-doc div[class*="language-"] .highlighted {
   box-shadow: inset 2px 0 0 var(--kx-accent);
 }

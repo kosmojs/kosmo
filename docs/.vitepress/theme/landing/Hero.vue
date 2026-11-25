@@ -279,7 +279,7 @@ onMounted(() => {
   text-align: left;
 }
 
-/* the last line is painted in teal, a shade deeper toward its foot */
+/* the last line is painted in blue, a shade deeper toward its foot */
 .tw-line.zero > .typed,
 .nojs.zero {
   background: linear-gradient(
