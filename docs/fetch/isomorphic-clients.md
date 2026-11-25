@@ -113,10 +113,12 @@ WARN: SSR failed, fallback to CSR
 SSRFetchError: /api/users/123: 500 [ Internal Server Error ]
 ```
 
-That recovery needs an untouched response, so it applies to **string-rendered routes** - the default.
-A [streamed route](/frontend/server-side-render#streaming-routes-do-not-recover) has already flushed its
-status line and opening HTML by the time a fetch fails, so there is nothing left to replace:
-streaming routes must handle fetch failures in the page itself.
+That recovery needs an untouched response.
+A **string-rendered route** - the default - always has one.
+So does a [streamed route](/frontend/server-side-render#streaming-routes-recover-up-to-the-shell),
+until its shell goes out.
+Past the shell, its status line and opening HTML are already on the wire,
+so there is nothing left to replace, and the page must handle the failure itself.
 
 The fallback is a deliberate trade - one consistent place to handle errors instead of server-side boundaries
 that behave differently in every framework - but it has a practical consequence worth internalising:

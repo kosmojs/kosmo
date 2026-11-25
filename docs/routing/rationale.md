@@ -97,7 +97,8 @@ A helper's position then tells you its reach, the same way a route's position te
 For code with no natural place in the route tree - a mailer, a queue client, a domain model -
 use the folder root and reach it through `~/`, which is what the examples in these docs do with `~/types/`.
 
-One more step up: code shared by *several source folders* goes outside `src/` entirely and is reached through `@/`.
+One more step up: code shared by *several source folders* goes outside `src/` entirely,
+and is reached through `#/`.
 Same idea, one level higher - the deepest place that covers everyone who needs it.
 [Path&nbsp;mappings&nbsp;›](/essentials/project-structure#path-mappings)
 

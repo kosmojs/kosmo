@@ -447,7 +447,7 @@ validation: {
   },
 
   // file whose default export maps custom TypeBox types
-  customTypesImport: "@/validation/types.ts",
+  customTypesImport: "#/validation/types.ts",
 
   // identifier used for runtime refinements, default "VRefine"
   refineTypeName: "Refine",
@@ -706,7 +706,7 @@ So your file should look like this:
 
 ::: tip You do not need `include` to *use* shared code
 Anything you import is typechecked along with the file importing it.
-`import { formatUser } from "@/shared/user"` pulls `shared/user.ts` into that
-folder's program whatever `include` says - the `@/` prefix resolves it,
+`import { formatUser } from "#/shared/user"` pulls `shared/user.ts` into that
+folder's program whatever `include` says - the `#/` prefix resolves it,
 and there is nothing to add to any `tsconfig.json`.
 :::

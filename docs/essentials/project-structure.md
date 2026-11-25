@@ -2,7 +2,7 @@
 title: Project Structure
 description: >-
     The anatomy of a KosmoJS project - source folders, the derived var/lib directory,
-    build output, and the reserved @/ ~/ _/ path mappings.
+    build output, and the reserved #/ ~/ _/ path mappings.
 head:
   - - meta
     - name: keywords
@@ -174,14 +174,17 @@ Five prefixes are reserved. Don't reuse them for your own aliases.
 
 | Prefix | Resolves to | Use it for |
 |---|---|---|
-| `@/*` | project root | anything shared across source folders - db layer, domain types |
-| `~/*` | **this** source folder | your own modules inside the folder |
-| `_/*` | `var/lib/<this folder>/` | derived code - generated, never edited |
+| `#/*` | project root | anything shared across source folders - db layer, domain types |
 | `#src/*` | `src/` | modules of **any** source folder, by name |
 | `#lib/*` | `var/lib/` | derived code of **any** folder, by name |
+| `~/*` | **this** source folder | your own modules inside the folder |
+| `_/*` | `var/lib/<this folder>/` | derived code - generated, never edited |
+
+The three starting with `#` reach the same place from anywhere in the project;
+`~/` and `_/` resolve against the folder that imports them.
 
 ```ts
-import { db } from "@/db";                    // my-app/db.ts
+import { db } from "#/db";                    // my-app/db.ts
 import type { User } from "~/types/user";     // src/front/types/user.ts
 import { defineRoute } from "_/api";          // var/lib/front/api.ts
 import fetchClients from "_/fetch";           // var/lib/front/fetch/
@@ -210,14 +213,15 @@ and so are `_/core` and `#lib/<this folder>/core`.
 Reach for `~/` and `_/` for your own folder, so it keeps working if the folder is renamed,
 and for `#src/` and `#lib/` when what you need belongs to another folder.
 
-`@/` is how folders share without packages. Put a type in `db/models.ts`,
-import it as `@/db/models` from every folder, change it once, and every folder sees it -
+`#/` is how folders share without packages. Put a type in `db/models.ts`,
+import it as `#/db/models` from every folder, change it once, and every folder sees it -
 no workspaces, no publishing, no version bumps.
 
 Nothing outside `src/<folder>/` is ever scanned for routes, so the layout there is entirely yours -
 these docs use `db/` and `shared/` in examples, nothing enforces either.
 
-It is still typechecked: a folder's run follows its imports, so `@/db/models` is checked whenever a folder that imports it is.
+It is still typechecked: a folder's run follows its imports,
+so `#/db/models` is checked whenever a folder that imports it is.
 Adding it to the root [include](/essentials/config#root-tsconfig-json) is worth doing anyway -
 that is what gives your editor a project for the file when you open it directly,
 and what covers code no folder imports yet.
@@ -261,7 +265,7 @@ src/
 ```
 
 Each has its own `kosmo.config.ts`, its own routes, middleware, layouts and build.
-They share one `package.json`, one `node_modules`, and one `@/` root.
+They share one `package.json`, one `node_modules`, and one `#/` root.
 
 ```sh
 pnpm dev                  # all folders

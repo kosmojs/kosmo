@@ -655,11 +655,13 @@ Your project starts with a minimal `tsconfig.json`:
 The extended config provides path mappings used throughout the framework.
 You can add your own paths, but these prefixes are reserved:
 
-- `@/*` - Root-level imports
-- `~/*` - Source folder imports
-- `_/*` - Derived code imports
-- `#src/*` - Source folder imports for any folder, by name
-- `#lib/*` - Derived code imports for any folder, by name
+| Prefix | Resolves to |
+|---|---|
+| `#/*` | project root |
+| `#src/*` | `src/` |
+| `#lib/*` | `var/lib/` |
+| `~/*` | **this** source folder |
+| `_/*` | `var/lib/<this folder>/` |
 
 [Project Structure ›](/essentials/project-structure#path-mappings) walks the whole layout - what
 lives in `src/` versus `var/lib/`, and what each alias resolves to.

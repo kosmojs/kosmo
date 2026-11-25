@@ -253,8 +253,8 @@ import { devSetup } from "_/api:dev";
 
 export default devSetup(async () => {
   const [{ disconnect }, { sharedConnection }] = await Promise.all([
-    import("@/db"),
-    import("@/redis"),
+    import("#/db"),
+    import("#/redis"),
   ]);
 
   // settles every close, whichever of them fails

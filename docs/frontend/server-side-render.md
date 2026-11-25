@@ -7,7 +7,7 @@ head:
     - name: keywords
       content: react ssr, solidjs ssr, vue ssr, svelte ssr, mdx ssr, server rendering, hydration,
         renderToString, renderToStream, ssr error handling, csr fallback, react router ssr, vue router ssr,
-        production rendering, stream rendering, kosmojs ssr
+        production rendering, stream rendering, ssr redirects, kosmojs ssr
 ---
 
 SSR adds production-ready server rendering while keeping your dev workflow unchanged.
@@ -349,13 +349,101 @@ When a route matches multiple patterns, the first match wins - so more specific
 patterns come first. Streaming a route requires the folder's renderer to
 implement `renderToStream`; MDX and Svelte folders do not accept the streaming mode.
 
+## Redirects
+
+A redirect made while a page renders on the server goes out as a real redirect:
+a 3xx status and a `Location` header, with no HTML.
+A crawler or `curl` sees the redirect, not a page that navigates away once it loads.
+
+Each framework redirects its own way:
+
+:::tabs key:frontend variant:code
+== React
+```tsx
+// React: pages/old/index.tsx
+import { redirect } from "react-router";
+
+// React Router's own redirect, thrown from the loader
+export const loader = () => {
+  throw redirect("/new", 301);
+};
+
+export default function Page() {
+  return null;
+}
+```
+
+== Solid
+```tsx
+// Solid: pages/old/index.tsx
+import { Navigate } from "@solidjs/router";
+
+// <Navigate>, navigate() and a query returning redirect() all redirect on the server
+export default function Page() {
+  return <Navigate href="/new" />;
+}
+```
+
+== Vue
+```vue
+<!-- Vue: pages/old/index.vue -->
+<script lang="ts">
+// a Response thrown from the loader - its Location goes out as given
+export const loader = () => {
+  throw new Response(null, {
+    status: 301,
+    headers: { Location: "/app/new" },
+  });
+};
+</script>
+
+<template><div /></template>
+```
+
+== Svelte
+```svelte
+<!-- Svelte: pages/old/index.svelte -->
+<script module lang="ts">
+// a Response thrown from the loader - its Location goes out as given
+export const loader = () => {
+  throw new Response(null, {
+    status: 301,
+    headers: { Location: "/app/new" },
+  });
+};
+</script>
+```
+:::
+
+- **React and Solid** take a path their router resolves against the folder's `base`,
+as they do in the browser.
+A thrown `Response` carries its `Location` as is, so it includes the base -
+`/app/new` in a folder whose base is `/app`.
+- **Vue** also redirects from a navigation guard that returns another location,
+`beforeRouteEnter` say.
+- **The status** is one of `301`, `302`, `303`, `307` or `308`.
+Solid Router answers every server redirect with a `302`:
+`<Navigate>` takes no status, and a `query` redirect drops the one given.
+A Vue guard returns a location with no status, so it is a `302` as well.
+- **A thrown `Response` with no `Location`, or with another status,** is not a redirect.
+The server answers it with `500: Malformed redirect`.
+
+The not-found page can redirect too, and the redirect goes out in place of the 404.
+
+Streamed routes redirect the same way: every way above happens while the route resolves,
+before the shell goes out.
+Past the shell, the status is already sent, and a redirect can no longer become a 3xx.
+
+In `pnpm dev`, and in a folder with SSR off, the same code redirects in the browser:
+the router navigates, and no 3xx is involved.
+
 ## Fetch Errors and Recovery
 
 Pages fetch data during server rendering through the same fetch client the browser uses,
 dispatched in-process into the API app.
 When a fetch fails mid-render, what happens next depends on the render mode.
 
-### The CSR fallback - string-rendered routes recover automatically.
+### The CSR fallback - a failed server render recovers automatically.
 
 A string-rendered page is produced in full before a single byte leaves the server,
 so a failed fetch aborts the render while the response is still untouched -
@@ -365,6 +453,7 @@ The browser receives a clean CSR page: the client entry mounts from scratch,
 fetching is retried in the browser, and any remaining failure surfaces through the error handling
 the page already implements for client-side navigation.
 No configuration is needed - string routes degrade to CSR on their own.
+Streamed routes do too, until [their shell](#streaming-routes-recover-up-to-the-shell) goes out.
 
 The same catch covers a **hard render failure**, not just a failed fetch: if the component tree throws while rendering,
 the partial output is discarded and the client shell is served in its place.
@@ -402,13 +491,28 @@ At build time there is no visitor waiting, so [SSG](/frontend/static-site-genera
 a route that cannot be rendered is never written as a shell,
 and one failure is enough to make the build write nothing and fail.
 
-### Streaming routes do not recover.
+### Streaming routes recover up to the shell.
 
-Streaming exists to flush the shell before rendering completes,
-so by the time a fetch fails, the status line, headers, and opening HTML are already on the wire -
+A streamed route is rendered up to its shell before the response starts,
+while its status can still change.
+A failure there - a loader's failed fetch, a render that throws before the shell is ready -
+gets the same CSR fallback as a string-rendered route,
+and the same `WARN: SSR failed, fallback to CSR` in the log.
+
+Where the shell ends depends on the framework:
+
+- **React** - React Router loaders run before the render,
+and the shell is everything outside Suspense boundaries.
+A failed loader fetch falls back, and so does a throw outside any Suspense boundary.
+- **Vue** - page loaders run before the render, so a failed loader fetch falls back.
+The render itself streams, so a component that throws while rendering is past the shell.
+- **Solid** renders lazily: its queries run as the page streams, past the shell.
+
+Past the shell, the status line, headers, and opening HTML are already on the wire -
 there is no response left to replace, and no server-side fallback is possible.
 
-Routes that enable streaming must handle fetch errors manually, inside the page itself:
+A failure there can only be reported, through the [onError](#onerror-hook) hook,
+so a streamed route must handle it inside the page itself:
 
 - catch errors in loaders or components and render an explicit error state.
 - treat failure as a regular data state: a streamed page should be able to render something for every state its data can be in.
@@ -462,7 +566,8 @@ export default renderFactory(() => {
 
 ::: warning It reports, it does not repair
 `onError` cannot change the response, patch the markup, or prevent what the render mode already does.
-A string-rendered route still falls back to CSR; a streamed route's shell is still on the wire.
+A route that fails before its shell still falls back to CSR;
+a streamed route that fails past it still has its shell on the wire.
 Returning a value from it changes nothing.
 :::
 
@@ -475,8 +580,10 @@ What to do inside it:
 it runs on the request path, in front of a visitor who is already waiting.
 - **Never throw from it.** An `onError` that throws turns one failure into two,
 in the one place that was supposed to make failures observable.
-- **Tag the render mode.** A string-rendered failure means one visitor got a CSR page;
-a streamed failure means one visitor got a broken document. They deserve different alert thresholds.
+- **Tell a fallback from a broken stream.**
+A failure before the shell means one visitor got a CSR page;
+a failure past a streamed shell means one visitor got a broken document.
+They deserve different alert thresholds.
 
 It fires in every environment that renders on the server - including [SSG](/frontend/static-site-generation#error-handling) pre-rendering,
 where it runs inside the build, once per route that fails,

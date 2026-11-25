@@ -211,7 +211,7 @@ src/
   mailer/       a sidecar alone - sidecar/entry.ts + sidecar/run.ts
 ```
 
-It is still a source folder, so `~/` and `@/` work as usual,
+It is still a source folder, so `~/` and `#/` work as usual,
 `pnpm build mailer` builds just it, and `pnpm typecheck mailer` checks it.
 With `serve` on, `kosmo serve` runs it beside your app and reloads it on change.
 
