@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { DeviceInfo } from "@/types/mfa";
+import type { DeviceInfo } from "#/types/mfa";
 
 export default defineRoute(({ POST }) => [
   POST<{

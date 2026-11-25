@@ -265,7 +265,7 @@ describe("typeResolver", { timeout: 10_000 }, () => {
   describe("discovery", () => {
     test("follows imports across files, through re-exports and aliases", () => {
       const { resolvedTypes, referencedFiles } = resolveSource(
-        `import type { Page, User } from "@/types/discovery";\nexport type json = { users: Page<User> };`,
+        `import type { Page, User } from "#/types/discovery";\nexport type json = { users: Page<User> };`,
       );
 
       const files = referencedFiles.map((f) =>
@@ -306,7 +306,7 @@ describe("typeResolver", { timeout: 10_000 }, () => {
 
     test("follows a namespace import and a default export", () => {
       const { resolvedTypes } = resolveSource(
-        `import type * as D from "@/types/discovery";\nimport type Settings from "@/types/discovery/default";\nexport type json = { user: D.User; settings: Settings };`,
+        `import type * as D from "#/types/discovery";\nimport type Settings from "#/types/discovery/default";\nexport type json = { user: D.User; settings: Settings };`,
       );
       const [json] = resolvedTypes ?? [];
       const props = json?.jsonSchema.properties as Record<string, JsonSchema>;
@@ -321,7 +321,7 @@ describe("typeResolver", { timeout: 10_000 }, () => {
 
     test("evaluates a recursive type at any depth", () => {
       const { resolvedTypes } = resolveSource(
-        `import type { TreeT } from "@/types/discovery/tree";\nexport type json = { root: TreeT };`,
+        `import type { TreeT } from "#/types/discovery/tree";\nexport type json = { root: TreeT };`,
         { closedTypes: ["json"] },
       );
       const valid = checker(resolvedTypes?.[0]?.jsonSchema as JsonSchema);
@@ -336,7 +336,7 @@ describe("typeResolver", { timeout: 10_000 }, () => {
 
     test("reaches only the files the names need", () => {
       const { referencedFiles } = resolveSource(
-        `import type { TreeT } from "@/types/discovery/tree";\nimport type { User } from "@/types/discovery/user";\nexport type json = { root: TreeT };`,
+        `import type { TreeT } from "#/types/discovery/tree";\nimport type { User } from "#/types/discovery/user";\nexport type json = { root: TreeT };`,
       );
       expect(
         referencedFiles.map((f) => f.replace(`${project.root}/`, "")),
@@ -347,7 +347,7 @@ describe("typeResolver", { timeout: 10_000 }, () => {
       const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
       try {
         const { resolvedTypes } = resolveSource(
-          `import type { Broken } from "@/types/discovery/missing";\nexport type json = Broken;`,
+          `import type { Broken } from "#/types/discovery/missing";\nexport type json = Broken;`,
         );
         const output = warn.mock.calls.flat().join("\n");
         expect(output).toMatch(/cannot resolve "\.\/nowhere"/);
@@ -375,7 +375,7 @@ describe("typeResolver", { timeout: 10_000 }, () => {
       const { resolvedTypes, referencedFiles } = resolveTypes(
         {
           file: entryFile,
-          source: `import type { User } from "@/types/discovery/user";\nexport type json = User;`,
+          source: `import type { User } from "#/types/discovery/user";\nexport type json = User;`,
           route: "probe",
         },
         { names: ["json"], evaluate: false },

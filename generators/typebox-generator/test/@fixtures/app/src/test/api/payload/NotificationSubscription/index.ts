@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { NotificationSubscriptionInput } from "@/types/notification";
+import type { NotificationSubscriptionInput } from "#/types/notification";
 
 export default defineRoute(({ POST }) => [
   POST<{

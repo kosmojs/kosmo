@@ -1,4 +1,4 @@
-import type { Page, User } from "@/types/discovery";
+import type { Page, User } from "#/types/discovery";
 
 export default defineRoute<"discovery">(({ POST }) => [
   POST<{

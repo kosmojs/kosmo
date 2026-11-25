@@ -16,9 +16,9 @@ export const ROUTE = "mappings";
  * Imports the route and page under test run, one per resolution case,
  * each binding a value echoed back in `mappings`:
  *
- *   app      @/ -> project root
- *   appSrc   @src/ -> access any folder by name; @src/admin for ex.
- *   appLib   @lib/ -> derived code of a folder by name; @lib/admin
+ *   app      #/ -> project root
+ *   appSrc   #src/ -> access any folder by name; #src/admin for ex.
+ *   appLib   #lib/ -> derived code of a folder by name; #lib/admin
  *   src      ~/ -> the folder's src dir
  *   lib      _/ -> the folder's derived code, the generated core module
  *   dir      a prefixed directory import, resolved to its index.ts

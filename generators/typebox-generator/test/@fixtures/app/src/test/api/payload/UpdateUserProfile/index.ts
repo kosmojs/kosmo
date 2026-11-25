@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { UserPreferences } from "@/types/profile";
+import type { UserPreferences } from "#/types/profile";
 
 export default defineRoute(({ POST }) => [
   POST<{

@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { BillingAddress } from "@/types/payment";
+import type { BillingAddress } from "#/types/payment";
 
 export default defineRoute(({ POST }) => [
   POST<{

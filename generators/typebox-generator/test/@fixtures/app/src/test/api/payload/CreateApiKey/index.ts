@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { CreateApiKeyInput } from "@/types/apikey";
+import type { CreateApiKeyInput } from "#/types/apikey";
 
 export default defineRoute(({ POST }) => [
   POST<{

@@ -1,5 +1,5 @@
 export const defaults = {
-  appPrefix: "@",
+  appPrefix: "#",
   srcPrefix: "~",
   libPrefix: "_",
 

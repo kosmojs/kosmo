@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { SearchPagination } from "@/types/search";
+import type { SearchPagination } from "#/types/search";
 
 export default defineRoute(({ POST }) => [
   POST<{

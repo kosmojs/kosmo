@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { ClosedResponse } from "@/types/closed";
+import type { ClosedResponse } from "#/types/closed";
 
 export default defineRoute(({ GET }) => [
   GET<{
