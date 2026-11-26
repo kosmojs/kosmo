@@ -1,3 +1,13 @@
+## [0.7.6](https://github.com/kosmojs/kosmo/compare/v0.7.5...v0.7.6) (2026-11-26)
+
+### ⚠ BREAKING CHANGES
+
+* ~/ prefix replaced by @/
+
+### Code Refactoring
+
+* @/ is the new prefix for source folder ([32f2d65](https://github.com/kosmojs/kosmo/commit/32f2d65e7bc2126f39b4060337fec591df748bd7))
+
 ## [0.7.5](https://github.com/kosmojs/kosmo/compare/v0.7.4...v0.7.5) (2026-11-25)
 
 ### ⚠ BREAKING CHANGES
