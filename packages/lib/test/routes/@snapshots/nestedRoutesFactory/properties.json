@@ -1,6 +1,6 @@
 {
   "layout": {
-    "id": "properties_layout_tsx_4189224751",
+    "id": "properties_2277716423",
     "name": "properties",
     "folder": "pages",
     "file": "properties/layout.tsx",
@@ -23,11 +23,11 @@
   },
   "children": [
     {
-      "index": {
-        "id": "properties_filters_index_tsx_1571931483",
+      "page": {
+        "id": "properties_filters_1252194096",
         "name": "properties/filters",
         "folder": "pages",
-        "file": "properties/filters/index.tsx",
+        "file": "properties/filters/page.tsx",
         "pathTokens": [
           {
             "kind": "static",
@@ -49,11 +49,11 @@
       "children": []
     },
     {
-      "index": {
-        "id": "properties_city_filters_filters_index_tsx_1192904431",
+      "page": {
+        "id": "properties_city_filters_filters__2773621047",
         "name": "properties/[city]/filters/{...filters}",
         "folder": "pages",
-        "file": "properties/[city]/filters/{...filters}/index.tsx",
+        "file": "properties/[city]/filters/{...filters}/page.tsx",
         "pathTokens": [
           {
             "kind": "param",

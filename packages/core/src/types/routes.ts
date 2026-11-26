@@ -38,6 +38,7 @@ export type PathToken = {
 export type RouteEntry = {
   // Unique ID across all routes, safe to use as a JavaScript identifier
   // in generated code (constants, imports, etc.).
+  // ID is unique across routes; route's files share same id.
   id: string;
   name: string;
   // root folder route defined in; either api or pages
@@ -55,7 +56,7 @@ export type RouteEntry = {
 };
 
 export type NestedRouteEntry = {
-  index: Omit<RouteEntry, "fileFullpath"> | undefined;
+  page: Omit<RouteEntry, "fileFullpath"> | undefined;
   layout: Omit<RouteEntry, "fileFullpath"> | undefined;
   parent: string | undefined;
   children: Array<NestedRouteEntry>;
@@ -83,12 +84,15 @@ export type PageRoute = RouteEntry & {
   };
 };
 
+export type PageFile = RouteEntry;
+
 export type PageLayout = RouteEntry;
 
 export type ResolvedEntry =
   | { kind: "apiRoute"; entry: ApiRoute }
   | { kind: "apiUse"; entry: ApiUse }
   | { kind: "pageRoute"; entry: PageRoute }
+  | { kind: "pageFile"; entry: PageFile }
   | { kind: "pageLayout"; entry: PageLayout };
 
 export type TypeDeclaration = {

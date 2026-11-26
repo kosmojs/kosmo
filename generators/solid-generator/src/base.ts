@@ -34,8 +34,8 @@ export const traverseFactory = () => {
   const traverseEntries = (
     entries: Array<NestedRouteEntry>,
   ): Array<TransformedEntry> => {
-    return entries.flatMap(({ index, layout, children }) => {
-      const { pathTokens } = { ...index, ...layout } as RouteEntry;
+    return entries.flatMap(({ page, layout, children }) => {
+      const { pathTokens } = { ...page, ...layout } as RouteEntry;
 
       const path = pathFactory(
         pathTokens.map((token) => {
@@ -43,13 +43,13 @@ export const traverseFactory = () => {
             return token;
           }
 
-          // Force convert to required if a child route carries an optional/splat param -
-          // an optional parent segment plus such children is ambiguous in solid-router's nested expansion.
-          // Adjacent optionals within one route need no demotion: solid-router
-          // expands them natively (`/:a?/:b?` -> `/`, `/:a`, `/:a/:b`).
-          if (
-            children.some((e) => e.index?.pathTokens.some(hasOptionalParam))
-          ) {
+          /**
+           * Force convert to required if a child route carries an optional/splat param -
+           * an optional parent segment plus such children is ambiguous in solid-router's nested expansion.
+           * Adjacent optionals within one route need no demotion: solid-router
+           * expands them natively (`/:a?/:b?` -> `/`, `/:a`, `/:a/:b`).
+           * */
+          if (children.some((e) => e.page?.pathTokens.some(hasOptionalParam))) {
             return {
               ...token,
               parts: [
@@ -70,26 +70,26 @@ export const traverseFactory = () => {
       if (hasSplatParam(lastToken)) {
         const indexPath = pathFactory([lastToken as never]);
 
-        if (index && layout) {
+        if (page && layout) {
           return [
             {
               path,
               component: layout.id,
               children: [
                 // no recursion here - splat params always goes last
-                { path: indexPath, component: index.id },
+                { path: indexPath, component: page.id },
               ],
             },
           ];
         }
 
-        if (index) {
+        if (page) {
           return [
             {
               // prefix-only entry, no component
               path,
               children: [
-                { path: indexPath, component: index.id },
+                { path: indexPath, component: page.id },
                 ...traverseEntries(children),
               ],
             },
@@ -109,26 +109,26 @@ export const traverseFactory = () => {
         return [];
       }
 
-      if (index && layout) {
+      if (page && layout) {
         return [
           {
             path,
             component: layout.id,
             children: [
-              { path: "/", component: index.id },
+              { path: "/", component: page.id },
               ...traverseEntries(children),
             ],
           },
         ];
       }
 
-      if (index) {
+      if (page) {
         return [
           {
             // prefix-only entry, no component
             path,
             children: [
-              { path: "/", component: index.id },
+              { path: "/", component: page.id },
               ...traverseEntries(children),
             ],
           },

@@ -12,7 +12,7 @@ head:
 Each fetch client exposes `path` and `href` for building URLs without making a request -
 useful for navigation, `<a>` tags, or passing URLs to other services.
 
-```ts [pages/example/index.tsx]
+```ts [pages/example/page.tsx]
 import fetchClients from "_/fetch";
 
 const useFetch = fetchClients["users/[id]"];

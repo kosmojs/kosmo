@@ -1,0 +1,33 @@
+{
+  "id": "about_team_774335872",
+  "name": "about/team",
+  "folder": "pages",
+  "file": "about/team/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "about",
+      "pattern": "about",
+      "parts": [
+        {
+          "type": "static",
+          "value": "about"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "team",
+      "pattern": "team",
+      "parts": [
+        {
+          "type": "static",
+          "value": "team"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "about/team",
+  "honoPattern": "about/team",
+  "h3Pattern": "about/team"
+}

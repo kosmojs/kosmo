@@ -1,0 +1,46 @@
+{
+  "id": "projects_projectId_team_3381253143",
+  "name": "projects/[projectId]/team",
+  "folder": "pages",
+  "file": "projects/[projectId]/team/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "projects",
+      "pattern": "projects",
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[projectId]",
+      "pattern": ":projectId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "projectId",
+          "const": "projectId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "team",
+      "pattern": "team",
+      "parts": [
+        {
+          "type": "static",
+          "value": "team"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "projects/:projectId/team",
+  "honoPattern": "projects/:projectId/team",
+  "h3Pattern": "projects/:projectId/team"
+}

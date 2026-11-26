@@ -370,7 +370,7 @@ Invalid requests are caught before they leave the browser:
 :::tabs key:frontend variant:code
 == React
 ```tsx
-// React: pages/users/[id]/index.tsx
+// React: pages/users/[id]/page.tsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import fetchClients from "_/fetch";
@@ -387,7 +387,7 @@ export default function UserPage() {
 
 == Solid
 ```tsx
-// Solid: pages/users/[id]/index.tsx
+// Solid: pages/users/[id]/page.tsx
 import { useParams, createAsync } from "@solidjs/router";
 import fetchClients from "_/fetch";
 
@@ -402,7 +402,7 @@ export default function UserPage() {
 
 == Vue
 ```vue
-<!-- Vue: pages/users/[id]/index.vue -->
+<!-- Vue: pages/users/[id]/page.vue -->
 <script lang="ts">
 import fetchClients from "_/fetch";
 
@@ -422,7 +422,7 @@ const user = useLoaderData();
 
 == Svelte
 ```svelte
-<!-- Svelte: pages/users/[id]/index.svelte -->
+<!-- Svelte: pages/users/[id]/page.svelte -->
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
@@ -441,7 +441,7 @@ const user = useLoaderData();
 
 == MDX
 ```mdx
-{/* MDX: pages/users/[id]/index.mdx */}
+{/* MDX: pages/users/[id]/page.mdx */}
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 
@@ -465,7 +465,8 @@ Server-side validation still runs even when endpoints are called directly - clie
 ## Create Client Pages
 
 Pages live in `pages/` and follow the same directory-based routing as API routes.
-Create `pages/users/index.tsx` - KosmoJS seeds framework-specific boilerplate.
+Create an empty `pages/users/index.ts` - KosmoJS seeds the route definition into it,
+and framework-specific boilerplate into `pages/users/page.tsx` next to it.
 
 Add a layout for shared UI across route groups - create `pages/users/layout.tsx`:
 
@@ -473,7 +474,8 @@ Add a layout for shared UI across route groups - create `pages/users/layout.tsx`
 pages/
 └── users/
     ├── layout.tsx    ← wraps all pages under /users
-    └── index.tsx
+    ├── index.ts      ← the route
+    └── page.tsx      ← renders it
 ```
 
 Layouts can be nested - deeper layouts wrap inner layouts, matching your route hierarchy.
@@ -620,7 +622,7 @@ yarn install
 
 ## Directory-Based Routing
 
-Folder names become URL segments. Each route requires an `index` file:
+Folder names become URL segments. Each route requires an `index.ts`:
 
 ```txt
 api/
@@ -631,9 +633,11 @@ api/
 
 pages/
   users/
-    index.tsx         -> /users
+    index.ts          -> /users
+    page.tsx
     [id]/
-      index.tsx       -> /users/:id
+      index.ts        -> /users/:id
+      page.tsx
 ```
 
 Parameters: `[id]` required · `{id}` optional · `{...path}` splat.

@@ -1,9 +1,9 @@
 {
-  "index": {
-    "id": "contact_index_tsx_3970670992",
+  "page": {
+    "id": "contact_1281549880",
     "name": "contact",
     "folder": "pages",
-    "file": "contact/index.tsx",
+    "file": "contact/page.tsx",
     "pathTokens": [
       {
         "kind": "static",
@@ -22,7 +22,7 @@
     "h3Pattern": "contact"
   },
   "layout": {
-    "id": "contact_layout_tsx_2321003899",
+    "id": "contact_1281549880",
     "name": "contact",
     "folder": "pages",
     "file": "contact/layout.tsx",

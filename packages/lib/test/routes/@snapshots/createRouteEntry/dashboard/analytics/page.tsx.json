@@ -1,0 +1,33 @@
+{
+  "id": "dashboard_analytics_1417427939",
+  "name": "dashboard/analytics",
+  "folder": "pages",
+  "file": "dashboard/analytics/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "dashboard",
+      "pattern": "dashboard",
+      "parts": [
+        {
+          "type": "static",
+          "value": "dashboard"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "analytics",
+      "pattern": "analytics",
+      "parts": [
+        {
+          "type": "static",
+          "value": "analytics"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "dashboard/analytics",
+  "honoPattern": "dashboard/analytics",
+  "h3Pattern": "dashboard/analytics"
+}

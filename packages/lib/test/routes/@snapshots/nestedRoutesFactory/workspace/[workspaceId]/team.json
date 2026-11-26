@@ -1,6 +1,6 @@
 {
   "layout": {
-    "id": "workspace_workspaceId_team_layout_tsx_1903886921",
+    "id": "workspace_workspaceId_team_3477030382",
     "name": "workspace/[workspaceId]/team",
     "folder": "pages",
     "file": "workspace/[workspaceId]/team/layout.tsx",
@@ -47,11 +47,11 @@
   },
   "children": [
     {
-      "index": {
-        "id": "workspace_workspaceId_team_memberId_permissions_permissionPath_index_tsx_3735406549",
+      "page": {
+        "id": "workspace_workspaceId_team_memberId_permissions_permissionPath__765346141",
         "name": "workspace/[workspaceId]/team/[memberId]/permissions/{...permissionPath}",
         "folder": "pages",
-        "file": "workspace/[workspaceId]/team/[memberId]/permissions/{...permissionPath}/index.tsx",
+        "file": "workspace/[workspaceId]/team/[memberId]/permissions/{...permissionPath}/page.tsx",
         "pathTokens": [
           {
             "kind": "param",

@@ -27,7 +27,7 @@ Your folder structure defines your routes - for both API and client pages.
 
 ```
 api/users/[id]/index.ts    -> /api/users/:id
-pages/users/[id]/index.tsx -> /users/:id
+pages/users/[id]/index.ts  -> /users/:id
 ```
 
 Dynamic parameters: `[id]` required · `{id}` optional · `{...path}` splat.
@@ -168,9 +168,11 @@ pages/
     layout.tsx        ← wraps all /app/* pages
     dashboard/
       layout.tsx      ← wraps all /app/dashboard/* pages
-      index.tsx
+      index.ts
+      page.tsx
       settings/
-        index.tsx
+        index.ts
+        page.tsx
 ```
 
 [Details&nbsp;›](/frontend/routing)

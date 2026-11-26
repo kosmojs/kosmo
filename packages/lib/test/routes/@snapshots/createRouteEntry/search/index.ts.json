@@ -1,0 +1,22 @@
+{
+  "id": "search_3035683751",
+  "name": "search",
+  "folder": "pages",
+  "file": "search/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "search",
+      "pattern": "search",
+      "parts": [
+        {
+          "type": "static",
+          "value": "search"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "search",
+  "honoPattern": "search",
+  "h3Pattern": "search"
+}

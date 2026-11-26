@@ -198,7 +198,7 @@ Sketches per framework - see the official guides above for the full picture:
 :::tabs key:frontend variant:code
 == React
 ```tsx
-// React: pages/users/[id]/index.tsx
+// React: pages/users/[id]/page.tsx
 // Prefetch in the loader, dehydrate, then wrap the page in HydrationBoundary.
 // https://tanstack.com/query/latest/docs/framework/react/guides/ssr
 import { dehydrate, HydrationBoundary, useQuery } from "@tanstack/react-query";
@@ -237,7 +237,7 @@ export default function Page() {
 
 == Solid
 ```tsx
-// Solid: pages/users/[id]/index.tsx
+// Solid: pages/users/[id]/page.tsx
 // Solid Query rehydrates through Solid's generateHydrationScript(),
 // which the SSR entry already emits - so there is no HydrationBoundary to place.
 // Prefetch into the request client and the cache crosses to the browser automatically.
@@ -267,7 +267,7 @@ export default function Page() {
 
 == Vue
 ```vue
-<!-- Vue: pages/users/[id]/index.vue -->
+<!-- Vue: pages/users/[id]/page.vue -->
 <!-- Prefetch + dehydrate in the loader; hydrate the page's script setup.
      https://tanstack.com/query/latest/docs/framework/vue/guides/ssr -->
 <script lang="ts">
@@ -310,7 +310,7 @@ const { data } = useQuery(queryOptions(route.params.id as string));
 
 == Svelte
 ```svelte
-<!-- Svelte: pages/users/[id]/index.svelte -->
+<!-- Svelte: pages/users/[id]/page.svelte -->
 <!-- Prefetch + dehydrate in the loader; wrap the page in HydrationBoundary.
      https://tanstack.com/query/latest/docs/framework/svelte/ssr -->
 <script module lang="ts">

@@ -1,0 +1,22 @@
+{
+  "id": "signup_1319313135",
+  "name": "signup",
+  "folder": "pages",
+  "file": "signup/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "signup",
+      "pattern": "signup",
+      "parts": [
+        {
+          "type": "static",
+          "value": "signup"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "signup",
+  "honoPattern": "signup",
+  "h3Pattern": "signup"
+}

@@ -15,7 +15,7 @@ The fetch client returns standard promises, so it fits naturally into whatever a
 :::tabs key:frontend variant:code
 == React
 ```tsx
-// React: pages/users/[id]/index.tsx
+// React: pages/users/[id]/page.tsx
 import { useLoaderData } from "react-router";
 import fetchClients from "_/fetch";
 
@@ -33,7 +33,7 @@ export default function UserProfile() {
 
 == Solid
 ```tsx
-// Solid: pages/users/[id]/index.tsx
+// Solid: pages/users/[id]/page.tsx
 import { Suspense } from "solid-js";
 import { createAsync, query, useParams } from "@solidjs/router";
 import fetchClients from "_/fetch";
@@ -56,7 +56,7 @@ export default function UserProfile() {
 
 == Vue
 ```vue
-<!-- Vue: pages/users/[id]/index.vue -->
+<!-- Vue: pages/users/[id]/page.vue -->
 <script lang="ts">
 import fetchClients from "_/fetch";
 
@@ -80,7 +80,7 @@ const user = useLoaderData();
 
 == Svelte
 ```svelte
-<!-- Svelte: pages/users/[id]/index.svelte -->
+<!-- Svelte: pages/users/[id]/page.svelte -->
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
@@ -101,7 +101,7 @@ const user = useLoaderData();
 
 == MDX
 ```mdx
-{/* MDX: pages/users/[id]/index.mdx */}
+{/* MDX: pages/users/[id]/page.mdx */}
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 

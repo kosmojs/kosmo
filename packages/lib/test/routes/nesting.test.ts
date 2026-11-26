@@ -24,15 +24,15 @@ describe("Nested Routes", async () => {
   const render = (
     entries: Array<NestedRouteEntry>,
   ): Array<NestedRouteEntry> => {
-    return entries.map(({ index, layout, parent, children }) => {
-      return { index, layout, parent, children: render(children) };
+    return entries.map(({ page, layout, parent, children }) => {
+      return { page, layout, parent, children: render(children) };
     });
   };
 
   const config = render(tree);
 
   for (const entry of config) {
-    const { name } = { ...entry?.index, ...entry?.layout };
+    const { name } = { ...entry?.page, ...entry?.layout };
     test(`nestedRoutesFactory: ${name}`, async () => {
       await expect(JSON.stringify(entry, null, 2)).toMatchFileSnapshot(
         `@snapshots/nestedRoutesFactory/${name}.json`,

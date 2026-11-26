@@ -1,6 +1,6 @@
 {
   "layout": {
-    "id": "profile_username_layout_tsx_2113498186",
+    "id": "profile_username__1954487444",
     "name": "profile/[username]",
     "folder": "pages",
     "file": "profile/[username]/layout.tsx",
@@ -37,7 +37,7 @@
   "children": [
     {
       "layout": {
-        "id": "profile_username_posts_postId_layout_tsx_485444689",
+        "id": "profile_username_posts_postId__3486838271",
         "name": "profile/[username]/posts/[postId]",
         "folder": "pages",
         "file": "profile/[username]/posts/[postId]/layout.tsx",
@@ -74,11 +74,11 @@
       "parent": "profile/[username]",
       "children": [
         {
-          "index": {
-            "id": "profile_username_posts_postId_comments_thread_index_tsx_635455370",
+          "page": {
+            "id": "profile_username_posts_postId_comments_thread__1630971533",
             "name": "profile/[username]/posts/[postId]/comments/{...thread}",
             "folder": "pages",
-            "file": "profile/[username]/posts/[postId]/comments/{...thread}/index.tsx",
+            "file": "profile/[username]/posts/[postId]/comments/{...thread}/page.tsx",
             "pathTokens": [
               {
                 "kind": "static",

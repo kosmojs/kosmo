@@ -1,6 +1,6 @@
 {
   "layout": {
-    "id": "store_layout_tsx_1661449985",
+    "id": "store_4283914359",
     "name": "store",
     "folder": "pages",
     "file": "store/layout.tsx",
@@ -24,7 +24,7 @@
   "children": [
     {
       "layout": {
-        "id": "store_category_sort_layout_tsx_1255246087",
+        "id": "store_category_sort_3090640527",
         "name": "store/[category]/sort",
         "folder": "pages",
         "file": "store/[category]/sort/layout.tsx",
@@ -61,11 +61,11 @@
       "parent": "store",
       "children": [
         {
-          "index": {
-            "id": "store_category_sort_sortBy_index_tsx_282881663",
+          "page": {
+            "id": "store_category_sort_sortBy__2408154266",
             "name": "store/[category]/sort/[sortBy]",
             "folder": "pages",
-            "file": "store/[category]/sort/[sortBy]/index.tsx",
+            "file": "store/[category]/sort/[sortBy]/page.tsx",
             "pathTokens": [
               {
                 "kind": "param",
@@ -91,11 +91,11 @@
       ]
     },
     {
-      "index": {
-        "id": "store_category_filters_filters_index_tsx_2600177157",
+      "page": {
+        "id": "store_category_filters_filters__3158719104",
         "name": "store/[category]/filters/{...filters}",
         "folder": "pages",
-        "file": "store/[category]/filters/{...filters}/index.tsx",
+        "file": "store/[category]/filters/{...filters}/page.tsx",
         "pathTokens": [
           {
             "kind": "param",

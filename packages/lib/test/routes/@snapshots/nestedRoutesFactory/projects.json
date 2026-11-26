@@ -1,9 +1,9 @@
 {
-  "index": {
-    "id": "projects_index_tsx_1541817812",
+  "page": {
+    "id": "projects_1553183652",
     "name": "projects",
     "folder": "pages",
-    "file": "projects/index.tsx",
+    "file": "projects/page.tsx",
     "pathTokens": [
       {
         "kind": "static",
@@ -22,7 +22,7 @@
     "h3Pattern": "projects"
   },
   "layout": {
-    "id": "projects_layout_tsx_4216421654",
+    "id": "projects_1553183652",
     "name": "projects",
     "folder": "pages",
     "file": "projects/layout.tsx",
@@ -45,11 +45,11 @@
   },
   "children": [
     {
-      "index": {
-        "id": "projects_projectId_index_tsx_2013112903",
+      "page": {
+        "id": "projects_projectId__1315672198",
         "name": "projects/[projectId]",
         "folder": "pages",
-        "file": "projects/[projectId]/index.tsx",
+        "file": "projects/[projectId]/page.tsx",
         "pathTokens": [
           {
             "kind": "param",
@@ -70,7 +70,7 @@
         "h3Pattern": "projects/:projectId"
       },
       "layout": {
-        "id": "projects_projectId_layout_tsx_2457576455",
+        "id": "projects_projectId__1315672198",
         "name": "projects/[projectId]",
         "folder": "pages",
         "file": "projects/[projectId]/layout.tsx",
@@ -96,11 +96,11 @@
       "parent": "projects",
       "children": [
         {
-          "index": {
-            "id": "projects_projectId_files_index_tsx_3641865118",
+          "page": {
+            "id": "projects_projectId_files_149135641",
             "name": "projects/[projectId]/files",
             "folder": "pages",
-            "file": "projects/[projectId]/files/index.tsx",
+            "file": "projects/[projectId]/files/page.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -119,7 +119,7 @@
             "h3Pattern": "projects/:projectId/files"
           },
           "layout": {
-            "id": "projects_projectId_files_layout_tsx_1843012014",
+            "id": "projects_projectId_files_149135641",
             "name": "projects/[projectId]/files",
             "folder": "pages",
             "file": "projects/[projectId]/files/layout.tsx",
@@ -143,11 +143,11 @@
           "parent": "projects/[projectId]",
           "children": [
             {
-              "index": {
-                "id": "projects_projectId_files_path_index_tsx_3414316093",
+              "page": {
+                "id": "projects_projectId_files_path__3708172195",
                 "name": "projects/[projectId]/files/{...path}",
                 "folder": "pages",
-                "file": "projects/[projectId]/files/{...path}/index.tsx",
+                "file": "projects/[projectId]/files/{...path}/page.tsx",
                 "pathTokens": [
                   {
                     "kind": "param",
@@ -173,11 +173,11 @@
           ]
         },
         {
-          "index": {
-            "id": "projects_projectId_tasks_index_tsx_2095702919",
+          "page": {
+            "id": "projects_projectId_tasks_1586398423",
             "name": "projects/[projectId]/tasks",
             "folder": "pages",
-            "file": "projects/[projectId]/tasks/index.tsx",
+            "file": "projects/[projectId]/tasks/page.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -196,7 +196,7 @@
             "h3Pattern": "projects/:projectId/tasks"
           },
           "layout": {
-            "id": "projects_projectId_tasks_layout_tsx_152335102",
+            "id": "projects_projectId_tasks_1586398423",
             "name": "projects/[projectId]/tasks",
             "folder": "pages",
             "file": "projects/[projectId]/tasks/layout.tsx",
@@ -220,11 +220,11 @@
           "parent": "projects/[projectId]",
           "children": [
             {
-              "index": {
-                "id": "projects_projectId_tasks_taskId_index_tsx_876882048",
+              "page": {
+                "id": "projects_projectId_tasks_taskId__409804491",
                 "name": "projects/[projectId]/tasks/[taskId]",
                 "folder": "pages",
-                "file": "projects/[projectId]/tasks/[taskId]/index.tsx",
+                "file": "projects/[projectId]/tasks/[taskId]/page.tsx",
                 "pathTokens": [
                   {
                     "kind": "param",
@@ -245,7 +245,7 @@
                 "h3Pattern": "projects/:projectId/tasks/:taskId"
               },
               "layout": {
-                "id": "projects_projectId_tasks_taskId_layout_tsx_2537048726",
+                "id": "projects_projectId_tasks_taskId__409804491",
                 "name": "projects/[projectId]/tasks/[taskId]",
                 "folder": "pages",
                 "file": "projects/[projectId]/tasks/[taskId]/layout.tsx",
@@ -271,11 +271,11 @@
               "parent": "projects/[projectId]/tasks",
               "children": [
                 {
-                  "index": {
-                    "id": "projects_projectId_tasks_taskId_comments_index_tsx_2812732982",
+                  "page": {
+                    "id": "projects_projectId_tasks_taskId_comments_3619292096",
                     "name": "projects/[projectId]/tasks/[taskId]/comments",
                     "folder": "pages",
-                    "file": "projects/[projectId]/tasks/[taskId]/comments/index.tsx",
+                    "file": "projects/[projectId]/tasks/[taskId]/comments/page.tsx",
                     "pathTokens": [
                       {
                         "kind": "static",
@@ -294,7 +294,7 @@
                     "h3Pattern": "projects/:projectId/tasks/:taskId/comments"
                   },
                   "layout": {
-                    "id": "projects_projectId_tasks_taskId_comments_layout_tsx_3047800545",
+                    "id": "projects_projectId_tasks_taskId_comments_3619292096",
                     "name": "projects/[projectId]/tasks/[taskId]/comments",
                     "folder": "pages",
                     "file": "projects/[projectId]/tasks/[taskId]/comments/layout.tsx",
@@ -318,11 +318,11 @@
                   "parent": "projects/[projectId]/tasks/[taskId]",
                   "children": [
                     {
-                      "index": {
-                        "id": "projects_projectId_tasks_taskId_comments_commentId_index_tsx_3891983433",
+                      "page": {
+                        "id": "projects_projectId_tasks_taskId_comments_commentId__2214096245",
                         "name": "projects/[projectId]/tasks/[taskId]/comments/[commentId]",
                         "folder": "pages",
-                        "file": "projects/[projectId]/tasks/[taskId]/comments/[commentId]/index.tsx",
+                        "file": "projects/[projectId]/tasks/[taskId]/comments/[commentId]/page.tsx",
                         "pathTokens": [
                           {
                             "kind": "param",
@@ -352,11 +352,11 @@
           ]
         },
         {
-          "index": {
-            "id": "projects_projectId_team_index_tsx_1454304763",
+          "page": {
+            "id": "projects_projectId_team_3381253143",
             "name": "projects/[projectId]/team",
             "folder": "pages",
-            "file": "projects/[projectId]/team/index.tsx",
+            "file": "projects/[projectId]/team/page.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -375,7 +375,7 @@
             "h3Pattern": "projects/:projectId/team"
           },
           "layout": {
-            "id": "projects_projectId_team_layout_tsx_1351420135",
+            "id": "projects_projectId_team_3381253143",
             "name": "projects/[projectId]/team",
             "folder": "pages",
             "file": "projects/[projectId]/team/layout.tsx",
@@ -399,11 +399,11 @@
           "parent": "projects/[projectId]",
           "children": [
             {
-              "index": {
-                "id": "projects_projectId_team_userId_index_tsx_1486831611",
+              "page": {
+                "id": "projects_projectId_team_userId__445654051",
                 "name": "projects/[projectId]/team/[userId]",
                 "folder": "pages",
-                "file": "projects/[projectId]/team/[userId]/index.tsx",
+                "file": "projects/[projectId]/team/[userId]/page.tsx",
                 "pathTokens": [
                   {
                     "kind": "param",

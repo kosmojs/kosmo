@@ -1,8 +1,8 @@
-import { basename, posix } from "node:path";
+import { posix } from "node:path";
 
 import type { NestedRouteEntry, RouteEntry } from "@kosmojs/core";
 
-import { PAGE_INDEX_BASENAME, PAGE_LAYOUT_BASENAME, sortRoutes } from "./base";
+import { isPageFile, isPageLayout, sortRoutes } from "./base";
 
 export const nestedRoutesFactory = (routeEntries: Array<RouteEntry>) => {
   const entryStack = structuredClone(routeEntries).sort(sortRoutes);
@@ -11,8 +11,8 @@ export const nestedRoutesFactory = (routeEntries: Array<RouteEntry>) => {
    * Group entries by name (at the same level, both layout and index share same name).
    *
    * Handle 3 cases:
-   *    - both index and layout exists
-   *    - only index exists
+   *    - both page and layout exists
+   *    - only page exists
    *    - only layout exists
    *
    * */
@@ -25,21 +25,16 @@ export const nestedRoutesFactory = (routeEntries: Array<RouteEntry>) => {
         return entry.name === name ? [entry] : [];
       });
 
-      const index = nameEntries.find((e) =>
-        basename(e.file).startsWith(PAGE_INDEX_BASENAME),
-      ) as RouteEntry;
+      const page = nameEntries.find((e) => isPageFile(e.file)) as RouteEntry;
+      const layout = nameEntries.find((e) => isPageLayout(e.file));
 
-      const layout = nameEntries.find((e) =>
-        basename(e.file).startsWith(PAGE_LAYOUT_BASENAME),
-      ) as RouteEntry;
-
-      if (index || layout) {
+      if (page || layout) {
         return [
           {
-            index: index
+            page: page
               ? {
-                  ...index,
-                  pathTokens: index.pathTokens.slice(
+                  ...page,
+                  pathTokens: page.pathTokens.slice(
                     parent?.pathTokens.length || 0,
                   ),
                 }
@@ -54,8 +49,8 @@ export const nestedRoutesFactory = (routeEntries: Array<RouteEntry>) => {
               : undefined,
             parent: parent?.name,
             children: transformEntries(
-              findDescendantEntries(index || layout),
-              index || layout,
+              findDescendantEntries(page || layout),
+              page || layout,
             ),
           },
         ];
@@ -71,8 +66,8 @@ export const nestedRoutesFactory = (routeEntries: Array<RouteEntry>) => {
    * "Direct" means the next existing route in the path hierarchy,
    * skipping intermediate path segments that don't have index/layout files.
    *
-   * Example: blog/post/[slug]/index.tsx is a direct child of blog/index.tsx
-   * even though "post" segment exists (it has no index.tsx).
+   * Example: blog/post/[slug]/index.ts is a direct child of blog/index.ts
+   * even though "post" segment exists (it has no index.ts).
    * */
   const findDescendantEntries = ({
     name,

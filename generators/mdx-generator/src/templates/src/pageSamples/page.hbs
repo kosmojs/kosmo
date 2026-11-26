@@ -5,13 +5,13 @@ title: "{{title}}"
 import PageSample from "{{ createImport 'lib' 'pageSamples/page.tsx' }}";
 
 export const pathMap = {
-  page: "{{ createImport 'pages' route.file }}",
+  page: "{{ createImport 'pages' entry.file }}",
   pages: "{{ createImport 'pages' }}",
   api: "{{ createImport 'api' }}",
 };
 
 <PageSample
   message="{{message}}"
-  routeName="{{route.name}}"
+  routeName="{{entry.name}}"
   pathMap={pathMap}
 />

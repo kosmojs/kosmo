@@ -360,7 +360,7 @@ Each framework redirects its own way:
 :::tabs key:frontend variant:code
 == React
 ```tsx
-// React: pages/old/index.tsx
+// React: pages/old/page.tsx
 import { redirect } from "react-router";
 
 // React Router's own redirect, thrown from the loader
@@ -375,7 +375,7 @@ export default function Page() {
 
 == Solid
 ```tsx
-// Solid: pages/old/index.tsx
+// Solid: pages/old/page.tsx
 import { Navigate } from "@solidjs/router";
 
 // <Navigate>, navigate() and a query returning redirect() all redirect on the server
@@ -386,7 +386,7 @@ export default function Page() {
 
 == Vue
 ```vue
-<!-- Vue: pages/old/index.vue -->
+<!-- Vue: pages/old/page.vue -->
 <script lang="ts">
 // a Response thrown from the loader - its Location goes out as given
 export const loader = () => {
@@ -402,7 +402,7 @@ export const loader = () => {
 
 == Svelte
 ```svelte
-<!-- Svelte: pages/old/index.svelte -->
+<!-- Svelte: pages/old/page.svelte -->
 <script module lang="ts">
 // a Response thrown from the loader - its Location goes out as given
 export const loader = () => {

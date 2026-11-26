@@ -28,25 +28,30 @@ export type ResolverSignature = {
   handler: (updatedFile?: string) => Promise<ResolvedEntry>;
 };
 
-export const API_INDEX_BASENAME = "index";
-export const API_INDEX_PATTERN = `${API_INDEX_BASENAME}.ts`;
+export const API_ROUTE_BASENAME = "index";
+export const API_ROUTE_PATTERN = `${API_ROUTE_BASENAME}.ts`;
 
 export const API_USE_BASENAME = "use";
 export const API_USE_PATTERN = `${API_USE_BASENAME}.ts`;
 
-export const PAGE_INDEX_BASENAME = "index";
-export const PAGE_INDEX_PATTERN = `${PAGE_INDEX_BASENAME}.{tsx,vue,svelte,mdx,md}`;
+export const PAGE_ROUTE_BASENAME = "index";
+export const PAGE_ROUTE_PATTERN = `${PAGE_ROUTE_BASENAME}.ts`;
+
+export const PAGE_FILE_BASENAME = "page";
+export const PAGE_FILE_PATTERN = `${PAGE_FILE_BASENAME}.{tsx,vue,svelte,mdx}`;
 
 export const PAGE_LAYOUT_BASENAME = "layout";
 export const PAGE_LAYOUT_PATTERN = `${PAGE_LAYOUT_BASENAME}.{tsx,vue,svelte,mdx}`;
 
 const ROUTE_FILE_PATTERNS = [
-  // match index files in api dir
-  `${defaults.apiDir}/**/${API_INDEX_PATTERN}`,
+  // match route files in api dir
+  `${defaults.apiDir}/**/${API_ROUTE_PATTERN}`,
   // match use files in api dir
   `${defaults.apiDir}/**/${API_USE_PATTERN}`,
-  // match index files in pages dir
-  `${defaults.pagesDir}/**/${PAGE_INDEX_PATTERN}`,
+  // match route files in pages dir
+  `${defaults.pagesDir}/**/${PAGE_ROUTE_PATTERN}`,
+  // match page files in pages dir
+  `${defaults.pagesDir}/**/${PAGE_FILE_PATTERN}`,
   // match layout files in pages dir
   `${defaults.pagesDir}/**/${PAGE_LAYOUT_PATTERN}`,
 ];
@@ -56,18 +61,42 @@ export const scanRoutes = async (
   sourceFolder: SourceFolder,
 ) => {
   const { createPath } = pathResolver(projectSettings, sourceFolder);
-  return glob(ROUTE_FILE_PATTERNS, {
+
+  const files = await glob(ROUTE_FILE_PATTERNS, {
     cwd: createPath.src(),
     absolute: true,
     onlyFiles: true,
     followSymbolicLinks: false,
     ignore: [
       // ignore top-level matches, routes resides in folders, even index route
-      `${defaults.apiDir}/${API_INDEX_PATTERN}`,
+      `${defaults.apiDir}/${API_ROUTE_PATTERN}`,
       `${defaults.apiDir}/${API_USE_PATTERN}`,
-      `${defaults.pagesDir}/${PAGE_INDEX_PATTERN}`,
+      `${defaults.pagesDir}/${PAGE_ROUTE_PATTERN}`,
+      `${defaults.pagesDir}/${PAGE_FILE_PATTERN}`,
       `${defaults.pagesDir}/${PAGE_LAYOUT_PATTERN}`,
     ],
+  });
+
+  const routeFiles = new Set(files.filter(isPageRoute));
+
+  // a page file considered only if a sibling index file exists
+  return files.filter((file) => {
+    return isPageFile(file)
+      ? routeFiles.has(createPageRoutePath({ fileFullpath: file }))
+      : true;
+  });
+};
+
+/**
+ * The page files next to the index.ts of a page route,
+ * picked up when the index.ts appears after them.
+ * */
+export const scanPageFiles = (routeFile: string) => {
+  return glob(PAGE_FILE_PATTERN, {
+    cwd: dirname(routeFile),
+    absolute: true,
+    onlyFiles: true,
+    followSymbolicLinks: false,
   });
 };
 
@@ -109,7 +138,7 @@ export const isRouteFile = (
 };
 
 export const isApiRoute = (file: string) => {
-  return picomatch.matchBase(file, `**/${API_INDEX_PATTERN}`);
+  return picomatch.matchBase(file, `**/${API_ROUTE_PATTERN}`);
 };
 
 export const isApiUse = (file: string) => {
@@ -117,7 +146,11 @@ export const isApiUse = (file: string) => {
 };
 
 export const isPageRoute = (file: string) => {
-  return picomatch.matchBase(file, `**/${PAGE_INDEX_PATTERN}`);
+  return picomatch.matchBase(file, `**/${PAGE_ROUTE_PATTERN}`);
+};
+
+export const isPageFile = (file: string) => {
+  return picomatch.matchBase(file, `**/${PAGE_FILE_PATTERN}`);
 };
 
 export const isPageLayout = (file: string) => {
@@ -143,8 +176,10 @@ export const createRouteEntry = (
 
   const [folder, file] = resolvedPaths;
 
-  const id = `${file.replace(/\W+/g, "_")}_${crc(file)}`;
   const name = dirname(file);
+
+  // id is unique across routes; route's files share same id
+  const id = `${name.replace(/\W+/g, "_").replace(/(^\d)+/, "_$1")}_${crc(name)}`;
 
   try {
     const pathTokens = pathTokensFactory(dirname(file));
@@ -316,4 +351,17 @@ export const sortRoutesForResolution = (
   }
 
   return sortRoutes(a, b);
+};
+
+export const createPageRoutePath = (
+  entry: Pick<RouteEntry, "fileFullpath">,
+) => {
+  return join(dirname(entry.fileFullpath), `${PAGE_ROUTE_BASENAME}.ts`);
+};
+
+export const createPageFilePath = (
+  entry: Pick<RouteEntry, "fileFullpath">,
+  ext: string,
+) => {
+  return join(dirname(entry.fileFullpath), `${PAGE_FILE_BASENAME}.${ext}`);
 };

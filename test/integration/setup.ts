@@ -304,7 +304,11 @@ export const setupTestProject = async (
         }[frontend]
       : "ts";
 
-    const filePath = createPath.pages(`${name}/${file}.${fileExt}`);
+    // `index` stands for the route itself: its page file rendering it,
+    // and an index.ts declaring it, left blank for the generators to seed
+    const filePath = createPath.pages(
+      `${name}/${file === "index" ? "page" : file}.${fileExt}`,
+    );
 
     const cssFile = `assets/${name}/${file}.css`;
     const cssText = `[id="${crc(name + file)}"]{content:"${name}/${file}"}`;
@@ -323,6 +327,10 @@ export const setupTestProject = async (
 
     await writeFile(filePath, templateBuilder());
     await writeFile(createPath.src(cssFile), cssText, "utf8");
+
+    if (file === "index") {
+      await writeFile(createPath.pages(`${name}/index.ts`), "");
+    }
   };
 
   type ApiTemplateFactory = (a: {

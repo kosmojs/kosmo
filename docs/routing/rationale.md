@@ -77,7 +77,8 @@ Six months later, you can still navigate it without re-reading the codebase.
 
 ### Helpers shared by several routes
 
-The same rule answers this one: nothing is scanned except `index.*` and `use.ts`,
+The same rule answers this one: nothing is scanned except `index.ts`
+and the names a route folder reserves - `use.ts` in `api/`, `page.*` and `layout.*` in `pages/` -
 so everything else is yours to place. Two spots follow from the tree itself:
 
 ```

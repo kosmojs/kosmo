@@ -10,7 +10,7 @@ describe("routes", async ({ afterAll }) => {
     bootstrapProject,
     withPageContent,
     createPageRoutes,
-  } = await setupTestProject({ frontend: "solid" });
+  } = await setupTestProject({ frontend: "react" });
 
   const teardown = await bootstrapProject(async () => {
     await createPageRoutes([...routes]);

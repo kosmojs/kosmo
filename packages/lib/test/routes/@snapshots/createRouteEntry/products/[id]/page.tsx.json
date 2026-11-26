@@ -1,0 +1,35 @@
+{
+  "id": "products_id__465570367",
+  "name": "products/[id]",
+  "folder": "pages",
+  "file": "products/[id]/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "products",
+      "pattern": "products",
+      "parts": [
+        {
+          "type": "static",
+          "value": "products"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[id]",
+      "pattern": ":id",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "id",
+          "const": "id"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "products/:id",
+  "honoPattern": "products/:id",
+  "h3Pattern": "products/:id"
+}

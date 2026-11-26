@@ -1,6 +1,6 @@
 import type { PageRoute } from "@kosmojs/core";
 
-{{#each pageRoutes}}
+{{#each files}}
 import * as {{id}} from "{{ createImport 'pages' file }}";
 {{/each}}
 
@@ -12,7 +12,7 @@ type SSGRoute = {
 };
 
 const routeMap: Record<string, SSGRoute> = {
-{{#each pageRoutes}}
+{{#each routes}}
   "{{name}}": {
     module: {{id}},
     pathPattern: "{{pathPattern}}",

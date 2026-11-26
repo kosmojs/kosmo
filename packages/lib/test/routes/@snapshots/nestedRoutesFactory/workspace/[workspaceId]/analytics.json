@@ -1,9 +1,9 @@
 {
-  "index": {
-    "id": "workspace_workspaceId_analytics_index_tsx_2441542851",
+  "page": {
+    "id": "workspace_workspaceId_analytics_1048435317",
     "name": "workspace/[workspaceId]/analytics",
     "folder": "pages",
-    "file": "workspace/[workspaceId]/analytics/index.tsx",
+    "file": "workspace/[workspaceId]/analytics/page.tsx",
     "pathTokens": [
       {
         "kind": "static",
@@ -46,7 +46,7 @@
     "h3Pattern": "workspace/:workspaceId/analytics"
   },
   "layout": {
-    "id": "workspace_workspaceId_analytics_layout_tsx_2018023528",
+    "id": "workspace_workspaceId_analytics_1048435317",
     "name": "workspace/[workspaceId]/analytics",
     "folder": "pages",
     "file": "workspace/[workspaceId]/analytics/layout.tsx",
@@ -93,11 +93,11 @@
   },
   "children": [
     {
-      "index": {
-        "id": "workspace_workspaceId_analytics_range_index_tsx_2469437584",
+      "page": {
+        "id": "workspace_workspaceId_analytics_range__1602344144",
         "name": "workspace/[workspaceId]/analytics/[range]",
         "folder": "pages",
-        "file": "workspace/[workspaceId]/analytics/[range]/index.tsx",
+        "file": "workspace/[workspaceId]/analytics/[range]/page.tsx",
         "pathTokens": [
           {
             "kind": "param",
@@ -118,7 +118,7 @@
         "h3Pattern": "workspace/:workspaceId/analytics/:range"
       },
       "layout": {
-        "id": "workspace_workspaceId_analytics_range_layout_tsx_2317889146",
+        "id": "workspace_workspaceId_analytics_range__1602344144",
         "name": "workspace/[workspaceId]/analytics/[range]",
         "folder": "pages",
         "file": "workspace/[workspaceId]/analytics/[range]/layout.tsx",

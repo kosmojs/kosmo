@@ -11,7 +11,14 @@ import {
   type ProjectSettings,
   type SourceFolder,
 } from "@kosmojs/core";
-import { formatCode, pathResolver, render, renderToFile } from "@kosmojs/lib";
+import {
+  API_ROUTE_BASENAME,
+  formatCode,
+  PAGE_ROUTE_BASENAME,
+  pathResolver,
+  render,
+  renderToFile,
+} from "@kosmojs/lib";
 
 import {
   exitOnError,
@@ -288,27 +295,18 @@ const seedSourceFolder = async (
 
   const { createPath } = pathResolver(projectSettings, sourceFolder);
 
+  const overwrite = (content: string) => !content?.trim().length;
+
   if (config.frontend) {
-    // create an empty index page, frontend generator will seed it accordingly
-    const frontend =
-      typeof config.frontend?.stack === "object"
-        ? config.frontend.stack.name
-        : config.frontend.stack;
-
-    const ext = {
-      react: "tsx",
-      solid: "tsx",
-      vue: "vue",
-      svelte: "svelte",
-      mdx: "mdx",
-    }[frontend];
-
-    await renderToFile(createPath.pages(`index/index.${ext}`), "", {});
+    // create an empty index route; generators seed it, along with its page file
+    const file = createPath.pages(`index/${PAGE_ROUTE_BASENAME}.ts`);
+    await renderToFile(file, "", { overwrite });
   }
 
   if (config.backend) {
     // create an empty index route, backend generator will seed it accordingly
-    await renderToFile(createPath.api("index/index.ts"), "", {});
+    const file = createPath.api(`index/${API_ROUTE_BASENAME}.ts`);
+    await renderToFile(file, "", { overwrite });
   }
 
   for (const generator of generators) {

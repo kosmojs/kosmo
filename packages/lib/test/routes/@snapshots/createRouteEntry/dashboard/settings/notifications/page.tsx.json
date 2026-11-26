@@ -1,0 +1,44 @@
+{
+  "id": "dashboard_settings_notifications_940256209",
+  "name": "dashboard/settings/notifications",
+  "folder": "pages",
+  "file": "dashboard/settings/notifications/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "dashboard",
+      "pattern": "dashboard",
+      "parts": [
+        {
+          "type": "static",
+          "value": "dashboard"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "settings",
+      "pattern": "settings",
+      "parts": [
+        {
+          "type": "static",
+          "value": "settings"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "notifications",
+      "pattern": "notifications",
+      "parts": [
+        {
+          "type": "static",
+          "value": "notifications"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "dashboard/settings/notifications",
+  "honoPattern": "dashboard/settings/notifications",
+  "h3Pattern": "dashboard/settings/notifications"
+}

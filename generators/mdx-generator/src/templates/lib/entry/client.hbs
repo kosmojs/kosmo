@@ -8,18 +8,18 @@ import {
 
 import { createRoute, type RouteComponent } from "../mdx";
 
-{{#each pageRoutes}}
+{{#each files}}
 const {{id}} = () => import("{{ createImport 'pages' file }}");
 {{/each}}
 {{#each layouts}}
-const {{id}} = () => import("{{ createImport 'pages' file }}");
+const {{id}}_layout = () => import("{{ createImport 'pages' file }}");
 {{/each}}
 
 export const createRoutes = () => {
   return [
-    {{#each pageRoutes}}
+    {{#each files}}
     createRoute("{{name}}", "{{pathPattern}}", {{id}}, [
-      {{#each layouts}}["{{name}}", {{id}}], {{/each}}
+      {{#each layouts}}["{{name}}", {{id}}_layout], {{/each}}
     ]),
     {{/each}}
   ];

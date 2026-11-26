@@ -11,7 +11,7 @@ head:
 
 The fetch index exports a map of route paths to their clients:
 
-```ts [pages/example/index.tsx]
+```ts [pages/example/page.tsx]
 import fetchClients from "_/fetch";
 
 const response = await fetchClients["users/[id]"].GET([123]);
@@ -37,7 +37,7 @@ export default defineRoute<"users/[id]", [number]>(({ GET }) => [
 
 The client expects a number parameter and an optional payload:
 
-```ts [pages/example/index.tsx]
+```ts [pages/example/page.tsx]
 const useFetch = fetchClients["users/[id]"];
 
 const response = await useFetch.GET([123]);
@@ -69,7 +69,7 @@ The client adapts to exactly what your API expects - passing the wrong shape is 
 The call above needs no variant for the server. In the browser it issues a same-origin network request;
 during SSR it dispatches to the API route in-process:
 
-```ts [pages/example/index.tsx]
+```ts [pages/example/page.tsx]
 // identical in a client component and in an SSR loader
 const response = await fetchClients["users/[id]"].GET([123]);
 ```

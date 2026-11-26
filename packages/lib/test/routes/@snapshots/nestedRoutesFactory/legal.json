@@ -1,6 +1,6 @@
 {
   "layout": {
-    "id": "legal_layout_tsx_1366181041",
+    "id": "legal_3814899792",
     "name": "legal",
     "folder": "pages",
     "file": "legal/layout.tsx",
@@ -23,11 +23,11 @@
   },
   "children": [
     {
-      "index": {
-        "id": "legal_privacy_index_tsx_603606551",
+      "page": {
+        "id": "legal_privacy_2834241270",
         "name": "legal/privacy",
         "folder": "pages",
-        "file": "legal/privacy/index.tsx",
+        "file": "legal/privacy/page.tsx",
         "pathTokens": [
           {
             "kind": "static",
@@ -49,11 +49,11 @@
       "children": []
     },
     {
-      "index": {
-        "id": "legal_terms_index_tsx_3828107619",
+      "page": {
+        "id": "legal_terms_3601362801",
         "name": "legal/terms",
         "folder": "pages",
-        "file": "legal/terms/index.tsx",
+        "file": "legal/terms/page.tsx",
         "pathTokens": [
           {
             "kind": "static",

@@ -50,7 +50,7 @@ Reads the result of the page's `loader` export, resolved before render.
 :::tabs key:frontend variant:code
 == Vue
 ```vue
-<!-- Vue: pages/users/[id]/index.vue -->
+<!-- Vue: pages/users/[id]/page.vue -->
 <script setup lang="ts">
 import { useLoaderData } from "_/use";
 import type { ResponseT } from "_/fetch";
@@ -61,7 +61,7 @@ const user = useLoaderData<ResponseT["users/[id]"]["GET"]>();
 
 == Svelte
 ```svelte
-<!-- Svelte: pages/users/[id]/index.svelte -->
+<!-- Svelte: pages/users/[id]/page.svelte -->
 <script lang="ts">
 import { useLoaderData } from "_/use";
 import type { ResponseT } from "_/fetch";
@@ -72,7 +72,7 @@ const user = useLoaderData<ResponseT["users/[id]"]["GET"]>();
 
 == MDX
 ```mdx
-{/* MDX: pages/users/[id]/index.mdx */}
+{/* MDX: pages/users/[id]/page.mdx */}
 import { useLoaderData } from "_/use";
 
 export const Profile = () => {

@@ -1,9 +1,9 @@
 {
-  "index": {
-    "id": "signup_index_tsx_1574634146",
+  "page": {
+    "id": "signup_1319313135",
     "name": "signup",
     "folder": "pages",
-    "file": "signup/index.tsx",
+    "file": "signup/page.tsx",
     "pathTokens": [
       {
         "kind": "static",

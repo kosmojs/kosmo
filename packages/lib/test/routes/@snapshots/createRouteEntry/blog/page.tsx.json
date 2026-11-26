@@ -1,0 +1,22 @@
+{
+  "id": "blog_3222622531",
+  "name": "blog",
+  "folder": "pages",
+  "file": "blog/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "blog",
+      "pattern": "blog",
+      "parts": [
+        {
+          "type": "static",
+          "value": "blog"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "blog",
+  "honoPattern": "blog",
+  "h3Pattern": "blog"
+}

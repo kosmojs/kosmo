@@ -1,0 +1,46 @@
+{
+  "id": "shop_product_id__3182361986",
+  "name": "shop/product/[id]",
+  "folder": "pages",
+  "file": "shop/product/[id]/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "shop",
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "product",
+      "pattern": "product",
+      "parts": [
+        {
+          "type": "static",
+          "value": "product"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[id]",
+      "pattern": ":id",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "id",
+          "const": "id"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "shop/product/:id",
+  "honoPattern": "shop/product/:id",
+  "h3Pattern": "shop/product/:id"
+}

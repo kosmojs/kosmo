@@ -1,5 +1,5 @@
 {
-  "id": "books_category_author_index_ts_938545357",
+  "id": "books_category_author__558912485",
   "name": "books/[category]/{author}",
   "folder": "api",
   "file": "books/[category]/{author}/index.ts",

@@ -1,0 +1,22 @@
+{
+  "id": "admin_2282622326",
+  "name": "admin",
+  "folder": "pages",
+  "file": "admin/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "admin",
+      "pattern": "admin",
+      "parts": [
+        {
+          "type": "static",
+          "value": "admin"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "admin",
+  "honoPattern": "admin",
+  "h3Pattern": "admin"
+}

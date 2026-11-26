@@ -12,9 +12,10 @@ head:
 Every frontend framework supports template overrides for specific routes through <span style="white-space: nowrap">pattern-based</span> matching.
 Useful for standardizing structure across landing pages, admin tools, or any section requiring a consistent starting point.
 
-Templates seed page `index` files - `pages/**/index.*` -
+Templates seed the page file of a route - `pages/**/page.*` -
 and, through the [function form](#template-format), `layout` files too.
-Every other seeded file gets the built-in minimal boilerplate to start from.
+Every other seeded file gets the built-in minimal boilerplate to start from,
+the route's own `index.ts` included.
 
 ## Configuration
 
@@ -127,28 +128,31 @@ themselves rather than glob syntax:
 Templates are written to disk as the page component file.
 A template can be either a **plain string**, or a **function**.
 
-A string seeds the page `index` file of every matching route.
+A string seeds the page file of every matching route.
 
 A function receives the resolved entry, `{ kind, entry }`, and returns the template,
 or `undefined` to use the built-in boilerplate.
 
-It is called for page routes (`kind: "pageRoute"`) and for layouts (`kind: "pageLayout"`),
-so one pattern can seed both, and the output can depend on the route itself:
+It is called once for every file it may seed, and `kind` tells which one:
+`pageRoute` for the route's `index.ts`, `pageFile` for its page file, `pageLayout` for a layout.
+So one pattern can seed all three, and the output can depend on the route itself:
 
 ```ts
 templates: {
-  // a plain string, for the page index file
+  // a plain string, for the page file
   "landing/*": landingTemplate,
 
-  // a function, for the page index file and the layout of every admin route
   "admin/**": ({ kind, entry }) => {
     if (kind === "pageLayout") {
-      return adminLayout;
+      return adminLayout; // seed layout.<ext>
     }
-    return `
-export default function Page() {
-  return <h1>${entry.name}</h1>;
-}`;
+    if (kind === "pageFile") {
+      return adminPage; // seed page.<ext>
+    }
+    if (kind === "pageRoute") {
+      return adminIndex; // seed index.ts
+    }
+    return undefined;
   },
 
   // a function returning undefined, to seed only the layout
@@ -159,7 +163,7 @@ export default function Page() {
 ```
 
 The pattern is matched against the route an entry belongs to:
-`admin/settings/index.tsx` and `admin/settings/layout.tsx` are both matched as `admin/settings`.
+`admin/settings/page.tsx` and `admin/settings/layout.tsx` are both matched as `admin/settings`.
 
 Each framework has its own component structure:
 

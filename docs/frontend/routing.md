@@ -13,11 +13,12 @@ head:
         route hierarchy, outlet pattern, router view, kosmojs routing
 ---
 
-On the frontend, a route is a **page component**,
-optionally wrapped in **layouts** inherited from the folders above it.
+On the frontend, a route is a folder with an **`index.ts`** in it,
+rendered by the **page component** next to it,
+and optionally wrapped in **layouts** inherited from the folders above it.
 
 You never register any of it. The dev server watches `pages/` dir,
-and as pages are created, renamed or deleted,
+and as routes are created, renamed or deleted,
 a matching route configuration is written into `var/lib/` for your framework's router to consume.
 
 This page covers the frontend specifics. The shared fundamentals are in
@@ -25,43 +26,61 @@ This page covers the frontend specifics. The shared fundamentals are in
 and the parameter syntax is in [Parameters](/routing/params).
 For how API routes are resolved, see <span class="text-nowrap">[Backend Routing](/backend/routing)</span>.
 
-## One folder, one page
+## One folder, one route
 
 ~~~txt
 pages/
 ├── index/
-│   └── index.tsx             ->  /
+│   ├── index.ts              ->  /
+│   └── page.tsx
 ├── users/
-│   ├── index.tsx             ->  /users
+│   ├── index.ts              ->  /users
+│   ├── page.tsx
 │   ├── types.ts              ->  helper, not a route
 │   └── [id]/
-│       └── index.tsx         ->  /users/:id
+│       ├── index.ts          ->  /users/:id
+│       └── page.tsx
 ├── dashboard/
 │   ├── layout.tsx            ->  wraps /dashboard and everything below
-│   ├── index.tsx             ->  /dashboard
+│   ├── index.ts              ->  /dashboard
+│   ├── page.tsx
 │   └── settings/
 │       ├── layout.tsx        ->  wraps /dashboard/settings and below
-│       └── index.tsx         ->  /dashboard/settings
+│       ├── index.ts          ->  /dashboard/settings
+│       └── page.tsx
 └── docs/
     └── {...path}/
-        └── index.tsx         ->  /docs/*
+        ├── index.ts          ->  /docs/*
+        └── page.tsx
 ~~~
 
-Only two filenames carry meaning inside `pages/`:
+Three filenames carry meaning inside `pages/`:
 
 | File | Role |
 |---|---|
-| `index.<ext>` | Defines the page. Its folder path is the URL. |
-| `layout.<ext>` | Wraps this folder's pages and everything beneath it. |
+| `index.ts` | Defines the route. Its folder path is the URL. |
+| `page.<ext>` | Renders the route. |
+| `layout.<ext>` | Wraps this folder's route and everything beneath it. |
+
+Only `index.ts` makes a route. `page.*` and `layout.*` are its assets:
+delete the `index.ts` and the folder is no longer a route, whatever else is in it.
 
 Everything else in a route folder - components, styles, types, tests - is yours.
-It is never scanned and never mistaken for a page.
+It is never scanned and never mistaken for a route.
 
-The extension depends on the framework the source folder runs.
+`index.ts` is plain TypeScript in every framework, and it only declares the route:
+
+```ts [pages/users/[id]/index.ts]
+import { defineRoute } from "_/pages";
+
+export default defineRoute<"users/[id]">();
+```
+
+The page and layout extensions depend on the framework the source folder runs.
 
 | | React | Solid | Vue | Svelte | MDX |
 |---|---|---|---|---|---|
-| Page | `index.tsx` | `index.tsx` | `index.vue` | `index.svelte` | `index.mdx` / `index.md` |
+| Page | `page.tsx` | `page.tsx` | `page.vue` | `page.svelte` | `page.mdx` |
 | Layout | `layout.tsx` | `layout.tsx` | `layout.vue` | `layout.svelte` | `layout.mdx` |
 
 A folder ignores other frameworks' files: a Vue folder skips `.tsx`, a React folder skips `.vue` and `.svelte`.
@@ -92,7 +111,7 @@ a folder at `base: "/"` catches only what no other folder claims.
 
 A page default-exports a component. Write it as a **named function**:
 
-```tsx [pages/users/index.tsx]
+```tsx [pages/users/page.tsx]
 export default function UserPage() {
   return <h1>User</h1>;
 }
@@ -100,7 +119,9 @@ export default function UserPage() {
 
 An anonymous arrow (`export default () => ...`) may break Vite's HMR.
 
-You rarely write the file from scratch: create it **empty** and the dev server seeds the correct boilerplate.
+You rarely write either file from scratch: create an **empty** `index.ts`
+and the dev server seeds it, along with a page file holding the correct boilerplate.
+An empty page file is seeded the same way.
 To control what gets seeded, use <span class="text-nowrap">[custom templates](/frontend/custom-templates)</span>.
 
 ## Parameters
@@ -132,12 +153,13 @@ In React and SolidJS the import does not resolve at all - use the router's own h
 
 * **Static beats dynamic.** `users/me` wins over `users/[id]` for `/users/me`.
 * **Optional parameters must not be followed by required ones.**
-  `users/{section}/{subsection}` is fine; `users/{optional}/[required]` is not.
+`users/{section}/{subsection}` is fine; `users/{optional}/[required]` is not.
 * **An optional segment before a static one can swallow it.** With `properties/{city}/filters`,
-  `/properties/filters` binds `{city}` to `"filters"` and 404s. Add an explicit static sibling
-  (`properties/filters/index.tsx`) and static priority resolves it.
-* **A sibling `index` makes `[id]` effectively optional.** With both `careers/index.tsx` and `careers/[jobId]/index.tsx`,
-  there is already a fallback for `/careers`, so `{jobId}` and `[jobId]` behave the same.
+`/properties/filters` binds `{city}` to `"filters"` and 404s.
+Add an explicit static sibling (`properties/filters/index.ts`) and static priority resolves it.
+* **A sibling route makes `[id]` effectively optional.**
+With both `careers/index.ts` and `careers/[jobId]/index.ts`,
+there is already a fallback for `/careers`, so `{jobId}` and `[jobId]` behave the same.
 
 [Details&nbsp;›](/routing/params#watch-out-for-ambiguous-paths)
 
@@ -163,7 +185,7 @@ A request to `/dashboard/settings` renders, outermost first:
 pages/layout.tsx                       (if present)
   pages/dashboard/layout.tsx
     pages/dashboard/settings/layout.tsx
-      pages/dashboard/settings/index.tsx
+      pages/dashboard/settings/page.tsx
 ```
 
 Layouts stack outward-in and cannot be escaped by child routes.
@@ -233,10 +255,10 @@ lazy loading, nested layouts, navigation guards, `loader` and `preload`, error e
 
 | You want | You write |
 |---|---|
-| A page at `/orders` | `pages/orders/index.tsx` (extension per framework) |
-| The root page `/` | `pages/index/index.tsx` |
+| A page at `/orders` | `pages/orders/index.ts`, rendered by `pages/orders/page.tsx` (extension per framework) |
+| The root page `/` | `pages/index/index.ts` and `pages/index/page.tsx` |
 | A required / optional / catch-all segment | `[id]` / `{id}` / `{...path}` |
 | Shared UI for a section | A `layout.<ext>` in that section's folder |
 | Data before render | A `loader` (`preload` in Solid) export on the page |
 | A typed link | `<Link to={["users/[id]", 123]} />` |
-| A helper next to a page | Any file other than `index.<ext>` / `layout.<ext>` |
+| A helper next to a page | Any file other than `index.ts` / `page.<ext>` / `layout.<ext>` |

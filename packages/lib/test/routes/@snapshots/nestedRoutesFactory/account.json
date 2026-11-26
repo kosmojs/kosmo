@@ -1,6 +1,6 @@
 {
   "layout": {
-    "id": "account_layout_tsx_2977242696",
+    "id": "account_2100713124",
     "name": "account",
     "folder": "pages",
     "file": "account/layout.tsx",
@@ -23,11 +23,11 @@
   },
   "children": [
     {
-      "index": {
-        "id": "account_profile_index_tsx_1987383209",
+      "page": {
+        "id": "account_profile_3828101079",
         "name": "account/profile",
         "folder": "pages",
-        "file": "account/profile/index.tsx",
+        "file": "account/profile/page.tsx",
         "pathTokens": [
           {
             "kind": "static",

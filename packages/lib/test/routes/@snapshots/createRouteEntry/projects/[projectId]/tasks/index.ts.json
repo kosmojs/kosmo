@@ -1,0 +1,46 @@
+{
+  "id": "projects_projectId_tasks_1586398423",
+  "name": "projects/[projectId]/tasks",
+  "folder": "pages",
+  "file": "projects/[projectId]/tasks/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "projects",
+      "pattern": "projects",
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[projectId]",
+      "pattern": ":projectId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "projectId",
+          "const": "projectId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "tasks",
+      "pattern": "tasks",
+      "parts": [
+        {
+          "type": "static",
+          "value": "tasks"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "projects/:projectId/tasks",
+  "honoPattern": "projects/:projectId/tasks",
+  "h3Pattern": "projects/:projectId/tasks"
+}

@@ -10,6 +10,7 @@ import {
   createRouteEntry,
   isApiRoute,
   isApiUse,
+  isPageFile,
   isPageLayout,
   isPageRoute,
   type ResolverSignature,
@@ -30,6 +31,7 @@ export const routesFactory = async (
     apiRouteResolver,
     apiUseResolver,
     pageRouteResolver,
+    pageFileResolver,
     pageLayoutResolver,
   } = resolverFactory(projectSettings, sourceFolder, cacheFactory);
 
@@ -54,6 +56,8 @@ export const routesFactory = async (
       } else if (entry.folder === defaults.pagesDir) {
         if (isPageRoute(entry.file)) {
           resolvers.set(entry.fileFullpath, pageRouteResolver(entry));
+        } else if (isPageFile(entry.file)) {
+          resolvers.set(entry.fileFullpath, pageFileResolver(entry));
         } else if (isPageLayout(entry.file)) {
           resolvers.set(entry.fileFullpath, pageLayoutResolver(entry));
         }

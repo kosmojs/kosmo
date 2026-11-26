@@ -71,7 +71,8 @@ src/app/
 └── pages/
     └── users/
         └── [id]/
-            └── index.tsx      ->  /users/:id
+            ├── index.ts       ->  /users/:id
+            └── page.tsx
 ```
 
 

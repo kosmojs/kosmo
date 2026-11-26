@@ -1,4 +1,4 @@
-import { readdir, rm, rmdir, stat } from "node:fs/promises";
+import { readdir, rm, rmdir } from "node:fs/promises";
 import http, { type IncomingMessage, type ServerResponse } from "node:http";
 import { dirname, join, resolve, sep } from "node:path";
 import { styleText } from "node:util";
@@ -31,10 +31,13 @@ import type { DevApp, DevSetup } from "@kosmojs/core/api";
 import {
   cacheDir,
   createAliasPatterns,
+  createPageRoutePath,
+  isPageFile,
   mergeConfigs,
   pathResolver,
   type ResolverSignature,
   routesFactory,
+  scanPageFiles,
   spinnerFactory,
   vitePluginsFactory,
 } from "@kosmojs/lib";
@@ -55,7 +58,8 @@ const TEARDOWN_TIMEOUT_MS = 3_000;
 /**
  * A default runner listens on Vite's hot channel and, told to full-reload,
  * evaluates its entry again by itself, next to what is already running:
- * one more API program with its own db pool and sockets, one more copy of a service's modules,
+ * one more API program with its own db pool and sockets,
+ * one more copy of a service's modules,
  * and nothing left to tear either down.
  *
  * Replacing what runs is done by the reloads below and nowhere else,
@@ -859,21 +863,45 @@ const buildSourceFolder = async (
   const { createPath } = pathResolver(projectSettings, sourceFolder);
   const { frontend, backend, sidecar } = sourceFolder.config;
 
-  // routes are pages and API; a folder with neither, a sidecar alone, has none to resolve
-  const { resolvers } =
-    frontend || backend
-      ? await routesFactory(projectSettings, sourceFolder, cacheFactory)
-      : { resolvers: new Map<string, ResolverSignature>() };
-
-  let resolvedRoutes = await resolveRoutes(sourceFolder, resolvers);
-
-  // route files still empty when resolved; generators seed them
-  const seededFiles: Array<string> = [];
-
-  for (const file of resolvers?.keys() ?? []) {
-    if ((await stat(file)).size === 0) {
-      seededFiles.push(file);
+  const routesResolver = async () => {
+    if (frontend || backend) {
+      const { resolvers } = await routesFactory(
+        projectSettings,
+        sourceFolder,
+        cacheFactory,
+      );
+      return resolveRoutes(sourceFolder, resolvers);
     }
+
+    // routes are pages and API; a folder with neither, a sidecar alone, has none to resolve
+    return [];
+  };
+
+  const generators = sourceFolder.generators.map(({ factory }) => {
+    return factory(projectSettings, sourceFolder);
+  });
+
+  /**
+   * INFO: Multi-stage build;
+   *  1: resolve routes
+   *  2: generators run build hook - blank route files get seeded
+   *  3: resolve routes again, generators run build hook again -
+   *     seeded files resolve with what was seeded, bundles are built from that
+   *  4: vite build frontend/backend/sidecar
+   *  5: generators run postBuild hook
+   * */
+
+  {
+    const resolvedRoutes = await routesResolver();
+    for (const generator of generators) {
+      await generator.build?.(resolvedRoutes);
+    }
+  }
+
+  const resolvedRoutes = await routesResolver();
+
+  for (const generator of generators) {
+    await generator.build?.(resolvedRoutes);
   }
 
   const vitePlugins = vitePluginsFactory(projectSettings, sourceFolder);
@@ -888,26 +916,6 @@ const buildSourceFolder = async (
       command,
     }),
   ];
-
-  const runGenerators = async () => {
-    for (const generator of sourceFolder.generators) {
-      await generator
-        .factory(projectSettings, sourceFolder)
-        .build?.(resolvedRoutes);
-    }
-  };
-
-  await runGenerators();
-
-  /**
-   * A seeded file was resolved empty: no methods, no validation definitions.
-   * Resolve again with what was seeded, and generated from that,
-   * as the dev server does when it sees the seeded file change.
-   * */
-  if (seededFiles.length) {
-    resolvedRoutes = await resolveRoutes(sourceFolder, resolvers);
-    await runGenerators();
-  }
 
   if (frontend) {
     // INFO: === build the frontend ===
@@ -1042,10 +1050,8 @@ const buildSourceFolder = async (
     );
   }
 
-  for (const generator of sourceFolder.generators) {
-    await generator
-      .factory(projectSettings, sourceFolder)
-      .postBuild?.(resolvedRoutes);
+  for (const generator of generators) {
+    await generator.postBuild?.(resolvedRoutes);
   }
 };
 
@@ -1112,7 +1118,9 @@ const eventFactory = async (
       resolvedRoutes.set(resolvedEntry.entry.fileFullpath, resolvedEntry);
       return resolvedEntry;
     } catch (error) {
-      const route = file.replace(`${createPath.api()}/`, "");
+      const route = file
+        .replace(`${createPath.api()}/`, "")
+        .replace(`${createPath.pages()}/`, "");
       console.error(
         styleText(
           "red",
@@ -1139,10 +1147,29 @@ const eventFactory = async (
         return;
       }
 
+      // a page file is loaded only next to the index.ts of a known route
+      if (
+        isPageFile(file) &&
+        !resolvers.has(createPageRoutePath({ fileFullpath: file }))
+      ) {
+        return;
+      }
+
       resolvers.set(file, resolver);
 
       // call only after `resolvers.set(file)`
       const resolvedEntry = await updateResolvedEntry(file);
+
+      if (resolvedEntry?.kind === "pageRoute") {
+        // page files already there become the route's, now it is declared
+        for (const pageFile of await scanPageFiles(file)) {
+          const [pageResolver] = resolversFactory([pageFile]).values();
+          if (pageResolver) {
+            resolvers.set(pageFile, pageResolver);
+            await updateResolvedEntry(pageFile);
+          }
+        }
+      }
 
       if (resolvedEntry) {
         await runGenerators({ kind: "create", file });
@@ -1179,6 +1206,19 @@ const eventFactory = async (
 
       resolvers.delete(file);
       resolvedRoutes.delete(file);
+
+      if (resolved?.kind === "pageRoute") {
+        // its page files stay on disk, but they are no route's anymore
+        for (const { kind, entry } of [...resolvedRoutes.values()]) {
+          if (
+            kind === "pageFile" &&
+            dirname(entry.fileFullpath) === dirname(file)
+          ) {
+            resolvers.delete(entry.fileFullpath);
+            resolvedRoutes.delete(entry.fileFullpath);
+          }
+        }
+      }
 
       if (resolved?.kind === "apiRoute") {
         /**

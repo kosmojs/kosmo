@@ -47,7 +47,7 @@ users/{optional}/[required]   ❌
 Optional parameters followed by static segments can cause unexpected 404s:
 
 ```
-properties/{city}/filters/index.tsx
+properties/{city}/filters/index.ts
 ```
 
 Visiting `/properties/filters`: the router matches `{city}` = `"filters"`,
@@ -57,25 +57,25 @@ Fix it by adding an explicit static route:
 
 ```
 properties/
-├── filters/index.tsx          -> /properties/filters
+├── filters/index.ts          -> /properties/filters
 └── {city}/
-    └── filters/index.tsx      -> /properties/NY/filters
+    └── filters/index.ts      -> /properties/NY/filters
 ```
 
 Static routes always take priority over dynamic ones.
 
 ### Required vs Optional - a Subtlety
 
-`[id]` technically means "required at this URL position", but a sibling `index` file changes that:
+`[id]` technically means "required at this URL position", but a sibling route changes that:
 
 ```
 careers/
-├── index.tsx       -> /careers (fallback when no id)
+├── index.ts       -> /careers (fallback when no id)
 └── [jobId]/
-    └── index.tsx   -> /careers/123
+    └── index.ts   -> /careers/123
 ```
 
-When a parent `index` exists, `[jobId]` is effectively optional - there's a fallback to render.
+When a parent route exists, `[jobId]` is effectively optional - there's a fallback to render.
 In this case, `{jobId}` communicates intent more clearly and both notations work identically.
 
 ## Splat Parameters

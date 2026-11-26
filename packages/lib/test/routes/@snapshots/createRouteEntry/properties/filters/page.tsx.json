@@ -1,0 +1,33 @@
+{
+  "id": "properties_filters_1252194096",
+  "name": "properties/filters",
+  "folder": "pages",
+  "file": "properties/filters/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "properties",
+      "pattern": "properties",
+      "parts": [
+        {
+          "type": "static",
+          "value": "properties"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "filters",
+      "pattern": "filters",
+      "parts": [
+        {
+          "type": "static",
+          "value": "filters"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "properties/filters",
+  "honoPattern": "properties/filters",
+  "h3Pattern": "properties/filters"
+}

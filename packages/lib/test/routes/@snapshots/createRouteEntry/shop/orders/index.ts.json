@@ -1,0 +1,33 @@
+{
+  "id": "shop_orders_2363820871",
+  "name": "shop/orders",
+  "folder": "pages",
+  "file": "shop/orders/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "shop",
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "orders",
+      "pattern": "orders",
+      "parts": [
+        {
+          "type": "static",
+          "value": "orders"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "shop/orders",
+  "honoPattern": "shop/orders",
+  "h3Pattern": "shop/orders"
+}

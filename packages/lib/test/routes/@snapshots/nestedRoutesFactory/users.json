@@ -1,9 +1,9 @@
 {
-  "index": {
-    "id": "users_index_tsx_3827824650",
+  "page": {
+    "id": "users_344172009",
     "name": "users",
     "folder": "pages",
-    "file": "users/index.tsx",
+    "file": "users/page.tsx",
     "pathTokens": [
       {
         "kind": "static",
@@ -22,7 +22,7 @@
     "h3Pattern": "users"
   },
   "layout": {
-    "id": "users_layout_tsx_2592424824",
+    "id": "users_344172009",
     "name": "users",
     "folder": "pages",
     "file": "users/layout.tsx",
@@ -45,11 +45,11 @@
   },
   "children": [
     {
-      "index": {
-        "id": "users_username_index_tsx_2988217479",
+      "page": {
+        "id": "users_username__1686078557",
         "name": "users/[username]",
         "folder": "pages",
-        "file": "users/[username]/index.tsx",
+        "file": "users/[username]/page.tsx",
         "pathTokens": [
           {
             "kind": "param",
@@ -70,7 +70,7 @@
         "h3Pattern": "users/:username"
       },
       "layout": {
-        "id": "users_username_layout_tsx_165316489",
+        "id": "users_username__1686078557",
         "name": "users/[username]",
         "folder": "pages",
         "file": "users/[username]/layout.tsx",
@@ -96,11 +96,11 @@
       "parent": "users",
       "children": [
         {
-          "index": {
-            "id": "users_username_followers_index_tsx_3491047874",
+          "page": {
+            "id": "users_username_followers_1107783251",
             "name": "users/[username]/followers",
             "folder": "pages",
-            "file": "users/[username]/followers/index.tsx",
+            "file": "users/[username]/followers/page.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -122,11 +122,11 @@
           "children": []
         },
         {
-          "index": {
-            "id": "users_username_following_index_tsx_1569883917",
+          "page": {
+            "id": "users_username_following_3081772567",
             "name": "users/[username]/following",
             "folder": "pages",
-            "file": "users/[username]/following/index.tsx",
+            "file": "users/[username]/following/page.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -148,11 +148,11 @@
           "children": []
         },
         {
-          "index": {
-            "id": "users_username_posts_index_tsx_3051146060",
+          "page": {
+            "id": "users_username_posts_2176026090",
             "name": "users/[username]/posts",
             "folder": "pages",
-            "file": "users/[username]/posts/index.tsx",
+            "file": "users/[username]/posts/page.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -171,7 +171,7 @@
             "h3Pattern": "users/:username/posts"
           },
           "layout": {
-            "id": "users_username_posts_layout_tsx_90922222",
+            "id": "users_username_posts_2176026090",
             "name": "users/[username]/posts",
             "folder": "pages",
             "file": "users/[username]/posts/layout.tsx",
@@ -195,11 +195,11 @@
           "parent": "users/[username]",
           "children": [
             {
-              "index": {
-                "id": "users_username_posts_postId_index_tsx_2337624193",
+              "page": {
+                "id": "users_username_posts_postId__3881455890",
                 "name": "users/[username]/posts/[postId]",
                 "folder": "pages",
-                "file": "users/[username]/posts/[postId]/index.tsx",
+                "file": "users/[username]/posts/[postId]/page.tsx",
                 "pathTokens": [
                   {
                     "kind": "param",
@@ -220,7 +220,7 @@
                 "h3Pattern": "users/:username/posts/:postId"
               },
               "layout": {
-                "id": "users_username_posts_postId_layout_tsx_3766512504",
+                "id": "users_username_posts_postId__3881455890",
                 "name": "users/[username]/posts/[postId]",
                 "folder": "pages",
                 "file": "users/[username]/posts/[postId]/layout.tsx",

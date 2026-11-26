@@ -7,6 +7,7 @@ import mdxFrontmatterPlugin from "remark-mdx-frontmatter";
 import { defaults, type PageRoute, type ResolvedEntry } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
+  createPageFilePath,
   createTemplateResolver,
   createWatchedPageRouteEntriesFilter,
   defineGeneratorFactory,
@@ -50,38 +51,53 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
     for (const resolvedEntry of entries) {
       const { kind, entry } = resolvedEntry;
       const customTemplate = templateResolver(entry.name, resolvedEntry)[kind];
-      if (kind === "pageRoute") {
+      if (kind === "pageLayout") {
         await deploySrcFile(
-          createPath.pages(entry.file),
+          entry.fileFullpath,
+          customTemplate || templates.srcPageSamplesLayout,
+          { entry },
+          { overwrite },
+        );
+      } else if (["pageRoute", "pageFile"].includes(kind)) {
+        await deploySrcFile(
+          createPageFilePath(entry, "mdx"),
           entry.name === "index"
             ? templates.srcPageSamplesWelcome
             : customTemplate || templates.srcPageSamplesPage,
           {
-            route: entry,
+            entry,
             title: entry.name.replace(/\{([^}]+)\}/g, "$1"),
             message: randomCongratMessage(),
           },
           { overwrite },
         );
-      } else if (kind === "pageLayout") {
-        await deploySrcFile(
-          createPath.pages(entry.file),
-          customTemplate || templates.srcPageSamplesLayout,
-          { route: entry },
-          { overwrite },
-        );
+        if (kind === "pageRoute") {
+          await deploySrcFile(
+            entry.fileFullpath,
+            templates.srcPageRoute,
+            { entry },
+            { overwrite },
+          );
+        }
       }
     }
   };
 
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
+    // defineRoute for the index.ts of page routes
+    await deployLibFile(createPath.lib("pages.ts"), templates.libPages, {});
+
+    const routes = entries.flatMap(({ kind, entry }) => {
+      return kind === "pageRoute" ? [entry] : [];
+    });
+
     const layouts = entries.flatMap(({ kind, entry }) => {
       return kind === "pageLayout" ? [entry] : [];
     });
 
-    const pageRoutes = entries
+    const files = entries
       .flatMap(({ kind, entry }) => {
-        if (kind === "pageRoute") {
+        if (kind === "pageFile") {
           const { name, file } = entry;
           return [
             {
@@ -106,7 +122,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       ["server.ts", templates.libEntryServer],
     ]) {
       await deployLibFile(createPath.libEntry(file), template, {
-        pageRoutes,
+        files,
         layouts,
       });
     }
@@ -115,7 +131,9 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       ["params.ts", templates.libParams],
       ["router.ts", templates.libRouter],
     ]) {
-      await deployLibFile(createPath.lib(file), template, { pageRoutes });
+      await deployLibFile(createPath.lib(file), template, {
+        routes,
+      });
     }
   };
 

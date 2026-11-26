@@ -74,6 +74,9 @@ export const createWatchedApiRouteEntriesFilter = (
  *   clients must generate on create, not only on a subsequent update.
  * - `update` event given: process the updated route,
  *    and any route referencing the updated file (shared types).
+ *
+ * A route is matched by its index.ts and by its page file alike,
+ * so creating either one seeds whichever of the two is still empty.
  * */
 export const createWatchedPageRouteEntriesFilter = (
   event: WatcherEvent | undefined,
@@ -87,7 +90,7 @@ export const createWatchedPageRouteEntriesFilter = (
     if (!eventsOfInterest.includes(event.kind)) {
       return false;
     }
-    return kind === "pageRoute" || kind === "pageLayout"
+    return kind === "pageRoute" || kind === "pageFile" || kind === "pageLayout"
       ? entry.fileFullpath === event.file
       : false;
   };

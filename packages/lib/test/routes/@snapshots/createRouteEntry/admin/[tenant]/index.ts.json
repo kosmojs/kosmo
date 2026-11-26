@@ -1,0 +1,35 @@
+{
+  "id": "admin_tenant__4029394976",
+  "name": "admin/[tenant]",
+  "folder": "pages",
+  "file": "admin/[tenant]/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "admin",
+      "pattern": "admin",
+      "parts": [
+        {
+          "type": "static",
+          "value": "admin"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[tenant]",
+      "pattern": ":tenant",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "tenant",
+          "const": "tenant"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "admin/:tenant",
+  "honoPattern": "admin/:tenant",
+  "h3Pattern": "admin/:tenant"
+}

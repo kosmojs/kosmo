@@ -70,3 +70,38 @@ export default defineConfig(
 
 The file is yours to configure: add more tests, settings, and so on,
 just do not remove `loadConfig()`, as that would exclude source folders from the test harness.
+
+### The project root
+
+`loadConfig()` loads source folders only.
+Tests at the project root - for code shared through `#/`, say - are deliberately not loaded:
+the root is yours to load and configure as you see fit.
+Loading it automatically would call for a way to configure it through Kosmo,
+which defeats the purpose.
+
+To test the root, add a project of your own.
+`mergeConfig` appends it to the projects `loadConfig()` returns:
+
+~~~ts [vitest.config.ts]
+import { defineConfig, mergeConfig } from "vitest/config";
+
+import { loadConfig } from "@kosmojs/vitest";
+
+export default defineConfig(
+  mergeConfig(
+    {
+      test: {
+        projects: [
+          {
+            test: {
+              name: "root",
+              include: ["test/**/*.test.ts"],
+            },
+          },
+        ],
+      },
+    },
+    await loadConfig(import.meta.dirname),
+  ),
+);
+~~~

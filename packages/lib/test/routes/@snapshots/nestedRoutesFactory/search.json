@@ -1,9 +1,9 @@
 {
-  "index": {
-    "id": "search_index_tsx_960598595",
+  "page": {
+    "id": "search_3035683751",
     "name": "search",
     "folder": "pages",
-    "file": "search/index.tsx",
+    "file": "search/page.tsx",
     "pathTokens": [
       {
         "kind": "static",
@@ -24,7 +24,7 @@
   "children": [
     {
       "layout": {
-        "id": "search_query_layout_tsx_3813281713",
+        "id": "search_query__671801423",
         "name": "search/{query}",
         "folder": "pages",
         "file": "search/{query}/layout.tsx",
@@ -50,11 +50,11 @@
       "parent": "search",
       "children": [
         {
-          "index": {
-            "id": "search_query_page_index_tsx_238838277",
+          "page": {
+            "id": "search_query_page__1336136964",
             "name": "search/{query}/{page}",
             "folder": "pages",
-            "file": "search/{query}/{page}/index.tsx",
+            "file": "search/{query}/{page}/page.tsx",
             "pathTokens": [
               {
                 "kind": "param",

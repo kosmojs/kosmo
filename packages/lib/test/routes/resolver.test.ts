@@ -23,6 +23,11 @@ describe("Routes Resolver", async () => {
     });
   }
 
+  // pages/orphan holds a page.tsx and no index.ts
+  test("a page file without an index.ts beside it is not scanned", () => {
+    expect(routeFiles.filter((file) => file.includes("/orphan/"))).toEqual([]);
+  });
+
   // also compare whole stack
   test("createRouteEntry", async () => {
     await expect(JSON.stringify(routeEntries, null, 2)).toMatchFileSnapshot(

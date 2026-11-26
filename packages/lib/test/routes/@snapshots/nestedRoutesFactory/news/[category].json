@@ -1,6 +1,6 @@
 {
   "layout": {
-    "id": "news_category_layout_tsx_4074534343",
+    "id": "news_category__2107111446",
     "name": "news/[category]",
     "folder": "pages",
     "file": "news/[category]/layout.tsx",
@@ -36,11 +36,11 @@
   },
   "children": [
     {
-      "index": {
-        "id": "news_category_articles_articlePath_index_tsx_4049923491",
+      "page": {
+        "id": "news_category_articles_articlePath__2698216149",
         "name": "news/[category]/articles/{...articlePath}",
         "folder": "pages",
-        "file": "news/[category]/articles/{...articlePath}/index.tsx",
+        "file": "news/[category]/articles/{...articlePath}/page.tsx",
         "pathTokens": [
           {
             "kind": "static",

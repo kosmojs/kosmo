@@ -1,0 +1,22 @@
+{
+  "id": "docs_1364667319",
+  "name": "docs",
+  "folder": "pages",
+  "file": "docs/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "docs",
+      "pattern": "docs",
+      "parts": [
+        {
+          "type": "static",
+          "value": "docs"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "docs",
+  "honoPattern": "docs",
+  "h3Pattern": "docs"
+}

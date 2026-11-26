@@ -1,0 +1,33 @@
+{
+  "id": "shop_cart_864259587",
+  "name": "shop/cart",
+  "folder": "pages",
+  "file": "shop/cart/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "shop",
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "cart",
+      "pattern": "cart",
+      "parts": [
+        {
+          "type": "static",
+          "value": "cart"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "shop/cart",
+  "honoPattern": "shop/cart",
+  "h3Pattern": "shop/cart"
+}

@@ -35,10 +35,13 @@ export default defineConfig({
 
 ## Writing Pages
 
-Pages are `.mdx` or `.md` files in your `pages/` directory.
+A page is the `page.mdx` file of a route folder in your `pages/` directory,
+next to the `index.ts` that declares the route.
+
+Only `page.mdx` is seeded and taken as the page file; a `page.md` is ignored.
 Standard markdown syntax works alongside JSX components:
 
-```mdx [pages/blog/index.mdx]
+```mdx [pages/blog/page.mdx]
 ---
 title: Blog
 description: Latest posts and updates.
@@ -88,9 +91,9 @@ export default function Alert(props: {
 }
 ```
 
-== pages/blog/index.mdx
+== pages/blog/page.mdx
 ```mdx
-{/* pages/blog/index.mdx */}
+{/* pages/blog/page.mdx */}
 import Alert from "./Alert.tsx"
 
 <Alert type="warning">
@@ -134,15 +137,18 @@ a `layout.mdx` file wraps all pages and nested layouts within its folder:
 ```txt
 pages/
 ├── index/
-│   └── index.mdx         ← wrapped by root layout
+│   ├── index.ts
+│   └── page.mdx          ← wrapped by root layout
 ├── docs/
 │   ├── layout.mdx        ← wraps all docs/* pages
 │   ├── links/
-│   │   └── index.mdx     ← wrapped by root + docs layout
+│   │   ├── index.ts
+│   │   └── page.mdx      ← wrapped by root + docs layout
 │   └── guide/
 │       ├── layout.mdx    ← wraps all docs/guide/* pages
 │       └── setup/
-│           └── index.mdx ← wrapped by root + docs + guide layout
+│           ├── index.ts
+│           └── page.mdx  ← wrapped by root + docs + guide layout
 ```
 
 For `/docs/guide/setup` the render order is:
@@ -151,7 +157,7 @@ For `/docs/guide/setup` the render order is:
 app.mdx (root layout)
 └── pages/docs/layout.mdx
     └── pages/docs/guide/layout.mdx
-        └── pages/docs/guide/setup/index.mdx
+        └── pages/docs/guide/setup/page.mdx
 ```
 
 ### Writing Layouts
@@ -210,7 +216,8 @@ src/content/
 └── pages/
     ├── layout.mdx
     └── index/
-        └── index.mdx
+        ├── index.ts
+        └── page.mdx
 ```
 
 ## Route Parameters
@@ -222,18 +229,21 @@ pages/
   blog/
     post/
       [slug]/
-        index.mdx        -> /blog/post/:slug
+        index.ts        -> /blog/post/:slug
+        page.mdx
     {category}/
-      index.mdx          -> /blog/:category (optional)
+      index.ts          -> /blog/:category (optional)
+      page.mdx
       {tag}/
-        index.mdx        -> /blog/:category/:tag (both optional)
+        index.ts        -> /blog/:category/:tag (both optional)
+        page.mdx
 ```
 
 Access parameters inside a component using `useParams()` from `_/use`.
 `.mdx` is not TypeScript, so it takes no type argument and the params come back untyped -
 move anything that needs the typed form into a `.tsx` component and import it:
 
-```mdx [pages/blog/post/[slug]/index.mdx]
+```mdx [pages/blog/post/[slug]/page.mdx]
 import { useParams } from "_/use";
 
 export const Post = () => {
@@ -249,7 +259,7 @@ export const Post = () => {
 Optional parameters come back possibly-undefined,
 and a splat parameter comes back as an array of segments or undefined:
 
-```mdx [pages/blog/{category}/{tag}/index.mdx]
+```mdx [pages/blog/{category}/{tag}/page.mdx]
 import { useParams } from "_/use";
 
 export const Filters = () => {
@@ -284,7 +294,7 @@ runs before the page is rendered, on both the server and the client.
 It receives the resolved route as first argument, and its return value is read
 inside the page with the `useLoaderData()` hook - `props` stays entirely yours.
 
-```mdx [pages/users/index.mdx]
+```mdx [pages/users/page.mdx]
 import f from "_/fetch";
 import { useLoaderData } from "_/use";
 
@@ -326,7 +336,7 @@ type LoaderRoute = {
 `paramsEntries` is a `[keys, values]` tuple, both in the same order the route
 declares its parameters - the same order `GET` expect:
 
-```mdx [pages/blog/[slug]/index.mdx]
+```mdx [pages/blog/[slug]/page.mdx]
 import f from "_/fetch";
 import { useLoaderData } from "_/use";
 

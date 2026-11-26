@@ -1,0 +1,33 @@
+{
+  "id": "legal_terms_3601362801",
+  "name": "legal/terms",
+  "folder": "pages",
+  "file": "legal/terms/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "legal",
+      "pattern": "legal",
+      "parts": [
+        {
+          "type": "static",
+          "value": "legal"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "terms",
+      "pattern": "terms",
+      "parts": [
+        {
+          "type": "static",
+          "value": "terms"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "legal/terms",
+  "honoPattern": "legal/terms",
+  "h3Pattern": "legal/terms"
+}

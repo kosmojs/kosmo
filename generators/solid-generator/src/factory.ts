@@ -3,13 +3,13 @@ import vitePlugin from "vite-plugin-solid";
 import { defaults, type ResolvedEntry } from "@kosmojs/core";
 import { routeRenderHelpers } from "@kosmojs/core/generators";
 import {
+  createPageFilePath,
   createTemplateResolver,
   createWatchedPageRouteEntriesFilter,
   defineGeneratorFactory,
   nestedRoutesFactory,
   pathResolver,
   renderFactory,
-  sortRoutes,
 } from "@kosmojs/lib";
 
 import { randomCongratMessage, traverseFactory } from "./base";
@@ -47,35 +47,47 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
     for (const resolvedEntry of entries) {
       const { kind, entry } = resolvedEntry;
       const customTemplate = templateResolver(entry.name, resolvedEntry)[kind];
-      if (kind === "pageRoute") {
+      if (kind === "pageLayout") {
         await deploySrcFile(
-          createPath.pages(entry.file),
+          entry.fileFullpath,
+          customTemplate || templates.srcPageSamplesLayout,
+          { entry },
+          { overwrite },
+        );
+      } else if (["pageRoute", "pageFile"].includes(kind)) {
+        await deploySrcFile(
+          createPageFilePath(entry, "tsx"),
           entry.name === "index"
             ? templates.srcPageSamplesWelcome
             : customTemplate || templates.srcPageSamplesPage,
-          { route: entry, message: randomCongratMessage() },
+          {
+            entry,
+            message: randomCongratMessage(),
+          },
           { overwrite },
         );
-      } else if (kind === "pageLayout") {
-        await deploySrcFile(
-          createPath.pages(entry.file),
-          customTemplate || templates.srcPageSamplesLayout,
-          { route: entry },
-          { overwrite },
-        );
+        if (kind === "pageRoute") {
+          await deploySrcFile(
+            entry.fileFullpath,
+            templates.srcPageRoute,
+            { entry },
+            { overwrite },
+          );
+        }
       }
     }
   };
 
   const generateLibFiles = async (entries: Array<ResolvedEntry>) => {
-    const indexRoutes = entries
-      .flatMap(({ kind, entry }) => {
-        return kind === "pageRoute" ? [entry] : [];
-      })
-      .sort(sortRoutes);
+    // defineRoute for the index.ts of page routes
+    await deployLibFile(createPath.lib("pages.ts"), templates.libPages, {});
 
     const pageEntries = entries.flatMap(({ kind, entry }) => {
-      return kind === "pageRoute" || kind === "pageLayout" ? [entry] : [];
+      return kind === "pageFile"
+        ? [entry]
+        : kind === "pageLayout"
+          ? [{ ...entry, id: `${entry.id}_layout` }]
+          : [];
     });
 
     const nestedRoutes = entriesTraverser(nestedRoutesFactory(pageEntries));
@@ -90,10 +102,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
       });
     }
 
-    await deployLibFile(createPath.lib("router.tsx"), templates.libRouter, {
-      entries,
-      indexRoutes,
-    });
+    await deployLibFile(createPath.lib("router.tsx"), templates.libRouter, {});
   };
 
   return {

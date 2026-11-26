@@ -45,11 +45,13 @@ src/<folder>/
 └── pages/
     ├── 404.tsx           -> rendered for unmatched routes
     ├── index/
-    │   └── index.tsx     -> the route  ->  /
+    │   ├── index.ts      -> the route  ->  /
+    │   └── page.tsx      -> renders it
     └── users/
         ├── layout.tsx    -> wraps everything under /users
         └── [id]/
-            └── index.tsx -> the route  ->  /users/:id
+            ├── index.ts  -> the route  ->  /users/:id
+            └── page.tsx  -> renders it
 ```
 
 ### Foundation files
@@ -69,23 +71,24 @@ src/<folder>/
 
 | File | What&nbsp;it&nbsp;is |
 |---|---|
-| `<route>/index.*` | **The route**. Its folder path becomes the URL. |
+| `<route>/index.ts` | **The route**. Its folder path becomes the URL. |
+| `<route>/page.*` | Renders the route. Only works **next to an `index.ts`**. |
 | `<route>/layout.*` | Wraps that folder and everything beneath it. Only works **inside a route folder**. [Details&nbsp;›](/frontend/layouts) |
 | `404.*` | The catch-all [error page](/frontend/error-pages) for unmatched URLs. |
 | anything&nbsp;else | A colocated helper - never a route. |
 
 ### Extensions per framework
 
-`router.ts` and `entry/*` are always `.ts`; everything else follows the framework:
+`router.ts`, `entry/*` and a route's `index.ts` are always `.ts`;
+everything else follows the framework:
 
-| | React | SolidJS | Vue | Svelte | MDX |
+| | React | Solid | Vue | Svelte | MDX |
 |---|:---:|:---:|:---:|:---:|:---:|
 | App file | `app.tsx` | `app.tsx` | `app.vue` | `app.svelte` | `app.mdx` |
-| Page | `index.tsx` | `index.tsx` | `index.vue` | `index.svelte` | `index.mdx` / `.md` |
+| Page | `page.tsx` | `page.tsx` | `page.vue` | `page.svelte` | `page.mdx` |
 | Layout | `layout.tsx` | `layout.tsx` | `layout.vue` | `layout.svelte` | `layout.mdx` |
 | Error&nbsp;page | `404.tsx` | `404.tsx` | `404.vue` | `404.svelte` | `404.mdx` |
 | `Link` | `Link.tsx` | `Link.tsx` | `Link.vue` | `Link.svelte` | `Link.tsx` |
-| Extra | – | – | – | – | `components/mdx.ts` (component map) |
 
 A source folder runs exactly one framework and ignores the others' files - a Vue folder never picks up a stray `.tsx` page.
 [Full&nbsp;matrix&nbsp;›](/essentials/frameworks#frontends)
@@ -101,7 +104,7 @@ configuration. Each framework has its own JSX import source requirement:
 | Framework | `jsxImportSource` |
 |-----------|-------------------|
 | React | `"react"` |
-| SolidJS | `"solid-js"` |
+| Solid | `"solid-js"` |
 | Vue | `"vue"` *(only when using JSX)* |
 | Svelte | n/a *(no JSX - compiled from `.svelte`)* |
 | MDX | `"preact"` |

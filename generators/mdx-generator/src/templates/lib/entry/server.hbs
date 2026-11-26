@@ -10,18 +10,18 @@ import { serverRenderFactory } from "@kosmojs/core/generators";
 
 import { createRoute, type Route, type RouteComponent } from "../mdx";
 
-{{#each pageRoutes}}
+{{#each files}}
 import * as {{id}} from "{{ createImport 'pages' file }}";
 {{/each}}
 {{#each layouts}}
-import * as {{id}} from "{{ createImport 'pages' file }}";
+import * as {{id}}_layout from "{{ createImport 'pages' file }}";
 {{/each}}
 
 export const createRoutes = () => {
   return [
-    {{#each pageRoutes}}
+    {{#each files}}
     createRoute("{{name}}", "{{pathPattern}}", async () => {{id}}, [
-      {{#each layouts}}["{{name}}", async () => {{id}}], {{/each}}
+      {{#each layouts}}["{{name}}", async () => {{id}}_layout], {{/each}}
     ]),
     {{/each}}
   ];

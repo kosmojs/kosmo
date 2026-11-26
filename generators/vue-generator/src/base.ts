@@ -50,11 +50,14 @@ export const pathFactory = (pathTokens: Array<PathToken>) => {
 };
 
 export const traverseFactory = () => {
-  // A top-level route made of optional params only (e.g. pages/{filter} -> "/:filter?")
-  // compiles to an empty path when the params are absent,
-  // and with the router-wide `strict: true` vue-router no longer matches it against "/".
-  // Relax strictness for that route only (per-record option), so ranking of every other route stays strict.
-  // Nested ones (e.g. "/blog/:category?") keep a static prefix and match fine.
+  /**
+   * A top-level route made of optional params only (e.g. pages/{filter} -> "/:filter?")
+   * compiles to an empty path when the params are absent,
+   * and with the router-wide `strict: true` vue-router no longer matches it against "/".
+   * Relax strictness for that route only (per-record option),
+   * so ranking of every other route stays strict.
+   * Nested ones (e.g. "/blog/:category?") keep a static prefix and match fine.
+   * */
   const isRootWithOptionalOnlyParams = (
     parent: string | undefined,
     pathTokens: Array<PathToken>,
@@ -84,8 +87,8 @@ export const traverseFactory = () => {
     entries: Array<NestedRouteEntry>,
     parent?: string | undefined,
   ): Array<TransformedEntry> => {
-    return entries.flatMap(({ index, layout, children }) => {
-      const { name, pathTokens } = { ...index, ...layout } as RouteEntry;
+    return entries.flatMap(({ page, layout, children }) => {
+      const { name, pathTokens } = { ...page, ...layout } as RouteEntry;
 
       if (!pathTokens) {
         // this is unlikely to happen, but still...
@@ -108,7 +111,7 @@ export const traverseFactory = () => {
       const lastToken = pathTokens.at(-1);
 
       if (hasSplatParam(lastToken)) {
-        if (index && layout) {
+        if (page && layout) {
           return [
             createLeaf({
               name: layoutName,
@@ -116,19 +119,19 @@ export const traverseFactory = () => {
               component: layout.id,
               children: [
                 // no recursion here - splat params always goes last
-                createLeaf({ name, path: "", component: index.id }),
+                createLeaf({ name, path: "", component: page.id }),
               ],
             }),
           ];
         }
 
-        if (index) {
+        if (page) {
           return [
             createLeaf({
               // prefix-only entry, no name no component
               path,
               children: [
-                createLeaf({ name, path: "", component: index.id }),
+                createLeaf({ name, path: "", component: page.id }),
                 ...traverseEntries(children, name),
               ],
             }),
@@ -149,27 +152,27 @@ export const traverseFactory = () => {
         return [];
       }
 
-      if (index && layout) {
+      if (page && layout) {
         return [
           createLeaf({
             name: layoutName,
             path,
             component: layout.id,
             children: [
-              createLeaf({ name, path: "", component: index.id }),
+              createLeaf({ name, path: "", component: page.id }),
               ...traverseEntries(children, name),
             ],
           }),
         ];
       }
 
-      if (index) {
+      if (page) {
         return [
           createLeaf({
             // prefix-only entry, no name no component
             path,
             children: [
-              createLeaf({ name, path: "", component: index.id }),
+              createLeaf({ name, path: "", component: page.id }),
               ...traverseEntries(children, name),
             ],
           }),

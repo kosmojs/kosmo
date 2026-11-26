@@ -1,0 +1,22 @@
+{
+  "id": "users_344172009",
+  "name": "users",
+  "folder": "pages",
+  "file": "users/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "users",
+      "pattern": "users",
+      "parts": [
+        {
+          "type": "static",
+          "value": "users"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "users",
+  "honoPattern": "users",
+  "h3Pattern": "users"
+}

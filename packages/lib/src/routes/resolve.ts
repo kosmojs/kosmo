@@ -28,6 +28,7 @@ export const resolverFactory = (
   sourceFolder: SourceFolder,
   cacheFactory?: RouteResolverCacheFactory,
 ): Record<
+  | "pageFileResolver"
   | "pageLayoutResolver"
   | "pageRouteResolver"
   | "apiUseResolver"
@@ -52,6 +53,19 @@ export const resolverFactory = (
   );
 
   return {
+    pageFileResolver(entry) {
+      const { name } = entry;
+
+      const handler: ResolverSignature["handler"] = async () => {
+        return {
+          kind: "pageFile",
+          entry,
+        };
+      };
+
+      return { name, handler };
+    },
+
     pageLayoutResolver(entry) {
       const { name } = entry;
 

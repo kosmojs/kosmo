@@ -108,7 +108,8 @@ demo/
     ├── router.ts
     ├── components/Link.tsx    # the typed Link
     ├── pages/404.tsx          # the 404 page
-    ├── pages/index/index.tsx  # the default index page
+    ├── pages/index/index.ts   # the default index route
+    ├── pages/index/page.tsx   # its page, extension per framework
     ├── entry/client.ts        # the client entry
     ├── entry/server.ts        # the server entry, used by SSR builds
     ├── public/favicon.svg

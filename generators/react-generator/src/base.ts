@@ -73,8 +73,8 @@ export const traverseFactory = () => {
   const traverseEntries = (
     entries: Array<NestedRouteEntry>,
   ): Array<TransformedEntry> => {
-    return entries.flatMap(({ index, layout, children }) => {
-      const { name, pathTokens } = { ...index, ...layout } as RouteEntry;
+    return entries.flatMap(({ page, layout, children }) => {
+      const { name, pathTokens } = { ...page, ...layout } as RouteEntry;
 
       if (!pathTokens) {
         // this is unlikely to happen, but still...
@@ -87,7 +87,7 @@ export const traverseFactory = () => {
       const lastToken = pathTokens.at(-1);
 
       if (hasSplatParam(lastToken)) {
-        if (index && layout) {
+        if (page && layout) {
           return [
             {
               name: layoutName,
@@ -95,19 +95,19 @@ export const traverseFactory = () => {
               component: layout.id,
               children: [
                 // no recursion here - splat params always goes last
-                { name, path: "*", component: index.id },
+                { name, path: "*", component: page.id },
               ],
             },
           ];
         }
 
-        if (index) {
+        if (page) {
           return [
             {
               // prefix-only entry, no name no component
               path,
               children: [
-                { name, path: "*", component: index.id },
+                { name, path: "*", component: page.id },
                 ...traverseEntries(children),
               ],
             },
@@ -128,27 +128,27 @@ export const traverseFactory = () => {
         return [];
       }
 
-      if (index && layout) {
+      if (page && layout) {
         return [
           {
             name: layoutName,
             path,
             component: layout.id,
             children: [
-              { name, index: true, component: index.id },
+              { name, index: true, component: page.id },
               ...traverseEntries(children),
             ],
           },
         ];
       }
 
-      if (index) {
+      if (page) {
         return [
           {
             // prefix-only entry, no name no component
             path,
             children: [
-              { name, index: true, component: index.id },
+              { name, index: true, component: page.id },
               ...traverseEntries(children),
             ],
           },

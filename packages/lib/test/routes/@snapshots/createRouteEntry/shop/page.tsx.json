@@ -1,0 +1,22 @@
+{
+  "id": "shop_2892647586",
+  "name": "shop",
+  "folder": "pages",
+  "file": "shop/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "shop",
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "shop",
+  "honoPattern": "shop",
+  "h3Pattern": "shop"
+}

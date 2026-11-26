@@ -1,9 +1,9 @@
 {
-  "index": {
-    "id": "shop_index_tsx_2616003680",
+  "page": {
+    "id": "shop_2892647586",
     "name": "shop",
     "folder": "pages",
-    "file": "shop/index.tsx",
+    "file": "shop/page.tsx",
     "pathTokens": [
       {
         "kind": "static",
@@ -22,7 +22,7 @@
     "h3Pattern": "shop"
   },
   "layout": {
-    "id": "shop_layout_tsx_933036490",
+    "id": "shop_2892647586",
     "name": "shop",
     "folder": "pages",
     "file": "shop/layout.tsx",
@@ -45,11 +45,11 @@
   },
   "children": [
     {
-      "index": {
-        "id": "shop_product_id_index_tsx_3035235801",
+      "page": {
+        "id": "shop_product_id__3182361986",
         "name": "shop/product/[id]",
         "folder": "pages",
-        "file": "shop/product/[id]/index.tsx",
+        "file": "shop/product/[id]/page.tsx",
         "pathTokens": [
           {
             "kind": "static",
@@ -81,7 +81,7 @@
         "h3Pattern": "shop/product/:id"
       },
       "layout": {
-        "id": "shop_product_id_layout_tsx_2232356331",
+        "id": "shop_product_id__3182361986",
         "name": "shop/product/[id]",
         "folder": "pages",
         "file": "shop/product/[id]/layout.tsx",
@@ -118,11 +118,11 @@
       "parent": "shop",
       "children": [
         {
-          "index": {
-            "id": "shop_product_id_reviews_index_tsx_1128969612",
+          "page": {
+            "id": "shop_product_id_reviews_1855913575",
             "name": "shop/product/[id]/reviews",
             "folder": "pages",
-            "file": "shop/product/[id]/reviews/index.tsx",
+            "file": "shop/product/[id]/reviews/page.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -146,11 +146,11 @@
       ]
     },
     {
-      "index": {
-        "id": "shop_cart_index_tsx_3461971678",
+      "page": {
+        "id": "shop_cart_864259587",
         "name": "shop/cart",
         "folder": "pages",
-        "file": "shop/cart/index.tsx",
+        "file": "shop/cart/page.tsx",
         "pathTokens": [
           {
             "kind": "static",
@@ -173,7 +173,7 @@
     },
     {
       "layout": {
-        "id": "shop_checkout_layout_tsx_2809742663",
+        "id": "shop_checkout_2216891405",
         "name": "shop/checkout",
         "folder": "pages",
         "file": "shop/checkout/layout.tsx",
@@ -197,11 +197,11 @@
       "parent": "shop",
       "children": [
         {
-          "index": {
-            "id": "shop_checkout_confirm_index_tsx_457300039",
+          "page": {
+            "id": "shop_checkout_confirm_2583764847",
             "name": "shop/checkout/confirm",
             "folder": "pages",
-            "file": "shop/checkout/confirm/index.tsx",
+            "file": "shop/checkout/confirm/page.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -223,11 +223,11 @@
           "children": []
         },
         {
-          "index": {
-            "id": "shop_checkout_payment_index_tsx_2839585893",
+          "page": {
+            "id": "shop_checkout_payment_2029664294",
             "name": "shop/checkout/payment",
             "folder": "pages",
-            "file": "shop/checkout/payment/index.tsx",
+            "file": "shop/checkout/payment/page.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -249,11 +249,11 @@
           "children": []
         },
         {
-          "index": {
-            "id": "shop_checkout_shipping_index_tsx_4218611208",
+          "page": {
+            "id": "shop_checkout_shipping_2176138456",
             "name": "shop/checkout/shipping",
             "folder": "pages",
-            "file": "shop/checkout/shipping/index.tsx",
+            "file": "shop/checkout/shipping/page.tsx",
             "pathTokens": [
               {
                 "kind": "static",
@@ -272,7 +272,7 @@
             "h3Pattern": "shop/checkout/shipping"
           },
           "layout": {
-            "id": "shop_checkout_shipping_layout_tsx_1955886922",
+            "id": "shop_checkout_shipping_2176138456",
             "name": "shop/checkout/shipping",
             "folder": "pages",
             "file": "shop/checkout/shipping/layout.tsx",
@@ -299,11 +299,11 @@
       ]
     },
     {
-      "index": {
-        "id": "shop_orders_index_tsx_3044215409",
+      "page": {
+        "id": "shop_orders_2363820871",
         "name": "shop/orders",
         "folder": "pages",
-        "file": "shop/orders/index.tsx",
+        "file": "shop/orders/page.tsx",
         "pathTokens": [
           {
             "kind": "static",
@@ -322,7 +322,7 @@
         "h3Pattern": "shop/orders"
       },
       "layout": {
-        "id": "shop_orders_layout_tsx_1560526654",
+        "id": "shop_orders_2363820871",
         "name": "shop/orders",
         "folder": "pages",
         "file": "shop/orders/layout.tsx",
@@ -346,11 +346,11 @@
       "parent": "shop",
       "children": [
         {
-          "index": {
-            "id": "shop_orders_orderId_index_tsx_3645959700",
+          "page": {
+            "id": "shop_orders_orderId__3453181393",
             "name": "shop/orders/[orderId]",
             "folder": "pages",
-            "file": "shop/orders/[orderId]/index.tsx",
+            "file": "shop/orders/[orderId]/page.tsx",
             "pathTokens": [
               {
                 "kind": "param",
@@ -376,11 +376,11 @@
       ]
     },
     {
-      "index": {
-        "id": "shop_products_index_tsx_3411274748",
+      "page": {
+        "id": "shop_products_2560713497",
         "name": "shop/products",
         "folder": "pages",
-        "file": "shop/products/index.tsx",
+        "file": "shop/products/page.tsx",
         "pathTokens": [
           {
             "kind": "static",
@@ -399,7 +399,7 @@
         "h3Pattern": "shop/products"
       },
       "layout": {
-        "id": "shop_products_layout_tsx_3463733314",
+        "id": "shop_products_2560713497",
         "name": "shop/products",
         "folder": "pages",
         "file": "shop/products/layout.tsx",
@@ -423,11 +423,11 @@
       "parent": "shop",
       "children": [
         {
-          "index": {
-            "id": "shop_products_category_index_tsx_130432150",
+          "page": {
+            "id": "shop_products_category__1715568857",
             "name": "shop/products/{category}",
             "folder": "pages",
-            "file": "shop/products/{category}/index.tsx",
+            "file": "shop/products/{category}/page.tsx",
             "pathTokens": [
               {
                 "kind": "param",
@@ -453,11 +453,11 @@
       ]
     },
     {
-      "index": {
-        "id": "shop_category_productId_index_tsx_3761077416",
+      "page": {
+        "id": "shop_category_productId__3418786773",
         "name": "shop/[category]/[productId]",
         "folder": "pages",
-        "file": "shop/[category]/[productId]/index.tsx",
+        "file": "shop/[category]/[productId]/page.tsx",
         "pathTokens": [
           {
             "kind": "param",
@@ -491,7 +491,7 @@
         "h3Pattern": "shop/:category/:productId"
       },
       "layout": {
-        "id": "shop_category_productId_layout_tsx_2723777336",
+        "id": "shop_category_productId__3418786773",
         "name": "shop/[category]/[productId]",
         "folder": "pages",
         "file": "shop/[category]/[productId]/layout.tsx",

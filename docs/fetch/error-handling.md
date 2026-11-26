@@ -22,7 +22,7 @@ and nothing is silently swallowed.
 
 Wrap a call in `try/catch` and branch on the error type:
 
-```ts [pages/example/index.tsx]
+```ts [pages/example/page.tsx]
 import fetchClients, { ValidationError } from "_/fetch";
 
 const useFetch = fetchClients["users/[id]"];

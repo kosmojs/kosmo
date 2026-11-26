@@ -152,8 +152,12 @@ export const createFrontendTestGroups = ({
       tests.push([
         `seeds ${name}/${file}: ${expected ?? "built-in"}`,
         async ({ expect }) => {
+          // `index` is the route, its page file is what gets seeded
           const source = await readFile(
-            createPath.pages(name, `${file}.${pageExtensions[frontend]}`),
+            createPath.pages(
+              name,
+              `${file === "index" ? "page" : file}.${pageExtensions[frontend]}`,
+            ),
             "utf8",
           );
           expect(collect(source, customIds), source).toEqual(

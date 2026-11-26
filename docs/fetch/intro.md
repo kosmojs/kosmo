@@ -40,7 +40,7 @@ exposed for client-side form validation with `check`, `errors`, `errorMessage`,
 
 Import the fetch map and pick the client for your route by path:
 
-```ts [pages/example/index.tsx]
+```ts [pages/example/page.tsx]
 import fetchClients from "_/fetch";
 
 const response = await fetchClients["users/[id]"].GET([123]);

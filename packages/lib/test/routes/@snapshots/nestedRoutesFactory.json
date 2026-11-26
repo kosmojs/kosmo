@@ -1,10 +1,10 @@
 [
   {
-    "index": {
-      "id": "workspace_workspaceId_analytics_index_tsx_2441542851",
+    "page": {
+      "id": "workspace_workspaceId_analytics_1048435317",
       "name": "workspace/[workspaceId]/analytics",
       "folder": "pages",
-      "file": "workspace/[workspaceId]/analytics/index.tsx",
+      "file": "workspace/[workspaceId]/analytics/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -47,7 +47,7 @@
       "h3Pattern": "workspace/:workspaceId/analytics"
     },
     "layout": {
-      "id": "workspace_workspaceId_analytics_layout_tsx_2018023528",
+      "id": "workspace_workspaceId_analytics_1048435317",
       "name": "workspace/[workspaceId]/analytics",
       "folder": "pages",
       "file": "workspace/[workspaceId]/analytics/layout.tsx",
@@ -94,11 +94,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "workspace_workspaceId_analytics_range_index_tsx_2469437584",
+        "page": {
+          "id": "workspace_workspaceId_analytics_range__1602344144",
           "name": "workspace/[workspaceId]/analytics/[range]",
           "folder": "pages",
-          "file": "workspace/[workspaceId]/analytics/[range]/index.tsx",
+          "file": "workspace/[workspaceId]/analytics/[range]/page.tsx",
           "pathTokens": [
             {
               "kind": "param",
@@ -119,7 +119,7 @@
           "h3Pattern": "workspace/:workspaceId/analytics/:range"
         },
         "layout": {
-          "id": "workspace_workspaceId_analytics_range_layout_tsx_2317889146",
+          "id": "workspace_workspaceId_analytics_range__1602344144",
           "name": "workspace/[workspaceId]/analytics/[range]",
           "folder": "pages",
           "file": "workspace/[workspaceId]/analytics/[range]/layout.tsx",
@@ -149,7 +149,7 @@
   },
   {
     "layout": {
-      "id": "workspace_workspaceId_team_layout_tsx_1903886921",
+      "id": "workspace_workspaceId_team_3477030382",
       "name": "workspace/[workspaceId]/team",
       "folder": "pages",
       "file": "workspace/[workspaceId]/team/layout.tsx",
@@ -196,11 +196,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "workspace_workspaceId_team_memberId_permissions_permissionPath_index_tsx_3735406549",
+        "page": {
+          "id": "workspace_workspaceId_team_memberId_permissions_permissionPath__765346141",
           "name": "workspace/[workspaceId]/team/[memberId]/permissions/{...permissionPath}",
           "folder": "pages",
-          "file": "workspace/[workspaceId]/team/[memberId]/permissions/{...permissionPath}/index.tsx",
+          "file": "workspace/[workspaceId]/team/[memberId]/permissions/{...permissionPath}/page.tsx",
           "pathTokens": [
             {
               "kind": "param",
@@ -251,7 +251,7 @@
   },
   {
     "layout": {
-      "id": "courses_courseId_layout_tsx_15431109",
+      "id": "courses_courseId__458745172",
       "name": "courses/[courseId]",
       "folder": "pages",
       "file": "courses/[courseId]/layout.tsx",
@@ -287,11 +287,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "courses_courseId_lessons_lessonId_assignments_assignmentPath_index_tsx_1618613158",
+        "page": {
+          "id": "courses_courseId_lessons_lessonId_assignments_assignmentPath__4099687594",
           "name": "courses/[courseId]/lessons/[lessonId]/assignments/{...assignmentPath}",
           "folder": "pages",
-          "file": "courses/[courseId]/lessons/[lessonId]/assignments/{...assignmentPath}/index.tsx",
+          "file": "courses/[courseId]/lessons/[lessonId]/assignments/{...assignmentPath}/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -353,7 +353,7 @@
   },
   {
     "layout": {
-      "id": "news_category_layout_tsx_4074534343",
+      "id": "news_category__2107111446",
       "name": "news/[category]",
       "folder": "pages",
       "file": "news/[category]/layout.tsx",
@@ -389,11 +389,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "news_category_articles_articlePath_index_tsx_4049923491",
+        "page": {
+          "id": "news_category_articles_articlePath__2698216149",
           "name": "news/[category]/articles/{...articlePath}",
           "folder": "pages",
-          "file": "news/[category]/articles/{...articlePath}/index.tsx",
+          "file": "news/[category]/articles/{...articlePath}/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -431,7 +431,7 @@
   },
   {
     "layout": {
-      "id": "profile_username_layout_tsx_2113498186",
+      "id": "profile_username__1954487444",
       "name": "profile/[username]",
       "folder": "pages",
       "file": "profile/[username]/layout.tsx",
@@ -468,7 +468,7 @@
     "children": [
       {
         "layout": {
-          "id": "profile_username_posts_postId_layout_tsx_485444689",
+          "id": "profile_username_posts_postId__3486838271",
           "name": "profile/[username]/posts/[postId]",
           "folder": "pages",
           "file": "profile/[username]/posts/[postId]/layout.tsx",
@@ -505,11 +505,11 @@
         "parent": "profile/[username]",
         "children": [
           {
-            "index": {
-              "id": "profile_username_posts_postId_comments_thread_index_tsx_635455370",
+            "page": {
+              "id": "profile_username_posts_postId_comments_thread__1630971533",
               "name": "profile/[username]/posts/[postId]/comments/{...thread}",
               "folder": "pages",
-              "file": "profile/[username]/posts/[postId]/comments/{...thread}/index.tsx",
+              "file": "profile/[username]/posts/[postId]/comments/{...thread}/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -548,11 +548,11 @@
     ]
   },
   {
-    "index": {
-      "id": "about_index_tsx_3061335318",
+    "page": {
+      "id": "about_3052675811",
       "name": "about",
       "folder": "pages",
-      "file": "about/index.tsx",
+      "file": "about/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -571,7 +571,7 @@
       "h3Pattern": "about"
     },
     "layout": {
-      "id": "about_layout_tsx_2396405898",
+      "id": "about_3052675811",
       "name": "about",
       "folder": "pages",
       "file": "about/layout.tsx",
@@ -595,7 +595,7 @@
     "children": [
       {
         "layout": {
-          "id": "about_careers_layout_tsx_3684129548",
+          "id": "about_careers_707294703",
           "name": "about/careers",
           "folder": "pages",
           "file": "about/careers/layout.tsx",
@@ -619,11 +619,11 @@
         "parent": "about",
         "children": [
           {
-            "index": {
-              "id": "about_careers_jobId_index_tsx_125723793",
+            "page": {
+              "id": "about_careers_jobId__1551480248",
               "name": "about/careers/{jobId}",
               "folder": "pages",
-              "file": "about/careers/{jobId}/index.tsx",
+              "file": "about/careers/{jobId}/page.tsx",
               "pathTokens": [
                 {
                   "kind": "param",
@@ -649,11 +649,11 @@
         ]
       },
       {
-        "index": {
-          "id": "about_team_index_tsx_3906889098",
+        "page": {
+          "id": "about_team_774335872",
           "name": "about/team",
           "folder": "pages",
-          "file": "about/team/index.tsx",
+          "file": "about/team/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -678,7 +678,7 @@
   },
   {
     "layout": {
-      "id": "account_layout_tsx_2977242696",
+      "id": "account_2100713124",
       "name": "account",
       "folder": "pages",
       "file": "account/layout.tsx",
@@ -701,11 +701,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "account_profile_index_tsx_1987383209",
+        "page": {
+          "id": "account_profile_3828101079",
           "name": "account/profile",
           "folder": "pages",
-          "file": "account/profile/index.tsx",
+          "file": "account/profile/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -729,11 +729,11 @@
     ]
   },
   {
-    "index": {
-      "id": "admin_index_tsx_1806534617",
+    "page": {
+      "id": "admin_2282622326",
       "name": "admin",
       "folder": "pages",
-      "file": "admin/index.tsx",
+      "file": "admin/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -752,7 +752,7 @@
       "h3Pattern": "admin"
     },
     "layout": {
-      "id": "admin_layout_tsx_2245020265",
+      "id": "admin_2282622326",
       "name": "admin",
       "folder": "pages",
       "file": "admin/layout.tsx",
@@ -775,11 +775,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "admin_tenant_index_tsx_144548962",
+        "page": {
+          "id": "admin_tenant__4029394976",
           "name": "admin/[tenant]",
           "folder": "pages",
-          "file": "admin/[tenant]/index.tsx",
+          "file": "admin/[tenant]/page.tsx",
           "pathTokens": [
             {
               "kind": "param",
@@ -802,11 +802,11 @@
         "parent": "admin",
         "children": [
           {
-            "index": {
-              "id": "admin_tenant_resources_index_tsx_1533280296",
+            "page": {
+              "id": "admin_tenant_resources_2481473727",
               "name": "admin/[tenant]/resources",
               "folder": "pages",
-              "file": "admin/[tenant]/resources/index.tsx",
+              "file": "admin/[tenant]/resources/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -825,7 +825,7 @@
               "h3Pattern": "admin/:tenant/resources"
             },
             "layout": {
-              "id": "admin_tenant_resources_layout_tsx_1331315044",
+              "id": "admin_tenant_resources_2481473727",
               "name": "admin/[tenant]/resources",
               "folder": "pages",
               "file": "admin/[tenant]/resources/layout.tsx",
@@ -849,11 +849,11 @@
             "parent": "admin/[tenant]",
             "children": [
               {
-                "index": {
-                  "id": "admin_tenant_resources_type_index_tsx_2889345339",
+                "page": {
+                  "id": "admin_tenant_resources_type__57895105",
                   "name": "admin/[tenant]/resources/[type]",
                   "folder": "pages",
-                  "file": "admin/[tenant]/resources/[type]/index.tsx",
+                  "file": "admin/[tenant]/resources/[type]/page.tsx",
                   "pathTokens": [
                     {
                       "kind": "param",
@@ -874,7 +874,7 @@
                   "h3Pattern": "admin/:tenant/resources/:type"
                 },
                 "layout": {
-                  "id": "admin_tenant_resources_type_layout_tsx_3407041363",
+                  "id": "admin_tenant_resources_type__57895105",
                   "name": "admin/[tenant]/resources/[type]",
                   "folder": "pages",
                   "file": "admin/[tenant]/resources/[type]/layout.tsx",
@@ -900,11 +900,11 @@
                 "parent": "admin/[tenant]/resources",
                 "children": [
                   {
-                    "index": {
-                      "id": "admin_tenant_resources_type_path_index_tsx_3566128822",
+                    "page": {
+                      "id": "admin_tenant_resources_type_path__2820910342",
                       "name": "admin/[tenant]/resources/[type]/{...path}",
                       "folder": "pages",
-                      "file": "admin/[tenant]/resources/[type]/{...path}/index.tsx",
+                      "file": "admin/[tenant]/resources/[type]/{...path}/page.tsx",
                       "pathTokens": [
                         {
                           "kind": "param",
@@ -932,11 +932,11 @@
             ]
           },
           {
-            "index": {
-              "id": "admin_tenant_settings_index_tsx_3198274446",
+            "page": {
+              "id": "admin_tenant_settings_3070821899",
               "name": "admin/[tenant]/settings",
               "folder": "pages",
-              "file": "admin/[tenant]/settings/index.tsx",
+              "file": "admin/[tenant]/settings/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -955,7 +955,7 @@
               "h3Pattern": "admin/:tenant/settings"
             },
             "layout": {
-              "id": "admin_tenant_settings_layout_tsx_1879736946",
+              "id": "admin_tenant_settings_3070821899",
               "name": "admin/[tenant]/settings",
               "folder": "pages",
               "file": "admin/[tenant]/settings/layout.tsx",
@@ -979,11 +979,11 @@
             "parent": "admin/[tenant]",
             "children": [
               {
-                "index": {
-                  "id": "admin_tenant_settings_general_index_tsx_4196017676",
+                "page": {
+                  "id": "admin_tenant_settings_general_2909006343",
                   "name": "admin/[tenant]/settings/general",
                   "folder": "pages",
-                  "file": "admin/[tenant]/settings/general/index.tsx",
+                  "file": "admin/[tenant]/settings/general/page.tsx",
                   "pathTokens": [
                     {
                       "kind": "static",
@@ -1005,11 +1005,11 @@
                 "children": []
               },
               {
-                "index": {
-                  "id": "admin_tenant_settings_permissions_index_tsx_3508365092",
+                "page": {
+                  "id": "admin_tenant_settings_permissions_506271670",
                   "name": "admin/[tenant]/settings/permissions",
                   "folder": "pages",
-                  "file": "admin/[tenant]/settings/permissions/index.tsx",
+                  "file": "admin/[tenant]/settings/permissions/page.tsx",
                   "pathTokens": [
                     {
                       "kind": "static",
@@ -1033,11 +1033,11 @@
             ]
           },
           {
-            "index": {
-              "id": "admin_tenant_users_index_tsx_1262984270",
+            "page": {
+              "id": "admin_tenant_users_1074074233",
               "name": "admin/[tenant]/users",
               "folder": "pages",
-              "file": "admin/[tenant]/users/index.tsx",
+              "file": "admin/[tenant]/users/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -1056,7 +1056,7 @@
               "h3Pattern": "admin/:tenant/users"
             },
             "layout": {
-              "id": "admin_tenant_users_layout_tsx_3952846485",
+              "id": "admin_tenant_users_1074074233",
               "name": "admin/[tenant]/users",
               "folder": "pages",
               "file": "admin/[tenant]/users/layout.tsx",
@@ -1080,11 +1080,11 @@
             "parent": "admin/[tenant]",
             "children": [
               {
-                "index": {
-                  "id": "admin_tenant_users_userId_index_tsx_333896102",
+                "page": {
+                  "id": "admin_tenant_users_userId__1156707635",
                   "name": "admin/[tenant]/users/[userId]",
                   "folder": "pages",
-                  "file": "admin/[tenant]/users/[userId]/index.tsx",
+                  "file": "admin/[tenant]/users/[userId]/page.tsx",
                   "pathTokens": [
                     {
                       "kind": "param",
@@ -1114,11 +1114,11 @@
     ]
   },
   {
-    "index": {
-      "id": "blog_index_tsx_656698020",
+    "page": {
+      "id": "blog_3222622531",
       "name": "blog",
       "folder": "pages",
-      "file": "blog/index.tsx",
+      "file": "blog/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -1137,7 +1137,7 @@
       "h3Pattern": "blog"
     },
     "layout": {
-      "id": "blog_layout_tsx_2871578117",
+      "id": "blog_3222622531",
       "name": "blog",
       "folder": "pages",
       "file": "blog/layout.tsx",
@@ -1160,11 +1160,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "blog_post_slug_index_tsx_4265829785",
+        "page": {
+          "id": "blog_post_slug__1415960805",
           "name": "blog/post/[slug]",
           "folder": "pages",
-          "file": "blog/post/[slug]/index.tsx",
+          "file": "blog/post/[slug]/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -1196,7 +1196,7 @@
           "h3Pattern": "blog/post/:slug"
         },
         "layout": {
-          "id": "blog_post_slug_layout_tsx_4086949147",
+          "id": "blog_post_slug__1415960805",
           "name": "blog/post/[slug]",
           "folder": "pages",
           "file": "blog/post/[slug]/layout.tsx",
@@ -1234,11 +1234,11 @@
         "children": []
       },
       {
-        "index": {
-          "id": "blog_category_index_tsx_2361523450",
+        "page": {
+          "id": "blog_category__52244126",
           "name": "blog/{category}",
           "folder": "pages",
-          "file": "blog/{category}/index.tsx",
+          "file": "blog/{category}/page.tsx",
           "pathTokens": [
             {
               "kind": "param",
@@ -1261,11 +1261,11 @@
         "parent": "blog",
         "children": [
           {
-            "index": {
-              "id": "blog_category_tag_index_tsx_1530717925",
+            "page": {
+              "id": "blog_category_tag__2580707054",
               "name": "blog/{category}/{tag}",
               "folder": "pages",
-              "file": "blog/{category}/{tag}/index.tsx",
+              "file": "blog/{category}/{tag}/page.tsx",
               "pathTokens": [
                 {
                   "kind": "param",
@@ -1293,11 +1293,11 @@
     ]
   },
   {
-    "index": {
-      "id": "contact_index_tsx_3970670992",
+    "page": {
+      "id": "contact_1281549880",
       "name": "contact",
       "folder": "pages",
-      "file": "contact/index.tsx",
+      "file": "contact/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -1316,7 +1316,7 @@
       "h3Pattern": "contact"
     },
     "layout": {
-      "id": "contact_layout_tsx_2321003899",
+      "id": "contact_1281549880",
       "name": "contact",
       "folder": "pages",
       "file": "contact/layout.tsx",
@@ -1340,11 +1340,11 @@
     "children": []
   },
   {
-    "index": {
-      "id": "dashboard_index_tsx_3400391192",
+    "page": {
+      "id": "dashboard_1553268728",
       "name": "dashboard",
       "folder": "pages",
-      "file": "dashboard/index.tsx",
+      "file": "dashboard/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -1363,7 +1363,7 @@
       "h3Pattern": "dashboard"
     },
     "layout": {
-      "id": "dashboard_layout_tsx_1762834450",
+      "id": "dashboard_1553268728",
       "name": "dashboard",
       "folder": "pages",
       "file": "dashboard/layout.tsx",
@@ -1386,11 +1386,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "dashboard_analytics_index_tsx_2467463920",
+        "page": {
+          "id": "dashboard_analytics_1417427939",
           "name": "dashboard/analytics",
           "folder": "pages",
-          "file": "dashboard/analytics/index.tsx",
+          "file": "dashboard/analytics/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -1412,11 +1412,11 @@
         "children": []
       },
       {
-        "index": {
-          "id": "dashboard_settings_index_tsx_2528451466",
+        "page": {
+          "id": "dashboard_settings_1351146423",
           "name": "dashboard/settings",
           "folder": "pages",
-          "file": "dashboard/settings/index.tsx",
+          "file": "dashboard/settings/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -1435,7 +1435,7 @@
           "h3Pattern": "dashboard/settings"
         },
         "layout": {
-          "id": "dashboard_settings_layout_tsx_2001687227",
+          "id": "dashboard_settings_1351146423",
           "name": "dashboard/settings",
           "folder": "pages",
           "file": "dashboard/settings/layout.tsx",
@@ -1459,11 +1459,11 @@
         "parent": "dashboard",
         "children": [
           {
-            "index": {
-              "id": "dashboard_settings_billing_index_tsx_3947003682",
+            "page": {
+              "id": "dashboard_settings_billing_2336091448",
               "name": "dashboard/settings/billing",
               "folder": "pages",
-              "file": "dashboard/settings/billing/index.tsx",
+              "file": "dashboard/settings/billing/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -1485,11 +1485,11 @@
             "children": []
           },
           {
-            "index": {
-              "id": "dashboard_settings_notifications_index_tsx_3109498012",
+            "page": {
+              "id": "dashboard_settings_notifications_940256209",
               "name": "dashboard/settings/notifications",
               "folder": "pages",
-              "file": "dashboard/settings/notifications/index.tsx",
+              "file": "dashboard/settings/notifications/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -1511,11 +1511,11 @@
             "children": []
           },
           {
-            "index": {
-              "id": "dashboard_settings_profile_index_tsx_3821990919",
+            "page": {
+              "id": "dashboard_settings_profile_3863481245",
               "name": "dashboard/settings/profile",
               "folder": "pages",
-              "file": "dashboard/settings/profile/index.tsx",
+              "file": "dashboard/settings/profile/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -1537,11 +1537,11 @@
             "children": []
           },
           {
-            "index": {
-              "id": "dashboard_settings_security_index_tsx_2219988972",
+            "page": {
+              "id": "dashboard_settings_security_3690805256",
               "name": "dashboard/settings/security",
               "folder": "pages",
-              "file": "dashboard/settings/security/index.tsx",
+              "file": "dashboard/settings/security/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -1560,7 +1560,7 @@
               "h3Pattern": "dashboard/settings/security"
             },
             "layout": {
-              "id": "dashboard_settings_security_layout_tsx_3549196698",
+              "id": "dashboard_settings_security_3690805256",
               "name": "dashboard/settings/security",
               "folder": "pages",
               "file": "dashboard/settings/security/layout.tsx",
@@ -1587,11 +1587,11 @@
         ]
       },
       {
-        "index": {
-          "id": "dashboard_view_index_tsx_3510080540",
+        "page": {
+          "id": "dashboard_view__3755796178",
           "name": "dashboard/[view]",
           "folder": "pages",
-          "file": "dashboard/[view]/index.tsx",
+          "file": "dashboard/[view]/page.tsx",
           "pathTokens": [
             {
               "kind": "param",
@@ -1617,11 +1617,11 @@
     ]
   },
   {
-    "index": {
-      "id": "docs_index_tsx_2030679828",
+    "page": {
+      "id": "docs_1364667319",
       "name": "docs",
       "folder": "pages",
-      "file": "docs/index.tsx",
+      "file": "docs/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -1640,7 +1640,7 @@
       "h3Pattern": "docs"
     },
     "layout": {
-      "id": "docs_layout_tsx_1612140628",
+      "id": "docs_1364667319",
       "name": "docs",
       "folder": "pages",
       "file": "docs/layout.tsx",
@@ -1663,11 +1663,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "docs_path_index_tsx_3119800738",
+        "page": {
+          "id": "docs_path__2099114793",
           "name": "docs/{...path}",
           "folder": "pages",
-          "file": "docs/{...path}/index.tsx",
+          "file": "docs/{...path}/page.tsx",
           "pathTokens": [
             {
               "kind": "param",
@@ -1694,7 +1694,7 @@
   },
   {
     "layout": {
-      "id": "legal_layout_tsx_1366181041",
+      "id": "legal_3814899792",
       "name": "legal",
       "folder": "pages",
       "file": "legal/layout.tsx",
@@ -1717,11 +1717,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "legal_privacy_index_tsx_603606551",
+        "page": {
+          "id": "legal_privacy_2834241270",
           "name": "legal/privacy",
           "folder": "pages",
-          "file": "legal/privacy/index.tsx",
+          "file": "legal/privacy/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -1743,11 +1743,11 @@
         "children": []
       },
       {
-        "index": {
-          "id": "legal_terms_index_tsx_3828107619",
+        "page": {
+          "id": "legal_terms_3601362801",
           "name": "legal/terms",
           "folder": "pages",
-          "file": "legal/terms/index.tsx",
+          "file": "legal/terms/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -1772,7 +1772,7 @@
   },
   {
     "layout": {
-      "id": "portal_layout_tsx_4243983674",
+      "id": "portal_195990512",
       "name": "portal",
       "folder": "pages",
       "file": "portal/layout.tsx",
@@ -1796,7 +1796,7 @@
     "children": [
       {
         "layout": {
-          "id": "portal_clientId_layout_tsx_3114159634",
+          "id": "portal_clientId__3769037540",
           "name": "portal/[clientId]",
           "folder": "pages",
           "file": "portal/[clientId]/layout.tsx",
@@ -1823,7 +1823,7 @@
         "children": [
           {
             "layout": {
-              "id": "portal_clientId_reports_layout_tsx_1980481456",
+              "id": "portal_clientId_reports_988668655",
               "name": "portal/[clientId]/reports",
               "folder": "pages",
               "file": "portal/[clientId]/reports/layout.tsx",
@@ -1848,7 +1848,7 @@
             "children": [
               {
                 "layout": {
-                  "id": "portal_clientId_reports_reportType_layout_tsx_3694080843",
+                  "id": "portal_clientId_reports_reportType__1762519789",
                   "name": "portal/[clientId]/reports/[reportType]",
                   "folder": "pages",
                   "file": "portal/[clientId]/reports/[reportType]/layout.tsx",
@@ -1874,11 +1874,11 @@
                 "parent": "portal/[clientId]/reports",
                 "children": [
                   {
-                    "index": {
-                      "id": "portal_clientId_reports_reportType_data_dataView_index_tsx_245814616",
+                    "page": {
+                      "id": "portal_clientId_reports_reportType_data_dataView__76313220",
                       "name": "portal/[clientId]/reports/[reportType]/data/[dataView]",
                       "folder": "pages",
-                      "file": "portal/[clientId]/reports/[reportType]/data/[dataView]/index.tsx",
+                      "file": "portal/[clientId]/reports/[reportType]/data/[dataView]/page.tsx",
                       "pathTokens": [
                         {
                           "kind": "static",
@@ -1910,7 +1910,7 @@
                       "h3Pattern": "portal/:clientId/reports/:reportType/data/:dataView"
                     },
                     "layout": {
-                      "id": "portal_clientId_reports_reportType_data_dataView_layout_tsx_520811149",
+                      "id": "portal_clientId_reports_reportType_data_dataView__76313220",
                       "name": "portal/[clientId]/reports/[reportType]/data/[dataView]",
                       "folder": "pages",
                       "file": "portal/[clientId]/reports/[reportType]/data/[dataView]/layout.tsx",
@@ -1956,11 +1956,11 @@
     ]
   },
   {
-    "index": {
-      "id": "products_index_tsx_3492241869",
+    "page": {
+      "id": "products_3015334490",
       "name": "products",
       "folder": "pages",
-      "file": "products/index.tsx",
+      "file": "products/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -1980,11 +1980,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "products_id_index_tsx_3698327518",
+        "page": {
+          "id": "products_id__465570367",
           "name": "products/[id]",
           "folder": "pages",
-          "file": "products/[id]/index.tsx",
+          "file": "products/[id]/page.tsx",
           "pathTokens": [
             {
               "kind": "param",
@@ -2010,11 +2010,11 @@
     ]
   },
   {
-    "index": {
-      "id": "projects_index_tsx_1541817812",
+    "page": {
+      "id": "projects_1553183652",
       "name": "projects",
       "folder": "pages",
-      "file": "projects/index.tsx",
+      "file": "projects/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -2033,7 +2033,7 @@
       "h3Pattern": "projects"
     },
     "layout": {
-      "id": "projects_layout_tsx_4216421654",
+      "id": "projects_1553183652",
       "name": "projects",
       "folder": "pages",
       "file": "projects/layout.tsx",
@@ -2056,11 +2056,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "projects_projectId_index_tsx_2013112903",
+        "page": {
+          "id": "projects_projectId__1315672198",
           "name": "projects/[projectId]",
           "folder": "pages",
-          "file": "projects/[projectId]/index.tsx",
+          "file": "projects/[projectId]/page.tsx",
           "pathTokens": [
             {
               "kind": "param",
@@ -2081,7 +2081,7 @@
           "h3Pattern": "projects/:projectId"
         },
         "layout": {
-          "id": "projects_projectId_layout_tsx_2457576455",
+          "id": "projects_projectId__1315672198",
           "name": "projects/[projectId]",
           "folder": "pages",
           "file": "projects/[projectId]/layout.tsx",
@@ -2107,11 +2107,11 @@
         "parent": "projects",
         "children": [
           {
-            "index": {
-              "id": "projects_projectId_files_index_tsx_3641865118",
+            "page": {
+              "id": "projects_projectId_files_149135641",
               "name": "projects/[projectId]/files",
               "folder": "pages",
-              "file": "projects/[projectId]/files/index.tsx",
+              "file": "projects/[projectId]/files/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -2130,7 +2130,7 @@
               "h3Pattern": "projects/:projectId/files"
             },
             "layout": {
-              "id": "projects_projectId_files_layout_tsx_1843012014",
+              "id": "projects_projectId_files_149135641",
               "name": "projects/[projectId]/files",
               "folder": "pages",
               "file": "projects/[projectId]/files/layout.tsx",
@@ -2154,11 +2154,11 @@
             "parent": "projects/[projectId]",
             "children": [
               {
-                "index": {
-                  "id": "projects_projectId_files_path_index_tsx_3414316093",
+                "page": {
+                  "id": "projects_projectId_files_path__3708172195",
                   "name": "projects/[projectId]/files/{...path}",
                   "folder": "pages",
-                  "file": "projects/[projectId]/files/{...path}/index.tsx",
+                  "file": "projects/[projectId]/files/{...path}/page.tsx",
                   "pathTokens": [
                     {
                       "kind": "param",
@@ -2184,11 +2184,11 @@
             ]
           },
           {
-            "index": {
-              "id": "projects_projectId_tasks_index_tsx_2095702919",
+            "page": {
+              "id": "projects_projectId_tasks_1586398423",
               "name": "projects/[projectId]/tasks",
               "folder": "pages",
-              "file": "projects/[projectId]/tasks/index.tsx",
+              "file": "projects/[projectId]/tasks/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -2207,7 +2207,7 @@
               "h3Pattern": "projects/:projectId/tasks"
             },
             "layout": {
-              "id": "projects_projectId_tasks_layout_tsx_152335102",
+              "id": "projects_projectId_tasks_1586398423",
               "name": "projects/[projectId]/tasks",
               "folder": "pages",
               "file": "projects/[projectId]/tasks/layout.tsx",
@@ -2231,11 +2231,11 @@
             "parent": "projects/[projectId]",
             "children": [
               {
-                "index": {
-                  "id": "projects_projectId_tasks_taskId_index_tsx_876882048",
+                "page": {
+                  "id": "projects_projectId_tasks_taskId__409804491",
                   "name": "projects/[projectId]/tasks/[taskId]",
                   "folder": "pages",
-                  "file": "projects/[projectId]/tasks/[taskId]/index.tsx",
+                  "file": "projects/[projectId]/tasks/[taskId]/page.tsx",
                   "pathTokens": [
                     {
                       "kind": "param",
@@ -2256,7 +2256,7 @@
                   "h3Pattern": "projects/:projectId/tasks/:taskId"
                 },
                 "layout": {
-                  "id": "projects_projectId_tasks_taskId_layout_tsx_2537048726",
+                  "id": "projects_projectId_tasks_taskId__409804491",
                   "name": "projects/[projectId]/tasks/[taskId]",
                   "folder": "pages",
                   "file": "projects/[projectId]/tasks/[taskId]/layout.tsx",
@@ -2282,11 +2282,11 @@
                 "parent": "projects/[projectId]/tasks",
                 "children": [
                   {
-                    "index": {
-                      "id": "projects_projectId_tasks_taskId_comments_index_tsx_2812732982",
+                    "page": {
+                      "id": "projects_projectId_tasks_taskId_comments_3619292096",
                       "name": "projects/[projectId]/tasks/[taskId]/comments",
                       "folder": "pages",
-                      "file": "projects/[projectId]/tasks/[taskId]/comments/index.tsx",
+                      "file": "projects/[projectId]/tasks/[taskId]/comments/page.tsx",
                       "pathTokens": [
                         {
                           "kind": "static",
@@ -2305,7 +2305,7 @@
                       "h3Pattern": "projects/:projectId/tasks/:taskId/comments"
                     },
                     "layout": {
-                      "id": "projects_projectId_tasks_taskId_comments_layout_tsx_3047800545",
+                      "id": "projects_projectId_tasks_taskId_comments_3619292096",
                       "name": "projects/[projectId]/tasks/[taskId]/comments",
                       "folder": "pages",
                       "file": "projects/[projectId]/tasks/[taskId]/comments/layout.tsx",
@@ -2329,11 +2329,11 @@
                     "parent": "projects/[projectId]/tasks/[taskId]",
                     "children": [
                       {
-                        "index": {
-                          "id": "projects_projectId_tasks_taskId_comments_commentId_index_tsx_3891983433",
+                        "page": {
+                          "id": "projects_projectId_tasks_taskId_comments_commentId__2214096245",
                           "name": "projects/[projectId]/tasks/[taskId]/comments/[commentId]",
                           "folder": "pages",
-                          "file": "projects/[projectId]/tasks/[taskId]/comments/[commentId]/index.tsx",
+                          "file": "projects/[projectId]/tasks/[taskId]/comments/[commentId]/page.tsx",
                           "pathTokens": [
                             {
                               "kind": "param",
@@ -2363,11 +2363,11 @@
             ]
           },
           {
-            "index": {
-              "id": "projects_projectId_team_index_tsx_1454304763",
+            "page": {
+              "id": "projects_projectId_team_3381253143",
               "name": "projects/[projectId]/team",
               "folder": "pages",
-              "file": "projects/[projectId]/team/index.tsx",
+              "file": "projects/[projectId]/team/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -2386,7 +2386,7 @@
               "h3Pattern": "projects/:projectId/team"
             },
             "layout": {
-              "id": "projects_projectId_team_layout_tsx_1351420135",
+              "id": "projects_projectId_team_3381253143",
               "name": "projects/[projectId]/team",
               "folder": "pages",
               "file": "projects/[projectId]/team/layout.tsx",
@@ -2410,11 +2410,11 @@
             "parent": "projects/[projectId]",
             "children": [
               {
-                "index": {
-                  "id": "projects_projectId_team_userId_index_tsx_1486831611",
+                "page": {
+                  "id": "projects_projectId_team_userId__445654051",
                   "name": "projects/[projectId]/team/[userId]",
                   "folder": "pages",
-                  "file": "projects/[projectId]/team/[userId]/index.tsx",
+                  "file": "projects/[projectId]/team/[userId]/page.tsx",
                   "pathTokens": [
                     {
                       "kind": "param",
@@ -2445,7 +2445,7 @@
   },
   {
     "layout": {
-      "id": "properties_layout_tsx_4189224751",
+      "id": "properties_2277716423",
       "name": "properties",
       "folder": "pages",
       "file": "properties/layout.tsx",
@@ -2468,11 +2468,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "properties_filters_index_tsx_1571931483",
+        "page": {
+          "id": "properties_filters_1252194096",
           "name": "properties/filters",
           "folder": "pages",
-          "file": "properties/filters/index.tsx",
+          "file": "properties/filters/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -2494,11 +2494,11 @@
         "children": []
       },
       {
-        "index": {
-          "id": "properties_city_filters_filters_index_tsx_1192904431",
+        "page": {
+          "id": "properties_city_filters_filters__2773621047",
           "name": "properties/[city]/filters/{...filters}",
           "folder": "pages",
-          "file": "properties/[city]/filters/{...filters}/index.tsx",
+          "file": "properties/[city]/filters/{...filters}/page.tsx",
           "pathTokens": [
             {
               "kind": "param",
@@ -2548,11 +2548,11 @@
     ]
   },
   {
-    "index": {
-      "id": "search_index_tsx_960598595",
+    "page": {
+      "id": "search_3035683751",
       "name": "search",
       "folder": "pages",
-      "file": "search/index.tsx",
+      "file": "search/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -2573,7 +2573,7 @@
     "children": [
       {
         "layout": {
-          "id": "search_query_layout_tsx_3813281713",
+          "id": "search_query__671801423",
           "name": "search/{query}",
           "folder": "pages",
           "file": "search/{query}/layout.tsx",
@@ -2599,11 +2599,11 @@
         "parent": "search",
         "children": [
           {
-            "index": {
-              "id": "search_query_page_index_tsx_238838277",
+            "page": {
+              "id": "search_query_page__1336136964",
               "name": "search/{query}/{page}",
               "folder": "pages",
-              "file": "search/{query}/{page}/index.tsx",
+              "file": "search/{query}/{page}/page.tsx",
               "pathTokens": [
                 {
                   "kind": "param",
@@ -2631,11 +2631,11 @@
     ]
   },
   {
-    "index": {
-      "id": "shop_index_tsx_2616003680",
+    "page": {
+      "id": "shop_2892647586",
       "name": "shop",
       "folder": "pages",
-      "file": "shop/index.tsx",
+      "file": "shop/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -2654,7 +2654,7 @@
       "h3Pattern": "shop"
     },
     "layout": {
-      "id": "shop_layout_tsx_933036490",
+      "id": "shop_2892647586",
       "name": "shop",
       "folder": "pages",
       "file": "shop/layout.tsx",
@@ -2677,11 +2677,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "shop_product_id_index_tsx_3035235801",
+        "page": {
+          "id": "shop_product_id__3182361986",
           "name": "shop/product/[id]",
           "folder": "pages",
-          "file": "shop/product/[id]/index.tsx",
+          "file": "shop/product/[id]/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -2713,7 +2713,7 @@
           "h3Pattern": "shop/product/:id"
         },
         "layout": {
-          "id": "shop_product_id_layout_tsx_2232356331",
+          "id": "shop_product_id__3182361986",
           "name": "shop/product/[id]",
           "folder": "pages",
           "file": "shop/product/[id]/layout.tsx",
@@ -2750,11 +2750,11 @@
         "parent": "shop",
         "children": [
           {
-            "index": {
-              "id": "shop_product_id_reviews_index_tsx_1128969612",
+            "page": {
+              "id": "shop_product_id_reviews_1855913575",
               "name": "shop/product/[id]/reviews",
               "folder": "pages",
-              "file": "shop/product/[id]/reviews/index.tsx",
+              "file": "shop/product/[id]/reviews/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -2778,11 +2778,11 @@
         ]
       },
       {
-        "index": {
-          "id": "shop_cart_index_tsx_3461971678",
+        "page": {
+          "id": "shop_cart_864259587",
           "name": "shop/cart",
           "folder": "pages",
-          "file": "shop/cart/index.tsx",
+          "file": "shop/cart/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -2805,7 +2805,7 @@
       },
       {
         "layout": {
-          "id": "shop_checkout_layout_tsx_2809742663",
+          "id": "shop_checkout_2216891405",
           "name": "shop/checkout",
           "folder": "pages",
           "file": "shop/checkout/layout.tsx",
@@ -2829,11 +2829,11 @@
         "parent": "shop",
         "children": [
           {
-            "index": {
-              "id": "shop_checkout_confirm_index_tsx_457300039",
+            "page": {
+              "id": "shop_checkout_confirm_2583764847",
               "name": "shop/checkout/confirm",
               "folder": "pages",
-              "file": "shop/checkout/confirm/index.tsx",
+              "file": "shop/checkout/confirm/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -2855,11 +2855,11 @@
             "children": []
           },
           {
-            "index": {
-              "id": "shop_checkout_payment_index_tsx_2839585893",
+            "page": {
+              "id": "shop_checkout_payment_2029664294",
               "name": "shop/checkout/payment",
               "folder": "pages",
-              "file": "shop/checkout/payment/index.tsx",
+              "file": "shop/checkout/payment/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -2881,11 +2881,11 @@
             "children": []
           },
           {
-            "index": {
-              "id": "shop_checkout_shipping_index_tsx_4218611208",
+            "page": {
+              "id": "shop_checkout_shipping_2176138456",
               "name": "shop/checkout/shipping",
               "folder": "pages",
-              "file": "shop/checkout/shipping/index.tsx",
+              "file": "shop/checkout/shipping/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -2904,7 +2904,7 @@
               "h3Pattern": "shop/checkout/shipping"
             },
             "layout": {
-              "id": "shop_checkout_shipping_layout_tsx_1955886922",
+              "id": "shop_checkout_shipping_2176138456",
               "name": "shop/checkout/shipping",
               "folder": "pages",
               "file": "shop/checkout/shipping/layout.tsx",
@@ -2931,11 +2931,11 @@
         ]
       },
       {
-        "index": {
-          "id": "shop_orders_index_tsx_3044215409",
+        "page": {
+          "id": "shop_orders_2363820871",
           "name": "shop/orders",
           "folder": "pages",
-          "file": "shop/orders/index.tsx",
+          "file": "shop/orders/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -2954,7 +2954,7 @@
           "h3Pattern": "shop/orders"
         },
         "layout": {
-          "id": "shop_orders_layout_tsx_1560526654",
+          "id": "shop_orders_2363820871",
           "name": "shop/orders",
           "folder": "pages",
           "file": "shop/orders/layout.tsx",
@@ -2978,11 +2978,11 @@
         "parent": "shop",
         "children": [
           {
-            "index": {
-              "id": "shop_orders_orderId_index_tsx_3645959700",
+            "page": {
+              "id": "shop_orders_orderId__3453181393",
               "name": "shop/orders/[orderId]",
               "folder": "pages",
-              "file": "shop/orders/[orderId]/index.tsx",
+              "file": "shop/orders/[orderId]/page.tsx",
               "pathTokens": [
                 {
                   "kind": "param",
@@ -3008,11 +3008,11 @@
         ]
       },
       {
-        "index": {
-          "id": "shop_products_index_tsx_3411274748",
+        "page": {
+          "id": "shop_products_2560713497",
           "name": "shop/products",
           "folder": "pages",
-          "file": "shop/products/index.tsx",
+          "file": "shop/products/page.tsx",
           "pathTokens": [
             {
               "kind": "static",
@@ -3031,7 +3031,7 @@
           "h3Pattern": "shop/products"
         },
         "layout": {
-          "id": "shop_products_layout_tsx_3463733314",
+          "id": "shop_products_2560713497",
           "name": "shop/products",
           "folder": "pages",
           "file": "shop/products/layout.tsx",
@@ -3055,11 +3055,11 @@
         "parent": "shop",
         "children": [
           {
-            "index": {
-              "id": "shop_products_category_index_tsx_130432150",
+            "page": {
+              "id": "shop_products_category__1715568857",
               "name": "shop/products/{category}",
               "folder": "pages",
-              "file": "shop/products/{category}/index.tsx",
+              "file": "shop/products/{category}/page.tsx",
               "pathTokens": [
                 {
                   "kind": "param",
@@ -3085,11 +3085,11 @@
         ]
       },
       {
-        "index": {
-          "id": "shop_category_productId_index_tsx_3761077416",
+        "page": {
+          "id": "shop_category_productId__3418786773",
           "name": "shop/[category]/[productId]",
           "folder": "pages",
-          "file": "shop/[category]/[productId]/index.tsx",
+          "file": "shop/[category]/[productId]/page.tsx",
           "pathTokens": [
             {
               "kind": "param",
@@ -3123,7 +3123,7 @@
           "h3Pattern": "shop/:category/:productId"
         },
         "layout": {
-          "id": "shop_category_productId_layout_tsx_2723777336",
+          "id": "shop_category_productId__3418786773",
           "name": "shop/[category]/[productId]",
           "folder": "pages",
           "file": "shop/[category]/[productId]/layout.tsx",
@@ -3165,11 +3165,11 @@
     ]
   },
   {
-    "index": {
-      "id": "signup_index_tsx_1574634146",
+    "page": {
+      "id": "signup_1319313135",
       "name": "signup",
       "folder": "pages",
-      "file": "signup/index.tsx",
+      "file": "signup/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -3191,7 +3191,7 @@
   },
   {
     "layout": {
-      "id": "store_layout_tsx_1661449985",
+      "id": "store_4283914359",
       "name": "store",
       "folder": "pages",
       "file": "store/layout.tsx",
@@ -3215,7 +3215,7 @@
     "children": [
       {
         "layout": {
-          "id": "store_category_sort_layout_tsx_1255246087",
+          "id": "store_category_sort_3090640527",
           "name": "store/[category]/sort",
           "folder": "pages",
           "file": "store/[category]/sort/layout.tsx",
@@ -3252,11 +3252,11 @@
         "parent": "store",
         "children": [
           {
-            "index": {
-              "id": "store_category_sort_sortBy_index_tsx_282881663",
+            "page": {
+              "id": "store_category_sort_sortBy__2408154266",
               "name": "store/[category]/sort/[sortBy]",
               "folder": "pages",
-              "file": "store/[category]/sort/[sortBy]/index.tsx",
+              "file": "store/[category]/sort/[sortBy]/page.tsx",
               "pathTokens": [
                 {
                   "kind": "param",
@@ -3282,11 +3282,11 @@
         ]
       },
       {
-        "index": {
-          "id": "store_category_filters_filters_index_tsx_2600177157",
+        "page": {
+          "id": "store_category_filters_filters__3158719104",
           "name": "store/[category]/filters/{...filters}",
           "folder": "pages",
-          "file": "store/[category]/filters/{...filters}/index.tsx",
+          "file": "store/[category]/filters/{...filters}/page.tsx",
           "pathTokens": [
             {
               "kind": "param",
@@ -3336,11 +3336,11 @@
     ]
   },
   {
-    "index": {
-      "id": "users_index_tsx_3827824650",
+    "page": {
+      "id": "users_344172009",
       "name": "users",
       "folder": "pages",
-      "file": "users/index.tsx",
+      "file": "users/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -3359,7 +3359,7 @@
       "h3Pattern": "users"
     },
     "layout": {
-      "id": "users_layout_tsx_2592424824",
+      "id": "users_344172009",
       "name": "users",
       "folder": "pages",
       "file": "users/layout.tsx",
@@ -3382,11 +3382,11 @@
     },
     "children": [
       {
-        "index": {
-          "id": "users_username_index_tsx_2988217479",
+        "page": {
+          "id": "users_username__1686078557",
           "name": "users/[username]",
           "folder": "pages",
-          "file": "users/[username]/index.tsx",
+          "file": "users/[username]/page.tsx",
           "pathTokens": [
             {
               "kind": "param",
@@ -3407,7 +3407,7 @@
           "h3Pattern": "users/:username"
         },
         "layout": {
-          "id": "users_username_layout_tsx_165316489",
+          "id": "users_username__1686078557",
           "name": "users/[username]",
           "folder": "pages",
           "file": "users/[username]/layout.tsx",
@@ -3433,11 +3433,11 @@
         "parent": "users",
         "children": [
           {
-            "index": {
-              "id": "users_username_followers_index_tsx_3491047874",
+            "page": {
+              "id": "users_username_followers_1107783251",
               "name": "users/[username]/followers",
               "folder": "pages",
-              "file": "users/[username]/followers/index.tsx",
+              "file": "users/[username]/followers/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -3459,11 +3459,11 @@
             "children": []
           },
           {
-            "index": {
-              "id": "users_username_following_index_tsx_1569883917",
+            "page": {
+              "id": "users_username_following_3081772567",
               "name": "users/[username]/following",
               "folder": "pages",
-              "file": "users/[username]/following/index.tsx",
+              "file": "users/[username]/following/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -3485,11 +3485,11 @@
             "children": []
           },
           {
-            "index": {
-              "id": "users_username_posts_index_tsx_3051146060",
+            "page": {
+              "id": "users_username_posts_2176026090",
               "name": "users/[username]/posts",
               "folder": "pages",
-              "file": "users/[username]/posts/index.tsx",
+              "file": "users/[username]/posts/page.tsx",
               "pathTokens": [
                 {
                   "kind": "static",
@@ -3508,7 +3508,7 @@
               "h3Pattern": "users/:username/posts"
             },
             "layout": {
-              "id": "users_username_posts_layout_tsx_90922222",
+              "id": "users_username_posts_2176026090",
               "name": "users/[username]/posts",
               "folder": "pages",
               "file": "users/[username]/posts/layout.tsx",
@@ -3532,11 +3532,11 @@
             "parent": "users/[username]",
             "children": [
               {
-                "index": {
-                  "id": "users_username_posts_postId_index_tsx_2337624193",
+                "page": {
+                  "id": "users_username_posts_postId__3881455890",
                   "name": "users/[username]/posts/[postId]",
                   "folder": "pages",
-                  "file": "users/[username]/posts/[postId]/index.tsx",
+                  "file": "users/[username]/posts/[postId]/page.tsx",
                   "pathTokens": [
                     {
                       "kind": "param",
@@ -3557,7 +3557,7 @@
                   "h3Pattern": "users/:username/posts/:postId"
                 },
                 "layout": {
-                  "id": "users_username_posts_postId_layout_tsx_3766512504",
+                  "id": "users_username_posts_postId__3881455890",
                   "name": "users/[username]/posts/[postId]",
                   "folder": "pages",
                   "file": "users/[username]/posts/[postId]/layout.tsx",
@@ -3590,11 +3590,11 @@
     ]
   },
   {
-    "index": {
-      "id": "files_filePath_index_tsx_3346733359",
+    "page": {
+      "id": "files_filePath__2901692274",
       "name": "files/{...filePath}",
       "folder": "pages",
-      "file": "files/{...filePath}/index.tsx",
+      "file": "files/{...filePath}/page.tsx",
       "pathTokens": [
         {
           "kind": "static",
@@ -3626,7 +3626,7 @@
       "h3Pattern": "files/**"
     },
     "layout": {
-      "id": "files_filePath_layout_tsx_3517107166",
+      "id": "files_filePath__2901692274",
       "name": "files/{...filePath}",
       "folder": "pages",
       "file": "files/{...filePath}/layout.tsx",

@@ -246,9 +246,9 @@ the backend and sidecars read every key from `process.env`.
 ## Directory-Based Routing
 
 ### How does routing map files to URLs?
-Folder names become path segments; `index` files define the endpoint or component:
+Folder names become path segments; an `index.ts` in a folder defines the route:
 - `api/users/[id]/index.ts` maps to `/api/users/:id`
-- `pages/users/[id]/index.tsx` maps to `/users/:id`.
+- `pages/users/[id]/index.ts` maps to `/users/:id`, rendered by the `page.tsx` next to it.
 
 No separate routing config - your file structure is your route definition.
 [Details&nbsp;›](/routing/intro#how-it-works)
@@ -261,7 +261,9 @@ The only cost is creating a folder even when it holds just `index.ts`.
 [Details&nbsp;›](/routing/rationale)
 
 ### Where do helpers shared by several routes go?
-Wherever you decide - `index.*` and `use.ts` are the only names the scanner looks for, so nothing else is claimed.
+Wherever you decide.
+`index.ts`, `use.ts`, `page.*` and `layout.*` are the only names the scanner looks for,
+so nothing else is claimed.
 
 The tree gives you a default: put a helper in the deepest folder that covers every route using it,
 and move it up when that stops being true.
@@ -307,9 +309,9 @@ It is typechecked through whichever folder imports it. Listing it in the root `t
 that is what lets your editor resolve the file when you open it on its own, and what covers code nothing imports yet.
 [Details&nbsp;›](/essentials/project-structure#path-mappings)
 
-### Why must every route be a folder with an `index` file, even the root?
+### Why must every route be a folder with an `index.ts`, even the root?
 Consistency - no special cases. The base route uses a folder named `index`
-(`pages/index/index.tsx` -> `/`).
+(`pages/index/index.ts` -> `/`).
 [Details&nbsp;›](/routing/intro#how-it-works)
 
 ### How do nested routes work?
@@ -334,9 +336,11 @@ then replace the seeded placeholder with real logic and visit the URL
 [Details&nbsp;›](/routing/intro#route-file-requirements)
 
 ### How do I create a page?
-Create a matching folder under `pages/` with an `index` component file for your framework -
-`pages/products/index.tsx` (React/SolidJS), `.vue` (Vue), `.svelte` (Svelte), or `.mdx` (MDX) - and it becomes `/products`.
-KosmoJS seeds a placeholder component you replace with your own;
+Create a folder under `pages/` with an empty `index.ts` - `pages/products/index.ts` -
+and it becomes `/products`.
+KosmoJS seeds the route definition into it, and a placeholder component into its page file -
+`page.tsx` (React/SolidJS), `.vue` (Vue), `.svelte` (Svelte), or `.mdx` (MDX) -
+that you replace with your own;
 the parallel `api/` and `pages/` trees mean a page and its endpoint are always one folder apart.
 The two sides are coupled by usage, not by name - you pick the names on each end freely. The
 docs mirror api and page names purely for consistency; matching them is a convention, not a
@@ -386,15 +390,15 @@ Optional params must not be followed by required ones (`users/{section}/{subsect
 ### Why am I getting an unexpected 404 with an optional param before a static segment?
 With `properties/{city}/filters`, visiting `/properties/filters` makes the router match
 `{city}="filters"` and then expect another `/filters` segment that isn't there - 404.
-Fix it by adding an explicit static route (`properties/filters/index.tsx`), which takes priority.
+Fix it by adding an explicit static route (`properties/filters/index.ts`), which takes priority.
 [Details&nbsp;›](/routing/params#watch-out-for-ambiguous-paths)
 
 ### When does a static route win over a dynamic one?
 Always - static routes take priority over dynamic ones.
 [Details&nbsp;›](/routing/params#watch-out-for-ambiguous-paths)
 
-### How does a sibling `index` make `[id]` effectively optional?
-A parent `index` provides a fallback to render, so `careers/index.tsx` + `careers/[jobId]/index.tsx`
+### How does a sibling route make `[id]` effectively optional?
+A parent route provides a fallback to render, so `careers/index.ts` + `careers/[jobId]/index.ts`
 makes `[jobId]` effectively optional. `{jobId}` communicates that intent more clearly;
 both notations work identically here.
 [Details&nbsp;›](/routing/params#required-vs-optional-a-subtlety)
@@ -465,7 +469,8 @@ Both blocks accept it:
 [Custom Route Templates&nbsp;›](/backend/custom-templates#configuration)
 
 ### Which seeded files can templates override?
-Route `index` files - `pages/**/index.*` on the frontend, `api/**/index.ts` on the backend -
+Page files on the frontend - `pages/**/page.*` -
+and route `index` files on the backend - `api/**/index.ts` -
 and, with the function form, `layout` files on the frontend and `use.ts` files on the backend.
 Every other seeded file gets the built-in minimal boilerplate to start from.
 [Frontend&nbsp;›](/frontend/custom-templates) ·
@@ -869,6 +874,14 @@ Same transport swap, same in-process dispatch - use it when a test needs a sibli
 const { body } = await clients["another/route"].GET();
 ~~~
 [Details&nbsp;›](/backend/testing#calling-other-routes)
+
+### Why are tests at the project root not run?
+`loadConfig()` in `vitest.config.ts` loads source folders only, and leaves the root out on purpose:
+the root is yours to load and configure as you see fit.
+Loading it automatically would call for a way to configure it through Kosmo,
+which defeats the purpose.
+Add a project of your own to `vitest.config.ts` for it.
+[Details&nbsp;›](/backend/testing#the-project-root)
 
 ### How do I narrow a test run to one route?
 Pass a path filter to vitest:
@@ -1529,7 +1542,7 @@ primarily interactive with occasional content -> a framework.
 [Details&nbsp;›](/frontend/mdx#when-to-use-mdx-vs-frameworks)
 
 ### How do I write MDX pages?
-`.mdx`/`.md` files in `pages/`, mixing markdown and JSX, with YAML frontmatter between `---` fences.
+`page.mdx` files in `pages/`, mixing markdown and JSX, with YAML frontmatter between `---` fences.
 Import Preact components directly.
 [Details&nbsp;›](/frontend/mdx#writing-pages)
 
@@ -2008,12 +2021,14 @@ package boundaries, internal dependency graphs, or build-cache configs.
 ## Routing
 
 ### What's the equivalent of Next's `app/page.tsx`?
-A folder with an `index` file: `pages/users/[id]/index.tsx` -> `/users/:id`.
+`page.tsx` too, next to the route's `index.ts`: `pages/users/[id]/index.ts` -> `/users/:id`.
 (TanStack file-based plugin users: same idea, folder-driven.)
 [Details&nbsp;›](/routing/intro#how-it-works)
 
-### Why folders-with-`index` instead of `page.tsx`?
-Only `index` is the route; siblings are colocated helpers - unambiguous at scale.
+### Why does a page route need an `index.ts` besides its `page.tsx`?
+Only `index.ts` is the route, in `pages/` as in `api/`;
+`page.*` and `layout.*` are its assets, and every other sibling is a colocated helper.
+Delete the `index.ts` and the folder is no longer a route, whatever else is in it.
 [Details&nbsp;›](/routing/rationale)
 
 ### How do params map to Next's / TanStack's?

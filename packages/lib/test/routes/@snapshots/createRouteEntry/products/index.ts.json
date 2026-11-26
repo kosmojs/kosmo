@@ -1,0 +1,22 @@
+{
+  "id": "products_3015334490",
+  "name": "products",
+  "folder": "pages",
+  "file": "products/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "products",
+      "pattern": "products",
+      "parts": [
+        {
+          "type": "static",
+          "value": "products"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "products",
+  "honoPattern": "products",
+  "h3Pattern": "products"
+}

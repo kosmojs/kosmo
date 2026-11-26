@@ -1,0 +1,22 @@
+{
+  "id": "dashboard_1553268728",
+  "name": "dashboard",
+  "folder": "pages",
+  "file": "dashboard/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "dashboard",
+      "pattern": "dashboard",
+      "parts": [
+        {
+          "type": "static",
+          "value": "dashboard"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "dashboard",
+  "honoPattern": "dashboard",
+  "h3Pattern": "dashboard"
+}

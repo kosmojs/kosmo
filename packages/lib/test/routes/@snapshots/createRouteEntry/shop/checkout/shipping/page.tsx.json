@@ -1,0 +1,44 @@
+{
+  "id": "shop_checkout_shipping_2176138456",
+  "name": "shop/checkout/shipping",
+  "folder": "pages",
+  "file": "shop/checkout/shipping/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "shop",
+      "pattern": "shop",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shop"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "checkout",
+      "pattern": "checkout",
+      "parts": [
+        {
+          "type": "static",
+          "value": "checkout"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "shipping",
+      "pattern": "shipping",
+      "parts": [
+        {
+          "type": "static",
+          "value": "shipping"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "shop/checkout/shipping",
+  "honoPattern": "shop/checkout/shipping",
+  "h3Pattern": "shop/checkout/shipping"
+}

@@ -41,16 +41,23 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
   // the routes table imports every page module, whatever the framework -
   // ssg.ts reads `staticParams` off each one at build time
   const generateRoutes = async (entries: Array<ResolvedEntry>) => {
-    const pageRoutes = entries
+    const routes = entries
       .flatMap(({ kind, entry }) => {
         return kind === "pageRoute" ? [entry] : [];
       })
       .sort(sortRoutes);
 
+    const files = entries.flatMap(({ kind, entry }) => {
+      return kind === "pageFile" ? [entry] : [];
+    });
+
     await deployLibFile(
       createPath.lib("ssg:routes.ts"),
       templates.libSsgRoutes,
-      { pageRoutes },
+      {
+        routes,
+        files,
+      },
     );
   };
 

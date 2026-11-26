@@ -1,0 +1,35 @@
+{
+  "id": "projects_projectId__1315672198",
+  "name": "projects/[projectId]",
+  "folder": "pages",
+  "file": "projects/[projectId]/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "projects",
+      "pattern": "projects",
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[projectId]",
+      "pattern": ":projectId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "projectId",
+          "const": "projectId"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "projects/:projectId",
+  "honoPattern": "projects/:projectId",
+  "h3Pattern": "projects/:projectId"
+}

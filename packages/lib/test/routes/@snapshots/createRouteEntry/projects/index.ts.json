@@ -1,0 +1,22 @@
+{
+  "id": "projects_1553183652",
+  "name": "projects",
+  "folder": "pages",
+  "file": "projects/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "projects",
+      "pattern": "projects",
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "projects",
+  "honoPattern": "projects",
+  "h3Pattern": "projects"
+}

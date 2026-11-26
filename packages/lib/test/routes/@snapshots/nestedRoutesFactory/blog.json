@@ -1,9 +1,9 @@
 {
-  "index": {
-    "id": "blog_index_tsx_656698020",
+  "page": {
+    "id": "blog_3222622531",
     "name": "blog",
     "folder": "pages",
-    "file": "blog/index.tsx",
+    "file": "blog/page.tsx",
     "pathTokens": [
       {
         "kind": "static",
@@ -22,7 +22,7 @@
     "h3Pattern": "blog"
   },
   "layout": {
-    "id": "blog_layout_tsx_2871578117",
+    "id": "blog_3222622531",
     "name": "blog",
     "folder": "pages",
     "file": "blog/layout.tsx",
@@ -45,11 +45,11 @@
   },
   "children": [
     {
-      "index": {
-        "id": "blog_post_slug_index_tsx_4265829785",
+      "page": {
+        "id": "blog_post_slug__1415960805",
         "name": "blog/post/[slug]",
         "folder": "pages",
-        "file": "blog/post/[slug]/index.tsx",
+        "file": "blog/post/[slug]/page.tsx",
         "pathTokens": [
           {
             "kind": "static",
@@ -81,7 +81,7 @@
         "h3Pattern": "blog/post/:slug"
       },
       "layout": {
-        "id": "blog_post_slug_layout_tsx_4086949147",
+        "id": "blog_post_slug__1415960805",
         "name": "blog/post/[slug]",
         "folder": "pages",
         "file": "blog/post/[slug]/layout.tsx",
@@ -119,11 +119,11 @@
       "children": []
     },
     {
-      "index": {
-        "id": "blog_category_index_tsx_2361523450",
+      "page": {
+        "id": "blog_category__52244126",
         "name": "blog/{category}",
         "folder": "pages",
-        "file": "blog/{category}/index.tsx",
+        "file": "blog/{category}/page.tsx",
         "pathTokens": [
           {
             "kind": "param",
@@ -146,11 +146,11 @@
       "parent": "blog",
       "children": [
         {
-          "index": {
-            "id": "blog_category_tag_index_tsx_1530717925",
+          "page": {
+            "id": "blog_category_tag__2580707054",
             "name": "blog/{category}/{tag}",
             "folder": "pages",
-            "file": "blog/{category}/{tag}/index.tsx",
+            "file": "blog/{category}/{tag}/page.tsx",
             "pathTokens": [
               {
                 "kind": "param",

@@ -27,9 +27,12 @@ pages/
     settings/
       layout.tsx       ← wraps all /dashboard/settings/* pages
       profile/
-        index.tsx      ← wrapped by both layouts
-      index.tsx
-    index.tsx
+        index.ts
+        page.tsx       ← wrapped by both layouts
+      index.ts
+      page.tsx
+    index.ts
+    page.tsx
 ```
 
 For `/dashboard/settings/profile`, the render order is:
@@ -38,7 +41,7 @@ For `/dashboard/settings/profile`, the render order is:
 app.tsx (global wrapper)
 └── dashboard/layout.tsx
     └── dashboard/settings/layout.tsx
-        └── dashboard/settings/profile/index.tsx
+        └── dashboard/settings/profile/page.tsx
 ```
 
 No configuration, no imports - the file system defines the hierarchy.
@@ -329,7 +332,8 @@ front/
     ├── dashboard/
     │   └── layout.tsx
     └── index/
-        └── index.tsx
+        ├── index.ts
+        └── page.tsx
 ```
 
 ## Layout Hierarchy Example
@@ -346,7 +350,8 @@ front/
             ├── layout.tsx         ← Level 3: settings wrapper
             └── security/
                 ├── layout.tsx     ← Level 4: security wrapper
-                └── index.tsx      ← Level 5: page component
+                ├── index.ts       ← the route
+                └── page.tsx       ← Level 5: page component
 ```
 
 Renders as:

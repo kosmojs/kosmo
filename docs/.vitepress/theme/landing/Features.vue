@@ -46,7 +46,7 @@ const tools = [
               <span class="url">/api/users/:id</span>
             </div>
             <div class="route">
-              <span class="file">pages/users/<i>[id]</i>/index.tsx</span>
+              <span class="file">pages/users/<i>[id]</i>/index.ts</span>
               <span class="to" />
               <span class="url">/users/:id</span>
             </div>

@@ -151,9 +151,10 @@ Visit `http://localhost:4556/api/users/123`. You should see JSON.
 
 ## Create a page
 
-With the dev server still running, create `pages/users/[id]/index.tsx`
-(or `.vue` / `.svelte` / `.mdx`).
-KosmoJS seeds a placeholder component - replace it with a page that fetches from your API route.
+With the dev server still running, create an empty `pages/users/[id]/index.ts`.
+KosmoJS seeds it with the route definition,
+and seeds a placeholder component next to it in `page.tsx` (or `.vue` / `.svelte` / `.mdx`) -
+replace that component with a page that fetches from your API route.
 React and SolidJS fetch in the component here;
 Vue, Svelte and MDX read through a `loader` export instead (resolved before render),
 so they need no loading state:
@@ -161,7 +162,7 @@ so they need no loading state:
 :::tabs key:frontend variant:code
 == React
 ```tsx
-// React: pages/users/[id]/index.tsx
+// React: pages/users/[id]/page.tsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import fetchClients from "_/fetch";
@@ -182,7 +183,7 @@ export default function UserPage() {
 
 == Solid
 ```tsx
-// Solid: pages/users/[id]/index.tsx
+// Solid: pages/users/[id]/page.tsx
 import { useParams } from "@solidjs/router";
 import { createAsync } from "@solidjs/router";
 import fetchClients from "_/fetch";
@@ -201,7 +202,7 @@ export default function UserPage() {
 
 == Vue
 ```vue
-<!-- Vue: pages/users/[id]/index.vue -->
+<!-- Vue: pages/users/[id]/page.vue -->
 <script lang="ts">
 import fetchClients from "_/fetch";
 
@@ -224,7 +225,7 @@ const user = useLoaderData();
 
 == Svelte
 ```svelte
-<!-- Svelte: pages/users/[id]/index.svelte -->
+<!-- Svelte: pages/users/[id]/page.svelte -->
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
@@ -244,7 +245,7 @@ const user = useLoaderData();
 
 == MDX
 ```mdx
-{/* MDX: pages/users/[id]/index.mdx */}
+{/* MDX: pages/users/[id]/page.mdx */}
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 
@@ -272,7 +273,7 @@ Your folder structure became your routes:
 
 ```
 api/users/[id]/index.ts     ->  /api/users/:id
-pages/users/[id]/index.tsx  ->  /users/:id
+pages/users/[id]/index.ts   ->  /users/:id
 ```
 
 `[id]` is a required parameter. `{id}` makes it optional. `{...path}` matches any depth.

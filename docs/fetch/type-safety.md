@@ -17,7 +17,7 @@ Parameters and payload are checked the moment you call a method: the signature e
 parameter array and payload shape your route declares, and passing the wrong thing is a
 compile error. Nothing to import, nothing to annotate.
 
-```ts [pages/example/index.tsx]
+```ts [pages/example/page.tsx]
 import fetchClients from "_/fetch";
 
 const { GET } = fetchClients["users/[id]"];
@@ -56,7 +56,7 @@ export default defineRoute<"users/[id]", [number]>(({ GET }) => [
 
 the response type is available on the client as:
 
-```ts [pages/example/index.tsx]
+```ts [pages/example/page.tsx]
 import f, { type ResponseT } from "_/fetch";
 
 ResponseT["users/[id]"]["GET"]; // { id: number; name: string; email: string }
@@ -132,7 +132,7 @@ export default defineRoute<"users">(({ POST }) => [
 Variants without a body - no third tuple element, like the bare `[409]` above -
 contribute nothing to the type, so they drop out of the union:
 
-```ts [pages/example/index.tsx]
+```ts [pages/example/page.tsx]
 import f, { type ResponseT } from "_/fetch";
 
 ResponseT["users"]["POST"]; // User | { queued: true }
@@ -146,7 +146,7 @@ and a shared helper naming the type once. `helpers.ts` is the same file for ever
 :::tabs variant:code
 == React
 ```tsx
-// React: pages/users/[id]/index.tsx
+// React: pages/users/[id]/page.tsx
 import { useLoaderData } from "react-router";
 import f from "_/fetch";
 import { formatUser, type User } from "./helpers";
@@ -164,7 +164,7 @@ export default function UserProfile() {
 
 == Solid
 ```tsx
-// Solid: pages/users/[id]/index.tsx
+// Solid: pages/users/[id]/page.tsx
 import { Show, Suspense } from "solid-js";
 import { createAsync, query, useParams } from "@solidjs/router";
 import f from "_/fetch";
@@ -191,7 +191,7 @@ export default function UserProfile() {
 
 == Vue
 ```vue
-<!-- Vue: pages/users/[id]/index.vue -->
+<!-- Vue: pages/users/[id]/page.vue -->
 <script lang="ts">
 import f from "_/fetch";
 
@@ -215,7 +215,7 @@ const user = useLoaderData<User>();
 
 == Svelte
 ```svelte
-<!-- Svelte: pages/users/[id]/index.svelte -->
+<!-- Svelte: pages/users/[id]/page.svelte -->
 <script module lang="ts">
 import f from "_/fetch";
 

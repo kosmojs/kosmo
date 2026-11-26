@@ -34,12 +34,17 @@ The frontend answer decides more than syntax - data preload, child rendering, la
 `jsxImportSource` and mixed-segment support all differ per framework.
 Consult the [support matrix](/essentials/frameworks) rather than guessing from one example.
 
-**Route or page?** An API route default-exports `defineRoute(...)` returning an array of method handlers.
-A page default-exports a component - a **named function**, never an anonymous arrow, which breaks Vite's HMR.
+**Route or page?** A route is the `index.ts` of a folder, in `api/` and in `pages/` alike.
+An API route default-exports `defineRoute(...)` returning an array of method handlers.
+A page route default-exports `defineRoute<...>()` from `_/pages`,
+and its sibling `page.*` renders it: the page default-exports a component -
+a **named function**, never an anonymous arrow, which breaks Vite's HMR.
+A `page.*` without an `index.ts` beside it is not part of any route.
 
 ## Never write the boilerplate yourself
 
 When a new route, `use.ts`, page or layout is needed: **create the file empty** and let KosmoJS fill it in.
+For a new page route, the empty `index.ts` is enough - its page file is seeded along with it.
 Imports, factory signatures and seeded-file wiring change between releases,
 so recalled boilerplate is the single most likely thing to be wrong.
 

@@ -1,6 +1,6 @@
 {
   "layout": {
-    "id": "portal_layout_tsx_4243983674",
+    "id": "portal_195990512",
     "name": "portal",
     "folder": "pages",
     "file": "portal/layout.tsx",
@@ -24,7 +24,7 @@
   "children": [
     {
       "layout": {
-        "id": "portal_clientId_layout_tsx_3114159634",
+        "id": "portal_clientId__3769037540",
         "name": "portal/[clientId]",
         "folder": "pages",
         "file": "portal/[clientId]/layout.tsx",
@@ -51,7 +51,7 @@
       "children": [
         {
           "layout": {
-            "id": "portal_clientId_reports_layout_tsx_1980481456",
+            "id": "portal_clientId_reports_988668655",
             "name": "portal/[clientId]/reports",
             "folder": "pages",
             "file": "portal/[clientId]/reports/layout.tsx",
@@ -76,7 +76,7 @@
           "children": [
             {
               "layout": {
-                "id": "portal_clientId_reports_reportType_layout_tsx_3694080843",
+                "id": "portal_clientId_reports_reportType__1762519789",
                 "name": "portal/[clientId]/reports/[reportType]",
                 "folder": "pages",
                 "file": "portal/[clientId]/reports/[reportType]/layout.tsx",
@@ -102,11 +102,11 @@
               "parent": "portal/[clientId]/reports",
               "children": [
                 {
-                  "index": {
-                    "id": "portal_clientId_reports_reportType_data_dataView_index_tsx_245814616",
+                  "page": {
+                    "id": "portal_clientId_reports_reportType_data_dataView__76313220",
                     "name": "portal/[clientId]/reports/[reportType]/data/[dataView]",
                     "folder": "pages",
-                    "file": "portal/[clientId]/reports/[reportType]/data/[dataView]/index.tsx",
+                    "file": "portal/[clientId]/reports/[reportType]/data/[dataView]/page.tsx",
                     "pathTokens": [
                       {
                         "kind": "static",
@@ -138,7 +138,7 @@
                     "h3Pattern": "portal/:clientId/reports/:reportType/data/:dataView"
                   },
                   "layout": {
-                    "id": "portal_clientId_reports_reportType_data_dataView_layout_tsx_520811149",
+                    "id": "portal_clientId_reports_reportType_data_dataView__76313220",
                     "name": "portal/[clientId]/reports/[reportType]/data/[dataView]",
                     "folder": "pages",
                     "file": "portal/[clientId]/reports/[reportType]/data/[dataView]/layout.tsx",

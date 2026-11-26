@@ -7,6 +7,7 @@ export { default as libPageSamples404 } from "#templates/lib/pageSamples/404.hbs
 export { default as libPageSamplesPage } from "#templates/lib/pageSamples/page.hbs";
 export { default as libPageSamplesStyles } from "#templates/lib/pageSamples/styles.css";
 export { default as libPageSamplesWelcome } from "#templates/lib/pageSamples/welcome.hbs";
+export { default as libPages } from "#templates/lib/pages.hbs";
 export { default as libParams } from "#templates/lib/params.hbs";
 export { default as libRouter } from "#templates/lib/router";
 export { default as libUse } from "#templates/lib/use";
@@ -15,6 +16,7 @@ export { default as srcComponentsLink } from "#templates/src/components/Link";
 export { default as srcComponentsMdx } from "#templates/src/components/mdx";
 export { default as srcEntryClient } from "#templates/src/entry/client";
 export { default as srcEntryServer } from "#templates/src/entry/server";
+export { default as srcPageRoute } from "#templates/src/pageRoute.hbs";
 export { default as srcPageSamples404 } from "#templates/src/pageSamples/404.mdx";
 export { default as srcPageSamplesLayout } from "#templates/src/pageSamples/layout.hbs";
 export { default as srcPageSamplesPage } from "#templates/src/pageSamples/page.hbs";

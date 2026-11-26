@@ -1,14 +1,15 @@
 ---
 title: "Routing: Overview"
 description: KosmoJS uses directory-based routing to map file system structure directly to URL paths.
-    Folder names become path segments with index files defining endpoints and components.
+    Folder names become path segments, and an index.ts in a folder defines the route.
 head:
   - - meta
     - name: keywords
       content: directory-based routing, url mapping, api routes, page routes, route organization
 ---
 
-With directory-based routing, folder names become URL path segments, and `index` files define the actual endpoints or components.
+With directory-based routing, folder names become URL path segments,
+and an `index.ts` in a folder defines the route.
 No separate routing configuration - your file structure is your route definition.
 
 ## How It Works
@@ -26,23 +27,26 @@ api/
 
 pages/
   index/
-    index.tsx         -> /
+    index.ts          -> /
+    page.tsx
   users/
-    index.tsx         -> /users
+    index.ts          -> /users
+    page.tsx
     [id]/
-      index.tsx       -> /users/:id
+      index.ts        -> /users/:id
+      page.tsx
 ```
 
 The parallel structure between `api/` and `pages/` is intentional -
 if you have a `/users/[id]` page, the corresponding `/api/users/[id]` endpoint is easy to find.
 
 Every route lives in a folder, including the root - the base route uses a folder named `index`.
-This consistency means no special cases: every route is a folder with an `index` file inside.
+This consistency means no special cases: every route is a folder with an `index.ts` inside.
 
 ## Route File Requirements
 
 API routes export a route definition (HTTP methods + handlers).
-Client pages export a component function.
+Page routes export a route definition too, and a sibling `page.*` file renders the page.
 
 When you create a new route, you rarely write it from scratch -
 it is automatically seeded with the correct boilerplate.
@@ -75,7 +79,7 @@ build time                          runtime
 ──────────                          ───────
 directory structure                 native router registration
   api/users/[id]/index.ts    ->        Hono/H3/Koa router
-  pages/users/[id]/index.tsx ->        React/Solid/Vue router
+  pages/users/[id]/index.ts  ->        React/Solid/Vue router
         │                                       │
         └── parsed via path-to-regexp ──────────┘
 ```

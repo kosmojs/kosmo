@@ -36,9 +36,9 @@ Koa for a mature Node ecosystem - and it is the only backend with complete mixed
 
 ## Frontends
 
-| | React | SolidJS | Vue | Svelte | MDX |
+| | React | Solid | Vue | Svelte | MDX |
 |---|:---:|:---:|:---:|:---:|:---:|
-| Page extension | `.tsx` | `.tsx` | `.vue` | `.svelte` | `.mdx` / `.md` |
+| Page extension | `.tsx` | `.tsx` | `.vue` | `.svelte` | `.mdx` |
 | Layout file | `layout.tsx` | `layout.tsx` | `layout.vue` | `layout.svelte` | `layout.mdx` |
 | Renders children with | `<Outlet/>` | `props.children` | `<RouterView/>` | `{@render children()}` | `props.children` |
 | `jsxImportSource` | `react` | `solid-js` | `vue` *(JSX only)* | n/a | `preact` |

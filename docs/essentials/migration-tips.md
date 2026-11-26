@@ -32,7 +32,7 @@ structural here instead.
 
 | You're looking for | In KosmoJS |
 |---|---|
-| `app/page.tsx` | a folder with an [index file](/routing/rationale) - `pages/users/[id]/index.tsx` |
+| `app/page.tsx` | `page.*` next to the route's [index.ts](/routing/rationale) - `pages/users/[id]/page.tsx` |
 | `[id]` / TanStack `$id` | `[id]` - same concept, [required param](/routing/params) |
 | `[...slug]` / `[[...slug]]` | `{...path}` - one splat [covers both](/routing/params) |
 | optional segment | `{id}` - same concept, [optional param](/routing/params) |
@@ -62,10 +62,13 @@ structural here instead.
 
 ### `app/page.tsx` and why folders
 
-A route is a **folder with an `index` file**: `pages/users/[id]/index.tsx` -> `/users/:id`.
+A route is a **folder with an `index.ts`**: `pages/users/[id]/index.ts` -> `/users/:id`,
+and its sibling `page.tsx` renders it - the counterpart of `app/page.tsx`.
 
-Only `index` is the route; every sibling file is an obviously-colocated helper.
-That is the whole reason for the extra folder - at scale, `schema.ts` next to `page.tsx` is ambiguous, and here it never is.
+Only `index.ts` makes the route; `page.*` and `layout.*` are its assets,
+and every other sibling is an obviously-colocated helper.
+The same `index.ts` defines an API route under `api/`,
+so a route is declared the same way on both sides.
 [Details&nbsp;›](/routing/rationale)
 
 ### Params

@@ -1,0 +1,46 @@
+{
+  "id": "projects_projectId_files_149135641",
+  "name": "projects/[projectId]/files",
+  "folder": "pages",
+  "file": "projects/[projectId]/files/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "projects",
+      "pattern": "projects",
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[projectId]",
+      "pattern": ":projectId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "projectId",
+          "const": "projectId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "files",
+      "pattern": "files",
+      "parts": [
+        {
+          "type": "static",
+          "value": "files"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "projects/:projectId/files",
+  "honoPattern": "projects/:projectId/files",
+  "h3Pattern": "projects/:projectId/files"
+}

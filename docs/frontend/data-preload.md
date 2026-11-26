@@ -77,7 +77,7 @@ and, on the client, an entry in the `ResponseT` map.
 :::tabs key:frontend variant:code
 == React
 ```tsx
-// React: pages/users/data/index.tsx
+// React: pages/users/data/page.tsx
 import { useLoaderData } from "react-router";
 import fetchClients from "_/fetch";
 
@@ -101,7 +101,7 @@ export default function Page() {
 
 == Solid
 ```tsx
-// Solid: pages/users/data/index.tsx
+// Solid: pages/users/data/page.tsx
 import { Suspense } from "solid-js";
 import { createAsync, query } from "@solidjs/router";
 import fetchClients from "_/fetch";
@@ -131,7 +131,7 @@ export default function Page() {
 
 == Vue
 ```vue
-<!-- Vue: pages/users/data/index.vue -->
+<!-- Vue: pages/users/data/page.vue -->
 <script lang="ts">
 import fetchClients from "_/fetch";
 
@@ -158,7 +158,7 @@ const data = useLoaderData();
 
 == Svelte
 ```svelte
-<!-- Svelte: pages/users/data/index.svelte -->
+<!-- Svelte: pages/users/data/page.svelte -->
 <script module lang="ts">
 import fetchClients from "_/fetch";
 
@@ -183,7 +183,7 @@ const data = useLoaderData();
 
 == MDX
 ```mdx
-{/* MDX: pages/users/data/index.mdx */}
+{/* MDX: pages/users/data/page.mdx */}
 import fetchClients from "_/fetch";
 import { useLoaderData } from "_/use";
 

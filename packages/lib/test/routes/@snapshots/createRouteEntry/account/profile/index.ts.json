@@ -1,0 +1,33 @@
+{
+  "id": "account_profile_3828101079",
+  "name": "account/profile",
+  "folder": "pages",
+  "file": "account/profile/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "account",
+      "pattern": "account",
+      "parts": [
+        {
+          "type": "static",
+          "value": "account"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "profile",
+      "pattern": "profile",
+      "parts": [
+        {
+          "type": "static",
+          "value": "profile"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "account/profile",
+  "honoPattern": "account/profile",
+  "h3Pattern": "account/profile"
+}

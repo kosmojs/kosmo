@@ -1,0 +1,33 @@
+{
+  "id": "legal_privacy_2834241270",
+  "name": "legal/privacy",
+  "folder": "pages",
+  "file": "legal/privacy/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "legal",
+      "pattern": "legal",
+      "parts": [
+        {
+          "type": "static",
+          "value": "legal"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "privacy",
+      "pattern": "privacy",
+      "parts": [
+        {
+          "type": "static",
+          "value": "privacy"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "legal/privacy",
+  "honoPattern": "legal/privacy",
+  "h3Pattern": "legal/privacy"
+}

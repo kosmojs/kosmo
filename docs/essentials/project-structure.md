@@ -68,11 +68,13 @@ src/front/
 ├── pages/                ── client side ───────────────────────────
 │   ├── 404.tsx           -> rendered for unmatched routes
 │   ├── index/
-│   │   └── index.tsx     -> the route  ->  /
+│   │   ├── index.ts      -> the route  ->  /
+│   │   └── page.tsx      -> renders it
 │   └── users/
 │       ├── layout.tsx    -> wraps everything under /users
 │       └── [id]/
-│           └── index.tsx -> the route  ->  /users/:id
+│           ├── index.ts  -> the route  ->  /users/:id
+│           └── page.tsx  -> renders it
 │
 ├── components/
 │   └── Link.tsx          -> type-safe navigation component
@@ -94,7 +96,8 @@ Things worth noticing:
 - **`api/` and `pages/` are siblings** with parallel trees,
 so an endpoint and its page are always one folder apart.
 Neither directory name appears in a URL.
-- **Only `index.*` is a route.** Everything else in a route folder is a colocated helper.
+- **Only `index.ts` is a route.** In `pages/`, `page.*` renders it and `layout.*` wraps it;
+everything else in a route folder is a colocated helper.
 [Rationale&nbsp;›](/routing/rationale)
 - **`app.*` is not a layout.** It sits at the folder root and wraps every route;
 `layout.*` files live inside `pages/**/*` and wrap a subtree.
@@ -104,7 +107,8 @@ Neither directory name appears in a URL.
 - **`sidecar/` is a process, not part of the app.** It builds and runs on its own,
 and `entry/` beside it belongs to the frontend.
 [Details&nbsp;›](/sidecar/intro)
-- **Everything else is yours.** `index.*` and `use.ts` are the only names the scanner looks for,
+- **Everything else is yours.**
+`index.ts`, `use.ts`, `page.*` and `layout.*` are the only names the scanner looks for,
 so any other file or directory - `types/`, `server/`, `domain/` - is ignored by it and reachable through `@/`.
 Where to put it is a judgement call, not a convention KosmoJS imposes.
 [Suggestions&nbsp;›](/routing/rationale#helpers-shared-by-several-routes)

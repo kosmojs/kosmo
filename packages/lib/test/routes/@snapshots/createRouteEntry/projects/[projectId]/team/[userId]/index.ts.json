@@ -1,0 +1,59 @@
+{
+  "id": "projects_projectId_team_userId__445654051",
+  "name": "projects/[projectId]/team/[userId]",
+  "folder": "pages",
+  "file": "projects/[projectId]/team/[userId]/index.ts",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "projects",
+      "pattern": "projects",
+      "parts": [
+        {
+          "type": "static",
+          "value": "projects"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[projectId]",
+      "pattern": ":projectId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "projectId",
+          "const": "projectId"
+        }
+      ]
+    },
+    {
+      "kind": "static",
+      "orig": "team",
+      "pattern": "team",
+      "parts": [
+        {
+          "type": "static",
+          "value": "team"
+        }
+      ]
+    },
+    {
+      "kind": "param",
+      "orig": "[userId]",
+      "pattern": ":userId",
+      "parts": [
+        {
+          "type": "param",
+          "kind": "required",
+          "name": "userId",
+          "const": "userId"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "projects/:projectId/team/:userId",
+  "honoPattern": "projects/:projectId/team/:userId",
+  "h3Pattern": "projects/:projectId/team/:userId"
+}

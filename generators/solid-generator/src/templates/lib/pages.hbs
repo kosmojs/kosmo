@@ -1,0 +1,17 @@
+import type { pageRouteMap } from "{{ createImport 'libCore' }}";
+
+export type PageRouteName = keyof typeof pageRouteMap;
+
+/**
+ * Declares the page route of the folder this index.ts sits in.
+ * The folder's page.* renders the route, its layout.* wraps it.
+ *
+ * Takes type arguments only - the route name,
+ * the params refinements and the validation definitions;
+ * nothing of the route is defined at runtime.
+ * */
+export const defineRoute = <
+  _Name extends PageRouteName,
+  _ParamsRefinements extends Array<unknown> = [],
+  _ValidationDefinitions extends { query?: object } = {},
+>(): void => {};

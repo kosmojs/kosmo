@@ -1,0 +1,22 @@
+{
+  "id": "about_3052675811",
+  "name": "about",
+  "folder": "pages",
+  "file": "about/page.tsx",
+  "pathTokens": [
+    {
+      "kind": "static",
+      "orig": "about",
+      "pattern": "about",
+      "parts": [
+        {
+          "type": "static",
+          "value": "about"
+        }
+      ]
+    }
+  ],
+  "pathPattern": "about",
+  "honoPattern": "about",
+  "h3Pattern": "about"
+}
