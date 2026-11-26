@@ -27,7 +27,7 @@ router props passed through:
 == Menu.tsx
 ```tsx
 // Menu.tsx
-import Link from "~/components/Link";
+import Link from "@/components/Link";
 
 export default function Menu() {
   return (
@@ -51,7 +51,7 @@ export default function Menu() {
 ```vue
 <!-- Menu.vue -->
 <script setup lang="ts">
-import Link from "~/components/Link.vue";
+import Link from "@/components/Link.vue";
 </script>
 
 <template>
@@ -74,7 +74,7 @@ import Link from "~/components/Link.vue";
 ```svelte
 <!-- Menu.svelte -->
 <script lang="ts">
-import Link from "~/components/Link.svelte";
+import Link from "@/components/Link.svelte";
 </script>
 
 <nav>

@@ -2,7 +2,7 @@
 title: Project Structure
 description: >-
     The anatomy of a KosmoJS project - source folders, the derived var/lib directory,
-    build output, and the reserved #/ ~/ _/ path mappings.
+    build output, and the reserved #/ @/ _/ path mappings.
 head:
   - - meta
     - name: keywords
@@ -78,7 +78,7 @@ src/front/
 │   └── Link.tsx          -> type-safe navigation component
 │
 ├── types/                -> yours - nothing outside the names above is scanned
-│   └── user.ts           -> reached as `~/types/user`
+│   └── user.ts           -> reached as `@/types/user`
 │
 ├── entry/
 │   ├── client.ts         -> mount / hydrate in the browser
@@ -105,7 +105,7 @@ Neither directory name appears in a URL.
 and `entry/` beside it belongs to the frontend.
 [Details&nbsp;›](/sidecar/intro)
 - **Everything else is yours.** `index.*` and `use.ts` are the only names the scanner looks for,
-so any other file or directory - `types/`, `server/`, `domain/` - is ignored by it and reachable through `~/`.
+so any other file or directory - `types/`, `server/`, `domain/` - is ignored by it and reachable through `@/`.
 Where to put it is a judgement call, not a convention KosmoJS imposes.
 [Suggestions&nbsp;›](/routing/rationale#helpers-shared-by-several-routes)
 
@@ -177,20 +177,20 @@ Five prefixes are reserved. Don't reuse them for your own aliases.
 | `#/*` | project root | anything shared across source folders - db layer, domain types |
 | `#src/*` | `src/` | modules of **any** source folder, by name |
 | `#lib/*` | `var/lib/` | derived code of **any** folder, by name |
-| `~/*` | **this** source folder | your own modules inside the folder |
+| `@/*` | **this** source folder | your own modules inside the folder |
 | `_/*` | `var/lib/<this folder>/` | derived code - generated, never edited |
 
 The three starting with `#` reach the same place from anywhere in the project;
-`~/` and `_/` resolve against the folder that imports them.
+`@/` and `_/` resolve against the folder that imports them.
 
 ```ts
 import { db } from "#/db";                    // my-app/db.ts
-import type { User } from "~/types/user";     // src/front/types/user.ts
+import type { User } from "@/types/user";     // src/front/types/user.ts
 import { defineRoute } from "_/api";          // var/lib/front/api.ts
 import fetchClients from "_/fetch";           // var/lib/front/fetch/
 ```
 
-`~/` and `_/` are **folder-relative**: the same `_/api` in `src/admin` resolves to `var/lib/admin/api.ts`.
+`@/` and `_/` are **folder-relative**: the same `_/api` in `src/admin` resolves to `var/lib/admin/api.ts`.
 That is what keeps folders isolated - `admin`'s route names and navigation types never leak into `front`.
 
 `#src/` and `#lib/` reach any folder by name, from anywhere -
@@ -208,9 +208,9 @@ import { apiRouteMap } from "#lib/docs/core";       // var/lib/docs/core
 import type { User } from "#src/front/types/user";  // src/front/types/user.ts
 ```
 
-Inside a folder, `~/types/user` and `#src/<this folder>/types/user` are the same file,
+Inside a folder, `@/types/user` and `#src/<this folder>/types/user` are the same file,
 and so are `_/core` and `#lib/<this folder>/core`.
-Reach for `~/` and `_/` for your own folder, so it keeps working if the folder is renamed,
+Reach for `@/` and `_/` for your own folder, so it keeps working if the folder is renamed,
 and for `#src/` and `#lib/` when what you need belongs to another folder.
 
 `#/` is how folders share without packages. Put a type in `db/models.ts`,

@@ -95,7 +95,7 @@ Put it in the deepest folder that covers every route using it, and move it up wh
 A helper's position then tells you its reach, the same way a route's position tells you its URL.
 
 For code with no natural place in the route tree - a mailer, a queue client, a domain model -
-use the folder root and reach it through `~/`, which is what the examples in these docs do with `~/types/`.
+use the folder root and reach it through `@/`, which is what the examples in these docs do with `@/types/`.
 
 One more step up: code shared by *several source folders* goes outside `src/` entirely,
 and is reached through `#/`.

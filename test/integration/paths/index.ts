@@ -19,7 +19,7 @@ export const ROUTE = "mappings";
  *   app      #/ -> project root
  *   appSrc   #src/ -> access any folder by name; #src/admin for ex.
  *   appLib   #lib/ -> derived code of a folder by name; #lib/admin
- *   src      ~/ -> the folder's src dir
+ *   src      @/ -> the folder's src dir
  *   lib      _/ -> the folder's derived code, the generated core module
  *   dir      a prefixed directory import, resolved to its index.ts
  *   explicit a prefixed import that already carries its .js extension

@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { SearchResultsResponse } from "~/types/search";
+import type { SearchResultsResponse } from "@/types/search";
 
 export default defineRoute(({ POST }) => [
   POST<{

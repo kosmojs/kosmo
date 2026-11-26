@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { MfaSetupResponse } from "~/types/mfa";
+import type { MfaSetupResponse } from "@/types/mfa";
 
 export default defineRoute(({ POST }) => [
   POST<{

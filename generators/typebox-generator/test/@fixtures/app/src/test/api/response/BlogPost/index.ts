@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { BlogAuthor } from "~/types/blog";
+import type { BlogAuthor } from "@/types/blog";
 
 export default defineRoute(({ POST }) => [
   POST<{

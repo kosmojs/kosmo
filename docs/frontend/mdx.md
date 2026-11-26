@@ -369,7 +369,7 @@ no need to reconstruct an array from `params`/`useParams()` by hand.
 There is `Link` component at `components/Link.tsx` for your convenience:
 
 ```mdx
-import Link from "~/components/Link"
+import Link from "@/components/Link"
 
 Navigate to the <Link to={["blog/[slug]", "hello-world"]}>first post</Link>
 or go <Link to={["index"]}>home</Link>.

@@ -145,7 +145,7 @@ Since validation rules are just `TypeScript` types, nested objects, union types,
 conditional fields, referenced types - all work naturally:
 
 ```ts [api/checkout/index.ts]
-import type { BillingAddress } from "~/types/checkout";
+import type { BillingAddress } from "@/types/checkout";
 
 type PaymentMethod = {
   type: "card" | "wallet";
@@ -384,7 +384,7 @@ export type Post = {
 Now you can use these types in any route by importing them:
 
 ```ts [api/users/index.ts]
-import type { User, Payload } from "~/types/api-payload";
+import type { User, Payload } from "@/types/api-payload";
 import { defineRoute } from "_/api";
 
 export default defineRoute<"users">(({ POST }) => [
@@ -402,7 +402,7 @@ Update a shared type and validation updates everywhere it's used.
 Different routes, same wrapper:
 
 ```ts [api/posts/index.ts]
-import type { Post, Payload } from "~/types/api-payload";
+import type { Post, Payload } from "@/types/api-payload";
 
 export default defineRoute<"posts">(({ POST }) => [
   POST<{
@@ -416,7 +416,7 @@ export default defineRoute<"posts">(({ POST }) => [
 Types are read from the source, the way your editor reads them, and followed across files:
 
 - named, default and namespace imports (`import type * as T`, then `T.User`), aliased imports,
-re-exports and `export *`, and the `#/`, `#src/`, `#lib/`, `~/` and `_/` path aliases;
+re-exports and `export *`, and the `#/`, `#src/`, `#lib/`, `@/` and `_/` path aliases;
 - interfaces and `extends`, generics, `Partial`, `Pick`, `Omit` and the other utility types,
 mapped, conditional, indexed and template literal types;
 - recursive types, such as a tree whose nodes hold their children - validated at any depth;

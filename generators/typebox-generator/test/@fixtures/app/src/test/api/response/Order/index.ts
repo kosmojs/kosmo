@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { OrderShippingAddress } from "~/types/order";
+import type { OrderShippingAddress } from "@/types/order";
 
 export default defineRoute(({ POST }) => [
   POST<{

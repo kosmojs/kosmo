@@ -142,7 +142,7 @@ and they coexist in one project.
 
 ### How do folders share types without publishing/versioning?
 Import a type directly across folders through the reserved aliases - `#/*` for root-level
-imports, `~/*` for source-folder imports, `_/*` for derived code. Change a database model
+imports, `@/*` for source-folder imports, `_/*` for derived code. Change a database model
 and every folder sees it immediately. No publishing, no workspace protocols.
 [Details&nbsp;›](/essentials/project-structure#path-mappings)
 
@@ -266,7 +266,7 @@ Wherever you decide - `index.*` and `use.ts` are the only names the scanner look
 The tree gives you a default: put a helper in the deepest folder that covers every route using it,
 and move it up when that stops being true.
 Its position then shows its reach. Code with no place in the route tree - a mailer, a queue client, a domain model -
-goes at the folder root and is reached through `~/`, as these docs do with `~/types/`.
+goes at the folder root and is reached through `@/`, as these docs do with `@/types/`.
 [Details&nbsp;›](/routing/rationale#helpers-shared-by-several-routes)
 
 ### How do I run a background worker or a non-HTTP process?
@@ -285,7 +285,7 @@ defineConfig({
 Its files are `sidecar/entry.ts` and `sidecar/run.ts`, seeded when missing.
 `pnpm folder` adds one when given `--sidecar`, or asks about it, so for a sidecar alone:
 `pnpm folder --name mailer --sidecar`.
-It builds / typechecks like any other folder, and reaches `~/` and `#/` like any other code.
+It builds / typechecks like any other folder, and reaches `@/` and `#/` like any other code.
 With `serve`, `pnpm dev` watches and restarts it. One per folder - a second worker is a second folder.
 
 A sidecar is built like any other folder, but `preview` and `dist/run.js` never start them - those are HTTP, and a sidecar is not.
@@ -349,13 +349,13 @@ Pages typically read data through the fetch client (`fetchClients["products"].GE
 where `<folder>` is your source-folder name.
 [Details&nbsp;›](/essentials/project-structure#path-mappings)
 
-### What do `#/*`, `#src/*`, `#lib/*`, `~/*`, `_/*` mean?
+### What do `#/*`, `#src/*`, `#lib/*`, `@/*`, `_/*` mean?
 
 Reserved path mappings:
 - `#/*` root-level imports,
 - `#src/*` source-folder imports for any folder, by name - `#src/admin/types`,
 - `#lib/*` derived-code imports for any folder, by name - `#lib/admin/core`,
-- `~/*` source-folder imports for the current folder,
+- `@/*` source-folder imports for the current folder,
 - `_/*` derived-code imports for the current folder.
 
 Don't reuse these prefixes for your own aliases.
@@ -1405,7 +1405,7 @@ page's; React and Solid scope per route automatically.
 ## Frontend: Navigation (typed Link)
 
 ### How does the typed Link component work?
-Just import it from `~/components/Link.{tsx,vue,svelte}`.
+Just import it from `@/components/Link.{tsx,vue,svelte}`.
 The `to` prop takes a typed tuple `[routeName, ...params]` (e.g. `["users/[id]", 123]`), plus an optional `query` prop.
 Typing the route name triggers IntelliSense; parameterized routes require their params.
 [Details&nbsp;›](/frontend/link-navigation#usage)

@@ -45,7 +45,7 @@ export default defineConfig({
 Also it is possible to use custom templates for seeding by provided a string for value:
 
 ~~~ts
-import * as templates from "~/test/templates"; // [!code focus]
+import * as templates from "@/test/templates"; // [!code focus]
 
 export default defineConfig({
   backend: { // or frontend

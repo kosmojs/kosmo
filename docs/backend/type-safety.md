@@ -67,7 +67,7 @@ Refinements also drive runtime validation - invalid params are rejected before y
 The first type argument to each method handler defines payload and response schemas:
 
 ```ts [api/example/index.ts]
-import type { User } from "~/types";
+import type { User } from "@/types";
 
 export default defineRoute<"example">(({ POST }) => [
   POST<{

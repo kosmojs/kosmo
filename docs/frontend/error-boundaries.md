@@ -108,7 +108,7 @@ let { children } = $props();
 == MDX
 ```mdx
 {/* MDX: layout.mdx */}
-import { Boundary } from "~/components/Boundary";
+import { Boundary } from "@/components/Boundary";
 
 <Boundary>
   {props.children}

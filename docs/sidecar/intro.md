@@ -37,7 +37,7 @@ A folder with a `sidecar` block and no `frontend` or `backend` is a sidecar alon
 no `base`, no routes, just the process.
 
 Either way it is still a source folder, so everything that follows from that holds:
-`~/` points at it, `#/` reaches shared code, its `tsconfig.json` covers it,
+`@/` points at it, `#/` reaches shared code, its `tsconfig.json` covers it,
 and `pnpm build` builds it.
 
 ---

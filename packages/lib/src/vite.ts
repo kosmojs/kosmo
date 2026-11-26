@@ -44,7 +44,7 @@ export const vitePluginsFactory = (
    *
    * These are the backbone of the generated code:
    * `defineRoute` and friends are emitted with `_/...` imports,
-   * pages import layouts and components via `~/...`,
+   * pages import layouts and components via `@/...`,
    * and `#/...` reaches shared app-level modules.
    * If a bundler cannot resolve them, nothing the framework generates can be loaded.
    *

@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { FileMetadata } from "~/types/upload";
+import type { FileMetadata } from "@/types/upload";
 
 export default defineRoute(({ POST }) => [
   POST<{

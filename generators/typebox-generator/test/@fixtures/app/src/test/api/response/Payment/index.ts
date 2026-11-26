@@ -1,5 +1,5 @@
 import { defineRoute } from "@test/index";
-import type { PaymentMethodInfo } from "~/types/payment";
+import type { PaymentMethodInfo } from "@/types/payment";
 
 export default defineRoute(({ POST }) => [
   POST<{

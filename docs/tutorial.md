@@ -334,7 +334,7 @@ Payload is validated before your handler runs. Response is validated before it's
 For simple cases, wire middleware inline with `use`:
 
 ```ts
-import { logRequest } from "~/middleware/logging";
+import { logRequest } from "@/middleware/logging";
 
 export default defineRoute<"users/[id]">(({ use, GET }) => [
   use(logRequest),
@@ -660,7 +660,7 @@ You can add your own paths, but these prefixes are reserved:
 | `#/*` | project root |
 | `#src/*` | `src/` |
 | `#lib/*` | `var/lib/` |
-| `~/*` | **this** source folder |
+| `@/*` | **this** source folder |
 | `_/*` | `var/lib/<this folder>/` |
 
 [Project Structure ›](/essentials/project-structure#path-mappings) walks the whole layout - what

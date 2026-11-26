@@ -62,7 +62,7 @@ for (const signal of ["SIGINT", "SIGTERM"]) {
 
 Replace it with whatever your deployment wants - restart on failure, a health port,
 draining in-flight work before exit. It is an ordinary module in your source folder,
-so it typechecks with the rest and reaches `~/` and `#/` as usual.
+so it typechecks with the rest and reaches `@/` and `#/` as usual.
 
 Delete either file and it is seeded again on the next start, so keep them and edit them in place.
 
