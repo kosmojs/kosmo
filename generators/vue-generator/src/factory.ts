@@ -41,16 +41,20 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
 
   const overwrite = (content: string) => !content?.trim().length;
 
-  const templateResolver = createTemplateResolver(frontend?.templates);
+  const templateResolver = createTemplateResolver(
+    projectSettings,
+    sourceFolder,
+    "frontend",
+  );
 
   const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
     for (const resolvedEntry of entries) {
       const { kind, entry } = resolvedEntry;
-      const customTemplate = templateResolver(entry.name, resolvedEntry)[kind];
+      const customTemplate = await templateResolver(entry.name);
       if (kind === "pageLayout") {
         await deploySrcFile(
           entry.fileFullpath,
-          customTemplate || templates.srcPageSamplesLayout,
+          customTemplate.layout || templates.srcPageSamplesLayout,
           { entry },
           { overwrite },
         );
@@ -59,7 +63,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
           createPageFilePath(entry, "vue"),
           entry.name === "index"
             ? templates.srcPageSamplesWelcome
-            : customTemplate || templates.srcPageSamplesPage,
+            : customTemplate.page || templates.srcPageSamplesPage,
           {
             entry,
             message: randomCongratMessage(),
@@ -69,7 +73,7 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
         if (kind === "pageRoute") {
           await deploySrcFile(
             entry.fileFullpath,
-            templates.srcPageRoute,
+            customTemplate.index || templates.srcPageRoute,
             { entry },
             { overwrite },
           );

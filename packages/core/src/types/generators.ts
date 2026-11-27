@@ -51,15 +51,6 @@ export type GeneratorMeta = {
   types?: Array<string>;
 };
 
-export type GeneratorCustomTemplateFunction = (
-  e: ResolvedEntry,
-) => string | undefined;
-
-export type GeneratorCustomTemplates = Record<
-  string,
-  string | GeneratorCustomTemplateFunction | undefined
->;
-
 export type GeneratorFactory = {
   // Vite config provided by generator itself
   viteConfig?: (o: {

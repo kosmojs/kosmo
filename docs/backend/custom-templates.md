@@ -1,7 +1,9 @@
 ---
 title: Custom Templates
-description: Override the seeded defineRoute boilerplate for specific API routes using
-    glob pattern matching. Seed consistent CRUD endpoints across many routes in Hono, H3 and Koa.
+description: >-
+    Override the seeded route and use.ts boilerplate for specific API routes
+    with a directory of template files, matched by glob pattern.
+    Seed consistent CRUD endpoints across many routes in Hono, H3 and Koa.
 head:
   - - meta
     - name: keywords
@@ -10,44 +12,62 @@ head:
 ---
 
 Every backend generator accepts a `templates` option.
-When you create a new route file whose name matches one of your patterns,
+When you create a new route whose name matches one of your patterns,
 **your** boilerplate is written into it instead of the built-in placeholder.
 
-Templates seed route `index` files - `api/**/index.ts` -
-and, through the [function form](#template-format), [use.ts](/backend/cascading-middleware) files too.
-Every other seeded file gets the built-in minimal boilerplate to start from.
+A template is a directory holding two files, one for each file a route folder seeds:
+
+| Template | Seeds |
+|---|---|
+| `index.tpl` | the route's `index.ts` |
+| `use.tpl` | a [use.ts](/backend/cascading-middleware) in the route's folder |
+
+Each file is optional: a file the directory does not hold gets the built-in boilerplate.
+A directory with only a `use.tpl`, say, seeds middleware and leaves routes to the default.
 
 ## Configuration
 
-Pass `templates` through the `backend` block in the source folder's `kosmo.config.ts`,
-keyed by route-name pattern:
+Keep the template directories next to the source folder's `kosmo.config.ts`:
+
+```txt
+src/app/
+  kosmo.config.ts
+  templates/
+    crud/
+      index.tpl
+    reports/
+      index.tpl
+      use.tpl
+```
+
+Then point route-name patterns at them from the `backend` block of that `kosmo.config.ts`.
+Paths are relative to the `kosmo.config.ts` itself:
 
 ```ts [kosmo.config.ts]
 import { defineConfig } from "@kosmojs/dev";
-
-const crudTemplate = `
-import { defineRoute } from "_/api";
-
-export default defineRoute<"{{route.name}}">(({ GET, POST, PUT, DELETE }) => [
-  GET(async (ctx) => { /* list or read */ }),
-  POST(async (ctx) => { /* create */ }),
-  PUT(async (ctx) => { /* update */ }),
-  DELETE(async (ctx) => { /* delete */ }),
-]);`;
 
 export default defineConfig({
   backend: {
     stack: "hono",
     base: "/api",
     templates: {
-      "admin/**": crudTemplate,
+      "crud/**": "templates/crud",
+      "reports/**": "templates/reports",
     },
   },
 });
 ```
 
-Keys match the **route name** - the path relative to `api/`, without the trailing `index.ts`.
-So `api/admin/users/index.ts` is matched as `admin/users`.
+Keys match the **route name** - the path relative to `api/`, without the trailing file name.
+So `api/crud/users/index.ts` and `api/crud/users/use.ts` are both matched as `crud/users`.
+
+Templates shared by several source folders can live outside `src/`:
+`../../templates/crud` reaches `templates/crud` at the project root.
+
+> **Templates only fill blank files.**
+Boilerplate is written into a file **only when that file is empty**,
+so changing a template does not retroactively rewrite existing routes.
+To re-seed one, empty the file and it will be filled again.
 
 ## Pattern Syntax
 
@@ -56,24 +76,24 @@ Patterns are [picomatch](https://github.com/micromatch/picomatch) globs matched 
 ### Single-depth wildcard (`*`)
 
 ```ts
-{ "admin/*": template }
+{ "crud/*": "templates/crud" }
 ```
 
-**Matches:** `admin/users`, `admin/settings`, `admin/[id]`
-**Excludes:** `admin/users/roles` (too deep), `admin` (too shallow)
+**Matches:** `crud/users`, `crud/settings`, `crud/[id]`
+**Excludes:** `crud/users/roles` (too deep), `crud` (too shallow)
 
 ### Multi-depth wildcard (`**`)
 
 ```ts
-{ "admin/**": template }
+{ "crud/**": "templates/crud" }
 ```
 
-**Matches:** `admin/users`, `admin/users/roles`, `admin/[id]/audit` - any depth.
+**Matches:** `crud/users`, `crud/users/roles`, `crud/[id]/audit` - any depth.
 
 ### Exact match
 
 ```ts
-{ "health": template }
+{ "health": "templates/health" }
 ```
 
 ### Parameter segments are literal
@@ -83,10 +103,14 @@ themselves rather than glob syntax:
 
 ```ts
 {
-  "users/[id]": userTemplate,           // required parameter
-  "products/{category}": productTemplate, // optional parameter
-  "docs/{...path}": docsTemplate,        // splat parameter
-  "shop/[category]/{sub}": shopTemplate, // combined
+  // required parameter
+  "users/[id]": "templates/user",
+  // optional parameter
+  "products/{category}": "templates/product",
+  // splat parameter
+  "docs/{...path}": "templates/docs",
+  // combined
+  "shop/[category]/{sub}": "templates/shop",
 }
 ```
 
@@ -96,9 +120,12 @@ The **first matching pattern wins**, in the order the keys are written - so orde
 
 ```ts
 templates: {
-  "admin/audit": auditTemplate,   // exact
-  "admin/*": adminTemplate,       // one level
-  "**": fallbackTemplate,         // everything else
+  // exact
+  "crud/audit": "templates/audit",
+  // one level
+  "crud/*": "templates/crud",
+  // everything else
+  "**": "templates/default",
 }
 ```
 
@@ -114,104 +141,76 @@ The `./` is stripped before matching.
 The same applies to [renderMode](/frontend/server-side-render#selecting-the-render-mode), which uses the same resolver.
 :::
 
-## Template Format
+## Template Files
 
-A template is either a **string**, or a **function**.
+A template file holds the seeded file as you want it.
+It is rendered with Handlebars, with the route entry itself as the context,
+so a <code v-pre>{{name}}</code> placeholder interpolates the route name.
+That is what keeps the [route-name type argument](/backend/intro#the-route-name-type-argument)
+correct in seeded files.
 
-A string seeds the route `index` file of every matching route.
+### index.tpl
 
-A function receives the resolved entry, `{ kind, entry }`, and returns the template,
-or `undefined` to use the built-in boilerplate.
-
-It is called for routes (`kind: "apiRoute"`) and for `use.ts` files (`kind: "apiUse"`),
-so one pattern can seed a route and the middleware around it,
-and the output can depend on the route itself:
-
-```ts
-templates: {
-  // plain string, rendered with Handlebars, for the route index file
-  "admin/**": crudTemplate,
-
-  // a function, for the route and the use.ts of every reports route
-  "reports/**": ({ kind, entry }) => {
-    if (kind === "apiUse") {
-      return reportsUseTemplate;
-    }
-    return `
+```ts [templates/crud/index.tpl]
 import { defineRoute } from "_/api";
 
-// endpoint: ${entry.name}
-export default defineRoute<"${entry.name}">(({ GET }) => [
-  GET(async (ctx) => { /* ... */ }),
-]);`;
-  },
-
-  // a function returning undefined, to seed only the use.ts
-  "internal/**": ({ kind }) => {
-    return kind === "apiUse" ? internalUseTemplate : undefined;
-  },
-}
+export default defineRoute<"{{name}}">(({ GET, POST, PUT, DELETE }) => [
+  GET(async (ctx) => { /* list or read */ }),
+  POST(async (ctx) => { /* create */ }),
+  PUT(async (ctx) => { /* update */ }),
+  DELETE(async (ctx) => { /* delete */ }),
+]);
 ```
-
-The pattern is matched against the route an entry belongs to:
-`api/reports/sales/index.ts` and `api/reports/sales/use.ts` are both matched as `reports/sales`.
-
-A `use.ts` template should keep the `UseT` export, even when empty:
-every `use.ts` in an `api/` subfolder is expected to export it.
-
-String templates are rendered with Handlebars against a `{ route }` context,
-so a <code v-pre>{{route.name}}</code> placeholder interpolates the route name -
-which is what keeps the required [route-name type argument](/backend/intro#the-route-name-type-argument) correct in seeded files.
-
-### Per-backend shapes
 
 Because the context API differs by backend, so does the boilerplate:
 
 :::tabs key:backend variant:code
 == Hono
 ```ts
-// Hono: kosmo.config.ts
-const template = `
+// Hono: templates/crud/index.tpl
 import { defineRoute } from "_/api";
 
-export default defineRoute<"{{route.name}}">(({ GET }) => [
+export default defineRoute<"{{name}}">(({ GET }) => [
   GET(async (ctx) => {
-    // Always \`return\` the response
+    // Always `return` the response
     return ctx.json({ ok: true });
   }),
-]);`;
+]);
 ```
 
 == H3
 ```ts
-// H3: kosmo.config.ts
-const template = `
+// H3: templates/crud/index.tpl
 import { defineRoute } from "_/api";
 
-export default defineRoute<"{{route.name}}">(({ GET }) => [
+export default defineRoute<"{{name}}">(({ GET }) => [
   GET(async (event) => {
     // return the value directly - objects serialize as JSON
     return { ok: true };
   }),
-]);`;
+]);
 ```
 
 == Koa
 ```ts
-// Koa: kosmo.config.ts
-const template = `
+// Koa: templates/crud/index.tpl
 import { defineRoute } from "_/api";
 
-export default defineRoute<"{{route.name}}">(({ GET }) => [
+export default defineRoute<"{{name}}">(({ GET }) => [
   GET(async (ctx) => {
     ctx.body = { ok: true };
   }),
-]);`;
+]);
 ```
 :::
 
-> Escape backticks (`` \` ``) and `${...}` inside template literals
-that you do not want interpolated at config-evaluation time.
+### use.tpl
+
+A `use.tpl` seeds a `use.ts` created in a matching route folder,
+so one pattern can seed a route and the middleware around it.
+
+It should keep the `UseT` export, even when empty:
+every `use.ts` in an `api/` subfolder is expected to export it.
 
 ## Seeding CRUD Endpoints
 
@@ -221,12 +220,11 @@ validation targets, method handlers, error shape, all identical apart from the t
 
 Write it once:
 
-```ts [kosmo.config.ts]
-const resourceTemplate = `
+```ts [templates/resource/index.tpl]
 import { defineRoute } from "_/api";
 import type { Resource, ResourcePayload } from "./types";
 
-export default defineRoute<"{{route.name}}">(({ GET, POST }) => [
+export default defineRoute<"{{name}}">(({ GET, POST }) => [
   GET<{
     query: { page?: number; limit?: number },
     response: [200, "json", Array<Resource>],
@@ -240,13 +238,15 @@ export default defineRoute<"{{route.name}}">(({ GET, POST }) => [
   }>(async (ctx) => {
     // create
   }),
-]);`;
+]);
+```
 
+```ts [kosmo.config.ts]
 export default defineConfig({
   backend: {
     stack: "hono",
     base: "/api",
-    templates: { "admin/**": resourceTemplate },
+    templates: { "crud/**": "templates/resource" },
   },
 });
 ```
@@ -265,9 +265,12 @@ backend: {
   stack: "hono",
   base: "/api",
   templates: {
-    "admin/**": crudTemplate,        // consistent admin endpoints
-    "webhooks/**": webhookTemplate,  // signature verification + 200 fast
-    "internal/**": internalTemplate, // runtimeValidation: false, trusted callers
+    // consistent crud endpoints
+    "crud/**": "templates/crud",
+    // signature verification + 200 fast
+    "webhooks/**": "templates/webhook",
+    // runtimeValidation: false, trusted callers
+    "internal/**": "templates/internal",
   },
 }
 ```

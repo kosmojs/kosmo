@@ -69,23 +69,27 @@ export default defineGeneratorFactory((projectSettings, sourceFolder) => {
   // by default, write only to blank files
   const overwrite = (content: string) => content?.trim().length === 0;
 
-  const templateResolver = createTemplateResolver(backend?.templates);
+  const templateResolver = createTemplateResolver(
+    projectSettings,
+    sourceFolder,
+    "backend",
+  );
 
   const generateSrcFiles = async (entries: Array<ResolvedEntry>) => {
     for (const resolvedEntry of entries) {
       const { kind, entry } = resolvedEntry;
-      const customTemplate = templateResolver(entry.name, resolvedEntry)[kind];
+      const customTemplate = await templateResolver(entry.name);
       if (kind === "apiRoute") {
         await deploySrcFile(
           createPath.api(entry.file),
-          customTemplate || templates.srcRouteIndex,
+          customTemplate.index || templates.srcRouteIndex,
           { route: entry },
           { overwrite },
         );
       } else if (kind === "apiUse") {
         await deploySrcFile(
           createPath.api(entry.file),
-          customTemplate || templates.srcRouteUse,
+          customTemplate.use || templates.srcRouteUse,
           {},
           { overwrite },
         );

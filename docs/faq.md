@@ -463,16 +463,16 @@ an anonymous arrow can break Vite's HMR.
 
 ### How do I override the default seeded template?
 Pass `templates` in the `frontend` or `backend` block of `kosmo.config.ts`, keyed by route-name glob pattern.
-Each value is either a template string or a function of the route returning one.
+Each value is the path to a directory of template files, relative to that `kosmo.config.ts`.
 Both blocks accept it:
 [Custom Page Templates&nbsp;›](/frontend/custom-templates#configuration) ·
 [Custom Route Templates&nbsp;›](/backend/custom-templates#configuration)
 
 ### Which seeded files can templates override?
-Page files on the frontend - `pages/**/page.*` -
-and route `index` files on the backend - `api/**/index.ts` -
-and, with the function form, `layout` files on the frontend and `use.ts` files on the backend.
-Every other seeded file gets the built-in minimal boilerplate to start from.
+One template file for each file a route seeds, all optional:
+`index.tpl`, `page.tpl` and `layout.tpl` on the frontend,
+`index.tpl` and `use.tpl` on the backend.
+A file the template directory does not hold gets the built-in boilerplate.
 [Frontend&nbsp;›](/frontend/custom-templates) ·
 [Backend&nbsp;›](/backend/custom-templates)
 

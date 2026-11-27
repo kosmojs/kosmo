@@ -1,10 +1,7 @@
 import type { PluginOption } from "vite";
 
 import type { BACKENDS, FRONTENDS } from "../defaults";
-import type {
-  GeneratorCustomTemplates,
-  GeneratorSignature,
-} from "./generators";
+import type { GeneratorSignature } from "./generators";
 import type { ViteConfig } from "./generic";
 import type { ApiRoute, PageRoute } from "./routes";
 import type { TypeboxSettings, TypeboxValidationMessages } from "./typebox";
@@ -101,7 +98,7 @@ export type FrontendOptions = {
   ssg?: boolean | { generator?: GeneratorSignature };
   tanstack?: { query?: boolean };
   test?: boolean | VitestOptions<"frontend">;
-  templates?: GeneratorCustomTemplates;
+  templates?: Record<string, string>;
   generator?: GeneratorSignature;
   viteConfig?: ViteConfig;
 };
@@ -136,7 +133,7 @@ export type BackendOptions = {
     string // Name of the route to handle the URL
   >;
 
-  templates?: GeneratorCustomTemplates;
+  templates?: Record<string, string>;
   generator?: GeneratorSignature;
   viteConfig?: ViteConfig;
 };

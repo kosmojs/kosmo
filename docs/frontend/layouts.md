@@ -75,7 +75,7 @@ When you create a new layout file, KosmoJS seeds framework-appropriate boilerpla
 Some editors may require a brief unfocus/refocus to load the seeded content.
 
 To seed your own layouts for selected routes,
-see [custom templates](/frontend/custom-templates#template-format).
+see [custom templates](/frontend/custom-templates#layout-tpl).
 
 ## Layout Implementation
 

@@ -178,12 +178,13 @@ Off by default; set to `true`, or to an [object](/frontend/testing#the-test-opti
 
 ### frontend.templates
 
-Overrides seeded page boilerplate by route pattern:
+Overrides the seeded route, page and layout boilerplate by route pattern.
+Each pattern maps to a directory holding `index.tpl`, `page.tpl` and `layout.tpl`, each optional:
 
 ```ts
 templates: {
-  "landing/*": landingTemplate,
-  "marketing/**": landingTemplate,
+  "landing/*": "templates/landing",
+  "marketing/**": "templates/landing",
 }
 ```
 
@@ -319,13 +320,13 @@ Off by default; set to `true`, or to an [object](/backend/testing#the-test-optio
 
 ### backend.templates
 
-Overrides the seeded route boilerplate by route-name pattern -
-the route file (`defineRoute(...)`), not a page component.
+Overrides the seeded route and `use.ts` boilerplate by route-name pattern.
+Each pattern maps to a directory holding `index.tpl` and `use.tpl`, each optional.
 This is what makes it useful for seeding CRUD endpoints across many tables at once.
 
 ```ts
 templates: {
-  "admin/**": adminRouteTemplate,
+  "crud/**": "templates/crud",
 }
 ```
 
